@@ -1,0 +1,1 @@
+io.quarkus.cxf.transport.UndertowDestinationFactory::true
