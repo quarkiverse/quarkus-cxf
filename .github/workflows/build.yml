@@ -32,6 +32,12 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    - name: Build with Maven
+    - name: Pull Quarkus Native Builder Image 20.2.0-java11
+      run: docker pull quay.io/quarkus/ubi-quarkus-native-image:20.2.0-java11
+
+    - name: Build - JVM
       run: mvn -B formatter:validate verify --file pom.xml
+
+    - name: Build - Native
+      run: mvn -B clean verify -Dnative -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-native-image:20.2.0-java11
 

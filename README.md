@@ -61,7 +61,7 @@ You can just configure the `quarkus-cxf` extension by adding the following depen
 
 ```xml
 <dependency>
-    <groupId>com.github.shumonsharif</groupId>
+    <groupId>io.quarkiverse.cxf</groupId>
     <artifactId>quarkus-cxf</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 </dependency>
