@@ -192,25 +192,41 @@ final class Target_org_apache_cxf_common_jaxb_JAXBUtils {
     @Substitute
     private static synchronized Object createNamespaceWrapper(Class<?> mcls, Map<String, String> map) {
         LOG.info("Substitute JAXBUtils.createNamespaceWrapper");
+        Class<?> NamespaceWrapperClass = null;
         Throwable t = null;
-        Class<?> clz = null;
         try {
-            clz = Class.forName("org.apache.cxf.jaxb.NamespaceMapperRI");
+            NamespaceWrapperClass = Class.forName("org.apache.cxf.jaxb.EclipseNamespaceMapper");
         } catch (ClassNotFoundException e) {
             // ignore
             t = e;
         }
-        if (clz == null && (!mcls.getName().contains(".internal.") && mcls.getName().contains("com.sun"))) {
+        if (NamespaceWrapperClass == null) {
             try {
-                clz = Class.forName("org.apache.cxf.common.jaxb.NamespaceMapper");
+                NamespaceWrapperClass = Class.forName("org.apache.cxf.jaxb.NamespaceMapper");
+            } catch (ClassNotFoundException e) {
+                // ignore
+                t = e;
+            }
+        }
+        if (NamespaceWrapperClass == null) {
+            try {
+                NamespaceWrapperClass = Class.forName("org.apache.cxf.jaxb.NamespaceMapperRI");
+            } catch (ClassNotFoundException e) {
+                // ignore
+                t = e;
+            }
+        }
+        if (NamespaceWrapperClass == null && (!mcls.getName().contains(".internal.") && mcls.getName().contains("com.sun"))) {
+            try {
+                NamespaceWrapperClass = Class.forName("org.apache.cxf.common.jaxb.NamespaceMapper");
             } catch (Throwable ex2) {
                 // ignore
                 t = ex2;
             }
         }
-        if (clz != null) {
+        if (NamespaceWrapperClass != null) {
             try {
-                return clz.getConstructor(Map.class).newInstance(map);
+                return NamespaceWrapperClass.getConstructor(Map.class).newInstance(map);
             } catch (Exception e) {
                 // ignore
                 t = e;

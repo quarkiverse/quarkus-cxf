@@ -512,182 +512,209 @@ class QuarkusCxfProcessor {
         }
     }
 
-    /*
-     * private static void createEclipseNamespaceMapper(ClassOutput classOutput) {
-     * 
-     * String className = "org.apache.cxf.jaxb.EclipseNamespaceMapper";
-     * String slashedName = "org/apache/cxf/jaxb/EclipseNamespaceMapper";
-     * String superName = "org/eclipse/persistence/internal/oxm/record/namespaces/MapNamespacePrefixMapper";
-     * ClassWriter file = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-     * final GizmoClassVisitor cw = new GizmoClassVisitor(Gizmo.ASM_API_VERSION, file,
-     * classOutput.getSourceWriter(slashedName));
-     * 
-     * FieldVisitor fv;
-     * MethodVisitor mv;
-     * cw.visit(Opcodes.V1_6,
-     * Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL + Opcodes.ACC_SUPER,
-     * slashedName, null,
-     * superName, null);
-     * 
-     * cw.visitSource("EclipseNamespaceMapper.java", null);
-     * 
-     * fv = cw.visitField(Opcodes.ACC_PRIVATE, "nsctxt", "[Ljava/lang/String;", null, null);
-     * fv.visitEnd();
-     * 
-     * 
-     * mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "(Ljava/util/Map;)V",
-     * "(Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;)V", null);
-     * mv.visitCode();
-     * Label l0 = new Label();
-     * mv.visitLabel(l0);
-     * mv.visitVarInsn(Opcodes.ALOAD, 0);
-     * mv.visitVarInsn(Opcodes.ALOAD, 1);
-     * mv.visitMethodInsn(Opcodes.INVOKESPECIAL,
-     * superName, "<init>", "(Ljava/util/Map;)V", false);
-     * Label l1 = new Label();
-     * mv.visitLabel(l1);
-     * mv.visitInsn(Opcodes.RETURN);
-     * Label l2 = new Label();
-     * mv.visitLabel(l2);
-     * mv.visitMaxs(2, 2);
-     * mv.visitEnd();
-     * 
-     * 
-     * mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "setContextualNamespaceDecls", "([Ljava/lang/String;)V",
-     * null, null);
-     * mv.visitCode();
-     * l0 = new Label();
-     * mv.visitLabel(l0);
-     * mv.visitLineNumber(47, l0);
-     * mv.visitVarInsn(Opcodes.ALOAD, 0);
-     * mv.visitVarInsn(Opcodes.ALOAD, 1);
-     * mv.visitFieldInsn(Opcodes.PUTFIELD, slashedName, "nsctxt", "[Ljava/lang/String;");
-     * l1 = new Label();
-     * mv.visitLabel(l1);
-     * mv.visitLineNumber(48, l1);
-     * mv.visitInsn(Opcodes.RETURN);
-     * l2 = new Label();
-     * mv.visitLabel(l2);
-     * mv.visitLocalVariable("this", "L" + slashedName + ";", null, l0, l2, 0);
-     * mv.visitLocalVariable("contextualNamespaceDecls", "[Ljava/lang/String;", null, l0, l2, 1);
-     * mv.visitMaxs(2, 2);
-     * mv.visitEnd();
-     * 
-     * mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "getContextualNamespaceDecls", "()[Ljava/lang/String;", null, null);
-     * mv.visitCode();
-     * l0 = new Label();
-     * mv.visitLabel(l0);
-     * mv.visitLineNumber(51, l0);
-     * mv.visitVarInsn(Opcodes.ALOAD, 0);
-     * mv.visitFieldInsn(Opcodes.GETFIELD, slashedName, "nsctxt", "[Ljava/lang/String;");
-     * mv.visitInsn(Opcodes.ARETURN);
-     * l1 = new Label();
-     * 
-     * mv.visitLabel(l1);
-     * mv.visitLocalVariable("this", "L" + slashedName + ";", null, l0, l1, 0);
-     * 
-     * mv.visitMaxs(1, 1);
-     * mv.visitEnd();
-     * 
-     * 
-     * mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "getPreDeclaredNamespaceUris", "()[Ljava/lang/String;", null, null);
-     * mv.visitCode();
-     * l0 = new Label();
-     * mv.visitLabel(l0);
-     * mv.visitLineNumber(1036, l0);
-     * mv.visitVarInsn(Opcodes.ALOAD, 0);
-     * mv.visitMethodInsn(Opcodes.INVOKESPECIAL,
-     * superName,
-     * "getPreDeclaredNamespaceUris", "()[Ljava/lang/String;", false);
-     * mv.visitVarInsn(Opcodes.ASTORE, 1);
-     * l1 = new Label();
-     * mv.visitLabel(l1);
-     * mv.visitLineNumber(1037, l1);
-     * mv.visitVarInsn(Opcodes.ALOAD, 0);
-     * mv.visitFieldInsn(Opcodes.GETFIELD, slashedName, "nsctxt", "[Ljava/lang/String;");
-     * l2 = new Label();
-     * mv.visitJumpInsn(Opcodes.IFNONNULL, l2);
-     * Label l3 = new Label();
-     * mv.visitLabel(l3);
-     * mv.visitLineNumber(1038, l3);
-     * mv.visitVarInsn(Opcodes.ALOAD, 1);
-     * mv.visitInsn(Opcodes.ARETURN);
-     * mv.visitLabel(l2);
-     * mv.visitLineNumber(1040, l2);
-     * mv.visitFrame(Opcodes.F_APPEND, 1, new Object[] {"[Ljava/lang/String;"}, 0, null);
-     * mv.visitTypeInsn(Opcodes.NEW, "java/util/ArrayList");
-     * mv.visitInsn(Opcodes.DUP);
-     * mv.visitVarInsn(Opcodes.ALOAD, 1);
-     * mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Arrays", "asList",
-     * "([Ljava/lang/Object;)Ljava/util/List;", false);
-     * mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/util/ArrayList", "<init>",
-     * "(Ljava/util/Collection;)V", false);
-     * mv.visitVarInsn(Opcodes.ASTORE, 2);
-     * Label l4 = new Label();
-     * mv.visitLabel(l4);
-     * mv.visitLineNumber(1041, l4);
-     * mv.visitInsn(Opcodes.ICONST_1);
-     * mv.visitVarInsn(Opcodes.ISTORE, 3);
-     * Label l5 = new Label();
-     * mv.visitLabel(l5);
-     * Label l6 = new Label();
-     * mv.visitJumpInsn(Opcodes.GOTO, l6);
-     * Label l7 = new Label();
-     * mv.visitLabel(l7);
-     * mv.visitLineNumber(1042, l7);
-     * mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] {"java/util/List", Opcodes.INTEGER}, 0, null);
-     * mv.visitVarInsn(Opcodes.ALOAD, 2);
-     * mv.visitVarInsn(Opcodes.ALOAD, 0);
-     * mv.visitFieldInsn(Opcodes.GETFIELD, slashedName, "nsctxt", "[Ljava/lang/String;");
-     * mv.visitVarInsn(Opcodes.ILOAD, 3);
-     * mv.visitInsn(Opcodes.AALOAD);
-     * mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/List", "remove", "(Ljava/lang/Object;)Z", true);
-     * mv.visitInsn(Opcodes.POP);
-     * Label l8 = new Label();
-     * mv.visitLabel(l8);
-     * mv.visitLineNumber(1041, l8);
-     * mv.visitIincInsn(3, 2);
-     * mv.visitLabel(l6);
-     * mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-     * mv.visitVarInsn(Opcodes.ILOAD, 3);
-     * mv.visitVarInsn(Opcodes.ALOAD, 0);
-     * mv.visitFieldInsn(Opcodes.GETFIELD,
-     * slashedName,
-     * "nsctxt", "[Ljava/lang/String;");
-     * mv.visitInsn(Opcodes.ARRAYLENGTH);
-     * mv.visitJumpInsn(Opcodes.IF_ICMPLT, l7);
-     * Label l9 = new Label();
-     * mv.visitLabel(l9);
-     * mv.visitLineNumber(1044, l9);
-     * mv.visitVarInsn(Opcodes.ALOAD, 2);
-     * mv.visitVarInsn(Opcodes.ALOAD, 2);
-     * mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/List", "size", "()I", true);
-     * mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/String");
-     * mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/List",
-     * "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", true);
-     * mv.visitTypeInsn(Opcodes.CHECKCAST, "[Ljava/lang/String;");
-     * mv.visitInsn(Opcodes.ARETURN);
-     * Label l10 = new Label();
-     * mv.visitLabel(l10);
-     * mv.visitLocalVariable("this", "L" + slashedName + ";",
-     * null, l0, l10, 0);
-     * mv.visitLocalVariable("sup", "[Ljava/lang/String;", null, l1, l10, 1);
-     * mv.visitLocalVariable("s", "Ljava/util/List;", "Ljava/util/List<Ljava/lang/String;>;", l4, l10, 2);
-     * mv.visitLocalVariable("x", "I", null, l5, l9, 3);
-     * mv.visitMaxs(3, 4);
-     * mv.visitEnd();
-     * 
-     * cw.visitEnd();
-     * 
-     * classOutput.write(className, file.toByteArray());
-     * }
-     */
-    private static void createNamespaceWrapperInternal(ClassOutput classOutput) {
-        String className = "org.apache.cxf.jaxb.NamespaceMapperRI";
-        String superName = "com/sun/xml/bind/marshaller/NamespacePrefixMapper";
-        String postFixedName = "org/apache/cxf/jaxb/NamespaceMapperRI";
+    private static void createEclipseNamespaceMapper(ClassOutput classOutput) {
+
+        String className = "org.apache.cxf.jaxb.EclipseNamespaceMapper";
+        String slashedName = "org/apache/cxf/jaxb/EclipseNamespaceMapper";
+        String superName = "org/eclipse/persistence/internal/oxm/record/namespaces/MapNamespacePrefixMapper";
+        ClassWriter file = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+        final GizmoClassVisitor cw = new GizmoClassVisitor(Gizmo.ASM_API_VERSION, file,
+                classOutput.getSourceWriter(slashedName));
+        FieldVisitor fv;
+        MethodVisitor mv;
+        cw.visit(Opcodes.V1_6,
+                Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL + Opcodes.ACC_SUPER,
+                slashedName, null,
+                superName, null);
+
+        cw.visitSource("EclipseNamespaceMapper.java", null);
+
+        fv = cw.visitField(Opcodes.ACC_PRIVATE, "nsctxt", "[Ljava/lang/String;", null, null);
+        fv.visitEnd();
+
+        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "(Ljava/util/Map;)V",
+                "(Ljava/util/Map<Ljava/lang/String;Ljava/lang/String;>;)V", null);
+        mv.visitCode();
+        Label l0 = new Label();
+        mv.visitLabel(l0);
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitVarInsn(Opcodes.ALOAD, 1);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                superName, "<init>", "(Ljava/util/Map;)V", false);
+        Label l1 = new Label();
+        mv.visitLabel(l1);
+        mv.visitInsn(Opcodes.RETURN);
+        Label l2 = new Label();
+        mv.visitLabel(l2);
+        mv.visitMaxs(2, 2);
+        mv.visitEnd();
+
+        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "setContextualNamespaceDecls", "([Ljava/lang/String;)V",
+                null, null);
+        mv.visitCode();
+        l0 = new Label();
+        mv.visitLabel(l0);
+        mv.visitLineNumber(47, l0);
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitVarInsn(Opcodes.ALOAD, 1);
+        mv.visitFieldInsn(Opcodes.PUTFIELD, slashedName, "nsctxt", "[Ljava/lang/String;");
+        l1 = new Label();
+        mv.visitLabel(l1);
+        mv.visitLineNumber(48, l1);
+        mv.visitInsn(Opcodes.RETURN);
+        l2 = new Label();
+        mv.visitLabel(l2);
+        mv.visitLocalVariable("this", "L" + slashedName + ";", null, l0, l2, 0);
+        mv.visitLocalVariable("contextualNamespaceDecls", "[Ljava/lang/String;", null, l0, l2, 1);
+        mv.visitMaxs(2, 2);
+        mv.visitEnd();
+
+        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "getContextualNamespaceDecls", "()[Ljava/lang/String;", null, null);
+        mv.visitCode();
+        l0 = new Label();
+        mv.visitLabel(l0);
+        mv.visitLineNumber(51, l0);
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitFieldInsn(Opcodes.GETFIELD, slashedName, "nsctxt", "[Ljava/lang/String;");
+        mv.visitInsn(Opcodes.ARETURN);
+        l1 = new Label();
+
+        mv.visitLabel(l1);
+        mv.visitLocalVariable("this", "L" + slashedName + ";", null, l0, l1, 0);
+
+        mv.visitMaxs(1, 1);
+        mv.visitEnd();
+
+        mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "getPreDeclaredNamespaceUris", "()[Ljava/lang/String;", null, null);
+        mv.visitCode();
+        l0 = new Label();
+        mv.visitLabel(l0);
+        mv.visitLineNumber(1036, l0);
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL,
+                superName,
+                "getPreDeclaredNamespaceUris", "()[Ljava/lang/String;", false);
+        mv.visitVarInsn(Opcodes.ASTORE, 1);
+        l1 = new Label();
+        mv.visitLabel(l1);
+        mv.visitLineNumber(1037, l1);
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitFieldInsn(Opcodes.GETFIELD, slashedName, "nsctxt", "[Ljava/lang/String;");
+        l2 = new Label();
+        mv.visitJumpInsn(Opcodes.IFNONNULL, l2);
+        Label l3 = new Label();
+        mv.visitLabel(l3);
+        mv.visitLineNumber(1038, l3);
+        mv.visitVarInsn(Opcodes.ALOAD, 1);
+        mv.visitInsn(Opcodes.ARETURN);
+        mv.visitLabel(l2);
+        mv.visitLineNumber(1040, l2);
+        mv.visitFrame(Opcodes.F_APPEND, 1, new Object[] { "[Ljava/lang/String;" }, 0, null);
+        mv.visitTypeInsn(Opcodes.NEW, "java/util/ArrayList");
+        mv.visitInsn(Opcodes.DUP);
+        mv.visitVarInsn(Opcodes.ALOAD, 1);
+        mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/util/Arrays", "asList",
+                "([Ljava/lang/Object;)Ljava/util/List;", false);
+        mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/util/ArrayList", "<init>",
+                "(Ljava/util/Collection;)V", false);
+        mv.visitVarInsn(Opcodes.ASTORE, 2);
+        Label l4 = new Label();
+        mv.visitLabel(l4);
+        mv.visitLineNumber(1041, l4);
+        mv.visitInsn(Opcodes.ICONST_1);
+        mv.visitVarInsn(Opcodes.ISTORE, 3);
+        Label l5 = new Label();
+        mv.visitLabel(l5);
+        Label l6 = new Label();
+        mv.visitJumpInsn(Opcodes.GOTO, l6);
+        Label l7 = new Label();
+        mv.visitLabel(l7);
+        mv.visitLineNumber(1042, l7);
+        mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] { "java/util/List", Opcodes.INTEGER }, 0, null);
+        mv.visitVarInsn(Opcodes.ALOAD, 2);
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitFieldInsn(Opcodes.GETFIELD, slashedName, "nsctxt", "[Ljava/lang/String;");
+        mv.visitVarInsn(Opcodes.ILOAD, 3);
+        mv.visitInsn(Opcodes.AALOAD);
+        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/List", "remove", "(Ljava/lang/Object;)Z", true);
+        mv.visitInsn(Opcodes.POP);
+        Label l8 = new Label();
+        mv.visitLabel(l8);
+        mv.visitLineNumber(1041, l8);
+        mv.visitIincInsn(3, 2);
+        mv.visitLabel(l6);
+        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+        mv.visitVarInsn(Opcodes.ILOAD, 3);
+        mv.visitVarInsn(Opcodes.ALOAD, 0);
+        mv.visitFieldInsn(Opcodes.GETFIELD,
+                slashedName,
+                "nsctxt", "[Ljava/lang/String;");
+        mv.visitInsn(Opcodes.ARRAYLENGTH);
+        mv.visitJumpInsn(Opcodes.IF_ICMPLT, l7);
+        Label l9 = new Label();
+        mv.visitLabel(l9);
+        mv.visitLineNumber(1044, l9);
+        mv.visitVarInsn(Opcodes.ALOAD, 2);
+        mv.visitVarInsn(Opcodes.ALOAD, 2);
+        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/List", "size", "()I", true);
+        mv.visitTypeInsn(Opcodes.ANEWARRAY, "java/lang/String");
+        mv.visitMethodInsn(Opcodes.INVOKEINTERFACE, "java/util/List",
+                "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", true);
+        mv.visitTypeInsn(Opcodes.CHECKCAST, "[Ljava/lang/String;");
+        mv.visitInsn(Opcodes.ARETURN);
+        Label l10 = new Label();
+        mv.visitLabel(l10);
+        mv.visitLocalVariable("this", "L" + slashedName + ";",
+                null, l0, l10, 0);
+        mv.visitLocalVariable("sup", "[Ljava/lang/String;", null, l1, l10, 1);
+        mv.visitLocalVariable("s", "Ljava/util/List;", "Ljava/util/List<Ljava/lang/String;>;", l4, l10, 2);
+        mv.visitLocalVariable("x", "I", null, l5, l9, 3);
+        mv.visitMaxs(3, 4);
+        mv.visitEnd();
+
+        cw.visitEnd();
+
+        classOutput.write(className, file.toByteArray());
+    }
+
+    private static void createNamespaceWrapper(ClassOutput classOutput,
+            BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
+            BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
+        String postFix = "";
+
+        Class<?> cls = null;
+        try {
+            cls = Class.forName("org.eclipse.persistence.internal.oxm.record.namespaces.MapNamespacePrefixMapper");
+            //QuarkusCxfProcessor.createEclipseNamespaceMapper(classOutput);
+            reflectiveClass.produce(new ReflectiveClassBuildItem(true, false, "org.apache.cxf.jaxb.EclipseNamespaceMapper"));
+            unremovableBeans.produce(new UnremovableBeanBuildItem(
+                    new UnremovableBeanBuildItem.BeanClassNameExclusion("org.apache.cxf.jaxb.EclipseNamespaceMapper")));
+            return;
+        } catch (ClassNotFoundException ex) {
+            //ignore fail
+        }
+
+        try {
+            cls = Class.forName("com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper");
+            postFix = "Internal";
+        } catch (ClassNotFoundException ex) {
+            //ignore fail
+        }
+        if (cls == null) {
+            try {
+                Class.forName("com.sun.xml.bind.marshaller.NamespacePrefixMapper");
+                postFix = "Internal";
+            } catch (ClassNotFoundException e) {
+            }
+        }
+
+        String superName = "com/sun/xml/"
+                + ("RI".equals(postFix) ? "" : "internal/")
+                + "bind/marshaller/NamespacePrefixMapper";
+        String postFixedName = "org/apache/cxf/jaxb/NamespaceMapper" + postFix;
         //TODO translate to gizmo
         /*
+         * String className = "org.apache.cxf.jaxb.NamespaceMapperRI";
          * try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
          * .superClass(com.sun.xml.bind.marshaller.NamespacePrefixMapper.class)
          * .className(className)
@@ -861,6 +888,10 @@ class QuarkusCxfProcessor {
         cw.visitEnd();
 
         classOutput.write(postFixedName, file.toByteArray());
+        reflectiveClass.produce(new ReflectiveClassBuildItem(true, false, "org.apache.cxf.jaxb.NamespaceMapper" + postFix));
+
+        unremovableBeans.produce(new UnremovableBeanBuildItem(
+                new UnremovableBeanBuildItem.BeanClassNameExclusion("org.apache.cxf.jaxb.NamespaceMapper" + postFix)));
     }
 
     @BuildStep
@@ -945,10 +976,8 @@ class QuarkusCxfProcessor {
         forceJaxb.produce(new JaxbFileRootBuildItem("."));
         //TODO bad code it is set in loop but use outside...
         ClassOutput classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
-        createNamespaceWrapperInternal(classOutput);
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, "org.apache.cxf.jaxb.NamespaceMapperRI"));
-        unremovableBeans.produce(new UnremovableBeanBuildItem(
-                new UnremovableBeanBuildItem.BeanClassNameExclusion("org.apache.cxf.jaxb.NamespaceMapperRI")));
+        createNamespaceWrapper(classOutput, reflectiveClass, unremovableBeans);
+
         Set<String> generatedClass = new HashSet<>();
         for (AnnotationInstance annotation : index.getAnnotations(WEBSERVICE_ANNOTATION)) {
             if (annotation.target().kind() != AnnotationTarget.Kind.CLASS) {
@@ -1387,58 +1416,108 @@ class QuarkusCxfProcessor {
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapBody"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapFault"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapOperation"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.marshaller.CharacterEscapeHandler"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler"));
-        // all subclass of TypedXmlWriter
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Annotated"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Annotation"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Any"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Appinfo"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.AttrDecls"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.AttributeType"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.episode.Bindings"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.episode.SchemaBindings"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.episode.Klass"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.episode.Package"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.ComplexContent"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.ComplexExtension"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.ComplexRestriction"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.ComplexType"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.ComplexTypeHost"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.ComplexTypeModel"));
-        proxies.produce(
-                new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.ContentModelContainer"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Documentation"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Element"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.ExplicitGroup"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.ExtensionType"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.FixedOrDefault"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Import"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.List"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.LocalAttribute"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.LocalElement"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.NestedParticle"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.NoFixedFacet"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Occurs"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Particle"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Redefinable"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.SchemaTop"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.SimpleContent"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.SimpleDerivation"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.SimpleExtension"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.SimpleRestriction"));
-        proxies.produce(
-                new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.SimpleRestrictionModel"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.SimpleType"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.SimpleTypeHost"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.TopLevelAttribute"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.TopLevelElement"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.TypeDefParticle"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.TypeHost"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Union"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Wildcard"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.txw2.TypedXmlWriter"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.schemagen.xmlschema.Schema"));
+        produceProxyIfExist(proxies, "com.sun.xml.bind.marshaller.CharacterEscapeHandler");
+        produceProxyIfExist(proxies, "com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.marshaller.CharacterEscapeHandler");
+        produceProxyIfExist(proxies, "com.sun.xml.txw2.output.CharacterEscapeHandler");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.characterEscapeHandler");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.marshaller.CharacterEscapeHandler");
+        //TODO find all sub interface of TypedXmlWriter thanks to jandex if possible
+        //java 11
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Bindings");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.SchemaBindings");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Klass");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Package");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Annotated");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Annotation");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Any");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Appinfo");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.AttrDecls");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.AttributeType");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexContent");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexExtension");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexRestriction");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexType");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexTypeHost");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexTypeModel");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ContentModelContainer");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Documentation");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Element");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ExplicitGroup");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ExtensionType");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.FixedOrDefault");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Import");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.List");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.LocalAttribute");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.LocalElement");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.NestedParticle");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.NoFixedFacet");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Occurs");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Particle");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Redefinable");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Schema");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SchemaTop");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleContent");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleDerivation");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleExtension");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleRestriction");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleRestrictionModel");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleType");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleTypeHost");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.TopLevelAttribute");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.TopLevelElement");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.TypeDefParticle");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.TypeHost");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Union");
+        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Wildcard");
+        //java 8
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.Bindings");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.SchemaBindings");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.Klass");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.Package");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Annotated");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Annotation");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Any");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Appinfo");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.AttrDecls");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.AttributeType");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexContent");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexExtension");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexRestriction");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexType");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexTypeHost");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexTypeModel");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ContentModelContainer");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Documentation");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Element");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ExplicitGroup");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ExtensionType");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.FixedOrDefault");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Import");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.List");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.LocalAttribute");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.LocalElement");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.NestedParticle");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.NoFixedFacet");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Occurs");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Particle");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Redefinable");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Schema");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SchemaTop");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleContent");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleDerivation");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleExtension");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleRestriction");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleRestrictionModel");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleType");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleTypeHost");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.TopLevelAttribute");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.TopLevelElement");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.TypeDefParticle");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.TypeHost");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Union");
+        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Wildcard");
+        produceProxyIfExist(proxies, "com.sun.xml.txw2.TypedXmlWriter");
         //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.annotation.Locatable"));
         //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.codemodel.JAnnotationWriter"));
         /*
@@ -1516,10 +1595,21 @@ class QuarkusCxfProcessor {
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$JDefinedClass"));
     }
 
+    private void produceProxyIfExist(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies, String s) {
+        try {
+            Class.forName(s);
+            proxies.produce(new NativeImageProxyDefinitionBuildItem(s));
+        } catch (ClassNotFoundException e) {
+            //silent fail
+        }
+    }
+
     @BuildStep
     public void registerReflectionItems(BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
         //TODO load all bus-extensions.txt file and parse it to generate the reflective class.
         //TODO load all handler from https://github.com/apache/cxf/tree/master/rt/frontend/jaxws/src/main/java/org/apache/cxf/jaxws/handler/types
+        reflectiveItems.produce(new ReflectiveClassBuildItem(true, false, "org.apache.cxf.common.jaxb.NamespaceMapper"));
+
         reflectiveItems.produce(new ReflectiveClassBuildItem(true, true,
                 "io.quarkiverse.cxf.QuarkusJAXBBeanInfo",
                 "java.net.HttpURLConnection",
@@ -1665,8 +1755,6 @@ class QuarkusCxfProcessor {
                 "com.sun.xml.bind.marshaller.MinimumEscapeHandler",
                 "com.sun.xml.bind.marshaller.DumbEscapeHandler",
                 "com.sun.xml.bind.marshaller.NioEscapeHandler",
-                "org.apache.cxf.common.jaxb.NamespaceMapper",
-                "org.apache.cxf.jaxb.NamespaceMapper",
                 "com.sun.tools.internal.xjc.api.XJC",
                 "com.sun.tools.xjc.api.XJC",
                 "com.sun.xml.internal.bind.api.JAXBRIContext",
