@@ -1422,7 +1422,11 @@ class QuarkusCxfProcessor {
         produceProxyIfExist(proxies, "com.sun.xml.txw2.output.CharacterEscapeHandler");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.characterEscapeHandler");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.marshaller.CharacterEscapeHandler");
-        //TODO find all sub interface of TypedXmlWriter thanks to jandex if possible
+        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Bindings");
+        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexType");
+        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexTypeHost");
+        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ExplicitGroup");
+        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Import");
         //java 11
         produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Bindings");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.SchemaBindings");
@@ -1470,6 +1474,7 @@ class QuarkusCxfProcessor {
         produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.TypeHost");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Union");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Wildcard");
+
         //java 8
         produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.Bindings");
         produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.SchemaBindings");
@@ -1518,73 +1523,8 @@ class QuarkusCxfProcessor {
         produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Union");
         produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Wildcard");
         produceProxyIfExist(proxies, "com.sun.xml.txw2.TypedXmlWriter");
-        //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.annotation.Locatable"));
-        //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.codemodel.JAnnotationWriter"));
-        /*
-         * proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.codemodel.XmlIDREFWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlAccessorOrderWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlAccessorTypeWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlAnyAttributeWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlAnyElementWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlAttachmentRefWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlAttributeWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlElementDeclWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlElementRefWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlElementRefsWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlElementWrapperWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlElementWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlElementsWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlEnumValueWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlEnumWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlIDREFWriter"));
-         * proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlIDWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlInlineBinaryDataWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlJavaTypeAdapterWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlListWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlMimeTypeWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlMixedWriter"));
-         * proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlNsWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlRegistryWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlRootElementWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlSchemaTypeWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlSchemaTypesWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlSchemaWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlSeeAlsoWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlTransientWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlTypeWriter"));
-         * proxies.produce(new
-         * NativeImageProxyDefinitionBuildItem("com.sun.tools.xjc.generator.annotation.spec.XmlValueWriter"));
-         * proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.impl.PropertySeed"));
-         * proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.core.TypeInfo"));
-         */
+        //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.impl.PropertySeed"));
+        //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.core.TypeInfo"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$S2JJAXBModel"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$Options"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$JCodeModel"));
