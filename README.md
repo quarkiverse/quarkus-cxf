@@ -3,7 +3,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-[![Build](https://github.com/shumonsharif/quarkus-cxf/workflows/build/badge.svg)](https://github.com/shumonsharif/quarkus-cxf/actions?query=workflow%3Abuild)
+[![Build](https://github.com/quarkiverse/quarkiverse-cxf/workflows/Build/badge.svg)](https://github.com/quarkiverse/quarkiverse-cxf/actions?query=workflow%3ABuild)
 [![Nexus](https://img.shields.io/nexus/s/com.github.shumonsharif/quarkus-cxf?server=https%3A%2F%2Foss.sonatype.org)]()
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
