@@ -265,10 +265,6 @@ public class MySoapClient {
 
 ## Native Mode Limitations
 
-- Native mode is currently not fully functional, though work is in progress to make it as such.
-- Please feel free to submit pull requests; to execute native integration tests, you can use:
-    ```
-    mvn integration-test -pl :quarkus-cxf-integration-tests -Dnative
-    ```
+- Native mode is currently in beta (java 8 and java 11 supported). You can open issue if you have issue.
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
