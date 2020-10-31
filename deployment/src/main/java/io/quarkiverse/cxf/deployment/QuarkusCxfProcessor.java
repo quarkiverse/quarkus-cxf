@@ -1422,12 +1422,6 @@ class QuarkusCxfProcessor {
         produceProxyIfExist(proxies, "com.sun.xml.txw2.output.CharacterEscapeHandler");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.characterEscapeHandler");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.marshaller.CharacterEscapeHandler");
-        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Bindings");
-        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexType");
-        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexTypeHost");
-        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ExplicitGroup");
-        // produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Import");
-        //java 11
         produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Bindings");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.SchemaBindings");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Klass");
@@ -1671,12 +1665,6 @@ class QuarkusCxfProcessor {
                 "org.xml.sax.Parser",
                 "org.xml.sax.XMLReader",
                 "org.xml.sax.helpers.AttributesImpl",
-                //already in jaxp quarkus extension
-                //"com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl",
-                //"com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl",
-                //"com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl",
-                //"com.sun.xml.internal.bind.v2.ContextFactory",
-                //"com.sun.xml.bind.v2.ContextFactory",
                 "org.apache.cxf.common.logging.Slf4jLogger",
                 "io.quarkiverse.cxf.AddressTypeExtensibility",
                 "io.quarkiverse.cxf.CXFException",
