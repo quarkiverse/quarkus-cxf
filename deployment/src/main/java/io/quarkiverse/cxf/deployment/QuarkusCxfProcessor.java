@@ -1212,13 +1212,16 @@ class QuarkusCxfProcessor {
 
                 sei = cxfEndPointConfig.serviceInterface.get();
                 LOGGER.warn(" produce loadCxfClient on " + sei);
+
                 String wsAbsoluteUrl = cxfEndPointConfig.clientEndpointUrl.isPresent()
                         ? cxfEndPointConfig.clientEndpointUrl.get()
                         : "http://localhost:8080";
-                wsAbsoluteUrl = wsAbsoluteUrl.endsWith("/") ? wsAbsoluteUrl.substring(0, wsAbsoluteUrl.length() - 2)
-                        : wsAbsoluteUrl;
-                wsAbsoluteUrl = relativePath.startsWith("/") ? wsAbsoluteUrl + relativePath
-                        : wsAbsoluteUrl + "/" + relativePath;
+                if (!relativePath.equals("/") && !relativePath.equals("")) {
+                    wsAbsoluteUrl = wsAbsoluteUrl.endsWith("/") ? wsAbsoluteUrl.substring(0, wsAbsoluteUrl.length() - 1)
+                            : wsAbsoluteUrl;
+                    wsAbsoluteUrl = relativePath.startsWith("/") ? wsAbsoluteUrl + relativePath
+                            : wsAbsoluteUrl + "/" + relativePath;
+                }
                 String seiClientproducerClassName = sei + "CxfClientProducer";
                 generateCxfClientProducer(generatedBeans, seiClientproducerClassName, wsAbsoluteUrl, sei, wsdlPath,
                         soapBinding);
