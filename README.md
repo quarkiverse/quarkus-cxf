@@ -4,14 +4,14 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Build](https://github.com/quarkiverse/quarkiverse-cxf/workflows/Build/badge.svg)](https://github.com/quarkiverse/quarkiverse-cxf/actions?query=workflow%3ABuild)
-[![Nexus](https://img.shields.io/nexus/s/com.github.shumonsharif/quarkus-cxf?server=https%3A%2F%2Foss.sonatype.org)]()
+[![Maven Central](https://img.shields.io/maven-central/v/io.quarkiverse.cxf/quarkus-cxf.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.quarkiverse.cxf/quarkus-cxf)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 SOAP (Simple Object Access Protocol) is a normalized exchange protocol based on XML, predating the era of REST services.
 
 This extension enables you to develop web services that consume and produce SOAP payloads using the [Apache CXF](http://cxf.apache.org/) libraries.
 
-  - [Credits](#credits)
+  - [Contributors](#contributors)
   - [Configuration](#configuration)
   - [Creating a SOAP Web service](#creating-a-soap-web-service)
   - [Creating a SOAP Client](#creating-a-soap-client)
@@ -63,7 +63,7 @@ You can just configure the `quarkus-cxf` extension by adding the following depen
 <dependency>
     <groupId>io.quarkiverse.cxf</groupId>
     <artifactId>quarkus-cxf</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>${latest.release.version}</version>
 </dependency>
 ```
 <!--
@@ -228,14 +228,14 @@ curl -X POST "http://localhost:8080/cxf/fruit" \
 
 ## Creating a SOAP Client
 
-In order to support only SOAP client, register endpoint URL and the service endpoint interface (same as the server) with configuration:
+In order to support a SOAP client, register the endpoint URL and the service endpoint interface (same as the server) with the following configuration:
 
 ```properties
 quarkus.cxf.endpoint."/fruit".client-endpoint-url=http://localhost:8080/
 quarkus.cxf.endpoint."/fruit".service-interface=org.acme.cxf.FruitWebService
 ```
 
-Then inject the client to use it. But paid attention that quarkus container must instantiate it so the client must be injected in a class which is manage/instanciate by container. If you need a main, you can use QuarkusMain annotation (cf https://quarkus.io/guides/lifecycle)
+Then inject the client as shown below to use it. Note that the Quarkus container must instantiate the client, ie. the client must be injected in a class which is managed and instantiated by the container. If you need a main, you can use the QuarkusMain annotation (cf https://quarkus.io/guides/lifecycle).
 
 ```java
 public class MySoapClient {
@@ -249,7 +249,7 @@ public class MySoapClient {
 }
 ```
 
-if MySoapClient is not handle by container but is instantiate by a main you have to use:
+If MySoapClient is not handled by the container but is instantiated by a main you have to use:
 
 ```java
 public class MySoapClient {
@@ -265,6 +265,6 @@ public class MySoapClient {
 
 ## Native Mode Limitations
 
-- Native mode is currently in beta (java 8 and java 11 supported). You can open issue if you have issue.
+- Native mode is currently in beta (java 8 and java 11 are both supported). Kindly open an issue if you have an issue.
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
