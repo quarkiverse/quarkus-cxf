@@ -55,7 +55,7 @@ public class CxfServiceTest {
     }
 
     @Test
-    public void whenUsingHelloMethod_thenCorrect()
+    public void whenUsingCountMethod_thenCorrect()
             throws XPathExpressionException, IOException, SAXException, ParserConfigurationException {
         String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://test.deployment.cxf.quarkiverse.io/\">\n"
                 +
@@ -77,5 +77,26 @@ public class CxfServiceTest {
         XPath xpath = XPathFactory.newInstance().newXPath();
         val = xpath.compile("/Envelope/Body/countResponse/countFruitsResponse").evaluate(doc);
         Assertions.assertEquals("2", val);
+    }
+
+    @Test
+    public void whenUsingAddMethod_thenCorrect()
+            throws XPathExpressionException, IOException, SAXException, ParserConfigurationException {
+        String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://test.deployment.cxf.quarkiverse.io/\">\n"
+                +
+                "   <soapenv:Header/>\n" +
+                "   <soapenv:Body>\n" +
+                "      <tem:Add>\n" +
+                "      <fruit>\n" +
+                "      <name>banana</name>\n" +
+                "      <description>banana is yellow</description>\n" +
+                "      </fruit>\n" +
+                "      </tem:Add>\n" +
+                "   </soapenv:Body>\n" +
+                "</soapenv:Envelope>";
+        String val = "";
+
+        Response response = RestAssured.given().header("Content-Type", "text/xml").and().body(xml).when().post("/fruit");
+        response.then().statusCode(200);
     }
 }

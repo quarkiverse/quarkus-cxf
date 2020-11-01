@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf.deployment;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1107,41 +1108,96 @@ class QuarkusCxfProcessor {
 
                     wrapperParams.add(new WrapperParameter(paramType, paramAnnotations, paramName));
                 }
-                // todo get REQUEST_WRAPPER_ANNOTATION to avoid creation of wrapper but create helper based on it
 
                 if (!generatedClass.contains(pkg + className)) {
-                    MethodDescriptor requestCtor = createWrapper(true, operationName, namespace, resultNamespace, resultName,
-                            mi.returnType().toString(), wrapperParams,
-                            classOutput, pkg, className, getters, setters);
+                    String fullClassName = null;
+                    AnnotationInstance requestWrapperAnnotation = mi.annotation(REQUEST_WRAPPER_ANNOTATION);
+                    if (requestWrapperAnnotation != null) {
+                        AnnotationValue classNameValue = requestWrapperAnnotation.value("className");
+                        fullClassName = classNameValue.asString();
+                    }
+                    MethodDescriptor requestCtor;
+
+                    if (fullClassName == null) {
+                        requestCtor = createWrapper(true, operationName, namespace, resultNamespace, resultName,
+                                mi.returnType().toString(), wrapperParams,
+                                classOutput, pkg, className, getters, setters);
+                        fullClassName = pkg + "." + className;
+                    } else {
+                        DotName fullClassDotName = DotName.createSimple(fullClassName);
+                        className = fullClassDotName.withoutPackagePrefix();
+                        requestCtor = MethodDescriptor.ofConstructor(fullClassName);
+                        DotName wrapperClass = DotName.createSimple(fullClassName);
+                        Field[] fields = wrapperClass.getClass().getFields();
+                        for (Field f : fields) {
+                            String fieldName = f.getName();
+                            getters.add(MethodDescriptor.ofMethod(fullClassName,
+                                    JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
+                                    f.getType().getName()));
+                            setters.add(MethodDescriptor.ofMethod(fullClassName,
+                                    JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.SETTER),
+                                    f.getType().getName()));
+                        }
+                    }
+                    reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, fullClassName));
                     String wrapperHelperClassName = createWrapperHelper(classOutput, pkg, className, requestCtor, getters,
                             setters);
-                    createWrapperFactory(classOutput, pkg, className, requestCtor);
-                    getters.clear();
-                    setters.clear();
-                    // todo get RESPONSE_WRAPPER_ANNOTATION to avoid creation of wrapper but create helper based on it
-
-                    MethodDescriptor responseCtor = createWrapper(false, operationName, namespace, resultNamespace, resultName,
-                            mi.returnType().toString(), wrapperParams,
-                            classOutput, pkg, className, getters, setters);
-                    String wrapperHelperResponseClassName = createWrapperHelper(classOutput, pkg,
-                            className + RESPONSE_CLASS_POSTFIX, responseCtor, getters, setters);
-                    createWrapperFactory(classOutput, pkg, className + RESPONSE_CLASS_POSTFIX, responseCtor);
-                    getters.clear();
-                    setters.clear();
-
-                    reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, pkg + "." + className));
-                    reflectiveClass
-                            .produce(new ReflectiveClassBuildItem(true, true, pkg + "." + className + RESPONSE_CLASS_POSTFIX));
                     reflectiveClass
                             .produce(new ReflectiveClassBuildItem(true, true, wrapperHelperClassName));
-                    reflectiveClass
-                            .produce(new ReflectiveClassBuildItem(true, true, wrapperHelperResponseClassName));
-                    reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, pkg + ".ObjectFactory"));
+
+                    createWrapperFactory(classOutput, pkg, className, requestCtor);
                     reflectiveClass
                             .produce(new ReflectiveClassBuildItem(true, true, pkg + "." + className + WRAPPER_FACTORY_POSTFIX));
-                    reflectiveClass.produce(
-                            new ReflectiveClassBuildItem(true, true,
-                                    pkg + "." + className + RESPONSE_CLASS_POSTFIX + WRAPPER_FACTORY_POSTFIX));
+                    getters.clear();
+                    setters.clear();
+
+                    fullClassName = null;
+                    AnnotationInstance responseWrapperAnnotation = mi.annotation(RESPONSE_WRAPPER_ANNOTATION);
+                    if (responseWrapperAnnotation != null) {
+                        AnnotationValue classNameValue = responseWrapperAnnotation.value("className");
+                        fullClassName = classNameValue.asString();
+                    }
+                    MethodDescriptor responseCtor;
+                    String responseClassName;
+                    if (fullClassName == null) {
+                        responseCtor = createWrapper(false, operationName, namespace, resultNamespace, resultName,
+                                mi.returnType().toString(), wrapperParams,
+                                classOutput, pkg, className, getters, setters);
+                        responseClassName = className + RESPONSE_CLASS_POSTFIX;
+                        fullClassName = pkg + "." + responseClassName;
+                    } else {
+                        DotName fullClassDotName = DotName.createSimple(fullClassName);
+                        responseClassName = fullClassDotName.withoutPackagePrefix();
+                        responseCtor = MethodDescriptor.ofConstructor(fullClassName);
+                        DotName wrapperClass = DotName.createSimple(fullClassName);
+                        Field[] fields = wrapperClass.getClass().getFields();
+                        for (Field f : fields) {
+                            String fieldName = f.getName();
+                            getters.add(MethodDescriptor.ofMethod(fullClassName,
+                                    JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
+                                    f.getType().getName()));
+                            setters.add(MethodDescriptor.ofMethod(fullClassName,
+                                    JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.SETTER),
+                                    f.getType().getName()));
+                        }
+                    }
+                    reflectiveClass
+                            .produce(new ReflectiveClassBuildItem(true, true, fullClassName));
+                    String wrapperHelperResponseClassName = createWrapperHelper(classOutput, pkg,
+                            responseClassName, responseCtor, getters, setters);
+                    reflectiveClass
+                            .produce(new ReflectiveClassBuildItem(true, true, wrapperHelperResponseClassName));
+                    createWrapperFactory(classOutput, pkg, responseClassName, responseCtor);
+
+                    reflectiveClass
+                            .produce(new ReflectiveClassBuildItem(true, true,
+                                    pkg + "." + responseClassName + WRAPPER_FACTORY_POSTFIX));
+
+                    getters.clear();
+                    setters.clear();
+
+                    reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, pkg + ".ObjectFactory"));
+
                     generatedClass.add(pkg + className);
                 }
 
