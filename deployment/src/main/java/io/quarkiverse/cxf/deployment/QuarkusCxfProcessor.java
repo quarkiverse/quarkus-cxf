@@ -60,6 +60,7 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
@@ -1500,6 +1501,40 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
+    void addDependencies(BuildProducer<IndexDependencyBuildItem> indexDependency) {
+        indexDependency.produce(new IndexDependencyBuildItem("org.glassfish.jaxb", "txw2"));
+        indexDependency.produce(new IndexDependencyBuildItem("org.glassfish.jaxb", "jaxb-runtime"));
+    }
+
+    @BuildStep
+    void httpProxies(CombinedIndexBuildItem combinedIndexBuildItem,
+            BuildProducer<NativeImageProxyDefinitionBuildItem> proxies) {
+        IndexView index = combinedIndexBuildItem.getIndex();
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.txw2.TypedXmlWriter"));
+        Set<String> proxiesCreated = new HashSet<>();
+        DotName typedXmlWriterDN = DotName.createSimple("com.sun.xml.txw2.TypedXmlWriter");
+        // getAllKnownDirectImplementors skip interface, so I have to do it myself.
+        produceRecursiveProxies(index, typedXmlWriterDN, proxies, proxiesCreated);
+    }
+
+    void produceRecursiveProxies(IndexView index,
+            DotName interfaceDN,
+            BuildProducer<NativeImageProxyDefinitionBuildItem> proxies, Set<String> proxiesCreated) {
+        index.getKnownDirectImplementors(interfaceDN).stream()
+                .filter(classinfo -> Modifier.isInterface(classinfo.flags()))
+                .map(ClassInfo::name)
+                .forEach((className) -> {
+                    if (!proxiesCreated.contains(className.toString())) {
+                        proxies.produce(new NativeImageProxyDefinitionBuildItem(className.toString()));
+                        produceRecursiveProxies(index, className, proxies, proxiesCreated);
+                        LOGGER.warn("add proxy:" + className);
+                        proxiesCreated.add(className.toString());
+                    }
+                });
+
+    }
+
+    @BuildStep
     void httpProxies(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies) {
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBContextProxy"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBBeanInfo"));
@@ -1526,101 +1561,6 @@ class QuarkusCxfProcessor {
         produceProxyIfExist(proxies, "com.sun.xml.txw2.output.CharacterEscapeHandler");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.characterEscapeHandler");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.marshaller.CharacterEscapeHandler");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Bindings");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.SchemaBindings");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Klass");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.episode.Package");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Annotated");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Annotation");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Any");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Appinfo");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.AttrDecls");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.AttributeType");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexContent");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexExtension");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexRestriction");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexType");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexTypeHost");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ComplexTypeModel");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ContentModelContainer");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Documentation");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Element");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ExplicitGroup");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.ExtensionType");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.FixedOrDefault");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Import");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.List");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.LocalAttribute");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.LocalElement");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.NestedParticle");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.NoFixedFacet");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Occurs");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Particle");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Redefinable");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Schema");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SchemaTop");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleContent");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleDerivation");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleExtension");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleRestriction");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleRestrictionModel");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleType");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.SimpleTypeHost");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.TopLevelAttribute");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.TopLevelElement");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.TypeDefParticle");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.TypeHost");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Union");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.v2.schemagen.xmlschema.Wildcard");
-
-        //java 8
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.Bindings");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.SchemaBindings");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.Klass");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.episode.Package");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Annotated");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Annotation");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Any");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Appinfo");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.AttrDecls");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.AttributeType");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexContent");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexExtension");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexRestriction");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexType");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexTypeHost");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ComplexTypeModel");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ContentModelContainer");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Documentation");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Element");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ExplicitGroup");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.ExtensionType");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.FixedOrDefault");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Import");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.List");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.LocalAttribute");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.LocalElement");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.NestedParticle");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.NoFixedFacet");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Occurs");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Particle");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Redefinable");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Schema");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SchemaTop");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleContent");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleDerivation");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleExtension");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleRestriction");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleRestrictionModel");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleType");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.SimpleTypeHost");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.TopLevelAttribute");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.TopLevelElement");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.TypeDefParticle");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.TypeHost");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Union");
-        produceProxyIfExist(proxies, "com.sun.xml.bind.v2.schemagen.xmlschema.Wildcard");
-        produceProxyIfExist(proxies, "com.sun.xml.txw2.TypedXmlWriter");
         //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.impl.PropertySeed"));
         //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.core.TypeInfo"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$S2JJAXBModel"));
