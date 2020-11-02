@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -980,6 +981,7 @@ class QuarkusCxfProcessor {
         createNamespaceWrapper(classOutput, reflectiveClass, unremovableBeans);
 
         Set<String> generatedClass = new HashSet<>();
+        HashMap<String, AnnotationInstance> classesMetadata = new HashMap<String, AnnotationInstance>();
         for (AnnotationInstance annotation : index.getAnnotations(WEBSERVICE_ANNOTATION)) {
             if (annotation.target().kind() != AnnotationTarget.Kind.CLASS) {
                 continue;
@@ -991,6 +993,7 @@ class QuarkusCxfProcessor {
             unremovableBeans.produce(new UnremovableBeanBuildItem(
                     new UnremovableBeanBuildItem.BeanClassNameExclusion(wsClassInfo.name().toString())));
 
+            classesMetadata.put(wsClassInfo.name().toString(), annotation);
             if (!Modifier.isInterface(wsClassInfo.flags())) {
                 continue;
             }
@@ -1267,6 +1270,11 @@ class QuarkusCxfProcessor {
             if (cxfEndPointConfig.serviceInterface.isPresent()) {
 
                 sei = cxfEndPointConfig.serviceInterface.get();
+                AnnotationInstance wsAnnotation = classesMetadata.get(sei);
+                if (wsAnnotation == null) {
+                    LOGGER.error("the service interface of web service is not found:" + sei);
+                    return;
+                }
                 LOGGER.warn(" produce loadCxfClient on " + sei);
 
                 String wsAbsoluteUrl = cxfEndPointConfig.clientEndpointUrl.isPresent()
@@ -1279,8 +1287,12 @@ class QuarkusCxfProcessor {
                             : wsAbsoluteUrl + "/" + relativePath;
                 }
                 String seiClientproducerClassName = sei + "CxfClientProducer";
+                String wsNamespace = wsAnnotation.value("targetNamespace") != null
+                        ? wsAnnotation.value("targetNamespace").asString()
+                        : "";
+                String wsName = wsAnnotation.value("name") != null ? wsAnnotation.value("name").asString() : "";
                 generateCxfClientProducer(generatedBeans, seiClientproducerClassName, wsAbsoluteUrl, sei, wsdlPath,
-                        soapBinding);
+                        soapBinding, wsNamespace, wsName);
                 unremovableBeans.produce(new UnremovableBeanBuildItem(
                         new UnremovableBeanBuildItem.BeanClassNameExclusion(seiClientproducerClassName)));
 
@@ -1403,7 +1415,8 @@ class QuarkusCxfProcessor {
      *
      */
     private void generateCxfClientProducer(BuildProducer<GeneratedBeanBuildItem> generatedBean,
-            String cxfClientProducerClassName, String endpointAddress, String sei, String wsdlUrl, String soapBinding) {
+            String cxfClientProducerClassName, String endpointAddress, String sei, String wsdlUrl, String soapBinding,
+            String wsNamespace, String wsName) {
         ClassOutput classOutput = new GeneratedBeanGizmoAdaptor(generatedBean);
 
         try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
@@ -1420,6 +1433,8 @@ class QuarkusCxfProcessor {
                 ResultHandle seiRH = cxfClientMethodCreator.load(sei);
                 ResultHandle endpointAddressRH = cxfClientMethodCreator.load(endpointAddress);
                 ResultHandle soapBindingRH = cxfClientMethodCreator.load(soapBinding);
+                ResultHandle wsNamespaceRH = cxfClientMethodCreator.load(wsNamespace);
+                ResultHandle wsNameRH = cxfClientMethodCreator.load(wsName);
 
                 ResultHandle wsdlUrlRH;
                 if (wsdlUrl != null) {
@@ -1436,8 +1451,11 @@ class QuarkusCxfProcessor {
                                 String.class,
                                 String.class,
                                 String.class,
+                                String.class,
+                                String.class,
                                 String.class),
-                        cxfClientMethodCreator.getThis(), seiRH, endpointAddressRH, wsdlUrlRH, soapBindingRH);
+                        cxfClientMethodCreator.getThis(), seiRH, endpointAddressRH, wsdlUrlRH, soapBindingRH, wsNamespaceRH,
+                        wsNameRH);
                 ResultHandle cxfClientCasted = cxfClientMethodCreator.checkCast(cxfClient, sei);
                 cxfClientMethodCreator.returnValue(cxfClientCasted);
             }
@@ -1469,12 +1487,14 @@ class QuarkusCxfProcessor {
         proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPAddress"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPBinding"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPFault"));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPHeaderFault"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapBinding"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapAddress"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapHeader"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapBody"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapFault"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapOperation"));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapHeaderFault"));
         produceProxyIfExist(proxies, "com.sun.xml.bind.marshaller.CharacterEscapeHandler");
         produceProxyIfExist(proxies, "com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler");
         produceProxyIfExist(proxies, "org.glassfish.jaxb.core.marshaller.CharacterEscapeHandler");
