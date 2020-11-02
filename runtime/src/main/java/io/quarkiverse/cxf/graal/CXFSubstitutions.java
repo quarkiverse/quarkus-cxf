@@ -86,6 +86,11 @@ final class Target_org_apache_cxf_jaxb_JAXBDataBinding {
         //TODO calculate signature to have the same one than generated else iterate on count.
         int count = 1;
         String newClassName = wrapperType.getName() + "_WrapperTypeHelper" + count;
+        // if wrapper is provided we need to change package
+        if (!newClassName.contains("jaxws_asm")) {
+            newClassName = newClassName.substring(0, newClassName.lastIndexOf(".")) + ".jaxws_asm"
+                    + newClassName.substring(newClassName.lastIndexOf("."));
+        }
         //todo handle signature
         Class<?> cls = null;
         try {
