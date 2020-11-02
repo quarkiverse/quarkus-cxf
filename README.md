@@ -37,7 +37,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
 ## Configuration
 
@@ -266,5 +266,3 @@ public class MySoapClient {
 ## Native Mode Limitations
 
 - Native mode is currently in beta (java 8 and java 11 are both supported). Kindly open an issue if you have an issue.
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
