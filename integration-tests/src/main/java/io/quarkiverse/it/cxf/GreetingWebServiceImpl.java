@@ -12,4 +12,10 @@ public class GreetingWebServiceImpl implements GreetingWebService {
     public String reply(@WebParam(name = "text") String text) {
         return "Hello " + text;
     }
+
+    @Override
+    public String ping(@WebParam(name = "text") String text) {
+        return "Hello " + text;
+    }
+
 }

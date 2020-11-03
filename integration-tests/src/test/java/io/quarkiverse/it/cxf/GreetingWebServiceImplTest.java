@@ -22,6 +22,11 @@ class GreetingWebServiceImplTest {
     }
 
     @Test
+    void testPing() {
+        Assertions.assertEquals("Hello bar", greetingWS.ping("bar"));
+    }
+
+    @Test
     void testSoapEndpoint() {
         String xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://cxf.it.quarkiverse.io/\">\n"
                 +
