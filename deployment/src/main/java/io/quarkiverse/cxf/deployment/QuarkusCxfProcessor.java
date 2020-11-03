@@ -1290,9 +1290,11 @@ class QuarkusCxfProcessor {
                 String wsNamespace = wsAnnotation.value("targetNamespace") != null
                         ? wsAnnotation.value("targetNamespace").asString()
                         : "";
+                String epNamespace = cxfEndPointConfig.endpointNamespace.orElse("");
+                String epName = cxfEndPointConfig.endpointName.orElse("");
                 String wsName = wsAnnotation.value("name") != null ? wsAnnotation.value("name").asString() : "";
                 generateCxfClientProducer(generatedBeans, seiClientproducerClassName, wsAbsoluteUrl, sei, wsdlPath,
-                        soapBinding, wsNamespace, wsName);
+                        soapBinding, wsNamespace, wsName, epNamespace, epName);
                 unremovableBeans.produce(new UnremovableBeanBuildItem(
                         new UnremovableBeanBuildItem.BeanClassNameExclusion(seiClientproducerClassName)));
 
@@ -1416,7 +1418,7 @@ class QuarkusCxfProcessor {
      */
     private void generateCxfClientProducer(BuildProducer<GeneratedBeanBuildItem> generatedBean,
             String cxfClientProducerClassName, String endpointAddress, String sei, String wsdlUrl, String soapBinding,
-            String wsNamespace, String wsName) {
+            String wsNamespace, String wsName, String epNamespace, String epName) {
         ClassOutput classOutput = new GeneratedBeanGizmoAdaptor(generatedBean);
 
         try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
@@ -1435,6 +1437,8 @@ class QuarkusCxfProcessor {
                 ResultHandle soapBindingRH = cxfClientMethodCreator.load(soapBinding);
                 ResultHandle wsNamespaceRH = cxfClientMethodCreator.load(wsNamespace);
                 ResultHandle wsNameRH = cxfClientMethodCreator.load(wsName);
+                ResultHandle epNamespaceRH = cxfClientMethodCreator.load(epNamespace);
+                ResultHandle epNameRH = cxfClientMethodCreator.load(epName);
 
                 ResultHandle wsdlUrlRH;
                 if (wsdlUrl != null) {
@@ -1453,9 +1457,11 @@ class QuarkusCxfProcessor {
                                 String.class,
                                 String.class,
                                 String.class,
+                                String.class,
+                                String.class,
                                 String.class),
                         cxfClientMethodCreator.getThis(), seiRH, endpointAddressRH, wsdlUrlRH, soapBindingRH, wsNamespaceRH,
-                        wsNameRH);
+                        wsNameRH, epNamespaceRH, epNameRH);
                 ResultHandle cxfClientCasted = cxfClientMethodCreator.checkCast(cxfClient, sei);
                 cxfClientMethodCreator.returnValue(cxfClientCasted);
             }

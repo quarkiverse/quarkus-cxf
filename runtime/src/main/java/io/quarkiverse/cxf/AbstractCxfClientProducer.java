@@ -11,7 +11,7 @@ public class AbstractCxfClientProducer {
     private static final Logger LOGGER = Logger.getLogger(AbstractCxfClientProducer.class);
 
     public Object loadCxfClient(String sei, String endpointAddress, String wsdlUrl, String soapBinding,
-            String wsNamespace, String wsName) {
+            String wsNamespace, String wsName, String epNamespace, String epName) {
         Class<?> seiClass;
         try {
             seiClass = Class.forName(sei, false, Thread.currentThread().getContextClassLoader());
@@ -22,7 +22,9 @@ public class AbstractCxfClientProducer {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(seiClass);
         factory.setServiceName(new QName(wsNamespace, wsName));
-        //factory.setEndpointName(new QName(wsNamespace, wsName));
+        if (epName != "") {
+            factory.setEndpointName(new QName(epNamespace, epName));
+        }
         factory.setAddress(endpointAddress);
         if (soapBinding != null) {
             factory.setBindingId(soapBinding);
