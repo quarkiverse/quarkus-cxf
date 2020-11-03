@@ -448,7 +448,7 @@ class QuarkusCxfProcessor {
                 getWrapperParts.setModifiers(Modifier.PUBLIC);
                 ResultHandle arraylistRH = getWrapperParts.newInstance(ARRAYLIST_CTOR, getWrapperParts.load(getters.size()));
                 ResultHandle objRH = getWrapperParts.getMethodParam(0);
-                ResultHandle wrapperRH = getWrapperParts.checkCast(objRH, pkg + "." + className);
+                ResultHandle wrapperRH = getWrapperParts.checkCast(objRH, ctorDescriptor.getDeclaringClass());
                 for (MethodDescriptor getter : getters) {
                     ResultHandle wrapperValRH = getWrapperParts.invokeVirtualMethod(getter, wrapperRH);
                     boolean isjaxbElement = false;
@@ -478,7 +478,8 @@ class QuarkusCxfProcessor {
         try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
                 .className(factoryClassName)
                 .build()) {
-            try (MethodCreator createWrapper = classCreator.getMethodCreator("create" + className, pkg + "." + className)) {
+            String fullClassName = ctorDescriptor.getDeclaringClass();
+            try (MethodCreator createWrapper = classCreator.getMethodCreator("create" + className, fullClassName)) {
                 createWrapper.setModifiers(Modifier.PUBLIC);
                 ResultHandle[] argsRH = new ResultHandle[ctorDescriptor.getParameterTypes().length];
                 for (int i = 0; i < ctorDescriptor.getParameterTypes().length; i++) {
@@ -1059,6 +1060,7 @@ class QuarkusCxfProcessor {
             //@SOAPBinding(style=Style.RPC, use=Use.LITERAL, parameterStyle=ParameterStyle.BARE)
             List<MethodDescriptor> setters = new ArrayList<>();
             List<MethodDescriptor> getters = new ArrayList<>();
+
             for (MethodInfo mi : wsClassInfo.methods()) {
                 for (Type exceptionType : mi.exceptions()) {
                     String exceptionName = exceptionType.name().withoutPackagePrefix() + "_Exception";
@@ -1130,16 +1132,25 @@ class QuarkusCxfProcessor {
                         DotName fullClassDotName = DotName.createSimple(fullClassName);
                         className = fullClassDotName.withoutPackagePrefix();
                         requestCtor = MethodDescriptor.ofConstructor(fullClassName);
-                        DotName wrapperClass = DotName.createSimple(fullClassName);
-                        Field[] fields = wrapperClass.getClass().getFields();
-                        for (Field f : fields) {
-                            String fieldName = f.getName();
-                            getters.add(MethodDescriptor.ofMethod(fullClassName,
-                                    JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
-                                    f.getType().getName()));
-                            setters.add(MethodDescriptor.ofMethod(fullClassName,
-                                    JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.SETTER),
-                                    f.getType().getName()));
+                        Class<?> wrapperClass = null;
+                        try {
+                            wrapperClass = Class.forName(fullClassName);
+                        } catch (ClassNotFoundException e) {
+                        }
+                        if (wrapperClass == null) {
+                            LOGGER.warn("wrapper class not found : " + fullClassName);
+                        } else {
+                            Field[] fields = wrapperClass.getDeclaredFields();
+                            for (Field f : fields) {
+                                String fieldName = f.getName();
+                                getters.add(MethodDescriptor.ofMethod(fullClassName,
+                                        JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
+                                        f.getType().getName()));
+                                setters.add(MethodDescriptor.ofMethod(fullClassName,
+                                        JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.SETTER),
+                                        "V",
+                                        f.getType().getName()));
+                            }
                         }
                     }
                     reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, fullClassName));
@@ -1172,16 +1183,25 @@ class QuarkusCxfProcessor {
                         DotName fullClassDotName = DotName.createSimple(fullClassName);
                         responseClassName = fullClassDotName.withoutPackagePrefix();
                         responseCtor = MethodDescriptor.ofConstructor(fullClassName);
-                        DotName wrapperClass = DotName.createSimple(fullClassName);
-                        Field[] fields = wrapperClass.getClass().getFields();
-                        for (Field f : fields) {
-                            String fieldName = f.getName();
-                            getters.add(MethodDescriptor.ofMethod(fullClassName,
-                                    JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
-                                    f.getType().getName()));
-                            setters.add(MethodDescriptor.ofMethod(fullClassName,
-                                    JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.SETTER),
-                                    f.getType().getName()));
+                        Class<?> wrapperClass = null;
+                        try {
+                            wrapperClass = Class.forName(fullClassName);
+                        } catch (ClassNotFoundException e) {
+                        }
+                        if (wrapperClass == null) {
+                            LOGGER.warn("wrapper class not found : " + fullClassName);
+                        } else {
+                            Field[] fields = wrapperClass.getClass().getFields();
+                            for (Field f : fields) {
+                                String fieldName = f.getName();
+                                getters.add(MethodDescriptor.ofMethod(fullClassName,
+                                        JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
+                                        f.getType().getName()));
+                                setters.add(MethodDescriptor.ofMethod(fullClassName,
+                                        JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.SETTER),
+                                        "V",
+                                        f.getType().getName()));
+                            }
                         }
                     }
                     reflectiveClass
@@ -1266,7 +1286,6 @@ class QuarkusCxfProcessor {
                 wsdlPath = cxfEndPointConfig.wsdlPath.get();
             }
             //TODO add soap1.2 in config file
-            LOGGER.warn("service interface present:" + cxfEndPointConfig.serviceInterface.isPresent());
             if (cxfEndPointConfig.serviceInterface.isPresent()) {
 
                 sei = cxfEndPointConfig.serviceInterface.get();
