@@ -31,4 +31,16 @@ public class CxfEndpointConfig {
      */
     @ConfigItem
     public Optional<String> serviceInterface;
+
+    /**
+     * The client endpoint namespace
+     */
+    @ConfigItem
+    public Optional<String> endpointNamespace;
+
+    /**
+     * The client endpoint name
+     */
+    @ConfigItem
+    public Optional<String> endpointName;
 }
