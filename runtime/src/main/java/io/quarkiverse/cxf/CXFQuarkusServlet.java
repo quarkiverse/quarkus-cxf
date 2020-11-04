@@ -16,12 +16,15 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
 import org.jboss.logging.Logger;
 
+import io.quarkus.arc.Unremovable;
+
 @Singleton
+@Unremovable
 public class CXFQuarkusServlet extends CXFNonSpringServlet {
 
     private static final Logger LOGGER = Logger.getLogger(CXFQuarkusServlet.class);
 
-    private static final List<CXFServletInfo> WEB_SERVICES = new ArrayList<>();
+    private static final CXFServletInfos cxfServletInfos = new CXFServletInfos();
 
     private Class<?> loadClass(String className) {
         try {
@@ -49,12 +52,18 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
 
         Bus bus = getBus();
         BusFactory.setDefaultBus(bus);
-
-        //ServerFactoryBean factory = new ServerFactoryBean();
-        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean();
+        //CXFServletInfos cxfServletInfos = CXFServletInfos.getInstance();
+        LOGGER.warn("DUFF1 :" + cxfServletInfos);
+        if (cxfServletInfos == null) {
+            LOGGER.error("no info transmit to servlet");
+            return;
+        }
+        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean(
+                new QuarkusJaxWsServiceFactoryBean(cxfServletInfos.getWrappersclasses()));
         factory.setBus(bus);
-
-        for (CXFServletInfo servletInfo : WEB_SERVICES) {
+        if (cxfServletInfos.getInfos() == null)
+            return;
+        for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
             Object instanceService = getInstance(servletInfo.getClassName());
             if (instanceService != null) {
                 Class<?> seiClass = null;
@@ -108,6 +117,6 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
     }
 
     public static void publish(CXFServletInfo cfg) {
-        WEB_SERVICES.add(cfg);
+        cxfServletInfos.add(cfg);
     }
 }

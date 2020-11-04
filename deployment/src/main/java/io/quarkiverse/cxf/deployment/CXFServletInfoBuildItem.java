@@ -17,8 +17,10 @@ public final class CXFServletInfoBuildItem extends MultiBuildItem {
     private String sei;
     private String wsdlPath;
     private String soapBinding;
+    private List<String> wrapperClassNames;
 
-    public CXFServletInfoBuildItem(String path, String className, String sei, String wsdlPath, String soapBinding) {
+    public CXFServletInfoBuildItem(String path, String className, String sei, String wsdlPath, String soapBinding,
+            List<String> wrapperClassNames) {
         this.path = path;
         this.className = className;
         this.inInterceptors = new ArrayList<>();
@@ -29,6 +31,7 @@ public final class CXFServletInfoBuildItem extends MultiBuildItem {
         this.sei = sei;
         this.wsdlPath = wsdlPath;
         this.soapBinding = soapBinding;
+        this.wrapperClassNames = wrapperClassNames;
     }
 
     public String getClassName() {
@@ -67,7 +70,12 @@ public final class CXFServletInfoBuildItem extends MultiBuildItem {
         return inFaultInterceptors;
     }
 
+    public List<String> getWrapperClassNames() {
+        return wrapperClassNames;
+    }
+
     public String getSOAPBinding() {
         return soapBinding;
     }
+
 }
