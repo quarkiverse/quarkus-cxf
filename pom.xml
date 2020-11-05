@@ -40,10 +40,8 @@
     </developers>
     <properties>
         <quarkus.version>1.9.1.Final</quarkus.version>
-        <cxf.version>3.3.7</cxf.version>
-
+        <cxf.version>3.4.0</cxf.version>
         <jakarta.xml.ws-api.version>2.3.3</jakarta.xml.ws-api.version>
-        <jakarta.jws-api.version>3.0.0</jakarta.jws-api.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -120,21 +118,10 @@
                 <version>${cxf.version}</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.jws</groupId>
-                <artifactId>jakarta.jws-api</artifactId>
-                <version>${jakarta.jws-api.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>jakarta.xml.ws</groupId>
                 <artifactId>jakarta.xml.ws-api</artifactId>
                 <version>${jakarta.xml.ws-api.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>jakarta.xml.bind</groupId>
-                        <artifactId>jakarta.xml.bind-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+            </dependency>     
         </dependencies>
     </dependencyManagement>
 
