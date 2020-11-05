@@ -113,57 +113,6 @@ final class Target_org_apache_cxf_jaxb_JAXBDataBinding {
 
 }
 
-@TargetClass(className = "org.apache.cxf.jaxws.WrapperClassGenerator")
-final class Target_org_apache_cxf_jaxws_WrapperClassGenerator {
-    @Alias
-    private static Logger LOG = null;
-
-    @Alias
-    private InterfaceInfo interfaceInfo;
-
-    @Alias
-    private Set<Class<?>> wrapperBeans = null;
-
-    @Alias
-    private JaxWsServiceFactoryBean factory;
-
-    @Alias
-    private String getPackageName(Method method) {
-        return null;
-    }
-
-    @Substitute()
-    private void createWrapperClass(MessagePartInfo wrapperPart,
-            MessageInfo messageInfo,
-            OperationInfo op,
-            Method method,
-            boolean isRequest) {
-        LOG.info("wrapper class substitution : " + op.getName() + (isRequest ? "" : "Response"));
-        QName wrapperElement = messageInfo.getName();
-        //TODO handle it when config for anonymous is handle
-        //boolean anonymous = factory.getAnonymousWrapperTypes();
-        boolean anonymous = false;
-
-        String pkg = getPackageName(method) + ".jaxws_asm" + (anonymous ? "_an" : "");
-        String className = pkg + "."
-                + StringUtils.capitalize(op.getName().getLocalPart());
-        if (!isRequest) {
-            className = className + "Response";
-        }
-
-        // generation is done on quarkus side now
-        Class<?> clz = null;
-        try {
-            clz = Thread.currentThread().getContextClassLoader().loadClass(className);
-            //clz = Class.forName(className);
-            wrapperPart.setTypeClass(clz);
-            wrapperBeans.add(clz);
-        } catch (Exception e) {
-            LOG.warning("wrapper class substitution failed : " + e.toString());
-        }
-    }
-}
-
 @TargetClass(className = "org.apache.cxf.endpoint.dynamic.TypeClassInitializer$ExceptionCreator")
 final class Target_org_apache_cxf_endpoint_dynamic_TypeClassInitializer$ExceptionCreator {
 
