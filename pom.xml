@@ -41,7 +41,7 @@
     <properties>
         <quarkus.version>1.9.1.Final</quarkus.version>
         <cxf.version>3.4.0</cxf.version>
-        <jakarta.xml.ws-api.version>2.3.3</jakarta.xml.ws-api.version>
+        <jakarta.xml.ws-api.version>3.0.0</jakarta.xml.ws-api.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
