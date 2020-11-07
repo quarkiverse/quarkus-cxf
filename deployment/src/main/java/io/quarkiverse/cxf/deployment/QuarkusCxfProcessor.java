@@ -49,7 +49,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import io.quarkiverse.cxf.CXFClientInfo;
-import io.quarkiverse.cxf.CXFQuarkusServlet;
 import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfClientProducer;
@@ -62,7 +61,6 @@ import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.arc.processor.BeanInfo;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.Capabilities;
-import io.quarkus.deployment.Capability;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
@@ -71,7 +69,6 @@ import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
-import io.quarkus.deployment.builditem.ServiceStartBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
@@ -89,15 +86,14 @@ import io.quarkus.gizmo.MethodDescriptor;
 import io.quarkus.gizmo.ResultHandle;
 import io.quarkus.jaxb.deployment.JaxbFileRootBuildItem;
 import io.quarkus.runtime.RuntimeValue;
-import io.quarkus.undertow.deployment.FilterBuildItem;
-import io.quarkus.undertow.deployment.ServletBuildItem;
-import io.quarkus.undertow.deployment.ServletDeploymentManagerBuildItem;
-import io.quarkus.undertow.deployment.ServletInitParamBuildItem;
+import io.quarkus.vertx.http.deployment.DefaultRouteBuildItem;
+import io.quarkus.vertx.http.deployment.RouteBuildItem;
+import io.quarkus.vertx.http.runtime.HandlerType;
+import io.vertx.core.Handler;
+import io.vertx.ext.web.RoutingContext;
 
 class QuarkusCxfProcessor {
 
-    private static final String JAX_WS_SERVLET_NAME = "org.apache.cxf.transport.servlet.CXFNonSpringServlet";
-    private static final String JAX_WS_FILTER_NAME = JAX_WS_SERVLET_NAME;
     private static final String FEATURE_CXF = "cxf";
     private static final DotName WEBSERVICE_ANNOTATION = DotName.createSimple("javax.jws.WebService");
     private static final DotName WEBMETHOD_ANNOTATION = DotName.createSimple("javax.jws.WebMethod");
@@ -346,18 +342,19 @@ class QuarkusCxfProcessor {
     }
 
     private String formatType(String str) {
-        // overt jvn descriptor to class name
+        // convert jvm descriptor to class name
         if (str == null) {
             return null;
         }
         if (str.length() == 1) {
+            //TODO check char, int and void (wich must never happend)
             switch (str) {
                 case "V":
                     return "void";
                 case "B":
                     return "byte";
                 case "C":
-                    return "character";
+                    return "char";
                 case "D":
                     return "double";
                 case "Z":
@@ -367,7 +364,7 @@ class QuarkusCxfProcessor {
                 case "J":
                     return "long";
                 case "I":
-                    return "integer";
+                    return "int";
                 case "F":
                     return "float";
             }
@@ -1021,21 +1018,13 @@ class QuarkusCxfProcessor {
             CombinedIndexBuildItem combinedIndexBuildItem,
             CxfBuildTimeConfig cxfBuildTimeConfig,
             BuildProducer<FeatureBuildItem> feature,
-            BuildProducer<ServletBuildItem> servlet,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
-            BuildProducer<FilterBuildItem> filters,
-            BuildProducer<ServletInitParamBuildItem> servletInitParameters,
             BuildProducer<JaxbFileRootBuildItem> forceJaxb,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
             BuildProducer<CxfWebServiceBuildItem> cxfWebServices,
             BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
         IndexView index = combinedIndexBuildItem.getIndex();
-        if (!capabilities.isPresent(Capability.SERVLET)) {
-            LOGGER.info("CXF running without servlet container.");
-            LOGGER.info("- Add quarkus-undertow to run CXF within a servlet container");
-            return;
-        }
         // Register package-infos for reflection
         for (AnnotationInstance xmlNamespaceInstance : index.getAnnotations(XML_NAMESPACE)) {
             reflectiveClass.produce(
@@ -1049,7 +1038,6 @@ class QuarkusCxfProcessor {
 
         Set<String> generatedClass = new HashSet<>();
 
-        boolean StartServlet = false;
         for (AnnotationInstance annotation : index.getAnnotations(WEBSERVICE_ANNOTATION)) {
             if (annotation.target().kind() != AnnotationTarget.Kind.CLASS) {
                 continue;
@@ -1077,7 +1065,6 @@ class QuarkusCxfProcessor {
                 unremovableBeans.produce(new UnremovableBeanBuildItem(
                         new UnremovableBeanBuildItem.BeanClassNameExclusion(seiClientproducerClassName)));
             } else {
-                StartServlet = true;
                 for (ClassInfo wsClass : implementors) {
                     implementor = wsClass.name().toString();
                     AnnotationInstance bindingType = wsClass.classAnnotation(BINDING_TYPE_ANNOTATION);
@@ -1318,7 +1305,8 @@ class QuarkusCxfProcessor {
 
             }
             cxfWebServices
-                    .produce(new CxfWebServiceBuildItem(sei, soapBinding, wsNamespace, wsName, wrapperClassNames, implementor));
+                    .produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace, wsName,
+                            wrapperClassNames, implementor));
             //MethodDescriptor requestCtor = createWrapper("parameters", namespace,mi.typeParameters(), classOutput, pkg, pkg+"Parameters", getters, setters);
             //createWrapperHelper(classOutput, pkg, className, requestCtor, getters, setters);
             //getters.clear();
@@ -1326,52 +1314,6 @@ class QuarkusCxfProcessor {
         }
 
         feature.produce(new FeatureBuildItem(FEATURE_CXF));
-
-        //TODO ServletInitParamBuildItem
-        /*
-         * AbstractHTTPServlet.STATIC_RESOURCES_PARAMETER
-         * AbstractHTTPServlet.STATIC_WELCOME_FILE_PARAMETER
-         * AbstractHTTPServlet.STATIC_CACHE_CONTROL
-         * AbstractHTTPServlet.REDIRECTS_PARAMETER
-         * AbstractHTTPServlet.REDIRECT_SERVLET_NAME_PARAMETER
-         * AbstractHTTPServlet.REDIRECT_SERVLET_PATH_PARAMETER
-         * AbstractHTTPServlet.REDIRECT_ATTRIBUTES_PARAMETER
-         * AbstractHTTPServlet.REDIRECT_QUERY_CHECK_PARAMETER
-         * AbstractHTTPServlet.REDIRECT_WITH_INCLUDE_PARAMETER
-         * AbstractHTTPServlet.USE_X_FORWARDED_HEADERS_PARAMETER
-         * CXFNonSpringJaxrsServlet.USER_MODEL_PARAM;
-         * CXFNonSpringJaxrsServlet.SERVICE_ADDRESS_PARAM;
-         * CXFNonSpringJaxrsServlet.IGNORE_APP_PATH_PARAM;
-         * CXFNonSpringJaxrsServlet.SERVICE_CLASSES_PARAM;
-         * CXFNonSpringJaxrsServlet.PROVIDERS_PARAM;
-         * CXFNonSpringJaxrsServlet.FEATURES_PARAM;
-         * CXFNonSpringJaxrsServlet.OUT_INTERCEPTORS_PARAM;
-         * CXFNonSpringJaxrsServlet.OUT_FAULT_INTERCEPTORS_PARAM;
-         * CXFNonSpringJaxrsServlet.IN_INTERCEPTORS_PARAM;
-         * CXFNonSpringJaxrsServlet.INVOKER_PARAM;
-         * CXFNonSpringJaxrsServlet.SERVICE_SCOPE_PARAM;
-         * CXFNonSpringJaxrsServlet.EXTENSIONS_PARAM;
-         * CXFNonSpringJaxrsServlet.LANGUAGES_PARAM;
-         * CXFNonSpringJaxrsServlet.PROPERTIES_PARAM;
-         * CXFNonSpringJaxrsServlet.SCHEMAS_PARAM;
-         * CXFNonSpringJaxrsServlet.DOC_LOCATION_PARAM;
-         * CXFNonSpringJaxrsServlet.STATIC_SUB_RESOLUTION_PARAM;
-         */
-
-        if (StartServlet) {
-            //if JAX-WS is installed at the root location we use a filter, otherwise we use a Servlet and take over the whole mapped path
-            //            if (cxfBuildTimeConfig.path.equals("/") || cxfBuildTimeConfig.path.isEmpty()) {
-            //                filters.produce(
-            //                        FilterBuildItem.builder(JAX_WS_FILTER_NAME, CXFQuarkusServlet.class.getName()).setLoadOnStartup(1)
-            //                                .addFilterServletNameMapping("default", DispatcherType.REQUEST).setAsyncSupported(true)
-            //                                .build());
-            //            } else {
-            String mappingPath = getMappingPath(cxfBuildTimeConfig.path);
-            servlet.produce(ServletBuildItem.builder(JAX_WS_SERVLET_NAME, CXFQuarkusServlet.class.getName())
-                    .setLoadOnStartup(1).addMapping(mappingPath).setAsyncSupported(true).build());
-            //            }
-            reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, CXFQuarkusServlet.class.getName()));
-        }
 
         for (ClassInfo subclass : index.getAllKnownSubclasses(ABSTRACT_FEATURE)) {
             reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
@@ -1384,32 +1326,32 @@ class QuarkusCxfProcessor {
         }
     }
 
-    //    @BuildStep
-    //    @Record(ExecutionTime.RUNTIME_INIT)
-    //    RouteBuildItem handler(LaunchModeBuildItem launch, CXFRecorder recorder, CxfBuildTimeConfig cfg, CxfConfig cxfConfig) {
-    //        return new RouteBuildItem(cfg.path, new CxfHandler(), HandlerType.BLOCKING);
-    //    }
-
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
-    public void runtimeConfig(CXFRecorder recorder, List<CxfWebServiceBuildItem> cxfWebServices,
-            CxfConfig cxfConfig, ServletDeploymentManagerBuildItem servletDeploymentManagerBuildItem,
-            //force after servlet boot
-            List<ServiceStartBuildItem> servicesStated
-    //to force that it is done before undertow boot
-    //, BuildProducer<HttpHandlerWrapperBuildItem> wrappers
-    ) {
+    public void startRoute(CXFRecorder recorder,
+            BuildProducer<DefaultRouteBuildItem> defaultRoutes,
+            BuildProducer<RouteBuildItem> routes,
+            List<CxfWebServiceBuildItem> cxfWebServices,
+            CxfConfig cxfConfig) {
+        String path = null;
+
         RuntimeValue<CXFServletInfos> infos = recorder.createInfos();
         for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
-            recorder.registerCXFServlet(infos, cxfWebService.getSei(),
+            recorder.registerCXFServlet(infos, cxfWebService.getPath(), cxfWebService.getSei(),
                     cxfConfig, cxfWebService.getSoapBinding(), cxfWebService.getClassNames(), cxfWebService.getImplementor());
+            if (path == null) {
+                path = cxfWebService.getPath();
+                recorder.setPath(infos, path);
+            }
         }
-        recorder.initServlet(servletDeploymentManagerBuildItem.getDeploymentManager(), infos);
+        Handler<RoutingContext> handler = recorder.initServer(infos);
+
+        routes.produce(new RouteBuildItem(getMappingPath(path), handler, HandlerType.BLOCKING));
     }
 
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
-    public void runtimeConfig(CXFRecorder recorder, CxfConfig cxfConfig, List<CxfWebServiceBuildItem> cxfWebServices,
+    public void startClient(CXFRecorder recorder, CxfConfig cxfConfig, List<CxfWebServiceBuildItem> cxfWebServices,
             BuildProducer<SyntheticBeanBuildItem> synthetics) {
         for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
             synthetics.produce(SyntheticBeanBuildItem.configure(CXFClientInfo.class).named(cxfWebService.getSei())

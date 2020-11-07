@@ -3,15 +3,10 @@ package io.quarkiverse.cxf;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.jboss.logging.Logger;
 
-import io.quarkus.arc.Unremovable;
-
-@ApplicationScoped
-@Unremovable
 public class CXFServletInfo {
+    private String relativePath;
     private String path;
     private String className;
     private List<String> inInterceptors;
@@ -27,11 +22,12 @@ public class CXFServletInfo {
 
     private static final Logger LOGGER = Logger.getLogger(CXFServletInfo.class);
 
-    public CXFServletInfo(String path, String className, String sei, String wsdlPath, String soapBinding,
+    public CXFServletInfo(String path, String relativePath, String className, String sei, String wsdlPath, String soapBinding,
             List<String> wrapperClassNames, String endpointUrl) {
         super();
         LOGGER.warn("new CXFServletInfo");
         this.path = path;
+        this.relativePath = relativePath;
         this.className = className;
         this.inInterceptors = new ArrayList<>();
         this.outInterceptors = new ArrayList<>();
@@ -51,6 +47,10 @@ public class CXFServletInfo {
 
     public String getPath() {
         return path;
+    }
+
+    public String getRelativePath() {
+        return relativePath;
     }
 
     public String getWsdlPath() {
