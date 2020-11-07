@@ -93,7 +93,7 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperCompiler {
         }
         while (cls != null) {
             try {
-                WrapperHelper helper = WrapperHelper.class.cast(cls.newInstance());
+                WrapperHelper helper = WrapperHelper.class.cast(cls.getConstructor().newInstance());
                 if (!helper.getSignature().equals(computeSignature())) {
                     LOG.warning("signature of helper : " + helper.getSignature()
                             + " is not equal to : " + computeSignature());

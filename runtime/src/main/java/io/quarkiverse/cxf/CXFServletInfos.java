@@ -6,18 +6,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Singleton;
-
 import org.jboss.logging.Logger;
 
-import io.quarkus.arc.Unremovable;
-
-@Singleton
-@Unremovable
 public class CXFServletInfos {
 
     private final List<CXFServletInfo> infos;
     private static final Logger LOGGER = Logger.getLogger(CXFServletInfos.class);
+    private String path = null;
 
     public CXFServletInfos() {
         LOGGER.warn("new CXFServletInfos");
@@ -26,6 +21,10 @@ public class CXFServletInfos {
 
     public Collection<CXFServletInfo> getInfos() {
         return infos;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public List<String> getWrappersclasses() {
@@ -37,5 +36,9 @@ public class CXFServletInfos {
 
     public void add(CXFServletInfo cfg) {
         infos.add(cfg);
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

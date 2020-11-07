@@ -8,10 +8,13 @@ import javax.servlet.ServletException;
 
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
 import io.undertow.servlet.api.DeploymentManager;
 import io.undertow.servlet.core.ManagedServlet;
+import io.vertx.core.Handler;
+import io.vertx.ext.web.RoutingContext;
 
 @Recorder
 public class CXFRecorder {
@@ -76,8 +79,8 @@ public class CXFRecorder {
         };
     }
 
-    public void registerCXFServlet(RuntimeValue<CXFServletInfos> runtimeInfos, String sei, CxfConfig cxfConfig,
-            String soapBinding, List<String> wrapperClassNames, String wsImplementor) {
+    public void registerCXFServlet(RuntimeValue<CXFServletInfos> runtimeInfos, String path, String sei,
+            CxfConfig cxfConfig, String soapBinding, List<String> wrapperClassNames, String wsImplementor) {
         CXFServletInfos infos = runtimeInfos.getValue();
         for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
             CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
@@ -86,7 +89,8 @@ public class CXFRecorder {
             if (cxfEndPointConfig.implementor.isPresent()) {
                 String implementor = cxfEndPointConfig.implementor.get();
                 if (implementor != null && implementor.equals(wsImplementor)) {
-                    CXFServletInfo cfg = new CXFServletInfo(relativePath,
+                    CXFServletInfo cfg = new CXFServletInfo(path,
+                            relativePath,
                             implementor,
                             sei,
                             cxfEndPointConfig.wsdlPath.orElse(null),
@@ -131,5 +135,14 @@ public class CXFRecorder {
             }
         } catch (ServletException e) {
         }
+    }
+
+    public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos) {
+        LOGGER.info("init server");
+        return new CxfHandler(infos.getValue());
+    }
+
+    public void setPath(RuntimeValue<CXFServletInfos> infos, String path) {
+        infos.getValue().setPath(path);
     }
 }
