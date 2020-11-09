@@ -39,6 +39,12 @@ public class CxfClientProducer {
         if (cxfClientInfo.getWsdlUrl() != null && !cxfClientInfo.getWsdlUrl().isEmpty()) {
             factory.setWsdlURL(cxfClientInfo.getWsdlUrl());
         }
+        if (cxfClientInfo.getUsername() != "") {
+            factory.setUsername(cxfClientInfo.getUsername());
+        }
+        if (cxfClientInfo.getPassword() != "") {
+            factory.setPassword(cxfClientInfo.getPassword());
+        }
         LOGGER.info("cxf client loaded for " + cxfClientInfo.getSei());
         return factory.create();
     }

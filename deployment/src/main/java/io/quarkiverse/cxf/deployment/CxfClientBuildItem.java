@@ -13,10 +13,12 @@ public final class CxfClientBuildItem extends MultiBuildItem {
     private String wsName;
     private String epNamespace;
     private String epName;
+    private String username;
+    private String password;
     private List<String> classNames;
 
     public CxfClientBuildItem(String sei, String endpointAddress, String wsdlUrl, String soapBinding, String wsNamespace,
-            String wsName, String epNamespace, String epName, List<String> classNames) {
+            String wsName, String epNamespace, String epName, String username, String password, List<String> classNames) {
         this.sei = sei;
         this.endpointAddress = endpointAddress;
         this.wsdlUrl = wsdlUrl;
@@ -26,6 +28,8 @@ public final class CxfClientBuildItem extends MultiBuildItem {
         this.epNamespace = epNamespace;
         this.epName = epName;
         this.classNames = classNames;
+        this.username = username;
+        this.password = password;
     }
 
     public String getSei() {
@@ -62,6 +66,14 @@ public final class CxfClientBuildItem extends MultiBuildItem {
 
     public String getEpName() {
         return epName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public List<String> getClassNames() {
