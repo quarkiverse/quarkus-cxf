@@ -1297,11 +1297,13 @@ class QuarkusCxfProcessor {
                 String epNamespace = cxfEndPointConfig.endpointNamespace.orElse("");
                 String epName = cxfEndPointConfig.endpointName.orElse("");
                 String wsName = wsAnnotation.value("name") != null ? wsAnnotation.value("name").asString() : "";
+                String username = cxfEndPointConfig.username.orElse("");
+                String password = cxfEndPointConfig.password.orElse("");
                 generateCxfClientProducer(generatedBeans, seiClientproducerClassName, sei);
                 unremovableBeans.produce(new UnremovableBeanBuildItem(
                         new UnremovableBeanBuildItem.BeanClassNameExclusion(seiClientproducerClassName)));
                 cxfClients.produce(new CxfClientBuildItem(sei, endpointAddress, wsdlPath, soapBinding, wsNamespace, wsName,
-                        epNamespace, epName, wrapperClassNames));
+                        epNamespace, epName, username, password, wrapperClassNames));
 
             }
             if (cxfEndPointConfig.implementor.isPresent()) {
@@ -1456,6 +1458,8 @@ class QuarkusCxfProcessor {
                             item.getWsName(),
                             item.getEpNamespace(),
                             item.getEpName(),
+                            item.getUsername(),
+                            item.getPassword(),
                             item.getClassNames()))
                     .unremovable()
                     .done());

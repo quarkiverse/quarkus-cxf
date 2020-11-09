@@ -43,4 +43,16 @@ public class CxfEndpointConfig {
      */
     @ConfigItem
     public Optional<String> endpointName;
+
+    /**
+     * The username for HTTP Basic auth
+     */
+    @ConfigItem
+    public Optional<String> username;
+
+    /**
+     * The password for HTTP Basic auth
+     */
+    @ConfigItem
+    public Optional<String> password;
 }

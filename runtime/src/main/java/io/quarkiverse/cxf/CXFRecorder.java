@@ -12,13 +12,14 @@ public class CXFRecorder {
     private static final Logger LOGGER = Logger.getLogger(CXFRecorder.class);
 
     public Supplier<CXFClientInfo> CXFClientInfoSupplier(String sei, String endpointAddress, String wsdlUrl, String soapBinding,
-            String wsNamespace, String wsName, String epNamespace, String epName, List<String> classNames) {
+            String wsNamespace, String wsName, String epNamespace, String epName, String username, String password,
+            List<String> classNames) {
         LOGGER.warn("recorder CXFClientInfoSupplier");
         return new Supplier<CXFClientInfo>() {
             @Override
             public CXFClientInfo get() {
                 return new CXFClientInfo(sei, endpointAddress, wsdlUrl, soapBinding, wsNamespace, wsName, epNamespace, epName,
-                        classNames);
+                        username, password, classNames);
             }
         };
     }

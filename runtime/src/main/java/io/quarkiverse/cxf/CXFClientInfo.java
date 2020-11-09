@@ -19,11 +19,13 @@ public class CXFClientInfo {
     private String wsName;
     private String epNamespace;
     private String epName;
+    private String username;
+    private String password;
     private List<String> classeNames;
     private static final Logger LOGGER = Logger.getLogger(CXFClientInfo.class);
 
     public CXFClientInfo(String sei, String endpointAddress, String wsdlUrl, String soapBinding, String wsNamespace,
-            String wsName, String epNamespace, String epName, List<String> classeNames) {
+            String wsName, String epNamespace, String epName, String username, String password, List<String> classeNames) {
         LOGGER.warn("new CXFClientInfo");
         this.sei = sei;
         this.endpointAddress = endpointAddress;
@@ -34,6 +36,8 @@ public class CXFClientInfo {
         this.epNamespace = epNamespace;
         this.epName = epName;
         this.classeNames = classeNames;
+        this.username = username;
+        this.password = password;
     }
 
     public String getSei() {
@@ -70,6 +74,14 @@ public class CXFClientInfo {
 
     public String getEpName() {
         return epName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public List<String> getClasseNames() {
