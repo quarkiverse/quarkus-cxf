@@ -1,11 +1,17 @@
 package io.quarkiverse.cxf.deployment;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +31,7 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.apache.cxf.bus.extension.ExtensionManagerImpl;
 import org.apache.cxf.common.jaxb.JAXBUtils;
 import org.apache.cxf.common.util.StringUtils;
 import org.jboss.jandex.AnnotationInstance;
@@ -1279,7 +1286,7 @@ class QuarkusCxfProcessor {
                     LOGGER.error("the service interface of web service is not found:" + sei);
                     return;
                 }
-                LOGGER.warn(" produce loadCxfClient on " + sei);
+                LOGGER.info(" produce loadCxfClient on " + sei);
 
                 String endpointAddress = cxfEndPointConfig.clientEndpointUrl.isPresent()
                         ? cxfEndPointConfig.clientEndpointUrl.get()
@@ -1426,7 +1433,6 @@ class QuarkusCxfProcessor {
             BuildProducer<RouteBuildItem> routes,
             BuildProducer<SyntheticBeanBuildItem> synthetics,
             CXFRecorder recorder) {
-        LOGGER.warn("recorder servlet" + cxfServletInfos.size());
         for (CXFServletInfoBuildItem cxfServletInfoBuildItem : cxfServletInfos) {
             recorder.registerCXFServlet(cxfServletInfoBuildItem.getPath(),
                     cxfServletInfoBuildItem.getClassName(),
@@ -1447,7 +1453,6 @@ class QuarkusCxfProcessor {
     @Record(ExecutionTime.STATIC_INIT)
     void configureClient(CXFRecorder recorder, List<CxfClientBuildItem> items,
             BuildProducer<SyntheticBeanBuildItem> synthetics) {
-        LOGGER.warn("recorder client" + items.size());
         for (CxfClientBuildItem item : items) {
             synthetics.produce(SyntheticBeanBuildItem.configure(CXFClientInfo.class).named(item.getSei())
                     .supplier(recorder.CXFClientInfoSupplier(item.getSei(),
@@ -1464,6 +1469,40 @@ class QuarkusCxfProcessor {
                     .unremovable()
                     .done());
         }
+    }
+
+    @BuildStep
+    void buildResources(BuildProducer<NativeImageResourceBuildItem> resources,
+            BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
+        try {
+            Enumeration<URL> urls = ExtensionManagerImpl.class.getClassLoader().getResources("META-INF/cxf/bus-extensions.txt");
+            while (urls.hasMoreElements()) {
+                URL url = urls.nextElement();
+                try (InputStream openStream = url.openStream()) {
+                    //todo set directly extension and avoid load of file at runtime
+                    //List<Extension> exts = new TextExtensionFragmentParser(loader).getExtensions(is);
+                    //factory.getBus().setExtension();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(openStream));
+                    String line = reader.readLine();
+                    while (line != null) {
+                        String[] cols = line.split(":");
+                        //org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
+                        if (cols.length > 1) {
+                            if (cols[0] != "") {
+                                reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[0]));
+                            }
+                            if (cols[1] != "") {
+                                reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[1]));
+                            }
+                        }
+                        line = reader.readLine();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.warn("can not open bus-extensions.txt");
+        }
+
     }
 
     /**
@@ -1564,7 +1603,6 @@ class QuarkusCxfProcessor {
                     if (!proxiesCreated.contains(className.toString())) {
                         proxies.produce(new NativeImageProxyDefinitionBuildItem(className.toString()));
                         produceRecursiveProxies(index, className, proxies, proxiesCreated);
-                        LOGGER.warn("add proxy:" + className);
                         proxiesCreated.add(className.toString());
                     }
                 });
@@ -2002,81 +2040,7 @@ class QuarkusCxfProcessor {
                 "org.springframework.core.io.support.PathMatchingResourcePatternResolver",
                 "org.springframework.core.type.classreading.CachingMetadataReaderFactory",
                 "org.springframework.osgi.io.OsgiBundleResourcePatternResolver",
-                "org.springframework.osgi.util.BundleDelegatingClassLoader",
-                // org.apache.cxf.extension.BusExtension interface without duplicate
-                "org.apache.cxf.configuration.spring.ConfigurerImpl",
-                // policy bus-extensions.txt
-                "org.apache.cxf.ws.policy.PolicyEngineImpl",
-                "org.apache.cxf.ws.policy.PolicyEngine",
-                "org.apache.cxf.policy.PolicyDataEngine",
-                "org.apache.cxf.ws.policy.PolicyDataEngineImpl",
-                "org.apache.cxf.ws.policy.AssertionBuilderRegistry",
-                "org.apache.cxf.ws.policy.AssertionBuilderRegistryImpl",
-                "org.apache.cxf.ws.policy.PolicyInterceptorProviderRegistry",
-                "org.apache.cxf.ws.policy.PolicyInterceptorProviderRegistryImpl",
-                "org.apache.cxf.ws.policy.PolicyBuilder",
-                "org.apache.cxf.ws.policy.PolicyBuilderImpl",
-                "org.apache.cxf.ws.policy.PolicyAnnotationListener",
-                "org.apache.cxf.ws.policy.attachment.ServiceModelPolicyProvider",
-                "org.apache.cxf.ws.policy.attachment.external.DomainExpressionBuilderRegistry",
-                "org.apache.cxf.ws.policy.attachment.external.EndpointReferenceDomainExpressionBuilder",
-                "org.apache.cxf.ws.policy.attachment.external.URIDomainExpressionBuilder",
-                "org.apache.cxf.ws.policy.attachment.wsdl11.Wsdl11AttachmentPolicyProvider",
-                "org.apache.cxf.ws.policy.mtom.MTOMAssertionBuilder",
-                "org.apache.cxf.ws.policy.mtom.MTOMPolicyInterceptorProvider",
-                //transport undertow bus-extensions.txt
-                "org.apache.cxf.transport.http_undertow.UndertowDestinationFactory",
-                "org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngineFactory",
-                //transport http bus-extensions.txt
-                "org.apache.cxf.transport.http.HTTPTransportFactory",
-                "org.apache.cxf.transport.http.HTTPWSDLExtensionLoader",
-                "org.apache.cxf.transport.http.policy.HTTPClientAssertionBuilder",
-                "org.apache.cxf.transport.http.policy.HTTPServerAssertionBuilder",
-                "org.apache.cxf.transport.http.policy.NoOpPolicyInterceptorProvider",
-                //jaxws bus-extensions.txt
-                "org.apache.cxf.jaxws.context.WebServiceContextResourceResolver",
-                //management bus-extensions.txt
-                "org.apache.cxf.management.InstrumentationManager",
-                "org.apache.cxf.management.jmx.InstrumentationManagerImpl",
-                //rt reliable message bus-extensions.txt
-                "org.apache.cxf.ws.rm.RMManager",
-                //mex bus-extensions.txt
-                "org.apache.cxf.ws.mex.MEXServerListener",
-                //sse bus-extensions.txt
-                "org.apache.cxf.transport.sse.SseProvidersExtension",
-                //transport websocket (over undertow) bus-extensions.txt
-                "org.apache.cxf.transport.websocket.WebSocketTransportFactory",
-                //rt wsdl bus-extensions.txt
-                "org.apache.cxf.wsdl.WSDLManager",
-                "org.apache.cxf.wsdl11.WSDLManagerImpl",
-                //xml binding bus-extensions.txt
-                "org.apache.cxf.binding.xml.XMLBindingFactory",
-                "org.apache.cxf.binding.xml.wsdl11.XMLWSDLExtensionLoader",
-                //rt soap binding bus-extensions.txt
-                "org.apache.cxf.binding.soap.SoapTransportFactory",
-                "org.apache.cxf.binding.soap.SoapBindingFactory",
-                // core bus-extensions.txt
-                "org.apache.cxf.bus.managers.PhaseManagerImpl",
-                "org.apache.cxf.phase.PhaseManager",
-                "org.apache.cxf.bus.managers.WorkQueueManagerImpl",
-                "org.apache.cxf.workqueue.WorkQueueManager",
-                "org.apache.cxf.bus.managers.CXFBusLifeCycleManager",
-                "org.apache.cxf.buslifecycle.BusLifeCycleManager",
-                "org.apache.cxf.bus.managers.ServerRegistryImpl",
-                "org.apache.cxf.endpoint.ServerRegistry",
-                "org.apache.cxf.bus.managers.EndpointResolverRegistryImpl",
-                "org.apache.cxf.endpoint.EndpointResolverRegistry",
-                "org.apache.cxf.bus.managers.HeaderManagerImpl",
-                "org.apache.cxf.headers.HeaderManager",
-                "org.apache.cxf.service.factory.FactoryBeanListenerManager",
-                "org.apache.cxf.bus.managers.ServerLifeCycleManagerImpl",
-                "org.apache.cxf.endpoint.ServerLifeCycleManager",
-                "org.apache.cxf.bus.managers.ClientLifeCycleManagerImpl",
-                "org.apache.cxf.endpoint.ClientLifeCycleManager",
-                "org.apache.cxf.bus.resource.ResourceManagerImpl",
-                "org.apache.cxf.resource.ResourceManager",
-                "org.apache.cxf.catalog.OASISCatalogManager",
-                "org.apache.cxf.catalog.OASISCatalogManager"));
+                "org.springframework.osgi.util.BundleDelegatingClassLoader"));
     }
 
     @BuildStep
