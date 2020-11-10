@@ -111,6 +111,7 @@ class QuarkusCxfProcessor {
     private static final DotName DATABINDING = DotName.createSimple("org.apache.cxf.databinding");
     private static final DotName BINDING_TYPE_ANNOTATION = DotName.createSimple("javax.xml.ws.BindingType");
     private static final DotName XML_NAMESPACE = DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace");
+    private static final DotName XML_SEE_ALSO = DotName.createSimple("javax.xml.bind.annotation.XmlSeeAlso");
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
     private static final List<Class<? extends Annotation>> JAXB_ANNOTATIONS = Arrays.asList(
             XmlList.class,
@@ -1591,6 +1592,19 @@ class QuarkusCxfProcessor {
         DotName typedXmlWriterDN = DotName.createSimple("com.sun.xml.txw2.TypedXmlWriter");
         // getAllKnownDirectImplementors skip interface, so I have to do it myself.
         produceRecursiveProxies(index, typedXmlWriterDN, proxies, proxiesCreated);
+    }
+
+    @BuildStep
+    void seeAlso(CombinedIndexBuildItem combinedIndexBuildItem,
+            BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
+        IndexView index = combinedIndexBuildItem.getIndex();
+        for (AnnotationInstance xmlSeeAlsoAnn : index.getAnnotations(XML_SEE_ALSO)) {
+            AnnotationValue value = xmlSeeAlsoAnn.value();
+            Type[] types = value.asClassArray();
+            for (Type t : types) {
+                reflectiveItems.produce(new ReflectiveClassBuildItem(false, false, t.name().toString()));
+            }
+        }
     }
 
     void produceRecursiveProxies(IndexView index,
