@@ -14,7 +14,7 @@ public class FruitWebServiceImpl implements FruitWebService {
 
     public FruitWebServiceImpl() {
         fruits.add(new Fruit("Apple", "Winter fruit"));
-        fruits.add(new Fruit("Pineapple", "Tropical fruit"));
+        fruits.add(new Banana());
     }
 
     @Override

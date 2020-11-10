@@ -52,10 +52,8 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
 
         Bus bus = getBus();
         BusFactory.setDefaultBus(bus);
-        //CXFServletInfos cxfServletInfos = CXFServletInfos.getInstance();
-        LOGGER.warn("DUFF1 :" + cxfServletInfos);
-        if (cxfServletInfos == null) {
-            LOGGER.error("no info transmit to servlet");
+        if (cxfServletInfos == null || cxfServletInfos.getInfos().size() == 0) {
+            LOGGER.warn("no info transmit to servlet");
             return;
         }
         JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean(

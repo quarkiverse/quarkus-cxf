@@ -28,6 +28,7 @@ public class CxfServiceTest {
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)
                     .addClass(Fruit.class)
+                    .addClass(Banana.class)
                     .addAsResource(new StringAsset(
                             "quarkus.cxf.endpoint.\"/fruit\".implementor=io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl"),
                             "application.properties"));
@@ -88,8 +89,8 @@ public class CxfServiceTest {
                 "   <soapenv:Body>\n" +
                 "      <tem:Add>\n" +
                 "      <fruit>\n" +
-                "      <name>banana</name>\n" +
-                "      <description>banana is yellow</description>\n" +
+                "      <name>Pineapple</name>\n" +
+                "      <description>Tropical fruit</description>\n" +
                 "      </fruit>\n" +
                 "      </tem:Add>\n" +
                 "   </soapenv:Body>\n" +
