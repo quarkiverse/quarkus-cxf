@@ -70,6 +70,7 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
+import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
@@ -1563,6 +1564,11 @@ class QuarkusCxfProcessor {
                 cxfClientMethodCreator.returnValue(cxfClientCasted);
             }
         }
+    }
+
+    @BuildStep
+    ExtensionSslNativeSupportBuildItem ssl() {
+        return new ExtensionSslNativeSupportBuildItem(FEATURE_CXF);
     }
 
     @BuildStep
