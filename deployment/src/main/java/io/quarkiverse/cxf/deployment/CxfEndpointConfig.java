@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.deployment;
 
+import java.util.List;
 import java.util.Optional;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
@@ -55,4 +56,34 @@ public class CxfEndpointConfig {
      */
     @ConfigItem
     public Optional<String> password;
+
+    /**
+     * The list of Feature class
+     */
+    @ConfigItem
+    public Optional<List<String>> features;
+
+    /**
+     * The list of InInterceptor class
+     */
+    @ConfigItem
+    public Optional<List<String>> inInterceptors;
+
+    /**
+     * The list of OutInterceptor class
+     */
+    @ConfigItem
+    public Optional<List<String>> outInterceptors;
+
+    /**
+     * The list of OutFaultInterceptor class
+     */
+    @ConfigItem
+    public Optional<List<String>> outFaultInterceptors;
+
+    /**
+     * The list of InFaultInterceptor class
+     */
+    @ConfigItem
+    public Optional<List<String>> inFaultInterceptors;
 }
