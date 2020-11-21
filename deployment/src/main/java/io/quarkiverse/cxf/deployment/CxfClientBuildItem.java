@@ -2,12 +2,9 @@ package io.quarkiverse.cxf.deployment;
 
 import java.util.List;
 
-import io.quarkus.builder.item.MultiBuildItem;
+public final class CxfClientBuildItem extends CxfInfoBuildItem {
 
-public final class CxfClientBuildItem extends MultiBuildItem {
-    private String sei;
     private String endpointAddress;
-    private String wsdlUrl;
     private String soapBinding;
     private String wsNamespace;
     private String wsName;
@@ -19,9 +16,8 @@ public final class CxfClientBuildItem extends MultiBuildItem {
 
     public CxfClientBuildItem(String sei, String endpointAddress, String wsdlUrl, String soapBinding, String wsNamespace,
             String wsName, String epNamespace, String epName, String username, String password, List<String> classNames) {
-        this.sei = sei;
+        super(sei, wsdlUrl);
         this.endpointAddress = endpointAddress;
-        this.wsdlUrl = wsdlUrl;
         this.soapBinding = soapBinding;
         this.wsNamespace = wsNamespace;
         this.wsName = wsName;
@@ -32,20 +28,8 @@ public final class CxfClientBuildItem extends MultiBuildItem {
         this.password = password;
     }
 
-    public String getSei() {
-        return sei;
-    }
-
-    public void setSei(String sei) {
-        this.sei = sei;
-    }
-
     public String getEndpointAddress() {
         return endpointAddress;
-    }
-
-    public String getWsdlUrl() {
-        return wsdlUrl;
     }
 
     public String getSoapBinding() {

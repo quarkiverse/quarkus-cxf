@@ -1,35 +1,20 @@
 package io.quarkiverse.cxf.deployment;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import io.quarkus.builder.item.MultiBuildItem;
-
-public final class CXFServletInfoBuildItem extends MultiBuildItem {
+public final class CXFServletInfoBuildItem extends CxfInfoBuildItem {
 
     private String path;
     private String className;
-    private List<String> inInterceptors;
-    private List<String> outInterceptors;
-    private List<String> outFaultInterceptors;
-    private List<String> inFaultInterceptors;
-    private List<String> features;
     private String sei;
-    private String wsdlPath;
     private String soapBinding;
     private List<String> wrapperClassNames;
 
     public CXFServletInfoBuildItem(String path, String className, String sei, String wsdlPath, String soapBinding,
             List<String> wrapperClassNames) {
+        super(sei, wsdlPath);
         this.path = path;
         this.className = className;
-        this.inInterceptors = new ArrayList<>();
-        this.outInterceptors = new ArrayList<>();
-        this.outFaultInterceptors = new ArrayList<>();
-        this.inFaultInterceptors = new ArrayList<>();
-        this.features = new ArrayList<>();
-        this.sei = sei;
-        this.wsdlPath = wsdlPath;
         this.soapBinding = soapBinding;
         this.wrapperClassNames = wrapperClassNames;
     }
@@ -38,36 +23,8 @@ public final class CXFServletInfoBuildItem extends MultiBuildItem {
         return className;
     }
 
-    public String getSei() {
-        return sei;
-    }
-
     public String getPath() {
         return path;
-    }
-
-    public String getWsdlPath() {
-        return wsdlPath;
-    }
-
-    public List<String> getFeatures() {
-        return features;
-    }
-
-    public List<String> getInInterceptors() {
-        return inInterceptors;
-    }
-
-    public List<String> getOutInterceptors() {
-        return outInterceptors;
-    }
-
-    public List<String> getOutFaultInterceptors() {
-        return outFaultInterceptors;
-    }
-
-    public List<String> getInFaultInterceptors() {
-        return inFaultInterceptors;
     }
 
     public List<String> getWrapperClassNames() {

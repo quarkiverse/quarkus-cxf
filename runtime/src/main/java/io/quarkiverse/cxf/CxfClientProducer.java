@@ -1,6 +1,9 @@
 package io.quarkiverse.cxf;
 
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.spi.CDI;
 import javax.xml.namespace.QName;
 
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
@@ -45,7 +48,56 @@ public class CxfClientProducer {
         if (cxfClientInfo.getPassword() != "") {
             factory.setPassword(cxfClientInfo.getPassword());
         }
+        for (String feature : cxfClientInfo.getFeatures()) {
+            addToCols(feature, factory.getFeatures());
+        }
+        for (String inInterceptor : cxfClientInfo.getInInterceptors()) {
+            addToCols(inInterceptor, factory.getInInterceptors());
+        }
+        for (String outInterceptor : cxfClientInfo.getOutInterceptors()) {
+            addToCols(outInterceptor, factory.getOutInterceptors());
+        }
+        for (String outFaultInterceptor : cxfClientInfo.getOutFaultInterceptors()) {
+            addToCols(outFaultInterceptor, factory.getOutFaultInterceptors());
+        }
+        for (String inFaultInterceptor : cxfClientInfo.getInFaultInterceptors()) {
+            addToCols(inFaultInterceptor, factory.getInFaultInterceptors());
+        }
+
         LOGGER.info("cxf client loaded for " + cxfClientInfo.getSei());
         return factory.create();
+    }
+
+    private <T> void addToCols(String className, List<T> cols) {
+        Class<?> cls;
+        try {
+            cls = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            // silent failed
+            return;
+        }
+        T item = null;
+        try {
+            Object o = CDI.current().select(cls).get();
+            item = (T) o;
+            if (item != null) {
+                cols.add(item);
+            }
+        } catch (ClassCastException e) {
+            //silent fail
+        }
+        if (item != null) {
+            return;
+        }
+        // if not found with beans just generate it.
+
+        try {
+            Object o = cls.getConstructor().newInstance();
+            item = (T) o;
+            if (item != null) {
+                cols.add(item);
+            }
+        } catch (Exception e) {
+        }
     }
 }

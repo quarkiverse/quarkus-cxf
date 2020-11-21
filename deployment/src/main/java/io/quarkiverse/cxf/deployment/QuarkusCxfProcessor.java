@@ -1289,7 +1289,7 @@ class QuarkusCxfProcessor {
                     return;
                 }
                 LOGGER.info(" produce loadCxfClient on " + sei);
-
+                ClassInfo wsClass = index.getClassByName(DotName.createSimple(sei));
                 String endpointAddress = cxfEndPointConfig.clientEndpointUrl.isPresent()
                         ? cxfEndPointConfig.clientEndpointUrl.get()
                         : "http://localhost:8080";
@@ -1311,8 +1311,12 @@ class QuarkusCxfProcessor {
                 generateCxfClientProducer(generatedBeans, seiClientproducerClassName, sei);
                 unremovableBeans.produce(new UnremovableBeanBuildItem(
                         new UnremovableBeanBuildItem.BeanClassNameExclusion(seiClientproducerClassName)));
-                cxfClients.produce(new CxfClientBuildItem(sei, endpointAddress, wsdlPath, soapBinding, wsNamespace, wsName,
-                        epNamespace, epName, username, password, wrapperClassNames));
+                CxfClientBuildItem cxfClientBuildItem = new CxfClientBuildItem(sei, endpointAddress, wsdlPath, soapBinding,
+                        wsNamespace, wsName,
+                        epNamespace, epName, username, password, wrapperClassNames);
+                configureInfo(wsClass, cxfClientBuildItem, cxfEndPointConfig, unremovableBeans, reflectiveClass);
+
+                cxfClients.produce(cxfClientBuildItem);
 
             }
             if (cxfEndPointConfig.implementor.isPresent()) {
@@ -1331,66 +1335,14 @@ class QuarkusCxfProcessor {
                         //}
                     }
                 }
+                ClassInfo seiClass = index.getClassByName(DotName.createSimple(sei));
 
                 CXFServletInfoBuildItem cxfServletInfo = new CXFServletInfoBuildItem(relativePath,
                         cxfEndPointConfig.implementor.get(), sei, wsdlPath, soapBinding, wrapperClassNames);
-                for (AnnotationInstance annotation : wsClass.classAnnotations()) {
-                    switch (annotation.name().toString()) {
-                        case "org.apache.cxf.feature.Features":
-                            HashSet<String> features = new HashSet<>(
-                                    Arrays.asList(annotation.value("features").asStringArray()));
-                            cxfServletInfo.getFeatures().addAll(features);
-                            unremovableBeans.produce(new UnremovableBeanBuildItem(
-                                    new UnremovableBeanBuildItem.BeanClassNamesExclusion(features)));
-                            reflectiveClass
-                                    .produce(
-                                            new ReflectiveClassBuildItem(true, true,
-                                                    annotation.value("features").asStringArray()));
-                            break;
-                        case "org.apache.cxf.interceptor.InInterceptors":
-                            HashSet<String> inInterceptors = new HashSet<>(
-                                    Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                            cxfServletInfo.getInInterceptors().addAll(inInterceptors);
-                            unremovableBeans.produce(new UnremovableBeanBuildItem(
-                                    new UnremovableBeanBuildItem.BeanClassNamesExclusion(inInterceptors)));
-                            reflectiveClass
-                                    .produce(new ReflectiveClassBuildItem(true, true,
-                                            annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                            break;
-                        case "org.apache.cxf.interceptor.OutInterceptors":
-                            HashSet<String> outInterceptors = new HashSet<>(
-                                    Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                            cxfServletInfo.getOutInterceptors().addAll(outInterceptors);
-                            unremovableBeans.produce(new UnremovableBeanBuildItem(
-                                    new UnremovableBeanBuildItem.BeanClassNamesExclusion(outInterceptors)));
-                            reflectiveClass
-                                    .produce(new ReflectiveClassBuildItem(true, true,
-                                            annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                            break;
-                        case "org.apache.cxf.interceptor.OutFaultInterceptors":
-                            HashSet<String> outFaultInterceptors = new HashSet<>(
-                                    Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                            cxfServletInfo.getOutFaultInterceptors().addAll(outFaultInterceptors);
-                            unremovableBeans.produce(new UnremovableBeanBuildItem(
-                                    new UnremovableBeanBuildItem.BeanClassNamesExclusion(outFaultInterceptors)));
-                            reflectiveClass
-                                    .produce(new ReflectiveClassBuildItem(true, true,
-                                            annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                            break;
-                        case "org.apache.cxf.interceptor.InFaultInterceptors":
-                            HashSet<String> inFaultInterceptors = new HashSet<>(
-                                    Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                            cxfServletInfo.getInFaultInterceptors().addAll(inFaultInterceptors);
-                            unremovableBeans.produce(new UnremovableBeanBuildItem(
-                                    new UnremovableBeanBuildItem.BeanClassNamesExclusion(inFaultInterceptors)));
-                            reflectiveClass
-                                    .produce(new ReflectiveClassBuildItem(true, true,
-                                            annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                //TODO cxf must handle annotation directly not sure all this stuff is really needed.
+                //TODO code a test case and check if it work when it is disable.
+                configureInfo(seiClass, cxfServletInfo, cxfEndPointConfig, unremovableBeans, reflectiveClass);
+                configureInfo(wsClass, cxfServletInfo, null, unremovableBeans, reflectiveClass);
                 cxfServletInfos.produce(cxfServletInfo);
             }
             if (!cxfEndPointConfig.serviceInterface.isPresent() && !cxfEndPointConfig.implementor.isPresent()) {
@@ -1421,7 +1373,86 @@ class QuarkusCxfProcessor {
         for (ClassInfo subclass : index.getAllKnownImplementors(DATABINDING)) {
             reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
         }
-        //TODO parse XmlSeeAlso annotation to add reflection on class too
+    }
+
+    public void configureInfo(ClassInfo wsClass, CxfInfoBuildItem cxfInfoBuildItem, CxfEndpointConfig cxfEndPointConfig,
+            BuildProducer<UnremovableBeanBuildItem> unremovableBeans,
+            BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
+        if (cxfEndPointConfig != null) {
+            if (cxfEndPointConfig.features.isPresent()) {
+                cxfInfoBuildItem.getFeatures().addAll(cxfEndPointConfig.features.get());
+            }
+            if (cxfEndPointConfig.features.isPresent()) {
+                cxfInfoBuildItem.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
+            }
+            if (cxfEndPointConfig.features.isPresent()) {
+                cxfInfoBuildItem.getOutInterceptors().addAll(cxfEndPointConfig.outInterceptors.get());
+            }
+            if (cxfEndPointConfig.features.isPresent()) {
+                cxfInfoBuildItem.getInFaultInterceptors().addAll(cxfEndPointConfig.inFaultInterceptors.get());
+            }
+            if (cxfEndPointConfig.features.isPresent()) {
+                cxfInfoBuildItem.getOutFaultInterceptors().addAll(cxfEndPointConfig.outFaultInterceptors.get());
+            }
+        }
+
+        for (AnnotationInstance annotation : wsClass.classAnnotations()) {
+            switch (annotation.name().toString()) {
+                case "org.apache.cxf.feature.Features":
+                    HashSet<String> features = new HashSet<>(
+                            Arrays.asList(annotation.value("features").asStringArray()));
+                    cxfInfoBuildItem.getFeatures().addAll(features);
+                    unremovableBeans.produce(new UnremovableBeanBuildItem(
+                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(features)));
+                    reflectiveClass
+                            .produce(
+                                    new ReflectiveClassBuildItem(true, true,
+                                            annotation.value("features").asStringArray()));
+                    break;
+                case "org.apache.cxf.interceptor.InInterceptors":
+                    HashSet<String> inInterceptors = new HashSet<>(
+                            Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
+                    cxfInfoBuildItem.getInInterceptors().addAll(inInterceptors);
+                    unremovableBeans.produce(new UnremovableBeanBuildItem(
+                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(inInterceptors)));
+                    reflectiveClass
+                            .produce(new ReflectiveClassBuildItem(true, true,
+                                    annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
+                    break;
+                case "org.apache.cxf.interceptor.OutInterceptors":
+                    HashSet<String> outInterceptors = new HashSet<>(
+                            Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
+                    cxfInfoBuildItem.getOutInterceptors().addAll(outInterceptors);
+                    unremovableBeans.produce(new UnremovableBeanBuildItem(
+                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(outInterceptors)));
+                    reflectiveClass
+                            .produce(new ReflectiveClassBuildItem(true, true,
+                                    annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
+                    break;
+                case "org.apache.cxf.interceptor.OutFaultInterceptors":
+                    HashSet<String> outFaultInterceptors = new HashSet<>(
+                            Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
+                    cxfInfoBuildItem.getOutFaultInterceptors().addAll(outFaultInterceptors);
+                    unremovableBeans.produce(new UnremovableBeanBuildItem(
+                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(outFaultInterceptors)));
+                    reflectiveClass
+                            .produce(new ReflectiveClassBuildItem(true, true,
+                                    annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
+                    break;
+                case "org.apache.cxf.interceptor.InFaultInterceptors":
+                    HashSet<String> inFaultInterceptors = new HashSet<>(
+                            Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
+                    cxfInfoBuildItem.getInFaultInterceptors().addAll(inFaultInterceptors);
+                    unremovableBeans.produce(new UnremovableBeanBuildItem(
+                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(inFaultInterceptors)));
+                    reflectiveClass
+                            .produce(new ReflectiveClassBuildItem(true, true,
+                                    annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     @BuildStep
@@ -1444,7 +1475,7 @@ class QuarkusCxfProcessor {
                     cxfServletInfoBuildItem.getInFaultInterceptors(),
                     cxfServletInfoBuildItem.getFeatures(),
                     cxfServletInfoBuildItem.getSei(),
-                    cxfServletInfoBuildItem.getWsdlPath(),
+                    cxfServletInfoBuildItem.getWsdlUrl(),
                     cxfServletInfoBuildItem.getSOAPBinding(),
                     cxfServletInfoBuildItem.getWrapperClassNames());
 

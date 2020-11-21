@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -21,6 +22,11 @@ public class CXFClientInfo {
     private String epName;
     private String username;
     private String password;
+    private List<String> inInterceptors;
+    private List<String> outInterceptors;
+    private List<String> outFaultInterceptors;
+    private List<String> inFaultInterceptors;
+    private List<String> features;
     private List<String> classeNames;
     private static final Logger LOGGER = Logger.getLogger(CXFClientInfo.class);
 
@@ -38,6 +44,11 @@ public class CXFClientInfo {
         this.classeNames = classeNames;
         this.username = username;
         this.password = password;
+        this.inInterceptors = new ArrayList<>();
+        this.outInterceptors = new ArrayList<>();
+        this.outFaultInterceptors = new ArrayList<>();
+        this.inFaultInterceptors = new ArrayList<>();
+        this.features = new ArrayList<>();
     }
 
     public String getSei() {
@@ -86,5 +97,25 @@ public class CXFClientInfo {
 
     public List<String> getClasseNames() {
         return classeNames;
+    }
+
+    public List<String> getFeatures() {
+        return features;
+    }
+
+    public List<String> getInInterceptors() {
+        return inInterceptors;
+    }
+
+    public List<String> getOutInterceptors() {
+        return outInterceptors;
+    }
+
+    public List<String> getOutFaultInterceptors() {
+        return outFaultInterceptors;
+    }
+
+    public List<String> getInFaultInterceptors() {
+        return inFaultInterceptors;
     }
 }
