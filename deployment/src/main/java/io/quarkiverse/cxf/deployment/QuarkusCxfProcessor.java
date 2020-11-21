@@ -1382,16 +1382,16 @@ class QuarkusCxfProcessor {
             if (cxfEndPointConfig.features.isPresent()) {
                 cxfInfoBuildItem.getFeatures().addAll(cxfEndPointConfig.features.get());
             }
-            if (cxfEndPointConfig.features.isPresent()) {
+            if (cxfEndPointConfig.inInterceptors.isPresent()) {
                 cxfInfoBuildItem.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
             }
-            if (cxfEndPointConfig.features.isPresent()) {
+            if (cxfEndPointConfig.outInterceptors.isPresent()) {
                 cxfInfoBuildItem.getOutInterceptors().addAll(cxfEndPointConfig.outInterceptors.get());
             }
-            if (cxfEndPointConfig.features.isPresent()) {
+            if (cxfEndPointConfig.inFaultInterceptors.isPresent()) {
                 cxfInfoBuildItem.getInFaultInterceptors().addAll(cxfEndPointConfig.inFaultInterceptors.get());
             }
-            if (cxfEndPointConfig.features.isPresent()) {
+            if (cxfEndPointConfig.outFaultInterceptors.isPresent()) {
                 cxfInfoBuildItem.getOutFaultInterceptors().addAll(cxfEndPointConfig.outFaultInterceptors.get());
             }
         }

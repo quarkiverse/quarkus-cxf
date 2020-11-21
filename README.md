@@ -265,4 +265,47 @@ public class MySoapClient {
 
 ## Native Mode Limitations
 
-- Native mode is currently in beta (java 8 and java 11 are both supported). Kindly open an issue if you have an issue.
+- The native mode is currently in beta (java 8 and java 11 are both supported). Kindly open an issue if you have an issue.
+
+## Advanced configuration
+
+Interceptors and features can be added to client/server thanks to :
+- annotation
+- configuration file
+
+On cxf website,a full list of [Cxf embeded interceptors](https://cxf.apache.org/docs/interceptors.html) and [Cxf embeded features](https://cxf.apache.org/docs/featureslist.html) are available,
+but you can implement a custom one.
+
+### Annotation
+
+Annotations can be put on the service interface or implementor class.
+
+```java
+@org.apache.cxf.feature.Features (features = {"org.apache.cxf.feature.LoggingFeature"})
+@org.apache.cxf.interceptor.InInterceptors (interceptors = {"com.example.Test1Interceptor" })
+@org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"com.example.Test2Interceptor" })
+@org.apache.cxf.interceptor.OutInterceptors (interceptors = {"com.example.Test1Interceptor" })
+@org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"com.example.Test2Interceptor","com.example.Test3Intercetpor" })
+@WebService(endpointInterface = "org.apache.cxf.javascript.fortest.SimpleDocLitBare",
+            targetNamespace = "uri:org.apache.cxf.javascript.fortest")
+public class SayHiImplementation implements SayHi {
+   public long sayHi(long arg) {
+       return arg;
+   }
+   //...
+}
+```
+
+
+### Configuration
+
+Else, you can use quarkus configuration file.
+Feature and interceptor will be try with CDI first and if no bean found,
+the constructor with no param will be used.
+```properties
+quarkus.cxf.endpoint."/greeting".features=org.apache.cxf.feature.LoggingFeature
+quarkus.cxf.endpoint."/greeting".in-interceptors=com.example.MyInterceptor
+quarkus.cxf.endpoint."/greeting".out-interceptors=com.example.MyInterceptor
+quarkus.cxf.endpoint."/greeting".in-fault-interceptors=com.example.MyInterceptor
+quarkus.cxf.endpoint."/greeting".out-fault-interceptors=com.example.MyInterceptor
+```
