@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.deployment;
+package io.quarkiverse.cxf;
 
 import java.util.List;
 import java.util.Optional;

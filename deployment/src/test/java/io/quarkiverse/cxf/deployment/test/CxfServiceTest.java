@@ -8,7 +8,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,10 +27,8 @@ public class CxfServiceTest {
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)
                     .addClass(Fruit.class)
-                    .addClass(Banana.class)
-                    .addAsResource(new StringAsset(
-                            "quarkus.cxf.endpoint.\"/fruit\".implementor=io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl"),
-                            "application.properties"));
+                    .addClass(Banana.class))
+            .withConfigurationResource("application-cxf-server-test.properties");
 
     @Test
     public void whenCheckingWsdl() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
