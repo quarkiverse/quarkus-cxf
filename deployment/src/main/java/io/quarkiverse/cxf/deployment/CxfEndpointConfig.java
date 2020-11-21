@@ -64,25 +64,25 @@ public class CxfEndpointConfig {
     public Optional<List<String>> features;
 
     /**
-     * The list of InInterceptor class
+     * The comma-separated list of InInterceptor class
      */
     @ConfigItem
     public Optional<List<String>> inInterceptors;
 
     /**
-     * The list of OutInterceptor class
+     * The comma-separated list of OutInterceptor class
      */
     @ConfigItem
     public Optional<List<String>> outInterceptors;
 
     /**
-     * The list of OutFaultInterceptor class
+     * The comma-separated list of OutFaultInterceptor class
      */
     @ConfigItem
     public Optional<List<String>> outFaultInterceptors;
 
     /**
-     * The list of InFaultInterceptor class
+     * The comma-separated list of InFaultInterceptor class
      */
     @ConfigItem
     public Optional<List<String>> inFaultInterceptors;
