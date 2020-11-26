@@ -92,7 +92,6 @@ import io.quarkus.runtime.util.HashUtil;
 import io.quarkus.undertow.deployment.FilterBuildItem;
 import io.quarkus.undertow.deployment.ServletBuildItem;
 import io.quarkus.undertow.deployment.ServletInitParamBuildItem;
-import io.quarkus.vertx.http.deployment.RouteBuildItem;
 
 class QuarkusCxfProcessor {
 
@@ -1463,8 +1462,6 @@ class QuarkusCxfProcessor {
     @BuildStep
     @Record(ExecutionTime.STATIC_INIT)
     public void configureServletInfoSupplier(List<CXFServletInfoBuildItem> cxfServletInfos,
-            BuildProducer<RouteBuildItem> routes,
-            BuildProducer<SyntheticBeanBuildItem> synthetics,
             CXFRecorder recorder) {
         for (CXFServletInfoBuildItem cxfServletInfoBuildItem : cxfServletInfos) {
             recorder.registerCXFServlet(cxfServletInfoBuildItem.getPath(),
@@ -1500,6 +1497,7 @@ class QuarkusCxfProcessor {
                             item.getPassword(),
                             item.getClassNames()))
                     .unremovable()
+                    .setRuntimeInit()
                     .done());
         }
     }
