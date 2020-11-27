@@ -24,7 +24,8 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
 
     private static final Logger LOGGER = Logger.getLogger(CXFQuarkusServlet.class);
 
-    private static final CXFServletInfos cxfServletInfos = new CXFServletInfos();
+    public CXFQuarkusServlet() {
+    }
 
     private Class<?> loadClass(String className) {
         try {
@@ -50,12 +51,15 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
 
         super.loadBus(servletConfig);
 
-        Bus bus = getBus();
-        BusFactory.setDefaultBus(bus);
+    }
+
+    public void build(CXFServletInfos cxfServletInfos) {
         if (cxfServletInfos == null || cxfServletInfos.getInfos().size() == 0) {
             LOGGER.warn("no info transmit to servlet");
             return;
         }
+        Bus bus = getBus();
+        BusFactory.setDefaultBus(bus);
         JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean(
                 new QuarkusJaxWsServiceFactoryBean(cxfServletInfos.getWrappersclasses()));
         factory.setBus(bus);
@@ -112,9 +116,5 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
                 LOGGER.error("Cannot initialize " + servletInfo.toString());
             }
         }
-    }
-
-    public static void publish(CXFServletInfo cfg) {
-        cxfServletInfos.add(cfg);
     }
 }

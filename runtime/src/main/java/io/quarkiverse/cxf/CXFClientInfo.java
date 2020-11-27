@@ -27,11 +27,11 @@ public class CXFClientInfo {
     private List<String> outFaultInterceptors;
     private List<String> inFaultInterceptors;
     private List<String> features;
-    private List<String> classeNames;
+    private List<String> classNames;
     private static final Logger LOGGER = Logger.getLogger(CXFClientInfo.class);
 
     public CXFClientInfo(String sei, String endpointAddress, String wsdlUrl, String soapBinding, String wsNamespace,
-            String wsName, String epNamespace, String epName, String username, String password, List<String> classeNames) {
+            String wsName, String epNamespace, String epName, String username, String password, List<String> classNames) {
         LOGGER.warn("new CXFClientInfo");
         this.sei = sei;
         this.endpointAddress = endpointAddress;
@@ -41,7 +41,7 @@ public class CXFClientInfo {
         this.wsName = wsName;
         this.epNamespace = epNamespace;
         this.epName = epName;
-        this.classeNames = classeNames;
+        this.classNames = classNames;
         this.username = username;
         this.password = password;
         this.inInterceptors = new ArrayList<>();
@@ -95,8 +95,8 @@ public class CXFClientInfo {
         return password;
     }
 
-    public List<String> getClasseNames() {
-        return classeNames;
+    public List<String> getClassNames() {
+        return classNames;
     }
 
     public List<String> getFeatures() {

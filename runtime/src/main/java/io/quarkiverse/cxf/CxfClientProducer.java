@@ -15,9 +15,9 @@ public class CxfClientProducer {
 
     public CXFClientInfo getInfo() {
         return null;
-    };
+    }
 
-    public Object loadCxfClient(String sei) {
+    public Object loadCxfClient() {
 
         CXFClientInfo cxfClientInfo = getInfo();
         Class<?> seiClass;
@@ -28,11 +28,11 @@ public class CxfClientProducer {
             return null;
         }
 
-        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean(new QuarkusClientFactoryBean(cxfClientInfo.getClasseNames()));
+        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean(new QuarkusClientFactoryBean(cxfClientInfo.getClassNames()));
 
         factory.setServiceClass(seiClass);
         factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
-        if (cxfClientInfo.getEpName() != "") {
+        if (cxfClientInfo.getEpName() != null) {
             factory.setEndpointName(new QName(cxfClientInfo.getEpNamespace(), cxfClientInfo.getEpName()));
         }
         factory.setAddress(cxfClientInfo.getEndpointAddress());
@@ -42,10 +42,10 @@ public class CxfClientProducer {
         if (cxfClientInfo.getWsdlUrl() != null && !cxfClientInfo.getWsdlUrl().isEmpty()) {
             factory.setWsdlURL(cxfClientInfo.getWsdlUrl());
         }
-        if (cxfClientInfo.getUsername() != "") {
+        if (cxfClientInfo.getUsername() != null) {
             factory.setUsername(cxfClientInfo.getUsername());
         }
-        if (cxfClientInfo.getPassword() != "") {
+        if (cxfClientInfo.getPassword() != null) {
             factory.setPassword(cxfClientInfo.getPassword());
         }
         for (String feature : cxfClientInfo.getFeatures()) {

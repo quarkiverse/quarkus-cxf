@@ -12,10 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -25,7 +23,6 @@ import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.jws.WebParam;
-import javax.servlet.DispatcherType;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -54,8 +51,9 @@ import org.objectweb.asm.Opcodes;
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFQuarkusServlet;
 import io.quarkiverse.cxf.CXFRecorder;
+import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfClientProducer;
-import io.quarkus.arc.Unremovable;
+import io.quarkiverse.cxf.CxfConfig;
 import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
@@ -73,6 +71,7 @@ import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
+import io.quarkus.deployment.builditem.ServiceStartBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
@@ -88,15 +87,15 @@ import io.quarkus.gizmo.MethodCreator;
 import io.quarkus.gizmo.MethodDescriptor;
 import io.quarkus.gizmo.ResultHandle;
 import io.quarkus.jaxb.deployment.JaxbFileRootBuildItem;
-import io.quarkus.runtime.util.HashUtil;
+import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.undertow.deployment.FilterBuildItem;
 import io.quarkus.undertow.deployment.ServletBuildItem;
+import io.quarkus.undertow.deployment.ServletDeploymentManagerBuildItem;
 import io.quarkus.undertow.deployment.ServletInitParamBuildItem;
-import io.quarkus.vertx.http.deployment.RouteBuildItem;
 
 class QuarkusCxfProcessor {
 
-    private static final String JAX_WS_SERVLET_NAME = "org.apache.cxf.transport.servlet.CXFNonSpringServlet;";
+    private static final String JAX_WS_SERVLET_NAME = "org.apache.cxf.transport.servlet.CXFNonSpringServlet";
     private static final String JAX_WS_FILTER_NAME = JAX_WS_SERVLET_NAME;
     private static final String FEATURE_CXF = "cxf";
     private static final DotName WEBSERVICE_ANNOTATION = DotName.createSimple("javax.jws.WebService");
@@ -122,16 +121,12 @@ class QuarkusCxfProcessor {
             XmlElement.class,
             XmlElementWrapper.class);
 
-    /**
-     * JAX-WS configuration.
-     */
-    CxfConfig cxfConfig;
-
     @BuildStep
-    public void generateWSDL(BuildProducer<NativeImageResourceBuildItem> ressources) {
-        for (CxfEndpointConfig endpointCfg : cxfConfig.endpoints.values()) {
-            if (endpointCfg.wsdlPath.isPresent()) {
-                ressources.produce(new NativeImageResourceBuildItem(endpointCfg.wsdlPath.get()));
+    public void generateWSDL(BuildProducer<NativeImageResourceBuildItem> ressources,
+            CxfBuildTimeConfig cxfBuildTimeConfig) {
+        if (cxfBuildTimeConfig.wsdlPath.isPresent()) {
+            for (String wsdlPath : cxfBuildTimeConfig.wsdlPath.get()) {
+                ressources.produce(new NativeImageResourceBuildItem(wsdlPath));
             }
         }
     }
@@ -954,16 +949,16 @@ class QuarkusCxfProcessor {
     public void build(
             Capabilities capabilities,
             CombinedIndexBuildItem combinedIndexBuildItem,
+            CxfBuildTimeConfig cxfBuildTimeConfig,
             BuildProducer<FeatureBuildItem> feature,
             BuildProducer<ServletBuildItem> servlet,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
             BuildProducer<FilterBuildItem> filters,
-            BuildProducer<CXFServletInfoBuildItem> cxfServletInfos,
             BuildProducer<ServletInitParamBuildItem> servletInitParameters,
             BuildProducer<JaxbFileRootBuildItem> forceJaxb,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
-            BuildProducer<CxfClientBuildItem> cxfClients,
+            BuildProducer<CxfWebServiceBuildItem> cxfWebServices,
             BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
         IndexView index = combinedIndexBuildItem.getIndex();
         if (!capabilities.isPresent(Capability.SERVLET)) {
@@ -983,8 +978,8 @@ class QuarkusCxfProcessor {
         createNamespaceWrapper(classOutput, reflectiveClass, unremovableBeans);
 
         Set<String> generatedClass = new HashSet<>();
-        List<String> wrapperClassNames = new ArrayList<>();
-        HashMap<String, AnnotationInstance> classesMetadata = new HashMap<String, AnnotationInstance>();
+
+        boolean StartServlet = false;
         for (AnnotationInstance annotation : index.getAnnotations(WEBSERVICE_ANNOTATION)) {
             if (annotation.target().kind() != AnnotationTarget.Kind.CLASS) {
                 continue;
@@ -996,9 +991,29 @@ class QuarkusCxfProcessor {
             unremovableBeans.produce(new UnremovableBeanBuildItem(
                     new UnremovableBeanBuildItem.BeanClassNameExclusion(wsClassInfo.name().toString())));
 
-            classesMetadata.put(wsClassInfo.name().toString(), annotation);
             if (!Modifier.isInterface(wsClassInfo.flags())) {
                 continue;
+            }
+            List<String> wrapperClassNames = new ArrayList<>();
+            String sei = wsClassInfo.name().toString();
+            Collection<ClassInfo> implementors = index.getAllKnownImplementors(DotName.createSimple(sei));
+            //TODO add soap1.2 in config file
+            String soapBinding = SOAPBinding.SOAP11HTTP_BINDING;
+            //if no implementor, it mean it is client
+            if (implementors == null || implementors.isEmpty()) {
+                String seiClientproducerClassName = sei + "CxfClientProducer";
+                generateCxfClientProducer(generatedBeans, seiClientproducerClassName, sei);
+                unremovableBeans.produce(new UnremovableBeanBuildItem(
+                        new UnremovableBeanBuildItem.BeanClassNameExclusion(seiClientproducerClassName)));
+            } else {
+                StartServlet = true;
+                for (ClassInfo wsClass : implementors) {
+                    AnnotationInstance bindingType = wsClass.classAnnotation(BINDING_TYPE_ANNOTATION);
+                    if (bindingType != null) {
+                        soapBinding = bindingType.value().asString();
+                        break;
+                    }
+                }
             }
             //ClientProxyFactoryBean
             //proxies.produce(new NativeImageProxyDefinitionBuildItem("java.io.Closeable",
@@ -1012,7 +1027,8 @@ class QuarkusCxfProcessor {
                 pkg = pkg.substring(0, idx);
             }
             AnnotationValue namespaceVal = annotation.value("targetNamespace");
-            String namespace = namespaceVal != null ? namespaceVal.asString() : getNamespaceFromPackage(pkg);
+            String wsNamespace = namespaceVal != null ? namespaceVal.asString() : getNamespaceFromPackage(pkg);
+            String wsName = annotation.value("name") != null ? annotation.value("name").asString() : "";
 
             pkg = pkg + ".jaxws_asm";
             //TODO config for boolean anonymous = factory.getAnonymousWrapperTypes();
@@ -1030,7 +1046,7 @@ class QuarkusCxfProcessor {
                         "java/lang/Object", null);
 
                 AnnotationVisitor av = cv.visitAnnotation("Ljavax/xml/bind/annotation/XmlSchema;", true);
-                av.visit("namespace", namespace);
+                av.visit("namespace", wsNamespace);
                 av.visitEnum("elementFormDefault", "Ljavax/xml/bind/annotation/XmlNsForm;", "QUALIFIED");
                 av.visitEnd();
 
@@ -1098,7 +1114,7 @@ class QuarkusCxfProcessor {
                         resultNamespace = resultNamespaceVal.asString();
                     }
                 }
-                List<WrapperParameter> wrapperParams = new ArrayList<WrapperParameter>();
+                List<WrapperParameter> wrapperParams = new ArrayList<>();
                 for (int i = 0; i < mi.parameters().size(); i++) {
                     Type paramType = mi.parameters().get(i);
                     String paramName = mi.parameterName(i);
@@ -1126,7 +1142,7 @@ class QuarkusCxfProcessor {
                     MethodDescriptor requestCtor;
 
                     if (fullClassName == null) {
-                        requestCtor = createWrapper(true, operationName, namespace, resultNamespace, resultName,
+                        requestCtor = createWrapper(true, operationName, wsNamespace, resultNamespace, resultName,
                                 mi.returnType().toString(), wrapperParams,
                                 classOutput, pkg, className, getters, setters);
                         fullClassName = pkg + "." + className;
@@ -1177,7 +1193,7 @@ class QuarkusCxfProcessor {
                     MethodDescriptor responseCtor;
                     String responseClassName;
                     if (fullClassName == null) {
-                        responseCtor = createWrapper(false, operationName, namespace, resultNamespace, resultName,
+                        responseCtor = createWrapper(false, operationName, wsNamespace, resultNamespace, resultName,
                                 mi.returnType().toString(), wrapperParams,
                                 classOutput, pkg, className, getters, setters);
                         responseClassName = className + RESPONSE_CLASS_POSTFIX;
@@ -1195,7 +1211,7 @@ class QuarkusCxfProcessor {
                         if (wrapperClass == null) {
                             LOGGER.warn("wrapper class not found : " + fullClassName);
                         } else {
-                            Field[] fields = wrapperClass.getClass().getFields();
+                            Field[] fields = wrapperClass.getFields();
                             for (Field f : fields) {
                                 String fieldName = f.getName();
                                 getters.add(MethodDescriptor.ofMethod(fullClassName,
@@ -1227,9 +1243,11 @@ class QuarkusCxfProcessor {
                     reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, pkg + ".ObjectFactory"));
 
                     generatedClass.add(pkg + className);
+
                 }
 
             }
+            cxfWebServices.produce(new CxfWebServiceBuildItem(sei, soapBinding, wsNamespace, wsName, wrapperClassNames));
             //MethodDescriptor requestCtor = createWrapper("parameters", namespace,mi.typeParameters(), classOutput, pkg, pkg+"Parameters", getters, setters);
             //createWrapperHelper(classOutput, pkg, className, requestCtor, getters, setters);
             //getters.clear();
@@ -1238,7 +1256,7 @@ class QuarkusCxfProcessor {
 
         feature.produce(new FeatureBuildItem(FEATURE_CXF));
 
-        //TODO servletInitParameters
+        //TODO ServletInitParamBuildItem
         /*
          * AbstractHTTPServlet.STATIC_RESOURCES_PARAMETER
          * AbstractHTTPServlet.STATIC_WELCOME_FILE_PARAMETER
@@ -1268,99 +1286,19 @@ class QuarkusCxfProcessor {
          * CXFNonSpringJaxrsServlet.DOC_LOCATION_PARAM;
          * CXFNonSpringJaxrsServlet.STATIC_SUB_RESOLUTION_PARAM;
          */
-        boolean StartServlet = false;
-        for (Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
 
-            CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
-            String relativePath = webServicesByPath.getKey();
-            String sei = null;
-            String wsdlPath = null;
-            String soapBinding = SOAPBinding.SOAP11HTTP_BINDING;
-            if (cxfEndPointConfig.wsdlPath.isPresent()) {
-                wsdlPath = cxfEndPointConfig.wsdlPath.get();
-            }
-            //TODO add soap1.2 in config file
-            if (cxfEndPointConfig.serviceInterface.isPresent()) {
-
-                sei = cxfEndPointConfig.serviceInterface.get();
-                AnnotationInstance wsAnnotation = classesMetadata.get(sei);
-                if (wsAnnotation == null) {
-                    LOGGER.error("the service interface of web service is not found:" + sei);
-                    return;
-                }
-                LOGGER.info(" produce loadCxfClient on " + sei);
-                ClassInfo wsClass = index.getClassByName(DotName.createSimple(sei));
-                String endpointAddress = cxfEndPointConfig.clientEndpointUrl.isPresent()
-                        ? cxfEndPointConfig.clientEndpointUrl.get()
-                        : "http://localhost:8080";
-                if (!relativePath.equals("/") && !relativePath.equals("")) {
-                    endpointAddress = endpointAddress.endsWith("/") ? endpointAddress.substring(0, endpointAddress.length() - 1)
-                            : endpointAddress;
-                    endpointAddress = relativePath.startsWith("/") ? endpointAddress + relativePath
-                            : endpointAddress + "/" + relativePath;
-                }
-                String seiClientproducerClassName = sei + "CxfClientProducer";
-                String wsNamespace = wsAnnotation.value("targetNamespace") != null
-                        ? wsAnnotation.value("targetNamespace").asString()
-                        : "";
-                String epNamespace = cxfEndPointConfig.endpointNamespace.orElse("");
-                String epName = cxfEndPointConfig.endpointName.orElse("");
-                String wsName = wsAnnotation.value("name") != null ? wsAnnotation.value("name").asString() : "";
-                String username = cxfEndPointConfig.username.orElse("");
-                String password = cxfEndPointConfig.password.orElse("");
-                generateCxfClientProducer(generatedBeans, seiClientproducerClassName, sei);
-                unremovableBeans.produce(new UnremovableBeanBuildItem(
-                        new UnremovableBeanBuildItem.BeanClassNameExclusion(seiClientproducerClassName)));
-                CxfClientBuildItem cxfClientBuildItem = new CxfClientBuildItem(sei, endpointAddress, wsdlPath, soapBinding,
-                        wsNamespace, wsName,
-                        epNamespace, epName, username, password, wrapperClassNames);
-                configureInfo(wsClass, cxfClientBuildItem, cxfEndPointConfig, unremovableBeans, reflectiveClass);
-
-                cxfClients.produce(cxfClientBuildItem);
-
-            }
-            if (cxfEndPointConfig.implementor.isPresent()) {
-                StartServlet = true;
-                DotName webServiceImplementor = DotName.createSimple(cxfEndPointConfig.implementor.get());
-                ClassInfo wsClass = index.getClassByName(webServiceImplementor);
-                AnnotationInstance bindingType = wsClass.classAnnotation(BINDING_TYPE_ANNOTATION);
-                if (bindingType != null) {
-                    soapBinding = bindingType.value().asString();
-                }
-                if (wsClass != null) {
-                    for (Type wsInterfaceType : wsClass.interfaceTypes()) {
-                        //TODO annotation is not seen, do not know why so comment it for now
-                        //if (wsInterfaceType.hasAnnotation(WEBSERVICE_ANNOTATION)) {
-                        sei = wsInterfaceType.name().toString();
-                        //}
-                    }
-                }
-                ClassInfo seiClass = index.getClassByName(DotName.createSimple(sei));
-
-                CXFServletInfoBuildItem cxfServletInfo = new CXFServletInfoBuildItem(relativePath,
-                        cxfEndPointConfig.implementor.get(), sei, wsdlPath, soapBinding, wrapperClassNames);
-                //TODO cxf must handle annotation directly not sure all this stuff is really needed.
-                //TODO code a test case and check if it work when it is disable.
-                configureInfo(seiClass, cxfServletInfo, cxfEndPointConfig, unremovableBeans, reflectiveClass);
-                configureInfo(wsClass, cxfServletInfo, null, unremovableBeans, reflectiveClass);
-                cxfServletInfos.produce(cxfServletInfo);
-            }
-            if (!cxfEndPointConfig.serviceInterface.isPresent() && !cxfEndPointConfig.implementor.isPresent()) {
-                LOGGER.error("either webservice interface (client) or implementation (server) is mandatory");
-            }
-        }
         if (StartServlet) {
             //if JAX-WS is installed at the root location we use a filter, otherwise we use a Servlet and take over the whole mapped path
-            if (cxfConfig.path.equals("/") || cxfConfig.path.isEmpty()) {
-                filters.produce(
-                        FilterBuildItem.builder(JAX_WS_FILTER_NAME, CXFQuarkusServlet.class.getName()).setLoadOnStartup(1)
-                                .addFilterServletNameMapping("default", DispatcherType.REQUEST).setAsyncSupported(true)
-                                .build());
-            } else {
-                String mappingPath = getMappingPath(cxfConfig.path);
-                servlet.produce(ServletBuildItem.builder(JAX_WS_SERVLET_NAME, CXFQuarkusServlet.class.getName())
-                        .setLoadOnStartup(0).addMapping(mappingPath).setAsyncSupported(true).build());
-            }
+            //            if (cxfBuildTimeConfig.path.equals("/") || cxfBuildTimeConfig.path.isEmpty()) {
+            //                filters.produce(
+            //                        FilterBuildItem.builder(JAX_WS_FILTER_NAME, CXFQuarkusServlet.class.getName()).setLoadOnStartup(1)
+            //                                .addFilterServletNameMapping("default", DispatcherType.REQUEST).setAsyncSupported(true)
+            //                                .build());
+            //            } else {
+            String mappingPath = getMappingPath(cxfBuildTimeConfig.path);
+            servlet.produce(ServletBuildItem.builder(JAX_WS_SERVLET_NAME, CXFQuarkusServlet.class.getName())
+                    .setLoadOnStartup(1).addMapping(mappingPath).setAsyncSupported(true).build());
+            //            }
             reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, CXFQuarkusServlet.class.getName()));
         }
 
@@ -1375,133 +1313,50 @@ class QuarkusCxfProcessor {
         }
     }
 
-    public void configureInfo(ClassInfo wsClass, CxfInfoBuildItem cxfInfoBuildItem, CxfEndpointConfig cxfEndPointConfig,
-            BuildProducer<UnremovableBeanBuildItem> unremovableBeans,
-            BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
-        if (cxfEndPointConfig != null) {
-            if (cxfEndPointConfig.features.isPresent()) {
-                cxfInfoBuildItem.getFeatures().addAll(cxfEndPointConfig.features.get());
-            }
-            if (cxfEndPointConfig.inInterceptors.isPresent()) {
-                cxfInfoBuildItem.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
-            }
-            if (cxfEndPointConfig.outInterceptors.isPresent()) {
-                cxfInfoBuildItem.getOutInterceptors().addAll(cxfEndPointConfig.outInterceptors.get());
-            }
-            if (cxfEndPointConfig.inFaultInterceptors.isPresent()) {
-                cxfInfoBuildItem.getInFaultInterceptors().addAll(cxfEndPointConfig.inFaultInterceptors.get());
-            }
-            if (cxfEndPointConfig.outFaultInterceptors.isPresent()) {
-                cxfInfoBuildItem.getOutFaultInterceptors().addAll(cxfEndPointConfig.outFaultInterceptors.get());
-            }
-        }
+    //    @BuildStep
+    //    @Record(ExecutionTime.RUNTIME_INIT)
+    //    RouteBuildItem handler(LaunchModeBuildItem launch, CXFRecorder recorder, CxfBuildTimeConfig cfg, CxfConfig cxfConfig) {
+    //        return new RouteBuildItem(cfg.path, new CxfHandler(), HandlerType.BLOCKING);
+    //    }
 
-        for (AnnotationInstance annotation : wsClass.classAnnotations()) {
-            switch (annotation.name().toString()) {
-                case "org.apache.cxf.feature.Features":
-                    HashSet<String> features = new HashSet<>(
-                            Arrays.asList(annotation.value("features").asStringArray()));
-                    cxfInfoBuildItem.getFeatures().addAll(features);
-                    unremovableBeans.produce(new UnremovableBeanBuildItem(
-                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(features)));
-                    reflectiveClass
-                            .produce(
-                                    new ReflectiveClassBuildItem(true, true,
-                                            annotation.value("features").asStringArray()));
-                    break;
-                case "org.apache.cxf.interceptor.InInterceptors":
-                    HashSet<String> inInterceptors = new HashSet<>(
-                            Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                    cxfInfoBuildItem.getInInterceptors().addAll(inInterceptors);
-                    unremovableBeans.produce(new UnremovableBeanBuildItem(
-                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(inInterceptors)));
-                    reflectiveClass
-                            .produce(new ReflectiveClassBuildItem(true, true,
-                                    annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                    break;
-                case "org.apache.cxf.interceptor.OutInterceptors":
-                    HashSet<String> outInterceptors = new HashSet<>(
-                            Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                    cxfInfoBuildItem.getOutInterceptors().addAll(outInterceptors);
-                    unremovableBeans.produce(new UnremovableBeanBuildItem(
-                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(outInterceptors)));
-                    reflectiveClass
-                            .produce(new ReflectiveClassBuildItem(true, true,
-                                    annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                    break;
-                case "org.apache.cxf.interceptor.OutFaultInterceptors":
-                    HashSet<String> outFaultInterceptors = new HashSet<>(
-                            Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                    cxfInfoBuildItem.getOutFaultInterceptors().addAll(outFaultInterceptors);
-                    unremovableBeans.produce(new UnremovableBeanBuildItem(
-                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(outFaultInterceptors)));
-                    reflectiveClass
-                            .produce(new ReflectiveClassBuildItem(true, true,
-                                    annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                    break;
-                case "org.apache.cxf.interceptor.InFaultInterceptors":
-                    HashSet<String> inFaultInterceptors = new HashSet<>(
-                            Arrays.asList(annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                    cxfInfoBuildItem.getInFaultInterceptors().addAll(inFaultInterceptors);
-                    unremovableBeans.produce(new UnremovableBeanBuildItem(
-                            new UnremovableBeanBuildItem.BeanClassNamesExclusion(inFaultInterceptors)));
-                    reflectiveClass
-                            .produce(new ReflectiveClassBuildItem(true, true,
-                                    annotation.value(ANNOTATION_VALUE_INTERCEPTORS).asStringArray()));
-                    break;
-                default:
-                    break;
-            }
+    @BuildStep
+    @Record(ExecutionTime.RUNTIME_INIT)
+    public void runtimeConfig(CXFRecorder recorder, List<CxfWebServiceBuildItem> cxfWebServices,
+            CxfConfig cxfConfig, ServletDeploymentManagerBuildItem servletDeploymentManagerBuildItem,
+            //force after servlet boot
+            List<ServiceStartBuildItem> servicesStated
+    //to force that it is done before undertow boot
+    //, BuildProducer<HttpHandlerWrapperBuildItem> wrappers
+    ) {
+        RuntimeValue<CXFServletInfos> infos = recorder.createInfos();
+        for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
+            recorder.registerCXFServlet(infos, cxfWebService.getSei(),
+                    cxfConfig, cxfWebService.getSoapBinding(), cxfWebService.getClassNames());
+        }
+        recorder.initServlet(servletDeploymentManagerBuildItem.getDeploymentManager(), infos);
+    }
+
+    @BuildStep
+    @Record(ExecutionTime.RUNTIME_INIT)
+    public void runtimeConfig(CXFRecorder recorder, CxfConfig cxfConfig, List<CxfWebServiceBuildItem> cxfWebServices,
+            BuildProducer<SyntheticBeanBuildItem> synthetics) {
+        for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
+            synthetics.produce(SyntheticBeanBuildItem.configure(CXFClientInfo.class).named(cxfWebService.getSei())
+                    .supplier(recorder.cxfClientInfoSupplier(cxfWebService.getSei(),
+                            cxfConfig,
+                            cxfWebService.getSoapBinding(),
+                            cxfWebService.getWsNamespace(),
+                            cxfWebService.getWsName(),
+                            cxfWebService.getClassNames()))
+                    .unremovable()
+                    .setRuntimeInit()
+                    .done());
         }
     }
 
     @BuildStep
     BeanDefiningAnnotationBuildItem additionalBeanDefiningAnnotation() {
         return new BeanDefiningAnnotationBuildItem(WEBSERVICE_ANNOTATION);
-    }
-
-    @BuildStep
-    @Record(ExecutionTime.STATIC_INIT)
-    public void configureServletInfoSupplier(List<CXFServletInfoBuildItem> cxfServletInfos,
-            BuildProducer<RouteBuildItem> routes,
-            BuildProducer<SyntheticBeanBuildItem> synthetics,
-            CXFRecorder recorder) {
-        for (CXFServletInfoBuildItem cxfServletInfoBuildItem : cxfServletInfos) {
-            recorder.registerCXFServlet(cxfServletInfoBuildItem.getPath(),
-                    cxfServletInfoBuildItem.getClassName(),
-                    cxfServletInfoBuildItem.getInInterceptors(),
-                    cxfServletInfoBuildItem.getOutInterceptors(),
-                    cxfServletInfoBuildItem.getOutFaultInterceptors(),
-                    cxfServletInfoBuildItem.getInFaultInterceptors(),
-                    cxfServletInfoBuildItem.getFeatures(),
-                    cxfServletInfoBuildItem.getSei(),
-                    cxfServletInfoBuildItem.getWsdlUrl(),
-                    cxfServletInfoBuildItem.getSOAPBinding(),
-                    cxfServletInfoBuildItem.getWrapperClassNames());
-
-        }
-    }
-
-    @BuildStep
-    @Record(ExecutionTime.STATIC_INIT)
-    void configureClient(CXFRecorder recorder, List<CxfClientBuildItem> items,
-            BuildProducer<SyntheticBeanBuildItem> synthetics) {
-        for (CxfClientBuildItem item : items) {
-            synthetics.produce(SyntheticBeanBuildItem.configure(CXFClientInfo.class).named(item.getSei())
-                    .supplier(recorder.CXFClientInfoSupplier(item.getSei(),
-                            item.getEndpointAddress(),
-                            item.getWsdlUrl(),
-                            item.getSoapBinding(),
-                            item.getWsNamespace(),
-                            item.getWsName(),
-                            item.getEpNamespace(),
-                            item.getEpName(),
-                            item.getUsername(),
-                            item.getPassword(),
-                            item.getClassNames()))
-                    .unremovable()
-                    .done());
-        }
     }
 
     @BuildStep
@@ -1583,14 +1438,12 @@ class QuarkusCxfProcessor {
                 cxfClientMethodCreator.addAnnotation(Produces.class);
                 cxfClientMethodCreator.addAnnotation(Default.class);
 
-                ResultHandle seiRH = cxfClientMethodCreator.load(sei);
                 // New configuration
                 ResultHandle cxfClient = cxfClientMethodCreator.invokeVirtualMethod(
                         MethodDescriptor.ofMethod(CxfClientProducer.class,
                                 "loadCxfClient",
-                                Object.class,
-                                String.class),
-                        cxfClientMethodCreator.getThis(), seiRH);
+                                Object.class),
+                        cxfClientMethodCreator.getThis());
                 ResultHandle cxfClientCasted = cxfClientMethodCreator.checkCast(cxfClient, sei);
                 cxfClientMethodCreator.returnValue(cxfClientCasted);
             }
@@ -2144,52 +1997,6 @@ class QuarkusCxfProcessor {
             mappingPath = path + "/*";
         }
         return mappingPath;
-    }
-
-    @BuildStep
-    public void createBeans(
-            BuildProducer<UnremovableBeanBuildItem> unremovableBeans,
-            BuildProducer<GeneratedBeanBuildItem> generatedBeans,
-            BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
-        for (Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
-            if (webServicesByPath.getValue().implementor.isPresent()) {
-                String webServiceName = webServicesByPath.getValue().implementor.get();
-                String producerClassName = webServiceName + "Producer";
-                ClassOutput classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
-
-                createProducer(producerClassName, classOutput, webServiceName);
-                unremovableBeans.produce(new UnremovableBeanBuildItem(
-                        new UnremovableBeanBuildItem.BeanClassNameExclusion(producerClassName)));
-                reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, producerClassName));
-            }
-
-        }
-
-    }
-
-    private void createProducer(String producerClassName,
-            ClassOutput classOutput,
-            String webServiceName) {
-        try (ClassCreator classCreator = ClassCreator.builder().classOutput(classOutput)
-                .className(producerClassName)
-                .build()) {
-            classCreator.addAnnotation(ApplicationScoped.class);
-
-            try (MethodCreator namedWebServiceMethodCreator = classCreator.getMethodCreator(
-                    "createWebService_" + HashUtil.sha1(webServiceName),
-                    webServiceName)) {
-                namedWebServiceMethodCreator.addAnnotation(ApplicationScoped.class);
-                namedWebServiceMethodCreator.addAnnotation(Unremovable.class);
-                namedWebServiceMethodCreator.addAnnotation(Produces.class);
-                namedWebServiceMethodCreator.addAnnotation(AnnotationInstance.create(DotNames.NAMED, null,
-                        new AnnotationValue[] { AnnotationValue.createStringValue("value", webServiceName) }));
-
-                ResultHandle namedWebService = namedWebServiceMethodCreator
-                        .newInstance(MethodDescriptor.ofConstructor(webServiceName));
-
-                namedWebServiceMethodCreator.returnValue(namedWebService);
-            }
-        }
     }
 
 }

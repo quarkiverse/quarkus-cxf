@@ -3,7 +3,6 @@ package io.quarkiverse.cxf.deployment.test;
 import javax.inject.Inject;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,10 +16,8 @@ public class CxfClientTest {
     public static final QuarkusUnitTest test = new QuarkusUnitTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(FruitWebService.class)
-                    .addClass(Fruit.class)
-                    .addAsResource(new StringAsset(
-                            "quarkus.cxf.endpoint.\"/fruit\".client-endpoint-url=http://localhost:8081/\nquarkus.cxf.endpoint.\"fruit\".service-interface=io.quarkiverse.cxf.deployment.test.FruitWebService"),
-                            "application.properties"));
+                    .addClass(Fruit.class))
+            .withConfigurationResource("application-cxf-test.properties");
 
     @Inject
     FruitWebService clientService;
