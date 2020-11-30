@@ -88,24 +88,31 @@ public class CXFRecorder {
 
             if (cxfEndPointConfig.implementor.isPresent()) {
                 Class<?> webServiceImplementor = null;
+                String implementor = cxfEndPointConfig.implementor.get();
                 try {
-                    webServiceImplementor = Class.forName(cxfEndPointConfig.implementor.get());
+                    webServiceImplementor = Class.forName(implementor);
                 } catch (ClassNotFoundException e) {
+                    LOGGER.warn("Unable to load the service implementor : " + implementor);
                 }
                 if (webServiceImplementor == null) {
                     continue;
                 }
                 Class<?>[] interfaces = webServiceImplementor.getInterfaces();
-
+                if (interfaces == null || interfaces.length == 0) {
+                    LOGGER.warn("No interfacefor service implementor : " + implementor);
+                }
                 for (Class<?> seiClass : interfaces) {
                     WebService wsAnnotation = seiClass.getAnnotation(WebService.class);
                     if (wsAnnotation != null) {
                         serviceInterface = seiClass.getName();
                     }
                 }
+                if (serviceInterface == null) {
+                    LOGGER.warn("Unable to find service interface for implementor : " + implementor);
+                }
                 if (sei.equals(serviceInterface)) {
                     CXFServletInfo cfg = new CXFServletInfo(relativePath,
-                            cxfEndPointConfig.implementor.get(),
+                            implementor,
                             sei,
                             cxfEndPointConfig.wsdlPath.orElse(null),
                             soapBinding,
