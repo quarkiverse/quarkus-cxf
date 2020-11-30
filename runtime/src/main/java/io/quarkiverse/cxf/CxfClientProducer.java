@@ -3,6 +3,7 @@ package io.quarkiverse.cxf;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.CDI;
 import javax.xml.namespace.QName;
 
@@ -83,7 +84,7 @@ public class CxfClientProducer {
             if (item != null) {
                 cols.add(item);
             }
-        } catch (ClassCastException e) {
+        } catch (ClassCastException | UnsatisfiedResolutionException e) {
             //silent fail
         }
         if (item != null) {

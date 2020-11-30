@@ -31,6 +31,11 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
+            //silent fail
+        }
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
             LOGGER.warn("failed to load class " + className);
             return null;
         }
