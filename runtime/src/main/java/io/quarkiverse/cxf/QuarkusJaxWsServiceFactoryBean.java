@@ -2,6 +2,7 @@ package io.quarkiverse.cxf;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,15 +18,21 @@ public class QuarkusJaxWsServiceFactoryBean extends JaxWsServiceFactoryBean {
     private static final org.jboss.logging.Logger LOGGER = org.jboss.logging.Logger
             .getLogger(QuarkusJaxWsServiceFactoryBean.class);
 
-    public QuarkusJaxWsServiceFactoryBean(List<String> classeNames) {
-        wrapperClasses = classeNames.stream().distinct().map(className -> {
+    public QuarkusJaxWsServiceFactoryBean(List<String> classNames) {
+        wrapperClasses = classNames.stream().distinct().map(className -> {
+            try {
+                return Thread.currentThread().getContextClassLoader().loadClass(className);
+            } catch (ClassNotFoundException e) {
+                //silent fail
+            }
             try {
                 return Class.forName(className);
             } catch (ClassNotFoundException e) {
                 LOGGER.error("Generated Wrapper class not found", e);
             }
+
             return null;
-        }).filter(c -> c != null).collect(Collectors.toSet());
+        }).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
     private Set<Class<?>> wrapperClasses;

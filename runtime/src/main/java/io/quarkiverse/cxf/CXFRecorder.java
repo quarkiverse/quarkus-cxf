@@ -130,15 +130,5 @@ public class CXFRecorder {
             }
         } catch (ServletException e) {
         }
-        //managedFilter.
-        // 2 solutions : init servlet again or
-        //CXFQuarkusServlet.getServletConfig
-        //CXFQuarkusServlet.init(cfg);
-        /*
-         * for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
-         * recorder.registerCXFServlet(cxfWebService.getSei(), cxfConfig, cxfWebService.getSoapBinding(),
-         * cxfWebService.getClassNames());
-         * }
-         */
     }
 }
