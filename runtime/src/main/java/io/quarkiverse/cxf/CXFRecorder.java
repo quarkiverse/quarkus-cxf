@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import javax.jws.WebService;
 import javax.servlet.ServletException;
 
 import org.jboss.logging.Logger;
@@ -78,39 +77,15 @@ public class CXFRecorder {
     }
 
     public void registerCXFServlet(RuntimeValue<CXFServletInfos> runtimeInfos, String sei, CxfConfig cxfConfig,
-            String soapBinding,
-            List<String> wrapperClassNames) {
+            String soapBinding, List<String> wrapperClassNames, String wsImplementor) {
         CXFServletInfos infos = runtimeInfos.getValue();
         for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
             CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
             String relativePath = webServicesByPath.getKey();
-            String serviceInterface = null;
 
             if (cxfEndPointConfig.implementor.isPresent()) {
-                Class<?> webServiceImplementor = null;
                 String implementor = cxfEndPointConfig.implementor.get();
-                try {
-                    webServiceImplementor = Class.forName(implementor);
-                } catch (ClassNotFoundException e) {
-                    LOGGER.warn("Unable to load the service implementor : " + implementor);
-                }
-                if (webServiceImplementor == null) {
-                    continue;
-                }
-                Class<?>[] interfaces = webServiceImplementor.getInterfaces();
-                if (interfaces == null || interfaces.length == 0) {
-                    LOGGER.warn("No interfacefor service implementor : " + implementor);
-                }
-                for (Class<?> seiClass : interfaces) {
-                    WebService wsAnnotation = seiClass.getAnnotation(WebService.class);
-                    if (wsAnnotation != null) {
-                        serviceInterface = seiClass.getName();
-                    }
-                }
-                if (serviceInterface == null) {
-                    LOGGER.warn("Unable to find service interface for implementor : " + implementor);
-                }
-                if (sei.equals(serviceInterface)) {
+                if (implementor != null && implementor.equals(wsImplementor)) {
                     CXFServletInfo cfg = new CXFServletInfo(relativePath,
                             implementor,
                             sei,

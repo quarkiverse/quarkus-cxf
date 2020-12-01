@@ -10,14 +10,16 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
     private final String wsNamespace;
     private final String wsName;
     private final List<String> classNames;
+    private final String implementor;
 
     public CxfWebServiceBuildItem(String sei, String soapBinding, String wsNamespace,
-            String wsName, List<String> classNames) {
+            String wsName, List<String> classNames, String implementor) {
         this.sei = sei;
         this.soapBinding = soapBinding;
         this.wsNamespace = wsNamespace;
         this.wsName = wsName;
         this.classNames = classNames;
+        this.implementor = implementor;
     }
 
     public String getSei() {
@@ -38,5 +40,9 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
 
     public String getWsNamespace() {
         return wsNamespace;
+    }
+
+    public String getImplementor() {
+        return implementor;
     }
 }

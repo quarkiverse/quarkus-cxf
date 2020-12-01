@@ -997,6 +997,7 @@ class QuarkusCxfProcessor {
             List<String> wrapperClassNames = new ArrayList<>();
             String sei = wsClassInfo.name().toString();
             Collection<ClassInfo> implementors = index.getAllKnownImplementors(DotName.createSimple(sei));
+            String implementor = "";
             //TODO add soap1.2 in config file
             String soapBinding = SOAPBinding.SOAP11HTTP_BINDING;
             //if no implementor, it mean it is client
@@ -1008,6 +1009,7 @@ class QuarkusCxfProcessor {
             } else {
                 StartServlet = true;
                 for (ClassInfo wsClass : implementors) {
+                    implementor = wsClass.name().toString();
                     AnnotationInstance bindingType = wsClass.classAnnotation(BINDING_TYPE_ANNOTATION);
                     if (bindingType != null) {
                         soapBinding = bindingType.value().asString();
@@ -1247,7 +1249,8 @@ class QuarkusCxfProcessor {
                 }
 
             }
-            cxfWebServices.produce(new CxfWebServiceBuildItem(sei, soapBinding, wsNamespace, wsName, wrapperClassNames));
+            cxfWebServices
+                    .produce(new CxfWebServiceBuildItem(sei, soapBinding, wsNamespace, wsName, wrapperClassNames, implementor));
             //MethodDescriptor requestCtor = createWrapper("parameters", namespace,mi.typeParameters(), classOutput, pkg, pkg+"Parameters", getters, setters);
             //createWrapperHelper(classOutput, pkg, className, requestCtor, getters, setters);
             //getters.clear();
@@ -1331,7 +1334,7 @@ class QuarkusCxfProcessor {
         RuntimeValue<CXFServletInfos> infos = recorder.createInfos();
         for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
             recorder.registerCXFServlet(infos, cxfWebService.getSei(),
-                    cxfConfig, cxfWebService.getSoapBinding(), cxfWebService.getClassNames());
+                    cxfConfig, cxfWebService.getSoapBinding(), cxfWebService.getClassNames(), cxfWebService.getImplementor());
         }
         recorder.initServlet(servletDeploymentManagerBuildItem.getDeploymentManager(), infos);
     }
