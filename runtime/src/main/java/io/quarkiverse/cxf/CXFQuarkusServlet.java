@@ -59,18 +59,16 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
     }
 
     public void build(CXFServletInfos cxfServletInfos) {
-        if (cxfServletInfos == null || cxfServletInfos.getInfos().size() == 0) {
+        if (cxfServletInfos == null || cxfServletInfos.getInfos() == null || cxfServletInfos.getInfos().isEmpty()) {
             LOGGER.warn("no info transmit to servlet");
             return;
         }
         Bus bus = getBus();
         BusFactory.setDefaultBus(bus);
-        JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean(
-                new QuarkusJaxWsServiceFactoryBean(cxfServletInfos.getWrappersclasses()));
-        factory.setBus(bus);
-        if (cxfServletInfos.getInfos() == null)
-            return;
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
+            JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean(
+                    new QuarkusJaxWsServiceFactoryBean(cxfServletInfos.getWrappersclasses()));
+            factory.setBus(bus);
             Object instanceService = getInstance(servletInfo.getClassName());
             if (instanceService != null) {
                 Class<?> seiClass = null;
@@ -86,7 +84,7 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
                 if (servletInfo.getWsdlPath() != null) {
                     factory.setWsdlLocation(servletInfo.getWsdlPath());
                 }
-                if (servletInfo.getFeatures().size() > 0) {
+                if (!servletInfo.getFeatures().isEmpty()) {
                     List<Feature> features = new ArrayList<>();
                     for (String feature : servletInfo.getFeatures()) {
                         Feature instanceFeature = (Feature) getInstance(feature);
