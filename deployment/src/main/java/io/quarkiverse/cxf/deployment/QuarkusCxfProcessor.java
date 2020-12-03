@@ -1217,11 +1217,11 @@ class QuarkusCxfProcessor {
                                 String fieldName = f.name();
                                 getters.add(MethodDescriptor.ofMethod(fullClassName,
                                         JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
-                                        f.type().name()));
+                                        f.type().name().toString()));
                                 setters.add(MethodDescriptor.ofMethod(fullClassName,
                                         JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.SETTER),
                                         "V",
-                                        f.type().name()));
+                                        f.type().name().toString()));
                             }
                         }
                     }
