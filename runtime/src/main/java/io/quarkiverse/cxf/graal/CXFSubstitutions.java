@@ -84,6 +84,8 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperCompiler {
         LOG.info("compileWrapperHelper substitution");
         int count = 1;
         String newClassName = wrapperType.getName() + "_WrapperTypeHelper" + count;
+        newClassName = newClassName.replaceAll("\\$", ".");
+        newClassName = newClassName.replace('/', '.');
         Class<?> cls = null;
         try {
             cls = Thread.currentThread().getContextClassLoader().loadClass(newClassName);
@@ -97,6 +99,7 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperCompiler {
                     count++;
                     newClassName = wrapperType.getName() + "_WrapperTypeHelper" + count;
                     newClassName = newClassName.replaceAll("\\$", ".");
+                    newClassName = newClassName.replace('/', '.');
                     try {
                         cls = Thread.currentThread().getContextClassLoader().loadClass(newClassName);
                     } catch (ClassNotFoundException e) {
