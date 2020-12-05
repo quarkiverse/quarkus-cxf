@@ -1183,9 +1183,10 @@ class QuarkusCxfProcessor {
                     reflectiveClass
                             .produce(new ReflectiveClassBuildItem(true, true, wrapperHelperClassName));
 
-                    createWrapperFactory(classOutput, pkg, className, requestCtor);
+                    createWrapperFactory(classOutput, pkgWH, className, requestCtor);
                     reflectiveClass
-                            .produce(new ReflectiveClassBuildItem(true, true, pkg + "." + className + WRAPPER_FACTORY_POSTFIX));
+                            .produce(new ReflectiveClassBuildItem(true, true,
+                                    pkgWH + "." + className + WRAPPER_FACTORY_POSTFIX));
                     getters.clear();
                     setters.clear();
 
@@ -1203,13 +1204,14 @@ class QuarkusCxfProcessor {
                                 classOutput, pkg, className, getters, setters);
                         responseClassName = className + RESPONSE_CLASS_POSTFIX;
                         fullClassName = pkg + "." + responseClassName;
+                        pkgWH = pkg;
                         wrapperClassNames.add(fullClassName);
                     } else {
                         DotName fullClassDotName = DotName.createSimple(fullClassName);
                         responseClassName = fullClassDotName.withoutPackagePrefix();
                         responseCtor = MethodDescriptor.ofConstructor(fullClassName);
                         ClassInfo wrapperClass = index.getClassByName(DotName.createSimple(fullClassName));
-
+                        pkgWH = fullClassName.substring(0, fullClassName.lastIndexOf(46));
                         if (wrapperClass == null) {
                             LOGGER.warn("wrapper class not found : " + fullClassName);
                         } else {
@@ -1229,20 +1231,20 @@ class QuarkusCxfProcessor {
                     reflectiveClass
                             .produce(new ReflectiveClassBuildItem(true, true, fullClassName));
 
-                    String wrapperHelperResponseClassName = createWrapperHelper(classOutput, pkg,
+                    String wrapperHelperResponseClassName = createWrapperHelper(classOutput, pkgWH,
                             responseClassName, responseCtor, getters, setters, index);
                     reflectiveClass
                             .produce(new ReflectiveClassBuildItem(true, true, wrapperHelperResponseClassName));
-                    createWrapperFactory(classOutput, pkg, responseClassName, responseCtor);
+                    createWrapperFactory(classOutput, pkgWH, responseClassName, responseCtor);
 
                     reflectiveClass
                             .produce(new ReflectiveClassBuildItem(true, true,
-                                    pkg + "." + responseClassName + WRAPPER_FACTORY_POSTFIX));
+                                    pkgWH + "." + responseClassName + WRAPPER_FACTORY_POSTFIX));
 
                     getters.clear();
                     setters.clear();
 
-                    reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, pkg + ".ObjectFactory"));
+                    reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, pkgWH + ".ObjectFactory"));
 
                     generatedClass.add(pkg + className);
 

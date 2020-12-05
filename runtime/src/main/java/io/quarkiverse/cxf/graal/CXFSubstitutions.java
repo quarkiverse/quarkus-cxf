@@ -68,30 +68,47 @@ final class Target_org_apache_cxf_jaxb_JAXBContextInitializer {
     }
 }
 
-@TargetClass(className = "org.apache.cxf.jaxb.JAXBDataBinding")
-final class Target_org_apache_cxf_jaxb_JAXBDataBinding {
+@TargetClass(className = "org.apache.cxf.jaxb.WrapperHelperCompiler")
+final class Target_org_apache_cxf_jaxb_WrapperHelperCompiler {
     @Alias
-    private static Logger LOG = null;
+    Class<?> wrapperType;
+
+    @Alias
+    private String computeSignature() {
+        return null;
+    }
 
     @Substitute()
-    private static WrapperHelper compileWrapperHelper(Class<?> wrapperType, Method[] setMethods,
-            Method[] getMethods, Method[] jaxbMethods,
-            Field[] fields, Object objectFactory) {
+    public WrapperHelper compile() {
+        Logger LOG = LogUtils.getL7dLogger(Target_org_apache_cxf_jaxb_WrapperHelperCompiler.class);
         LOG.info("compileWrapperHelper substitution");
-        //TODO calculate signature to have the same one than generated else iterate on count.
         int count = 1;
         String newClassName = wrapperType.getName() + "_WrapperTypeHelper" + count;
-        // if wrapper is provided we need to change package
-        if (!newClassName.contains("jaxws_asm")) {
-            newClassName = newClassName.substring(0, newClassName.lastIndexOf(".")) + ".jaxws_asm"
-                    + newClassName.substring(newClassName.lastIndexOf("."));
-        }
-        //todo handle signature
         Class<?> cls = null;
         try {
             cls = Thread.currentThread().getContextClassLoader().loadClass(newClassName);
         } catch (ClassNotFoundException e) {
             LOG.warning("Wrapper helper class not found : " + e.toString());
+        }
+        while (cls != null) {
+            try {
+                WrapperHelper helper = WrapperHelper.class.cast(cls.newInstance());
+                if (!helper.getSignature().equals(computeSignature())) {
+                    count++;
+                    newClassName = wrapperType.getName() + "_WrapperTypeHelper" + count;
+                    newClassName = newClassName.replaceAll("\\$", ".");
+                    try {
+                        cls = Thread.currentThread().getContextClassLoader().loadClass(newClassName);
+                    } catch (ClassNotFoundException e) {
+                        LOG.warning("Wrapper helper class not found : " + e.toString());
+                        break;
+                    }
+                } else {
+                    return helper;
+                }
+            } catch (Exception e) {
+                return null;
+            }
         }
 
         WrapperHelper helper = null;
