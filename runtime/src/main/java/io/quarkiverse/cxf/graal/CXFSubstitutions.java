@@ -96,6 +96,8 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperCompiler {
             try {
                 WrapperHelper helper = WrapperHelper.class.cast(cls.newInstance());
                 if (!helper.getSignature().equals(computeSignature())) {
+                    LOG.warning("signature of helper : " + helper.getSignature()
+                            + " is not equal to : " + computeSignature());
                     count++;
                     newClassName = wrapperType.getName() + "_WrapperTypeHelper" + count;
                     newClassName = newClassName.replaceAll("\\$", ".");
