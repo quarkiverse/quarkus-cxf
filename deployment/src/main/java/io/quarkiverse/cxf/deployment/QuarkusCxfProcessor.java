@@ -1146,19 +1146,20 @@ class QuarkusCxfProcessor {
                         fullClassName = classNameValue.asString();
                     }
                     MethodDescriptor requestCtor;
-
+                    String pkgWH;
                     if (fullClassName == null) {
                         requestCtor = createWrapper(true, operationName, wsNamespace, resultNamespace, resultName,
                                 mi.returnType().toString(), wrapperParams,
                                 classOutput, pkg, className, getters, setters);
                         fullClassName = pkg + "." + className;
+                        pkgWH = pkg;
                         wrapperClassNames.add(fullClassName);
                     } else {
                         DotName fullClassDotName = DotName.createSimple(fullClassName);
                         className = fullClassDotName.withoutPackagePrefix();
                         requestCtor = MethodDescriptor.ofConstructor(fullClassName);
                         ClassInfo wrapperClass = index.getClassByName(DotName.createSimple(fullClassName));
-
+                        pkgWH = fullClassName.substring(0, fullClassName.lastIndexOf(46));
                         if (wrapperClass == null) {
                             LOGGER.warn("wrapper class not found : " + fullClassName);
                         } else {
@@ -1177,7 +1178,7 @@ class QuarkusCxfProcessor {
                     }
 
                     reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, fullClassName));
-                    String wrapperHelperClassName = createWrapperHelper(classOutput, pkg, className, requestCtor, getters,
+                    String wrapperHelperClassName = createWrapperHelper(classOutput, pkgWH, className, requestCtor, getters,
                             setters, index);
                     reflectiveClass
                             .produce(new ReflectiveClassBuildItem(true, true, wrapperHelperClassName));

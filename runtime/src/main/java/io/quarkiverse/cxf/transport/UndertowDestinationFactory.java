@@ -15,6 +15,7 @@ public class UndertowDestinationFactory extends HTTPTransportFactory implements 
     public AbstractHTTPDestination createDestination(EndpointInfo endpointInfo, Bus bus,
             DestinationRegistry destinationRegistry) throws IOException {
         return new UndertowDestination(endpointInfo, bus, destinationRegistry);
+
     }
 
 }

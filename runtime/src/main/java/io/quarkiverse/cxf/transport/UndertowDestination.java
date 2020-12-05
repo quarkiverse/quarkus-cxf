@@ -24,4 +24,8 @@ public class UndertowDestination extends AbstractHTTPDestination {
     public EndpointReferenceType getAddress() {
         return super.getAddress();
     }
+
+    public handleRequest() {
+
+    }
 }
