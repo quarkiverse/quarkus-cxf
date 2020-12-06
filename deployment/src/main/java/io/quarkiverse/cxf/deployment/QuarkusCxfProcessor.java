@@ -370,10 +370,10 @@ class QuarkusCxfProcessor {
             }
         } else if (str.startsWith("[")) {
             return formatType(str.substring(1));
-        } else if (str.startsWith("L")) {
-            return str.substring(1).replace('/', '.');
+        } else if (str.startsWith("L") && str.endsWith(";")) {
+            return str.substring(1, str.length() - 1).replace('/', '.');
         }
-        return str.replace('/', '.');
+        return str.replace('/', '.').replaceAll(";", "");
     }
 
     public boolean isAssignableFrom(String interfaceOrSuper, ClassInfo toAssign) {
