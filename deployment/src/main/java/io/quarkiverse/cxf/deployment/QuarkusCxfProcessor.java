@@ -336,10 +336,44 @@ class QuarkusCxfProcessor {
                 b.append("null,");
             } else {
                 b.append(getters.get(x).getName()).append('/');
-                b.append(getters.get(x).getReturnType()).append(',');
+                b.append(formatType(getters.get(x).getReturnType())).append(',');
             }
         }
         return b.toString();
+    }
+
+    private String formatType(String str) {
+        // overt jvn descriptor to class name
+        if (str == null) {
+            return null;
+        }
+        if (str.length() == 1) {
+            switch (str) {
+                case "V":
+                    return "void";
+                case "B":
+                    return "byte";
+                case "C":
+                    return "character";
+                case "D":
+                    return "double";
+                case "Z":
+                    return "boolean";
+                case "S":
+                    return "short";
+                case "J":
+                    return "long";
+                case "I":
+                    return "integer";
+                case "F":
+                    return "float";
+            }
+        } else if (str.startsWith("[")) {
+            return formatType(str.substring(1));
+        } else if (str.startsWith("L")) {
+            return str.substring(1).replace('/', '.');
+        }
+        return str.replace('/', '.');
     }
 
     public boolean isAssignableFrom(String interfaceOrSuper, ClassInfo toAssign) {
