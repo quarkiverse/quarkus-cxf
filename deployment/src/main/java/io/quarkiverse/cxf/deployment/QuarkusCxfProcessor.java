@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.soap.SOAPBinding;
 
+import io.quarkus.gizmo.DescriptorUtils;
 import org.apache.cxf.bus.extension.ExtensionManagerImpl;
 import org.apache.cxf.common.jaxb.JAXBUtils;
 import org.apache.cxf.common.util.StringUtils;
@@ -332,11 +333,13 @@ class QuarkusCxfProcessor {
         StringBuilder b = new StringBuilder();
         b.append(setters.size()).append(':');
         for (int x = 0; x < setters.size(); x++) {
-            if (getters.get(x) == null) {
+            MethodDescriptor getMethodDesc = getters.get(x);
+            if (getMethodDesc == null) {
                 b.append("null,");
             } else {
-                b.append(getters.get(x).getName()).append('/');
-                b.append(formatType(getters.get(x).getReturnType())).append(',');
+                //convert MethodDescriptor.getReturnType() format to Method.getReturnType().getName() format
+                b.append(getMethodDesc.getName()).append('/');
+                b.append(formatType(getMethodDesc.getReturnType())).append(',');
             }
         }
         return b.toString();
@@ -394,6 +397,9 @@ class QuarkusCxfProcessor {
         }
         return false;
     }
+    public boolean isArray(String str) {
+        return (str != null && str.startsWith("["));
+    }
 
     private String createWrapperHelper(ClassOutput classOutput, String pkg, String className,
             MethodDescriptor ctorDescriptor, List<MethodDescriptor> getters,
@@ -414,7 +420,6 @@ class QuarkusCxfProcessor {
             ClassInfo objectFactoryCls = index.getClassByName(DotName.createSimple(pkg + ".ObjectFactory"));
             //TODO object factory creator
             // but must be always null for generated class so not sure if we keep that.
-            //String methodName = "create" + className + setMethod.getName().substring(3);
 
             FieldCreator factoryField = null;
             if (objectFactoryCls != null) {
@@ -439,21 +444,33 @@ class QuarkusCxfProcessor {
             }
             try (MethodCreator createWrapperObject = classCreator.getMethodCreator("createWrapperObject", Object.class,
                     List.class)) {
+
                 createWrapperObject.setModifiers(Modifier.PUBLIC);
                 ResultHandle wrapperRH = createWrapperObject.newInstance(ctorDescriptor);
-                // get list<Object>
-                ResultHandle listRH = createWrapperObject.getMethodParam(0);
 
                 for (int i = 0; i < setters.size(); i++) {
                     MethodDescriptor setter = setters.get(i);
-                    ClassInfo firstParam = index.getClassByName(DotName.createSimple(setter.getParameterTypes()[0]));
-                    if (firstParam == null) {
-                        continue;
+                    MethodDescriptor getter = getters.get(i);
+                    if (getter == null) {
+                        if (setter == null) {
+                            // null placeholder
+                            continue;
+                        }
+                        //TODO throw missing setter exception
                     }
-                    boolean isList = isAssignableFrom(List.class.getName(), firstParam);
+                    ClassInfo tp = index.getClassByName(DotName.createSimple(getter.getReturnType()));
+
+                    boolean isList = isAssignableFrom(List.class.getName(), tp);
 
                     if (isList) {
-                        MethodDescriptor getter = getters.get(i);
+                        // List aVal = obj.getA();
+                        // List newA = (List)lst.get(99);
+                        // if (aVal == null) {
+                        // obj.setA(newA);
+                        // } else if (newA != null) {
+                        // aVal.addAll(newA);
+                        // }
+                        ResultHandle listRH = createWrapperObject.getMethodParam(0);
                         ResultHandle getterListRH = createWrapperObject.invokeVirtualMethod(getter, wrapperRH);
                         ResultHandle listValRH = createWrapperObject.invokeInterfaceMethod(LIST_GET, listRH,
                                 createWrapperObject.load(i));
@@ -461,27 +478,41 @@ class QuarkusCxfProcessor {
                         BranchResult isNullBranch = createWrapperObject.ifNull(getterListRH);
                         try (BytecodeCreator getterValIsNull = isNullBranch.trueBranch()) {
                             getterValIsNull.checkCast(listValRH, getter.getReturnType());
-                            getterValIsNull.invokeVirtualMethod(setter, listValRH);
+                            getterValIsNull.invokeVirtualMethod(setter, wrapperRH, listValRH);
 
                         }
                         try (BytecodeCreator getterValIsNotNull = isNullBranch.falseBranch()) {
                             getterValIsNotNull.invokeInterfaceMethod(LIST_ADDALL, getterListRH, listValRH);
                         }
                     } else {
-                        boolean isJaxbElement = isAssignableFrom(JAXBElement.class.getName(), firstParam);
-
+                        boolean isJaxbElement = isAssignableFrom(JAXBElement.class.getName(), tp);
+                        ResultHandle listRH = createWrapperObject.getMethodParam(0);
                         ResultHandle listValRH = createWrapperObject.invokeInterfaceMethod(LIST_GET, listRH,
                                 createWrapperObject.load(i));
-                        if (isJaxbElement) {
+                        if (DescriptorUtils.isPrimitive(getter.getReturnType())) {
+                            if (tp != null) {
+                                createWrapperObject.invokeVirtualMethod(setter, wrapperRH, listValRH);
+                            }
+                        } else if (isJaxbElement) {
                             ResultHandle factoryRH = createWrapperObject.readInstanceField(factoryField.getFieldDescriptor(),
                                     createWrapperObject.getThis());
-                            //TODO invoke virtual objectFactoryClass jaxbmethod
-                        }
-                        createWrapperObject.invokeVirtualMethod(setter, wrapperRH, listValRH);
-                    }
-                    // TODO if setter not created we add by field, but do not think that is needed because I generate everythings
-                }
+                            String jaxbMethodName = "create" + className + setter.getName().substring(3);
 
+                            ResultHandle jaxbSetRH = createWrapperObject.invokeVirtualMethod(
+                                    MethodDescriptor.ofMethod(objectFactoryCls.name().toString(),
+                                    jaxbMethodName, setter.getParameterTypes()[0], getter.getReturnType()),
+                                    factoryRH, listValRH);
+
+                            createWrapperObject.invokeVirtualMethod(setter, wrapperRH, jaxbSetRH);
+                        } else if (isArray(getter.getReturnType())) {
+                            createWrapperObject.checkCast(listValRH, getter.getReturnType());
+                            createWrapperObject.invokeVirtualMethod(setter, wrapperRH, listValRH);
+                        } else {
+                            createWrapperObject.checkCast(listValRH, getter.getReturnType());
+                            createWrapperObject.invokeVirtualMethod(setter, wrapperRH, listValRH);
+                        }
+                    }
+                }
                 createWrapperObject.returnValue(wrapperRH);
             }
             try (MethodCreator getWrapperParts = classCreator.getMethodCreator("getWrapperParts", List.class, Object.class)) {
