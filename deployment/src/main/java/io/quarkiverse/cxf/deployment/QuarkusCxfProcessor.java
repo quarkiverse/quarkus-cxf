@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.soap.SOAPBinding;
 
-import io.quarkus.gizmo.DescriptorUtils;
 import org.apache.cxf.bus.extension.ExtensionManagerImpl;
 import org.apache.cxf.common.jaxb.JAXBUtils;
 import org.apache.cxf.common.util.StringUtils;
@@ -81,6 +80,7 @@ import io.quarkus.gizmo.BranchResult;
 import io.quarkus.gizmo.BytecodeCreator;
 import io.quarkus.gizmo.ClassCreator;
 import io.quarkus.gizmo.ClassOutput;
+import io.quarkus.gizmo.DescriptorUtils;
 import io.quarkus.gizmo.FieldCreator;
 import io.quarkus.gizmo.Gizmo;
 import io.quarkus.gizmo.GizmoClassVisitor;
@@ -397,6 +397,7 @@ class QuarkusCxfProcessor {
         }
         return false;
     }
+
     public boolean isArray(String str) {
         return (str != null && str.startsWith("["));
     }
@@ -500,7 +501,7 @@ class QuarkusCxfProcessor {
 
                             ResultHandle jaxbSetRH = createWrapperObject.invokeVirtualMethod(
                                     MethodDescriptor.ofMethod(objectFactoryCls.name().toString(),
-                                    jaxbMethodName, setter.getParameterTypes()[0], getter.getReturnType()),
+                                            jaxbMethodName, setter.getParameterTypes()[0], getter.getReturnType()),
                                     factoryRH, listValRH);
 
                             createWrapperObject.invokeVirtualMethod(setter, wrapperRH, jaxbSetRH);
