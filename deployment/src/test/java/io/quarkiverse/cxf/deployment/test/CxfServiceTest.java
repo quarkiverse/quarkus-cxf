@@ -50,6 +50,11 @@ public class CxfServiceTest {
                 .evaluate(doc);
         Assertions.assertEquals("xs:string", val);
 
+        val = xpath
+                .compile(
+                        "/definitions/service/port/address/@location")
+                .evaluate(doc);
+        Assertions.assertEquals("https://io.quarkus-cxf.com/fruit", val);
     }
 
     @Test

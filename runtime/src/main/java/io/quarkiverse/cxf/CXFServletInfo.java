@@ -23,11 +23,12 @@ public class CXFServletInfo {
     private String wsdlPath;
     private String soapBinding;
     private List<String> wrapperClassNames;
+    private String endpointUrl;
 
     private static final Logger LOGGER = Logger.getLogger(CXFServletInfo.class);
 
     public CXFServletInfo(String path, String className, String sei, String wsdlPath, String soapBinding,
-            List<String> wrapperClassNames) {
+            List<String> wrapperClassNames, String endpointUrl) {
         super();
         LOGGER.warn("new CXFServletInfo");
         this.path = path;
@@ -41,6 +42,7 @@ public class CXFServletInfo {
         this.wsdlPath = wsdlPath;
         this.soapBinding = soapBinding;
         this.wrapperClassNames = wrapperClassNames;
+        this.endpointUrl = endpointUrl;
     }
 
     public String getClassName() {
@@ -85,6 +87,14 @@ public class CXFServletInfo {
 
     public List<String> getWrapperClassNames() {
         return wrapperClassNames;
+    }
+
+    public String getEndpointUrl() {
+        return endpointUrl;
+    }
+
+    public void setEndpointUrl(String endpointUrl) {
+        this.endpointUrl = endpointUrl;
     }
 
     @Override

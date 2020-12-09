@@ -91,7 +91,8 @@ public class CXFRecorder {
                             sei,
                             cxfEndPointConfig.wsdlPath.orElse(null),
                             soapBinding,
-                            wrapperClassNames);
+                            wrapperClassNames,
+                            cxfEndPointConfig.publishedEndpointUrl.orElse(null));
                     if (cxfEndPointConfig.inInterceptors.isPresent()) {
                         cfg.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
                     }

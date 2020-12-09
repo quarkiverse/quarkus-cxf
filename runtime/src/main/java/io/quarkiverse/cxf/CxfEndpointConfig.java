@@ -28,6 +28,12 @@ public class CxfEndpointConfig {
     public Optional<String> clientEndpointUrl;
 
     /**
+     * The server endpoint url
+     */
+    @ConfigItem
+    public Optional<String> publishedEndpointUrl;
+
+    /**
      * The client interface
      */
     @ConfigItem
