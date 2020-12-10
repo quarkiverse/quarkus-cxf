@@ -113,6 +113,7 @@ class QuarkusCxfProcessor {
     private static final DotName BINDING_TYPE_ANNOTATION = DotName.createSimple("javax.xml.ws.BindingType");
     private static final DotName XML_NAMESPACE = DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace");
     private static final DotName XML_SEE_ALSO = DotName.createSimple("javax.xml.bind.annotation.XmlSeeAlso");
+    private static final DotName XML_ELEMENT_REF = DotName.createSimple("javax.xml.bind.annotation.XmlElementRef");
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
     private static final List<Class<? extends Annotation>> JAXB_ANNOTATIONS = Arrays.asList(
             XmlList.class,
@@ -1231,7 +1232,10 @@ class QuarkusCxfProcessor {
                         } else {
                             List<FieldInfo> fields = wrapperClass.fields();
                             for (FieldInfo f : fields) {
-                                String fieldName = f.name();
+                                AnnotationInstance elemRefAnnot = f.annotation(XML_ELEMENT_REF);
+                                String fieldName = elemRefAnnot != null && elemRefAnnot.value("name") != null
+                                        ? elemRefAnnot.value("name").asString()
+                                        : f.name();
                                 getters.add(MethodDescriptor.ofMethod(fullClassName,
                                         JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
                                         f.type().name().toString()));
@@ -1283,7 +1287,10 @@ class QuarkusCxfProcessor {
                         } else {
                             List<FieldInfo> fields = wrapperClass.fields();
                             for (FieldInfo f : fields) {
-                                String fieldName = f.name();
+                                AnnotationInstance elemRefAnnot = f.annotation(XML_ELEMENT_REF);
+                                String fieldName = elemRefAnnot != null && elemRefAnnot.value("name") != null
+                                        ? elemRefAnnot.value("name").asString()
+                                        : f.name();
                                 getters.add(MethodDescriptor.ofMethod(fullClassName,
                                         JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
                                         f.type().name().toString()));
