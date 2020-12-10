@@ -93,10 +93,6 @@ public class CXFServletInfo {
         return endpointUrl;
     }
 
-    public void setEndpointUrl(String endpointUrl) {
-        this.endpointUrl = endpointUrl;
-    }
-
     @Override
     public String toString() {
         return "Web Service " + className + " on " + path;

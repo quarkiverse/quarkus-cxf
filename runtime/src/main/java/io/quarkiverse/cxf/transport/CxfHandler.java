@@ -119,6 +119,9 @@ public class CxfHandler implements Handler<RoutingContext> {
                 if (servletInfo.getSOAPBinding() != null) {
                     factory.setBindingId(servletInfo.getSOAPBinding());
                 }
+                if (servletInfo.getEndpointUrl() != null) {
+                    factory.setPublishedEndpointUrl(servletInfo.getEndpointUrl());
+                }
 
                 Server server = factory.create();
                 for (String className : servletInfo.getInFaultInterceptors()) {
