@@ -1,27 +1,22 @@
 package io.quarkiverse.cxf.transport;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.binding.soap.SoapTransportFactory;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Destination;
+import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.apache.cxf.transport.http.HttpDestinationFactory;
 
-public class VertxDestinationFactory extends HTTPTransportFactory implements HttpDestinationFactory {
+public class VertxDestinationFactory extends SoapTransportFactory implements DestinationFactory {
 
-    protected VertxDestinationFactory(List<String> transportIds, DestinationRegistry registry) {
-        super(transportIds, registry);
-    }
+    protected DestinationRegistry registry;
 
-    @Override
-    public AbstractHTTPDestination createDestination(EndpointInfo endpointInfo, Bus bus,
-            DestinationRegistry destinationRegistry) throws IOException {
-        return new VertxDestination(endpointInfo, bus, destinationRegistry);
-
+    protected VertxDestinationFactory(DestinationRegistry registry) {
+        super();
+        this.registry = registry;
     }
 
     @Override
@@ -32,13 +27,11 @@ public class VertxDestinationFactory extends HTTPTransportFactory implements Htt
         synchronized (registry) {
             AbstractHTTPDestination d = registry.getDestinationForPath(endpointInfo.getAddress());
             if (d == null) {
-                d = createDestination(endpointInfo, bus, registry);
+                d = new VertxDestination(endpointInfo, bus, registry);
                 registry.addDestination(d);
-                configure(bus, d);
                 d.finalizeConfig();
             }
             return d;
         }
     }
-
 }

@@ -3,7 +3,6 @@ package io.quarkiverse.cxf.transport;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.DestinationRegistryImpl;
-import org.apache.cxf.transport.http.HttpDestinationFactory;
 import org.apache.cxf.transport.servlet.BaseUrlHelper;
 import org.apache.cxf.transport.servlet.ServletController;
 import org.apache.cxf.transport.servlet.servicelist.ServiceListGeneratorServlet;
@@ -73,14 +71,12 @@ public class CxfHandler implements Handler<RoutingContext> {
 
         LOGGER.info("load destination");
         DestinationFactoryManager dfm = this.bus.getExtension(DestinationFactoryManager.class);
-        VertxDestinationFactory destinationFactory = new VertxDestinationFactory(
-                Arrays.asList("http://cxf.apache.org/transports/quarkus"),
-                new DestinationRegistryImpl());
+        destinationRegistry = new DestinationRegistryImpl();
+        VertxDestinationFactory destinationFactory = new VertxDestinationFactory(destinationRegistry);
         dfm.registerDestinationFactory("http://cxf.apache.org/transports/quarkus", destinationFactory);
         ConduitInitiatorManager extension = bus.getExtension(ConduitInitiatorManager.class);
         extension.registerConduitInitiator("http://cxf.apache.org/transports/quarkus", destinationFactory);
-        bus.setExtension(destinationFactory, HttpDestinationFactory.class);
-        this.destinationRegistry = destinationFactory.getRegistry();
+
         serviceListGeneratorServlet = new ServiceListGeneratorServlet(destinationRegistry, bus);
         VertxServletConfig servletConfig = new VertxServletConfig();
         serviceListGeneratorServlet.init(servletConfig);
