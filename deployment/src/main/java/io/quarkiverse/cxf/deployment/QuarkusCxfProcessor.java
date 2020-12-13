@@ -1183,10 +1183,9 @@ class QuarkusCxfProcessor {
                         if (methodAnnotation.target().kind() != AnnotationTarget.Kind.METHOD_PARAMETER)
                             continue;
                         MethodParameterInfo paramInfo = methodAnnotation.target().asMethodParameter();
-                        if (paramInfo != null && paramName.equals(paramInfo.name())) {
+                        if (paramInfo != null && paramName != null && paramName.equals(paramInfo.name())) {
                             paramAnnotations.add(methodAnnotation);
                         }
-
                     }
 
                     wrapperParams.add(new WrapperParameter(paramType, paramAnnotations, paramName));
