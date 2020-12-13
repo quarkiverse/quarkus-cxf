@@ -1630,6 +1630,7 @@ class QuarkusCxfProcessor {
                 "com.sun.xml.fastinfoset.stax.StAXDocumentSerializer",
                 "com.sun.xml.fastinfoset.stax.StAXDocumentParser",
                 "org.jvnet.fastinfoset.stax.FastInfosetStreamReader",
+                "org.jvnet.fastinfoset.VocabularyApplicationData",
                 "org.jvnet.staxex.XMLStreamReaderEx",
                 // missing from jaxp extension
                 //GregorSamsa but which package ???
