@@ -118,7 +118,19 @@ class QuarkusCxfProcessor {
             XmlMimeType.class,
             XmlElement.class,
             XmlElementWrapper.class);
+    private static final Set<String> classHelpers = new HashSet<>();
+    private static final String WRAPPER_HELPER_POSTFIX = "_WrapperTypeHelper";
+    private static final String WRAPPER_FACTORY_POSTFIX = "Factory";
+    private static final String ANNOTATION_VALUE_INTERCEPTORS = "interceptors";
+    static final MethodDescriptor LIST_GET = MethodDescriptor.ofMethod(List.class, "get", Object.class, int.class);
+    static final MethodDescriptor LIST_ADDALL = MethodDescriptor.ofMethod(List.class, "addAll", Collection.class,
+            boolean.class);
 
+    static final MethodDescriptor ARRAYLIST_CTOR = MethodDescriptor.ofConstructor(ArrayList.class, int.class);
+    static final MethodDescriptor JAXBELEMENT_GETVALUE = MethodDescriptor.ofMethod(JAXBElement.class, "getValue", Object.class);
+
+    static final MethodDescriptor LIST_ADD = MethodDescriptor.ofMethod(List.class, "add", boolean.class, Object.class);
+    @SuppressWarnings("unused")
     @BuildStep
     public void generateWSDL(BuildProducer<NativeImageResourceBuildItem> ressources,
             CxfBuildTimeConfig cxfBuildTimeConfig) {
@@ -184,7 +196,7 @@ class QuarkusCxfProcessor {
                 //TODO check if method annotation must been forwarded
                 try {
                     createWrapperClassField(getters, setters, classCreator, resultType, resultNamespace, resultName,
-                            new ArrayList<AnnotationInstance>());
+                            new ArrayList<>());
                 } catch (Exception e) {
                     throw new RuntimeException("failed to create fields:" + resultType);
                 }
@@ -314,18 +326,6 @@ class QuarkusCxfProcessor {
         return b.toString();
     }
 
-    private static Set<String> classHelpers = new HashSet<>();
-    static final MethodDescriptor LIST_GET = MethodDescriptor.ofMethod(List.class, "get", Object.class, int.class);
-    static final MethodDescriptor LIST_ADDALL = MethodDescriptor.ofMethod(List.class, "addAll", Collection.class,
-            boolean.class);
-
-    static final MethodDescriptor ARRAYLIST_CTOR = MethodDescriptor.ofConstructor(ArrayList.class, int.class);
-    static final MethodDescriptor JAXBELEMENT_GETVALUE = MethodDescriptor.ofMethod(JAXBElement.class, "getValue", Object.class);
-
-    static final MethodDescriptor LIST_ADD = MethodDescriptor.ofMethod(List.class, "add", boolean.class, Object.class);
-    private static final String WRAPPER_HELPER_POSTFIX = "_WrapperTypeHelper";
-    private static final String WRAPPER_FACTORY_POSTFIX = "Factory";
-
     private String computeSignature(List<MethodDescriptor> getters, List<MethodDescriptor> setters) {
         StringBuilder b = new StringBuilder();
         b.append(setters.size()).append(':');
@@ -368,6 +368,8 @@ class QuarkusCxfProcessor {
                     return "int";
                 case "F":
                     return "float";
+                default:
+                    throw new IllegalArgumentException("Unknown type");
             }
         } else if (str.startsWith("[")) {
             return formatType(str.substring(1));
@@ -563,18 +565,18 @@ class QuarkusCxfProcessor {
                 .className(exceptionClassName)
                 .build()) {
 
-            String FaultClassName = name.toString();
+            String faultClassName = name.toString();
 
-            FieldCreator field = classCreator.getFieldCreator("faultInfo", FaultClassName).setModifiers(Modifier.PRIVATE);
+            FieldCreator field = classCreator.getFieldCreator("faultInfo", faultClassName).setModifiers(Modifier.PRIVATE);
             //constructor
-            try (MethodCreator ctor = classCreator.getMethodCreator("<init>", "V", String.class, FaultClassName)) {
+            try (MethodCreator ctor = classCreator.getMethodCreator("<init>", "V", String.class, faultClassName)) {
                 ctor.setModifiers(Modifier.PUBLIC);
                 ctor.invokeSpecialMethod(MethodDescriptor.ofConstructor(Exception.class, String.class), ctor.getThis(),
                         ctor.getMethodParam(0));
                 ctor.writeInstanceField(field.getFieldDescriptor(), ctor.getThis(), ctor.getMethodParam(1));
                 ctor.returnValue(null);
             }
-            try (MethodCreator getter = classCreator.getMethodCreator("getFaultInfo", FaultClassName)) {
+            try (MethodCreator getter = classCreator.getMethodCreator("getFaultInfo", faultClassName)) {
                 getter.setModifiers(Modifier.PUBLIC);
                 getter.returnValue(getter.readInstanceField(field.getFieldDescriptor(), getter.getThis()));
             }
@@ -960,6 +962,7 @@ class QuarkusCxfProcessor {
                 new UnremovableBeanBuildItem.BeanClassNameExclusion("org.apache.cxf.jaxb.NamespaceMapper" + postFix)));
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     void markBeansAsUnremovable(BuildProducer<UnremovableBeanBuildItem> unremovables) {
         unremovables.produce(new UnremovableBeanBuildItem(new Predicate<BeanInfo>() {
@@ -979,21 +982,19 @@ class QuarkusCxfProcessor {
                 .produce(new UnremovableBeanBuildItem(new UnremovableBeanBuildItem.BeanClassNamesExclusion(extensibilities)));
     }
 
-    private static final String ANNOTATION_VALUE_INTERCEPTORS = "interceptors";
-
-    class WrapperParameter {
-        private Type parameterType;
-        private List<AnnotationInstance> annotations;
-        private String Name;
+    static class WrapperParameter {
+        private final Type parameterType;
+        private final List<AnnotationInstance> annotations;
+        private final String name;
 
         WrapperParameter(Type parameterType, List<AnnotationInstance> annotations, String name) {
             this.parameterType = parameterType;
             this.annotations = annotations;
-            Name = name;
+            this.name = name;
         }
 
         public String getName() {
-            return Name;
+            return name;
         }
 
         public List<AnnotationInstance> getAnnotations() {
@@ -1013,6 +1014,7 @@ class QuarkusCxfProcessor {
         }
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     public void build(
             Capabilities capabilities,
@@ -1332,6 +1334,7 @@ class QuarkusCxfProcessor {
         }
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
     public void startRoute(CXFRecorder recorder,
@@ -1355,6 +1358,7 @@ class QuarkusCxfProcessor {
         routes.produce(new RouteBuildItem(getMappingPath(path), handler, HandlerType.BLOCKING));
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
     public void startClient(CXFRecorder recorder, CxfConfig cxfConfig, List<CxfWebServiceBuildItem> cxfWebServices,
@@ -1373,11 +1377,13 @@ class QuarkusCxfProcessor {
         }
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     BeanDefiningAnnotationBuildItem additionalBeanDefiningAnnotation() {
         return new BeanDefiningAnnotationBuildItem(WEBSERVICE_ANNOTATION);
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     void buildResources(BuildProducer<NativeImageResourceBuildItem> resources,
             BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
@@ -1395,10 +1401,10 @@ class QuarkusCxfProcessor {
                         String[] cols = line.split(":");
                         //org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
                         if (cols.length > 1) {
-                            if (cols[0] != "") {
+                            if (!cols[0].equals("")) {
                                 reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[0]));
                             }
-                            if (cols[1] != "") {
+                            if (!cols[1].equals("")) {
                                 reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[1]));
                             }
                         }
@@ -1469,11 +1475,13 @@ class QuarkusCxfProcessor {
         }
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     ExtensionSslNativeSupportBuildItem ssl() {
         return new ExtensionSslNativeSupportBuildItem(FEATURE_CXF);
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     List<RuntimeInitializedClassBuildItem> runtimeInitializedClasses() {
         return Arrays.asList(
@@ -1486,12 +1494,14 @@ class QuarkusCxfProcessor {
                 new RuntimeInitializedClassBuildItem("org.apache.cxf.staxutils.validation.W3CMultiSchemaFactory"));
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     void addDependencies(BuildProducer<IndexDependencyBuildItem> indexDependency) {
         indexDependency.produce(new IndexDependencyBuildItem("org.glassfish.jaxb", "txw2"));
         indexDependency.produce(new IndexDependencyBuildItem("org.glassfish.jaxb", "jaxb-runtime"));
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     void httpProxies(CombinedIndexBuildItem combinedIndexBuildItem,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies) {
@@ -1503,6 +1513,7 @@ class QuarkusCxfProcessor {
         produceRecursiveProxies(index, typedXmlWriterDN, proxies, proxiesCreated);
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     void seeAlso(CombinedIndexBuildItem combinedIndexBuildItem,
             BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
@@ -1522,7 +1533,7 @@ class QuarkusCxfProcessor {
         index.getKnownDirectImplementors(interfaceDN).stream()
                 .filter(classinfo -> Modifier.isInterface(classinfo.flags()))
                 .map(ClassInfo::name)
-                .forEach((className) -> {
+                .forEach(className -> {
                     if (!proxiesCreated.contains(className.toString())) {
                         proxies.produce(new NativeImageProxyDefinitionBuildItem(className.toString()));
                         produceRecursiveProxies(index, className, proxies, proxiesCreated);
@@ -1532,6 +1543,7 @@ class QuarkusCxfProcessor {
 
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     void httpProxies(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies) {
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBContextProxy"));
@@ -1580,6 +1592,7 @@ class QuarkusCxfProcessor {
         }
     }
 
+    @SuppressWarnings("unused")
     @BuildStep
     public void registerReflectionItems(BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
         //TODO load all bus-extensions.txt file and parse it to generate the reflective class.
@@ -1966,7 +1979,7 @@ class QuarkusCxfProcessor {
                 "org.springframework.osgi.io.OsgiBundleResourcePatternResolver",
                 "org.springframework.osgi.util.BundleDelegatingClassLoader"));
     }
-
+    @SuppressWarnings("unused")
     @BuildStep
     NativeImageResourceBuildItem nativeImageResourceBuildItem() {
         //TODO add @HandlerChain (file) and parse it to add class loading
@@ -2011,6 +2024,9 @@ class QuarkusCxfProcessor {
 
     private String getMappingPath(String path) {
         String mappingPath;
+        if (path == null) {
+            return "/*";
+        }
         if (path.endsWith("/")) {
             mappingPath = path + "*";
         } else {
