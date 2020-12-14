@@ -73,6 +73,7 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBui
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
+import io.quarkus.gizmo.AssignableResultHandle;
 import io.quarkus.gizmo.BranchResult;
 import io.quarkus.gizmo.BytecodeCreator;
 import io.quarkus.gizmo.ClassCreator;
@@ -402,7 +403,7 @@ class QuarkusCxfProcessor {
 
     private String createWrapperHelper(ClassOutput classOutput, String pkg, String className,
             MethodDescriptor ctorDescriptor, List<MethodDescriptor> getters,
-            List<MethodDescriptor> setters, IndexView index) {
+            List<MethodDescriptor> setters, List<String> jaxbElementParams, IndexView index) {
         //WrapperClassGenerator
         int count = 1;
         String newClassName = pkg + "." + className + WRAPPER_HELPER_POSTFIX + count;
@@ -457,7 +458,8 @@ class QuarkusCxfProcessor {
                         }
                         //TODO throw missing setter exception
                     }
-                    ClassInfo tp = index.getClassByName(DotName.createSimple(getter.getReturnType()));
+                    String returnType = formatType(getter.getReturnType());
+                    ClassInfo tp = index.getClassByName(DotName.createSimple(returnType));
 
                     boolean isList = isAssignableFrom(List.class.getName(), tp);
 
@@ -493,13 +495,14 @@ class QuarkusCxfProcessor {
                                 createWrapperObject.invokeVirtualMethod(setter, wrapperRH, listValRH);
                             }
                         } else if (isJaxbElement) {
+                            String jaxbElementParam = jaxbElementParams.get(i);
                             ResultHandle factoryRH = createWrapperObject.readInstanceField(factoryField.getFieldDescriptor(),
                                     createWrapperObject.getThis());
                             String jaxbMethodName = "create" + className + setter.getName().substring(3);
 
                             ResultHandle jaxbSetRH = createWrapperObject.invokeVirtualMethod(
                                     MethodDescriptor.ofMethod(objectFactoryCls.name().toString(),
-                                            jaxbMethodName, setter.getParameterTypes()[0], getter.getReturnType()),
+                                            jaxbMethodName, setter.getParameterTypes()[0], jaxbElementParam),
                                     factoryRH, listValRH);
 
                             createWrapperObject.invokeVirtualMethod(setter, wrapperRH, jaxbSetRH);
@@ -521,12 +524,16 @@ class QuarkusCxfProcessor {
                 ResultHandle wrapperRH = getWrapperParts.checkCast(objRH, ctorDescriptor.getDeclaringClass());
                 for (MethodDescriptor getter : getters) {
                     ResultHandle wrapperValRH = getWrapperParts.invokeVirtualMethod(getter, wrapperRH);
-                    ClassInfo firstParam = index.getClassByName(DotName.createSimple(getter.getReturnType()));
+                    String returnType = formatType(getter.getReturnType());
+                    ClassInfo firstParam = index.getClassByName(DotName.createSimple(returnType));
                     boolean isJaxbElement = isAssignableFrom(JAXBElement.class.getName(), firstParam);
                     if (isJaxbElement) {
-                        wrapperValRH = getWrapperParts.ifNull(wrapperValRH).falseBranch().invokeVirtualMethod(
+                        AssignableResultHandle tempVarRH = getWrapperParts.createVariable(getter.getReturnType());
+                        BytecodeCreator falseBranch = getWrapperParts.ifNull(wrapperValRH).falseBranch();
+                        falseBranch.assign(tempVarRH, falseBranch.invokeVirtualMethod(
                                 JAXBELEMENT_GETVALUE,
-                                wrapperValRH);
+                                wrapperValRH));
+                        wrapperValRH = tempVarRH;
                     }
 
                     getWrapperParts.invokeInterfaceMethod(LIST_ADD, arraylistRH, wrapperValRH);
@@ -1138,6 +1145,7 @@ class QuarkusCxfProcessor {
             //@SOAPBinding(style=Style.RPC, use=Use.LITERAL, parameterStyle=ParameterStyle.BARE)
             List<MethodDescriptor> setters = new ArrayList<>();
             List<MethodDescriptor> getters = new ArrayList<>();
+            List<String> jaxbElementParams = new ArrayList<>();
 
             for (MethodInfo mi : wsClassInfo.methods()) {
                 for (Type exceptionType : mi.exceptions()) {
@@ -1225,6 +1233,7 @@ class QuarkusCxfProcessor {
                                 getters.add(MethodDescriptor.ofMethod(fullClassName,
                                         JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
                                         f.type().name().toString()));
+                                jaxbElementParams.add(extractJAXBElementParam(f));
                                 setters.add(MethodDescriptor.ofMethod(fullClassName,
                                         JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.SETTER),
                                         "V",
@@ -1235,7 +1244,7 @@ class QuarkusCxfProcessor {
 
                     reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, fullClassName));
                     String wrapperHelperClassName = createWrapperHelper(classOutput, pkgWH, className, requestCtor, getters,
-                            setters, index);
+                            setters, jaxbElementParams, index);
                     reflectiveClass
                             .produce(new ReflectiveClassBuildItem(true, true, wrapperHelperClassName));
 
@@ -1245,6 +1254,7 @@ class QuarkusCxfProcessor {
                                     pkgWH + "." + className + WRAPPER_FACTORY_POSTFIX));
                     getters.clear();
                     setters.clear();
+                    jaxbElementParams.clear();
 
                     fullClassName = null;
                     AnnotationInstance responseWrapperAnnotation = mi.annotation(RESPONSE_WRAPPER_ANNOTATION);
@@ -1280,6 +1290,7 @@ class QuarkusCxfProcessor {
                                 getters.add(MethodDescriptor.ofMethod(fullClassName,
                                         JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.GETTER),
                                         f.type().name().toString()));
+                                jaxbElementParams.add(extractJAXBElementParam(f));
                                 setters.add(MethodDescriptor.ofMethod(fullClassName,
                                         JAXBUtils.nameToIdentifier(fieldName, JAXBUtils.IdentifierType.SETTER),
                                         "V",
@@ -1291,7 +1302,7 @@ class QuarkusCxfProcessor {
                             .produce(new ReflectiveClassBuildItem(true, true, fullClassName));
 
                     String wrapperHelperResponseClassName = createWrapperHelper(classOutput, pkgWH,
-                            responseClassName, responseCtor, getters, setters, index);
+                            responseClassName, responseCtor, getters, setters, jaxbElementParams, index);
                     reflectiveClass
                             .produce(new ReflectiveClassBuildItem(true, true, wrapperHelperResponseClassName));
                     createWrapperFactory(classOutput, pkgWH, responseClassName, responseCtor);
@@ -1329,6 +1340,14 @@ class QuarkusCxfProcessor {
         }
         for (ClassInfo subclass : index.getAllKnownImplementors(DATABINDING)) {
             reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
+        }
+    }
+
+    private String extractJAXBElementParam(FieldInfo f) {
+        if (f.type().name().equals(DotName.createSimple(JAXBElement.class.getName()))) {
+            return f.type().asParameterizedType().arguments().get(0).name().toString();
+        } else {
+            return null;
         }
     }
 
@@ -1488,6 +1507,7 @@ class QuarkusCxfProcessor {
 
     @BuildStep
     void addDependencies(BuildProducer<IndexDependencyBuildItem> indexDependency) {
+        indexDependency.produce(new IndexDependencyBuildItem("org.jboss.spec.javax.xml.bind", "jboss-jaxb-api_2.3_spec"));
         indexDependency.produce(new IndexDependencyBuildItem("org.glassfish.jaxb", "txw2"));
         indexDependency.produce(new IndexDependencyBuildItem("org.glassfish.jaxb", "jaxb-runtime"));
     }
