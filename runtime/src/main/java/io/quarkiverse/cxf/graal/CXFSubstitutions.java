@@ -1,10 +1,9 @@
 package io.quarkiverse.cxf.graal;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URLStreamHandlerFactory;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,17 +18,14 @@ import org.apache.cxf.databinding.WrapperHelper;
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
-import com.oracle.svm.core.util.VMError;
 
 import io.quarkiverse.cxf.CXFException;
 
-@TargetClass(className = "org.apache.cxf.wsdl.JAXBExtensionHelper")
-final class Target_org_apache_cxf_wsdl_JAXBExtensionHelper {
-    @Alias
-    private static Logger LOG = null;
-
+@TargetClass(className = "org.apache.cxf.wsdl.ExtensionClassGenerator")
+final class Target_org_apache_cxf_wsdl_ExtensionClassGenerator {
     @Substitute()
-    private static Class<?> createExtensionClass(Class<?> cls, QName qname, ClassLoader loader) {
+    public Class<?> createExtensionClass(Class<?> cls, QName qname, ClassLoader loader) {
+        Logger LOG = LogUtils.getL7dLogger(Target_org_apache_cxf_wsdl_ExtensionClassGenerator.class);
         try {
             LOG.info("extensibility class substitute: " + cls.getName());
             Class<?> clz = Class.forName("io.quarkiverse.cxf." + cls.getSimpleName() + "Extensibility");
@@ -43,22 +39,14 @@ final class Target_org_apache_cxf_wsdl_JAXBExtensionHelper {
     }
 }
 
-@TargetClass(className = "org.apache.cxf.jaxb.JAXBContextInitializer")
-final class Target_org_apache_cxf_jaxb_JAXBContextInitializer {
-    @Alias
-    private static Logger LOG = null;
-
+@TargetClass(className = "org.apache.cxf.jaxb.FactoryClassGenerator")
+final class Target_org_apache_cxf_jaxb_FactoryClassGenerator {
     @Substitute()
-    private Object createFactory(Class<?> cls, Constructor<?> contructor) {
+    private Class<?> createFactory(Class<?> cls) {
+        Logger LOG = LogUtils.getL7dLogger(Target_org_apache_cxf_jaxb_FactoryClassGenerator.class);
         try {
             LOG.info("substitute  JAXBContextInitializer.createFactory class for : " + cls.getSimpleName());
-            Class<?> factoryClass = Class.forName("io.quarkiverse.cxf." + cls.getSimpleName() + "Factory");
-            try {
-                return factoryClass.getConstructor().newInstance();
-            } catch (Exception e) {
-                LOG.warning("factory class not created for " + cls.getSimpleName());
-            }
-            return null;
+            return Class.forName("io.quarkiverse.cxf." + cls.getSimpleName() + "Factory");
         } catch (ClassNotFoundException e) {
             LOG.warning("factory class to create : " + cls.getSimpleName());
             throw new UnsupportedOperationException(cls.getName() + " factory not implemented yet for GraalVM native images",
@@ -67,19 +55,19 @@ final class Target_org_apache_cxf_jaxb_JAXBContextInitializer {
     }
 }
 
-@TargetClass(className = "org.apache.cxf.jaxb.WrapperHelperCompiler")
-final class Target_org_apache_cxf_jaxb_WrapperHelperCompiler {
-    @Alias
-    Class<?> wrapperType;
+@TargetClass(className = "org.apache.cxf.jaxb.WrapperHelperClassGenerator")
+final class Target_org_apache_cxf_jaxb_WrapperHelperClassGenerator {
 
     @Alias
-    private String computeSignature() {
+    public static String computeSignature(Method[] setMethods, Method[] getMethods) {
         return null;
     }
 
     @Substitute()
-    public WrapperHelper compile() {
-        Logger LOG = LogUtils.getL7dLogger(Target_org_apache_cxf_jaxb_WrapperHelperCompiler.class);
+    public WrapperHelper compile(Class<?> wrapperType, Method[] setMethods,
+            Method[] getMethods, Method[] jaxbMethods,
+            Field[] fields, Object objectFactory) {
+        Logger LOG = LogUtils.getL7dLogger(Target_org_apache_cxf_jaxb_WrapperHelperClassGenerator.class);
         LOG.info("compileWrapperHelper substitution");
         int count = 1;
         String newClassName = wrapperType.getName() + "_WrapperTypeHelper" + count;
@@ -94,9 +82,9 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperCompiler {
         while (cls != null) {
             try {
                 WrapperHelper helper = WrapperHelper.class.cast(cls.getConstructor().newInstance());
-                if (!helper.getSignature().equals(computeSignature())) {
+                if (!helper.getSignature().equals(computeSignature(setMethods, getMethods))) {
                     LOG.warning("signature of helper : " + helper.getSignature()
-                            + " is not equal to : " + computeSignature());
+                            + " is not equal to : " + computeSignature(setMethods, getMethods));
                     count++;
                     newClassName = wrapperType.getName() + "_WrapperTypeHelper" + count;
                     newClassName = newClassName.replaceAll("\\$", ".");
@@ -129,8 +117,8 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperCompiler {
 
 }
 
-@TargetClass(className = "org.apache.cxf.endpoint.dynamic.TypeClassInitializer$ExceptionCreator")
-final class Target_org_apache_cxf_endpoint_dynamic_TypeClassInitializer$ExceptionCreator {
+@TargetClass(className = "org.apache.cxf.endpoint.dynamic.ExceptionClassGenerator")
+final class Target_org_apache_cxf_endpoint_dynamic_ExceptionClassGenerator {
 
     @Substitute
     public Class<?> createExceptionClass(Class<?> bean) throws ClassNotFoundException {
@@ -154,14 +142,14 @@ final class Target_org_apache_cxf_endpoint_dynamic_TypeClassInitializer$Exceptio
     }
 }
 
-@TargetClass(className = "org.apache.cxf.common.jaxb.JAXBUtils")
-final class Target_org_apache_cxf_common_jaxb_JAXBUtils {
+@TargetClass(className = "org.apache.cxf.common.spi.NamespaceClassGenerator")
+final class Target_org_apache_cxf_common_spi_NamespaceClassGenerator {
     @Alias
     private static Logger LOG = null;
 
     @Substitute
-    private static synchronized Object createNamespaceWrapper(Class<?> mcls, Map<String, String> map) {
-        LOG.info("Substitute JAXBUtils.createNamespaceWrapper");
+    private synchronized Class<?> createNamespaceWrapperClass(Class<?> mcls, Map<String, String> map) {
+        LOG.info("Substitute NamespaceClassGenerator.createNamespaceWrapper");
         Class<?> NamespaceWrapperClass = null;
         Throwable t = null;
         try {
@@ -196,7 +184,7 @@ final class Target_org_apache_cxf_common_jaxb_JAXBUtils {
         }
         if (NamespaceWrapperClass != null) {
             try {
-                return NamespaceWrapperClass.getConstructor(Map.class).newInstance(map);
+                return NamespaceWrapperClass;
             } catch (Exception e) {
                 // ignore
                 t = e;
@@ -309,16 +297,6 @@ final class Target_org_apache_cxf_common_util_ReflectionInvokationHandler {
     @Alias
     private static Object wrapReturn(ReflectionInvokationHandler.WrapReturn wr, Object t) {
         return null;
-    }
-}
-
-//copy fix from graal 20.3 until quarkus move to 20.3
-@TargetClass(java.net.URL.class)
-final class Target_java_net_URL {
-    @Substitute
-    @SuppressWarnings("unused")
-    public static void setURLStreamHandlerFactory(URLStreamHandlerFactory fac) {
-        VMError.unsupportedFeature("Setting a custom URLStreamHandlerFactory.");
     }
 }
 
