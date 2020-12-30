@@ -26,8 +26,7 @@ public class CxfServiceTest {
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)
-                    .addClass(Fruit.class)
-                    .addClass(Banana.class))
+                    .addClass(Fruit.class))
             .withConfigurationResource("application-cxf-server-test.properties");
 
     @Test
@@ -89,12 +88,12 @@ public class CxfServiceTest {
                 +
                 "   <soapenv:Header/>\n" +
                 "   <soapenv:Body>\n" +
-                "      <tem:Add>\n" +
+                "      <tem:add>\n" +
                 "      <fruit>\n" +
                 "      <name>Pineapple</name>\n" +
                 "      <description>Tropical fruit</description>\n" +
                 "      </fruit>\n" +
-                "      </tem:Add>\n" +
+                "      </tem:add>\n" +
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
         String val = "";

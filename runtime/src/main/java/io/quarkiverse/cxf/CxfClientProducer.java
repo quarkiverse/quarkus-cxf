@@ -7,7 +7,20 @@ import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.CDI;
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.Bus;
+import org.apache.cxf.common.spi.GeneratedNamespaceClassLoader;
+import org.apache.cxf.common.spi.NamespaceClassCreator;
+import org.apache.cxf.endpoint.dynamic.ExceptionClassCreator;
+import org.apache.cxf.endpoint.dynamic.ExceptionClassLoader;
+import org.apache.cxf.jaxb.FactoryClassCreator;
+import org.apache.cxf.jaxb.FactoryClassLoader;
+import org.apache.cxf.jaxb.WrapperHelperClassLoader;
+import org.apache.cxf.jaxb.WrapperHelperCreator;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.jaxws.spi.WrapperClassCreator;
+import org.apache.cxf.jaxws.spi.WrapperClassLoader;
+import org.apache.cxf.wsdl.ExtensionClassCreator;
+import org.apache.cxf.wsdl.ExtensionClassLoader;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
@@ -28,9 +41,15 @@ public class CxfClientProducer {
             LOGGER.error("either webservice interface (client) or implementation (server) is mandatory");
             return null;
         }
-
-        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean(new QuarkusClientFactoryBean(cxfClientInfo.getClassNames()));
-
+        QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean(cxfClientInfo.getClassNames());
+        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean(quarkusClientFactoryBean);
+        Bus bus = quarkusClientFactoryBean.getBus(true);
+        bus.setExtension(new WrapperHelperClassLoader(bus), WrapperHelperCreator.class);
+        bus.setExtension(new ExtensionClassLoader(bus), ExtensionClassCreator.class);
+        bus.setExtension(new ExceptionClassLoader(bus), ExceptionClassCreator.class);
+        bus.setExtension(new WrapperClassLoader(bus), WrapperClassCreator.class);
+        bus.setExtension(new FactoryClassLoader(bus), FactoryClassCreator.class);
+        bus.setExtension(new GeneratedNamespaceClassLoader(bus), NamespaceClassCreator.class);
         factory.setServiceClass(seiClass);
         factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
         if (cxfClientInfo.getEpName() != null) {
