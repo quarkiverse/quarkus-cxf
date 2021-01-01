@@ -1341,18 +1341,22 @@ class QuarkusCxfProcessor {
             CxfConfig cxfConfig) {
         String path = null;
 
-        RuntimeValue<CXFServletInfos> infos = recorder.createInfos();
-        for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
-            recorder.registerCXFServlet(infos, cxfWebService.getPath(), cxfWebService.getSei(),
-                    cxfConfig, cxfWebService.getSoapBinding(), cxfWebService.getClassNames(), cxfWebService.getImplementor());
-            if (path == null) {
-                path = cxfWebService.getPath();
-                recorder.setPath(infos, path);
+        if (!cxfWebServices.isEmpty()) {
+            RuntimeValue<CXFServletInfos> infos = recorder.createInfos();
+            for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
+                recorder.registerCXFServlet(infos, cxfWebService.getPath(), cxfWebService.getSei(),
+                        cxfConfig, cxfWebService.getSoapBinding(), cxfWebService.getClassNames(),
+                        cxfWebService.getImplementor());
+                if (path == null) {
+                    path = cxfWebService.getPath();
+                    recorder.setPath(infos, path);
+                }
+            }
+            Handler<RoutingContext> handler = recorder.initServer(infos);
+            if (path != null) {
+                routes.produce(new RouteBuildItem(getMappingPath(path), handler, HandlerType.BLOCKING));
             }
         }
-        Handler<RoutingContext> handler = recorder.initServer(infos);
-
-        routes.produce(new RouteBuildItem(getMappingPath(path), handler, HandlerType.BLOCKING));
     }
 
     @BuildStep
