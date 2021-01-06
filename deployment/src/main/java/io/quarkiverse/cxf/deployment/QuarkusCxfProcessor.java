@@ -255,7 +255,18 @@ class QuarkusCxfProcessor {
             }
             AnnotationValue namespaceVal = annotation.value("targetNamespace");
             String wsNamespace = namespaceVal != null ? namespaceVal.asString() : getNamespaceFromPackage(pkg);
-            String wsName = annotation.value("name") != null ? annotation.value("name").asString() : "";
+            String wsName;
+            if (annotation.value("serviceName") != null) {
+                wsName = annotation.value("serviceName").asString();
+            } else if (implementor != null && !implementor.isEmpty()) {
+                if (implementor.contains(".")) {
+                    wsName = implementor.substring(implementor.lastIndexOf('.') + 1);
+                } else {
+                    wsName = implementor;
+                }
+            } else {
+                wsName = wsClassInfo.simpleName();
+            }
 
             for (MethodInfo mi : wsClassInfo.methods()) {
 
