@@ -2,18 +2,22 @@ package io.quarkiverse.cxf.deployment.test;
 
 import java.util.Objects;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(name = "Fruit")
-@XmlRootElement
-@XmlSeeAlso({ Banana.class })
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "Fruit", propOrder = {
+        "name",
+        "description"
+})
 public class Fruit {
 
+    @XmlElement
     private String name;
 
+    @XmlElement
     private String description;
 
     public Fruit() {
@@ -28,7 +32,6 @@ public class Fruit {
         return name;
     }
 
-    @XmlElement
     public void setName(String name) {
         this.name = name;
     }
@@ -37,7 +40,6 @@ public class Fruit {
         return description;
     }
 
-    @XmlElement
     public void setDescription(String description) {
         this.description = description;
     }

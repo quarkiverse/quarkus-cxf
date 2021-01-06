@@ -8,12 +8,24 @@ import javax.servlet.ServletConfig;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.common.spi.GeneratedNamespaceClassLoader;
+import org.apache.cxf.common.spi.NamespaceClassCreator;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.endpoint.dynamic.ExceptionClassCreator;
+import org.apache.cxf.endpoint.dynamic.ExceptionClassLoader;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.jaxb.FactoryClassCreator;
+import org.apache.cxf.jaxb.FactoryClassLoader;
+import org.apache.cxf.jaxb.WrapperHelperClassLoader;
+import org.apache.cxf.jaxb.WrapperHelperCreator;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.apache.cxf.jaxws.spi.WrapperClassCreator;
+import org.apache.cxf.jaxws.spi.WrapperClassLoader;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.servlet.CXFNonSpringServlet;
+import org.apache.cxf.wsdl.ExtensionClassCreator;
+import org.apache.cxf.wsdl.ExtensionClassLoader;
 import org.jboss.logging.Logger;
 
 import io.quarkus.arc.Unremovable;
@@ -64,6 +76,12 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
             return;
         }
         Bus bus = getBus();
+        bus.setExtension(new WrapperHelperClassLoader(bus), WrapperHelperCreator.class);
+        bus.setExtension(new ExtensionClassLoader(bus), ExtensionClassCreator.class);
+        bus.setExtension(new ExceptionClassLoader(bus), ExceptionClassCreator.class);
+        bus.setExtension(new WrapperClassLoader(bus), WrapperClassCreator.class);
+        bus.setExtension(new FactoryClassLoader(bus), FactoryClassCreator.class);
+        bus.setExtension(new GeneratedNamespaceClassLoader(bus), NamespaceClassCreator.class);
         BusFactory.setDefaultBus(bus);
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
             JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean(

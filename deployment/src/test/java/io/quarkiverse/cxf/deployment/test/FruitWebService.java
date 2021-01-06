@@ -14,9 +14,10 @@ public interface FruitWebService {
     int count();
 
     @WebMethod
-    @RequestWrapper(localName = "Add", targetNamespace = "http://test.deployment.cxf.quarkiverse.io/", className = "io.quarkiverse.cxf.deployment.test.Add")
+    @RequestWrapper(localName = "add", targetNamespace = "http://test.deployment.cxf.quarkiverse.io/", className = "io.quarkiverse.cxf.deployment.test.Add")
     void add(@WebParam(name = "fruit") Fruit fruit);
 
     @WebMethod
-    void delete(@WebParam(name = "fruit") Fruit fruit);
+    @RequestWrapper(localName = "delete", targetNamespace = "http://test.deployment.cxf.quarkiverse.io/", className = "io.quarkiverse.cxf.deployment.test.Delete")
+    void delete(@WebParam(name = "deletedfruit") Fruit fruit);
 }
