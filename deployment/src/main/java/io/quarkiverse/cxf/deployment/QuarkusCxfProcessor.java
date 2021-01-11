@@ -28,7 +28,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerImpl;
 import org.apache.cxf.common.spi.GeneratedClassClassLoaderCapture;
-import org.apache.cxf.service.Service;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.AnnotationValue;
@@ -45,6 +44,7 @@ import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfClientProducer;
 import io.quarkiverse.cxf.CxfConfig;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
@@ -177,6 +177,7 @@ class QuarkusCxfProcessor {
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
             BuildProducer<CxfWebServiceBuildItem> cxfWebServices,
+            BuildProducer<AdditionalBeanBuildItem> additionalBeans,
             BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
         IndexView index = combinedIndexBuildItem.getIndex();
         // Register package-infos for reflection
@@ -189,12 +190,6 @@ class QuarkusCxfProcessor {
         //TODO bad code it is set in loop but use outside...
         ClassOutput classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
         quarkusCapture c = new quarkusCapture(classOutput);
-        //JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean(new QuarkusJaxWsServiceFactoryBean(cxfServletInfos.getWrappersclasses()));
-        //factory.setServiceClass();
-
-        //WrapperHelper wh = new JAXBDataBinding().createWrapperHelper(requestClass, null, partNames, elTypeNames, partClasses);
-        //in runtime part
-        // cl.defineClass(cls.getKey(), cls.getValue());
 
         for (AnnotationInstance annotation : index.getAnnotations(WEBSERVICE_ANNOTATION)) {
             if (annotation.target().kind() != AnnotationTarget.Kind.CLASS) {
@@ -219,7 +214,7 @@ class QuarkusCxfProcessor {
             //TODO here add all class
             try {
                 jaxwsFac.setServiceClass(Thread.currentThread().getContextClassLoader().loadClass(sei));
-                Service service = jaxwsFac.create();
+                jaxwsFac.create();
                 wrapperClassNames.addAll(jaxwsFac.getWrappersClassNames());
             } catch (ClassNotFoundException e) {
                 LOGGER.error("failed to load WS class : " + sei);
@@ -237,6 +232,7 @@ class QuarkusCxfProcessor {
             } else {
                 for (ClassInfo wsClass : implementors) {
                     implementor = wsClass.name().toString();
+                    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(implementor));
                     AnnotationInstance bindingType = wsClass.classAnnotation(BINDING_TYPE_ANNOTATION);
                     if (bindingType != null) {
                         soapBinding = bindingType.value().asString();
