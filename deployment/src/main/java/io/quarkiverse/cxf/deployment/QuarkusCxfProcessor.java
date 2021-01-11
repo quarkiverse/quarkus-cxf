@@ -82,6 +82,7 @@ class QuarkusCxfProcessor {
 
     private static final String FEATURE_CXF = "cxf";
     private static final DotName WEBSERVICE_ANNOTATION = DotName.createSimple("javax.jws.WebService");
+    private static final DotName WEBSERVICE_CLIENT = DotName.createSimple("javax.xml.ws.WebServiceClient");
     private static final DotName WEBMETHOD_ANNOTATION = DotName.createSimple("javax.jws.WebMethod");
     private static final DotName WEBPARAM_ANNOTATION = DotName.createSimple("javax.jws.WebParam");
     private static final DotName WEBRESULT_ANNOTATION = DotName.createSimple("javax.jws.WebResult");
@@ -219,6 +220,17 @@ class QuarkusCxfProcessor {
             } catch (ClassNotFoundException e) {
                 LOGGER.error("failed to load WS class : " + sei);
             }
+            String pkg = wsClassInfo.name().toString();
+            int idx = pkg.lastIndexOf('.');
+            if (idx != -1 && idx < pkg.length() - 1) {
+                pkg = pkg.substring(0, idx);
+            }
+            AnnotationValue namespaceVal = annotation.value("targetNamespace");
+            String wsNamespace = namespaceVal != null ? namespaceVal.asString() : getNamespaceFromPackage(pkg);
+            String wsName = "";
+            if (annotation.value("serviceName") != null) {
+                wsName = annotation.value("serviceName").asString();
+            }
             Collection<ClassInfo> implementors = index.getAllKnownImplementors(DotName.createSimple(sei));
             String implementor = "";
             //TODO add soap1.2 in config file
@@ -232,6 +244,16 @@ class QuarkusCxfProcessor {
             } else {
                 for (ClassInfo wsClass : implementors) {
                     implementor = wsClass.name().toString();
+                    if (implementor.contains(".")) {
+                        wsName = implementor.substring(implementor.lastIndexOf('.') + 1);
+                    } else {
+                        wsName = implementor;
+                    }
+                    AnnotationInstance webserviceClient = wsClass.classAnnotation(WEBSERVICE_CLIENT);
+                    if (webserviceClient != null) {
+                        wsName = webserviceClient.value("name").asString();
+                        wsNamespace = webserviceClient.value("targetNamespace").asString();
+                    }
                     additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(implementor));
                     AnnotationInstance bindingType = wsClass.classAnnotation(BINDING_TYPE_ANNOTATION);
                     if (bindingType != null) {
@@ -243,26 +265,6 @@ class QuarkusCxfProcessor {
 
             proxies.produce(new NativeImageProxyDefinitionBuildItem(wsClassInfo.name().toString(),
                     "javax.xml.ws.BindingProvider", "java.io.Closeable", "org.apache.cxf.endpoint.Client"));
-
-            String pkg = wsClassInfo.name().toString();
-            int idx = pkg.lastIndexOf('.');
-            if (idx != -1 && idx < pkg.length() - 1) {
-                pkg = pkg.substring(0, idx);
-            }
-            AnnotationValue namespaceVal = annotation.value("targetNamespace");
-            String wsNamespace = namespaceVal != null ? namespaceVal.asString() : getNamespaceFromPackage(pkg);
-            String wsName;
-            if (annotation.value("serviceName") != null) {
-                wsName = annotation.value("serviceName").asString();
-            } else if (implementor != null && !implementor.isEmpty()) {
-                if (implementor.contains(".")) {
-                    wsName = implementor.substring(implementor.lastIndexOf('.') + 1);
-                } else {
-                    wsName = implementor;
-                }
-            } else {
-                wsName = wsClassInfo.simpleName();
-            }
 
             for (MethodInfo mi : wsClassInfo.methods()) {
 
