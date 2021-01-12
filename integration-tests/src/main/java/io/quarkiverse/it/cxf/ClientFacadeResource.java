@@ -8,6 +8,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.tempuri.Calculator;
+import org.tempuri.alt.AltCalculatorSoap;
 
 @Path("/rest/clientfacade")
 public class ClientFacadeResource {
@@ -15,9 +16,20 @@ public class ClientFacadeResource {
     @Inject
     Calculator calculatorWS;
 
+    @Inject
+    AltCalculatorSoap altCalculatorWS;
+
     @GET
+    @Path("/multiply")
     @Produces(MediaType.TEXT_PLAIN)
     public int multiply(@QueryParam("a") int a, @QueryParam("b") int b) {
         return calculatorWS.multiply(a, b);
+    }
+
+    @GET
+    @Path("/add")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int add(@QueryParam("a") int a, @QueryParam("b") int b) {
+        return altCalculatorWS.add(a, b);
     }
 }

@@ -90,6 +90,10 @@
                                         <bindingFile>${basedir}/src/main/resources/wsdl/calculator_binding.xml</bindingFile>
                                     </bindingFiles>
                                 </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/main/resources/wsdl/alt_calculator.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/alt_calculator.wsdl</wsdlLocation>
+                                </wsdlOption>
                             </wsdlOptions>
                         </configuration>
                     </execution>
