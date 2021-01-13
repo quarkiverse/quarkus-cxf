@@ -7,14 +7,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.tempuri.Calculator;
+import org.tempuri.CalculatorSoap;
 import org.tempuri.alt.AltCalculatorSoap;
 
 @Path("/rest/clientfacade")
 public class ClientFacadeResource {
 
     @Inject
-    Calculator calculatorWS;
+    CalculatorSoap calculatorWS;
 
     @Inject
     AltCalculatorSoap altCalculatorWS;
