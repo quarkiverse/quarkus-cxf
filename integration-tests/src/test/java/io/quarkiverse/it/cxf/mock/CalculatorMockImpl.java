@@ -8,7 +8,7 @@ import javax.jws.WebService;
  * clients for that interface. Instead we use the
  * {@link WebService#endpointInterface} attribute.
  */
-@WebService(targetNamespace = "http://tempuri.org/", endpointInterface = "org.tempuri.Calculator", serviceName = "Calculator", portName = "CalculatorSoap")
+@WebService(targetNamespace = "http://tempuri.org/", endpointInterface = "org.tempuri.CalculatorSoap", serviceName = "Calculator", portName = "CalculatorSoap")
 public class CalculatorMockImpl {
 
     public int subtract(int intA, int intB) {
