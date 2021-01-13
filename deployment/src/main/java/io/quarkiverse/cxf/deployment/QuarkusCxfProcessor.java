@@ -255,11 +255,6 @@ class QuarkusCxfProcessor {
                     } else {
                         wsName = implementor;
                     }
-                    AnnotationInstance webserviceClient = wsClass.classAnnotation(WEBSERVICE_CLIENT);
-                    if (webserviceClient != null) {
-                        wsName = webserviceClient.value("name").asString();
-                        wsNamespace = webserviceClient.value("targetNamespace").asString();
-                    }
                     additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(implementor));
                     AnnotationInstance bindingType = wsClass.classAnnotation(BINDING_TYPE_ANNOTATION);
                     if (bindingType != null) {
