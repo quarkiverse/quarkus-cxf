@@ -241,6 +241,12 @@ class QuarkusCxfProcessor {
                 generateCxfClientProducer(generatedBeans, seiClientproducerClassName, sei);
                 unremovableBeans.produce(new UnremovableBeanBuildItem(
                         new UnremovableBeanBuildItem.BeanClassNameExclusion(seiClientproducerClassName)));
+
+                AnnotationInstance webserviceClient = findWebServiceClientAnnotation(index, wsClassInfo.name());
+                if (webserviceClient != null) {
+                    wsName = webserviceClient.value("name").asString();
+                    wsNamespace = webserviceClient.value("targetNamespace").asString();
+                }
             } else {
                 for (ClassInfo wsClass : implementors) {
                     implementor = wsClass.name().toString();
@@ -297,6 +303,21 @@ class QuarkusCxfProcessor {
         for (ClassInfo subclass : index.getAllKnownImplementors(DATABINDING)) {
             reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
         }
+    }
+
+    private AnnotationInstance findWebServiceClientAnnotation(IndexView index, DotName seiName) {
+        Collection<AnnotationInstance> annotations = index.getAnnotations(WEBSERVICE_CLIENT);
+        for (AnnotationInstance annotation : annotations) {
+            ClassInfo targetClass = annotation.target().asClass();
+
+            for (MethodInfo method : targetClass.methods()) {
+                if (method.returnType().name().equals(seiName)) {
+                    return annotation;
+                }
+            }
+        }
+
+        return null;
     }
 
     @BuildStep
