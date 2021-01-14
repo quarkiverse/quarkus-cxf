@@ -12,6 +12,9 @@ import org.apache.cxf.common.spi.GeneratedNamespaceClassLoader;
 import org.apache.cxf.common.spi.NamespaceClassCreator;
 import org.apache.cxf.endpoint.dynamic.ExceptionClassCreator;
 import org.apache.cxf.endpoint.dynamic.ExceptionClassLoader;
+import org.apache.cxf.feature.Feature;
+import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxb.FactoryClassCreator;
 import org.apache.cxf.jaxb.FactoryClassLoader;
 import org.apache.cxf.jaxb.WrapperHelperClassLoader;
@@ -19,12 +22,14 @@ import org.apache.cxf.jaxb.WrapperHelperCreator;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.spi.WrapperClassCreator;
 import org.apache.cxf.jaxws.spi.WrapperClassLoader;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.wsdl.ExtensionClassCreator;
 import org.apache.cxf.wsdl.ExtensionClassLoader;
 import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class CxfClientProducer {
+
     private static final Logger LOGGER = Logger.getLogger(CxfClientProducer.class);
 
     public CXFClientInfo getInfo() {
@@ -69,7 +74,7 @@ public class CxfClientProducer {
             factory.setPassword(cxfClientInfo.getPassword());
         }
         for (String feature : cxfClientInfo.getFeatures()) {
-            addToCols(feature, factory.getFeatures());
+            addToCols(feature, factory.getFeatures(), Feature.class);
         }
         for (String inInterceptor : cxfClientInfo.getInInterceptors()) {
             addToCols(inInterceptor, factory.getInInterceptors());
@@ -88,18 +93,28 @@ public class CxfClientProducer {
         return factory.create();
     }
 
-    private <T> void addToCols(String className, List<T> cols) {
-        Class<?> cls;
+    private void addToCols(String className, List<Interceptor<? extends Message>> cols) {
+        /*
+         * We use CastUtils to simplify an unchecked cast from
+         * List<Interceptor<? extends Message>> to List<Interceptor>. For our
+         * purposes this is ok since the parameterization of Interceptor is lost
+         * at runtime anyway and we wouldn't be able enforce it without some
+         * very complicated and very Interceptor-specific reflection code.
+         */
+        addToCols(className, CastUtils.<Interceptor> cast(cols), Interceptor.class);
+    }
+
+    private <T> void addToCols(String className, List<T> cols, Class<T> clazz) {
+        Class<? extends T> cls;
         try {
-            cls = Class.forName(className);
-        } catch (ClassNotFoundException e) {
+            cls = Class.forName(className).asSubclass(clazz);
+        } catch (ClassNotFoundException | ClassCastException e) {
             // silent failed
             return;
         }
         T item = null;
         try {
-            Object o = CDI.current().select(cls).get();
-            item = (T) o;
+            item = CDI.current().select(cls).get();
             if (item != null) {
                 cols.add(item);
             }
@@ -112,12 +127,11 @@ public class CxfClientProducer {
         // if not found with beans just generate it.
 
         try {
-            Object o = cls.getConstructor().newInstance();
-            item = (T) o;
+            item = cls.getConstructor().newInstance();
             if (item != null) {
                 cols.add(item);
             }
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException | RuntimeException e) {
         }
     }
 }
