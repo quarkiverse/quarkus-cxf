@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.servlet.ServletException;
 
 import org.apache.cxf.Bus;
@@ -170,6 +171,10 @@ public class CxfHandler implements Handler<RoutingContext> {
 
     private Object getInstance(String className) {
         Class<?> classObj = loadClass(className);
+        Object res = CDI.current().select(classObj).get();
+        if (res != null) {
+            return res;
+        }
         try {
             return classObj.getConstructor().newInstance();
         } catch (Exception e) {
