@@ -1,5 +1,6 @@
 package io.quarkiverse.it.cxf;
 
+import javax.inject.Inject;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.ws.BindingType;
@@ -8,14 +9,17 @@ import javax.xml.ws.BindingType;
 @BindingType(javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
 public class GreetingWebServiceImpl implements GreetingWebService {
 
+    @Inject
+    public HelloResource helloResource;
+
     @Override
     public String reply(@WebParam(name = "text") String text) {
-        return "Hello " + text;
+        return helloResource.getHello() + text;
     }
 
     @Override
     public String ping(@WebParam(name = "text") String text) {
-        return "Hello " + text;
+        return helloResource.getHello() + text;
     }
 
 }
