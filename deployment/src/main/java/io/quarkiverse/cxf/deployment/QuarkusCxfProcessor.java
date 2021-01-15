@@ -475,7 +475,8 @@ class QuarkusCxfProcessor {
                 new RuntimeInitializedClassBuildItem(
                         "io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeHeapByteBuf"),
                 new RuntimeInitializedClassBuildItem("io.netty.buffer.AbstractReferenceCountedByteBuf"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.staxutils.validation.W3CMultiSchemaFactory"));
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.staxutils.validation.W3CMultiSchemaFactory"),
+                new RuntimeInitializedClassBuildItem("com.sun.xml.bind.v2.runtime.output.FastInfosetStreamWriterOutput"));
     }
 
     @BuildStep

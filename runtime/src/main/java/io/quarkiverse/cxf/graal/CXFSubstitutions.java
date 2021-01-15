@@ -5,15 +5,21 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 
+import org.apache.cxf.annotations.FastInfoset;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.common.util.ReflectionInvokationHandler;
 import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.databinding.WrapperHelper;
+import org.apache.cxf.interceptor.FIStaxInInterceptor;
+import org.apache.cxf.interceptor.FIStaxOutInterceptor;
+import org.apache.cxf.interceptor.InterceptorProvider;
+import org.apache.cxf.service.factory.AnnotationsFactoryBeanListener;
 
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
@@ -298,6 +304,72 @@ final class Target_org_apache_cxf_common_util_ReflectionInvokationHandler {
     private static Object wrapReturn(ReflectionInvokationHandler.WrapReturn wr, Object t) {
         return null;
     }
+}
+
+/**
+ * Verifies if the FastInfoset classes are missing from the classpath. Since
+ * testing all classes would be infeasible, we test the few classes used by
+ * {@link FIStaxInInterceptor} and {@link FIStaxOutInterceptor}, which are
+ * themselves the main users of FastInfoset.
+ */
+class FastInfosetMissing implements BooleanSupplier {
+
+    /**
+     * Used by {@link FIStaxInInterceptor}.
+     */
+    private static final String PARSER_CLASSNAME = "com.sun.xml.fastinfoset.stax.StAXDocumentParser";
+
+    /**
+     * Used by {@link FIStaxOutInterceptor}.
+     */
+    private static final String SERIALIZER_CLASSNAME = "com.sun.xml.fastinfoset.stax.StAXDocumentSerializer";
+
+    @Override
+    public boolean getAsBoolean() {
+        try {
+            Class.forName(PARSER_CLASSNAME);
+        } catch (ClassNotFoundException ex) {
+            return true;
+        }
+
+        try {
+            Class.forName(SERIALIZER_CLASSNAME);
+        } catch (ClassNotFoundException ex) {
+            return true;
+        }
+
+        return false;
+    }
+
+}
+
+/**
+ * Substitutes {@link AnnotationsFactoryBeanListener} when FastInfoset classes
+ * are not found in the classpath.
+ */
+@TargetClass(className = "org.apache.cxf.service.factory.AnnotationsFactoryBeanListener", onlyWith = FastInfosetMissing.class)
+final class Target_org_apache_cxf_service_factory_AnnotationsFactoryBeanListener {
+
+    /**
+     * Substitutes {@link AnnotationsFactoryBeanListener#addFastInfosetSupport}
+     * to throw an exception when FastInfoset support is requested. The original
+     * method creates instances of {@link FIStaxInInterceptor} and
+     * {@link FIStaxOutInterceptor} which make use of FastInfoset's classes and
+     * will break the native compilation when they're not present. This has no
+     * effect when FastInfoset is actually present since this substitution will
+     * not be applied at all in such a case.
+     *
+     * @param provider
+     * @param annotation
+     */
+    @Substitute
+    private void addFastInfosetSupport(InterceptorProvider provider, FastInfoset annotation) {
+        if (annotation != null) {
+            throw new UnsupportedOperationException(
+                    "FastInfoset support was requested but its classes are not present in the classpath.");
+        }
+    }
+
 }
 
 public class CXFSubstitutions {
