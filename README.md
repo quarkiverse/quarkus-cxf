@@ -265,7 +265,7 @@ public class MySoapClient {
 
 ## Native Mode Limitations
 
-- The native mode is currently in beta (java 8 and java 11 are both supported). Kindly open an issue if you have an issue.
+- The native mode is supported (java 8 and java 11 are both supported).
 
 ## Advanced configuration
 
