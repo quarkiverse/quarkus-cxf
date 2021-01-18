@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,14 +13,11 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.cxf.Bus;
@@ -37,7 +33,6 @@ import org.jboss.jandex.IndexView;
 import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 import org.jboss.logging.Logger;
-import org.objectweb.asm.ClassWriter;
 
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFRecorder;
@@ -50,7 +45,6 @@ import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
-import io.quarkus.arc.processor.BeanInfo;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -83,28 +77,15 @@ class QuarkusCxfProcessor {
     private static final String FEATURE_CXF = "cxf";
     private static final DotName WEBSERVICE_ANNOTATION = DotName.createSimple("javax.jws.WebService");
     private static final DotName WEBSERVICE_CLIENT = DotName.createSimple("javax.xml.ws.WebServiceClient");
-    private static final DotName WEBMETHOD_ANNOTATION = DotName.createSimple("javax.jws.WebMethod");
-    private static final DotName WEBPARAM_ANNOTATION = DotName.createSimple("javax.jws.WebParam");
-    private static final DotName WEBRESULT_ANNOTATION = DotName.createSimple("javax.jws.WebResult");
     private static final DotName REQUEST_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.RequestWrapper");
     private static final DotName RESPONSE_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.ResponseWrapper");
-    private static final DotName SOAPBINDING_ANNOTATION = DotName.createSimple("javax.jws.soap.SOAPBinding");
-    private static final DotName WEBFAULT_ANNOTATION = DotName.createSimple("javax.jws.WebFault");
     private static final DotName ABSTRACT_FEATURE = DotName.createSimple("org.apache.cxf.feature.AbstractFeature");
     private static final DotName ABSTRACT_INTERCEPTOR = DotName.createSimple("org.apache.cxf.phase.AbstractPhaseInterceptor");
     private static final DotName DATABINDING = DotName.createSimple("org.apache.cxf.databinding");
     private static final DotName BINDING_TYPE_ANNOTATION = DotName.createSimple("javax.xml.ws.BindingType");
     private static final DotName XML_NAMESPACE = DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace");
     private static final DotName XML_SEE_ALSO = DotName.createSimple("javax.xml.bind.annotation.XmlSeeAlso");
-    private static final DotName XML_ELEMENT_REF = DotName.createSimple("javax.xml.bind.annotation.XmlElementRef");
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
-    private static final List<Class<? extends Annotation>> JAXB_ANNOTATIONS = Arrays.asList(
-            XmlList.class,
-            XmlAttachmentRef.class,
-            XmlJavaTypeAdapter.class,
-            XmlMimeType.class,
-            XmlElement.class,
-            XmlElementWrapper.class);
 
     @BuildStep
     public void generateWSDL(BuildProducer<NativeImageResourceBuildItem> ressources,
@@ -115,8 +96,6 @@ class QuarkusCxfProcessor {
             }
         }
     }
-
-    private static final String RESPONSE_CLASS_POSTFIX = "Response";
 
     private String getNamespaceFromPackage(String pkg) {
         //TODO XRootElement then XmlSchema then derived of package
@@ -134,12 +113,9 @@ class QuarkusCxfProcessor {
 
     @BuildStep
     void markBeansAsUnremovable(BuildProducer<UnremovableBeanBuildItem> unremovables) {
-        unremovables.produce(new UnremovableBeanBuildItem(new Predicate<BeanInfo>() {
-            @Override
-            public boolean test(BeanInfo beanInfo) {
-                String nameWithPackage = beanInfo.getBeanClass().local();
-                return nameWithPackage.contains(".jaxws_asm") || nameWithPackage.endsWith("ObjectFactory");
-            }
+        unremovables.produce(new UnremovableBeanBuildItem(beanInfo -> {
+            String nameWithPackage = beanInfo.getBeanClass().local();
+            return nameWithPackage.contains(".jaxws_asm") || nameWithPackage.endsWith("ObjectFactory");
         }));
         Set<String> extensibilities = new HashSet<>(Arrays.asList(
                 "io.quarkiverse.cxf.AddressTypeExtensibility",
@@ -152,7 +128,7 @@ class QuarkusCxfProcessor {
     }
 
     class quarkusCapture implements GeneratedClassClassLoaderCapture {
-        private ClassOutput classOutput;
+        private final ClassOutput classOutput;
 
         quarkusCapture(ClassOutput classOutput) {
             this.classOutput = classOutput;
@@ -161,7 +137,6 @@ class QuarkusCxfProcessor {
 
         @Override
         public void capture(String name, byte[] bytes) {
-            ClassWriter file = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
             classOutput.getSourceWriter(name);
             LOGGER.warn("capture generation of " + name);
             classOutput.write(name, bytes);
@@ -269,7 +244,7 @@ class QuarkusCxfProcessor {
 
             for (MethodInfo mi : wsClassInfo.methods()) {
 
-                String fullClassName = null;
+                String fullClassName;
                 AnnotationInstance requestWrapperAnnotation = mi.annotation(REQUEST_WRAPPER_ANNOTATION);
                 if (requestWrapperAnnotation != null) {
                     AnnotationValue classNameValue = requestWrapperAnnotation.value("className");
@@ -341,7 +316,11 @@ class QuarkusCxfProcessor {
             if (startRoute) {
                 Handler<RoutingContext> handler = recorder.initServer(infos);
                 if (path != null) {
-                    routes.produce(new RouteBuildItem(getMappingPath(path), handler, HandlerType.BLOCKING));
+                    routes.produce(new RouteBuildItem.Builder()
+                            .route(getMappingPath(path))
+                            .handler(handler)
+                            .handlerType(HandlerType.BLOCKING)
+                            .build());
                 }
             }
         }
@@ -387,10 +366,10 @@ class QuarkusCxfProcessor {
                         String[] cols = line.split(":");
                         //org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
                         if (cols.length > 1) {
-                            if (cols[0] != "") {
+                            if (!"".equals(cols[0])) {
                                 reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[0]));
                             }
-                            if (cols[1] != "") {
+                            if (!"".equals(cols[1])) {
                                 reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[1]));
                             }
                         }
