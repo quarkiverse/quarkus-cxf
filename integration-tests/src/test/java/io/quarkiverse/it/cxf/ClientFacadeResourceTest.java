@@ -10,9 +10,6 @@ import java.util.List;
 
 import javax.xml.ws.Endpoint;
 
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.transport.http_jetty.JettyHTTPServerEngineFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,9 +25,7 @@ class ClientFacadeResourceTest {
 
     @BeforeAll
     public static void setUpClass() throws GeneralSecurityException, IOException {
-        Bus defaultBus = BusFactory.getDefaultBus();
-        new JettyHTTPServerEngineFactory(defaultBus).createJettyHTTPServerEngine(9000, "http");
-
+        // server functionality automatically added by the "cxf-rt-transports-http-netty-server" jar
         String address = "http://localhost:9000/mockCalculator";
         CalculatorMockImpl implementor = new CalculatorMockImpl();
 
