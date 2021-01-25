@@ -244,17 +244,16 @@ class QuarkusCxfProcessor {
 
             for (MethodInfo mi : wsClassInfo.methods()) {
 
-                String fullClassName;
                 AnnotationInstance requestWrapperAnnotation = mi.annotation(REQUEST_WRAPPER_ANNOTATION);
                 if (requestWrapperAnnotation != null) {
                     AnnotationValue classNameValue = requestWrapperAnnotation.value("className");
-                    fullClassName = classNameValue.asString();
+                    String fullClassName = classNameValue.asString();
                     reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, fullClassName));
                 }
                 AnnotationInstance responseWrapperAnnotation = mi.annotation(RESPONSE_WRAPPER_ANNOTATION);
                 if (responseWrapperAnnotation != null) {
                     AnnotationValue classNameValue = responseWrapperAnnotation.value("className");
-                    fullClassName = classNameValue.asString();
+                    String fullClassName = classNameValue.asString();
                     reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, fullClassName));
                 }
             }
