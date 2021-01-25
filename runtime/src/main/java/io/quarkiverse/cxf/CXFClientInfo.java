@@ -13,21 +13,21 @@ import io.quarkus.arc.Unremovable;
 @Unremovable
 public class CXFClientInfo {
     private String sei;
-    private String endpointAddress;
-    private String wsdlUrl;
-    private String soapBinding;
-    private String wsNamespace;
-    private String wsName;
-    private String epNamespace;
-    private String epName;
-    private String username;
-    private String password;
-    private List<String> inInterceptors;
-    private List<String> outInterceptors;
-    private List<String> outFaultInterceptors;
-    private List<String> inFaultInterceptors;
-    private List<String> features;
-    private List<String> classNames;
+    private final String endpointAddress;
+    private final String wsdlUrl;
+    private final String soapBinding;
+    private final String wsNamespace;
+    private final String wsName;
+    private final String epNamespace;
+    private final String epName;
+    private final String username;
+    private final String password;
+    private final List<String> inInterceptors;
+    private final List<String> outInterceptors;
+    private final List<String> outFaultInterceptors;
+    private final List<String> inFaultInterceptors;
+    private final List<String> features;
+    private final List<String> classNames;
     private static final Logger LOGGER = Logger.getLogger(CXFClientInfo.class);
 
     public CXFClientInfo(String sei, String endpointAddress, String wsdlUrl, String soapBinding, String wsNamespace,

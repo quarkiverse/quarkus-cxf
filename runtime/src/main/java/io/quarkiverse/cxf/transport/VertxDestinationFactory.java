@@ -12,7 +12,7 @@ import org.apache.cxf.transport.http.DestinationRegistry;
 
 public class VertxDestinationFactory extends SoapTransportFactory implements DestinationFactory {
 
-    protected DestinationRegistry registry;
+    protected final DestinationRegistry registry;
 
     protected VertxDestinationFactory(DestinationRegistry registry) {
         super();
