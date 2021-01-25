@@ -13,6 +13,7 @@ public class QuarkusClientFactoryBean extends ClientFactoryBean {
         super(new QuarkusJaxWsServiceFactoryBean(classNames));
     }
 
+    @Override
     public void setServiceClass(Class<?> serviceClass) {
         super.setServiceClass(serviceClass);
         if (((JaxWsServiceFactoryBean) this.getServiceFactory()).getJaxWsImplementorInfo() == null) {
@@ -22,6 +23,7 @@ public class QuarkusClientFactoryBean extends ClientFactoryBean {
 
     }
 
+    @Override
     protected SoapBindingConfiguration createSoapBindingConfig() {
         JaxWsSoapBindingConfiguration bc = new JaxWsSoapBindingConfiguration(
                 (JaxWsServiceFactoryBean) this.getServiceFactory());
@@ -32,6 +34,7 @@ public class QuarkusClientFactoryBean extends ClientFactoryBean {
         return bc;
     }
 
+    @Override
     public void setBindingId(String bind) {
         if (!"http://schemas.xmlsoap.org/wsdl/soap/http".equals(bind)
                 && !"http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true".equals(bind)) {

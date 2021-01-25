@@ -39,7 +39,6 @@ import io.vertx.ext.web.RoutingContext;
 public class CxfHandler implements Handler<RoutingContext> {
     private static final Logger LOGGER = Logger.getLogger(CxfHandler.class);
     private static final String ALLOWED_METHODS = "POST, GET, PUT, DELETE, HEAD, OPTIONS, TRACE";
-    private static final String QUERY_PARAM_FORMAT = "format";
     private ServiceListGeneratorServlet serviceListGeneratorServlet;
     private Bus bus;
     private ClassLoader loader;
@@ -145,16 +144,6 @@ public class CxfHandler implements Handler<RoutingContext> {
         }
     }
 
-    private String combinePath(String path, String relativePath) {
-        if (path.endsWith("/") && relativePath.startsWith("/")) {
-            return path.substring(0, path.length() - 1) + relativePath;
-        } else if (path.endsWith("/") || relativePath.startsWith("/")) {
-            return path + relativePath;
-        } else {
-            return path + "/" + relativePath;
-        }
-    }
-
     private Class<?> loadClass(String className) {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className);
@@ -177,7 +166,7 @@ public class CxfHandler implements Handler<RoutingContext> {
         }
         try {
             return classObj.getConstructor().newInstance();
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException | RuntimeException e) {
             return null;
         }
     }

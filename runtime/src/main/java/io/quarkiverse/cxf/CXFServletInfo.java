@@ -6,19 +6,19 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 public class CXFServletInfo {
-    private String relativePath;
-    private String path;
-    private String className;
-    private List<String> inInterceptors;
-    private List<String> outInterceptors;
-    private List<String> outFaultInterceptors;
-    private List<String> inFaultInterceptors;
-    private List<String> features;
-    private String sei;
-    private String wsdlPath;
-    private String soapBinding;
-    private List<String> wrapperClassNames;
-    private String endpointUrl;
+    private final String relativePath;
+    private final String path;
+    private final String className;
+    private final List<String> inInterceptors;
+    private final List<String> outInterceptors;
+    private final List<String> outFaultInterceptors;
+    private final List<String> inFaultInterceptors;
+    private final List<String> features;
+    private final String sei;
+    private final String wsdlPath;
+    private final String soapBinding;
+    private final List<String> wrapperClassNames;
+    private final String endpointUrl;
 
     private static final Logger LOGGER = Logger.getLogger(CXFServletInfo.class);
 

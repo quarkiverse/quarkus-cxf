@@ -19,18 +19,22 @@ public class QuarkusJAXBBeanInfo implements JAXBBeanInfo {
         this.qname = qname;
     }
 
+    @Override
     public boolean isElement() {
-        return el == null ? false : true;
+        return el != null;
     }
 
+    @Override
     public Collection<QName> getTypeNames() {
         return Collections.singletonList(typeName);
     }
 
+    @Override
     public String getElementNamespaceURI(Object object) {
         return qname.getNamespaceURI();
     }
 
+    @Override
     public String getElementLocalName(Object object) {
         return qname.getLocalPart();
     }

@@ -45,6 +45,7 @@ public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
         super(new QuarkusClientFactoryBean(classNames));
     }
 
+    @Override
     protected String getConfiguredName() {
         QName name = getEndpointName();
         if (name == null) {
@@ -60,6 +61,7 @@ public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
      *
      * @param h a <code>List</code> of <code>Handler</code> objects
      */
+    @Override
     public void setHandlers(@SuppressWarnings("rawtypes") List<Handler> h) {
         handlers.clear();
         handlers.addAll(h);
@@ -71,14 +73,17 @@ public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
      * @return a <code>List</code> of <code>Handler</code> objects
      */
     @SuppressWarnings("rawtypes")
+    @Override
     public List<Handler> getHandlers() {
         return handlers;
     }
 
+    @Override
     public void setLoadHandlers(boolean b) {
         loadHandlers = b;
     }
 
+    @Override
     public boolean isLoadHandlers() {
         return loadHandlers;
     }

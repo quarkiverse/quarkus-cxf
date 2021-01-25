@@ -20,7 +20,7 @@ import io.vertx.core.http.HttpServerResponse;
 
 public class VertxServletOutputStream extends ServletOutputStream {
 
-    private HttpServerRequest request;
+    private final HttpServerRequest request;
     protected HttpServerResponse response;
     private ByteBuf pooledBuffer;
     private long written;
@@ -34,8 +34,10 @@ public class VertxServletOutputStream extends ServletOutputStream {
     private ByteArrayOutputStream overflow;
 
     /**
-     * Construct a new instance. No write timeout is configured.
+     * Construct a new instance.No write timeout is configured.
      *
+     * @param request
+     * @param response
      */
     public VertxServletOutputStream(HttpServerRequest request, HttpServerResponse response) {
         this.response = response;
@@ -45,6 +47,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final int b) throws IOException {
         write(new byte[] { (byte) b }, 0, 1);
     }
@@ -52,6 +55,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final byte[] b) throws IOException {
         write(b, 0, b.length);
     }
@@ -59,6 +63,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void write(final byte[] b, final int off, final int len) throws IOException {
         if (len < 1) {
             return;
@@ -85,7 +90,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
                     writeBlocking(tmpBuf, false);
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             if (buffer != null && buffer.refCnt() > 0) {
                 buffer.release();
             }
@@ -144,7 +149,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
                         request.response().write(createBuffer(data));
                     }
                 }
-            } catch (Exception e) {
+            } catch (IOException | RuntimeException e) {
                 if (data != null && data.refCnt() > 0) {
                     data.release();
                 }
@@ -185,23 +190,20 @@ public class VertxServletOutputStream extends ServletOutputStream {
     private void registerDrainHandler() {
         if (!drainHandlerRegistered) {
             drainHandlerRegistered = true;
-            Handler<Void> handler = new Handler<Void>() {
-                @Override
-                public void handle(Void event) {
-                    HttpConnection connection = request.connection();
-                    synchronized (connection) {
-                        if (waitingForDrain) {
-                            connection.notifyAll();
-                        }
-                        if (overflow != null) {
-                            if (overflow.size() > 0) {
-                                if (closed) {
-                                    request.response().end(Buffer.buffer(overflow.toByteArray()));
-                                } else {
-                                    request.response().write(Buffer.buffer(overflow.toByteArray()));
-                                }
-                                overflow.reset();
+            Handler<Void> handler = event -> {
+                HttpConnection connection = request.connection();
+                synchronized (connection) {
+                    if (waitingForDrain) {
+                        connection.notifyAll();
+                    }
+                    if (overflow != null) {
+                        if (overflow.size() > 0) {
+                            if (closed) {
+                                request.response().end(Buffer.buffer(overflow.toByteArray()));
+                            } else {
+                                request.response().write(Buffer.buffer(overflow.toByteArray()));
                             }
+                            overflow.reset();
                         }
                     }
                 }
@@ -222,6 +224,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void flush() throws IOException {
         if (closed) {
             throw new IOException("Stream is closed");
@@ -231,7 +234,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
                 writeBlocking(pooledBuffer, false);
                 pooledBuffer = null;
             }
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             if (pooledBuffer != null) {
                 pooledBuffer.release();
                 pooledBuffer = null;
@@ -243,12 +246,13 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void close() throws IOException {
         if (closed)
             return;
         try {
             writeBlocking(pooledBuffer, true);
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             throw new IOException(e);
         } finally {
             closed = true;

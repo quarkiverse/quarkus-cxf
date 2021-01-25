@@ -1,5 +1,7 @@
 package io.quarkiverse.cxf;
 
+import java.util.Objects;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -28,7 +30,7 @@ public class CXFClientInfos {
 
     public CXFClientInfo getClientInfoBySei(String sei) {
         for (CXFClientInfo clientInfo : cxfClientInfos) {
-            if (clientInfo.getSei() == sei) {
+            if (Objects.equals(clientInfo.getSei(), sei)) {
                 return clientInfo;
             }
         }

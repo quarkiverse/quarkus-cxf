@@ -6,7 +6,6 @@ import java.util.List;
 import javax.inject.Singleton;
 import javax.servlet.ServletConfig;
 
-import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.spi.GeneratedNamespaceClassLoader;
 import org.apache.cxf.common.spi.NamespaceClassCreator;
@@ -35,6 +34,7 @@ import io.quarkus.arc.Unremovable;
 public class CXFQuarkusServlet extends CXFNonSpringServlet {
 
     private static final Logger LOGGER = Logger.getLogger(CXFQuarkusServlet.class);
+    private static final long serialVersionUID = 1371666057918777501L;
 
     public CXFQuarkusServlet() {
     }
@@ -57,7 +57,7 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
         Class<?> classObj = loadClass(className);
         try {
             return classObj.getConstructor().newInstance();
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException | RuntimeException e) {
             return null;
         }
     }
@@ -75,7 +75,6 @@ public class CXFQuarkusServlet extends CXFNonSpringServlet {
             LOGGER.warn("no info transmit to servlet");
             return;
         }
-        Bus bus = getBus();
         bus.setExtension(new WrapperHelperClassLoader(bus), WrapperHelperCreator.class);
         bus.setExtension(new ExtensionClassLoader(bus), ExtensionClassCreator.class);
         bus.setExtension(new ExceptionClassLoader(bus), ExceptionClassCreator.class);
