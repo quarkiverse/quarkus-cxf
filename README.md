@@ -15,7 +15,7 @@ This extension enables you to develop web services that consume and produce SOAP
   - [Configuration](#configuration)
   - [Creating a SOAP Web service](#creating-a-soap-web-service)
   - [Creating a SOAP Client](#creating-a-soap-client)
-  - [Native Mode Limitations](#native-mode-limitations)
+  - [Native Mode Support](#native-mode-support)
 
 
 ## Contributors ✨
@@ -249,12 +249,12 @@ public class MySoapClient {
 }
 ```
 
-If MySoapClient is not handled by the container but is instantiated by a main you have to use:
+If MySoapClient is not instantiated by the container and instead by a main then you have to use:
 
 ```java
 public class MySoapClient {
 
-    FruitWebService clientService = CDI.current().select(FruitWebService.class).get();;
+    FruitWebService clientService = CDI.current().select(FruitWebService.class).get();
 
     public int getCount() {
         return clientService.count();
@@ -263,22 +263,22 @@ public class MySoapClient {
 ```
 
 
-## Native Mode Limitations
+## Native Mode Support
 
-- The native mode is supported (java 8 and java 11 are both supported).
+- Native mode is currently supported for both Java 8 and Java 11.
 
-## Advanced configuration
 
-Interceptors and features can be added to client/server thanks to :
-- annotation
-- configuration file
+## Advanced CXF configurations
 
-On cxf website,a full list of [Cxf embeded interceptors](https://cxf.apache.org/docs/interceptors.html) and [Cxf embeded features](https://cxf.apache.org/docs/featureslist.html) are available,
-but you can implement a custom one.
+[CXF interceptors](https://cxf.apache.org/docs/interceptors.html) and [CXF features](https://cxf.apache.org/docs/featureslist.html) can be added to both your client or server using either:
+- annotations
+- `application.properties` configurations
+
+While CXF provides a number of out of the box embedded interceptors and features, you can also integrate your custom developed implementations. 
 
 ### Annotation
 
-Annotations can be put on the service interface or implementor class.
+Annotations can be used on either the service interface or implementor classes.
 
 ```java
 @org.apache.cxf.feature.Features (features = {"org.apache.cxf.feature.LoggingFeature"})
@@ -296,12 +296,12 @@ public class SayHiImplementation implements SayHi {
 }
 ```
 
-
 ### Configuration
 
-Else, you can use quarkus configuration file.
-Feature and interceptor will be try with CDI first and if no bean found,
-the constructor with no param will be used.
+You may also define your configurations in the `application.properties` file.
+
+Both feature and interceptor classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.
+
 ```properties
 quarkus.cxf.endpoint."/greeting".features=org.apache.cxf.feature.LoggingFeature
 quarkus.cxf.endpoint."/greeting".in-interceptors=com.example.MyInterceptor
