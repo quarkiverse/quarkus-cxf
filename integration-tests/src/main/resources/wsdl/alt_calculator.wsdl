@@ -188,10 +188,10 @@
   </wsdl:binding>
   <wsdl:service name="AltCalculator">
     <wsdl:port name="CalculatorSoap" binding="tns:CalculatorSoap">
-      <soap:address location="http://www.dneonline.com/calculator.asmx"/>
+      <soap:address location="http://example.org/calculator.asmx"/>
     </wsdl:port>
     <wsdl:port name="CalculatorSoap12" binding="tns:CalculatorSoap12">
-      <soap12:address location="http://www.dneonline.com/calculator.asmx"/>
+      <soap12:address location="http://example.org/calculator.asmx"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

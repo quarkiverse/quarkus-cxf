@@ -3,44 +3,14 @@ package io.quarkiverse.it.cxf;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.ws.Endpoint;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.it.cxf.mock.AltCalculatorMockImpl;
-import io.quarkiverse.it.cxf.mock.CalculatorMockImpl;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@QuarkusTestResource(value = MockWSTestResource.class)
 class ClientFacadeResourceTest {
-
-    private static final List<Endpoint> ENDPOINTS = new ArrayList<>();
-
-    @BeforeAll
-    public static void setUpClass() throws GeneralSecurityException, IOException {
-        // server functionality automatically added by the "cxf-rt-transports-http-netty-server" jar
-        String address = "http://localhost:9000/mockCalculator";
-        CalculatorMockImpl implementor = new CalculatorMockImpl();
-
-        String altAddress = "http://localhost:9000/mockAltCalculator";
-        AltCalculatorMockImpl altImplementor = new AltCalculatorMockImpl();
-
-        ENDPOINTS.add(Endpoint.publish(address, implementor));
-        ENDPOINTS.add(Endpoint.publish(altAddress, altImplementor));
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-        ENDPOINTS.forEach(
-                Endpoint::stop);
-    }
 
     @Test
     public void testMultiply() {
