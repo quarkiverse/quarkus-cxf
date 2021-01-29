@@ -4,15 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import javax.servlet.ServletException;
-
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
-import io.undertow.servlet.api.DeploymentManager;
-import io.undertow.servlet.core.ManagedServlet;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
@@ -120,18 +116,6 @@ public class CXFRecorder {
     public RuntimeValue<CXFServletInfos> createInfos() {
         CXFServletInfos infos = new CXFServletInfos();
         return new RuntimeValue<>(infos);
-    }
-
-    public void initServlet(DeploymentManager deploymentMgr, RuntimeValue<CXFServletInfos> infos) {
-        ManagedServlet managedServlet = deploymentMgr.getDeployment().getServlets()
-                .getManagedServlet("org.apache.cxf.transport.servlet.CXFNonSpringServlet");
-        try {
-            if (managedServlet != null) {
-                CXFQuarkusServlet servlet = (CXFQuarkusServlet) managedServlet.getServlet().getInstance();
-                servlet.build(infos.getValue());
-            }
-        } catch (ServletException e) {
-        }
     }
 
     public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos) {
