@@ -10,7 +10,7 @@ import org.tempuri.alt.AltCalculatorSoap;
  * clients for that interface. Instead we use the
  * {@link WebService#endpointInterface} attribute.
  */
-@WebService(targetNamespace = "http://alt.tempuri.org/", endpointInterface = "org.tempuri.alt.AltCalculatorSoap", serviceName = "AltCalculator", portName = "AltCalculatorSoap")
+@WebService(targetNamespace = "http://alt.tempuri.org/", wsdlLocation = "classpath:wsdl/alt_calculator.wsdl", endpointInterface = "org.tempuri.alt.AltCalculatorSoap", serviceName = "AltCalculator", portName = "CalculatorSoap")
 public class AltCalculatorMockImpl {
 
     public int subtract(int intA, int intB) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- taken verbatim from http://www.dneonline.com/calculator.asmx?wsdl -->
+<!-- except for endpoints, changed to prevent accidental invocations -->
 <wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
@@ -188,10 +189,10 @@
   </wsdl:binding>
   <wsdl:service name="Calculator">
     <wsdl:port name="CalculatorSoap" binding="tns:CalculatorSoap">
-      <soap:address location="http://www.dneonline.com/calculator.asmx"/>
+      <soap:address location="http://example.org/calculator.asmx"/>
     </wsdl:port>
     <wsdl:port name="CalculatorSoap12" binding="tns:CalculatorSoap12">
-      <soap12:address location="http://www.dneonline.com/calculator.asmx"/>
+      <soap12:address location="http://example.org/calculator.asmx"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
