@@ -38,7 +38,8 @@ public class CXFRecorder {
                                 : endpointAddress + "/" + relativePath;
                     }
 
-                    CXFClientInfo cfg = new CXFClientInfo(sei,
+                    CXFClientInfo cfg = new CXFClientInfo();
+                    cfg.init(sei,
                             endpointAddress,
                             cxfEndPointConfig.wsdlPath.orElse(null),
                             soapBinding,
