@@ -309,3 +309,11 @@ quarkus.cxf.endpoint."/greeting".out-interceptors=com.example.MyInterceptor
 quarkus.cxf.endpoint."/greeting".in-fault-interceptors=com.example.MyInterceptor
 quarkus.cxf.endpoint."/greeting".out-fault-interceptors=com.example.MyInterceptor
 ```
+
+#### Basic Auth
+Basic auth is supported by default. Just add the following properties to `application.properties` file
+
+```properties
+quarkus.cxf.endpoint."/greeting".username=user
+quarkus.cxf.endpoint."/greeting".password=password
+```
