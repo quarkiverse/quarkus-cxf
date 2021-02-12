@@ -107,7 +107,7 @@ public class CxfClientProducer {
     private <T> void addToCols(String className, List<T> cols, Class<T> clazz) {
         Class<? extends T> cls;
         try {
-            cls = Class.forName(className).asSubclass(clazz);
+            cls = Class.forName(className, false, Thread.currentThread().getContextClassLoader()).asSubclass(clazz);
         } catch (ClassNotFoundException | ClassCastException e) {
             // silent failed
             return;
