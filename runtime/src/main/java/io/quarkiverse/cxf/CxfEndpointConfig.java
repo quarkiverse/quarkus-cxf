@@ -28,6 +28,12 @@ public class CxfEndpointConfig {
     public Optional<String> clientEndpointUrl;
 
     /**
+     * Specifies whether the clientEndpointUrl is an absolute url
+     */
+    @ConfigItem
+    public Optional<Boolean> clientEndpointAbsoluteUrl;
+
+    /**
      * The server endpoint url
      */
     @ConfigItem

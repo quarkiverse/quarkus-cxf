@@ -30,7 +30,8 @@ public class CXFRecorder {
                 String cfgSei = cxfEndPointConfig.serviceInterface.get();
                 if (cfgSei.equals(sei)) {
                     String endpointAddress = cxfEndPointConfig.clientEndpointUrl.orElse("http://localhost:8080");
-                    if (!relativePath.equals("/") && !relativePath.equals("")) {
+                    boolean clientEndpointAbsoluteUrl = cxfEndPointConfig.clientEndpointAbsoluteUrl.orElse(false);
+                    if (!clientEndpointAbsoluteUrl && !relativePath.equals("/") && !relativePath.equals("")) {
                         endpointAddress = endpointAddress.endsWith("/")
                                 ? endpointAddress.substring(0, endpointAddress.length() - 1)
                                 : endpointAddress;
