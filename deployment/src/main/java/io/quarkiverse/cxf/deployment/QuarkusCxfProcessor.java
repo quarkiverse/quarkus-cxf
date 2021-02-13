@@ -64,7 +64,6 @@ import io.quarkus.gizmo.FieldCreator;
 import io.quarkus.gizmo.MethodCreator;
 import io.quarkus.gizmo.MethodDescriptor;
 import io.quarkus.gizmo.ResultHandle;
-import io.quarkus.jaxb.deployment.JaxbFileRootBuildItem;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.vertx.http.deployment.DefaultRouteBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
@@ -149,7 +148,6 @@ class QuarkusCxfProcessor {
             CxfBuildTimeConfig cxfBuildTimeConfig,
             BuildProducer<FeatureBuildItem> feature,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
-            BuildProducer<JaxbFileRootBuildItem> forceJaxb,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
             BuildProducer<CxfWebServiceBuildItem> cxfWebServices,
@@ -162,7 +160,6 @@ class QuarkusCxfProcessor {
                     new ReflectiveClassBuildItem(true, true, xmlNamespaceInstance.target().asClass().name().toString()));
         }
 
-        forceJaxb.produce(new JaxbFileRootBuildItem("."));
         //TODO bad code it is set in loop but use outside...
         ClassOutput classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
         quarkusCapture c = new quarkusCapture(classOutput);
