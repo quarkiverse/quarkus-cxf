@@ -109,6 +109,7 @@
             </activation>
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
+                <quarkus.native.report-errors-at-runtime>true</quarkus.native.report-errors-at-runtime>
             </properties>
             <build>
                 <plugins>
