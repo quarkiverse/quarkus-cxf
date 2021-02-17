@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.ServletException;
 
@@ -160,9 +161,10 @@ public class CxfHandler implements Handler<RoutingContext> {
 
     private Object getInstance(String className) {
         Class<?> classObj = loadClass(className);
-        Object res = CDI.current().select(classObj).get();
-        if (res != null) {
-            return res;
+        try {
+            return CDI.current().select(classObj).get();
+        } catch (UnsatisfiedResolutionException e) {
+            //silent fail
         }
         try {
             return classObj.getConstructor().newInstance();
