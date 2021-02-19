@@ -18,7 +18,7 @@ public class CXFRecorder {
 
     public Supplier<CXFClientInfo> cxfClientInfoSupplier(String sei, CxfConfig cxfConfig,
             String soapBinding, String wsNamespace, String wsName, List<String> classNames) {
-        LOGGER.warn("recorder CXFClientInfoSupplier");
+        LOGGER.trace("recorder CXFClientInfoSupplier");
         return () -> {
             // TODO suboptimal process. migrate to hashmap and get instead of loop
             for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
@@ -107,7 +107,7 @@ public class CXFRecorder {
                         cfg.getFeatures().addAll(cxfEndPointConfig.features.get());
                     }
 
-                    LOGGER.info("register CXF Servlet info");
+                    LOGGER.trace("register CXF Servlet info");
                     infos.add(cfg);
                 }
             }
@@ -120,7 +120,7 @@ public class CXFRecorder {
     }
 
     public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos) {
-        LOGGER.info("init server");
+        LOGGER.trace("init server");
         return new CxfHandler(infos.getValue());
     }
 

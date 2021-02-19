@@ -19,7 +19,7 @@ public class CXFClientInfos {
     private final Instance<CXFClientInfo> cxfClientInfos;
 
     public CXFClientInfos(@Any Instance<CXFClientInfo> cxfClientInfos) {
-        LOGGER.warn("new CXFClientInfos");
+        LOGGER.trace("new CXFClientInfos");
         this.cxfClientInfos = cxfClientInfos;
     }
 

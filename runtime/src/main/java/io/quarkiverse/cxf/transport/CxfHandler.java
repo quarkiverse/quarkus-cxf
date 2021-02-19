@@ -61,7 +61,7 @@ public class CxfHandler implements Handler<RoutingContext> {
     }
 
     public CxfHandler(CXFServletInfos cxfServletInfos) {
-        LOGGER.info("CxfHandler created");
+        LOGGER.trace("CxfHandler created");
         if (cxfServletInfos == null || cxfServletInfos.getInfos() == null || cxfServletInfos.getInfos().isEmpty()) {
             LOGGER.warn("no info transmit to servlet");
             return;
@@ -70,7 +70,7 @@ public class CxfHandler implements Handler<RoutingContext> {
         BusFactory.setDefaultBus(bus);
         this.loader = this.bus.getExtension(ClassLoader.class);
 
-        LOGGER.info("load destination");
+        LOGGER.trace("load destination");
         DestinationFactoryManager dfm = this.bus.getExtension(DestinationFactoryManager.class);
         destinationRegistry = new DestinationRegistryImpl();
         VertxDestinationFactory destinationFactory = new VertxDestinationFactory(destinationRegistry);

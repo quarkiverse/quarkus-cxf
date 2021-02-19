@@ -35,7 +35,7 @@ public class CXFClientInfo {
 
     public void init(String sei, String endpointAddress, String wsdlUrl, String soapBinding, String wsNamespace,
             String wsName, String epNamespace, String epName, String username, String password, List<String> classNames) {
-        LOGGER.warn("new CXFClientInfo");
+        LOGGER.trace("new CXFClientInfo");
         this.sei = sei;
         this.endpointAddress = endpointAddress;
         this.wsdlUrl = wsdlUrl;

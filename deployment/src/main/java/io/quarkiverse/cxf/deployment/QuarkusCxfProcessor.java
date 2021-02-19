@@ -137,7 +137,7 @@ class QuarkusCxfProcessor {
         @Override
         public void capture(String name, byte[] bytes) {
             classOutput.getSourceWriter(name);
-            LOGGER.warn("capture generation of " + name);
+            LOGGER.trace("capture generation of " + name);
             classOutput.write(name, bytes);
         }
     }
