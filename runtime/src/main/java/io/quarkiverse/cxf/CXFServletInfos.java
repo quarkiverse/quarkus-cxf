@@ -15,7 +15,7 @@ public class CXFServletInfos {
     private String path = null;
 
     public CXFServletInfos() {
-        LOGGER.warn("new CXFServletInfos");
+        LOGGER.trace("new CXFServletInfos");
         infos = new ArrayList<>();
     }
 
