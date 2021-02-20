@@ -40,6 +40,7 @@ import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfClientProducer;
 import io.quarkiverse.cxf.CxfConfig;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import io.quarkus.arc.deployment.BeanContainerBuildItem;
 import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
@@ -291,6 +292,7 @@ class QuarkusCxfProcessor {
     public void startRoute(CXFRecorder recorder,
             BuildProducer<DefaultRouteBuildItem> defaultRoutes,
             BuildProducer<RouteBuildItem> routes,
+            BeanContainerBuildItem beanContainer,
             List<CxfWebServiceBuildItem> cxfWebServices,
             CxfConfig cxfConfig) {
         String path = null;
@@ -310,7 +312,7 @@ class QuarkusCxfProcessor {
                 }
             }
             if (startRoute) {
-                Handler<RoutingContext> handler = recorder.initServer(infos);
+                Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue());
                 if (path != null) {
                     routes.produce(new RouteBuildItem.Builder()
                             .route(getMappingPath(path))
