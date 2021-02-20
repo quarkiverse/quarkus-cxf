@@ -37,6 +37,7 @@ import io.quarkus.arc.ManagedContext;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.security.identity.CurrentIdentityAssociation;
 import io.quarkus.security.identity.IdentityProviderManager;
+import io.quarkus.vertx.http.runtime.CurrentVertxRequest;
 import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
@@ -55,6 +56,7 @@ public class CxfHandler implements Handler<RoutingContext> {
     private BeanContainer beanContainer;
     private CurrentIdentityAssociation association;
     private IdentityProviderManager identityProviderManager;
+    private CurrentVertxRequest currentVertxRequest;
 
     private static final Map<String, String> RESPONSE_HEADERS = new HashMap<>();
 
@@ -76,6 +78,7 @@ public class CxfHandler implements Handler<RoutingContext> {
         this.association = association.isResolvable() ? association.get() : null;
         Instance<IdentityProviderManager> identityProviderManager = CDI.current().select(IdentityProviderManager.class);
         this.identityProviderManager = identityProviderManager.isResolvable() ? identityProviderManager.get() : null;
+        this.currentVertxRequest = CDI.current().select(CurrentVertxRequest.class).get();
         if (cxfServletInfos == null || cxfServletInfos.getInfos() == null || cxfServletInfos.getInfos().isEmpty()) {
             LOGGER.warn("no info transmit to servlet");
             return;
@@ -258,13 +261,14 @@ public class CxfHandler implements Handler<RoutingContext> {
         if (association != null) {
             association.setIdentity(QuarkusHttpUser.getSecurityIdentity(event, identityProviderManager));
         }
+        currentVertxRequest.setCurrent(event);
         try {
             VertxHttpServletRequest req = new VertxHttpServletRequest(event, "", servletPath);
             VertxHttpServletResponse resp = new VertxHttpServletResponse(event);
             controller.invoke(req, resp);
             resp.end();
         } catch (ServletException | IOException e) {
-            LOGGER.warn("Can not get list of web service.", e);
+            LOGGER.warn("Cannot get list of web service.", e);
         } finally {
             if (requestContext.isActive()) {
                 requestContext.terminate();

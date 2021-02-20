@@ -108,7 +108,7 @@ public class CXFRecorder {
                         cfg.getFeatures().addAll(cxfEndPointConfig.features.get());
                     }
 
-                    LOGGER.info("register CXF Servlet info");
+                    LOGGER.trace("register CXF Servlet info");
                     infos.add(cfg);
                 }
             }
