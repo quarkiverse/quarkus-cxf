@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.transport.CxfHandler;
+import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
 import io.vertx.core.Handler;
@@ -107,7 +108,7 @@ public class CXFRecorder {
                         cfg.getFeatures().addAll(cxfEndPointConfig.features.get());
                     }
 
-                    LOGGER.trace("register CXF Servlet info");
+                    LOGGER.info("register CXF Servlet info");
                     infos.add(cfg);
                 }
             }
@@ -119,9 +120,9 @@ public class CXFRecorder {
         return new RuntimeValue<>(infos);
     }
 
-    public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos) {
+    public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos, BeanContainer beanContainer) {
         LOGGER.trace("init server");
-        return new CxfHandler(infos.getValue());
+        return new CxfHandler(infos.getValue(), beanContainer);
     }
 
     public void setPath(RuntimeValue<CXFServletInfos> infos, String path) {

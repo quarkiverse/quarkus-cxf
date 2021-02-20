@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.ServletException;
@@ -32,6 +33,11 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.CXFServletInfo;
 import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.QuarkusJaxWsServiceFactoryBean;
+import io.quarkus.arc.ManagedContext;
+import io.quarkus.arc.runtime.BeanContainer;
+import io.quarkus.security.identity.CurrentIdentityAssociation;
+import io.quarkus.security.identity.IdentityProviderManager;
+import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -46,6 +52,9 @@ public class CxfHandler implements Handler<RoutingContext> {
     private DestinationRegistry destinationRegistry;
     private String servletPath;
     private ServletController controller;
+    private BeanContainer beanContainer;
+    private CurrentIdentityAssociation association;
+    private IdentityProviderManager identityProviderManager;
 
     private static final Map<String, String> RESPONSE_HEADERS = new HashMap<>();
 
@@ -60,8 +69,13 @@ public class CxfHandler implements Handler<RoutingContext> {
     public CxfHandler() {
     }
 
-    public CxfHandler(CXFServletInfos cxfServletInfos) {
+    public CxfHandler(CXFServletInfos cxfServletInfos, BeanContainer beanContainer) {
         LOGGER.trace("CxfHandler created");
+        this.beanContainer = beanContainer;
+        Instance<CurrentIdentityAssociation> association = CDI.current().select(CurrentIdentityAssociation.class);
+        this.association = association.isResolvable() ? association.get() : null;
+        Instance<IdentityProviderManager> identityProviderManager = CDI.current().select(IdentityProviderManager.class);
+        this.identityProviderManager = identityProviderManager.isResolvable() ? identityProviderManager.get() : null;
         if (cxfServletInfos == null || cxfServletInfos.getInfos() == null || cxfServletInfos.getInfos().isEmpty()) {
             LOGGER.warn("no info transmit to servlet");
             return;
@@ -239,6 +253,11 @@ public class CxfHandler implements Handler<RoutingContext> {
     }
 
     private void process(RoutingContext event) {
+        ManagedContext requestContext = this.beanContainer.requestContext();
+        requestContext.activate();
+        if (association != null) {
+            association.setIdentity(QuarkusHttpUser.getSecurityIdentity(event, identityProviderManager));
+        }
         try {
             VertxHttpServletRequest req = new VertxHttpServletRequest(event, "", servletPath);
             VertxHttpServletResponse resp = new VertxHttpServletResponse(event);
@@ -246,6 +265,10 @@ public class CxfHandler implements Handler<RoutingContext> {
             resp.end();
         } catch (ServletException | IOException e) {
             LOGGER.warn("Can not get list of web service.", e);
+        } finally {
+            if (requestContext.isActive()) {
+                requestContext.terminate();
+            }
         }
     }
 }
