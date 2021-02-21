@@ -37,6 +37,7 @@ import io.quarkus.arc.ManagedContext;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.security.identity.CurrentIdentityAssociation;
 import io.quarkus.security.identity.IdentityProviderManager;
+import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.vertx.http.runtime.CurrentVertxRequest;
 import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
 import io.vertx.core.Handler;
@@ -259,7 +260,13 @@ public class CxfHandler implements Handler<RoutingContext> {
         ManagedContext requestContext = this.beanContainer.requestContext();
         requestContext.activate();
         if (association != null) {
-            association.setIdentity(QuarkusHttpUser.getSecurityIdentity(event, identityProviderManager));
+            QuarkusHttpUser existing = (QuarkusHttpUser) event.user();
+            if (existing != null) {
+                SecurityIdentity identity = existing.getSecurityIdentity();
+                association.setIdentity(identity);
+            } else {
+                association.setIdentity(QuarkusHttpUser.getSecurityIdentity(event, identityProviderManager));
+            }
         }
         currentVertxRequest.setCurrent(event);
         try {
@@ -267,8 +274,12 @@ public class CxfHandler implements Handler<RoutingContext> {
             VertxHttpServletResponse resp = new VertxHttpServletResponse(event);
             controller.invoke(req, resp);
             resp.end();
-        } catch (ServletException | IOException e) {
-            LOGGER.warn("Cannot get list of web service.", e);
+        } catch (ServletException se) {
+            LOGGER.warn("Internal server error", se);
+            event.fail(500, se);
+        } catch (IOException ioe) {
+            LOGGER.warn("Cannot list or instantiate web service", ioe);
+            event.fail(404, ioe);
         } finally {
             if (requestContext.isActive()) {
                 requestContext.terminate();
