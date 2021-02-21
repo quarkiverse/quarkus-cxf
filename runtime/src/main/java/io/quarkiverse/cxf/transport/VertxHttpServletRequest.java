@@ -36,7 +36,10 @@ import javax.servlet.http.Part;
 import org.apache.cxf.common.util.UrlUtils;
 import org.jboss.logging.Logger;
 
+import io.quarkus.security.identity.CurrentIdentityAssociation;
+import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.vertx.http.runtime.VertxInputStream;
+import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
@@ -289,7 +292,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     @Override
     public boolean isSecure() {
         LOG.trace("isSecure");
-        return false;
+        return request.isSSL();
     }
 
     @Override
@@ -330,8 +333,12 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public String getAuthType() {
-        LOG.trace("getAuthType");
-        return "null";
+        String authorizationValue = request.getHeader("Authorization");
+        if (authorizationValue == null) {
+            return null;
+        } else {
+            return authorizationValue.split(" ")[0].trim();
+        }
     }
 
     @Override
@@ -464,8 +471,11 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public Principal getUserPrincipal() {
-        LOG.trace("getUserPrincipal");
-        return null;
+        QuarkusHttpUser user = (QuarkusHttpUser) context.user();
+        if (user == null || user.getSecurityIdentity().isAnonymous()) {
+            return null;
+        }
+        return user.getSecurityIdentity().getPrincipal();
     }
 
     @Override
@@ -495,8 +505,11 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public boolean isUserInRole(String role) {
-        LOG.trace("isUserInRole");
-        return false;
+        SecurityIdentity user = CurrentIdentityAssociation.current();
+        if (role.equals("**")) {
+            return !user.isAnonymous();
+        }
+        return user.hasRole(role);
     }
 
     @Override
