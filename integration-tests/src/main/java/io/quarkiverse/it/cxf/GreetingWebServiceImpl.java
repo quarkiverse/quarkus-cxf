@@ -1,5 +1,6 @@
 package io.quarkiverse.it.cxf;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.jws.WebParam;
 import javax.jws.WebService;
