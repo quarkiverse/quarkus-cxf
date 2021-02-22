@@ -1,0 +1,130 @@
+[.configuration-reference.searchable, cols="50,.^10,.^40"]
+|===
+
+h|[[quarkus-cxf_configuration]]link:#quarkus-cxf_configuration[Configuration property]
+
+h|Type
+h|Sample value
+
+a| [[quarkus.cxf.path]]`link:#quarkus.cxf.path[quarkus.cxf.path]`
+
+[.description]
+--
+Description
+--|string
+|
+
+
+a| [[quarkus.cxf.wsdl-path]]`link:#quarkus.cxf.wsdl-path[quarkus.cxf.wsdl-path]`
+
+[.description]
+--
+Description
+--|string
+|
+
+a| [[quarkus.cxf.endpoint.key.endpoint-name]]`link:#quarkus.cxf.endpoint.key.endpoint-name[quarkus.cxf.endpoint.key.endpoint-name]`
+
+[.description]
+--
+Description
+--|string
+|
+
+a| [[quarkus.cxf.endpoint.key.endpoint-namespace]]`link:#quarkus.cxf.endpoint.key.endpoint-namespace[quarkus.cxf.endpoint.key.endpoint-namespace]`
+
+[.description]
+--
+Description
+--|string
+|
+
+a| [[quarkus.cxf.endpoint.key.features]]`link:#quarkus.cxf.endpoint.key.features[quarkus.cxf.endpoint.key.features]`
+
+[.description]
+--
+Description
+--|list of strings
+|
+
+a| [[quarkus.cxf.endpoint.key.implementor]]`link:#quarkus.cxf.endpoint.key.implementor[quarkus.cxf.endpoint.key.implementor]`
+
+[.description]
+--
+Description
+--|string
+|
+
+a| [[quarkus.cxf.endpoint.key.in-fault-interceptors]]`link:#quarkus.cxf.endpoint.key.in-fault-interceptors[quarkus.cxf.endpoint.key.in-fault-interceptors]`
+
+[.description]
+--
+Description
+--|list of strings
+|
+
+a| [[quarkus.cxf.endpoint.key.in-interceptors]]`link:#quarkus.cxf.endpoint.key.in-interceptors[quarkus.cxf.endpoint.key.in-interceptors]`
+
+[.description]
+--
+Description
+--|list of strings
+|
+
+a| [[quarkus.cxf.endpoint.key.out-fault-interceptors]]`link:#quarkus.cxf.endpoint.key.out-fault-interceptors[quarkus.cxf.endpoint.key.out-fault-interceptors]`
+
+[.description]
+--
+Description
+--|list of strings
+|
+
+a| [[quarkus.cxf.endpoint.key.out-interceptors]]`link:#quarkus.cxf.endpoint.key.out-interceptors[quarkus.cxf.endpoint.key.out-interceptors]`
+
+[.description]
+--
+Description
+--|list of strings
+|
+
+a| [[quarkus.cxf.endpoint.key.password]]`link:#quarkus.cxf.endpoint.key.password[quarkus.cxf.endpoint.key.password]`
+
+[.description]
+--
+Description
+--|string
+|
+
+a| [[quarkus.cxf.endpoint.key.published-endpoint-url]]`link:#quarkus.cxf.endpoint.key.published-endpoint-url[quarkus.cxf.endpoint.key.published-endpoint-url]`
+
+[.description]
+--
+Description
+--|string
+|
+
+a| [[quarkus.cxf.endpoint.key.service-interface]]`link:#quarkus.cxf.endpoint.key.service-interface[quarkus.cxf.endpoint.key.service-interface]`
+
+[.description]
+--
+Description
+--|string
+|
+
+a| [[quarkus.cxf.endpoint.key.username]]`link:#quarkus.cxf.endpoint.key.username[quarkus.cxf.endpoint.key.username]`
+
+[.description]
+--
+Description
+--|string
+|
+
+a| [[quarkus.cxf.endpoint.key.wsdl]]`link:#quarkus.cxf.endpoint.key.wsdl[quarkus.cxf.endpoint.key.wsdl]`
+
+[.description]
+--
+Description
+--|string
+|
+
+|===
