@@ -215,7 +215,7 @@ quarkus.cxf.endpoint."/fruit".implementor=org.acme.cxf.FruitWebServiceImpl
 
 The following sample curl command can be used to test your Fruit service.
 
-```
+```bash
 curl -X POST "http://localhost:8080/cxf/fruit" \
  -H 'Content-Type: text/xml' \
  -H 'SOAPAction:' \
@@ -269,9 +269,7 @@ Native mode is currently supported for both Java 8 and Java 11.
 
 ### Interceptors and Features
 
-[CXF interceptors](https://cxf.apache.org/docs/interceptors.html) and [CXF features](https://cxf.apache.org/docs/featureslist.html) can be added to both your client or server using either:
-- annotations
-- `application.properties` configurations
+[CXF interceptors](https://cxf.apache.org/docs/interceptors.html) and [CXF features](https://cxf.apache.org/docs/featureslist.html) can be added to both your client or server using either annotations or `application.properties` configurations.
 
 While CXF provides a number of out of the box embedded interceptors and features, you can also integrate your custom developed implementations. 
 
@@ -322,8 +320,8 @@ Add the following to your web service class to instantiate the `WSS4JInIntercept
     @Produces
     public WSS4JInInterceptor getWSS4JInInterceptor() {
         Map<String,Object> inProps = new HashMap<String,Object>();
-        inProps.put(ConfigurationConstants.ACTION, "UsernameToken");
-        inProps.put(ConfigurationConstants.PASSWORD_TYPE, "PasswordDigest");
+        inProps.put(ConfigurationConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
+        inProps.put(ConfigurationConstants.PASSWORD_TYPE, WSConstants.PASSWORD_DIGEST);
         inProps.put(ConfigurationConstants.PW_CALLBACK_CLASS, UsernameTokenPasswordServerCallback.class.getName());
         return new WSS4JInInterceptor(inProps);
     }
