@@ -224,7 +224,8 @@ public class MySoapClient {
 }
 ----
 
-==== Basic Auth
+[[basic-auth]]
+=== Basic Auth
 
 Basic auth for clients is supported by default. Just add the following properties to your `application.properties` file.
 
@@ -286,7 +287,7 @@ quarkus.cxf.endpoint."/greeting".out-fault-interceptors=com.example.MyIntercepto
 [[ws-security]]
 === WS-Security
 
-The CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J].The example below shows how to integrate with WSS4J using interceptors.
+The CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J]. The example below shows how to integrate with WSS4J using interceptors.
 
 ==== SOAP Web Service Integration
 
@@ -311,7 +312,7 @@ Add the following to your web service class to instantiate the `WSS4JInIntercept
     }
 ----
 
-Finally, a sample `UsernameTokenPasswordServerCallback` class in provided below. Please refer to the WSS4J documentation for more advanced needs.
+Finally, a sample `UsernameTokenPasswordServerCallback` class is provided below. Please refer to the https://cxf.apache.org/docs/ws-security.html[WS-Security] and https://ws.apache.org/wss4j/user_guide.html[WSS4J] documentation for more advanced needs.
 
 [source,java]
 ----
@@ -369,7 +370,7 @@ Add the following to your client class to instantiate the `WSS4JOutInterceptor`.
     }
 ----
 
-Finally, a sample `UsernameTokenPasswordClientCallback` class in provided below.Please refer to the WSS4J documentation for more advanced needs.
+Finally, a sample `UsernameTokenPasswordClientCallback` class is provided below. Please refer to the https://cxf.apache.org/docs/ws-security.html[WS-Security] and https://ws.apache.org/wss4j/user_guide.html[WSS4J] documentation for more advanced needs.
 
 [source,java]
 ----
