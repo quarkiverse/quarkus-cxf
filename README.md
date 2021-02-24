@@ -16,6 +16,9 @@ This extension enables you to develop web services that consume and produce SOAP
   - [Creating a SOAP Web service](#creating-a-soap-web-service)
   - [Creating a SOAP Client](#creating-a-soap-client)
   - [Native Mode Support](#native-mode-support)
+  - [Advanced CXF configurations](#advanced-cxf-configurations)
+    - [Interceptors and Features](#interceptors-and-features)
+    - [WS-Security](#ws-security)
 
 
 ## Contributors ✨
@@ -41,7 +44,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Configuration
 
-After configuring `quarkus BOM`:
+After configuring the `Quarkus BOM`:
 
 ```xml
 <dependencyManagement>
@@ -57,7 +60,7 @@ After configuring `quarkus BOM`:
 </dependencyManagement>
 ```
 
-You can just configure the `quarkus-cxf` extension by adding the following dependency:
+You can configure the `quarkus-cxf` extension by adding the following dependency:
 
 ```xml
 <dependency>
@@ -248,35 +251,28 @@ public class MySoapClient {
     }
 }
 ```
+#### Basic Auth
+Basic auth for clients is supported by default. Just add the following properties to `application.properties` file
 
-If MySoapClient is not instantiated by the container and instead by a main then you have to use:
-
-```java
-public class MySoapClient {
-
-    FruitWebService clientService = CDI.current().select(FruitWebService.class).get();
-
-    public int getCount() {
-        return clientService.count();
-    }
-}
+```properties
+quarkus.cxf.endpoint."/greeting".username=user
+quarkus.cxf.endpoint."/greeting".password=password
 ```
-
 
 ## Native Mode Support
 
-- Native mode is currently supported for both Java 8 and Java 11.
+Native mode is currently supported for both Java 8 and Java 11.
 
 
 ## Advanced CXF configurations
+
+### Interceptors and Features
 
 [CXF interceptors](https://cxf.apache.org/docs/interceptors.html) and [CXF features](https://cxf.apache.org/docs/featureslist.html) can be added to both your client or server using either:
 - annotations
 - `application.properties` configurations
 
 While CXF provides a number of out of the box embedded interceptors and features, you can also integrate your custom developed implementations. 
-
-### Annotation
 
 Annotations can be used on either the service interface or implementor classes.
 
@@ -295,9 +291,6 @@ public class SayHiImplementation implements SayHi {
    //...
 }
 ```
-
-### Configuration
-
 You may also define your configurations in the `application.properties` file.
 
 Both feature and interceptor classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.
@@ -310,10 +303,107 @@ quarkus.cxf.endpoint."/greeting".in-fault-interceptors=com.example.MyInterceptor
 quarkus.cxf.endpoint."/greeting".out-fault-interceptors=com.example.MyInterceptor
 ```
 
-#### Basic Auth
-Basic auth is supported by default. Just add the following properties to `application.properties` file
+### WS-Security
+
+The CXF framework's [WS-Security](https://cxf.apache.org/docs/ws-security.html) implementation is largely based on  [WSS4J](https://ws.apache.org/wss4j/user_guide.html).  The example below shows how to integrate with WSS4J using interceptors.
+
+#### SOAP Web Service Integration
+
+Use the `WSS4JInInterceptor` to add WS-Security to your web service.  You can update your `application.properties` file to include:
 
 ```properties
-quarkus.cxf.endpoint."/greeting".username=user
-quarkus.cxf.endpoint."/greeting".password=password
+quarkus.cxf.endpoint."/greeting".in-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor
+```
+
+Add the following to your web service class to instantiate the `WSS4JInInterceptor`.
+
+```java
+    @Produces
+    public WSS4JInInterceptor getWSS4JInInterceptor() {
+        Map<String,Object> inProps = new HashMap<String,Object>();
+        inProps.put(ConfigurationConstants.ACTION, "UsernameToken");
+        inProps.put(ConfigurationConstants.PASSWORD_TYPE, "PasswordDigest");
+        inProps.put(ConfigurationConstants.PW_CALLBACK_CLASS, UsernameTokenPasswordServerCallback.class.getName());
+        return new WSS4JInInterceptor(inProps);
+    }
+```
+
+Finally, a sample `UsernameTokenPasswordServerCallback` class in provided below.  Please refer to the WSS4J documentation for more advanced needs.
+
+```java
+import org.apache.wss4j.common.ext.WSPasswordCallback;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class UsernameTokenPasswordServerCallback implements CallbackHandler {
+
+    private Map<String, String> passwords = new HashMap();
+
+    public UsernameTokenPasswordServerCallback() {
+        passwords.put("joe", "wss4j");
+    }
+
+    @Override
+    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        for (Callback callback : callbacks) {
+            WSPasswordCallback pc = (WSPasswordCallback) callback;
+            String pass = passwords.get(pc.getIdentifier());
+            if (pass != null) {
+                pc.setPassword(pass);
+                return;
+            }
+        }
+    }
+}
+```
+
+#### SOAP Client Integration
+
+The corresponding client implementation would be slightly different.  Use the `WSS4JOutInterceptor` to add WS-Security to your SOAP client.  You can update your `application.properties` file to include:
+
+```properties
+quarkus.cxf.endpoint."/client".out-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor
+```
+
+Add the following to your client class to instantiate the `WSS4JOutInterceptor`.
+
+```java
+    @Produces
+    public WSS4JOutInterceptor getWSS4JOutInterceptor() {
+        Map<String,Object> outProps = new HashMap<String,Object>();
+        outProps.put(ConfigurationConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
+        outProps.put(ConfigurationConstants.PASSWORD_TYPE, WSConstants.PASSWORD_DIGEST);
+        outProps.put(ConfigurationConstants.PW_CALLBACK_CLASS, UsernameTokenPasswordClientCallback.class.getName());
+        outProps.put(ConfigurationConstants.USER, "joe");
+        return new WSS4JOutInterceptor(outProps);
+    }
+```
+
+Finally, a sample `UsernameTokenPasswordClientCallback` class in provided below.  Please refer to the WSS4J documentation for more advanced needs.
+
+```java
+import org.apache.wss4j.common.ext.WSPasswordCallback;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import java.io.IOException;
+
+public class UsernameTokenPasswordClientCallback implements CallbackHandler {
+
+    @Override
+    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        for (Callback callback : callbacks) {
+            WSPasswordCallback wpc = (WSPasswordCallback) callback;
+            if (wpc.getIdentifier().equals("joe")) {
+                wpc.setPassword("wss4j");
+                return;
+            }
+        }
+    }
+}
 ```
