@@ -15,6 +15,7 @@ This extension enables you to develop web services that consume and produce SOAP
   - [Configuration](#configuration)
   - [Creating a SOAP Web service](#creating-a-soap-web-service)
   - [Creating a SOAP Client](#creating-a-soap-client)
+    - [Basic Auth](#basic-auth)
   - [Native Mode Support](#native-mode-support)
   - [Advanced CXF configurations](#advanced-cxf-configurations)
     - [Interceptors and Features](#interceptors-and-features)
@@ -251,7 +252,7 @@ public class MySoapClient {
     }
 }
 ```
-#### Basic Auth
+### Basic Auth
 Basic auth for clients is supported by default. Just add the following properties to `application.properties` file
 
 ```properties
