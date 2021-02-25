@@ -205,7 +205,7 @@ class QuarkusCxfProcessor {
                 wsName = annotation.value("serviceName").asString();
             }
             Collection<ClassInfo> implementors = index.getAllKnownImplementors(DotName.createSimple(sei));
-            String implementor = "";
+
             //TODO add soap1.2 in config file
             String soapBinding = SOAPBinding.SOAP11HTTP_BINDING;
             //if no implementor, it mean it is client
@@ -220,9 +220,12 @@ class QuarkusCxfProcessor {
                     wsName = webserviceClient.value("name").asString();
                     wsNamespace = webserviceClient.value("targetNamespace").asString();
                 }
+                cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
+                        wsName, wrapperClassNames, ""));
             } else {
+
                 for (ClassInfo wsClass : implementors) {
-                    implementor = wsClass.name().toString();
+                    String implementor = wsClass.name().toString();
                     if (implementor.contains(".")) {
                         wsName = implementor.substring(implementor.lastIndexOf('.') + 1);
                     } else {
@@ -232,8 +235,9 @@ class QuarkusCxfProcessor {
                     AnnotationInstance bindingType = wsClass.classAnnotation(BINDING_TYPE_ANNOTATION);
                     if (bindingType != null) {
                         soapBinding = bindingType.value().asString();
-                        break;
                     }
+                    cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
+                            wsName, wrapperClassNames, implementor));
                 }
             }
 
@@ -255,8 +259,6 @@ class QuarkusCxfProcessor {
                     reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, fullClassName));
                 }
             }
-            cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
-                    wsName, wrapperClassNames, implementor));
         }
 
         feature.produce(new FeatureBuildItem(FEATURE_CXF));
