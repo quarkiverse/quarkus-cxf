@@ -221,7 +221,7 @@ class QuarkusCxfProcessor {
                     wsNamespace = webserviceClient.value("targetNamespace").asString();
                 }
                 cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
-                        wsName, wrapperClassNames, ""));
+                        wsName, wrapperClassNames));
             } else {
 
                 for (ClassInfo wsClass : implementors) {
@@ -239,6 +239,8 @@ class QuarkusCxfProcessor {
                     cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
                             wsName, wrapperClassNames, implementor));
                 }
+                cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
+                        wsName, wrapperClassNames));
             }
 
             proxies.produce(new NativeImageProxyDefinitionBuildItem(wsClassInfo.name().toString(),
@@ -302,6 +304,9 @@ class QuarkusCxfProcessor {
         if (!cxfWebServices.isEmpty()) {
             RuntimeValue<CXFServletInfos> infos = recorder.createInfos();
             for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
+                if (cxfWebService.IsClient()) {
+                    continue;
+                }
                 recorder.registerCXFServlet(infos, cxfWebService.getPath(), cxfWebService.getSei(),
                         cxfConfig, cxfWebService.getSoapBinding(), cxfWebService.getClassNames(),
                         cxfWebService.getImplementor());
@@ -316,11 +321,12 @@ class QuarkusCxfProcessor {
             if (startRoute) {
                 Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue());
                 if (path != null) {
-                    routes.produce(new RouteBuildItem.Builder()
+                    routes.produce(RouteBuildItem.builder()
                             .route(getMappingPath(path))
                             .handler(handler)
                             .handlerType(HandlerType.BLOCKING)
                             .build());
+
                 }
             }
         }
@@ -331,6 +337,9 @@ class QuarkusCxfProcessor {
     public void startClient(CXFRecorder recorder, CxfConfig cxfConfig, List<CxfWebServiceBuildItem> cxfWebServices,
             BuildProducer<SyntheticBeanBuildItem> synthetics) {
         for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
+            if (!cxfWebService.IsClient()) {
+                continue;
+            }
             synthetics.produce(SyntheticBeanBuildItem.configure(CXFClientInfo.class).named(cxfWebService.getSei())
                     .supplier(recorder.cxfClientInfoSupplier(cxfWebService.getSei(),
                             cxfConfig,
