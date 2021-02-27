@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -21,7 +22,9 @@ public class CXFRecorder {
             String soapBinding, String wsNamespace, String wsName, List<String> classNames) {
         LOGGER.trace("recorder CXFClientInfoSupplier");
         return () -> {
-            // TODO suboptimal process. migrate to hashmap and get instead of loop
+            // TODO if 2 clients with same SEI but different config it will failed but strange use case
+            Map<String, CxfEndpointConfig> seiToCfg = new HashMap<>();
+            Map<String, String> seiToPath = new HashMap<>();
             for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
                 CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
                 String relativePath = webServicesByPath.getKey();
@@ -29,89 +32,116 @@ public class CXFRecorder {
                     continue;
                 }
                 String cfgSei = cxfEndPointConfig.serviceInterface.get();
-                if (cfgSei.equals(sei)) {
-                    String endpointAddress = cxfEndPointConfig.clientEndpointUrl.orElse("http://localhost:8080");
-                    if (!relativePath.equals("/") && !relativePath.equals("")) {
-                        endpointAddress = endpointAddress.endsWith("/")
-                                ? endpointAddress.substring(0, endpointAddress.length() - 1)
-                                : endpointAddress;
-                        endpointAddress = relativePath.startsWith("/") ? endpointAddress + relativePath
-                                : endpointAddress + "/" + relativePath;
-                    }
-
-                    CXFClientInfo cfg = new CXFClientInfo();
-                    cfg.init(sei,
-                            endpointAddress,
-                            cxfEndPointConfig.wsdlPath.orElse(null),
-                            soapBinding,
-                            wsNamespace,
-                            wsName,
-                            cxfEndPointConfig.endpointNamespace.orElse(null),
-                            cxfEndPointConfig.endpointName.orElse(null),
-                            cxfEndPointConfig.username.orElse(null),
-                            cxfEndPointConfig.password.orElse(null),
-                            classNames);
-                    if (cxfEndPointConfig.inInterceptors.isPresent()) {
-                        cfg.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
-                    }
-                    if (cxfEndPointConfig.outInterceptors.isPresent()) {
-                        cfg.getOutInterceptors().addAll(cxfEndPointConfig.outInterceptors.get());
-                    }
-                    if (cxfEndPointConfig.outFaultInterceptors.isPresent()) {
-                        cfg.getOutFaultInterceptors().addAll(cxfEndPointConfig.outFaultInterceptors.get());
-                    }
-                    if (cxfEndPointConfig.inFaultInterceptors.isPresent()) {
-                        cfg.getInFaultInterceptors().addAll(cxfEndPointConfig.inFaultInterceptors.get());
-                    }
-                    if (cxfEndPointConfig.features.isPresent()) {
-                        cfg.getFeatures().addAll(cxfEndPointConfig.features.get());
-                    }
-                    return cfg;
-                }
+                seiToCfg.put(cfgSei, cxfEndPointConfig);
+                seiToPath.put(cfgSei, relativePath);
             }
-            LOGGER.warn("the service interface config is not found for : " + sei);
-            return null;
+
+            CxfEndpointConfig cxfEndPointConfig = seiToCfg.get(sei);
+            String relativePath = seiToPath.get(sei);
+
+            String endpointAddress;
+            if (cxfEndPointConfig != null) {
+                endpointAddress = cxfEndPointConfig.clientEndpointUrl.orElse("http://localhost:8080");
+            } else {
+                endpointAddress = "http://localhost:8080";
+            }
+            // default is sei name without package
+            if (relativePath == null) {
+                String serviceName = sei.toLowerCase();
+                if (serviceName.contains(".")) {
+                    serviceName = serviceName.substring(serviceName.lastIndexOf('.') + 1);
+                }
+                relativePath = "/" + serviceName;
+            }
+            if (!relativePath.equals("/") && !relativePath.equals("")) {
+                endpointAddress = endpointAddress.endsWith("/")
+                        ? endpointAddress.substring(0, endpointAddress.length() - 1)
+                        : endpointAddress;
+                endpointAddress = relativePath.startsWith("/") ? endpointAddress + relativePath
+                        : endpointAddress + "/" + relativePath;
+            }
+
+            CXFClientInfo cfg = new CXFClientInfo();
+            cfg.init(sei,
+                    endpointAddress,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath.orElse(null) : null,
+                    soapBinding,
+                    wsNamespace,
+                    wsName,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.endpointNamespace.orElse(null) : null,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.endpointName.orElse(null) : null,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.username.orElse(null) : null,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.password.orElse(null) : null,
+                    classNames);
+            if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors.isPresent()) {
+                cfg.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
+            }
+            if (cxfEndPointConfig != null && cxfEndPointConfig.outInterceptors.isPresent()) {
+                cfg.getOutInterceptors().addAll(cxfEndPointConfig.outInterceptors.get());
+            }
+            if (cxfEndPointConfig != null && cxfEndPointConfig.outFaultInterceptors.isPresent()) {
+                cfg.getOutFaultInterceptors().addAll(cxfEndPointConfig.outFaultInterceptors.get());
+            }
+            if (cxfEndPointConfig != null && cxfEndPointConfig.inFaultInterceptors.isPresent()) {
+                cfg.getInFaultInterceptors().addAll(cxfEndPointConfig.inFaultInterceptors.get());
+            }
+            if (cxfEndPointConfig != null && cxfEndPointConfig.features.isPresent()) {
+                cfg.getFeatures().addAll(cxfEndPointConfig.features.get());
+            }
+            return cfg;
         };
     }
 
     public void registerCXFServlet(RuntimeValue<CXFServletInfos> runtimeInfos, String path, String sei,
             CxfConfig cxfConfig, String soapBinding, List<String> wrapperClassNames, String wsImplementor) {
         CXFServletInfos infos = runtimeInfos.getValue();
+        Map<String, CxfEndpointConfig> implementorToCfg = new HashMap<>();
+        Map<String, String> implementorToPath = new HashMap<>();
         for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
             CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
             String relativePath = webServicesByPath.getKey();
-
-            if (cxfEndPointConfig.implementor.isPresent()) {
-                String implementor = cxfEndPointConfig.implementor.get();
-                if (implementor != null && implementor.equals(wsImplementor)) {
-                    CXFServletInfo cfg = new CXFServletInfo(path,
-                            relativePath,
-                            implementor,
-                            sei,
-                            cxfEndPointConfig.wsdlPath.orElse(null),
-                            soapBinding,
-                            wrapperClassNames,
-                            cxfEndPointConfig.publishedEndpointUrl.orElse(null));
-                    if (cxfEndPointConfig.inInterceptors.isPresent()) {
-                        cfg.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
-                    }
-                    if (cxfEndPointConfig.outInterceptors.isPresent()) {
-                        cfg.getOutInterceptors().addAll(cxfEndPointConfig.outInterceptors.get());
-                    }
-                    if (cxfEndPointConfig.outFaultInterceptors.isPresent()) {
-                        cfg.getOutFaultInterceptors().addAll(cxfEndPointConfig.outFaultInterceptors.get());
-                    }
-                    if (cxfEndPointConfig.inFaultInterceptors.isPresent()) {
-                        cfg.getInFaultInterceptors().addAll(cxfEndPointConfig.inFaultInterceptors.get());
-                    }
-                    if (cxfEndPointConfig.features.isPresent()) {
-                        cfg.getFeatures().addAll(cxfEndPointConfig.features.get());
-                    }
-
-                    LOGGER.trace("register CXF Servlet info");
-                    infos.add(cfg);
-                }
+            if (!cxfEndPointConfig.implementor.isPresent()) {
+                continue;
             }
+            String cfgImplementor = cxfEndPointConfig.implementor.get();
+            implementorToCfg.put(cfgImplementor, cxfEndPointConfig);
+            implementorToPath.put(cfgImplementor, relativePath);
+        }
+        CxfEndpointConfig cxfEndPointConfig = implementorToCfg.get(wsImplementor);
+        String relativePath = implementorToPath.get(wsImplementor);
+        if (relativePath == null) {
+            String serviceName = sei.toLowerCase();
+            if (serviceName.contains(".")) {
+                serviceName = serviceName.substring(serviceName.lastIndexOf('.') + 1);
+            }
+            relativePath = "/" + serviceName;
+        }
+        if (wsImplementor != null && !wsImplementor.equals("")) {
+            CXFServletInfo cfg = new CXFServletInfo(path,
+                    relativePath,
+                    wsImplementor,
+                    sei,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath.orElse(null) : null,
+                    soapBinding,
+                    wrapperClassNames,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.publishedEndpointUrl.orElse(null) : null);
+            if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors.isPresent()) {
+                cfg.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
+            }
+            if (cxfEndPointConfig != null && cxfEndPointConfig.outInterceptors.isPresent()) {
+                cfg.getOutInterceptors().addAll(cxfEndPointConfig.outInterceptors.get());
+            }
+            if (cxfEndPointConfig != null && cxfEndPointConfig.outFaultInterceptors.isPresent()) {
+                cfg.getOutFaultInterceptors().addAll(cxfEndPointConfig.outFaultInterceptors.get());
+            }
+            if (cxfEndPointConfig != null && cxfEndPointConfig.inFaultInterceptors.isPresent()) {
+                cfg.getInFaultInterceptors().addAll(cxfEndPointConfig.inFaultInterceptors.get());
+            }
+            if (cxfEndPointConfig != null && cxfEndPointConfig.features.isPresent()) {
+                cfg.getFeatures().addAll(cxfEndPointConfig.features.get());
+            }
+            LOGGER.trace("register CXF Servlet info");
+            infos.add(cfg);
         }
     }
 
