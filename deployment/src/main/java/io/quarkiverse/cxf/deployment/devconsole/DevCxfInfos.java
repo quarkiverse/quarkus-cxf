@@ -13,7 +13,7 @@ public class DevCxfInfos {
     }
 
     public void addService(String implementor) {
-        clients.add(implementor);
+        services.add(implementor);
     }
 
     public void addClient(String sei) {
@@ -24,7 +24,7 @@ public class DevCxfInfos {
         return services;
     }
 
-    public List<String> getTClients() {
+    public List<String> getClients() {
         return clients;
     }
 }

@@ -9,7 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf</artifactId>
-    <name>Quarkus CXF Extension - Runtime</name>
+    <name>Quarkus CXF</name>
+    <description>Enables you to develop web services using Apache CXF</description>
     
     <dependencies>
         <dependency>
