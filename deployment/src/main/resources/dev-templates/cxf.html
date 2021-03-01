@@ -13,15 +13,15 @@ margin-top: 5px;
 {/style}
 {#body}
 <h5>SOAP Services</h5>
-{#for service in info:cxfInfo.services}
+{#for service in info:cxfInfos.services}
 <div class="row">
     <div class="col">
         <code>{service}</code>
     </div>
 </div>
 {/for}
-<h5>SOAP clients</h5>
-{#for client in info:cxfInfo.clients}
+<h5>SOAP Clients</h5>
+{#for client in info:cxfInfos.clients}
 <div class="row">
     <div class="col">
         <code>{client}</code>

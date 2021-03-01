@@ -19,6 +19,6 @@ public class DevConsoleProcessor {
                 cxfInfos.addService(webservice.getImplementor());
             }
         }
-        return new DevConsoleTemplateInfoBuildItem("cxfInfo", cxfInfos);
+        return new DevConsoleTemplateInfoBuildItem("cxfInfos", cxfInfos);
     }
 }
