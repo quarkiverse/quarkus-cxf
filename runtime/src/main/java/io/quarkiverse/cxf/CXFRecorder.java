@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,11 +93,20 @@ public class CXFRecorder {
         };
     }
 
+    public class servletConfig {
+        public CxfEndpointConfig config;
+        public String path;
+
+        public servletConfig(CxfEndpointConfig cxfEndPointConfig, String relativePath) {
+            this.config = cxfEndPointConfig;
+            this.path = relativePath;
+        }
+    }
+
     public void registerCXFServlet(RuntimeValue<CXFServletInfos> runtimeInfos, String path, String sei,
             CxfConfig cxfConfig, String soapBinding, List<String> wrapperClassNames, String wsImplementor) {
         CXFServletInfos infos = runtimeInfos.getValue();
-        Map<String, CxfEndpointConfig> implementorToCfg = new HashMap<>();
-        Map<String, String> implementorToPath = new HashMap<>();
+        Map<String, List<servletConfig>> implementorToCfg = new HashMap<>();
         for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
             CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
             String relativePath = webServicesByPath.getKey();
@@ -104,18 +114,34 @@ public class CXFRecorder {
                 continue;
             }
             String cfgImplementor = cxfEndPointConfig.implementor.get();
-            implementorToCfg.put(cfgImplementor, cxfEndPointConfig);
-            implementorToPath.put(cfgImplementor, relativePath);
+            List<servletConfig> lst;
+            if (implementorToCfg.containsKey(cfgImplementor)) {
+                lst = implementorToCfg.get(cfgImplementor);
+            } else {
+                lst = new ArrayList<>();
+                implementorToCfg.put(cfgImplementor, lst);
+            }
+            lst.add(new servletConfig(cxfEndPointConfig, relativePath));
         }
-        CxfEndpointConfig cxfEndPointConfig = implementorToCfg.get(wsImplementor);
-        String relativePath = implementorToPath.get(wsImplementor);
-        if (relativePath == null) {
+        List<servletConfig> cfgs = implementorToCfg.get(wsImplementor);
+        if (cfgs != null) {
+            for (servletConfig cfg : cfgs) {
+                CxfEndpointConfig cxfEndPointConfig = cfg.config;
+                String relativePath = cfg.path;
+                startRoute(path, sei, soapBinding, wrapperClassNames, wsImplementor, infos, cxfEndPointConfig, relativePath);
+            }
+        } else {
             String serviceName = sei.toLowerCase();
             if (serviceName.contains(".")) {
                 serviceName = serviceName.substring(serviceName.lastIndexOf('.') + 1);
             }
-            relativePath = "/" + serviceName;
+            String relativePath = "/" + serviceName;
+            startRoute(path, sei, soapBinding, wrapperClassNames, wsImplementor, infos, null, relativePath);
         }
+    }
+
+    private void startRoute(String path, String sei, String soapBinding, List<String> wrapperClassNames, String wsImplementor,
+            CXFServletInfos infos, CxfEndpointConfig cxfEndPointConfig, String relativePath) {
         if (wsImplementor != null && !wsImplementor.equals("")) {
             CXFServletInfo cfg = new CXFServletInfo(path,
                     relativePath,
