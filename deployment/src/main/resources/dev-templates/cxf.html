@@ -1,32 +1,45 @@
 {#include main}
 {#title}Quarkus SOAP Endpoints{/title}
-{#style}
-h5{
-background: gainsboro;
-margin-top: 20px;
-margin-bottom: 20px;
-padding: 10px;
-}
-.static{
-margin-top: 5px;
-}
-{/style}
 {#body}
-<h5>SOAP Services</h5>
-{#for service in info:cxfInfos.services}
-<div class="row">
-    <div class="col">
-        <code>{service}</code>
+<div class="card mt-4">
+    <div class="card-header">
+        SOAP Services
+    </div>
+    <div class="card-body">
+        {#for service in info:cxfServiceInfos.orEmpty}
+        <div class="row">
+            <div class="col">
+                <code>{service.className}</code>
+            </div>
+            <div class="col">
+                <code>{service.path}{service.relativePath}</code>
+            </div>
+        </div>
+        {/for}
     </div>
 </div>
-{/for}
-<h5>SOAP Clients</h5>
-{#for client in info:cxfInfos.clients}
-<div class="row">
-    <div class="col">
-        <code>{client}</code>
+<div class="card mt-4">
+    <div class="card-header">
+        SOAP Clients
+    </div>
+    <div class="card-body">
+        {#for client in info:cxfClientInfos.orEmpty}
+        <div class="row">
+            <div class="col">
+                <code>{client.sei}</code>
+            </div>
+            <div class="col">
+                {#if client.wsdlUrl}
+                <code>{client.wsdlUrl}</code>
+                {#else if client.endpointAddress}
+                <code>{client.endpointAddress}</code>
+                {#else}
+                <code>N/A</code>
+                {/if}
+            </div>
+        </div>
+        {/for}
     </div>
 </div>
-{/for}
 {/body}
 {/include}

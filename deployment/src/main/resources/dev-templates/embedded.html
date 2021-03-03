@@ -1,3 +1,11 @@
 <a href="{urlbase}/cxf" class="badge badge-light">
     <i class="fa fa-boxes fa-fw"></i>
     List of SOAP WS</a>
+<script>
+    // Insert link to Quarkiverse docs
+    window.addEventListener("load", (event) => {
+        $(".card-header:contains('CXF')").html(
+            'Quarkus CXF <a href="https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev" class="text-light float-right" title="Guide"><i class="fa fa-book"></i></a>'
+        );
+    });
+</script>
