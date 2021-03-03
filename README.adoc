@@ -5,9 +5,10 @@ image:https://img.shields.io/maven-central/v/io.quarkiverse.cxf/quarkus-cxf.svg?
 image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License,link=https://opensource.org/licenses/Apache-2.0]
 
 * xref:#contributors[Contributors]
+* xref:#configuration[Configuration]
+* xref:#documentation[Documentation]
 * xref:#sample-code-integration-tests[Sample Code]
 * xref:#issues-and-support[Issues and Support]
-* xref:#documentation[Documentation]
 
 [[contributors]]
 == Contributors
@@ -26,6 +27,27 @@ Thanks goes to these wonderful people:
 </div>
 ++++
 
+[[configuration]]
+== Configuration
+
+You can configure the `quarkus-cxf` extension by adding the following dependency to your Quarkus project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf</artifactId>
+    <version>${latest.release.version}</version>
+</dependency>
+
+----
+
+[[documentation]]
+== Documentation
+
+Documentation for this extension is available through Quarkiverse Docs located at:
+
+https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html
 
 [[sample-code-integration-tests]]
 == Sample Code
@@ -34,10 +56,3 @@ The `integration-tests` module in the codebase provides various examples that de
 [[issues-and-support]]
 == Issues and Support
 Please feel free to https://github.com/quarkiverse/quarkus-cxf/issues/new[open an issue] in the GitHub repository in case you need support.  Contributions and pull requests from the community are welcome.
-
-[[documentation]]
-== Documentation
-
-Additional documentation is available through Quarkiverse Docs located at:
-
-https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html
