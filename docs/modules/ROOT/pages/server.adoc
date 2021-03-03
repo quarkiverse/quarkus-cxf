@@ -1,0 +1,162 @@
+[[creating-a-soap-web-service]]
+= Creating a SOAP Web Service
+
+In this example, we will create an application to manage a list of fruits.
+
+First, let's create the `Fruit` bean as follows:
+
+[source,java]
+----
+package org.acme.cxf;
+
+import java.util.Objects;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlType(name = "Fruit")
+@XmlRootElement
+public class Fruit {
+
+    private String name;
+
+    private String description;
+
+    public Fruit() {
+    }
+
+    public Fruit(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @XmlElement
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @XmlElement
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Fruit)) {
+            return false;
+        }
+
+        Fruit other = (Fruit) obj;
+
+        return Objects.equals(other.getName(), this.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getName());
+    }
+}
+----
+
+Now, create the `org.acme.cxf.FruitWebService` class as follows:
+
+[source,java]
+----
+package org.acme.cxf;
+
+import java.util.Set;
+
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+
+@WebService
+public interface FruitWebService {
+
+    @WebMethod
+    Set<Fruit> list();
+
+    @WebMethod
+    Set<Fruit> add(Fruit fruit);
+
+    @WebMethod
+    Set<Fruit> delete(Fruit fruit);
+}
+----
+
+Then, create the `org.acme.cxf.FruitWebServiceImpl` class as follows:
+
+[source,java]
+----
+package org.acme.cxf;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Set;
+
+import javax.jws.WebService;
+
+@WebService(endpointInterface = "org.acme.cxf.FruitWebService")
+public class FruitWebServiceImpl implements FruitWebService {
+
+    private Set<Fruit> fruits = Collections.newSetFromMap(Collections.synchronizedMap(new LinkedHashMap<>()));
+
+    public FruitWebServiceImpl() {
+        fruits.add(new Fruit("Apple", "Winter fruit"));
+        fruits.add(new Fruit("Pineapple", "Tropical fruit"));
+    }
+
+    @Override
+    public Set<Fruit> list() {
+        return fruits;
+    }
+
+    @Override
+    public Set<Fruit> add(Fruit fruit) {
+        fruits.add(fruit);
+        return fruits;
+    }
+
+    @Override
+    public Set<Fruit> delete(Fruit fruit) {
+        fruits.remove(fruit);
+        return fruits;
+    }
+}
+----
+
+The implementation is pretty straightforward and you just need to define your endpoints using the `application.properties`.
+
+[source,properties]
+----
+quarkus.cxf.path=/cxf
+quarkus.cxf.endpoint."/fruit".implementor=org.acme.cxf.FruitWebServiceImpl
+----
+
+The following sample curl command can be used to test your Fruit service.
+
+[source,bash]
+----
+curl -X POST "http://localhost:8080/cxf/fruit" \
+ -H 'Content-Type: text/xml' \
+ -H 'SOAPAction:' \
+ -d '
+ <soapenv:Envelope
+ xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+ xmlns:cxf="http://cxf.acme.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cxf:list/>
+   </soapenv:Body>
+</soapenv:Envelope>'
+----
+
