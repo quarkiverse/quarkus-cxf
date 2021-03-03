@@ -1,3 +1,4 @@
+[[cxf-extension-for-quarkus]]
 = CXF Extension for Quarkus
 
 SOAP (Simple Object Access Protocol) is a normalized exchange protocol based on XML, predating the era of REST services.
