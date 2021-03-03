@@ -163,32 +163,33 @@ curl -X POST "http://localhost:8080/cxf/fruit" \
 [[wsdl-url]]
 == WSDL URL
 
-CXF generate the WSDL for each SOAP webservice then you can access wsdl just by adding "?wsdl" at end of service url.
-The following sample curl command can be used to grab the generated wsdl.
+When using code first development, CXF generates the WSDL for each SOAP web service.  You can access the WSDL by appending `?wsdl` at end of the service URL.
+
+The following sample curl command can be used to grab the generated WSDL.
 
 [source,bash]
 ----
 curl http://localhost:8080/cxf/fruit?wsdl
 ----
 
-[[soap-annotation]]
-== SOAP annotation
+[[soap-annotations]]
+== SOAP Annotations
 
-You can use annotation to modified element(name, namespace,...) in SOAP.
+The JAX-WS API provides several annotations that are used to specify metadata for your service definitions.
 
 _List of annotations:_
 
-* @SOAPBinding annotation
-* @WebService annotation
-* @WebMethod annotation
-* @RequestWrapper annotation
-* @ResponseWrapper annotation
-* @WebFault annotation
-* @Oneway annotation
-* @WebParam annotation
-* @WebResult annotation
+* `@SOAPBinding`
+* `@WebService`
+* `@WebMethod`
+* `@RequestWrapper`
+* `@ResponseWrapper`
+* `@WebFault`
+* `@Oneway`
+* `@WebParam`
+* `@WebResult`
 
-If you start from Java code, here is the https://cxf.apache.org/docs/developing-a-service.html#DevelopingaService-JavaFirstDevelopment[documentation of annotation to customize web-service]
+If you start from Java code, here is the https://cxf.apache.org/docs/developing-a-service.html#DevelopingaService-JavaFirstDevelopment[documentation of annotations to customize a web service].
 
 
 

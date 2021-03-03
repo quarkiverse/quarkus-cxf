@@ -38,9 +38,8 @@ quarkus.cxf.endpoint."/greeting".password=password
 [[async-support]]
 == Asynchronous Client HTTP Transport
 
-By default, CXF client use HttpURLConnection to perform HTTP request.
-In order to have non-blocking (asynchronous connection) add the dependency `cxf-rt-transports-http-hc` to your project.
-Then CXF will use HttpAsyncClient for async call and will continue with HttpURLConnection for sync call.
+By default, the CXF client uses `HttpURLConnection` to perform HTTP requests.  In order to have non-blocking (asynchronous) invocations you can add the  `cxf-rt-transports-http-hc` dependency to your project.
 
-You can see full detail about async client on https://cxf.apache.org/docs/asynchronous-client-http-transport.html[CXF asynchronous client documentation]
+Once the dependency is available in the classpath, CXF will use `HttpAsyncClient` for asynchronous calls and will continue using `HttpURLConnection` for synchronous calls.
 
+You can see more details about the CXF asynchronous client and how to tune it further at https://cxf.apache.org/docs/asynchronous-client-http-transport.html[this link].
