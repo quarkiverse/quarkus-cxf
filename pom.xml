@@ -5,12 +5,12 @@
     <parent>
         <groupId>io.quarkiverse</groupId>
         <artifactId>quarkiverse-parent</artifactId>
-        <version>6</version>
+        <version>7</version>
     </parent>
 
     <groupId>io.quarkiverse.cxf</groupId>
     <artifactId>quarkus-cxf-parent</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.7.0-SNAPSHOT</version>
     <name>Quarkus CXF Extension - Parent</name>
 
     <packaging>pom</packaging>
@@ -40,8 +40,8 @@
         </developer>
     </developers>
     <properties>
-        <quarkus.version>1.12.0.Final</quarkus.version>
-        <cxf.version>3.4.2</cxf.version>
+        <quarkus.version>1.13.3.Final</quarkus.version>
+        <cxf.version>3.4.3</cxf.version>
         <jakarta.xml.ws-api.version>2.3.3</jakarta.xml.ws-api.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

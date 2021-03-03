@@ -15,18 +15,13 @@ import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.QuarkusUnitTest;
 
-public class CxfClientTest {
+public class CxfSeiOnlyClientTest {
 
     @RegisterExtension
     public static final QuarkusUnitTest test = new QuarkusUnitTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(FruitWebService.class)
-                    .addClass(FruitWebServiceImpl.class)
-                    .addClass(Fruit.class)
-                    .addClass(GreetingWebService.class)
-                    .addClass(GreetingWebServiceImpl.class)
-            //.addClass(HelloWebServiceImpl.class)
-            )
+                    .addClass(Fruit.class))
             .withConfigurationResource("application-cxf-test.properties");
 
     @Inject
@@ -34,21 +29,16 @@ public class CxfClientTest {
     CXFClientInfo clientInfo;
 
     @Inject
-    FruitWebService serviceImpl;
-
-    @Inject
     @CXFClient
-    FruitWebService proxyClient;
+    FruitWebService clientProxy;
 
     @Test
-    public void testInjectedBeansAvailable() {
-        Assertions.assertNotNull(serviceImpl);
+    public void testInjectedBeans() {
         Assertions.assertNotNull(clientInfo);
-        Assertions.assertNotNull(proxyClient);
+        Assertions.assertNotNull(clientProxy);
 
         Assertions.assertFalse(Proxy.isProxyClass(clientInfo.getClass()));
-        Assertions.assertFalse(Proxy.isProxyClass(serviceImpl.getClass()));
-        Assertions.assertTrue(Proxy.isProxyClass(proxyClient.getClass()));
+        Assertions.assertTrue(Proxy.isProxyClass(clientProxy.getClass()));
     }
 
 }

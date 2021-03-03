@@ -6,14 +6,11 @@ import java.util.Optional;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
 
+/**
+ * A class that provides configurable options of a CXF client.
+ */
 @ConfigGroup
-public class CxfEndpointConfig {
-
-    /**
-     * The server class implementor
-     */
-    @ConfigItem
-    public Optional<String> implementor;
+public class CxfClientConfig {
 
     /**
      * The wsdl path
@@ -22,24 +19,10 @@ public class CxfEndpointConfig {
     public Optional<String> wsdlPath;
 
     /**
-     * The url of SOAP Binding
-     * a list of standard value :
-     * https://docs.oracle.com/javase/7/docs/api/constant-values.html#javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING
-     */
-    @ConfigItem
-    public Optional<String> soapBinding;
-
-    /**
      * The client endpoint url
      */
     @ConfigItem
     public Optional<String> clientEndpointUrl;
-
-    /**
-     * The server endpoint url
-     */
-    @ConfigItem
-    public Optional<String> publishedEndpointUrl;
 
     /**
      * The client interface
@@ -100,4 +83,12 @@ public class CxfEndpointConfig {
      */
     @ConfigItem
     public Optional<List<String>> inFaultInterceptors;
+
+    /**
+     * Indicates whether this is an alternative proxy client configuration. If
+     * true, then this configuration is ignored when configuring a client without
+     * annotation @CXF.
+     */
+    @ConfigItem
+    public boolean alternative = false;
 }

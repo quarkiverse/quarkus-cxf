@@ -3,6 +3,8 @@ package io.quarkiverse.it.cxf;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
+import java.lang.reflect.Proxy;
+
 import javax.inject.Inject;
 
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +16,12 @@ import io.quarkus.test.junit.QuarkusTest;
 class GreetingWebServiceImplTest {
 
     @Inject
-    public GreetingClientWebService greetingWS;
+    public GreetingWebService greetingWS;
+
+    @Test
+    void testIsNotProxy() {
+        Assertions.assertFalse(Proxy.isProxyClass(greetingWS.getClass()));
+    }
 
     @Test
     void testCxfClient() {
