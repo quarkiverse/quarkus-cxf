@@ -14,7 +14,7 @@ a| [[quarkus.cxf.path]]`link:#quarkus.cxf.path[quarkus.cxf.path]`
 --
 Root context for CXF web services
 --|String
-|
+|If REST API is used, split REST and SOAP with different paths to make wsdl url working.
 
 a| [[quarkus.cxf.endpoint.key.endpoint-name]]`link:#quarkus.cxf.endpoint.key.endpoint-name[quarkus.cxf.endpoint.key.endpoint-name]`
 

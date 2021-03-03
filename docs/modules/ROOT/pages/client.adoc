@@ -34,3 +34,13 @@ Basic auth for clients is supported by default. Just add the following propertie
 quarkus.cxf.endpoint."/greeting".username=user
 quarkus.cxf.endpoint."/greeting".password=password
 ----
+
+[[async-support]]
+== Asynchronous Client HTTP Transport
+
+By default, CXF client use HttpURLConnection to perform HTTP request.
+In order to have non-blocking (asynchronous connection) add the dependency `cxf-rt-transports-http-hc` to your project.
+Then CXF will use HttpAsyncClient for async call and will continue with HttpURLConnection for sync call.
+
+You can see full detail about async client on https://cxf.apache.org/docs/asynchronous-client-http-transport.html[CXF asynchronous client documentation]
+
