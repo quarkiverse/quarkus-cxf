@@ -1,120 +1,31 @@
-[.configuration-reference.searchable, cols="50,.^20,.^30"]
-|===
+[[configuration]]
+= Configuration
 
-h|Configuration property
-h|Type
-h|Notes
+After configuring the `Quarkus BOM`:
 
-a| [[quarkus.cxf.path]]`link:#quarkus.cxf.path[quarkus.cxf.path]`
+[source,xml]
+----
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-bom</artifactId>
+            <version>${insert.newest.quarkus.version.here}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+----
 
-[.description]
---
-Root context for CXF web services
---|String
-|
+You can configure the `quarkus-cxf` extension by adding the following dependency:
 
-a| [[quarkus.cxf.endpoint.key.endpoint-name]]`link:#quarkus.cxf.endpoint.key.endpoint-name[quarkus.cxf.endpoint.key.endpoint-name]`
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf</artifactId>
+    <version>${latest.release.version}</version>
+</dependency>
 
-[.description]
---
-The client endpoint name
---|String
-|
-
-a| [[quarkus.cxf.endpoint.key.endpoint-namespace]]`link:#quarkus.cxf.endpoint.key.endpoint-namespace[quarkus.cxf.endpoint.key.endpoint-namespace]`
-
-[.description]
---
-The client endpoint namespace
---|String
-|
-
-a| [[quarkus.cxf.endpoint.key.features]]`link:#quarkus.cxf.endpoint.key.features[quarkus.cxf.endpoint.key.features]`
-
-[.description]
---
-The comma-separated list of Feature classes
---|List of Strings
-|
-
-a| [[quarkus.cxf.endpoint.key.implementor]]`link:#quarkus.cxf.endpoint.key.implementor[quarkus.cxf.endpoint.key.implementor]`
-
-[.description]
---
-The server class implementor
---|String
-|
-
-a| [[quarkus.cxf.endpoint.key.in-fault-interceptors]]`link:#quarkus.cxf.endpoint.key.in-fault-interceptors[quarkus.cxf.endpoint.key.in-fault-interceptors]`
-
-[.description]
---
-The comma-separated list of InFaultInterceptor classes
---|List of Strings
-|
-
-a| [[quarkus.cxf.endpoint.key.in-interceptors]]`link:#quarkus.cxf.endpoint.key.in-interceptors[quarkus.cxf.endpoint.key.in-interceptors]`
-
-[.description]
---
-The comma-separated list of InInterceptor classes
---|List of Strings
-|
-
-a| [[quarkus.cxf.endpoint.key.out-fault-interceptors]]`link:#quarkus.cxf.endpoint.key.out-fault-interceptors[quarkus.cxf.endpoint.key.out-fault-interceptors]`
-
-[.description]
---
-The comma-separated list of OutFaultInterceptor classes
---|List of Strings
-|
-
-a| [[quarkus.cxf.endpoint.key.out-interceptors]]`link:#quarkus.cxf.endpoint.key.out-interceptors[quarkus.cxf.endpoint.key.out-interceptors]`
-
-[.description]
---
-The comma-separated list of OutInterceptor classes
---|List of Strings
-|
-
-a| [[quarkus.cxf.endpoint.key.password]]`link:#quarkus.cxf.endpoint.key.password[quarkus.cxf.endpoint.key.password]`
-
-[.description]
---
-The password for client HTTP Basic auth
---|String
-|
-
-a| [[quarkus.cxf.endpoint.key.published-endpoint-url]]`link:#quarkus.cxf.endpoint.key.published-endpoint-url[quarkus.cxf.endpoint.key.published-endpoint-url]`
-
-[.description]
---
-The server endpoint URL
---|String
-|
-
-a| [[quarkus.cxf.endpoint.key.service-interface]]`link:#quarkus.cxf.endpoint.key.service-interface[quarkus.cxf.endpoint.key.service-interface]`
-
-[.description]
---
-The client interface
---|String
-|
-
-a| [[quarkus.cxf.endpoint.key.username]]`link:#quarkus.cxf.endpoint.key.username[quarkus.cxf.endpoint.key.username]`
-
-[.description]
---
-The username for client HTTP Basic auth
---|String
-|
-
-a| [[quarkus.cxf.endpoint.key.wsdl]]`link:#quarkus.cxf.endpoint.key.wsdl[quarkus.cxf.endpoint.key.wsdl]`
-
-[.description]
---
-WSDL resource path used by CXF
---|String
-|
-
-|===
+----

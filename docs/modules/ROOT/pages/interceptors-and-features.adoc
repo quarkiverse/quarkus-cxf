@@ -1,0 +1,39 @@
+[[interceptors-and-features]]
+= Interceptors and Features
+
+https://cxf.apache.org/docs/interceptors.html[CXF interceptors] and https://cxf.apache.org/docs/featureslist.html[CXF features] can be added to both your client or server using either annotations or `application.properties` configurations.
+
+While CXF provides a number of out of the box embedded interceptors and features, you can also integrate your custom developed implementations.
+
+Annotations can be used on either the service interface or implementor classes.
+
+[source,java]
+----
+@org.apache.cxf.feature.Features (features = {"org.apache.cxf.feature.LoggingFeature"})
+@org.apache.cxf.interceptor.InInterceptors (interceptors = {"com.example.Test1Interceptor" })
+@org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"com.example.Test2Interceptor" })
+@org.apache.cxf.interceptor.OutInterceptors (interceptors = {"com.example.Test1Interceptor" })
+@org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"com.example.Test2Interceptor","com.example.Test3Intercetpor" })
+@WebService(endpointInterface = "org.apache.cxf.javascript.fortest.SimpleDocLitBare",
+            targetNamespace = "uri:org.apache.cxf.javascript.fortest")
+public class SayHiImplementation implements SayHi {
+   public long sayHi(long arg) {
+       return arg;
+   }
+   //...
+}
+----
+
+You may also define your configurations in the `application.properties` file.
+
+Both feature and interceptor classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.
+
+[source,properties]
+----
+quarkus.cxf.endpoint."/greeting".features=org.apache.cxf.feature.LoggingFeature
+quarkus.cxf.endpoint."/greeting".in-interceptors=com.example.MyInterceptor
+quarkus.cxf.endpoint."/greeting".out-interceptors=com.example.MyInterceptor
+quarkus.cxf.endpoint."/greeting".in-fault-interceptors=com.example.MyInterceptor
+quarkus.cxf.endpoint."/greeting".out-fault-interceptors=com.example.MyInterceptor
+----
+

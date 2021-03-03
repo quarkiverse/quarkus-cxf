@@ -1,0 +1,36 @@
+[[creating-a-soap-client]]
+= Creating a SOAP Client
+
+In order to support a SOAP client, register the endpoint URL and the service endpoint interface (same as the server) with the following configuration:
+
+[source,properties]
+----
+quarkus.cxf.endpoint."/fruit".client-endpoint-url=http://localhost:8080/
+quarkus.cxf.endpoint."/fruit".service-interface=org.acme.cxf.FruitWebService
+----
+
+Then inject the client as shown below to use it. Note that the Quarkus container must instantiate the client, ie. the client must be injected in a class which is managed and instantiated by the container. If you need a main, you can use the QuarkusMain annotation (cf https://quarkus.io/guides/lifecycle).
+
+[source,java]
+----
+public class MySoapClient {
+
+    @Inject
+    FruitWebService clientService;
+
+    public int getCount() {
+        return clientService.count();
+    }
+}
+----
+
+[[basic-auth]]
+== Basic Auth
+
+Basic auth for clients is supported by default. Just add the following properties to your `application.properties` file.
+
+[source,properties]
+----
+quarkus.cxf.endpoint."/greeting".username=user
+quarkus.cxf.endpoint."/greeting".password=password
+----
