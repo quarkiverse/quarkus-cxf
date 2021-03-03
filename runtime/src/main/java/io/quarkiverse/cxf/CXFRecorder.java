@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.cxf.devconsole.DevCxfServerInfosSupplier;
 import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.runtime.RuntimeValue;
@@ -152,6 +153,8 @@ public class CXFRecorder {
 
     public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos, BeanContainer beanContainer) {
         LOGGER.trace("init server");
+        // There may be a better way to handle this
+        DevCxfServerInfosSupplier.setServletInfos(infos.getValue());
         return new CxfHandler(infos.getValue(), beanContainer);
     }
 
