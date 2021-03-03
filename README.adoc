@@ -1,0 +1,43 @@
+= CXF Extension for Quarkus
+
+image:https://github.com/quarkiverse/quarkiverse-cxf/workflows/Build/badge.svg[Build,link=https://github.com/quarkiverse/quarkiverse-cxf/actions?query=workflow%3ABuild]
+image:https://img.shields.io/maven-central/v/io.quarkiverse.cxf/quarkus-cxf.svg?label=Maven%20Central[Maven Central,link=https://search.maven.org/artifact/io.quarkiverse.cxf/quarkus-cxf]
+image:https://img.shields.io/badge/License-Apache%202.0-blue.svg[License,link=https://opensource.org/licenses/Apache-2.0]
+
+* xref:#contributors[Contributors]
+* xref:#sample-code-integration-tests[Sample Code]
+* xref:#issues-and-support[Issues and Support]
+* xref:#documentation[Documentation]
+
+[[contributors]]
+== Contributors
+
+Thanks goes to these wonderful people:
+
+++++
+<div>
+<table>
+<tr>
+<td align="center"><a href="https://github.com/shumonsharif"><img src="https://avatars2.githubusercontent.com/u/13334073?v=4" width="100px;" alt=""/><br /><sub><b>shumonsharif</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkiverse-cxf/commits?author=shumonsharif" title="Code">💻</a> <a href="#maintenance-shumonsharif" title="Maintenance">🚧</a></td>
+<td align="center"><a href="https://github.com/dufoli"><img src="https://avatars0.githubusercontent.com/u/202057?v=4" width="100px;" alt=""/><br /><sub><b>dufoli</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkiverse-cxf/commits?author=dufoli" title="Code">💻</a> <a href="#maintenance-dufoli" title="Maintenance">🚧</a></td>
+<td align="center"><a href="https://github.com/dufgui"><img src="https://avatars0.githubusercontent.com/u/237211?v=4" width="100px;" alt=""/><br /><sub><b>dufgui</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkiverse-cxf/commits?author=dufgui" title="Code">💻</a> <a href="#maintenance-dufgui" title="Maintenance">🚧</a></td>
+</tr>
+</table>
+</div>
+++++
+
+
+[[sample-code-integration-tests]]
+== Sample Code
+The `integration-tests` module in the codebase provides various examples that demonstrate how to use this extension effectively.
+
+[[issues-and-support]]
+== Issues and Support
+Please feel free to https://github.com/quarkiverse/quarkus-cxf/issues/new[open an issue] in the GitHub repository in case you need support.  Contributions and pull requests from the community are welcome.
+
+[[documentation]]
+== Documentation
+
+Additional documentation is available through Quarkiverse Docs located at:
+
+https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html
