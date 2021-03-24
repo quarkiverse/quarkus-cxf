@@ -19,12 +19,30 @@ public class CxfClientTest {
                     .addClass(Fruit.class))
             .withConfigurationResource("application-cxf-test.properties");
 
+    //    @Inject
+    //    @Named("io.quarkiverse.cxf.deployment.test.FruitWebService")
+    //    CXFClientInfo clientInfo;
+
     @Inject
     FruitWebService clientService;
+
+    //    @Inject
+    //    @CXF(config = "fruit")
+    //    FruitWebService clientServiceWithConfigFruit;
 
     @Test
     public void whenCheckingClientInjected() {
         Assertions.assertNotNull(clientService);
     }
+
+    //    @Test
+    //    public void whenCheckingClientInfoInjected() {
+    //        Assertions.assertNotNull(clientInfo);
+    //    }
+    //
+    //    @Test
+    //    public void testClientInfoDetails() {
+    //        Assertions.assertNotNull(clientInfo.getEndpointAddress());
+    //    }
 
 }

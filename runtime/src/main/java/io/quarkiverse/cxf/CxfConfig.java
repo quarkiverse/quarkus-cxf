@@ -1,6 +1,9 @@
 package io.quarkiverse.cxf;
 
 import java.util.Map;
+import java.util.Optional;
+
+import org.wildfly.common.annotation.Nullable;
 
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
@@ -15,4 +18,18 @@ public class CxfConfig {
      */
     @ConfigItem(name = "endpoint")
     public Map<String, CxfEndpointConfig> endpoints;
+
+    /**
+     * Configure client proxiess.
+     */
+    @ConfigItem(name = "client")
+    public Map<String, CxfClientConfig> clients;
+
+    public boolean isClientPresent(String key) {
+        return Optional.ofNullable(clients).map(m -> m.containsKey(key)).orElse(false);
+    }
+
+    public @Nullable CxfClientConfig getClient(String key) {
+        return Optional.ofNullable(clients).map(m -> m.get(key)).orElse(null);
+    }
 }

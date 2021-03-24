@@ -2,6 +2,7 @@ package io.quarkiverse.cxf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -12,6 +13,7 @@ import io.quarkus.arc.Unremovable;
 @ApplicationScoped
 @Unremovable
 public class CXFClientInfo {
+    private static final Logger LOGGER = Logger.getLogger(CXFClientInfo.class);
     private String sei;
     private String endpointAddress;
     private String wsdlUrl;
@@ -22,36 +24,61 @@ public class CXFClientInfo {
     private String epName;
     private String username;
     private String password;
-    private List<String> inInterceptors;
-    private List<String> outInterceptors;
-    private List<String> outFaultInterceptors;
-    private List<String> inFaultInterceptors;
-    private List<String> features;
-    private List<String> classNames;
-    private static final Logger LOGGER = Logger.getLogger(CXFClientInfo.class);
+    private final List<String> inInterceptors = new ArrayList<>();
+    private final List<String> outInterceptors = new ArrayList<>();
+    private final List<String> outFaultInterceptors = new ArrayList<>();
+    private final List<String> inFaultInterceptors = new ArrayList<>();
+    private final List<String> features = new ArrayList<>();
+    private final List<String> classNames = new ArrayList<>();
 
     public CXFClientInfo() {
     }
 
-    public void init(String sei, String endpointAddress, String wsdlUrl, String soapBinding, String wsNamespace,
-            String wsName, String epNamespace, String epName, String username, String password, List<String> classNames) {
-        LOGGER.trace("new CXFClientInfo");
-        this.sei = sei;
+    public CXFClientInfo(
+            String sei,
+            String endpointAddress,
+            String soapBinding,
+            String wsNamespace,
+            String wsName,
+            List<String> classNames) {
+        this.classNames.addAll(classNames);
         this.endpointAddress = endpointAddress;
-        this.wsdlUrl = wsdlUrl;
+        this.epName = null;
+        this.epNamespace = null;
+        this.password = null;
+        this.sei = sei;
         this.soapBinding = soapBinding;
-        this.wsNamespace = wsNamespace;
+        this.username = null;
         this.wsName = wsName;
-        this.epNamespace = epNamespace;
-        this.epName = epName;
-        this.classNames = classNames;
-        this.username = username;
-        this.password = password;
-        this.inInterceptors = new ArrayList<>();
-        this.outInterceptors = new ArrayList<>();
-        this.outFaultInterceptors = new ArrayList<>();
-        this.inFaultInterceptors = new ArrayList<>();
-        this.features = new ArrayList<>();
+        this.wsNamespace = wsNamespace;
+        this.wsdlUrl = null;
+    }
+
+    public CXFClientInfo(CXFClientInfo other) {
+        this(other.sei, other.endpointAddress, other.soapBinding, other.wsNamespace, other.wsName, other.classNames);
+        this.wsdlUrl = other.wsdlUrl;
+        this.epNamespace = other.epNamespace;
+        this.epName = other.epName;
+        this.username = other.username;
+        this.password = other.password;
+        this.features.addAll(other.features);
+        this.inFaultInterceptors.addAll(other.inFaultInterceptors);
+        this.inInterceptors.addAll(other.inInterceptors);
+        this.outFaultInterceptors.addAll(other.outFaultInterceptors);
+        this.outInterceptors.addAll(other.outInterceptors);
+    }
+
+    public CXFClientInfo withConfig(CxfClientConfig config) {
+        Objects.requireNonNull(config);
+        this.wsdlUrl = config.wsdlPath.orElse(this.wsdlUrl);
+        this.epNamespace = config.endpointNamespace.orElse(this.epNamespace);
+        this.epName = config.endpointName.orElse(this.epName);
+        this.username = config.username.orElse(this.username);
+        this.password = config.password.orElse(this.password);
+        this.endpointAddress = config.clientEndpointUrl.orElse(this.endpointAddress);
+        addFeatures(config);
+        addInterceptors(config);
+        return this;
     }
 
     public String getSei() {
@@ -120,5 +147,102 @@ public class CXFClientInfo {
 
     public List<String> getInFaultInterceptors() {
         return inFaultInterceptors;
+    }
+
+    private CXFClientInfo addInterceptors(CxfClientConfig cxfEndPointConfig) {
+        if (cxfEndPointConfig.inInterceptors.isPresent()) {
+            this.inInterceptors.addAll(cxfEndPointConfig.inInterceptors.get());
+        }
+        if (cxfEndPointConfig.outInterceptors.isPresent()) {
+            this.outInterceptors.addAll(cxfEndPointConfig.outInterceptors.get());
+        }
+        if (cxfEndPointConfig.outFaultInterceptors.isPresent()) {
+            this.outFaultInterceptors.addAll(cxfEndPointConfig.outFaultInterceptors.get());
+        }
+        if (cxfEndPointConfig.inFaultInterceptors.isPresent()) {
+            this.inFaultInterceptors.addAll(cxfEndPointConfig.inFaultInterceptors.get());
+        }
+        return this;
+    }
+
+    private CXFClientInfo addFeatures(CxfClientConfig cxfEndPointConfig) {
+        if (cxfEndPointConfig.features.isPresent()) {
+            this.features.addAll(cxfEndPointConfig.features.get());
+        }
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "CXFClientInfo{" +
+                "sei='" + sei + '\'' +
+                ", endpointAddress='" + endpointAddress + '\'' +
+                ", wsdlUrl='" + wsdlUrl + '\'' +
+                ", soapBinding='" + soapBinding + '\'' +
+                ", wsNamespace='" + wsNamespace + '\'' +
+                ", wsName='" + wsName + '\'' +
+                ", epNamespace='" + epNamespace + '\'' +
+                ", epName='" + epName + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", inInterceptors=" + inInterceptors +
+                ", outInterceptors=" + outInterceptors +
+                ", outFaultInterceptors=" + outFaultInterceptors +
+                ", inFaultInterceptors=" + inFaultInterceptors +
+                ", features=" + features +
+                ", classNames=" + classNames +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        CXFClientInfo that = (CXFClientInfo) o;
+        return Objects.equals(sei, that.sei) && Objects.equals(
+                endpointAddress,
+                that.endpointAddress) && Objects.equals(wsdlUrl, that.wsdlUrl)
+                && Objects.equals(
+                        soapBinding,
+                        that.soapBinding)
+                && Objects.equals(wsNamespace, that.wsNamespace) && Objects.equals(
+                        wsName,
+                        that.wsName)
+                && Objects.equals(epNamespace, that.epNamespace) && Objects.equals(
+                        epName,
+                        that.epName)
+                && Objects.equals(username, that.username) && Objects.equals(
+                        password,
+                        that.password)
+                && Objects.equals(inInterceptors, that.inInterceptors) && Objects.equals(
+                        outInterceptors,
+                        that.outInterceptors)
+                && Objects.equals(outFaultInterceptors, that.outFaultInterceptors) && Objects.equals(
+                        inFaultInterceptors,
+                        that.inFaultInterceptors)
+                && Objects.equals(features, that.features) && Objects.equals(classNames, that.classNames);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                sei,
+                endpointAddress,
+                wsdlUrl,
+                soapBinding,
+                wsNamespace,
+                wsName,
+                epNamespace,
+                epName,
+                username,
+                password,
+                inInterceptors,
+                outInterceptors,
+                outFaultInterceptors,
+                inFaultInterceptors,
+                features,
+                classNames);
     }
 }

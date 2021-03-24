@@ -2,6 +2,7 @@ package io.quarkiverse.cxf.deployment;
 
 import java.util.List;
 
+import io.quarkiverse.cxf.CXFClientData;
 import io.quarkus.builder.item.MultiBuildItem;
 
 /**
@@ -73,5 +74,15 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
 
     public boolean IsClient() {
         return isClient;
+    }
+
+    public CXFClientData clientData() {
+        CXFClientData cxf = new CXFClientData();
+        cxf.soapBinding = this.getSoapBinding();
+        cxf.classNames.addAll(this.getClassNames());
+        cxf.sei = this.getSei();
+        cxf.wsName = this.getWsName();
+        cxf.wsNamespace = this.getWsNamespace();
+        return cxf;
     }
 }
