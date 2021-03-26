@@ -9,8 +9,10 @@ import org.wildfly.common.annotation.Nullable;
 /**
  * Provides runtime metadata for a CXF client.
  *
- * <p> This class contains extracted from a SEI. It contains basic data to
- * setup a proxy client for a given SEI. </p>
+ * <p>
+ * This class contains extracted from a SEI. It contains basic data to
+ * setup a proxy client for a given SEI.
+ * </p>
  *
  * @author wh81752
  */

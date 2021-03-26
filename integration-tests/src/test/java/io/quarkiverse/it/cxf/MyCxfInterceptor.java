@@ -10,11 +10,14 @@ import org.apache.cxf.phase.Phase;
  *
  * <p>
  * Implemenents an CXF interceptor that throws unconditionally an illegal
- * state exception on handling a message.</p>
+ * state exception on handling a message.
+ * </p>
  *
- * <p>This interceptor is intented to be used for testing. Configure a
+ * <p>
+ * This interceptor is intented to be used for testing. Configure a
  * CXF client with this interceptor and simply test whether there is an
- * effect, i.e. expect a SOAPFaultException.</p>
+ * effect, i.e. expect a SOAPFaultException.
+ * </p>
  *
  * @author wh81752
  */

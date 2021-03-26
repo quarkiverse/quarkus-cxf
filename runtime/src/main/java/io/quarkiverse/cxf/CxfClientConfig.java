@@ -83,4 +83,12 @@ public class CxfClientConfig {
      */
     @ConfigItem
     public Optional<List<String>> inFaultInterceptors;
+
+    /**
+     * Indicates whether this is an alternative proxy client configuration. If
+     * true, then this configuration is ignored when configuring a client without
+     * annotation @CXF.
+     */
+    @ConfigItem
+    public boolean alternative = false;
 }

@@ -202,6 +202,7 @@ public abstract class CxfClientProducer {
                 .filter(kv -> kv.getValue() != null)
                 .filter(kv -> kv.getValue().serviceInterface.isPresent())
                 .filter(kv -> kv.getValue().serviceInterface.get().equals(meta.getSei()))
+                .filter(kv -> kv.getValue().alternative == false)
                 .map(Map.Entry::getKey)
                 .collect(toList());
 
