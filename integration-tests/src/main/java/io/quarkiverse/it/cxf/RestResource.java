@@ -12,7 +12,7 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 public class RestResource {
     @Inject
     @CXFClient
-    public GreetingClientWebService greetingWS;
+    public GreetingWebService greetingWS;
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)

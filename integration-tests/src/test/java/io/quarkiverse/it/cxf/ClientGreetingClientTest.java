@@ -19,9 +19,13 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 class ClientGreetingClientTest {
 
+    //    @Inject
+    //    @CXFClient
+    //    GreetingClientWebService greetingWS;
+    // TODO: change to GreetingClientWebService
     @Inject
     @CXFClient
-    GreetingClientWebService greetingWS;
+    GreetingWebService greetingWS;
 
     @Named("io.quarkiverse.it.cxf.GreetingClientWebService")
     CXFClientInfo greetingInfo;

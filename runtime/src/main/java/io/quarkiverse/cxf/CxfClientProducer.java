@@ -221,9 +221,9 @@ public abstract class CxfClientProducer {
 
         if (keylist.size() > 1) {
             String fmt;
-            fmt = "multiple client applicable configurations found for SEI %s: %s. This is illegal. Consider to " +
-                    "remove all but one from selection by applying config property *.alternative = false.";
-            throw new IllegalStateException(format(fmt, meta.getSei(), join(",", keylist)));
+            fmt = "multiple client configurations found applicable for SEI(%s): %s. This is illegal. Consider to " +
+                    "remove all but one applicable configurations by applying config property '*.alternative = false'.";
+            throw new IllegalStateException(format(fmt, meta.getSei(), join("|", keylist)));
         }
 
         // It is legal to have no matching configuration. Then we go ahead and use default values derived from
