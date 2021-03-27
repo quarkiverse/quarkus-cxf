@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.CXFClientInfo;
+import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.junit.QuarkusTest;
 
 /**
@@ -19,6 +20,7 @@ import io.quarkus.test.junit.QuarkusTest;
 class ClientGreetingClientTest {
 
     @Inject
+    @CXFClient
     GreetingClientWebService greetingWS;
 
     @Named("io.quarkiverse.it.cxf.GreetingClientWebService")

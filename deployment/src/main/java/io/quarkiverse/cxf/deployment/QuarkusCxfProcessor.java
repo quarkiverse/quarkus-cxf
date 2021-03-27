@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.xml.ws.soap.SOAPBinding;
@@ -28,6 +26,7 @@ import org.jboss.jandex.*;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.*;
+import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.arc.deployment.*;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.builder.item.BuildItem;
@@ -234,6 +233,7 @@ class QuarkusCxfProcessor {
                             wrapperClassNames,
                             implementor));
                 }
+                generateCxfClientProducer(sei, generatedBeans, unremovableBeans);
                 cxfWebServices.produce(new CxfWebServiceBuildItem(
                         cxfBuildTimeConfig.path,
                         sei,
@@ -1085,13 +1085,10 @@ class QuarkusCxfProcessor {
         // >>   @Named(value="{SEI}")
         // >>   public CXFClientInfo info;
         // >>
-        // >>   public CXFClientInfo getInfo() { return this.info; }
-        // >>
         // >> @Dependent
         // >> @Produces
-        // >> @Default
         // >> {SEI} createService(InjectionPoint ip) {
-        // >>   return ({SEI}) super().loadCxfClient(ip);
+        // >>   return ({SEI}) super().loadCxfClient(ip, this.info);
         // >> }
         String cxfClientProducerClassName = sei + "CxfClientProducer";
 
@@ -1132,33 +1129,18 @@ class QuarkusCxfProcessor {
                     AnnotationInstance
                             .create(DotName.createSimple(Inject.class.getName()), null, new AnnotationValue[] {}));
 
-            //
-            // create method 'public CXFClientInfo getInfo() { return this.info; }'
-            //
-            //                        try (MethodCreator getInfo = classCreator.getMethodCreator(
-            //                                "getInfo",
-            //                                "io.quarkiverse.cxf.CXFClientInfo")) {
-            //                            getInfo.setModifiers(Modifier.PUBLIC);
-            //                            getInfo.returnValue(getInfo.readInstanceField(
-            //                                    info.getFieldDescriptor(),
-            //                                    getInfo.getThis()));
-            //                        }
-
-            //
             // create method
             // >> @Dependent
             // >> @Produces
-            // >> @Default
+            // >> @CXFClient
             // >> {SEI} createService(InjectionPoint ip) { .. }
-            //
 
             String p0class = "javax.enterprise.inject.spi.InjectionPoint";
             String p1class = "io.quarkiverse.cxf.CXFClientInfo";
             try (MethodCreator createService = classCreator.getMethodCreator("createService", sei, p0class)) {
                 createService.addAnnotation(Dependent.class);
                 createService.addAnnotation(Produces.class);
-                createService.addAnnotation(Default.class);
-                createService.addAnnotation(Any.class);
+                createService.addAnnotation(CXFClient.class);
 
                 // p0 (InjectionPoint);
                 ResultHandle p0;

@@ -2,6 +2,8 @@ package io.quarkiverse.it.cxf;
 
 import static io.restassured.RestAssured.given;
 
+import java.lang.reflect.Proxy;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -11,6 +13,7 @@ import org.tempuri.CalculatorSoap;
 import org.tempuri.alt.AltCalculatorSoap;
 
 import io.quarkiverse.cxf.CXFClientInfo;
+import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.junit.QuarkusTest;
 
 /**
@@ -22,9 +25,11 @@ import io.quarkus.test.junit.QuarkusTest;
 class ClientCalculatorTest {
 
     @Inject
+    @CXFClient
     CalculatorSoap calculatorWS;
 
     @Inject
+    @CXFClient
     AltCalculatorSoap altCalculatorWS;
 
     @Inject
@@ -39,6 +44,12 @@ class ClientCalculatorTest {
     public void test_clients_injected() {
         Assertions.assertNotNull(calculatorWS);
         Assertions.assertNotNull(altCalculatorWS);
+    }
+
+    @Test
+    public void test_proxies_injected() {
+        Assertions.assertTrue(Proxy.isProxyClass(calculatorWS.getClass()));
+        Assertions.assertTrue(Proxy.isProxyClass(altCalculatorWS.getClass()));
     }
 
     @Test

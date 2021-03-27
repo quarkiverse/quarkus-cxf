@@ -33,7 +33,7 @@ import org.apache.cxf.wsdl.ExtensionClassCreator;
 import org.apache.cxf.wsdl.ExtensionClassLoader;
 import org.jboss.logging.Logger;
 
-import io.quarkiverse.cxf.annotation.CXF;
+import io.quarkiverse.cxf.annotation.CXFClient;
 
 /**
  * Base producer class for setting up CXF client proxies.
@@ -56,12 +56,9 @@ public abstract class CxfClientProducer {
      */
     public Object loadCxfClient(
             InjectionPoint ip,
-            CXFClientInfo metainfo) {
+            CXFClientInfo meta) {
         LOGGER.debug(format("ip(%s) config(%s)", ip, this.config));
-
-        CXFClientInfo info = this.cxfClientInfoSupplier(config, ip, metainfo);
-
-        return produceCxfClient(info);
+        return produceCxfClient(selectorCXFClientInfo(config, ip, meta));
     }
 
     /**
@@ -173,29 +170,42 @@ public abstract class CxfClientProducer {
         }
     }
 
-    static private CXFClientInfo cxfClientInfoSupplier(
+    /**
+     * Calculates the client info to use for producing a JAXWS client proxy.
+     *
+     * @param cxfConfig The current configuration
+     * @param ip Meta information about where injection of client proxy takes place
+     * @param meta The default to return
+     * @return not null
+     */
+    static private CXFClientInfo selectorCXFClientInfo(
             CxfConfig cxfConfig,
             InjectionPoint ip,
             CXFClientInfo meta) {
         CXFClientInfo info = new CXFClientInfo(meta);
 
-        // TODO: mingle around with IP info as well.
-        //        // Is this client annotated with CXF?
-        if (ip.getAnnotated().isAnnotationPresent(CXF.class)) {
-            CXF anno = ip.getAnnotated().getAnnotation(CXF.class);
+        // If injection point is annotated with @CXFClient then determine a
+        // configuration by looking up annotated config value:
+
+        if (ip.getAnnotated().isAnnotationPresent(CXFClient.class)) {
+            CXFClient anno = ip.getAnnotated().getAnnotation(CXFClient.class);
             String configKey = anno.config();
 
             if (cxfConfig.isClientPresent(configKey)) {
-                CxfClientConfig cfg = cxfConfig.getClient(configKey);
-                info = info.withConfig(cfg);
-            } else {
-                LOGGER.warn("no such CXF client configuration in your app properties: " + configKey);
+                return info.withConfig(cxfConfig.getClient(configKey));
             }
-            // That's it.
-            return info;
-        }
 
-        // determine all matching configurations for given SEI
+            // If config-key is present and not default: This is an error:
+            if (configKey != null && !configKey.isEmpty()) {
+                throw new IllegalStateException(format(
+                        "client config key %s does not exist. This is illegal.",
+                        configKey));
+            }
+        }
+        // User did not specify any client config value. Thus we make a smart guess
+        // about which configuration is to be used.
+        //
+        // Determine all matching configurations for given SEI
         List<String> keylist = cxfConfig.clients
                 .entrySet()
                 .stream()
@@ -206,24 +216,27 @@ public abstract class CxfClientProducer {
                 .map(Map.Entry::getKey)
                 .collect(toList());
 
-        //
-        // keylist contains all configurations for given SEI.
-        //
+        // keylist contains all configurations for given SEI. It is illegal to have multiple matching
+        // configurations.
+
         if (keylist.size() > 1) {
-            // TODO: either bail out with error or merge (in a predictable way).
-            // Alternative: Use "serviceinterface" instead of "endpoints" where the service interface
-            // class is the configuration key.
-            LOGGER.warn(format(
-                    "multiple client configurations found for SEI %s: %s, all but first are ignored.",
-                    meta.getSei(),
-                    join(",", keylist)));
+            String fmt;
+            fmt = "multiple client applicable configurations found for SEI %s: %s. This is illegal. Consider to " +
+                    "remove all but one from selection by applying config property *.alternative = false.";
+            throw new IllegalStateException(format(fmt, meta.getSei(), join(",", keylist)));
         }
 
-        if (!keylist.isEmpty()) {
-            info = info.withConfig(cxfConfig.clients.get(keylist.get(0)));
+        // It is legal to have no matching configuration. Then we go ahead and use default values derived from
+        // the service itself.
+
+        if (keylist.isEmpty()) {
+            String fmt;
+            fmt = "no matching configuration found for SEI %s, using derived value %s.";
+            LOGGER.warn(format(fmt, meta.getSei(), meta));
+            return meta;
         }
 
-        return info;
+        return info.withConfig(cxfConfig.clients.get(keylist.get(0)));
     }
 
 }

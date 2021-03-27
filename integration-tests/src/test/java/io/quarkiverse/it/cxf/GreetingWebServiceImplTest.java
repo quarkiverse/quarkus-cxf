@@ -8,12 +8,14 @@ import javax.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 class GreetingWebServiceImplTest {
 
     @Inject
+    @CXFClient
     public GreetingClientWebService greetingWS;
 
     @Test
