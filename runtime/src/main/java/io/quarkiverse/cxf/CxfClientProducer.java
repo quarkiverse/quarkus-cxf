@@ -54,11 +54,12 @@ public abstract class CxfClientProducer {
     /**
      * Must be public, otherwise: java.lang.VerifyError: Bad access to protected data in invokevirtual
      */
-    public Object loadCxfClient(
-            InjectionPoint ip,
-            CXFClientInfo meta) {
-        LOGGER.debug(format("ip(%s) config(%s)", ip, this.config));
+    public Object loadCxfClient(InjectionPoint ip, CXFClientInfo meta) {
         return produceCxfClient(selectorCXFClientInfo(config, ip, meta));
+    }
+
+    public Object loadCxfClientInfo(InjectionPoint ip, CXFClientInfo meta) {
+        return selectorCXFClientInfo(config, ip, meta);
     }
 
     /**
