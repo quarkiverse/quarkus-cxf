@@ -13,7 +13,7 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.junit.QuarkusTest;
 
 /**
- * Test clients of internal WebService GreetingWebService.
+ * Test WebService {@link GreetingWebService}.
  *
  */
 @QuarkusTest
@@ -23,16 +23,16 @@ class ClientGreetingTest {
     @CXFClient
     GreetingWebService greetingWS;
 
+    @Inject
+    GreetingWebService greetingImpl;
+
     @Named("io.quarkiverse.it.cxf.GreetingWebService")
     CXFClientInfo greetingInfo;
 
     @Test
-    public void test_clients_injected() {
+    public void test_injected() {
         Assertions.assertNotNull(greetingWS);
-    }
-
-    @Test
-    public void test_infos_injected() {
+        Assertions.assertNotNull(greetingImpl);
         Assertions.assertNotNull(greetingInfo);
     }
 
@@ -58,7 +58,12 @@ class ClientGreetingTest {
     }
 
     @Test
-    public void test_ping() {
+    public void test_ws_ping() {
         Assertions.assertEquals("Hello hello", greetingWS.ping("hello"));
+    }
+
+    @Test
+    public void test_impl_ping() {
+        Assertions.assertEquals("Hello hello", greetingImpl.ping("hello"));
     }
 }

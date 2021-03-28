@@ -16,8 +16,8 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.junit.QuarkusTest;
 
 /**
- * GreetingClientWebService is SEI-identical with GreetingWebService. Here we test whether we can access
- * GreetingWebService's EP via GreetingClientWebService.
+ * {@link GreetingClientWebService} is SEI-identical with {@link GreetingWebService}. This test is
+ *  about whether we can access {@code GreetingWebService}'s EP via {@code GreetingClientWebService}.
  */
 @QuarkusTest
 class ClientGreetingClientTest {
