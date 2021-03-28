@@ -1,7 +1,11 @@
 package io.quarkiverse.it.cxf;
 
+import javax.inject.Inject;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.junit.QuarkusTest;
 
 /**
@@ -15,10 +19,10 @@ class ClientConfigredGreetingTest {
     // cause a GreetingWebService proxy client is not produced by Quarkus-CXF (
     // CxfClientProducer). How come?
 
-    //    @Inject
-    //    @CXFClient(config = "foo")
-    //    GreetingClientWebService greetingWS;
-    //
+    @Inject
+    @CXFClient
+    GreetingClientWebService greetingWS;
+
     //    @Inject
     //    @CXFClient(config = "featured-foo")
     //    GreetingClientWebService featuredWS;
@@ -26,10 +30,10 @@ class ClientConfigredGreetingTest {
     //    @Named("io.quarkiverse.it.cxf.GreetingWebService")
     //    CXFClientInfo greetingInfo;
     //
-    //    @Test
-    //    public void test_clients_injected() {
-    //        Assertions.assertNotNull(greetingWS);
-    //    }
+    @Test
+    public void test_clients_injected() {
+        Assertions.assertNotNull(greetingWS);
+    }
     //
     //    @Test
     //    public void test_infos_injected() {

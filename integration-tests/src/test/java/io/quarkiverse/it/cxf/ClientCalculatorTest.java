@@ -25,7 +25,7 @@ import io.quarkus.test.junit.QuarkusTest;
 class ClientCalculatorTest {
 
     @Inject
-    @CXFClient
+    @CXFClient("mockCalculator")
     CalculatorSoap calculatorWS;
 
     @Inject

@@ -189,7 +189,7 @@ public abstract class CxfClientProducer {
 
         if (ip.getAnnotated().isAnnotationPresent(CXFClient.class)) {
             CXFClient anno = ip.getAnnotated().getAnnotation(CXFClient.class);
-            String configKey = anno.config();
+            String configKey = anno.value();
 
             if (cxfConfig.isClientPresent(configKey)) {
                 return info.withConfig(cxfConfig.getClient(configKey));

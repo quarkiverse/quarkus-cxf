@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.xml.ws.soap.SOAPBinding;
@@ -108,7 +107,7 @@ class QuarkusCxfProcessor {
                         extensibilities)));
     }
 
-    class quarkusCapture implements GeneratedClassClassLoaderCapture {
+    static class quarkusCapture implements GeneratedClassClassLoaderCapture {
         private final ClassOutput classOutput;
 
         quarkusCapture(ClassOutput classOutput) {
@@ -1138,7 +1137,6 @@ class QuarkusCxfProcessor {
             String p0class = "javax.enterprise.inject.spi.InjectionPoint";
             String p1class = "io.quarkiverse.cxf.CXFClientInfo";
             try (MethodCreator createService = classCreator.getMethodCreator("createService", sei, p0class)) {
-                createService.addAnnotation(Dependent.class);
                 createService.addAnnotation(Produces.class);
                 createService.addAnnotation(CXFClient.class);
 
