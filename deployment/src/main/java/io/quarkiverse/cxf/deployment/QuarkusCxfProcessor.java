@@ -31,7 +31,6 @@ import io.quarkus.arc.processor.DotNames;
 import io.quarkus.builder.item.BuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
@@ -195,20 +194,13 @@ class QuarkusCxfProcessor {
             String soapBinding = SOAPBinding.SOAP11HTTP_BINDING;
             //if no implementor, it mean it is client
             if (implementors == null || implementors.isEmpty()) {
-                generateCxfClientProducer(sei, generatedBeans, unremovableBeans);
 
                 AnnotationInstance webserviceClient = findWebServiceClientAnnotation(index, wsClassInfo.name());
                 if (webserviceClient != null) {
                     wsName = webserviceClient.value("name").asString();
                     wsNamespace = webserviceClient.value("targetNamespace").asString();
                 }
-                cxfWebServices.produce(new CxfWebServiceBuildItem(
-                        cxfBuildTimeConfig.path,
-                        sei,
-                        soapBinding,
-                        wsNamespace,
-                        wsName,
-                        wrapperClassNames));
+
             } else {
 
                 for (ClassInfo wsClass : implementors) {
@@ -232,15 +224,14 @@ class QuarkusCxfProcessor {
                             wrapperClassNames,
                             implementor));
                 }
-                generateCxfClientProducer(sei, generatedBeans, unremovableBeans);
-                cxfWebServices.produce(new CxfWebServiceBuildItem(
-                        cxfBuildTimeConfig.path,
-                        sei,
-                        soapBinding,
-                        wsNamespace,
-                        wsName,
-                        wrapperClassNames));
             }
+            cxfWebServices.produce(new CxfWebServiceBuildItem(
+                    cxfBuildTimeConfig.path,
+                    sei,
+                    soapBinding,
+                    wsNamespace,
+                    wsName,
+                    wrapperClassNames));
 
             proxies.produce(new NativeImageProxyDefinitionBuildItem(
                     wsClassInfo.name().toString(),
@@ -296,7 +287,21 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    @Record(ExecutionTime.RUNTIME_INIT)
+    void clientProducerBuildStep(
+            List<CxfWebServiceBuildItem> webservices,
+            BuildProducer<GeneratedBeanBuildItem> generatedBeans,
+            BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
+        webservices
+                .stream()
+                .filter(CxfWebServiceBuildItem::IsClient)
+                .map(CxfWebServiceBuildItem::getSei)
+                .forEach(sei -> {
+                    generateCxfClientProducer(sei, generatedBeans, unremovableBeans);
+                });
+    }
+
+    @BuildStep
+    @Record(RUNTIME_INIT)
     public void startRoute(
             CXFRecorder recorder,
             BuildProducer<DefaultRouteBuildItem> defaultRoutes,

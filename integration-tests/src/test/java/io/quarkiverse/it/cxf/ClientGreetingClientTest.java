@@ -17,7 +17,7 @@ import io.quarkus.test.junit.QuarkusTest;
 
 /**
  * {@link GreetingClientWebService} is SEI-identical with {@link GreetingWebService}. This test is
- *  about whether we can access {@code GreetingWebService}'s EP via {@code GreetingClientWebService}.
+ * about whether we can access {@code GreetingWebService}'s EP via {@code GreetingClientWebService}.
  */
 @QuarkusTest
 class ClientGreetingClientTest {

@@ -7,7 +7,6 @@ import java.lang.reflect.Proxy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import io.quarkiverse.it.cxf.mock.AltCalculatorMockImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.tempuri.CalculatorSoap;
@@ -15,13 +14,16 @@ import org.tempuri.alt.AltCalculatorSoap;
 
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.it.cxf.mock.AltCalculatorMockImpl;
 import io.quarkus.test.junit.QuarkusTest;
 
 /**
  * Test webservice clients to truly external service endpoints.
  *
  *
- * <p>See {@link MockWSTestResource}, {@link AltCalculatorMockImpl} and {@link AltCalculatorMockImpl} for details.</p>
+ * <p>
+ * See {@link MockWSTestResource}, {@link AltCalculatorMockImpl} and {@link AltCalculatorMockImpl} for details.
+ * </p>
  */
 @QuarkusTest
 class ClientCalculatorTest {
