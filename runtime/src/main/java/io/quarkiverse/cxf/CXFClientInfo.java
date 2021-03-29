@@ -10,7 +10,6 @@ import org.jboss.logging.Logger;
 
 import io.quarkus.arc.Unremovable;
 
-@ApplicationScoped
 @Unremovable
 public class CXFClientInfo {
     private static final Logger LOGGER = Logger.getLogger(CXFClientInfo.class);
