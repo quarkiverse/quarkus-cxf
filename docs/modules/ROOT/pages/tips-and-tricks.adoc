@@ -1,0 +1,291 @@
+[[Tips-Tricks]]
+== Tips and Tricks
+Several traps or unknowing points can appear during develop, test, native's image building ...
+bellow some of the best known.
+
+Sometimes a REST endpoint may be needed on the same project where Quarkus CXF Extension is used.
+The REST endpoint path, must be different from the SOAP endpoint path (in order to avoid request
+forwarding conflict between both protocols)
+
+For example, if one WeatherWebService interface declared in a WSDL, you can
+begin by create the `org.acme.cxf.WeatherWebServiceImpl` class as follows:
+
+[source,java]
+----
+package org.acme.cxf;
+
+import ...
+
+@Slf4j
+@WebService(endpointInterface = "org.acme.cxf.WeatherWebService")
+public class WeatherWebServiceImpl implements WeatherWebService {
+
+	@Inject
+    BackEndWeatherService backEndWeatherService;
+
+    private Map<String, DailyTemperature> dailyTempByZipCode = Collections.synchronizedMap(new LinkedHashMap<>());
+
+    public WeatherWebServiceImpl() {
+        this.dailyTempByZipCode.addAll(
+        		this.backEndWeatherService.getDailyForecast(Instant.now()));
+    }
+
+    @Override
+    public DailyTemperature estimationTemperatures(String zipCode) {
+        log.info("Daily estimation temperatures forecast called with '{}' zip code paramter", zipCode);
+        return this.dailyTempByZipCode.get(zipCode);
+    }
+}
+----
+
+After that, you need to specify the root context for CXF web services, as indicated
+in properties documentation for correctly split REST (with RESTEasy for example)
+and SOAP routes on different paths to make wsdl url working.
+
+CXF's SOAP properties:
+[source,properties]
+----
+quarkus.cxf.path=/soap
+quarkus.cxf.endpoint."/weather".implementor=org.acme.cxf.WeatherWebServiceImpl
+----
+
+Now, imagine the following RESTEasy endpoint:
+[source,java]
+----
+package org.acme.reasteasy;
+
+import ...
+
+@Slf4j
+@Path("/healthcheck")
+public class HealthCheckResource {
+
+	@Inject
+    BackEndWeatherService backEndWeatherService;
+
+	@GET
+	public Response doHealthCheck() {
+		if(this.backEndWeatherService.isAvailable()) {
+            return Response.ok().build();
+		} else {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE);
+		}
+	}
+}
+----
+
+finishing by stating the REASTEasy path:
+[source,properties]
+----
+quarkus.resteasy.path=/services
+----
+
+As a result, you can know request regardless you REST and SOAP endpoints deployed with only one project, at:
+
+`REST request`: http://localhost:8080/services/healthcheck
+
+`SOAP request`: http://localhost:8080/soap/weather
+
+
+[[Native-Image-Building]]
+== Native Image Building
+During a native image building, especially on the "analysis" phase, the build can throws
+the following exception:
+
+[source,bash]
+----
+Error: com.oracle.svm.hosted.substitute.DeletedElementException: Unsupported method java.lang.ClassLoader.defineClass(String, byte[], int, int) is reachable
+To diagnose the issue, you can add the option --report-unsupported-elements-at-runtime. The unsupported element is then reported at run time when it is accessed the first time.
+Detailed message:
+Trace:
+	at parsing org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader.java:108)
+Call path from entry point to org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader$TypeHelperClassLoader, String, byte[], int, int):
+	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader.java:108)
+	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.lambda$defineClass$0(ClassGeneratorClassLoader.java:148)
+	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader$$Lambda$915/0x00000007c1dc1440.apply(Unknown Source)
+	at sun.security.ec.XECParameters$1.get(XECParameters.java:183)
+	at com.oracle.svm.core.jdk.SystemPropertiesSupport.initializeLazyValue(SystemPropertiesSupport.java:190)
+	at com.oracle.svm.core.jdk.SystemPropertiesSupport.getProperty(SystemPropertiesSupport.java:143)
+	at com.oracle.svm.core.jdk.Target_java_lang_System.getProperty(JavaLangSubstitutions.java:338)
+	at com.oracle.svm.jni.JNIJavaCallWrappers.jniInvoke_ARRAY:Ljava_lang_System_2_0002egetProperty_00028Ljava_lang_String_2_00029Ljava_lang_String_2(generated:0)
+
+com.oracle.svm.core.util.UserError$UserException: com.oracle.svm.hosted.substitute.DeletedElementException: Unsupported method java.lang.ClassLoader.defineClass(String, byte[], int, int) is reachable
+To diagnose the issue, you can add the option --report-unsupported-elements-at-runtime. The unsupported element is then reported at run time when it is accessed the first time.
+Detailed message:
+Trace:
+	at parsing org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader.java:108)
+Call path from entry point to org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader$TypeHelperClassLoader, String, byte[], int, int):
+	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader.java:108)
+	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.lambda$defineClass$0(ClassGeneratorClassLoader.java:148)
+	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader$$Lambda$915/0x00000007c1dc1440.apply(Unknown Source)
+	at sun.security.ec.XECParameters$1.get(XECParameters.java:183)
+	at com.oracle.svm.core.jdk.SystemPropertiesSupport.initializeLazyValue(SystemPropertiesSupport.java:190)
+	at com.oracle.svm.core.jdk.SystemPropertiesSupport.getProperty(SystemPropertiesSupport.java:143)
+	at com.oracle.svm.core.jdk.Target_java_lang_System.getProperty(JavaLangSubstitutions.java:338)
+	at com.oracle.svm.jni.JNIJavaCallWrappers.jniInvoke_ARRAY:Ljava_lang_System_2_0002egetProperty_00028Ljava_lang_String_2_00029Ljava_lang_String_2(generated:0)
+
+	at com.oracle.svm.core.util.UserError.abort(UserError.java:82)
+----
+
+This exception raises if errors should be reported at runtime. The proposed option
+`report-unsupported-elements-at-runtime` reports usage of unsupported methods and
+fields at run time when they are accessed the first time, instead of as an error
+during image building.
+
+The problem can be easily by specifying two following property in pom.xml:
+[source,xml]
+----
+  <profiles>
+        <profile>
+            <id>native</id>
+            <activation>
+                <property>
+                    <name>native</name>
+                </property>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <quarkus.package.type>native</quarkus.package.type>
+                <quarkus.native.report-errors-at-runtime>true</quarkus.native.report-errors-at-runtime>
+            </properties>
+            ...
+        </profile>
+ </profiles>
+----
+
+And finally generate the native image with the `native` profile activation like this:
+
+[source,bash]
+----
+mvn clean package -Pnative -am -Dquarkus.native.container-build=true -Dimage-native.xmx=9g
+----
+
+
+
+[[Non-ASCII-Characters]]
+== Non ASCII Characters
+Sometimes, after wsdl2java utility as well as cxf-codegen-plugin, the autogenerated Java classes can not be
+fully compatible with extension due to non ASCII characters
+
+[source,bash]
+----
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]     (clinit):   2 895,06 ms,  5,72 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]   (typeflow):  62 616,32 ms,  5,72 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]    (objects):  75 250,89 ms,  5,72 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]   (features):   3 545,75 ms,  5,72 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]     analysis: 150 545,33 ms,  5,72 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]     universe:   5 928,98 ms,  5,72 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]      (parse):  33 146,96 ms,  6,44 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]     (inline):  25 312,67 ms,  8,36 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]    (compile):  96 344,91 ms,  8,54 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]      compile: 161 459,15 ms,  8,54 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]        image: 158 272,73 ms,  8,43 GB
+[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]        write:     205,82 ms,  8,43 GB
+Fatal error:com.oracle.svm.core.util.VMError$HostedError: java.lang.RuntimeException: oops : expected ASCII string! com.oracle.svm.reflect.OperationOrderStatusType_CRÉÉ_f151156b0d42ecdbdfb919501d8a86dda8733012_1456.hashCode
+	at com.oracle.svm.core.util.VMError.shouldNotReachHere(VMError.java:72)
+	at com.oracle.svm.hosted.image.NativeBootImage.write(NativeBootImage.java:169)
+	at com.oracle.svm.hosted.image.NativeBootImageViaCC.write(NativeBootImageViaCC.java:404)
+	at com.oracle.svm.hosted.NativeImageGenerator.doRun(NativeImageGenerator.java:685)
+	at com.oracle.svm.hosted.NativeImageGenerator.lambda$run$0(NativeImageGenerator.java:476)
+	at java.base/java.util.concurrent.ForkJoinTask$AdaptedRunnableAction.exec(ForkJoinTask.java:1407)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:290)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1020)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1656)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1594)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:183)
+Caused by: java.lang.RuntimeException: oops : expected ASCII string! com.oracle.svm.reflect.OperationOrderStatusType_CRÉÉ_f151156b0d42ecdbdfb919501d8a86dda8733012_1456.hashCode
+	at com.oracle.objectfile.elf.dwarf.DwarfSectionImpl.putAsciiStringBytes(DwarfSectionImpl.java:246)
+	at com.oracle.objectfile.elf.dwarf.DwarfSectionImpl.putAsciiStringBytes(DwarfSectionImpl.java:238)
+	at com.oracle.objectfile.elf.dwarf.DwarfStrSectionImpl.writeContent(DwarfStrSectionImpl.java:75)
+	at com.oracle.objectfile.ObjectFile.debugContext(ObjectFile.java:1823)
+	at com.oracle.objectfile.elf.dwarf.DwarfSectionImpl.getOrDecideContent(DwarfSectionImpl.java:366)
+	at com.oracle.objectfile.elf.ELFUserDefinedSection.getOrDecideContent(ELFUserDefinedSection.java:111)
+	at com.oracle.objectfile.ObjectFile.bake(ObjectFile.java:1608)
+	at com.oracle.objectfile.ObjectFile.write(ObjectFile.java:1268)
+	at com.oracle.svm.hosted.image.NativeBootImage.lambda$write$0(NativeBootImage.java:165)
+	at com.oracle.objectfile.ObjectFile.withDebugContext(ObjectFile.java:1804)
+	at com.oracle.svm.hosted.image.NativeBootImage.write(NativeBootImage.java:164)
+	... 9 more
+Error: Image build request failed with exit status 1
+----
+
+Bellow an example of generated non ASCII characters Java class:
+[source,java]
+----
+@XmlType(name = "OperationOrderStatusType")
+@XmlEnum
+public enum OperationOrderStatusType {
+
+    @XmlEnumValue("Cr\u00e9\u00e9")
+    CRÉÉ("Cr\u00e9\u00e9"),
+    @XmlEnumValue("A communiquer")
+    A_COMMUNIQUER("A communiquer"),
+    @XmlEnumValue("En attente de r\u00e9ponse")
+    EN_ATTENTE_DE_RÉPONSE("En attente de r\u00e9ponse"),
+    @XmlEnumValue("Attribu\u00e9")
+    ATTRIBUÉ("Attribu\u00e9"),
+    @XmlEnumValue("Clotur\u00e9")
+    CLOTURÉ("Clotur\u00e9"),
+    @XmlEnumValue("Annul\u00e9")
+    ANNULÉ("Annul\u00e9");
+    private final String value;
+
+    OperationOrderStatusType(String v) {
+        value = v;
+    }
+
+    public String value() {
+        return value;
+    }
+
+    public static OperationOrderStatusType fromValue(String v) {
+        for (OperationOrderStatusType c: OperationOrderStatusType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
+}
+----
+
+anything starting with `\u` will be a problem. Consequently the following refactoring is needed:
+
+[source,java]
+----
+@XmlType(name = "OperationOrderStatusType")
+@XmlEnum
+public enum OperationOrderStatusType {
+
+    @XmlEnumValue("Créé")
+    CREE("Créé"),
+    @XmlEnumValue("A communiquer")
+    A_COMMUNIQUER("A communiquer"),
+    @XmlEnumValue("En attente de réponse")
+    EN_ATTENTE_DE_REPONSE("En attente de réponse"),
+    @XmlEnumValue("Attribué")
+    ATTRIBUE("Attribué"),
+    @XmlEnumValue("Cloturé")
+    CLOTURE("Cloturé"),
+    @XmlEnumValue("Annulé")
+    ANNULE("Annulé");
+    private final String value;
+
+    OperationOrderStatusType(String v) {
+        value = v;
+    }
+
+    public String value() {
+        return value;
+    }
+
+    public static OperationOrderStatusType fromValue(String v) {
+        for (OperationOrderStatusType c: OperationOrderStatusType.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
+}
+----
