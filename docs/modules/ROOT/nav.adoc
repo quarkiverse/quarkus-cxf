@@ -15,3 +15,4 @@
 ** xref:ws-security.adoc#ws-security-service[Web Service Integration]
 ** xref:ws-security.adoc#ws-security-client[Client Integration]
 * xref:properties.adoc[Properties Reference]
+* xref:tips-and-tricks.adoc[Tips & tricks]
