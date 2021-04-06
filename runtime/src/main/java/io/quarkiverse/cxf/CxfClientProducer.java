@@ -125,9 +125,7 @@ public abstract class CxfClientProducer {
         return factory.create();
     }
 
-    private static void addToCols(
-            String className,
-            List<Interceptor<? extends Message>> cols) {
+    private void addToCols(String className, List<Interceptor<? extends Message>> cols) {
         /*
          * We use CastUtils to simplify an unchecked cast from
          * List<Interceptor<? extends Message>> to List<Interceptor>. For our
@@ -138,15 +136,11 @@ public abstract class CxfClientProducer {
         addToCols(className, CastUtils.<Interceptor> cast(cols), Interceptor.class);
     }
 
-    private static <T> void addToCols(
-            String className,
-            List<T> cols,
-            Class<T> clazz) {
+    private <T> void addToCols(String className, List<T> cols, Class<T> clazz) {
         Class<? extends T> cls;
         try {
             cls = Class.forName(className, false, Thread.currentThread().getContextClassLoader()).asSubclass(clazz);
         } catch (ClassNotFoundException | ClassCastException e) {
-            // silent fail
             LOGGER.warn(format("no such class %s", className));
             return;
         }

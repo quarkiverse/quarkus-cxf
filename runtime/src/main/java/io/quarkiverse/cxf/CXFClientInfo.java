@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.jboss.logging.Logger;
 
 import io.quarkus.arc.Unremovable;
