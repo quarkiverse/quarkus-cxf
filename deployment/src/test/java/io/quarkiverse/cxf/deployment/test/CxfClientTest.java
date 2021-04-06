@@ -23,8 +23,9 @@ public class CxfClientTest {
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)
                     .addClass(Fruit.class)
-            //                    .addClass(GreetingWebService.class)
-            //                    .addClass(ExoticFruitWebServiceImpl.class)
+                    .addClass(GreetingWebService.class)
+                    .addClass(GreetingWebServiceImpl.class)
+            //.addClass(HelloWebServiceImpl.class)
             )
             .withConfigurationResource("application-cxf-test.properties");
 
@@ -33,42 +34,21 @@ public class CxfClientTest {
     CXFClientInfo clientInfo;
 
     @Inject
-    FruitWebService clientService;
+    FruitWebService serviceImpl;
 
     @Inject
     @CXFClient
-    FruitWebService fruitclient;
-
-    @Inject
-    @CXFClient("fruitclient")
-    CXFClientInfo clientProxyInfo;
-    //
-    //    @Inject
-    //    @CXFClient("foo")
-    //    CXFClientInfo fooInfo;
+    FruitWebService proxyClient;
 
     @Test
     public void test_injected_beans() {
-        Assertions.assertNotNull(clientService);
+        Assertions.assertNotNull(serviceImpl);
         Assertions.assertNotNull(clientInfo);
-        Assertions.assertNotNull(fruitclient);
-        //        Assertions.assertNotNull(clientProxyInfo);
-        //        Assertions.assertNotNull(fooInfo);
+        Assertions.assertNotNull(proxyClient);
 
         Assertions.assertFalse(Proxy.isProxyClass(clientInfo.getClass()));
-        Assertions.assertFalse(Proxy.isProxyClass(clientService.getClass()));
-        Assertions.assertTrue(Proxy.isProxyClass(fruitclient.getClass()));
-        //        Assertions.assertFalse(Proxy.isProxyClass(clientProxyInfo.getClass()));
-        //        Assertions.assertFalse(Proxy.isProxyClass(fooInfo.getClass()));
+        Assertions.assertFalse(Proxy.isProxyClass(serviceImpl.getClass()));
+        Assertions.assertTrue(Proxy.isProxyClass(proxyClient.getClass()));
     }
 
-    @Test
-    public void test_injected_info() {
-        //        Assertions.assertEquals("http://localhost:8081/fruit", fooInfo.getEndpointAddress());
-        //        Assertions.assertEquals(FruitWebService.class.getName(), fooInfo.getSei());
-        //        // check that "foo" has LoggingFeature ..
-        //        Assertions.assertTrue(
-        //                fooInfo.getFeatures().stream()
-        //                        .anyMatch(feature -> feature.equals("org.apache.cxf.feature.LoggingFeature")));
-    }
 }

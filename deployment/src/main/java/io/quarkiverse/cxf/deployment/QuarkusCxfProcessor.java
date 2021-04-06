@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -43,7 +44,13 @@ import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfClientProducer;
 import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.arc.deployment.*;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import io.quarkus.arc.deployment.BeanContainerBuildItem;
+import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
+import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
+import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
+import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
+import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.builder.item.BuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -58,7 +65,12 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBui
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
-import io.quarkus.gizmo.*;
+import io.quarkus.gizmo.ClassCreator;
+import io.quarkus.gizmo.ClassOutput;
+import io.quarkus.gizmo.FieldCreator;
+import io.quarkus.gizmo.MethodCreator;
+import io.quarkus.gizmo.MethodDescriptor;
+import io.quarkus.gizmo.ResultHandle;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.vertx.http.deployment.DefaultRouteBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
@@ -141,17 +153,16 @@ class QuarkusCxfProcessor {
     public void buildAdditionalBeans(
             BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
         Stream.of(
-                "io.quarkiverse.cxf.annotation.CXFClient",
-                "io.quarkiverse.cxf.CxfInfoProducer")
-              .map(AdditionalBeanBuildItem::unremovableOf)
-              .forEach(additionalBeans::produce);
+                "io.quarkiverse.cxf.annotation.CXFClient")
+                .map(AdditionalBeanBuildItem::unremovableOf)
+                .forEach(additionalBeans::produce);
     }
 
     @BuildStep
     public void buildUnremovablesBeans(BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
         Stream.of(
-                "io.quarkiverse.cxf.annotation.CXFClient",
-                "io.quarkiverse.cxf.CxfInfoProducer").map(UnremovableBeanBuildItem.BeanClassNameExclusion::new)
+                "io.quarkiverse.cxf.annotation.CXFClient")
+                .map(UnremovableBeanBuildItem.BeanClassNameExclusion::new)
                 .map(UnremovableBeanBuildItem::new)
                 .forEach(unremovableBeans::produce);
     }
@@ -1093,95 +1104,34 @@ class QuarkusCxfProcessor {
             // >> @CXFClient
             // >> {SEI} createService(InjectionPoint ip) { .. }
 
-            String p0class = InjectionPoint.class.getName();
-            String p1class = CXFClientInfo.class.getName();
-            try (MethodCreator createService = classCreator.getMethodCreator("createService", sei, p0class)) {
+            //String p0class = InjectionPoint.class.getName();
+            //String p1class = CXFClientInfo.class.getName();
+            try (MethodCreator createService = classCreator.getMethodCreator("createService", sei, InjectionPoint.class)) {
                 createService.addAnnotation(Produces.class);
                 createService.addAnnotation(CXFClient.class);
 
                 // p0 (InjectionPoint);
-                ResultHandle p0;
-                ResultHandle p1;
+                ResultHandle p0, p1, p2;
                 ResultHandle cxfClient;
 
-                p0 = createService.getMethodParam(0);
+                p0 = createService.getThis();
+                p1 = createService.getMethodParam(0);
+                p2 = createService.readInstanceField(info.getFieldDescriptor(), p0);
 
                 MethodDescriptor loadCxfClient = MethodDescriptor.ofMethod(
                         CxfClientProducer.class,
                         "loadCxfClient",
                         "java.lang.Object",
-                        p0class,
-                        p1class);
+                        InjectionPoint.class,
+                        CXFClientInfo.class);
                 // >> .. {
-                // >>       Object cxfClient = this().loadCxfClient(ip, this.info);
+                // >>       Object cxfClient = this.loadCxfClient(ip, this.info);
                 // >>       return ({SEI})cxfClient;
                 // >>    }
 
-                p1 = createService.readInstanceField(info.getFieldDescriptor(), createService.getThis());
-                cxfClient = createService.invokeVirtualMethod(loadCxfClient, createService.getThis(), p0, p1);
+                cxfClient = createService.invokeVirtualMethod(loadCxfClient, p0, p1, p2);
                 createService.returnValue(createService.checkCast(cxfClient, sei));
             }
-
-            try (MethodCreator createInfo = classCreator.getMethodCreator(
-                    "createInfo",
-                    "io.quarkiverse.cxf.CXFClientInfo",
-                    p0class)) {
-                createInfo.addAnnotation(Produces.class);
-                createInfo.addAnnotation(CXFClient.class);
-
-                // p0 (InjectionPoint);
-                ResultHandle p0;
-                ResultHandle p1;
-                ResultHandle cxfClient;
-
-                p0 = createInfo.getMethodParam(0);
-
-                MethodDescriptor loadCxfInfo = MethodDescriptor.ofMethod(
-                        CxfClientProducer.class,
-                        "loadCxfClientInfo",
-                        "java.lang.Object",
-                        p0class,
-                        p1class);
-                // >> .. {
-                // >>       Object cxfInfo = this().loadCxfInfo(ip, this.info);
-                // >>       return (CXFClientInfo)cxfInfo;
-                // >>    }
-
-                p1 = createInfo.readInstanceField(info.getFieldDescriptor(), createInfo.getThis());
-                cxfClient = createInfo.invokeVirtualMethod(loadCxfInfo, createInfo.getThis(), p0, p1);
-                createInfo.returnValue(createInfo.checkCast(cxfClient, CXFClientInfo.class.getName()));
-            }
-            //            try (MethodCreator createInfo = classCreator.getMethodCreator(
-            //                    "createInfo",
-            //                    "io.quarkiverse.cxf.CXFClientInfo",
-            //                    p0class)) {
-            //                createInfo.addAnnotation(Produces.class);
-            //                createInfo.addAnnotation(CXFClient.class);
-            //
-            //                // p0 (InjectionPoint);
-            //                ResultHandle p0;
-            //                ResultHandle p1;
-            //                ResultHandle cxfClient;
-            //
-            //                p0 = createInfo.getMethodParam(0);
-            //
-            //                MethodDescriptor loadCxfInfo = MethodDescriptor.ofMethod(
-            //                        CxfClientProducer.class,
-            //                        "loadCxfClientInfo",
-            //                        "java.lang.Object",
-            //                        p0class,
-            //                        p1class);
-            //                // >> .. {
-            //                // >>       Object cxfInfo = this().loadCxfInfo(ip, this.info);
-            //                // >>       return (CXFClientInfo)cxfInfo;
-            //                // >>    }
-            //
-            //                p1 = createInfo.readInstanceField(info.getFieldDescriptor(), createInfo.getThis());
-            //                cxfClient = createInfo.invokeVirtualMethod(loadCxfInfo, createInfo.getThis(), p0, p1);
-            //                createInfo.returnValue(createInfo.checkCast(cxfClient, "io.quarkiverse.cxf
-            //                .CXFClientInfo"));
-            //            }
-
         }
 
         // Eventually let's produce
