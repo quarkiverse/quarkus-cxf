@@ -1,32 +1,18 @@
 package io.quarkiverse.cxf.deployment;
 
-import static io.quarkus.deployment.annotations.ExecutionTime.RUNTIME_INIT;
-import static java.lang.String.format;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.xml.ws.soap.SOAPBinding;
-
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.bus.extension.ExtensionManagerImpl;
-import org.apache.cxf.common.spi.GeneratedClassClassLoaderCapture;
-import org.jboss.jandex.*;
-import org.jboss.logging.Logger;
-
-import io.quarkiverse.cxf.*;
+import io.quarkiverse.cxf.CXFClientInfo;
+import io.quarkiverse.cxf.CXFRecorder;
+import io.quarkiverse.cxf.CXFServletInfos;
+import io.quarkiverse.cxf.CxfClientProducer;
+import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.arc.deployment.*;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import io.quarkus.arc.deployment.BeanContainerBuildItem;
+import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
+import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
+import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
+import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
+import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
 import io.quarkus.builder.item.BuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -40,13 +26,54 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBui
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
-import io.quarkus.gizmo.*;
+import io.quarkus.gizmo.ClassCreator;
+import io.quarkus.gizmo.ClassOutput;
+import io.quarkus.gizmo.FieldCreator;
+import io.quarkus.gizmo.MethodCreator;
+import io.quarkus.gizmo.MethodDescriptor;
+import io.quarkus.gizmo.ResultHandle;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.vertx.http.deployment.DefaultRouteBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
 import io.quarkus.vertx.http.runtime.HandlerType;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.extension.ExtensionManagerImpl;
+import org.apache.cxf.common.spi.GeneratedClassClassLoaderCapture;
+import org.jboss.jandex.AnnotationInstance;
+import org.jboss.jandex.AnnotationTarget;
+import org.jboss.jandex.AnnotationValue;
+import org.jboss.jandex.ClassInfo;
+import org.jboss.jandex.DotName;
+import org.jboss.jandex.IndexView;
+import org.jboss.jandex.MethodInfo;
+import org.jboss.jandex.Type;
+import org.jboss.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.xml.ws.soap.SOAPBinding;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Modifier;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static io.quarkus.deployment.annotations.ExecutionTime.RUNTIME_INIT;
+import static java.lang.String.format;
 
 class QuarkusCxfProcessor {
 
@@ -122,6 +149,25 @@ class QuarkusCxfProcessor {
             LOGGER.trace("capture generation of " + name);
             classOutput.write(name, bytes);
         }
+    }
+
+    @BuildStep
+    public void buildAdditionalBeans(
+            BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
+        Stream.of(
+                "io.quarkiverse.cxf.annotation.CXFClient",
+                "io.quarkiverse.cxf.CxfInfoProducer")
+                .map(AdditionalBeanBuildItem::unremovableOf)
+                .forEach(additionalBeans::produce);
+    }
+
+    @BuildStep
+    public void buildUnremovablesBeans(BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
+        Stream.of(
+                "io.quarkiverse.cxf.annotation.CXFClient",
+                "io.quarkiverse.cxf.CxfInfoProducer").map(UnremovableBeanBuildItem.BeanClassNameExclusion::new)
+                .map(UnremovableBeanBuildItem::new)
+                .forEach(unremovableBeans::produce);
     }
 
     @BuildStep
@@ -740,6 +786,7 @@ class QuarkusCxfProcessor {
                 "org.xml.sax.XMLReader",
                 "org.xml.sax.helpers.AttributesImpl",
                 "org.apache.cxf.common.logging.Slf4jLogger",
+                "io.quarkiverse.cxf.CxfInfoProducer",
                 "io.quarkiverse.cxf.AddressTypeExtensibility",
                 "io.quarkiverse.cxf.CXFException",
                 "io.quarkiverse.cxf.HTTPClientPolicyExtensibility",
@@ -822,7 +869,9 @@ class QuarkusCxfProcessor {
                 "com.ibm.wsdl.extensions.soap12.SOAP12OperationImpl",
                 "com.ibm.wsdl.extensions.soap12.SOAP12OperationSerializer",
                 "com.sun.xml.internal.bind.retainReferenceToInfo"));
-        reflectiveItems.produce(new ReflectiveClassBuildItem(false, false,
+        reflectiveItems.produce(new ReflectiveClassBuildItem(
+                false,
+                false,
                 //manually added
                 "org.apache.cxf.wsdl.interceptors.BareInInterceptor",
                 "com.sun.msv.reader.GrammarReaderController",
@@ -897,9 +946,12 @@ class QuarkusCxfProcessor {
                 "com.ibm.wsdl.PortTypeImpl",
                 "com.ibm.wsdl.ServiceImpl",
                 "com.ibm.wsdl.TypesImpl",
-                "com.oracle.xmlns.webservices.jaxws_databinding.ObjectFactory",
-                "com.sun.org.apache.xerces.internal.utils.XMLSecurityManager",
-                "com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager",
+                "com.oracle.xmlns.webservices.jaxws_databinding" +
+                        ".ObjectFactory",
+                "com.sun.org.apache.xerces.internal.utils" +
+                        ".XMLSecurityManager",
+                "com.sun.org.apache.xerces.internal.utils" +
+                        ".XMLSecurityPropertyManager",
                 "com.sun.xml.bind.api.TypeReference",
                 "com.sun.xml.bind.DatatypeConverterImpl",
                 "com.sun.xml.internal.bind.api.TypeReference",
@@ -983,10 +1035,14 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.message.StringMap",
                 "org.apache.cxf.tools.fortest.cxf523.Database",
                 "org.apache.cxf.tools.fortest.cxf523.DBServiceFault",
-                "org.apache.cxf.tools.fortest.withannotation.doc.HelloWrapped",
-                "org.apache.cxf.transports.http.configuration.HTTPClientPolicy",
-                "org.apache.cxf.transports.http.configuration.HTTPServerPolicy",
-                "org.apache.cxf.transports.http.configuration.ObjectFactory",
+                "org.apache.cxf.tools.fortest.withannotation.doc" +
+                        ".HelloWrapped",
+                "org.apache.cxf.transports.http.configuration" +
+                        ".HTTPClientPolicy",
+                "org.apache.cxf.transports.http.configuration" +
+                        ".HTTPServerPolicy",
+                "org.apache.cxf.transports.http.configuration" +
+                        ".ObjectFactory",
                 "org.apache.cxf.ws.addressing.wsdl.AttributedQNameType",
                 "org.apache.cxf.ws.addressing.wsdl.ObjectFactory",
                 "org.apache.cxf.ws.addressing.wsdl.ServiceNameType",
@@ -1012,9 +1068,12 @@ class QuarkusCxfProcessor {
                 "org.slf4j.LoggerFactory",
                 "org.springframework.aop.framework.Advised",
                 "org.springframework.aop.support.AopUtils",
-                "org.springframework.core.io.support.PathMatchingResourcePatternResolver",
-                "org.springframework.core.type.classreading.CachingMetadataReaderFactory",
-                "org.springframework.osgi.io.OsgiBundleResourcePatternResolver",
+                "org.springframework.core.io.support" +
+                        ".PathMatchingResourcePatternResolver",
+                "org.springframework.core.type.classreading" +
+                        ".CachingMetadataReaderFactory",
+                "org.springframework.osgi.io" +
+                        ".OsgiBundleResourcePatternResolver",
                 "org.springframework.osgi.util.BundleDelegatingClassLoader"));
     }
 
@@ -1177,35 +1236,36 @@ class QuarkusCxfProcessor {
                 createService.returnValue(createService.checkCast(cxfClient, sei));
             }
 
-            try (MethodCreator createInfo = classCreator.getMethodCreator(
-                    "createInfo",
-                    "io.quarkiverse.cxf.CXFClientInfo",
-                    p0class)) {
-                createInfo.addAnnotation(Produces.class);
-                createInfo.addAnnotation(CXFClient.class);
-
-                // p0 (InjectionPoint);
-                ResultHandle p0;
-                ResultHandle p1;
-                ResultHandle cxfClient;
-
-                p0 = createInfo.getMethodParam(0);
-
-                MethodDescriptor loadCxfInfo = MethodDescriptor.ofMethod(
-                        CxfClientProducer.class,
-                        "loadCxfClientInfo",
-                        "java.lang.Object",
-                        p0class,
-                        p1class);
-                // >> .. {
-                // >>       Object cxfInfo = this().loadCxfInfo(ip, this.info);
-                // >>       return (CXFClientInfo)cxfInfo;
-                // >>    }
-
-                p1 = createInfo.readInstanceField(info.getFieldDescriptor(), createInfo.getThis());
-                cxfClient = createInfo.invokeVirtualMethod(loadCxfInfo, createInfo.getThis(), p0, p1);
-                createInfo.returnValue(createInfo.checkCast(cxfClient, "io.quarkiverse.cxf.CXFClientInfo"));
-            }
+            //            try (MethodCreator createInfo = classCreator.getMethodCreator(
+            //                    "createInfo",
+            //                    "io.quarkiverse.cxf.CXFClientInfo",
+            //                    p0class)) {
+            //                createInfo.addAnnotation(Produces.class);
+            //                createInfo.addAnnotation(CXFClient.class);
+            //
+            //                // p0 (InjectionPoint);
+            //                ResultHandle p0;
+            //                ResultHandle p1;
+            //                ResultHandle cxfClient;
+            //
+            //                p0 = createInfo.getMethodParam(0);
+            //
+            //                MethodDescriptor loadCxfInfo = MethodDescriptor.ofMethod(
+            //                        CxfClientProducer.class,
+            //                        "loadCxfClientInfo",
+            //                        "java.lang.Object",
+            //                        p0class,
+            //                        p1class);
+            //                // >> .. {
+            //                // >>       Object cxfInfo = this().loadCxfInfo(ip, this.info);
+            //                // >>       return (CXFClientInfo)cxfInfo;
+            //                // >>    }
+            //
+            //                p1 = createInfo.readInstanceField(info.getFieldDescriptor(), createInfo.getThis());
+            //                cxfClient = createInfo.invokeVirtualMethod(loadCxfInfo, createInfo.getThis(), p0, p1);
+            //                createInfo.returnValue(createInfo.checkCast(cxfClient, "io.quarkiverse.cxf
+            //                .CXFClientInfo"));
+            //            }
 
         }
 

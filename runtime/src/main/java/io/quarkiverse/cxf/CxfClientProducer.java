@@ -58,10 +58,6 @@ public abstract class CxfClientProducer {
         return produceCxfClient(selectorCXFClientInfo(config, ip, meta));
     }
 
-    public Object loadCxfClientInfo(InjectionPoint ip, CXFClientInfo meta) {
-        return selectorCXFClientInfo(config, ip, meta);
-    }
-
     /**
      * The main workhorse producing a CXF client proxy.
      *
