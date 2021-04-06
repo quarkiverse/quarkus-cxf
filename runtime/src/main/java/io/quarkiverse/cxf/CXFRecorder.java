@@ -42,22 +42,14 @@ public class CXFRecorder {
         public CxfEndpointConfig config;
         public String path;
 
-        public servletConfig(
-                CxfEndpointConfig cxfEndPointConfig,
-                String relativePath) {
+        public servletConfig(CxfEndpointConfig cxfEndPointConfig, String relativePath) {
             this.config = cxfEndPointConfig;
             this.path = relativePath;
         }
     }
 
-    public void registerCXFServlet(
-            RuntimeValue<CXFServletInfos> runtimeInfos,
-            String path,
-            String sei,
-            CxfConfig cxfConfig,
-            String soapBinding,
-            List<String> wrapperClassNames,
-            String wsImplementor) {
+    public void registerCXFServlet(RuntimeValue<CXFServletInfos> runtimeInfos, String path, String sei,
+            CxfConfig cxfConfig, String soapBinding, List<String> wrapperClassNames, String wsImplementor) {
         CXFServletInfos infos = runtimeInfos.getValue();
         Map<String, List<servletConfig>> implementorToCfg = new HashMap<>();
         for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
@@ -81,15 +73,7 @@ public class CXFRecorder {
             for (servletConfig cfg : cfgs) {
                 CxfEndpointConfig cxfEndPointConfig = cfg.config;
                 String relativePath = cfg.path;
-                startRoute(
-                        path,
-                        sei,
-                        soapBinding,
-                        wrapperClassNames,
-                        wsImplementor,
-                        infos,
-                        cxfEndPointConfig,
-                        relativePath);
+                startRoute(path, sei, soapBinding, wrapperClassNames, wsImplementor, infos, cxfEndPointConfig, relativePath);
             }
         } else {
             String serviceName = sei.toLowerCase();
@@ -101,18 +85,10 @@ public class CXFRecorder {
         }
     }
 
-    private void startRoute(
-            String path,
-            String sei,
-            String soapBinding,
-            List<String> wrapperClassNames,
-            String wsImplementor,
-            CXFServletInfos infos,
-            CxfEndpointConfig cxfEndPointConfig,
-            String relativePath) {
+    private void startRoute(String path, String sei, String soapBinding, List<String> wrapperClassNames, String wsImplementor,
+            CXFServletInfos infos, CxfEndpointConfig cxfEndPointConfig, String relativePath) {
         if (wsImplementor != null && !wsImplementor.equals("")) {
-            CXFServletInfo cfg = new CXFServletInfo(
-                    path,
+            CXFServletInfo cfg = new CXFServletInfo(path,
                     relativePath,
                     wsImplementor,
                     sei,
@@ -145,18 +121,14 @@ public class CXFRecorder {
         return new RuntimeValue<>(infos);
     }
 
-    public Handler<RoutingContext> initServer(
-            RuntimeValue<CXFServletInfos> infos,
-            BeanContainer beanContainer) {
+    public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos, BeanContainer beanContainer) {
         LOGGER.trace("init server");
         // There may be a better way to handle this
         DevCxfServerInfosSupplier.setServletInfos(infos.getValue());
         return new CxfHandler(infos.getValue(), beanContainer);
     }
 
-    public void setPath(
-            RuntimeValue<CXFServletInfos> infos,
-            String path) {
+    public void setPath(RuntimeValue<CXFServletInfos> infos, String path) {
         infos.getValue().setPath(path);
     }
 }
