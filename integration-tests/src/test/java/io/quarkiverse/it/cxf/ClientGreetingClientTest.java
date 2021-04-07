@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.CXFClientInfo;
-import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.junit.QuarkusTest;
 
 /**
@@ -23,15 +22,15 @@ import io.quarkus.test.junit.QuarkusTest;
 class ClientGreetingClientTest {
 
     @Inject
-    @CXFClient
+    @Named("greetingclient")
     GreetingClientWebService defaultClient;
 
     @Inject
-    @CXFClient("greetingclient")
+    @Named("greetingclient")
     GreetingClientWebService greetingClient;
 
     @Inject
-    @CXFClient("greetingclient-fault")
+    @Named("greetingclient-fault")
     GreetingClientWebService faultyClient;
 
     @Inject

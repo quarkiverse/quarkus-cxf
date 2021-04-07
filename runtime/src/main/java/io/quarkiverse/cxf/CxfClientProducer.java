@@ -11,6 +11,7 @@ import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.namespace.QName;
 
 import org.apache.cxf.Bus;
@@ -32,8 +33,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.wsdl.ExtensionClassCreator;
 import org.apache.cxf.wsdl.ExtensionClassLoader;
 import org.jboss.logging.Logger;
-
-import io.quarkiverse.cxf.annotation.CXFClient;
 
 /**
  * Base producer class for setting up CXF client proxies.
@@ -175,11 +174,11 @@ public abstract class CxfClientProducer {
             CXFClientInfo meta) {
         CXFClientInfo info = new CXFClientInfo(meta);
 
-        // If injection point is annotated with @CXFClient then determine a
+        // If injection point is annotated with @Named then determine a
         // configuration by looking up annotated config value:
 
-        if (ip.getAnnotated().isAnnotationPresent(CXFClient.class)) {
-            CXFClient anno = ip.getAnnotated().getAnnotation(CXFClient.class);
+        if (ip.getAnnotated().isAnnotationPresent(Named.class)) {
+            Named anno = ip.getAnnotated().getAnnotation(Named.class);
             String configKey = anno.value();
 
             if (cxfConfig.isClientPresent(configKey)) {

@@ -10,27 +10,41 @@ import javax.inject.Inject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.annotation.CXFImpl;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 class GreetingWebServiceImplTest {
 
     @Inject
-    public GreetingWebService greetingWS;
+    @CXFImpl
+    public GreetingWebService greetingImpl;
+
+    @Test
+    void test_is_injected() {
+        Assertions.assertNotNull(greetingImpl);
+    }
+
+    @Test
+    void test_is_helloresource_injected() {
+        Assertions.assertNotNull(greetingImpl);
+        Assertions.assertTrue(greetingImpl instanceof GreetingWebServiceImpl);
+        Assertions.assertNotNull(GreetingWebServiceImpl.class.cast(greetingImpl).helloResource);
+    }
 
     @Test
     void test_is_not_proxy() {
-        Assertions.assertFalse(Proxy.isProxyClass(greetingWS.getClass()));
+        Assertions.assertFalse(Proxy.isProxyClass(greetingImpl.getClass()));
     }
 
     @Test
     void testCxfClient() {
-        Assertions.assertEquals("Hello bar", greetingWS.reply("bar"));
+        Assertions.assertEquals("Hello bar", greetingImpl.reply("bar"));
     }
 
     @Test
     void testPing() {
-        Assertions.assertEquals("Hello bar", greetingWS.ping("bar"));
+        Assertions.assertEquals("Hello bar", greetingImpl.ping("bar"));
     }
 
     @Test

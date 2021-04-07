@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.CXFClientInfo;
-import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.QuarkusUnitTest;
 
 public class CxfSeiOnlyClientTest {
@@ -29,16 +28,27 @@ public class CxfSeiOnlyClientTest {
     CXFClientInfo clientInfo;
 
     @Inject
-    @CXFClient
+    @Named("whatever")
     FruitWebService clientProxy;
+
+    @Inject
+    @Named
+    FruitWebService clientProxyB;
+
+    @Inject
+    FruitWebService clientProxyC;
 
     @Test
     public void test_injected_beans() {
         Assertions.assertNotNull(clientInfo);
         Assertions.assertNotNull(clientProxy);
+        Assertions.assertNotNull(clientProxyB);
+        Assertions.assertNotNull(clientProxyC);
 
         Assertions.assertFalse(Proxy.isProxyClass(clientInfo.getClass()));
         Assertions.assertTrue(Proxy.isProxyClass(clientProxy.getClass()));
+        Assertions.assertTrue(Proxy.isProxyClass(clientProxyB.getClass()));
+        Assertions.assertTrue(Proxy.isProxyClass(clientProxyC.getClass()));
     }
 
 }

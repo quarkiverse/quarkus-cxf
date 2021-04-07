@@ -13,7 +13,6 @@ import org.tempuri.CalculatorSoap;
 import org.tempuri.alt.AltCalculatorSoap;
 
 import io.quarkiverse.cxf.CXFClientInfo;
-import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.it.cxf.mock.AltCalculatorMockImpl;
 import io.quarkus.test.junit.QuarkusTest;
 
@@ -29,11 +28,11 @@ import io.quarkus.test.junit.QuarkusTest;
 class ClientCalculatorTest {
 
     @Inject
-    @CXFClient("mockCalculator")
+    @Named("mockCalculator")
     CalculatorSoap calculatorWS;
 
     @Inject
-    @CXFClient
+    @Named
     AltCalculatorSoap altCalculatorWS;
 
     @Inject

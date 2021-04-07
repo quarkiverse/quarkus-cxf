@@ -41,14 +41,27 @@ public class CxfClientTest {
     FruitWebService proxyClient;
 
     @Inject
-    FruitWebService proxyClientB;
+    @Named("foo")
+    FruitWebService fooClient;
+
+    // This injection point does also not work in case of multiple configured clients
+    // cause both producer methods qualify.
+    //    @Inject
+    //    @Named
+    //    FruitWebService proxyClientB;
+
+    // This one does not work in the presence of multiple configured clients as both
+    // producer methods are applicable, i.e. every producer method producing
+    // FruitWebService qualifies here, regardless of any qualifier.
+    //    @Inject
+    //    FruitWebService proxyClientC;
 
     @Inject
     @Named("io.quarkiverse.cxf.deployment.test.GreetingWebService")
     CXFClientInfo greetingInfo;
 
     @Inject
-    @CXFImpl /* TODO: this work without */
+    @CXFImpl
     GreetingWebServiceImpl greetingImpl;
 
     @Inject
@@ -56,19 +69,21 @@ public class CxfClientTest {
     GreetingWebService greetingClient;
 
     @Inject
+    @Named
     GreetingWebService greetingClientB;
+
+    @Inject
+    GreetingWebService greetingClientC;
 
     @Test
     public void test_injected_beans() {
         Assertions.assertNotNull(serviceImpl);
         Assertions.assertNotNull(clientInfo);
         Assertions.assertNotNull(proxyClient);
-        Assertions.assertNotNull(proxyClientB);
 
         Assertions.assertFalse(Proxy.isProxyClass(clientInfo.getClass()));
         Assertions.assertFalse(Proxy.isProxyClass(serviceImpl.getClass()));
         Assertions.assertTrue(Proxy.isProxyClass(proxyClient.getClass()));
-        Assertions.assertTrue(Proxy.isProxyClass(proxyClientB.getClass()));
     }
 
     @Test
@@ -77,11 +92,13 @@ public class CxfClientTest {
         Assertions.assertNotNull(greetingInfo);
         Assertions.assertNotNull(greetingClient);
         Assertions.assertNotNull(greetingClientB);
+        Assertions.assertNotNull(greetingClientC);
 
         Assertions.assertFalse(Proxy.isProxyClass(greetingInfo.getClass()));
         Assertions.assertFalse(Proxy.isProxyClass(greetingImpl.getClass()));
         Assertions.assertTrue(Proxy.isProxyClass(greetingClient.getClass()));
         Assertions.assertTrue(Proxy.isProxyClass(greetingClientB.getClass()));
+        Assertions.assertTrue(Proxy.isProxyClass(greetingClientC.getClass()));
     }
 
 }
