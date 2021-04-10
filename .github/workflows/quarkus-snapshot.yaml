@@ -1,5 +1,6 @@
 name: "Quarkus ecosystem CI"
 on:
+  workflow_dispatch:
   watch:
     types: [started]
 
@@ -21,7 +22,7 @@ jobs:
   build:
     name: "Build against latest Quarkus snapshot"
     runs-on: ubuntu-latest
-    if: github.actor == 'quarkusbot' || github.actor == 'quarkiversebot'
+    if: github.actor == 'quarkusbot' || github.actor == 'quarkiversebot' || github.actor == 'dufoli'
 
     steps:
       - name: Install yq
