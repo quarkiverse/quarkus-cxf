@@ -1,14 +1,16 @@
 [[Tips-Tricks]]
-== Tips and Tricks
-Several traps or unknowing points can appear during develop, test, native's image building ...
-bellow some of the best known.
+= Tips and Tricks
+Several issues may appear during the development, testing, and native image building process of your `quarkus-cxf` project;
+below are some common ones and how to address them.
 
-Sometimes a REST endpoint may be needed on the same project where Quarkus CXF Extension is used.
-The REST endpoint path, must be different from the SOAP endpoint path (in order to avoid request
-forwarding conflict between both protocols)
+== REST and SOAP Endpoints
 
-For example, if one WeatherWebService interface declared in a WSDL, you can
-begin by create the `org.acme.cxf.WeatherWebServiceImpl` class as follows:
+Sometimes a REST endpoint may be needed in the same project where the Quarkus CXF Extension is used.
+The REST endpoint path must be different from the SOAP endpoint path (in order to avoid request
+forwarding conflicts between both protocols).
+
+For example, if a WeatherWebService interface is declared in a WSDL, you can
+begin by creating the `org.acme.cxf.WeatherWebServiceImpl` class as follows:
 
 [source,java]
 ----
@@ -20,7 +22,7 @@ import ...
 @WebService(endpointInterface = "org.acme.cxf.WeatherWebService")
 public class WeatherWebServiceImpl implements WeatherWebService {
 
-	@Inject
+    @Inject
     BackEndWeatherService backEndWeatherService;
 
     private Map<String, DailyTemperature> dailyTempByZipCode = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -38,9 +40,9 @@ public class WeatherWebServiceImpl implements WeatherWebService {
 }
 ----
 
-After that, you need to specify the root context for CXF web services, as indicated
-in properties documentation for correctly split REST (with RESTEasy for example)
-and SOAP routes on different paths to make wsdl url working.
+After that, you would need to specify the root context for your CXF web services, as indicated
+in the link:properties.adoc#quarkus.cxf.path[properties documentation] to split the REST (with RESTEasy for example)
+and SOAP routes based on their root context paths.
 
 CXF's SOAP properties:
 [source,properties]
@@ -74,22 +76,22 @@ public class HealthCheckResource {
 }
 ----
 
-finishing by stating the REASTEasy path:
+You can separate your REST endpoint by configuring the REASTEasy path:
 [source,properties]
 ----
 quarkus.resteasy.path=/services
 ----
 
-As a result, you can know request regardless you REST and SOAP endpoints deployed with only one project, at:
+You should now be able to send requests to both your REST and SOAP endpoints deployed within a single project, at:
 
-`REST request`: http://localhost:8080/services/healthcheck
+*REST request*: http://localhost:8080/services/healthcheck
 
-`SOAP request`: http://localhost:8080/soap/weather
+*SOAP request*: http://localhost:8080/soap/weather
 
 
 [[Native-Image-Building]]
 == Native Image Building
-During a native image building, especially on the "analysis" phase, the build can throws
+During a native image build, specifically during the "analysis" phase, your build may throw
 the following exception:
 
 [source,bash]
@@ -108,31 +110,14 @@ Call path from entry point to org.apache.cxf.common.spi.ClassGeneratorClassLoade
 	at com.oracle.svm.core.jdk.SystemPropertiesSupport.getProperty(SystemPropertiesSupport.java:143)
 	at com.oracle.svm.core.jdk.Target_java_lang_System.getProperty(JavaLangSubstitutions.java:338)
 	at com.oracle.svm.jni.JNIJavaCallWrappers.jniInvoke_ARRAY:Ljava_lang_System_2_0002egetProperty_00028Ljava_lang_String_2_00029Ljava_lang_String_2(generated:0)
-
-com.oracle.svm.core.util.UserError$UserException: com.oracle.svm.hosted.substitute.DeletedElementException: Unsupported method java.lang.ClassLoader.defineClass(String, byte[], int, int) is reachable
-To diagnose the issue, you can add the option --report-unsupported-elements-at-runtime. The unsupported element is then reported at run time when it is accessed the first time.
-Detailed message:
-Trace:
-	at parsing org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader.java:108)
-Call path from entry point to org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader$TypeHelperClassLoader, String, byte[], int, int):
-	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader.java:108)
-	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.lambda$defineClass$0(ClassGeneratorClassLoader.java:148)
-	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader$$Lambda$915/0x00000007c1dc1440.apply(Unknown Source)
-	at sun.security.ec.XECParameters$1.get(XECParameters.java:183)
-	at com.oracle.svm.core.jdk.SystemPropertiesSupport.initializeLazyValue(SystemPropertiesSupport.java:190)
-	at com.oracle.svm.core.jdk.SystemPropertiesSupport.getProperty(SystemPropertiesSupport.java:143)
-	at com.oracle.svm.core.jdk.Target_java_lang_System.getProperty(JavaLangSubstitutions.java:338)
-	at com.oracle.svm.jni.JNIJavaCallWrappers.jniInvoke_ARRAY:Ljava_lang_System_2_0002egetProperty_00028Ljava_lang_String_2_00029Ljava_lang_String_2(generated:0)
-
-	at com.oracle.svm.core.util.UserError.abort(UserError.java:82)
 ----
 
-This exception raises if errors should be reported at runtime. The proposed option
+This exception is thrown if errors should be reported at runtime. The proposed option
 `report-unsupported-elements-at-runtime` reports usage of unsupported methods and
 fields at run time when they are accessed the first time, instead of as an error
 during image building.
 
-The problem can be easily by specifying two following property in pom.xml:
+The issue can easily be addressed by specifying the following properties in your pom.xml:
 [source,xml]
 ----
   <profiles>
@@ -153,31 +138,23 @@ The problem can be easily by specifying two following property in pom.xml:
  </profiles>
 ----
 
-And finally generate the native image with the `native` profile activation like this:
+And finally generate the native image with the `native` maven profile activation like this:
 
 [source,bash]
 ----
-mvn clean package -Pnative -am -Dquarkus.native.container-build=true -Dimage-native.xmx=9g
+mvn clean package -Pnative -am -Dquarkus.native.container-build=true
 ----
 
 
 
 [[Non-ASCII-Characters]]
 == Non ASCII Characters
-Sometimes, after wsdl2java utility as well as cxf-codegen-plugin, the autogenerated Java classes can not be
-fully compatible with extension due to non ASCII characters
+Sometimes, after wsdl2java utility as well as cxf-codegen-plugin, the autogenerated Java classes may not be
+fully compatible with GraalVM due to non ASCII characters getting included in the code.  Similar exceptions to
+the below may appear during native image builds.
 
 [source,bash]
 ----
-[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]     (clinit):   2 895,06 ms,  5,72 GB
-[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]   (typeflow):  62 616,32 ms,  5,72 GB
-[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]    (objects):  75 250,89 ms,  5,72 GB
-[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]   (features):   3 545,75 ms,  5,72 GB
-[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]     analysis: 150 545,33 ms,  5,72 GB
-[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]     universe:   5 928,98 ms,  5,72 GB
-[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]      (parse):  33 146,96 ms,  6,44 GB
-[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]     (inline):  25 312,67 ms,  8,36 GB
-[quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]    (compile):  96 344,91 ms,  8,54 GB
 [quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]      compile: 161 459,15 ms,  8,54 GB
 [quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]        image: 158 272,73 ms,  8,43 GB
 [quarkus-dalkia-ticket-loader-1.0.0-SNAPSHOT-runner:26]        write:     205,82 ms,  8,43 GB
@@ -209,7 +186,7 @@ Caused by: java.lang.RuntimeException: oops : expected ASCII string! com.oracle.
 Error: Image build request failed with exit status 1
 ----
 
-Bellow an example of generated non ASCII characters Java class:
+Below is an example of auto-generated non ASCII characters in a Java class:
 [source,java]
 ----
 @XmlType(name = "OperationOrderStatusType")
@@ -249,7 +226,7 @@ public enum OperationOrderStatusType {
 }
 ----
 
-anything starting with `\u` will be a problem. Consequently the following refactoring is needed:
+Anything starting with `\u` will be a problem. Consequently the following refactoring is needed:
 
 [source,java]
 ----
