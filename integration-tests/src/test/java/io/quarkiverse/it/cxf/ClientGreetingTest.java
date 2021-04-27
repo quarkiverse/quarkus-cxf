@@ -30,26 +30,26 @@ class ClientGreetingTest {
     CXFClientInfo greetingInfo;
 
     @Test
-    public void test_injected() {
+    public void testInjected() {
         Assertions.assertNotNull(greetingWS);
         Assertions.assertNotNull(greetingImpl);
         Assertions.assertNotNull(greetingInfo);
     }
 
     @Test
-    public void test_default_ep_address() {
+    public void testDefaultEpAddress() {
         Assertions.assertEquals(
                 "http://localhost:8080/io.quarkiverse.it.cxf.greetingwebservice",
                 this.greetingInfo.getEndpointAddress());
     }
 
     @Test
-    public void test_active_ep_address() {
+    public void testActiveEpAddress() {
         /* Too bad - there is no way of retrieving this information */
     }
 
     @Test
-    public void test_wsdl_available() {
+    public void testWsdlAvailable() {
         // http://localhost:8081/soap/greeting
         // TODO: get dynamically quarkus' test port.
         given().port(8081)
@@ -58,12 +58,12 @@ class ClientGreetingTest {
     }
 
     @Test
-    public void test_ws_ping() {
+    public void testWsPing() {
         Assertions.assertEquals("Hello hello", greetingWS.ping("hello"));
     }
 
     @Test
-    public void test_impl_ping() {
+    public void testImplPing() {
         Assertions.assertEquals("Hello hello", greetingImpl.ping("hello"));
     }
 }

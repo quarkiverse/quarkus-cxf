@@ -39,38 +39,38 @@ class ClientGreetingClientTest {
     CXFClientInfo greetingInfo;
 
     @Test
-    public void test_clientproxy_injected() {
+    public void testClientProxyInjected() {
         Assertions.assertNotNull(defaultClient);
         Assertions.assertNotNull(greetingClient);
         Assertions.assertNotNull(faultyClient);
     }
 
     @Test
-    public void test_clientproxy_isproxy() {
+    public void testClientProxyIsproxy() {
         Assertions.assertTrue(Proxy.isProxyClass(defaultClient.getClass()));
         Assertions.assertTrue(Proxy.isProxyClass(greetingClient.getClass()));
         Assertions.assertTrue(Proxy.isProxyClass(faultyClient.getClass()));
     }
 
     @Test
-    public void test_clientinfo_injected() {
+    public void testClientInfoInjected() {
         Assertions.assertNotNull(greetingInfo);
     }
 
     @Test
-    public void test_default_ep_address() {
+    public void testDefaultEpAddress() {
         Assertions.assertEquals(
                 "http://localhost:8080/io.quarkiverse.it.cxf.greetingclientwebservice",
                 this.greetingInfo.getEndpointAddress());
     }
 
     @Test
-    public void test_active_ep_address() {
+    public void testActiveEpAddress() {
         /* Too bad - there is no way of retrieving this information */
     }
 
     @Test
-    public void test_wsdl_available() {
+    public void testWsdlAvailable() {
         // http://localhost:8081/soap/greeting
         // TODO: get dynamically quarkus' test port.
         given().port(8081)
@@ -79,13 +79,13 @@ class ClientGreetingClientTest {
     }
 
     @Test
-    public void test_ping() {
+    public void testPing() {
         Assertions.assertEquals("Hello hello", greetingClient.ping("hello"));
         Assertions.assertEquals("Hello hello", defaultClient.ping("hello"));
     }
 
     @Test
-    public void test_out_interceptor_present() {
+    public void testOutInterceptorPresent() {
         Assertions.assertThrows(SOAPFaultException.class, () -> {
             faultyClient.ping("hello");
         });

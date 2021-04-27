@@ -1,10 +1,8 @@
 package io.quarkiverse.cxf;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
-
-import org.jboss.logging.Logger;
-import org.wildfly.common.annotation.Nullable;
 
 /**
  * Provides runtime metadata for a CXF client.
@@ -13,16 +11,67 @@ import org.wildfly.common.annotation.Nullable;
  * This class contains extracted from a SEI. It contains basic data to
  * setup a proxy client for a given SEI.
  * </p>
- *
- * @author wh81752
  */
-public class CXFClientData {
-    private static final Logger LOGGER = Logger.getLogger(CXFClientData.class);
-    final public List<String> classNames = new ArrayList<>();
-    public String soapBinding;
-    public String sei;
-    public String wsName;
-    public String wsNamespace;
-    public @Nullable String serviceName;
+public class CXFClientData implements Serializable {
+    private List<String> classNames;
+    private String soapBinding;
+    private String sei;
+    private String wsName;
+    private String wsNamespace;
 
+    public CXFClientData() {
+    }
+
+    public CXFClientData(
+            String soapBinding,
+            String sei,
+            String wsName,
+            String wsNamespace,
+            List<String> classNames) {
+        this.soapBinding = soapBinding;
+        this.sei = sei;
+        this.wsName = wsName;
+        this.wsNamespace = wsNamespace;
+        this.classNames = Collections.unmodifiableList(classNames);
+    }
+
+    public List<String> getClassNames() {
+        return classNames;
+    }
+
+    public String getSoapBinding() {
+        return soapBinding;
+    }
+
+    public String getSei() {
+        return sei;
+    }
+
+    public String getWsName() {
+        return wsName;
+    }
+
+    public String getWsNamespace() {
+        return wsNamespace;
+    }
+
+    public void setClassNames(List<String> classNames) {
+        this.classNames = Collections.unmodifiableList(classNames);
+    }
+
+    public void setSoapBinding(String soapBinding) {
+        this.soapBinding = soapBinding;
+    }
+
+    public void setSei(String sei) {
+        this.sei = sei;
+    }
+
+    public void setWsName(String wsName) {
+        this.wsName = wsName;
+    }
+
+    public void setWsNamespace(String wsNamespace) {
+        this.wsNamespace = wsNamespace;
+    }
 }

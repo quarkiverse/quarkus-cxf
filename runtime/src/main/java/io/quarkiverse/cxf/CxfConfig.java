@@ -3,8 +3,6 @@ package io.quarkiverse.cxf;
 import java.util.Map;
 import java.util.Optional;
 
-import org.wildfly.common.annotation.Nullable;
-
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -29,7 +27,7 @@ public class CxfConfig {
         return Optional.ofNullable(clients).map(m -> m.containsKey(key)).orElse(false);
     }
 
-    public @Nullable CxfClientConfig getClient(String key) {
+    public CxfClientConfig getClient(String key) {
         return Optional.ofNullable(clients).map(m -> m.get(key)).orElse(null);
     }
 }

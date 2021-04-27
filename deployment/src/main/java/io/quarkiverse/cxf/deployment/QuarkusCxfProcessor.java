@@ -394,11 +394,11 @@ class QuarkusCxfProcessor {
                 .map(CxfWebServiceBuildItem::clientData)
                 .map(cxf -> {
                     String fmt = "producing dedicated CXFClientInfo bean named '%s' for SEI %s";
-                    String msg = format(fmt, cxf.sei, cxf.sei);
+                    String msg = format(fmt, cxf.getSei(), cxf.getSei());
                     LOGGER.info(msg);
                     return SyntheticBeanBuildItem
                             .configure(CXFClientInfo.class)
-                            .named(cxf.sei)
+                            .named(cxf.getSei())
                             .runtimeValue(recorder.cxfClientInfoSupplier(cxf))
                             .unremovable()
                             .setRuntimeInit()
@@ -1139,18 +1139,18 @@ class QuarkusCxfProcessor {
     }
 
     @SafeVarargs
-    static private <T> Set<T> asSet(T... items) {
+    private static <T> Set<T> asSet(T... items) {
         return Arrays.stream(items).collect(Collectors.toSet());
     }
 
     @SafeVarargs
-    static private <T extends BuildItem> void produce(
+    private static <T extends BuildItem> void produce(
             BuildProducer<T> p,
             T... beans) {
         Arrays.stream(beans).forEach(p::produce);
     }
 
-    static private <T extends BuildItem> void produce(
+    private static <T extends BuildItem> void produce(
             BuildProducer<T> p,
             Collection<T> beans) {
         beans.forEach(p::produce);

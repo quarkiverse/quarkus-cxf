@@ -28,14 +28,14 @@ public class CXFRecorder {
      * This method is called once per @WebService *interface*. The idear is to produce a default client config for a
      * given SEI.
      */
-    public RuntimeValue<CXFClientInfo> cxfClientInfoSupplier(CXFClientData ws) {
+    public RuntimeValue<CXFClientInfo> cxfClientInfoSupplier(CXFClientData cxfClientData) {
         return new RuntimeValue<>(new CXFClientInfo(
-                ws.sei,
-                format("%s/%s", DEFAULT_EP_ADDR, ws.sei.toLowerCase()),
-                ws.soapBinding,
-                ws.wsNamespace,
-                ws.wsName,
-                ws.classNames));
+                cxfClientData.getSei(),
+                format("%s/%s", DEFAULT_EP_ADDR, cxfClientData.getSei().toLowerCase()),
+                cxfClientData.getSoapBinding(),
+                cxfClientData.getWsNamespace(),
+                cxfClientData.getWsName(),
+                cxfClientData.getClassNames()));
     }
 
     public class servletConfig {

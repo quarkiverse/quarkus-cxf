@@ -19,7 +19,7 @@ class GreetingWebServiceImplTest {
     public GreetingWebService greetingWS;
 
     @Test
-    void test_is_not_proxy() {
+    void testIsNotProxy() {
         Assertions.assertFalse(Proxy.isProxyClass(greetingWS.getClass()));
     }
 

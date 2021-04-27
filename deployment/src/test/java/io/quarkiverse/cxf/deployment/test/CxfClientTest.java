@@ -41,7 +41,7 @@ public class CxfClientTest {
     FruitWebService proxyClient;
 
     @Test
-    public void test_injected_beans() {
+    public void testInjectedBeansAvailable() {
         Assertions.assertNotNull(serviceImpl);
         Assertions.assertNotNull(clientInfo);
         Assertions.assertNotNull(proxyClient);

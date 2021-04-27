@@ -61,18 +61,18 @@ public abstract class CxfClientProducer {
     /**
      * The main workhorse producing a CXF client proxy.
      *
-     * @param info
+     * @param cxfClientInfo
      * @return
      */
-    private Object produceCxfClient(CXFClientInfo info) {
+    private Object produceCxfClient(CXFClientInfo cxfClientInfo) {
         Class<?> seiClass;
         try {
-            seiClass = Class.forName(info.getSei(), false, Thread.currentThread().getContextClassLoader());
+            seiClass = Class.forName(cxfClientInfo.getSei(), false, Thread.currentThread().getContextClassLoader());
         } catch (ClassNotFoundException e) {
             LOGGER.error("either webservice interface (client) or implementation (server) is mandatory");
             return null;
         }
-        QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean(info.getClassNames());
+        QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean(cxfClientInfo.getClassNames());
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean(quarkusClientFactoryBean);
         Bus bus = quarkusClientFactoryBean.getBus(true);
         bus.setExtension(new WrapperHelperClassLoader(bus), WrapperHelperCreator.class);
@@ -82,42 +82,42 @@ public abstract class CxfClientProducer {
         bus.setExtension(new FactoryClassLoader(bus), FactoryClassCreator.class);
         bus.setExtension(new GeneratedNamespaceClassLoader(bus), NamespaceClassCreator.class);
         factory.setServiceClass(seiClass);
-        LOGGER.info(format("using servicename %s%s", info.getWsNamespace(), info.getWsName()));
-        factory.setServiceName(new QName(info.getWsNamespace(), info.getWsName()));
+        LOGGER.info(format("using servicename %s%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
+        factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
         LOGGER.info(format("using  servicename %s", factory.getServiceName()));
-        if (info.getEpName() != null) {
-            factory.setEndpointName(new QName(info.getEpNamespace(), info.getEpName()));
+        if (cxfClientInfo.getEpName() != null) {
+            factory.setEndpointName(new QName(cxfClientInfo.getEpNamespace(), cxfClientInfo.getEpName()));
         }
-        factory.setAddress(info.getEndpointAddress());
-        if (info.getSoapBinding() != null) {
-            factory.setBindingId(info.getSoapBinding());
+        factory.setAddress(cxfClientInfo.getEndpointAddress());
+        if (cxfClientInfo.getSoapBinding() != null) {
+            factory.setBindingId(cxfClientInfo.getSoapBinding());
         }
-        if (info.getWsdlUrl() != null && !info.getWsdlUrl().isEmpty()) {
-            factory.setWsdlURL(info.getWsdlUrl());
+        if (cxfClientInfo.getWsdlUrl() != null && !cxfClientInfo.getWsdlUrl().isEmpty()) {
+            factory.setWsdlURL(cxfClientInfo.getWsdlUrl());
         }
-        if (info.getUsername() != null) {
-            factory.setUsername(info.getUsername());
+        if (cxfClientInfo.getUsername() != null) {
+            factory.setUsername(cxfClientInfo.getUsername());
         }
-        if (info.getPassword() != null) {
-            factory.setPassword(info.getPassword());
+        if (cxfClientInfo.getPassword() != null) {
+            factory.setPassword(cxfClientInfo.getPassword());
         }
-        for (String feature : info.getFeatures()) {
+        for (String feature : cxfClientInfo.getFeatures()) {
             addToCols(feature, factory.getFeatures(), Feature.class);
         }
-        for (String inInterceptor : info.getInInterceptors()) {
+        for (String inInterceptor : cxfClientInfo.getInInterceptors()) {
             addToCols(inInterceptor, factory.getInInterceptors());
         }
-        for (String outInterceptor : info.getOutInterceptors()) {
+        for (String outInterceptor : cxfClientInfo.getOutInterceptors()) {
             addToCols(outInterceptor, factory.getOutInterceptors());
         }
-        for (String outFaultInterceptor : info.getOutFaultInterceptors()) {
+        for (String outFaultInterceptor : cxfClientInfo.getOutFaultInterceptors()) {
             addToCols(outFaultInterceptor, factory.getOutFaultInterceptors());
         }
-        for (String inFaultInterceptor : info.getInFaultInterceptors()) {
+        for (String inFaultInterceptor : cxfClientInfo.getInFaultInterceptors()) {
             addToCols(inFaultInterceptor, factory.getInFaultInterceptors());
         }
 
-        LOGGER.info("cxf client loaded for " + info.getSei());
+        LOGGER.info("cxf client loaded for " + cxfClientInfo.getSei());
         return factory.create();
     }
 
@@ -169,7 +169,7 @@ public abstract class CxfClientProducer {
      * @param meta The default to return
      * @return not null
      */
-    static private CXFClientInfo selectorCXFClientInfo(
+    private static CXFClientInfo selectorCXFClientInfo(
             CxfConfig cxfConfig,
             InjectionPoint ip,
             CXFClientInfo meta) {

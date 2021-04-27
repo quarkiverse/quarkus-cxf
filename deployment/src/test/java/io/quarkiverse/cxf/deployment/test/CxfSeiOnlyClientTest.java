@@ -33,7 +33,7 @@ public class CxfSeiOnlyClientTest {
     FruitWebService clientProxy;
 
     @Test
-    public void test_injected_beans() {
+    public void testInjectedBeans() {
         Assertions.assertNotNull(clientInfo);
         Assertions.assertNotNull(clientProxy);
 

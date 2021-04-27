@@ -16,8 +16,6 @@ import org.apache.cxf.phase.Phase;
  * CXF client with this interceptor and simply test whether there is an
  * effect, i.e. expect a {@link SOAPFaultException} on sending a message.
  * </p>
- *
- * @author wh81752
  */
 public class SOAPExceptionInterceptor extends AbstractPhaseInterceptor<Message> {
     public SOAPExceptionInterceptor() {

@@ -45,25 +45,25 @@ class ClientCalculatorTest {
     CXFClientInfo altCalculatorInfo;
 
     @Test
-    public void test_clients_injected() {
+    public void testInjectedBeansAvailable() {
         Assertions.assertNotNull(calculatorWS);
         Assertions.assertNotNull(altCalculatorWS);
     }
 
     @Test
-    public void test_proxies_injected() {
+    public void testProxiesInjected() {
         Assertions.assertTrue(Proxy.isProxyClass(calculatorWS.getClass()));
         Assertions.assertTrue(Proxy.isProxyClass(altCalculatorWS.getClass()));
     }
 
     @Test
-    public void test_infos_injected() {
+    public void testInfosInjected() {
         Assertions.assertNotNull(calculatorInfo);
         Assertions.assertNotNull(altCalculatorInfo);
     }
 
     @Test
-    public void test_default_ep_address() {
+    public void testDefaultEpAddress() {
         Assertions.assertEquals(
                 "http://localhost:8080/org.tempuri.calculatorsoap",
                 this.calculatorInfo.getEndpointAddress());
@@ -73,19 +73,19 @@ class ClientCalculatorTest {
     }
 
     @Test
-    public void test_active_ep_address() {
+    public void testActiveEpAddress() {
         /* Too bad - there is no way of retrieving this information */
     }
 
     @Test
-    public void test_calculator_wsdl_available() {
+    public void testCalculatorWsdlAvailable() {
         given().port(9000)
                 .when().get("/mockCalculator?wsdl")
                 .then().statusCode(200);
     }
 
     @Test
-    public void test_alt_calculator_wsdl_available() {
+    public void testAltCalculatorWsdlAvailable() {
         given().port(9000)
                 .when().get("/mockAltCalculator?wsdl")
                 .then().statusCode(200);
