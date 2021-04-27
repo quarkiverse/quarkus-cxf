@@ -6,8 +6,9 @@ import io.quarkiverse.cxf.CXFClientData;
 import io.quarkus.builder.item.MultiBuildItem;
 
 /**
- * CxfWebServiceBuildItem is instanciate for each SEI and each implementor it mean that if an interface have 2
- * implementors it generate 3 items (1 for client and 2 for implementors)
+ * CxfWebServiceBuildItem is instanciate for each SEI and each implementor
+ * it mean that if an interface have 2 implementors
+ * it generate 3 items (1 for client and 2 for implementors)
  */
 public final class CxfWebServiceBuildItem extends MultiBuildItem {
     private final String sei;
@@ -19,14 +20,8 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
     private final String path;
     private final boolean isClient;
 
-    public CxfWebServiceBuildItem(
-            String path,
-            String sei,
-            String soapBinding,
-            String wsNamespace,
-            String wsName,
-            List<String> classNames,
-            String implementor) {
+    public CxfWebServiceBuildItem(String path, String sei, String soapBinding, String wsNamespace,
+            String wsName, List<String> classNames, String implementor) {
         this.path = path;
         this.sei = sei;
         this.soapBinding = soapBinding;
@@ -37,13 +32,8 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
         this.isClient = false;
     }
 
-    public CxfWebServiceBuildItem(
-            String path,
-            String sei,
-            String soapBinding,
-            String wsNamespace,
-            String wsName,
-            List<String> classNames) {
+    public CxfWebServiceBuildItem(String path, String sei, String soapBinding, String wsNamespace,
+            String wsName, List<String> classNames) {
         this.path = path;
         this.sei = sei;
         this.soapBinding = soapBinding;
