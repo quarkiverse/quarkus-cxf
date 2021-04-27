@@ -1,81 +1,69 @@
 [[creating-a-soap-client]]
-= Creating a SOAP Client
+= SOAP Clients
 
-Quarkus-CXF supports SOAP clients out of the box. Assuming a given SEI like `FruitWebService` is present Quarkus-CXF
-is able to inject a ready-to-go configured SOAP client:
+Quarkus-CXF supports SOAP clients. Assuming a given SEI like `FruitWebService`, Quarkus-CXF is able to inject a ready-to-use client proxy:
 
 [source,java]
 ----
-import com.example.FruitWebService;
+import com.example.FruitWebService;                   // SEI
 import javax.enterprise.context.ApplicationScoped;
 import io.quarkiverse.cxf.annotation.CXFClient;
 
-@Application    // or any other CDI scope
+@Application  // or any other CDI scope
 public class MySoapClient {
 
-    @Inject
-    @CXFClient
+    @Inject @CXFClient
     FruitWebService clientService;
 
     public int getCount() {
-        return clientService.count();
+        return this.clientService.count();
     }
 }
 ----
 
-While this technically works it is more then likely that remote call `count()` fails. Quarkus-CXF assumes your service to be
-published at `http://localhost:8080/{service-path}`, where `{service-path}` in turn is derived from config property
-`quarkus.cxf.path` (if present) and the SEI's full class name in lowercase characters.
+Without any further configuration Quarkus-CXF assumes a service to be published at http://localhost:8080/{service-path}, where `{service-path}` is derived from
 
-Thus in the example above Quarkus-CXF assumes service FruitWebService to be published at `http://localhost:8080/com.example.fruitwebservice`.
+* config property `quarkus.cxf.path` (if present); and the
+* SEI’s lowercased class name
 
-It is of course possible to configure SOAP clients, especially the URL where the service is available:
+Given `quarkus.cxf.path=/ws`, Quarkus-CXF would use http://localhost:8080/ws/com.example.fruitwebservice as `FruitWebService` 's endpoint URL and otherwise just  http://localhost:8080/ws/com.example.fruitwebservice.
 
+
+Various SOAP client properties can be configured. To do so, prefix `quarkus.cxf.client.{name}` creates a logical client configuration unit. The name of such a unit, here denoted as `{name}`, can be arbitrarily choosen as long as not (whitespace) empty. The following properties are available on such a configuration unit:
+
+* `client-endpoint-url`
+* `endpoint-name`
+* `endpoint-namespace`
+* `features`
+* `in-fault-interceptors`
+* `in-interceptors`
+* `out-fault-interceptors`
+* `out-fnterceptors`
+* `password`
+* `service-interface`
+* `username`
+* `wsdl`
+
+A typical example configuration example is given below. Here unit name `my-fruitservice-client` is used. The goal of this configuration is the change the service endpoint address to http://localhost:8080/fruit:
 [source,properties]
 ----
-quarkus.cxf.client."my-fruitservice-client".service-interface=com.example.FruitWebService      # (A)
-quarkus.cxf.client."my-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit    # (B)
+quarkus.cxf.client."my-fruitservice-client".service-interface=com.example.FruitWebService
+quarkus.cxf.client."my-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit
 ----
 
-Here a logical client configuration named `my-fruitservice-client` is created. Line (A) defines the SEI while (B) defines the URL
-to use. When Quarkus-CXF produces a SOAP client, it will scan all logical client configurations for a configuration that matches the
-SEI of the SOAP client to be injected.
-
-Quarkus-CXF allows you to have more than one client configuration per SEI. Consider this configuration example:
-
-[source,properties]
-----
-quarkus.cxf.client."my-fruitservice-client".service-interface=com.example.FruitWebService               # (A)
-quarkus.cxf.client."my-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit             # (B)
-
-quarkus.cxf.client."my-featured-fruitservice-client".service-interface=com.example.FruitWebService      # (C)
-quarkus.cxf.client."my-featured-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit    # (D)
-quarkus.cxf.client."my-featured-fruitservice-client".features=org.apache.cxf.feature.LoggingFeature     # (E)
-----
-
-Here another client configuration named `my-featured-fruitservice-client` has been defined in addition to
-`my-fruitservice-client`. This configuration adds, as an example, a standard CXF logging feature which can
-be useful for tracing or debugging.
-
-Adding this second configuration created an ambiguity though:
-
+Another way of applying a client configuration is to use it directly:
 [source,java]
 ----
-    @Inject
-    @CXFClient
-    FruitWebService clientService;   // with or without logging feature enabled?
+@Inject @CXFClient("my-fruitservice-client")
+FruitWebService clientService;
 ----
 
-In other words, shall the configuration `my-featured-fruitservice-client` or `my-fruitservice-client` be used? From
-Quarkus-CXF's point of view both are configurations are equivalent.
+Here Quarkus-CXF uses configuration unit `my-fruitservice-client` for setting up a SOAP client `clientService` by scanning configuration units for a unit with that name. It is an error to use a unit name which does not exist.
 
-To avoid conflicts, Quarkus-CXF needs to be told about the default configuration. This is done by
-marking all _conflicting_ configurations as so called _alternatives_ by either
+If `@CXFClient` is used without a unit name Quarkus-CXF identifies matching configuration by scanning for a unit where property `service-interface` _matches_ the SEI to be injected. Such a matching configuration is the _default_ configuration for that SEI. The purpose of property `service-interface` is therefore to identify the matching SEI.
 
-* applying property `*.alternative = true` ; or by
-* removing property `*.service-interface`
+Default configurations must be unique per SEI while it is otherwise perfectly valid to have multiple client configuration units per SEI. Consider this example:
 
-as shown here:
 [source,properties]
 ----
 quarkus.cxf.client."my-fruitservice-client".service-interface=com.example.FruitWebService
@@ -83,15 +71,11 @@ quarkus.cxf.client."my-fruitservice-client".client-endpoint-url=http://localhost
 
 quarkus.cxf.client."my-featured-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit
 quarkus.cxf.client."my-featured-fruitservice-client".features=org.apache.cxf.feature.LoggingFeature
-quarkus.cxf.client."my-featured-fruitservice-client".alternative=true
 ----
 
-Here property `*.service-interface` has been removed and `*.alternative = true` has been applied as well
-marking `my-featured-fruitservice-client` as alternative configuration and turning `my-fruitservice-client`
-into a default configuration for service `FruitWebService`.
-
-So far so good but how can an alternative configuration be used? This way:
-
+Here a second configuration named `my-featured-fruitservice-client` has been defined in addition to
+`my-fruitservice-client`. This second configuration applies a standard CXF logging feature which can
+be useful for tracing or debugging. An example for the purpose of illustration:
 [source,java]
 ----
 import com.example.FruitWebService;
@@ -101,16 +85,13 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 @Application    // or any other CDI scope
 public class MySoapClient {
 
-    private boolean logging = ..
+    private boolean logging = ..  // depending on context, logging is on or off
 
-    @Inject
-    @CXFClient("my-featured-fruitservice-client")
+    @Inject @CXFClient("my-featured-fruitservice-client")
     FruitWebService featuredClientService;
 
-    @Inject
-    @CXFClient
+    @Inject @CXFClient
     FruitWebService clientService;
-
 
     public int getCount() {
         return (logging ? featuredClientService : clientService).count();
@@ -118,13 +99,7 @@ public class MySoapClient {
 }
 ----
 
-Annotation `@CXFClient` contains a default property named `config`. If this property value is absent, then Quarkus-CXF
-scans for the default configuration and applies it. If a property value is present, this value _must_ match a client
-configuration. Specifying a non existing property value is illegal.
-
-Quarkus-CXF is otherwise rather tolerant in applying a client configuration. Technically it just applies the client
-configuration identified by the `config` property value, regardless of whether it fits with the SEI at the injection
-point or not.
+Notice the absence of property `service-interface` in quarkus.cxf.client."my-featured-fruitservice-client" cause this configuration is meant to be an alternative to the default configuration.
 
 Eventually a word of warning before closing this chapter. You may expect to get a SOAP client injected at this injection point
 as well:
@@ -135,9 +110,7 @@ as well:
     FruitWebService clientService;
 ----
 
-This is wrong. Instead you may get FruitWebService's implementation injected if available in your CDI
-container. Otherwise CDI will complain about non suitable beans. Injection of an implementation happens
-cause Quarkus-CXF automatically adds CDI scope `@Dependent` on every class annotated
+This is wrong. If your CDI container contains an implementation of `FruitWebService` then such an instance will be injected. If not, then CDI will complain about not suitable beans. Injection of an implementation can happen because Quarkus-CXF automatically adds CDI scope `@Dependent` on every class annotated
 with `@WebService`, thus turing every webservice it encounters automatically into a CDI bean.
 
 [[basic-auth]]
