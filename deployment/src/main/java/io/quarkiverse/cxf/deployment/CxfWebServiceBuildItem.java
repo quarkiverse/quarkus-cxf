@@ -2,7 +2,6 @@ package io.quarkiverse.cxf.deployment;
 
 import java.util.List;
 
-import io.quarkiverse.cxf.CXFClientData;
 import io.quarkus.builder.item.MultiBuildItem;
 
 /**
