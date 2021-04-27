@@ -389,7 +389,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     @Override
     public String getMethod() {
         LOG.trace("getMethod");
-        return request.rawMethod();
+        return request.method().name();
     }
 
     @Override

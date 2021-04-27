@@ -1,5 +1,7 @@
 package io.quarkiverse.cxf.graal;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -10,6 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.cxf.annotations.FastInfoset;
 import org.apache.cxf.common.logging.LogUtils;
@@ -18,8 +22,6 @@ import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.databinding.WrapperHelper;
 import org.apache.cxf.interceptor.FIStaxInInterceptor;
 import org.apache.cxf.interceptor.FIStaxOutInterceptor;
-import org.apache.cxf.interceptor.InterceptorProvider;
-import org.apache.cxf.service.factory.AnnotationsFactoryBeanListener;
 
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
@@ -344,30 +346,31 @@ class FastInfosetMissing implements BooleanSupplier {
 }
 
 /**
- * Substitutes {@link AnnotationsFactoryBeanListener} when FastInfoset classes
- * are not found in the classpath.
+ * Substitutes {@link FIStaxInInterceptor} when FastInfoset classes are not
+ * found in the classpath.
  */
-@TargetClass(className = "org.apache.cxf.service.factory.AnnotationsFactoryBeanListener", onlyWith = FastInfosetMissing.class)
-final class Target_org_apache_cxf_service_factory_AnnotationsFactoryBeanListener {
+@TargetClass(className = "org.apache.cxf.interceptor.FIStaxInInterceptor", onlyWith = FastInfosetMissing.class)
+final class Target_org_apache_cxf_interceptor_FIStaxInInterceptor {
 
-    /**
-     * Substitutes {@link AnnotationsFactoryBeanListener#addFastInfosetSupport}
-     * to throw an exception when FastInfoset support is requested. The original
-     * method creates instances of {@link FIStaxInInterceptor} and
-     * {@link FIStaxOutInterceptor} which make use of FastInfoset's classes and
-     * will break the native compilation when they're not present. This has no
-     * effect when FastInfoset is actually present since this substitution will
-     * not be applied at all in such a case.
-     *
-     * @param provider
-     * @param annotation
-     */
     @Substitute
-    private void addFastInfosetSupport(InterceptorProvider provider, FastInfoset annotation) {
-        if (annotation != null) {
-            throw new UnsupportedOperationException(
-                    "FastInfoset support was requested but its classes are not present in the classpath.");
-        }
+    private XMLStreamReader getParser(InputStream in) {
+        throw new UnsupportedOperationException(
+                "FastInfoset support was requested but its classes are not present in the classpath.");
+    }
+
+}
+
+/**
+ * Substitutes {@link FIStaxOutInterceptor} when FastInfoset classes are not
+ * found in the classpath.
+ */
+@TargetClass(className = "org.apache.cxf.interceptor.FIStaxOutInterceptor", onlyWith = FastInfosetMissing.class)
+final class Target_org_apache_cxf_interceptor_FIStaxOutInterceptor {
+
+    @Substitute
+    private XMLStreamWriter getOutput(OutputStream out) {
+        throw new UnsupportedOperationException(
+                "FastInfoset support was requested but its classes are not present in the classpath.");
     }
 
 }

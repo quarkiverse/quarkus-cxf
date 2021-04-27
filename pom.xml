@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.quarkiverse</groupId>
         <artifactId>quarkiverse-parent</artifactId>
-        <version>6</version>
+        <version>7</version>
     </parent>
 
     <groupId>io.quarkiverse.cxf</groupId>
@@ -40,8 +40,8 @@
         </developer>
     </developers>
     <properties>
-        <quarkus.version>1.12.1.Final</quarkus.version>
-        <cxf.version>3.4.2</cxf.version>
+        <quarkus.version>1.13.2.Final</quarkus.version>
+        <cxf.version>3.4.3</cxf.version>
         <jakarta.xml.ws-api.version>2.3.3</jakarta.xml.ws-api.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
