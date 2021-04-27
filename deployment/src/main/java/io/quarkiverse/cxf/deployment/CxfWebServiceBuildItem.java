@@ -85,13 +85,4 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
     public boolean IsClient() {
         return isClient;
     }
-
-    public CXFClientData clientData() {
-        return new CXFClientData(
-                this.getSoapBinding(),
-                this.getSei(),
-                this.getWsName(),
-                this.getWsNamespace(),
-                this.getClassNames());
-    }
 }

@@ -24,6 +24,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.xml.ws.soap.SOAPBinding;
 
+import io.quarkiverse.cxf.CXFClientData;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerImpl;
@@ -391,7 +392,7 @@ class QuarkusCxfProcessor {
         cxfWebServices
                 .stream()
                 .filter(CxfWebServiceBuildItem::IsClient)
-                .map(CxfWebServiceBuildItem::clientData)
+                .map(QuarkusCxfProcessor::clientData)
                 .map(cxf -> {
                     String fmt = "producing dedicated CXFClientInfo bean named '%s' for SEI %s";
                     String msg = format(fmt, cxf.getSei(), cxf.getSei());
@@ -1155,4 +1156,14 @@ class QuarkusCxfProcessor {
             Collection<T> beans) {
         beans.forEach(p::produce);
     }
+
+    private static CXFClientData clientData(CxfWebServiceBuildItem cxfWebServiceBuildItem) {
+        return new CXFClientData(
+                cxfWebServiceBuildItem.getSoapBinding(),
+                cxfWebServiceBuildItem.getSei(),
+                cxfWebServiceBuildItem.getWsName(),
+                cxfWebServiceBuildItem.getWsNamespace(),
+                cxfWebServiceBuildItem.getClassNames());
+    }
+
 }
