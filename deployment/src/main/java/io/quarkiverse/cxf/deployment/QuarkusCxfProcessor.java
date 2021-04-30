@@ -869,8 +869,6 @@ class QuarkusCxfProcessor {
                 "com.sun.xml.ws.runtime.config.ObjectFactory",
                 "ibm.wsdl.DefinitionImpl",
                 "io.swagger.jaxrs.DefaultParameterExtension",
-                "io.undertow.server.HttpServerExchange",
-                "io.undertow.UndertowOptions",
                 "java.lang.invoke.MethodHandles",
                 "java.rmi.RemoteException",
                 "java.rmi.ServerException",
