@@ -67,7 +67,7 @@ public class CXFRecorder {
             cfg.init(sei,
                     endpointAddress,
                     cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath.orElse(null) : null,
-                    soapBinding,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.soapBinding.orElse(soapBinding) : soapBinding,
                     wsNamespace,
                     wsName,
                     cxfEndPointConfig != null ? cxfEndPointConfig.endpointNamespace.orElse(null) : null,
