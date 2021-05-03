@@ -256,23 +256,12 @@ class QuarkusCxfProcessor {
                     if (bindingType != null) {
                         soapBinding = bindingType.value().asString();
                     }
-                    cxfWebServices.produce(new CxfWebServiceBuildItem(
-                            cxfBuildTimeConfig.path,
-                            sei,
-                            soapBinding,
-                            wsNamespace,
-                            wsName,
-                            wrapperClassNames,
-                            implementor));
+                    cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
+                            wsName, wrapperClassNames, implementor));
                 }
             }
-            cxfWebServices.produce(new CxfWebServiceBuildItem(
-                    cxfBuildTimeConfig.path,
-                    sei,
-                    soapBinding,
-                    wsNamespace,
-                    wsName,
-                    wrapperClassNames));
+            cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
+                    wsName, wrapperClassNames));
 
             proxies.produce(new NativeImageProxyDefinitionBuildItem(wsClassInfo.name().toString(),
                     "javax.xml.ws.BindingProvider", "java.io.Closeable", "org.apache.cxf.endpoint.Client"));
