@@ -149,7 +149,7 @@ public class CXFRecorder {
                     wsImplementor,
                     sei,
                     cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath.orElse(null) : null,
-                    soapBinding,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.soapBinding.orElse(soapBinding) : soapBinding,
                     wrapperClassNames,
                     cxfEndPointConfig != null ? cxfEndPointConfig.publishedEndpointUrl.orElse(null) : null);
             if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors.isPresent()) {
