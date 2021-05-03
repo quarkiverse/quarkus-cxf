@@ -1,9 +1,12 @@
 package io.quarkiverse.cxf.deployment;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,6 +21,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.cxf.Bus;
@@ -54,11 +61,14 @@ import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import io.quarkus.deployment.builditem.GeneratedResourceBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
+import io.quarkus.deployment.pkg.PackageConfig;
+import io.quarkus.deployment.pkg.builditem.UberJarRequiredBuildItem;
 import io.quarkus.gizmo.ClassCreator;
 import io.quarkus.gizmo.ClassOutput;
 import io.quarkus.gizmo.FieldCreator;
@@ -360,7 +370,13 @@ class QuarkusCxfProcessor {
 
     @BuildStep
     void buildResources(BuildProducer<NativeImageResourceBuildItem> resources,
-            BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
+            BuildProducer<ReflectiveClassBuildItem> reflectiveItems,
+            List<UberJarRequiredBuildItem> uberJarRequired,
+            PackageConfig packageConfig,
+            BuildProducer<GeneratedResourceBuildItem> generatedResources) {
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os));
         try {
             Enumeration<URL> urls = ExtensionManagerImpl.class.getClassLoader().getResources("META-INF/cxf/bus-extensions.txt");
             while (urls.hasMoreElements()) {
@@ -371,6 +387,8 @@ class QuarkusCxfProcessor {
                     //factory.getBus().setExtension();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(openStream));
                     String line = reader.readLine();
+                    out.write(line);
+                    out.newLine();
                     while (line != null) {
                         String[] cols = line.split(":");
                         //org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
@@ -389,7 +407,74 @@ class QuarkusCxfProcessor {
         } catch (IOException e) {
             LOGGER.warn("can not open bus-extensions.txt");
         }
+        // for uber jar merge bus-extensions
+        if ((!uberJarRequired.isEmpty() || packageConfig.type.equalsIgnoreCase(PackageConfig.UBER_JAR))
+                && (os.size() > 0)) {
+            generatedResources.produce(
+                    new GeneratedResourceBuildItem("META-INF/cxf/bus-extensions.txt", os.toByteArray()));
+        }
+    }
 
+    @BuildStep
+    void buildXmlResources(BuildProducer<NativeImageResourceBuildItem> resources,
+            List<UberJarRequiredBuildItem> uberJarRequired,
+            PackageConfig packageConfig,
+            BuildProducer<GeneratedResourceBuildItem> generatedResources) {
+        // for uber jar only merge xml resource
+        if (uberJarRequired.isEmpty() && !packageConfig.type.equalsIgnoreCase(PackageConfig.UBER_JAR)) {
+            return;
+        }
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        try {
+            XMLOutputFactory xmlof = XMLOutputFactory.newFactory();
+            XMLStreamWriter out = xmlof.createXMLStreamWriter(os);
+            out.writeStartDocument("UTF-8", "1.0");
+            out.writeStartElement("properties");
+            Enumeration<URL> urls = ExtensionManagerImpl.class.getClassLoader().getResources("META-INF/wsdl.plugin.xml");
+            while (urls.hasMoreElements()) {
+                URL url = urls.nextElement();
+                try (InputStream openStream = url.openStream()) {
+                    XMLInputFactory xmlif = XMLInputFactory.newInstance();
+                    XMLStreamReader reader = xmlif.createXMLStreamReader(openStream);
+                    while (reader.hasNext()) {
+                        int eventType = reader.next();
+                        switch (eventType) {
+                            case XMLStreamReader.START_ELEMENT: {
+                                if (reader.getLocalName() == "entry") {
+                                    out.writeStartElement("entry");
+                                    for (int i = 0; i < reader.getAttributeCount(); i++) {
+                                        out.writeAttribute(reader.getAttributeLocalName(i), reader.getAttributeValue(i));
+                                    }
+                                }
+                                break;
+                            }
+                            case XMLStreamReader.CHARACTERS: {
+                                out.writeCharacters(reader.getText());
+                                break;
+                            }
+                            case XMLStreamReader.END_ELEMENT: {
+                                if (reader.getLocalName() == "entry") {
+                                    out.writeEndElement();
+                                }
+                                break;
+                            }
+                            default:// just skip
+                                break;
+                        }
+
+                    }
+                }
+            }
+            out.writeEndElement();
+            out.writeEndDocument();
+        } catch (IOException | javax.xml.stream.XMLStreamException e) {
+            LOGGER.warn("can not merged wsdl.plugin.xml");
+        }
+        if (os.size() > 0) {
+            generatedResources.produce(
+                    new GeneratedResourceBuildItem("META-INF/wsdl.plugin.xml", os.toByteArray()));
+        }
     }
 
     /**
@@ -882,11 +967,8 @@ class QuarkusCxfProcessor {
                 "javax.security.auth.login.Configuration",
                 "javax.servlet.WriteListener",
                 "javax.wsdl.Binding",
-                "javax.wsdl.Binding",
-                "javax.wsdl.BindingFault",
                 "javax.wsdl.BindingFault",
                 "javax.wsdl.BindingInput",
-                "javax.wsdl.BindingOperation",
                 "javax.wsdl.BindingOperation",
                 "javax.wsdl.BindingOutput",
                 "javax.wsdl.Definition",
@@ -897,7 +979,6 @@ class QuarkusCxfProcessor {
                 "javax.wsdl.Operation",
                 "javax.wsdl.Output",
                 "javax.wsdl.Part",
-                "javax.wsdl.Port",
                 "javax.wsdl.Port",
                 "javax.wsdl.PortType",
                 "javax.wsdl.Service",
