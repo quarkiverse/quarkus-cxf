@@ -25,7 +25,7 @@ public class CXFRecorder {
     /**
      * Create CXFClientInfo supplier.
      * <p>
-     * This method is called once per @WebService *interface*. The idear is to produce a default client config for a
+     * This method is called once per @WebService *interface*. The idea is to produce a default client config for a
      * given SEI.
      */
     public RuntimeValue<CXFClientInfo> cxfClientInfoSupplier(CXFClientData cxfClientData) {
@@ -93,7 +93,7 @@ public class CXFRecorder {
                     wsImplementor,
                     sei,
                     cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath.orElse(null) : null,
-                    soapBinding,
+                    cxfEndPointConfig != null ? cxfEndPointConfig.soapBinding.orElse(soapBinding) : soapBinding,
                     wrapperClassNames,
                     cxfEndPointConfig != null ? cxfEndPointConfig.publishedEndpointUrl.orElse(null) : null);
             if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors.isPresent()) {

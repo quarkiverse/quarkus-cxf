@@ -107,7 +107,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         return new ServletInputStream() {
             @Override
             public int read() throws IOException {
-                return (int) request.bytesRead();
+                return in.read();
             }
 
             @Override
@@ -117,16 +117,22 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
             @Override
             public boolean isFinished() {
-                throw new UnsupportedOperationException();
+                try {
+                    return (in.available() == -1);
+                } catch (IOException e) {
+                    // when closed it is finished
+                    return true;
+                }
             }
 
             @Override
             public boolean isReady() {
-                throw new UnsupportedOperationException();
+                // not closed or not finished
+                return !isFinished();
             }
 
             @Override
-            public void setReadListener(ReadListener arg0) {
+            public void setReadListener(ReadListener readListener) {
                 throw new UnsupportedOperationException();
             }
         };

@@ -9,8 +9,8 @@ import javax.servlet.WriteListener;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.undertow.httpcore.HttpHeaderNames;
-import io.undertow.vertx.VertxBufferImpl;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.quarkus.vertx.core.runtime.VertxBufferImpl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
