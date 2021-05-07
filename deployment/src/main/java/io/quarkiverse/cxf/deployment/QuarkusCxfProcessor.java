@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.deployment;
 
+import static io.quarkus.deployment.annotations.ExecutionTime.RUNTIME_INIT;
 import static java.lang.String.format;
 
 import java.io.BufferedReader;
@@ -44,11 +45,6 @@ import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfClientProducer;
 import io.quarkiverse.cxf.CxfConfig;
-import io.quarkiverse.cxf.CXFClientInfo;
-import io.quarkiverse.cxf.CXFRecorder;
-import io.quarkiverse.cxf.CXFServletInfos;
-import io.quarkiverse.cxf.CxfClientProducer;
-import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
@@ -83,42 +79,6 @@ import io.quarkus.vertx.http.deployment.RouteBuildItem;
 import io.quarkus.vertx.http.runtime.HandlerType;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.bus.extension.ExtensionManagerImpl;
-import org.apache.cxf.common.spi.GeneratedClassClassLoaderCapture;
-import org.jboss.jandex.AnnotationInstance;
-import org.jboss.jandex.AnnotationTarget;
-import org.jboss.jandex.AnnotationValue;
-import org.jboss.jandex.ClassInfo;
-import org.jboss.jandex.DotName;
-import org.jboss.jandex.IndexView;
-import org.jboss.jandex.MethodInfo;
-import org.jboss.jandex.Type;
-import org.jboss.logging.Logger;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.xml.ws.soap.SOAPBinding;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static io.quarkus.deployment.annotations.ExecutionTime.RUNTIME_INIT;
-import static java.lang.String.format;
 
 class QuarkusCxfProcessor {
 
