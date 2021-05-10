@@ -800,6 +800,8 @@ class QuarkusCxfProcessor {
                 "com.sun.xml.internal.bind.retainReferenceToInfo"));
         reflectiveItems.produce(new ReflectiveClassBuildItem(false, false,
                 //manually added
+                "org.apache.cxf.jaxws.spi.ProviderImpl",
+                "com.sun.xml.bind.v2.JAXBContextFactory",
                 "org.apache.cxf.wsdl.interceptors.BareInInterceptor",
                 "com.sun.msv.reader.GrammarReaderController",
                 "org.apache.cxf.binding.soap.interceptor.RPCInInterceptor",
@@ -983,6 +985,7 @@ class QuarkusCxfProcessor {
         //TODO add @HandlerChain (file) and parse it to add class loading
         return new NativeImageResourceBuildItem("com/sun/xml/fastinfoset/resources/ResourceBundle.properties",
                 "META-INF/cxf/bus-extensions.txt",
+                "META-INF/services/javax.xml.ws.spi.Provider",
                 "META-INF/cxf/cxf.xml",
                 "META-INF/cxf/org.apache.cxf.bus.factory",
                 "META-INF/services/org.apache.cxf.bus.factory",
