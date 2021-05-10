@@ -19,6 +19,14 @@ public class CxfClientConfig {
     public Optional<String> wsdlPath;
 
     /**
+     * The url of SOAP Binding
+     * a list of standard value :
+     * https://docs.oracle.com/javase/7/docs/api/constant-values.html#javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING
+     */
+    @ConfigItem
+    public Optional<String> soapBinding;
+
+    /**
      * The client endpoint url
      */
     @ConfigItem

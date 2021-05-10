@@ -72,6 +72,7 @@ public class CXFClientInfo {
         this.epName = config.endpointName.orElse(this.epName);
         this.username = config.username.orElse(this.username);
         this.password = config.password.orElse(this.password);
+        this.soapBinding = config.soapBinding.orElse(this.soapBinding);
         this.endpointAddress = config.clientEndpointUrl.orElse(this.endpointAddress);
         addFeatures(config);
         addInterceptors(config);
