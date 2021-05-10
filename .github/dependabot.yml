@@ -9,3 +9,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: jakarta.xml.ws:jakarta.xml.ws-api
+        versions:
+          - ">= 3.0.0"
