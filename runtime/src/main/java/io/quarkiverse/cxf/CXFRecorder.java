@@ -1,10 +1,11 @@
 package io.quarkiverse.cxf;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import org.jboss.logging.Logger;
 
@@ -19,79 +20,22 @@ import io.vertx.ext.web.RoutingContext;
 @Recorder
 public class CXFRecorder {
     private static final Logger LOGGER = Logger.getLogger(CXFRecorder.class);
+    private static final String DEFAULT_EP_ADDR = "http://localhost:8080";
 
-    public Supplier<CXFClientInfo> cxfClientInfoSupplier(String sei, CxfConfig cxfConfig,
-            String soapBinding, String wsNamespace, String wsName, List<String> classNames) {
-        LOGGER.trace("recorder CXFClientInfoSupplier");
-        return () -> {
-            // TODO if 2 clients with same SEI but different config it will failed but strange use case
-            Map<String, CxfEndpointConfig> seiToCfg = new HashMap<>();
-            Map<String, String> seiToPath = new HashMap<>();
-            for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
-                CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
-                String relativePath = webServicesByPath.getKey();
-                if (!cxfEndPointConfig.serviceInterface.isPresent()) {
-                    continue;
-                }
-                String cfgSei = cxfEndPointConfig.serviceInterface.get();
-                seiToCfg.put(cfgSei, cxfEndPointConfig);
-                seiToPath.put(cfgSei, relativePath);
-            }
-
-            CxfEndpointConfig cxfEndPointConfig = seiToCfg.get(sei);
-            String relativePath = seiToPath.get(sei);
-
-            String endpointAddress;
-            if (cxfEndPointConfig != null) {
-                endpointAddress = cxfEndPointConfig.clientEndpointUrl.orElse("http://localhost:8080");
-            } else {
-                endpointAddress = "http://localhost:8080";
-            }
-            // default is sei name without package
-            if (relativePath == null) {
-                String serviceName = sei.toLowerCase();
-                if (serviceName.contains(".")) {
-                    serviceName = serviceName.substring(serviceName.lastIndexOf('.') + 1);
-                }
-                relativePath = "/" + serviceName;
-            }
-            if (!relativePath.equals("/") && !relativePath.equals("")) {
-                endpointAddress = endpointAddress.endsWith("/")
-                        ? endpointAddress.substring(0, endpointAddress.length() - 1)
-                        : endpointAddress;
-                endpointAddress = relativePath.startsWith("/") ? endpointAddress + relativePath
-                        : endpointAddress + "/" + relativePath;
-            }
-
-            CXFClientInfo cfg = new CXFClientInfo();
-            cfg.init(sei,
-                    endpointAddress,
-                    cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath.orElse(null) : null,
-                    cxfEndPointConfig != null ? cxfEndPointConfig.soapBinding.orElse(soapBinding) : soapBinding,
-                    wsNamespace,
-                    wsName,
-                    cxfEndPointConfig != null ? cxfEndPointConfig.endpointNamespace.orElse(null) : null,
-                    cxfEndPointConfig != null ? cxfEndPointConfig.endpointName.orElse(null) : null,
-                    cxfEndPointConfig != null ? cxfEndPointConfig.username.orElse(null) : null,
-                    cxfEndPointConfig != null ? cxfEndPointConfig.password.orElse(null) : null,
-                    classNames);
-            if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors.isPresent()) {
-                cfg.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
-            }
-            if (cxfEndPointConfig != null && cxfEndPointConfig.outInterceptors.isPresent()) {
-                cfg.getOutInterceptors().addAll(cxfEndPointConfig.outInterceptors.get());
-            }
-            if (cxfEndPointConfig != null && cxfEndPointConfig.outFaultInterceptors.isPresent()) {
-                cfg.getOutFaultInterceptors().addAll(cxfEndPointConfig.outFaultInterceptors.get());
-            }
-            if (cxfEndPointConfig != null && cxfEndPointConfig.inFaultInterceptors.isPresent()) {
-                cfg.getInFaultInterceptors().addAll(cxfEndPointConfig.inFaultInterceptors.get());
-            }
-            if (cxfEndPointConfig != null && cxfEndPointConfig.features.isPresent()) {
-                cfg.getFeatures().addAll(cxfEndPointConfig.features.get());
-            }
-            return cfg;
-        };
+    /**
+     * Create CXFClientInfo supplier.
+     * <p>
+     * This method is called once per @WebService *interface*. The idear is to produce a default client config for a
+     * given SEI.
+     */
+    public RuntimeValue<CXFClientInfo> cxfClientInfoSupplier(CXFClientData cxfClientData) {
+        return new RuntimeValue<>(new CXFClientInfo(
+                cxfClientData.getSei(),
+                format("%s/%s", DEFAULT_EP_ADDR, cxfClientData.getSei().toLowerCase()),
+                cxfClientData.getSoapBinding(),
+                cxfClientData.getWsNamespace(),
+                cxfClientData.getWsName(),
+                cxfClientData.getClassNames()));
     }
 
     public class servletConfig {

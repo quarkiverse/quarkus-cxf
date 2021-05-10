@@ -6,10 +6,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import io.quarkiverse.cxf.annotation.CXFClient;
+
 @Path("/rest")
 public class RestResource {
     @Inject
-    public GreetingClientWebService greetingWS;
+    @CXFClient
+    public GreetingWebService greetingWS;
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)

@@ -10,13 +10,17 @@ import javax.ws.rs.core.MediaType;
 import org.tempuri.CalculatorSoap;
 import org.tempuri.alt.AltCalculatorSoap;
 
+import io.quarkiverse.cxf.annotation.CXFClient;
+
 @Path("/rest/clientfacade")
 public class ClientFacadeResource {
 
     @Inject
+    @CXFClient
     CalculatorSoap calculatorWS;
 
     @Inject
+    @CXFClient
     AltCalculatorSoap altCalculatorWS;
 
     @GET

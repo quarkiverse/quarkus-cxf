@@ -1,38 +1,127 @@
 [[creating-a-soap-client]]
-= Creating a SOAP Client
+= SOAP Clients
 
-In order to support a SOAP client, register the endpoint URL and the service endpoint interface (same as the server) with the following configuration:
-
-[source,properties]
-----
-quarkus.cxf.endpoint."/fruit".client-endpoint-url=http://localhost:8080/
-quarkus.cxf.endpoint."/fruit".service-interface=org.acme.cxf.FruitWebService
-----
-
-Then inject the client as shown below to use it. Note that the Quarkus container must instantiate the client, ie. the client must be injected in a class which is managed and instantiated by the container. If you need a main, you can use the QuarkusMain annotation (cf https://quarkus.io/guides/lifecycle).
+Quarkus-CXF supports SOAP clients. Assuming a given SEI like `FruitWebService`, Quarkus-CXF is able to inject a ready-to-use client proxy:
 
 [source,java]
 ----
+import com.example.FruitWebService;                   // SEI
+import javax.enterprise.context.ApplicationScoped;
+import io.quarkiverse.cxf.annotation.CXFClient;
+
+@Application  // or any other CDI scope
 public class MySoapClient {
 
-    @Inject
+    @Inject @CXFClient
     FruitWebService clientService;
 
     public int getCount() {
-        return clientService.count();
+        return this.clientService.count();
     }
 }
 ----
 
-[[basic-auth]]
-== Basic Auth
+Without any further configuration Quarkus-CXF assumes a service to be published at http://localhost:8080/{service-path}, where `{service-path}` is derived from
 
-Basic auth for clients is supported by default. Just add the following properties to your `application.properties` file.
+* config property `quarkus.cxf.path` (if present); and the
+* SEI’s lowercased class name
+
+Given `quarkus.cxf.path=/ws`, Quarkus-CXF would use http://localhost:8080/ws/com.example.fruitwebservice as `FruitWebService` 's endpoint URL and otherwise just  http://localhost:8080/ws/com.example.fruitwebservice.
+
+
+Various SOAP client properties can be configured. To do so, prefix `quarkus.cxf.client.{name}` creates a logical client configuration unit. The name of such a unit, here denoted as `{name}`, can be arbitrarily choosen as long as not (whitespace) empty. The following properties are available on such a configuration unit:
+
+* `client-endpoint-url`
+* `endpoint-name`
+* `endpoint-namespace`
+* `features`
+* `in-fault-interceptors`
+* `in-interceptors`
+* `out-fault-interceptors`
+* `out-fnterceptors`
+* `password`
+* `service-interface`
+* `username`
+* `wsdl`
+
+A typical example configuration example is given below. Here unit name `my-fruitservice-client` is used. The goal of this configuration is the change the service endpoint address to http://localhost:8080/fruit:
+[source,properties]
+----
+quarkus.cxf.client."my-fruitservice-client".service-interface=com.example.FruitWebService
+quarkus.cxf.client."my-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit
+----
+
+Another way of applying a client configuration is to use it directly:
+[source,java]
+----
+@Inject @CXFClient("my-fruitservice-client")
+FruitWebService clientService;
+----
+
+Here Quarkus-CXF uses configuration unit `my-fruitservice-client` for setting up a SOAP client `clientService` by scanning configuration units for a unit with that name. It is an error to use a unit name which does not exist.
+
+If `@CXFClient` is used without a unit name Quarkus-CXF identifies matching configuration by scanning for a unit where property `service-interface` _matches_ the SEI to be injected. Such a matching configuration is the _default_ configuration for that SEI. The purpose of property `service-interface` is therefore to identify the matching SEI.
+
+Default configurations must be unique per SEI while it is otherwise perfectly valid to have multiple client configuration units per SEI. Consider this example:
 
 [source,properties]
 ----
-quarkus.cxf.endpoint."/greeting".username=user
-quarkus.cxf.endpoint."/greeting".password=password
+quarkus.cxf.client."my-fruitservice-client".service-interface=com.example.FruitWebService
+quarkus.cxf.client."my-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit
+
+quarkus.cxf.client."my-featured-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit
+quarkus.cxf.client."my-featured-fruitservice-client".features=org.apache.cxf.feature.LoggingFeature
+----
+
+Here a second configuration named `my-featured-fruitservice-client` has been defined in addition to
+`my-fruitservice-client`. This second configuration applies a standard CXF logging feature which can
+be useful for tracing or debugging. An example for the purpose of illustration:
+[source,java]
+----
+import com.example.FruitWebService;
+import javax.enterprise.context.ApplicationScoped;
+import io.quarkiverse.cxf.annotation.CXFClient;
+
+@Application    // or any other CDI scope
+public class MySoapClient {
+
+    private boolean logging = ..  // depending on context, logging is on or off
+
+    @Inject @CXFClient("my-featured-fruitservice-client")
+    FruitWebService featuredClientService;
+
+    @Inject @CXFClient
+    FruitWebService clientService;
+
+    public int getCount() {
+        return (logging ? featuredClientService : clientService).count();
+    }
+}
+----
+
+Notice the absence of property `service-interface` in quarkus.cxf.client."my-featured-fruitservice-client" cause this configuration is meant to be an alternative to the default configuration.
+
+Eventually a word of warning before closing this chapter. You may expect to get a SOAP client injected at this injection point
+as well:
+
+[source,java]
+----
+    @Inject
+    FruitWebService clientService;
+----
+
+This is wrong. If your CDI container contains an implementation of `FruitWebService` then such an instance will be injected. If not, then CDI will complain about not suitable beans. Injection of an implementation can happen because Quarkus-CXF automatically adds CDI scope `@Dependent` on every class annotated
+with `@WebService`, thus turing every webservice it encounters automatically into a CDI bean.
+
+[[basic-auth]]
+== Basic Auth
+
+Basic auth for clients is supported by default. Just add the following properties to your `application.properties` file:
+
+[source,properties]
+----
+quarkus.cxf.client."my-fruitservice-client".username=user
+quarkus.cxf.client."my-fruitservice-client".password=password
 ----
 
 [[async-support]]
