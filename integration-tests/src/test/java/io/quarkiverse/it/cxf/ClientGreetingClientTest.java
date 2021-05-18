@@ -6,6 +6,7 @@ import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.junit.jupiter.api.Assertions;
@@ -86,7 +87,7 @@ class ClientGreetingClientTest {
 
     @Test
     public void testOutInterceptorPresent() {
-        Assertions.assertThrows(SOAPFaultException.class, () -> {
+        Assertions.assertThrows(WebServiceException.class, () -> {
             faultyClient.ping("hello");
         });
     }
