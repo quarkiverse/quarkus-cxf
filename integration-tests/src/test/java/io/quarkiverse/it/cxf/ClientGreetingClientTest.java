@@ -7,7 +7,6 @@ import java.lang.reflect.Proxy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.ws.WebServiceException;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
