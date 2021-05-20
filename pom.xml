@@ -28,6 +28,7 @@
         <developer>
             <id>dufoli</id>
             <name>Olivier Dufour</name>
+            <email>olivier dot duff at gmail(DOT)com</email>
         </developer>
         <developer>
             <id>dufgui</id>
@@ -57,6 +58,7 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <jaxb-runtime.version>2.3.3-b02</jaxb-runtime.version>
     </properties>
 
     <scm>
@@ -98,6 +100,10 @@
                         <groupId>org.apache.geronimo.specs</groupId>
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -109,7 +115,18 @@
                 <groupId>jakarta.xml.ws</groupId>
                 <artifactId>jakarta.xml.ws-api</artifactId>
                 <version>${jakarta.xml.ws-api.version}</version>
-            </dependency>     
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${jaxb-runtime.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
