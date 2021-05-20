@@ -556,6 +556,12 @@ class QuarkusCxfProcessor {
 
         reflectiveItems.produce(new ReflectiveClassBuildItem(true, true,
                 "org.apache.cxf.common.spi.ClassLoaderService",
+                "org.apache.cxf.bindings.xformat.ObjectFactory",
+                "org.apache.cxf.ws.addressing.wsdl.ObjectFactory",
+                "org.apache.cxf.transports.http.configuration.ObjectFactory",
+                "org.apache.cxf.wsdl.http.ObjectFactory",
+                "com.sun.xml.ws.runtime.config.ObjectFactory",
+                "com.oracle.xmlns.webservices.jaxws_databinding.ObjectFactory",
                 "org.apache.cxf.common.spi.GeneratedClassClassLoaderCapture",
                 "org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader",
                 "org.apache.cxf.common.util.ASMHelper",
@@ -851,17 +857,12 @@ class QuarkusCxfProcessor {
                 "com.ibm.wsdl.PortTypeImpl",
                 "com.ibm.wsdl.ServiceImpl",
                 "com.ibm.wsdl.TypesImpl",
-                "com.oracle.xmlns.webservices.jaxws_databinding" +
-                        ".ObjectFactory",
-                "com.sun.org.apache.xerces.internal.utils" +
-                        ".XMLSecurityManager",
-                "com.sun.org.apache.xerces.internal.utils" +
-                        ".XMLSecurityPropertyManager",
+                "com.sun.org.apache.xerces.internal.utils.XMLSecurityManager",
+                "com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager",
                 "com.sun.xml.bind.api.TypeReference",
                 "com.sun.xml.bind.DatatypeConverterImpl",
                 "com.sun.xml.internal.bind.api.TypeReference",
                 "com.sun.xml.internal.bind.DatatypeConverterImpl",
-                "com.sun.xml.ws.runtime.config.ObjectFactory",
                 "ibm.wsdl.DefinitionImpl",
                 "io.swagger.jaxrs.DefaultParameterExtension",
                 "java.lang.invoke.MethodHandles",
@@ -921,7 +922,6 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.binding.soap.SoapHeader",
                 "org.apache.cxf.binding.soap.SoapMessage",
                 "org.apache.cxf.binding.xml.XMLFault",
-                "org.apache.cxf.bindings.xformat.ObjectFactory",
                 "org.apache.cxf.bindings.xformat.XMLBindingMessageFormat",
                 "org.apache.cxf.bindings.xformat.XMLFormatBinding",
                 "org.apache.cxf.bus.CXFBusFactory",
@@ -938,19 +938,12 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.message.StringMap",
                 "org.apache.cxf.tools.fortest.cxf523.Database",
                 "org.apache.cxf.tools.fortest.cxf523.DBServiceFault",
-                "org.apache.cxf.tools.fortest.withannotation.doc" +
-                        ".HelloWrapped",
-                "org.apache.cxf.transports.http.configuration" +
-                        ".HTTPClientPolicy",
-                "org.apache.cxf.transports.http.configuration" +
-                        ".HTTPServerPolicy",
-                "org.apache.cxf.transports.http.configuration" +
-                        ".ObjectFactory",
+                "org.apache.cxf.tools.fortest.withannotation.doc.HelloWrapped",
+                "org.apache.cxf.transports.http.configuration.HTTPClientPolicy",
+                "org.apache.cxf.transports.http.configuration.HTTPServerPolicy",
                 "org.apache.cxf.ws.addressing.wsdl.AttributedQNameType",
-                "org.apache.cxf.ws.addressing.wsdl.ObjectFactory",
                 "org.apache.cxf.ws.addressing.wsdl.ServiceNameType",
                 "org.apache.cxf.wsdl.http.AddressType",
-                "org.apache.cxf.wsdl.http.ObjectFactory",
                 "org.apache.hello_world.Greeter",
                 "org.apache.hello_world_soap_http.types.StringStruct",
                 "org.apache.karaf.jaas.boot.principal.Group",
@@ -971,12 +964,9 @@ class QuarkusCxfProcessor {
                 "org.slf4j.LoggerFactory",
                 "org.springframework.aop.framework.Advised",
                 "org.springframework.aop.support.AopUtils",
-                "org.springframework.core.io.support" +
-                        ".PathMatchingResourcePatternResolver",
-                "org.springframework.core.type.classreading" +
-                        ".CachingMetadataReaderFactory",
-                "org.springframework.osgi.io" +
-                        ".OsgiBundleResourcePatternResolver",
+                "org.springframework.core.io.support.PathMatchingResourcePatternResolver",
+                "org.springframework.core.type.classreading.CachingMetadataReaderFactory",
+                "org.springframework.osgi.io.OsgiBundleResourcePatternResolver",
                 "org.springframework.osgi.util.BundleDelegatingClassLoader"));
     }
 
