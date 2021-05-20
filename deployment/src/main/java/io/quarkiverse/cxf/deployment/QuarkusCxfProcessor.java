@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -21,11 +22,20 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -40,6 +50,12 @@ import org.jboss.jandex.IndexView;
 import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
 import org.jboss.logging.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFRecorder;
@@ -405,7 +421,7 @@ class QuarkusCxfProcessor {
                 }
             }
         } catch (IOException e) {
-            LOGGER.warn("can not open bus-extensions.txt");
+            LOGGER.warn("can not merge bus-extensions.txt");
         }
         // for uber jar merge bus-extensions
         if ((!uberJarRequired.isEmpty() || packageConfig.type.equalsIgnoreCase(PackageConfig.UBER_JAR))
@@ -425,51 +441,37 @@ class QuarkusCxfProcessor {
             return;
         }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-
         try {
-            XMLOutputFactory xmlof = XMLOutputFactory.newFactory();
-            XMLStreamWriter out = xmlof.createXMLStreamWriter(os);
-            out.writeStartDocument("UTF-8", "1.0");
-            out.writeStartElement("properties");
-            Enumeration<URL> urls = ExtensionManagerImpl.class.getClassLoader().getResources("META-INF/wsdl.plugin.xml");
-            while (urls.hasMoreElements()) {
-                URL url = urls.nextElement();
-                try (InputStream openStream = url.openStream()) {
-                    XMLInputFactory xmlif = XMLInputFactory.newInstance();
-                    XMLStreamReader reader = xmlif.createXMLStreamReader(openStream);
-                    while (reader.hasNext()) {
-                        int eventType = reader.next();
-                        switch (eventType) {
-                            case XMLStreamReader.START_ELEMENT: {
-                                if (reader.getLocalName() == "entry") {
-                                    out.writeStartElement("entry");
-                                    for (int i = 0; i < reader.getAttributeCount(); i++) {
-                                        out.writeAttribute(reader.getAttributeLocalName(i), reader.getAttributeValue(i));
-                                    }
-                                }
-                                break;
-                            }
-                            case XMLStreamReader.CHARACTERS: {
-                                out.writeCharacters(reader.getText());
-                                break;
-                            }
-                            case XMLStreamReader.END_ELEMENT: {
-                                if (reader.getLocalName() == "entry") {
-                                    out.writeEndElement();
-                                }
-                                break;
-                            }
-                            default:// just skip
-                                break;
-                        }
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
-                    }
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            Enumeration<URL> urls = loader.getResources("META-INF/wsdl.plugin.xml");
+
+            // Create output / merged document
+            Document mergedXmlDocument = builder.newDocument();
+            Element root = mergedXmlDocument.createElement("properties");
+            mergedXmlDocument.appendChild(root);
+            for (URL url : Collections.list(urls)) {
+                Document dDoc = builder.parse(new InputSource(new InputStreamReader(url.openStream())));
+                NodeList nodeList = (NodeList) xpath.compile("//entry").evaluate(dDoc, XPathConstants.NODESET);
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    Node node = nodeList.item(i);
+                    Node copyNode = mergedXmlDocument.importNode(node, true);
+                    root.appendChild(copyNode);
                 }
             }
-            out.writeEndElement();
-            out.writeEndDocument();
-        } catch (IOException | javax.xml.stream.XMLStreamException e) {
-            LOGGER.warn("can not merged wsdl.plugin.xml");
+
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.transform(new DOMSource(mergedXmlDocument),
+                    new StreamResult(new OutputStreamWriter(os, "UTF-8")));
+        } catch (XPathExpressionException
+                | ParserConfigurationException
+                | IOException
+                | SAXException
+                | TransformerException e) {
+            LOGGER.warn("can not merge wsdl.plugin.xml");
         }
         if (os.size() > 0) {
             generatedResources.produce(
