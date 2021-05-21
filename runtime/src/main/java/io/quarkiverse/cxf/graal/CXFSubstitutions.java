@@ -308,6 +308,16 @@ final class Target_org_apache_cxf_common_util_ReflectionInvokationHandler {
     }
 }
 
+@TargetClass(className = "org.apache.cxf.common.util.ASMHelperImpl")
+final class Target_org_apache_cxf_common_util_ASMHelperImpl {
+
+    @Substitute
+    private Class<?> getASMClassWriterClass() {
+        return null;
+    }
+
+}
+
 /**
  * Verifies if the FastInfoset classes are missing from the classpath. Since
  * testing all classes would be infeasible, we test the few classes used by

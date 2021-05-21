@@ -28,6 +28,7 @@
         <developer>
             <id>dufoli</id>
             <name>Olivier Dufour</name>
+            <email>olivier dot duff at gmail(DOT)com</email>
         </developer>
         <developer>
             <id>dufgui</id>
@@ -98,6 +99,14 @@
                         <groupId>org.apache.geronimo.specs</groupId>
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>jaxb-runtime</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -109,7 +118,7 @@
                 <groupId>jakarta.xml.ws</groupId>
                 <artifactId>jakarta.xml.ws-api</artifactId>
                 <version>${jakarta.xml.ws-api.version}</version>
-            </dependency>     
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
