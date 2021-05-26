@@ -49,6 +49,10 @@ Documentation for this extension is available through Quarkiverse Docs located a
 
 https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html
 
+Please note that you can switch to the appropriate version of the release documentation by clicking on 'dev' in the top right corner.
+
+image::https://user-images.githubusercontent.com/13334073/119669482-19640a80-be06-11eb-8184-9f063166276a.jpg[]
+
 [[sample-code-integration-tests]]
 == Sample Code
 The `integration-tests` module in the codebase provides various examples that demonstrate how to use this extension effectively.
