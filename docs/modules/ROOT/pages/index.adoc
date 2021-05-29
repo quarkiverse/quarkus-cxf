@@ -36,4 +36,14 @@ The `integration-tests` module in the codebase provides various examples that de
 
 [[issues-and-support]]
 == Issues and Support
-Please feel free to https://github.com/quarkiverse/quarkus-cxf/issues/new[open an issue] in the GitHub repository in case you need support.  Contributions and pull requests from the community are welcome.
+Please feel free to https://github.com/quarkiverse/quarkus-cxf/discussions[start a  discussion] or https://github.com/quarkiverse/quarkus-cxf/issues/new[open an issue] in the GitHub repository in case you need support.  The following general guidelines can be used to determine whether to start a discussion or open an issue.
+
+=== GitHub Issues
+- Bug reports
+- Feature requests
+
+=== GitHub Discussions
+- Q&A and general communication
+- RFCs for new features
+
+Contributions and pull requests from the community are welcome.
