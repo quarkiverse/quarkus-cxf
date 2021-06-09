@@ -51,6 +51,12 @@
             <artifactId>cxf-rt-transports-http-netty-server</artifactId>
             <version>${cxf.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- provides CXF logging feature -->
@@ -59,6 +65,12 @@
             <artifactId>cxf-rt-features-logging</artifactId>
             <version>${cxf.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
