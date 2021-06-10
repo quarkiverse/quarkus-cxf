@@ -34,10 +34,20 @@
         "code",
         "maintenance"
       ]
+    },
+    {
+      "login": "famod",
+      "name": "Falko Modler",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22860528?v=4",
+      "profile": "https://github.com/famod",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7,
-  "projectName": "quarkiverse-cxf",
+  "projectName": "quarkus-cxf",
   "projectOwner": "quarkiverse",
   "repoType": "github",
   "repoHost": "https://github.com",
