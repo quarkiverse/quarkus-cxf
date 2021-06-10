@@ -1,6 +1,6 @@
 ![Build](https://github.com/quarkiverse/quarkiverse-cxf/workflows/Build/badge.svg) ![Maven Central](https://img.shields.io/maven-central/v/io.quarkiverse.cxf/quarkus-cxf.svg?label=Maven%20Central) ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 -   [Contributors](##contributors)
@@ -22,14 +22,16 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/shumonsharif"><img src="https://avatars2.githubusercontent.com/u/13334073?v=4" width="100px;" alt=""/><br /><sub><b>shumonsharif</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkiverse-cxf/commits?author=shumonsharif" title="Code">💻</a> <a href="#maintenance-shumonsharif" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/dufoli"><img src="https://avatars0.githubusercontent.com/u/202057?v=4" width="100px;" alt=""/><br /><sub><b>dufoli</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkiverse-cxf/commits?author=dufoli" title="Code">💻</a> <a href="#maintenance-dufoli" title="Maintenance">🚧</a></td>
-    <td align="center"><a href="https://github.com/dufgui"><img src="https://avatars0.githubusercontent.com/u/237211?v=4" width="100px;" alt=""/><br /><sub><b>dufgui</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkiverse-cxf/commits?author=dufgui" title="Code">💻</a> <a href="#maintenance-dufgui" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/shumonsharif"><img src="https://avatars2.githubusercontent.com/u/13334073?v=4?s=100" width="100px;" alt=""/><br /><sub><b>shumonsharif</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-cxf/commits?author=shumonsharif" title="Code">💻</a> <a href="#maintenance-shumonsharif" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/dufoli"><img src="https://avatars0.githubusercontent.com/u/202057?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dufoli</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-cxf/commits?author=dufoli" title="Code">💻</a> <a href="#maintenance-dufoli" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/dufgui"><img src="https://avatars0.githubusercontent.com/u/237211?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dufgui</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-cxf/commits?author=dufgui" title="Code">💻</a> <a href="#maintenance-dufgui" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/famod"><img src="https://avatars.githubusercontent.com/u/22860528?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Falko Modler</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-cxf/commits?author=famod" title="Code">💻</a> <a href="#maintenance-famod" title="Maintenance">🚧</a></td>
   </tr>
 </table>
 
-<!-- markdownlint-enable -->
+<!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Configuration
