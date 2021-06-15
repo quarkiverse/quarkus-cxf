@@ -178,7 +178,7 @@ public abstract class CxfClientProducer {
         // If injection point is annotated with @CXFClient then determine a
         // configuration by looking up annotated config value:
 
-        if (ip.getAnnotated().isAnnotationPresent(CXFClient.class)) {
+        if (ip != null && ip.getAnnotated() != null && ip.getAnnotated().isAnnotationPresent(CXFClient.class)) {
             CXFClient anno = ip.getAnnotated().getAnnotation(CXFClient.class);
             String configKey = anno.value();
 
