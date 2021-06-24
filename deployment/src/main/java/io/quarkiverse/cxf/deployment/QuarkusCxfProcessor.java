@@ -89,6 +89,7 @@ import io.quarkus.deployment.builditem.GeneratedResourceBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
@@ -538,6 +539,19 @@ class QuarkusCxfProcessor {
                         "io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeHeapByteBuf"),
                 new RuntimeInitializedClassBuildItem("io.netty.buffer.AbstractReferenceCountedByteBuf"),
                 new RuntimeInitializedClassBuildItem("org.apache.cxf.staxutils.validation.W3CMultiSchemaFactory"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.endpoint.ClientImpl"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.phase.PhaseInterceptorChain"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.interceptor.AttachmentOutInterceptor"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.attachment.AttachmentSerializer"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.attachment.AttachmentUtil"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.service.factory.AbstractServiceFactoryBean"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.interceptor.OneWayProcessorInterceptor"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.interceptor.OneWayProcessorInterceptor$1"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.ws.addressing.impl.InternalContextUtils"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.ws.addressing.impl.InternalContextUtils$1"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.transport.http.HTTPConduit"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream$1"),
                 new RuntimeInitializedClassBuildItem("com.sun.xml.bind.v2.runtime.output.FastInfosetStreamWriterOutput"));
     }
 
@@ -1051,6 +1065,11 @@ class QuarkusCxfProcessor {
                 "org.springframework.core.type.classreading.CachingMetadataReaderFactory",
                 "org.springframework.osgi.io.OsgiBundleResourcePatternResolver",
                 "org.springframework.osgi.util.BundleDelegatingClassLoader"));
+    }
+
+    @BuildStep
+    NativeImageResourceBundleBuildItem nativeImageResourceBundleBuildItem() {
+        return new NativeImageResourceBundleBuildItem("org.apache.cxf.interceptor.Messages");
     }
 
     @BuildStep
