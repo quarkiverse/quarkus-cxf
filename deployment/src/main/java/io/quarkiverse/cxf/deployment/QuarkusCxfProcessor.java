@@ -93,6 +93,7 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuil
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
+import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarRequiredBuildItem;
 import io.quarkus.gizmo.ClassCreator;
 import io.quarkus.gizmo.ClassOutput;
@@ -427,6 +428,13 @@ class QuarkusCxfProcessor {
     @BuildStep
     BeanDefiningAnnotationBuildItem additionalBeanDefiningAnnotation() {
         return new BeanDefiningAnnotationBuildItem(WEBSERVICE_ANNOTATION);
+    }
+
+    @BuildStep
+    List<UberJarMergedResourceBuildItem> uberJarMergedResourceBuildItem() {
+        return Arrays.asList(
+                new UberJarMergedResourceBuildItem("META-INF/cxf/bus-extensions.txt"),
+                new UberJarMergedResourceBuildItem("META-INF/wsdl.plugin.xml"));
     }
 
     @BuildStep
