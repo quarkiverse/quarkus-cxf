@@ -90,6 +90,7 @@ import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageSystemPropertyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
@@ -122,6 +123,11 @@ class QuarkusCxfProcessor {
     private static final DotName XML_NAMESPACE = DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace");
     private static final DotName XML_SEE_ALSO = DotName.createSimple("javax.xml.bind.annotation.XmlSeeAlso");
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
+
+    @BuildStep
+    public void generateNativeSysProps(BuildProducer<NativeImageSystemPropertyBuildItem> props) {
+        props.produce(new NativeImageSystemPropertyBuildItem("com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize", "true"));
+    }
 
     @BuildStep
     public void generateWSDL(BuildProducer<NativeImageResourceBuildItem> ressources,
