@@ -3,7 +3,6 @@ package io.quarkiverse.cxf.deployment.test;
 import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -30,7 +29,6 @@ public class CxfClientTest {
             .withConfigurationResource("application-cxf-test.properties");
 
     @Inject
-    @Named("io.quarkiverse.cxf.deployment.test.FruitWebService")
     CXFClientInfo clientInfo;
 
     @Inject
