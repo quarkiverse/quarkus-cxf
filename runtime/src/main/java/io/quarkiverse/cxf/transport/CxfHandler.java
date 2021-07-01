@@ -52,6 +52,7 @@ public class CxfHandler implements Handler<RoutingContext> {
     private Bus bus;
     private ClassLoader loader;
     private DestinationRegistry destinationRegistry;
+    private String contextPath;
     private String servletPath;
     private ServletController controller;
     private BeanContainer beanContainer;
@@ -102,6 +103,7 @@ public class CxfHandler implements Handler<RoutingContext> {
         this.controller = new ServletController(destinationRegistry, servletConfig, serviceListGeneratorServlet);
         serviceListGeneratorServlet.init(new VertxServletConfig());
         servletPath = cxfServletInfos.getPath();
+        contextPath = cxfServletInfos.getContextPath();
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
             JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean(
                     new QuarkusJaxWsServiceFactoryBean(cxfServletInfos.getWrappersclasses()));
@@ -154,6 +156,22 @@ public class CxfHandler implements Handler<RoutingContext> {
                 LOGGER.error("Cannot initialize " + servletInfo.toString());
             }
         }
+    }
+
+    private String mergePath(String servletPath, String relativePath) {
+        if (servletPath.endsWith("/")) {
+            if (relativePath.startsWith("/")) {
+                servletPath += relativePath.substring(1);
+            } else {
+                servletPath += relativePath;
+            }
+        } else if (!relativePath.equals("/")) {
+            if (!relativePath.startsWith("/")) {
+                servletPath += "/";
+            }
+            servletPath += relativePath;
+        }
+        return servletPath;
     }
 
     private Class<?> loadClass(String className) {
@@ -239,9 +257,9 @@ public class CxfHandler implements Handler<RoutingContext> {
             StringBuilder sb = new StringBuilder();
             URI uri = URI.create(reqPrefix);
             sb.append(uri.getScheme()).append("://").append(uri.getRawAuthority());
-            String contextPath = request.path();
-            if (contextPath != null) {
-                sb.append(contextPath);
+            String path = request.path();
+            if (path != null) {
+                sb.append(path);
             }
             reqPrefix = sb.toString();
         }
@@ -263,7 +281,7 @@ public class CxfHandler implements Handler<RoutingContext> {
         }
         currentVertxRequest.setCurrent(event);
         try {
-            VertxHttpServletRequest req = new VertxHttpServletRequest(event, "", servletPath);
+            VertxHttpServletRequest req = new VertxHttpServletRequest(event, contextPath, servletPath);
             VertxHttpServletResponse resp = new VertxHttpServletResponse(event);
             controller.invoke(req, resp);
             resp.end();

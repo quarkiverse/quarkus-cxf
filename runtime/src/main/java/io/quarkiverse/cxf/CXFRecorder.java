@@ -128,7 +128,8 @@ public class CXFRecorder {
         return new CxfHandler(infos.getValue(), beanContainer);
     }
 
-    public void setPath(RuntimeValue<CXFServletInfos> infos, String path) {
+    public void setPath(RuntimeValue<CXFServletInfos> infos, String path, String contextPath) {
         infos.getValue().setPath(path);
+        infos.getValue().setContextPath(contextPath);
     }
 }
