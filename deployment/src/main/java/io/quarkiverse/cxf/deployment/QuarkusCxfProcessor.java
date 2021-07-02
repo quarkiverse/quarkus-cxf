@@ -11,18 +11,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
@@ -52,6 +54,7 @@ import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 import org.jboss.jandex.MethodInfo;
+import org.jboss.jandex.MethodParameterInfo;
 import org.jboss.jandex.Type;
 import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
@@ -111,6 +114,8 @@ import io.vertx.ext.web.RoutingContext;
 class QuarkusCxfProcessor {
 
     private static final String FEATURE_CXF = "cxf";
+    private static final DotName CXFCLIENT_ANNOTATION = DotName.createSimple(CXFClient.class.getName());
+    private static final DotName INJECT_INSTANCE = DotName.createSimple(Instance.class.getName());
     private static final DotName WEBSERVICE_ANNOTATION = DotName.createSimple("javax.jws.WebService");
     private static final DotName WEBSERVICE_CLIENT = DotName.createSimple("javax.xml.ws.WebServiceClient");
     private static final DotName REQUEST_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.RequestWrapper");
@@ -138,7 +143,12 @@ class QuarkusCxfProcessor {
         }
     }
 
-    private String getNamespaceFromPackage(String pkg) {
+    private String getNameSpaceFromClassInfo(ClassInfo wsClassInfo) {
+        String pkg = wsClassInfo.name().toString();
+        int idx = pkg.lastIndexOf('.');
+        if (idx != -1 && idx < pkg.length() - 1) {
+            pkg = pkg.substring(0, idx);
+        }
         //TODO XRootElement then XmlSchema then derived of package
         String[] strs = pkg.split("\\.");
         StringBuilder b = new StringBuilder("http://");
@@ -212,7 +222,7 @@ class QuarkusCxfProcessor {
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
             BuildProducer<CxfWebServiceBuildItem> cxfWebServices,
             BuildProducer<AdditionalBeanBuildItem> additionalBeans,
-            BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
+            BuildProducer<UnremovableBeanBuildItem> unremovableBeans) throws ClassNotFoundException {
         IndexView index = combinedIndexBuildItem.getIndex();
         // Register package-infos for reflection
         for (AnnotationInstance xmlNamespaceInstance : index.getAnnotations(XML_NAMESPACE)) {
@@ -220,9 +230,12 @@ class QuarkusCxfProcessor {
                     new ReflectiveClassBuildItem(true, true, xmlNamespaceInstance.target().asClass().name().toString()));
         }
 
-        //TODO bad code it is set in loop but use outside...
-        ClassOutput classOutput = new GeneratedBeanGizmoAdaptor(generatedBeans);
-        quarkusCapture c = new quarkusCapture(classOutput);
+        Bus bus = BusFactory.getDefaultBus();
+        // setup class capturing
+        bus.setExtension(new quarkusCapture(new GeneratedBeanGizmoAdaptor(generatedBeans)),
+                GeneratedClassClassLoaderCapture.class);
+
+        Set<String> clientSEIsInUse = findClientSEIsInUse(index);
 
         for (AnnotationInstance annotation : index.getAnnotations(WEBSERVICE_ANNOTATION)) {
             if (annotation.target().kind() != AnnotationTarget.Kind.CLASS) {
@@ -230,75 +243,68 @@ class QuarkusCxfProcessor {
             }
 
             ClassInfo wsClassInfo = annotation.target().asClass();
+
             String sei = wsClassInfo.name().toString();
+
             reflectiveClass
                     .produce(new ReflectiveClassBuildItem(true, true, sei));
             unremovableBeans.produce(new UnremovableBeanBuildItem(
                     new UnremovableBeanBuildItem.BeanClassNameExclusion(sei)));
-            List<String> wrapperClassNames = new ArrayList<>();
 
             if (!Modifier.isInterface(wsClassInfo.flags())) {
                 continue;
             }
-            QuarkusJaxWsServiceFactoryBean jaxwsFac = new QuarkusJaxWsServiceFactoryBean();
-            Bus bus = BusFactory.getDefaultBus();
-            jaxwsFac.setBus(bus);
-            bus.setExtension(c, GeneratedClassClassLoaderCapture.class);
-            //TODO here add all class
-            try {
-                jaxwsFac.setServiceClass(Thread.currentThread().getContextClassLoader().loadClass(sei));
-                jaxwsFac.create();
-                wrapperClassNames.addAll(jaxwsFac.getWrappersClassNames());
-            } catch (ClassNotFoundException e) {
-                LOGGER.error("failed to load WS class : " + sei);
-            }
-            String pkg = wsClassInfo.name().toString();
-            int idx = pkg.lastIndexOf('.');
-            if (idx != -1 && idx < pkg.length() - 1) {
-                pkg = pkg.substring(0, idx);
-            }
-            AnnotationValue namespaceVal = annotation.value("targetNamespace");
-            String wsNamespace = namespaceVal != null ? namespaceVal.asString() : getNamespaceFromPackage(pkg);
-            String wsName = "";
-            if (annotation.value("serviceName") != null) {
-                wsName = annotation.value("serviceName").asString();
-            }
-            Collection<ClassInfo> implementors = index.getAllKnownImplementors(DotName.createSimple(sei));
+
+            // created on-demand if an implementor or client usage is found
+            QuarkusJaxWsServiceFactoryBean factoryBean = null;
+
+            String wsNamespace = Optional.ofNullable(annotation.value("targetNamespace"))
+                    .map(AnnotationValue::asString)
+                    .orElseGet(() -> getNameSpaceFromClassInfo(wsClassInfo));
 
             //TODO add soap1.2 in config file
-            String soapBinding = SOAPBinding.SOAP11HTTP_BINDING;
-            //if no implementor, it mean it is client
-            if (implementors == null || implementors.isEmpty()) {
+            final String soapBindingDefault = SOAPBinding.SOAP11HTTP_BINDING;
+
+            Collection<ClassInfo> implementors = index.getAllKnownImplementors(DotName.createSimple(sei));
+
+            if (implementors != null && !implementors.isEmpty()) {
+                factoryBean = factoryBean == null ? createQuarkusJaxWsServiceFactoryBean(sei, bus) : factoryBean;
+
+                for (ClassInfo wsClass : implementors) {
+                    String impl = wsClass.name().toString();
+                    String wsName = impl.contains(".") ? impl.substring(impl.lastIndexOf('.') + 1) : impl;
+                    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(impl));
+                    String soapBinding = Optional.ofNullable(wsClass.classAnnotation(BINDING_TYPE_ANNOTATION))
+                            .map(bindingType -> bindingType.value().asString())
+                            .orElse(soapBindingDefault);
+                    cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding,
+                            wsNamespace, wsName, factoryBean.getWrappersClassNames(), impl));
+                }
+            }
+
+            if (clientSEIsInUse.contains(sei)) {
+                factoryBean = factoryBean == null ? createQuarkusJaxWsServiceFactoryBean(sei, bus) : factoryBean;
 
                 AnnotationInstance webserviceClient = findWebServiceClientAnnotation(index, wsClassInfo.name());
+                String wsName;
                 if (webserviceClient != null) {
                     wsName = webserviceClient.value("name").asString();
                     wsNamespace = webserviceClient.value("targetNamespace").asString();
+                } else {
+                    wsName = Optional.ofNullable(annotation.value("serviceName"))
+                            .map(AnnotationValue::asString)
+                            .orElse("");
                 }
-
-            } else {
-
-                for (ClassInfo wsClass : implementors) {
-                    String implementor = wsClass.name().toString();
-                    if (implementor.contains(".")) {
-                        wsName = implementor.substring(implementor.lastIndexOf('.') + 1);
-                    } else {
-                        wsName = implementor;
-                    }
-                    additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(implementor));
-                    AnnotationInstance bindingType = wsClass.classAnnotation(BINDING_TYPE_ANNOTATION);
-                    if (bindingType != null) {
-                        soapBinding = bindingType.value().asString();
-                    }
-                    cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
-                            wsName, wrapperClassNames, implementor));
-                }
+                cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBindingDefault, wsNamespace,
+                        wsName, factoryBean.getWrappersClassNames()));
+                proxies.produce(new NativeImageProxyDefinitionBuildItem(wsClassInfo.name().toString(),
+                        "javax.xml.ws.BindingProvider", "java.io.Closeable", "org.apache.cxf.endpoint.Client"));
             }
-            cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace,
-                    wsName, wrapperClassNames));
 
-            proxies.produce(new NativeImageProxyDefinitionBuildItem(wsClassInfo.name().toString(),
-                    "javax.xml.ws.BindingProvider", "java.io.Closeable", "org.apache.cxf.endpoint.Client"));
+            if (factoryBean == null) {
+                // neither implementation nor client usage found, no use processing the methods
+                continue;
+            }
 
             for (MethodInfo mi : wsClassInfo.methods()) {
 
@@ -330,6 +336,26 @@ class QuarkusCxfProcessor {
         }
     }
 
+    private Set<String> findClientSEIsInUse(IndexView index) {
+        return index.getAnnotations(CXFCLIENT_ANNOTATION).stream()
+                .map(AnnotationInstance::target)
+                .map(target -> {
+                    switch (target.kind()) {
+                        case FIELD:
+                            return target.asField().type();
+                        case METHOD_PARAMETER:
+                            MethodParameterInfo paramInfo = target.asMethodParameter();
+                            return paramInfo.method().parameters().get(paramInfo.position());
+                        default:
+                            return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .map(type -> type.name().equals(INJECT_INSTANCE) ? type.asParameterizedType().arguments().get(0) : type)
+                .map(type -> type.name().toString())
+                .collect(Collectors.toSet());
+    }
+
     private AnnotationInstance findWebServiceClientAnnotation(IndexView index, DotName seiName) {
         Collection<AnnotationInstance> annotations = index.getAnnotations(WEBSERVICE_CLIENT);
         for (AnnotationInstance annotation : annotations) {
@@ -343,6 +369,16 @@ class QuarkusCxfProcessor {
         }
 
         return null;
+    }
+
+    private QuarkusJaxWsServiceFactoryBean createQuarkusJaxWsServiceFactoryBean(String sei, Bus bus)
+            throws ClassNotFoundException {
+        QuarkusJaxWsServiceFactoryBean jaxwsFac = new QuarkusJaxWsServiceFactoryBean();
+        jaxwsFac.setBus(bus);
+        //TODO here add all class
+        jaxwsFac.setServiceClass(Thread.currentThread().getContextClassLoader().loadClass(sei));
+        jaxwsFac.create();
+        return jaxwsFac;
     }
 
     /**
@@ -1306,5 +1342,4 @@ class QuarkusCxfProcessor {
                 cxfWebServiceBuildItem.getWsNamespace(),
                 cxfWebServiceBuildItem.getClassNames());
     }
-
 }

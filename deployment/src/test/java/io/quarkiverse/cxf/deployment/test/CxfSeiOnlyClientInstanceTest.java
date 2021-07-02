@@ -2,6 +2,7 @@ package io.quarkiverse.cxf.deployment.test;
 
 import java.lang.reflect.Proxy;
 
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,7 +17,7 @@ import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.QuarkusUnitTest;
 
-public class CxfSeiOnlyClientTest {
+public class CxfSeiOnlyClientInstanceTest {
 
     @RegisterExtension
     public static final QuarkusUnitTest test = new QuarkusUnitTest()
@@ -27,25 +28,31 @@ public class CxfSeiOnlyClientTest {
             .withConfigurationResource("application-cxf-test.properties");
 
     @Inject
-    CXFClientInfo clientInfo;
+    Instance<CXFClientInfo> clientInfoInstance;
 
     @Inject
     @Named("io.quarkiverse.cxf.deployment.test.FruitWebService")
-    CXFClientInfo namedClientInfo;
+    Instance<CXFClientInfo> namedClientInfoInstance;
 
     @Inject
     @CXFClient
-    FruitWebService clientProxy;
+    Instance<FruitWebService> clientProxyinstance;
 
     @Test
-    public void testInjectedBeans() {
+    public void testInjectedInstances() {
+        Assertions.assertTrue(clientInfoInstance.isResolvable());
+        Assertions.assertTrue(clientProxyinstance.isResolvable());
+
+        CXFClientInfo clientInfo = clientInfoInstance.get();
+        FruitWebService clientProxy = clientProxyinstance.get();
+
         Assertions.assertNotNull(clientInfo);
         Assertions.assertNotNull(clientProxy);
 
         Assertions.assertFalse(Proxy.isProxyClass(clientInfo.getClass()));
         Assertions.assertTrue(Proxy.isProxyClass(clientProxy.getClass()));
 
-        Assertions.assertEquals(namedClientInfo, clientInfo);
+        Assertions.assertEquals(namedClientInfoInstance.get(), clientInfo);
     }
 
     @Test
