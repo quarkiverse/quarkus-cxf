@@ -110,14 +110,7 @@ public class CxfHandler implements Handler<RoutingContext> {
             //suboptimal because done it in loop but not a real issue...
             Object instanceService = getInstance(servletInfo.getClassName());
             if (instanceService != null) {
-                Class<?> seiClass = null;
-                if (servletInfo.getSei() != null) {
-                    seiClass = loadClass(servletInfo.getSei());
-                    factory.setServiceClass(instanceService.getClass());
-                }
-                if (seiClass == null) {
-                    LOGGER.warn("sei not found: " + servletInfo.getSei());
-                }
+                factory.setServiceClass(instanceService.getClass());
                 factory.setAddress(servletInfo.getRelativePath());
                 factory.setServiceBean(instanceService);
                 if (servletInfo.getWsdlPath() != null) {

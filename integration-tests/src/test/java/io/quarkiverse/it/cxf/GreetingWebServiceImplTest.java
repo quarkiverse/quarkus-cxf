@@ -30,7 +30,12 @@ class GreetingWebServiceImplTest {
 
     @Test
     void testPing() {
-        Assertions.assertEquals("Hello bar", greetingWS.ping("bar"));
+        String ret = null;
+        try {
+            ret = greetingWS.ping("bar");
+        } catch (GreetingException e) {
+        }
+        Assertions.assertEquals("Hello bar", ret);
     }
 
     @Test

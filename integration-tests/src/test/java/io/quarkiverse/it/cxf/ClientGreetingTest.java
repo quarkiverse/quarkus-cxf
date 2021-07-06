@@ -59,11 +59,28 @@ class ClientGreetingTest {
 
     @Test
     public void testWsPing() {
-        Assertions.assertEquals("Hello hello", greetingWS.ping("hello"));
+        String res = null;
+        try {
+            res = greetingWS.ping("hello");
+        } catch (GreetingException e) {
+        }
+        Assertions.assertEquals("Hello hello", res);
     }
 
     @Test
     public void testImplPing() {
-        Assertions.assertEquals("Hello hello", greetingImpl.ping("hello"));
+        String res = null;
+        try {
+            res = greetingImpl.ping("hello");
+        } catch (GreetingException e) {
+        }
+        Assertions.assertEquals("Hello hello", res);
+    }
+
+    @Test
+    public void testWsError() {
+        Assertions.assertThrows(GreetingException.class, () -> {
+            greetingWS.ping("error");
+        });
     }
 }
