@@ -158,22 +158,6 @@ public class CxfHandler implements Handler<RoutingContext> {
         }
     }
 
-    private String mergePath(String servletPath, String relativePath) {
-        if (servletPath.endsWith("/")) {
-            if (relativePath.startsWith("/")) {
-                servletPath += relativePath.substring(1);
-            } else {
-                servletPath += relativePath;
-            }
-        } else if (!relativePath.equals("/")) {
-            if (!relativePath.startsWith("/")) {
-                servletPath += "/";
-            }
-            servletPath += relativePath;
-        }
-        return servletPath;
-    }
-
     private Class<?> loadClass(String className) {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className);
