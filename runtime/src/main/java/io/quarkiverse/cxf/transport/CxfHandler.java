@@ -113,7 +113,7 @@ public class CxfHandler implements Handler<RoutingContext> {
                 Class<?> seiClass = null;
                 if (servletInfo.getSei() != null) {
                     seiClass = loadClass(servletInfo.getSei());
-                    factory.setServiceClass(seiClass);
+                    factory.setServiceClass(instanceService.getClass());
                 }
                 if (seiClass == null) {
                     LOGGER.warn("sei not found: " + servletInfo.getSei());
