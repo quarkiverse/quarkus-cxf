@@ -13,6 +13,7 @@ public class CXFServletInfos {
     private final List<CXFServletInfo> infos;
     private static final Logger LOGGER = Logger.getLogger(CXFServletInfos.class);
     private String path = null;
+    private String contextPath = null;
 
     public CXFServletInfos() {
         LOGGER.trace("new CXFServletInfos");
@@ -25,6 +26,10 @@ public class CXFServletInfos {
 
     public String getPath() {
         return path;
+    }
+
+    public String getContextPath() {
+        return contextPath;
     }
 
     public List<String> getWrappersclasses() {
@@ -40,5 +45,9 @@ public class CXFServletInfos {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 }
