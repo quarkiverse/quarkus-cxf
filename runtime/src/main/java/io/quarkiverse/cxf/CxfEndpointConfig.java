@@ -30,46 +30,10 @@ public class CxfEndpointConfig {
     public Optional<String> soapBinding;
 
     /**
-     * The client endpoint url
-     */
-    @ConfigItem
-    public Optional<String> clientEndpointUrl;
-
-    /**
      * The server endpoint url
      */
     @ConfigItem
     public Optional<String> publishedEndpointUrl;
-
-    /**
-     * The client interface
-     */
-    @ConfigItem
-    public Optional<String> serviceInterface;
-
-    /**
-     * The client endpoint namespace
-     */
-    @ConfigItem
-    public Optional<String> endpointNamespace;
-
-    /**
-     * The client endpoint name
-     */
-    @ConfigItem
-    public Optional<String> endpointName;
-
-    /**
-     * The username for HTTP Basic auth
-     */
-    @ConfigItem
-    public Optional<String> username;
-
-    /**
-     * The password for HTTP Basic auth
-     */
-    @ConfigItem
-    public Optional<String> password;
 
     /**
      * The list of Feature class

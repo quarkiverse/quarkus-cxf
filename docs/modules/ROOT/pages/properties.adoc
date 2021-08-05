@@ -16,21 +16,13 @@ Root context for CXF web services
 --|String
 |If REST API is used, split REST and SOAP with different paths to make wsdl url working.
 
-a| [[quarkus.cxf.endpoint.key.endpoint-name]]`link:#quarkus.cxf.endpoint.key.endpoint-name[quarkus.cxf.endpoint.key.endpoint-name]`
+a| [[quarkus.cxf.wsdl-path]]`link:#quarkus.cxf.path[quarkus.cxf.wsdl-path]`
 
 [.description]
 --
-The client endpoint name
+The paths of wsdl include in resource
 --|String
-|
-
-a| [[quarkus.cxf.endpoint.key.endpoint-namespace]]`link:#quarkus.cxf.endpoint.key.endpoint-namespace[quarkus.cxf.endpoint.key.endpoint-namespace]`
-
-[.description]
---
-The client endpoint namespace
---|String
-|
+|The comma-separated list of wsdl resource path used by cxf.(for native support)
 
 a| [[quarkus.cxf.endpoint.key.features]]`link:#quarkus.cxf.endpoint.key.features[quarkus.cxf.endpoint.key.features]`
 
@@ -80,35 +72,11 @@ The comma-separated list of OutInterceptor classes
 --|List of Strings
 |
 
-a| [[quarkus.cxf.endpoint.key.password]]`link:#quarkus.cxf.endpoint.key.password[quarkus.cxf.endpoint.key.password]`
-
-[.description]
---
-The password for client HTTP Basic auth
---|String
-|
-
 a| [[quarkus.cxf.endpoint.key.published-endpoint-url]]`link:#quarkus.cxf.endpoint.key.published-endpoint-url[quarkus.cxf.endpoint.key.published-endpoint-url]`
 
 [.description]
 --
 The server endpoint URL
---|String
-|
-
-a| [[quarkus.cxf.endpoint.key.service-interface]]`link:#quarkus.cxf.endpoint.key.service-interface[quarkus.cxf.endpoint.key.service-interface]`
-
-[.description]
---
-The client interface
---|String
-|
-
-a| [[quarkus.cxf.endpoint.key.username]]`link:#quarkus.cxf.endpoint.key.username[quarkus.cxf.endpoint.key.username]`
-
-[.description]
---
-The username for client HTTP Basic auth
 --|String
 |
 
@@ -120,4 +88,16 @@ WSDL resource path used by CXF
 --|String
 |
 
+
+a| [[quarkus.cxf.endpoint.key.soap-binding]]`link:#quarkus.cxf.endpoint.key.soap-binding[quarkus.cxf.endpoint.key.soap-binding]`
+
+[.description]
+--
+SOAP version (1.1 by default)
+--|String
+|
+* SOAP 1.1 : http://schemas.xmlsoap.org/wsdl/soap/http +
+* SOAP 1.2 : http://www.w3.org/2003/05/soap/bindings/HTTP/ +
+* SOAP 1.1 with MTOM : http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true +
+* SOAP 1.2 with MTOM : http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true
 |===
