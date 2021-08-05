@@ -191,6 +191,20 @@ _List of annotations:_
 
 If you start from Java code, here is the https://cxf.apache.org/docs/developing-a-service.html#DevelopingaService-JavaFirstDevelopment[documentation of annotations to customize a web service].
 
+[[soap-12]]
+== SOAP 1.2
 
+By default, SOAP 1.1 is used. In order to switch to SOAP 1.2 and/or support MTOM, the config `quarkus.cxf.endpoint.key.soap-binding` must be set to one of the following values:
+
+|===
+|Version | Url
+
+| SOAP 1.1 | http://schemas.xmlsoap.org/wsdl/soap/http
+| SOAP 1.2 | http://www.w3.org/2003/05/soap/bindings/HTTP/
+| SOAP 1.1 with MTOM | http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true
+| SOAP 1.2 with MTOM | http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true
+
+
+|===
 
 
