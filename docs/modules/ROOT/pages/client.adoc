@@ -132,3 +132,46 @@ By default, the CXF client uses `HttpURLConnection` to perform HTTP requests.  I
 Once the dependency is available in the classpath, CXF will use `HttpAsyncClient` for asynchronous calls and will continue using `HttpURLConnection` for synchronous calls.
 
 You can see more details about the CXF asynchronous client and how to tune it further at https://cxf.apache.org/docs/asynchronous-client-http-transport.html[this link].
+
+[[code-config]]
+== Configure client with code
+
+Global configuration for all clients :
+[source,java]
+----
+void onStart(@Observes StartupEvent ev) {
+
+     HTTPConduitConfigurer httpConduitConfigurer = new HTTPConduitConfigurer() {
+         public void configure(String name, String address, HTTPConduit c) {
+             AsyncHTTPConduit conduit = (AsyncHTTPConduit)c;
+             // use setter to configure client
+             conduit.getHttpAsyncClient().getCredentialsProvider().setCredentials( AuthScope.ANY,
+              new NTCredentials( USER,PWD, "", DOM ) );
+             conduit.getClient().setAllowChunking( false );
+             conduit.getClient().setAutoRedirect( true );
+         }
+     };
+
+     final Bus bus = BusFactory.getThreadDefaultBus();
+     bus.setExtension(httpConduitConfigurer, HTTPConduitConfigurer.class);
+ }
+----
+
+Configure one client :
+
+[source,java]
+----
+    @Inject
+    @CXFClient
+    SomePortType portType;
+
+    @PostConstruct
+    void configurePortType() throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
+        final var httpConduit = (HTTPConduit) ClientProxy.getClient(portType).getConduit();
+        final var tlsClientParameters = Optional.ofNullable(httpConduit.getTlsClientParameters()).orElseGet(TLSClientParameters::new);
+        tlsClientParameters.setCertAlias(config.clientCert().keyAlias());
+        tlsClientParameters.setKeyManagers(clientKeyManagers);
+        tlsClientParameters.setTrustManagers(clientTrustManagers);
+        httpConduit.setTlsClientParameters(tlsClientParameters);
+    }
+----
