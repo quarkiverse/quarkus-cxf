@@ -171,6 +171,7 @@ class QuarkusCxfProcessor {
         }));
         Set<String> extensibilities = new HashSet<>(Arrays.asList(
                 "io.quarkiverse.cxf.AddressTypeExtensibility",
+                "io.quarkiverse.cxf.UsingAddressingExtensibility",
                 "io.quarkiverse.cxf.HTTPClientPolicyExtensibility",
                 "io.quarkiverse.cxf.HTTPServerPolicyExtensibility",
                 "io.quarkiverse.cxf.XMLBindingMessageFormatExtensibility",
@@ -742,6 +743,8 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.endpoint.dynamic.ExceptionClassCreator",
                 "org.apache.cxf.endpoint.dynamic.ExceptionClassLoader",
                 "org.apache.cxf.endpoint.dynamic.ExceptionClassGenerator",
+                "org.apache.cxf.ws.addressing.WSAddressingFeature",
+                "org.apache.cxf.ws.addressing.impl.AddressingWSDLExtensionLoader",
                 "org.apache.cxf.wsdl.ExtensionClassCreatorProxyService",
                 "org.apache.cxf.wsdl.ExtensionClassCreator",
                 "org.apache.cxf.wsdl.ExtensionClassLoader",
@@ -869,6 +872,7 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.common.logging.Slf4jLogger",
                 "io.quarkiverse.cxf.CxfInfoProducer",
                 "io.quarkiverse.cxf.AddressTypeExtensibility",
+                "io.quarkiverse.cxf.UsingAddressingExtensibility",
                 "io.quarkiverse.cxf.CXFException",
                 "io.quarkiverse.cxf.HTTPClientPolicyExtensibility",
                 "io.quarkiverse.cxf.HTTPServerPolicyExtensibility",
