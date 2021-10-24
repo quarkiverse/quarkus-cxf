@@ -595,6 +595,7 @@ class QuarkusCxfProcessor {
                 new RuntimeInitializedClassBuildItem("org.apache.cxf.interceptor.AttachmentOutInterceptor"),
                 new RuntimeInitializedClassBuildItem("org.apache.cxf.attachment.AttachmentSerializer"),
                 new RuntimeInitializedClassBuildItem("org.apache.cxf.attachment.AttachmentUtil"),
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.attachment.ImageDataContentHandler"),
                 new RuntimeInitializedClassBuildItem("org.apache.cxf.service.factory.AbstractServiceFactoryBean"),
                 new RuntimeInitializedClassBuildItem("org.apache.cxf.interceptor.OneWayProcessorInterceptor"),
                 new RuntimeInitializedClassBuildItem("org.apache.cxf.interceptor.OneWayProcessorInterceptor$1"),
