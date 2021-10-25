@@ -1,0 +1,65 @@
+[[micrometer-metrics]]
+= Micrometer Metrics
+
+CXF provides https://micrometer.io/[Micrometer] integration using https://github.com/apache/cxf/blob/master/rt/features/metrics/src/main/java/org/apache/cxf/metrics/micrometer/MicrometerMetricsProvider.java[MicrometerMetricsProvider].
+
+To take advantage of this feature within your https://quarkus.io/guides/micrometer[Quarkus Micrometer] ecosystem, first ensure that you have the following dependency:
+
+[source,xml]
+----
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-features-metrics</artifactId>
+    </dependency>
+----
+
+Next, define a class that helps plug in the CXF Micrometer integration as described https://cxf.apache.org/docs/micrometer.html#Micrometer-IntegrationwithJAX-WS[in the CXF docs]. The sample source code is provided below.
+
+[source,java]
+----
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Metrics;
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import org.apache.cxf.metrics.MetricsFeature;
+import org.apache.cxf.metrics.micrometer.MicrometerMetricsProperties;
+import org.apache.cxf.metrics.micrometer.MicrometerMetricsProvider;
+import org.apache.cxf.metrics.micrometer.provider.DefaultExceptionClassProvider;
+import org.apache.cxf.metrics.micrometer.provider.DefaultTimedAnnotationProvider;
+import org.apache.cxf.metrics.micrometer.provider.StandardTags;
+import org.apache.cxf.metrics.micrometer.provider.StandardTagsProvider;
+import org.apache.cxf.metrics.micrometer.provider.TagsCustomizer;
+import org.apache.cxf.metrics.micrometer.provider.TagsProvider;
+import org.apache.cxf.metrics.micrometer.provider.TimedAnnotationProvider;
+import org.apache.cxf.metrics.micrometer.provider.jaxws.JaxwsFaultCodeProvider;
+import org.apache.cxf.metrics.micrometer.provider.jaxws.JaxwsFaultCodeTagsCustomizer;
+import org.apache.cxf.metrics.micrometer.provider.jaxws.JaxwsOperationTagsCustomizer;
+import org.apache.cxf.metrics.micrometer.provider.jaxws.JaxwsTags;
+
+import java.util.Arrays;
+import java.util.List;
+
+@RegisterForReflection
+public class QuarkusCxfMetricsFeature extends MetricsFeature {
+
+    private static final MeterRegistry meterRegistry = Metrics.globalRegistry;
+    private static final JaxwsTags jaxwsTags = new JaxwsTags();
+    private static final TagsCustomizer operationsCustomizer = new JaxwsOperationTagsCustomizer(jaxwsTags);
+    private static final TagsCustomizer faultsCustomizer = new JaxwsFaultCodeTagsCustomizer(jaxwsTags, new JaxwsFaultCodeProvider());
+    private static final TimedAnnotationProvider timedAnnotationProvider = new DefaultTimedAnnotationProvider();
+    private static final List tagsCustomizers = Arrays.asList(operationsCustomizer, faultsCustomizer);
+    private static final TagsProvider tagsProvider = new StandardTagsProvider(new DefaultExceptionClassProvider(), new StandardTags());
+    private static final MicrometerMetricsProperties micrometerMetricsProperties = new MicrometerMetricsProperties();
+
+    public QuarkusCxfMetricsFeature() {
+        super(new MicrometerMetricsProvider(meterRegistry, tagsProvider, tagsCustomizers, timedAnnotationProvider, micrometerMetricsProperties));
+    }
+
+}
+----
+
+Finally, you can add the following to your `application.properties` file to start using your new Feature class.  Please note that the same class can be applied to both server and client definitions.
+
+[source,properties]
+----
+quarkus.cxf.endpoint."/fruit".features=com.example.QuarkusCxfMetricsFeature
+----
