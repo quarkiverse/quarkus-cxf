@@ -10,6 +10,8 @@
 * xref:client.adoc[Creating a SOAP Client]
 ** xref:client.adoc#basic-auth[Basic Auth]
 ** xref:client.adoc#async-support[Asynchronous Client HTTP Transport]
+** xref:client.adoc#code-config[Advanced Client Configurations]
+** xref:client.adoc#pure-client[Pure Client Applications]
 * xref:interceptors-and-features.adoc[Interceptors and Features]
 * xref:ws-security.adoc[WS-Security]
 ** xref:ws-security.adoc#ws-security-service[Web Service Integration]

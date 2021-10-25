@@ -134,9 +134,9 @@ Once the dependency is available in the classpath, CXF will use `HttpAsyncClient
 You can see more details about the CXF asynchronous client and how to tune it further at https://cxf.apache.org/docs/asynchronous-client-http-transport.html[this link].
 
 [[code-config]]
-== Configure client with code
+== Advanced Client Configurations
 
-Global configuration for all clients :
+To globally configure all clients in your application, you can use the example snippet below to configure the https://cxf.apache.org/docs/client-http-transport-including-ssl-support.html#ClientHTTPTransport(includingSSLsupport)-Usingjavacode[`HttpConduit`].  This allows you to set the `HTTPClientPolicy`, `AuthorizationPolicy`, `ProxyAuthorizationPolicy` or even `TLSClientParameters` for your clients.
 [source,java]
 ----
 void onStart(@Observes StartupEvent ev) {
@@ -157,7 +157,7 @@ void onStart(@Observes StartupEvent ev) {
  }
 ----
 
-Configure one client :
+To configure the `HttpConduit` for a single client in your application, use the example snippet below:
 
 [source,java]
 ----
@@ -174,4 +174,15 @@ Configure one client :
         tlsClientParameters.setTrustManagers(clientTrustManagers);
         httpConduit.setTlsClientParameters(tlsClientParameters);
     }
+----
+
+
+[[pure-client]]
+== Pure Client Applications
+
+Quarkus batch (e.g. periodically scheduled), or command line applications, may sometimes not require an HTTP server to be launched at startup.  To disable listenening on a host:port, you can use the property below:
+
+[source,properties]
+----
+quarkus.http.host-enabled=false
 ----
