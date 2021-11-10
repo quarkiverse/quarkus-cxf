@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -39,6 +42,7 @@ import io.quarkus.security.identity.CurrentIdentityAssociation;
 import io.quarkus.security.identity.IdentityProviderManager;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.vertx.http.runtime.CurrentVertxRequest;
+import io.quarkus.vertx.http.runtime.HttpConfiguration;
 import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;
@@ -59,8 +63,15 @@ public class CxfHandler implements Handler<RoutingContext> {
     private CurrentIdentityAssociation association;
     private IdentityProviderManager identityProviderManager;
     private CurrentVertxRequest currentVertxRequest;
+    private HttpConfiguration httpConfiguration;
 
     private static final Map<String, String> RESPONSE_HEADERS = new HashMap<>();
+
+    private static final String X_FORWARDED_PROTO_HEADER = "X-Forwarded-Proto";
+    private static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
+    private static final String X_FORWARDED_PREFIX_HEADER = "X-Forwarded-Prefix";
+    private static final String X_FORWARDED_HOST_HEADER = "X-Forwarded-Host";
+    private static final String X_FORWARDED_PORT_HEADER = "X-Forwarded-Port";
 
     static {
         RESPONSE_HEADERS.put("Access-Control-Allow-Origin", "*");
@@ -73,9 +84,10 @@ public class CxfHandler implements Handler<RoutingContext> {
     public CxfHandler() {
     }
 
-    public CxfHandler(CXFServletInfos cxfServletInfos, BeanContainer beanContainer) {
+    public CxfHandler(CXFServletInfos cxfServletInfos, BeanContainer beanContainer, HttpConfiguration httpConfiguration) {
         LOGGER.trace("CxfHandler created");
         this.beanContainer = beanContainer;
+        this.httpConfiguration = httpConfiguration;
         Instance<CurrentIdentityAssociation> association = CDI.current().select(CurrentIdentityAssociation.class);
         this.association = association.isResolvable() ? association.get() : null;
         Instance<IdentityProviderManager> identityProviderManager = CDI.current().select(IdentityProviderManager.class);
@@ -251,6 +263,30 @@ public class CxfHandler implements Handler<RoutingContext> {
         return reqPrefix;
     }
 
+    private HttpServletRequest checkXForwardedHeaders(HttpServletRequest request) {
+        if (httpConfiguration.proxy.proxyAddressForwarding) {
+            String originalProtocol = request.getHeader(X_FORWARDED_PROTO_HEADER);
+            String originalRemoteAddr = request.getHeader(X_FORWARDED_FOR_HEADER);
+            String originalPrefix = request.getHeader(X_FORWARDED_PREFIX_HEADER);
+            String originalHost = request.getHeader(X_FORWARDED_HOST_HEADER);
+            String originalPort = request.getHeader(X_FORWARDED_PORT_HEADER);
+
+            // If at least one of the X-Forwarded-Xxx headers is set, try to use them
+            if (Stream.of(originalProtocol, originalRemoteAddr, originalPrefix,
+                    originalHost, originalPort).anyMatch(Objects::nonNull)) {
+                return new VertxHttpServletRequestXForwardedFilter(request,
+                        originalProtocol,
+                        originalRemoteAddr,
+                        originalPrefix,
+                        originalHost,
+                        originalPort);
+            }
+        }
+
+        return request;
+
+    }
+
     private void process(RoutingContext event) {
         ManagedContext requestContext = this.beanContainer.requestContext();
         requestContext.activate();
@@ -265,8 +301,9 @@ public class CxfHandler implements Handler<RoutingContext> {
         }
         currentVertxRequest.setCurrent(event);
         try {
-            VertxHttpServletRequest req = new VertxHttpServletRequest(event, contextPath, servletPath);
+            HttpServletRequest req = new VertxHttpServletRequest(event, contextPath, servletPath);
             VertxHttpServletResponse resp = new VertxHttpServletResponse(event);
+            req = checkXForwardedHeaders(req);
             controller.invoke(req, resp);
             resp.end();
         } catch (ServletException se) {
