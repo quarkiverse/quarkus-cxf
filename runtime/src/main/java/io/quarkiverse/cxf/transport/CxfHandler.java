@@ -267,8 +267,10 @@ public class CxfHandler implements Handler<RoutingContext> {
         if (httpConfiguration.proxy.proxyAddressForwarding) {
             String originalProtocol = request.getHeader(X_FORWARDED_PROTO_HEADER);
             String originalRemoteAddr = request.getHeader(X_FORWARDED_FOR_HEADER);
-            String originalPrefix = request.getHeader(X_FORWARDED_PREFIX_HEADER);
-            String originalHost = request.getHeader(X_FORWARDED_HOST_HEADER);
+            String originalPrefix = httpConfiguration.proxy.enableForwardedPrefix ? null
+                    : request.getHeader(httpConfiguration.proxy.forwardedPrefixHeader);
+            String originalHost = httpConfiguration.proxy.enableForwardedHost ? null
+                    : request.getHeader(httpConfiguration.proxy.forwardedHostHeader);
             String originalPort = request.getHeader(X_FORWARDED_PORT_HEADER);
 
             // If at least one of the X-Forwarded-Xxx headers is set, try to use them
