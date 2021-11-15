@@ -263,6 +263,13 @@ public class CxfHandler implements Handler<RoutingContext> {
         return reqPrefix;
     }
 
+    /**
+     * Leverages the Quarkus HTTP proxy configuration properties,
+     * instead of relying on pure HTTP headers, and is based on the method referenced below.
+     * 
+     * @see org.apache.cxf.transport.servlet.AbstractHTTPServlet#checkXForwardedHeaders(HttpServletRequest)
+     * @see io.quarkus.vertx.http.runtime.ProxyConfig
+     */
     private HttpServletRequest checkXForwardedHeaders(HttpServletRequest request) {
         if (httpConfiguration.proxy.proxyAddressForwarding) {
             String originalProtocol = request.getHeader(X_FORWARDED_PROTO_HEADER);
