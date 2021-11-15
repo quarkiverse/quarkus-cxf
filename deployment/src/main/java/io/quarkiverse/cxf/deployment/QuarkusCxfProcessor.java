@@ -109,6 +109,7 @@ import io.quarkus.vertx.http.deployment.DefaultRouteBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
 import io.quarkus.vertx.http.runtime.HandlerType;
 import io.quarkus.vertx.http.runtime.HttpBuildTimeConfig;
+import io.quarkus.vertx.http.runtime.HttpConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
@@ -407,7 +408,8 @@ class QuarkusCxfProcessor {
             BuildProducer<RouteBuildItem> routes,
             BeanContainerBuildItem beanContainer,
             List<CxfWebServiceBuildItem> cxfWebServices,
-            HttpBuildTimeConfig httpConfig,
+            HttpBuildTimeConfig httpBuildTimeConfig,
+            HttpConfiguration httpConfiguration,
             CxfConfig cxfConfig) {
         String path = null;
         boolean startRoute = false;
@@ -425,11 +427,12 @@ class QuarkusCxfProcessor {
                 }
                 if (path == null) {
                     path = cxfWebService.getPath();
-                    recorder.setPath(infos, path, httpConfig.rootPath);
+                    recorder.setPath(infos, path, httpBuildTimeConfig.rootPath);
                 }
             }
             if (startRoute) {
-                Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue());
+                Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(),
+                        httpConfiguration);
                 if (path != null) {
                     routes.produce(RouteBuildItem.builder()
                             .route(getMappingPath(path))

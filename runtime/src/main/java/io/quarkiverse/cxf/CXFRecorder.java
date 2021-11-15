@@ -14,6 +14,7 @@ import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
+import io.quarkus.vertx.http.runtime.HttpConfiguration;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
@@ -121,11 +122,12 @@ public class CXFRecorder {
         return new RuntimeValue<>(infos);
     }
 
-    public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos, BeanContainer beanContainer) {
+    public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos, BeanContainer beanContainer,
+            HttpConfiguration httpConfiguration) {
         LOGGER.trace("init server");
         // There may be a better way to handle this
         DevCxfServerInfosSupplier.setServletInfos(infos.getValue());
-        return new CxfHandler(infos.getValue(), beanContainer);
+        return new CxfHandler(infos.getValue(), beanContainer, httpConfiguration);
     }
 
     public void setPath(RuntimeValue<CXFServletInfos> infos, String path, String contextPath) {
