@@ -21,6 +21,8 @@ public class CXFClientInfo {
     private String epName;
     private String username;
     private String password;
+    private Long receiveTimeout = null;
+    private Long connectionTimeout = null;
     private final List<String> inInterceptors = new ArrayList<>();
     private final List<String> outInterceptors = new ArrayList<>();
     private final List<String> outFaultInterceptors = new ArrayList<>();
@@ -49,6 +51,8 @@ public class CXFClientInfo {
         this.wsName = wsName;
         this.wsNamespace = wsNamespace;
         this.wsdlUrl = null;
+        this.receiveTimeout = null;
+        this.connectionTimeout = null;
     }
 
     public CXFClientInfo(CXFClientInfo other) {
@@ -63,6 +67,8 @@ public class CXFClientInfo {
         this.inInterceptors.addAll(other.inInterceptors);
         this.outFaultInterceptors.addAll(other.outFaultInterceptors);
         this.outInterceptors.addAll(other.outInterceptors);
+        this.receiveTimeout = other.receiveTimeout;
+        this.connectionTimeout = other.connectionTimeout;
     }
 
     public CXFClientInfo withConfig(CxfClientConfig config) {
@@ -74,6 +80,8 @@ public class CXFClientInfo {
         this.password = config.password.orElse(this.password);
         this.soapBinding = config.soapBinding.orElse(this.soapBinding);
         this.endpointAddress = config.clientEndpointUrl.orElse(this.endpointAddress);
+        this.receiveTimeout = config.receiveTimeout.orElse(this.receiveTimeout);
+        this.connectionTimeout = config.connectionTimeout.orElse(this.connectionTimeout);
         addFeatures(config);
         addInterceptors(config);
         return this;
@@ -145,6 +153,26 @@ public class CXFClientInfo {
 
     public List<String> getInFaultInterceptors() {
         return inFaultInterceptors;
+    }
+
+    public Long getReceiveTimeout() {
+        return receiveTimeout;
+    }
+
+    public Long getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    protected boolean hasReceiveTimeout() {
+        return receiveTimeout != null;
+    }
+
+    protected boolean hasConnectionTimeout() {
+        return connectionTimeout != null;
+    }
+
+    protected boolean hasPropertiesForHttpClientPolicy() {
+        return hasReceiveTimeout() || hasConnectionTimeout();
     }
 
     private CXFClientInfo addInterceptors(CxfClientConfig cxfEndPointConfig) {

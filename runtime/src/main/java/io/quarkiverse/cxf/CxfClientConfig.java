@@ -93,6 +93,18 @@ public class CxfClientConfig {
     public Optional<List<String>> inFaultInterceptors;
 
     /**
+     * The receive timeout for responses in milli seconds
+     */
+    @ConfigItem
+    public Optional<Long> receiveTimeout;
+
+    /**
+     * The connection timeout for connect to soap service in milli seconds
+     */
+    @ConfigItem
+    public Optional<Long> connectionTimeout;
+
+    /**
      * Indicates whether this is an alternative proxy client configuration. If
      * true, then this configuration is ignored when configuring a client without
      * annotation @CXF.

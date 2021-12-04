@@ -29,6 +29,8 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.spi.WrapperClassCreator;
 import org.apache.cxf.jaxws.spi.WrapperClassLoader;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.transport.http.HTTPConduitConfigurer;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.wsdl.ExtensionClassCreator;
 import org.apache.cxf.wsdl.ExtensionClassLoader;
 import org.jboss.logging.Logger;
@@ -81,6 +83,19 @@ public abstract class CxfClientProducer {
         bus.setExtension(new WrapperClassLoader(bus), WrapperClassCreator.class);
         bus.setExtension(new FactoryClassLoader(bus), FactoryClassCreator.class);
         bus.setExtension(new GeneratedNamespaceClassLoader(bus), NamespaceClassCreator.class);
+        if (cxfClientInfo.hasPropertiesForHttpClientPolicy()) {
+            HTTPConduitConfigurer httpConduitConfigurer = (name, address, c) -> {
+                HTTPClientPolicy httpClientPolicy = new HTTPClientPolicy();
+                if (cxfClientInfo.hasConnectionTimeout()) {
+                    httpClientPolicy.setConnectionTimeout(cxfClientInfo.getConnectionTimeout());
+                }
+                if (cxfClientInfo.hasReceiveTimeout()) {
+                    httpClientPolicy.setReceiveTimeout(cxfClientInfo.getReceiveTimeout());
+                }
+                c.setClient(httpClientPolicy);
+            };
+            bus.setExtension(httpConduitConfigurer, HTTPConduitConfigurer.class);
+        }
         factory.setServiceClass(seiClass);
         LOGGER.info(format("using servicename %s%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
         factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));

@@ -38,11 +38,13 @@ Various SOAP client properties can be configured. To do so, prefix `quarkus.cxf.
 * `in-fault-interceptors`
 * `in-interceptors`
 * `out-fault-interceptors`
-* `out-fnterceptors`
+* `out-interceptors`
 * `password`
 * `service-interface`
 * `username`
 * `wsdl`
+* `receiveTimeout`
+* `connectionTimeout`
 
 A typical example configuration example is given below. Here unit name `my-fruitservice-client` is used. The goal of this configuration is the change the service endpoint address to http://localhost:8080/fruit:
 [source,properties]
