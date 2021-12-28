@@ -45,8 +45,8 @@ import io.quarkiverse.cxf.annotation.CXFClient;
  * proper configuration to use.
  */
 public abstract class CxfClientProducer {
+
     private static final Logger LOGGER = Logger.getLogger(CxfClientProducer.class);
-    private static final String DEFAULT_EP_ADDR = "http://localhost:8080";
 
     @Inject
     CxfConfig config;

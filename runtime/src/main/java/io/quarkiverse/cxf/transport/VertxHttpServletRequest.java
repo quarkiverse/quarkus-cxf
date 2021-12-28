@@ -54,7 +54,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     private final String servletPath;
     private final Map<String, Object> attributes;
 
-    public VertxHttpServletRequest(RoutingContext context, String contextPath, String servletPath) throws IOException {
+    public VertxHttpServletRequest(RoutingContext context, String contextPath, String servletPath) {
         this.request = context.request();
         this.response = context.response();
         this.contextPath = contextPath;
@@ -195,7 +195,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     @Override
     public Map<String, String[]> getParameterMap() {
         LOG.trace("getParameterMap()");
-        return null;
+        return Collections.emptyMap();
     }
 
     @Override
@@ -209,7 +209,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         if (LOG.isTraceEnabled()) {
             LOG.tracef("getParameterValues({0})", name);
         }
-        return null;
+        return new String[0];
     }
 
     @Override
@@ -355,7 +355,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     @Override
     public Cookie[] getCookies() {
         LOG.trace("getCookies");
-        return null;
+        return new Cookie[0];
     }
 
     @Override
@@ -407,7 +407,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     @Override
     public Collection<Part> getParts() throws IOException, ServletException {
         LOG.trace("getParts");
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
