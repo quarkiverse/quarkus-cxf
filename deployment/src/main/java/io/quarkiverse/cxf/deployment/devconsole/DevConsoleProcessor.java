@@ -7,6 +7,7 @@ import io.quarkiverse.cxf.devconsole.DevCxfClientInfosSupplier;
 import io.quarkiverse.cxf.devconsole.DevCxfServerInfosSupplier;
 import io.quarkus.deployment.IsDevelopment;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.pkg.builditem.CurateOutcomeBuildItem;
 import io.quarkus.devconsole.spi.DevConsoleRuntimeTemplateInfoBuildItem;
 import io.quarkus.devconsole.spi.DevConsoleTemplateInfoBuildItem;
 
@@ -18,12 +19,14 @@ public class DevConsoleProcessor {
     }
 
     @BuildStep(onlyIf = IsDevelopment.class)
-    public DevConsoleRuntimeTemplateInfoBuildItem collectClientBeanInfo() {
-        return new DevConsoleRuntimeTemplateInfoBuildItem("cxfClientInfos", new DevCxfClientInfosSupplier());
+    public DevConsoleRuntimeTemplateInfoBuildItem collectClientBeanInfo(CurateOutcomeBuildItem curateOutcomeBuildItem) {
+        return new DevConsoleRuntimeTemplateInfoBuildItem("cxfClientInfos", new DevCxfClientInfosSupplier(),
+                DevConsoleProcessor.class, curateOutcomeBuildItem);
     }
 
     @BuildStep(onlyIf = IsDevelopment.class)
-    public DevConsoleRuntimeTemplateInfoBuildItem collectServerBeanInfo() {
-        return new DevConsoleRuntimeTemplateInfoBuildItem("cxfServiceInfos", new DevCxfServerInfosSupplier());
+    public DevConsoleRuntimeTemplateInfoBuildItem collectServerBeanInfo(CurateOutcomeBuildItem curateOutcomeBuildItem) {
+        return new DevConsoleRuntimeTemplateInfoBuildItem("cxfServiceInfos", new DevCxfServerInfosSupplier(),
+                DevConsoleProcessor.class, curateOutcomeBuildItem);
     }
 }

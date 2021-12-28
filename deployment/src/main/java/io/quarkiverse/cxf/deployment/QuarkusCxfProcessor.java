@@ -759,7 +759,6 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.wsdl.ExtensionClassCreator",
                 "org.apache.cxf.wsdl.ExtensionClassLoader",
                 "org.apache.cxf.wsdl.ExtensionClassGenerator",
-                "io.quarkiverse.cxf.QuarkusJAXBBeanInfo",
                 "java.net.HttpURLConnection",
                 "com.sun.xml.bind.v2.schemagen.xmlschema.Schema",
                 "com.sun.xml.bind.v2.schemagen.xmlschema.package-info",
