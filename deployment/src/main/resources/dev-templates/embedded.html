@@ -5,7 +5,11 @@
     // Insert link to Quarkiverse docs
     window.addEventListener("load", (event) => {
         $(".card-header:contains('CXF')").html(
-            'Quarkus CXF <a href="https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev" class="text-light float-right" title="Guide"><i class="fa fa-book"></i></a>'
+            '<div class="row">' +
+            '<div class="col-md-10"> Quarkus CXF </div>' +
+            '<div class="col-md-1">' +
+            '<a href="https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev" class="text-light float-right" title="Guide"><i class="fa fa-book"></i></a>' +
+            '</div></div>'
         );
     });
 </script>

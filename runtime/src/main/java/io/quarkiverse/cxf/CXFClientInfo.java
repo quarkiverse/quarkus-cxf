@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.jboss.logging.Logger;
-
 import io.quarkus.arc.Unremovable;
 
 @Unremovable
 public class CXFClientInfo {
-    private static final Logger LOGGER = Logger.getLogger(CXFClientInfo.class);
+
     private String sei;
     private String endpointAddress;
     private String wsdlUrl;

@@ -28,6 +28,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -181,10 +182,10 @@ class QuarkusCxfProcessor {
                 .produce(new UnremovableBeanBuildItem(new UnremovableBeanBuildItem.BeanClassNamesExclusion(extensibilities)));
     }
 
-    class quarkusCapture implements GeneratedClassClassLoaderCapture {
+    class QuarkusCapture implements GeneratedClassClassLoaderCapture {
         private final ClassOutput classOutput;
 
-        quarkusCapture(ClassOutput classOutput) {
+        QuarkusCapture(ClassOutput classOutput) {
             this.classOutput = classOutput;
 
         }
@@ -235,7 +236,7 @@ class QuarkusCxfProcessor {
 
         Bus bus = BusFactory.getDefaultBus();
         // setup class capturing
-        bus.setExtension(new quarkusCapture(new GeneratedBeanGizmoAdaptor(generatedBeans)),
+        bus.setExtension(new QuarkusCapture(new GeneratedBeanGizmoAdaptor(generatedBeans)),
                 GeneratedClassClassLoaderCapture.class);
 
         Set<String> clientSEIsInUse = findClientSEIsInUse(index);
@@ -265,7 +266,6 @@ class QuarkusCxfProcessor {
                     .map(AnnotationValue::asString)
                     .orElseGet(() -> getNameSpaceFromClassInfo(wsClassInfo));
 
-            //TODO add soap1.2 in config file
             final String soapBindingDefault = SOAPBinding.SOAP11HTTP_BINDING;
 
             Collection<ClassInfo> implementors = index.getAllKnownImplementors(DotName.createSimple(sei));
@@ -543,7 +543,10 @@ class QuarkusCxfProcessor {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             XPath xpath = XPathFactory.newInstance().newXPath();
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+            DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Enumeration<URL> urls = loader.getResources("META-INF/wsdl.plugin.xml");
@@ -562,7 +565,10 @@ class QuarkusCxfProcessor {
                 }
             }
 
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(mergedXmlDocument),
                     new StreamResult(new OutputStreamWriter(os, "UTF-8")));
@@ -753,7 +759,6 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.wsdl.ExtensionClassCreator",
                 "org.apache.cxf.wsdl.ExtensionClassLoader",
                 "org.apache.cxf.wsdl.ExtensionClassGenerator",
-                "io.quarkiverse.cxf.QuarkusJAXBBeanInfo",
                 "java.net.HttpURLConnection",
                 "com.sun.xml.bind.v2.schemagen.xmlschema.Schema",
                 "com.sun.xml.bind.v2.schemagen.xmlschema.package-info",

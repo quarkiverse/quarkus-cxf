@@ -14,13 +14,13 @@ import io.quarkus.arc.Unremovable;
 @ApplicationScoped
 @Unremovable
 public class CXFClientInfos {
-    private static final Logger LOGGER = Logger.getLogger(CXFRecorder.class);
+    private static final Logger LOGGER = Logger.getLogger(CXFClientInfos.class);
 
-    private final Instance<CXFClientInfo> cxfClientInfos;
+    private final Instance<CXFClientInfo> cxfClientInfoInstances;
 
-    public CXFClientInfos(@Any Instance<CXFClientInfo> cxfClientInfos) {
+    public CXFClientInfos(@Any Instance<CXFClientInfo> cxfClientInfoInstances) {
         LOGGER.trace("new CXFClientInfos");
-        this.cxfClientInfos = cxfClientInfos;
+        this.cxfClientInfoInstances = cxfClientInfoInstances;
     }
 
     public static CXFClientInfo fromSei(String sei) {
@@ -29,7 +29,7 @@ public class CXFClientInfos {
     }
 
     public CXFClientInfo getClientInfoBySei(String sei) {
-        for (CXFClientInfo clientInfo : cxfClientInfos) {
+        for (CXFClientInfo clientInfo : cxfClientInfoInstances) {
             if (Objects.equals(clientInfo.getSei(), sei)) {
                 return clientInfo;
             }

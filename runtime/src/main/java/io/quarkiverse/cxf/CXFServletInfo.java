@@ -24,7 +24,6 @@ public class CXFServletInfo {
 
     public CXFServletInfo(String path, String relativePath, String className, String sei, String wsdlPath, String soapBinding,
             List<String> wrapperClassNames, String endpointUrl) {
-        super();
         LOGGER.trace("new CXFServletInfo");
         this.path = path;
         this.relativePath = relativePath;

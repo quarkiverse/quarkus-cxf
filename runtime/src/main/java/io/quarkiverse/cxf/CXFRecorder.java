@@ -39,11 +39,11 @@ public class CXFRecorder {
                 cxfClientData.getClassNames()));
     }
 
-    public class servletConfig {
+    private class ServletConfig {
         public CxfEndpointConfig config;
         public String path;
 
-        public servletConfig(CxfEndpointConfig cxfEndPointConfig, String relativePath) {
+        public ServletConfig(CxfEndpointConfig cxfEndPointConfig, String relativePath) {
             this.config = cxfEndPointConfig;
             this.path = relativePath;
         }
@@ -52,7 +52,7 @@ public class CXFRecorder {
     public void registerCXFServlet(RuntimeValue<CXFServletInfos> runtimeInfos, String path, String sei,
             CxfConfig cxfConfig, String soapBinding, List<String> wrapperClassNames, String wsImplementor) {
         CXFServletInfos infos = runtimeInfos.getValue();
-        Map<String, List<servletConfig>> implementorToCfg = new HashMap<>();
+        Map<String, List<ServletConfig>> implementorToCfg = new HashMap<>();
         for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
             CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
             String relativePath = webServicesByPath.getKey();
@@ -60,18 +60,18 @@ public class CXFRecorder {
                 continue;
             }
             String cfgImplementor = cxfEndPointConfig.implementor.get();
-            List<servletConfig> lst;
+            List<ServletConfig> lst;
             if (implementorToCfg.containsKey(cfgImplementor)) {
                 lst = implementorToCfg.get(cfgImplementor);
             } else {
                 lst = new ArrayList<>();
                 implementorToCfg.put(cfgImplementor, lst);
             }
-            lst.add(new servletConfig(cxfEndPointConfig, relativePath));
+            lst.add(new ServletConfig(cxfEndPointConfig, relativePath));
         }
-        List<servletConfig> cfgs = implementorToCfg.get(wsImplementor);
+        List<ServletConfig> cfgs = implementorToCfg.get(wsImplementor);
         if (cfgs != null) {
-            for (servletConfig cfg : cfgs) {
+            for (ServletConfig cfg : cfgs) {
                 CxfEndpointConfig cxfEndPointConfig = cfg.config;
                 String relativePath = cfg.path;
                 startRoute(path, sei, soapBinding, wrapperClassNames, wsImplementor, infos, cxfEndPointConfig, relativePath);

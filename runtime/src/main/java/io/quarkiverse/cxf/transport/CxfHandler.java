@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf.transport;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,10 +87,12 @@ public class CxfHandler implements Handler<RoutingContext> {
         LOGGER.trace("CxfHandler created");
         this.beanContainer = beanContainer;
         this.httpConfiguration = httpConfiguration;
-        Instance<CurrentIdentityAssociation> association = CDI.current().select(CurrentIdentityAssociation.class);
-        this.association = association.isResolvable() ? association.get() : null;
-        Instance<IdentityProviderManager> identityProviderManager = CDI.current().select(IdentityProviderManager.class);
-        this.identityProviderManager = identityProviderManager.isResolvable() ? identityProviderManager.get() : null;
+        Instance<CurrentIdentityAssociation> identityAssociationInstance = CDI.current()
+                .select(CurrentIdentityAssociation.class);
+        this.association = identityAssociationInstance.isResolvable() ? identityAssociationInstance.get() : null;
+        Instance<IdentityProviderManager> identityProviderManagerInstance = CDI.current().select(IdentityProviderManager.class);
+        this.identityProviderManager = identityProviderManagerInstance.isResolvable() ? identityProviderManagerInstance.get()
+                : null;
         this.currentVertxRequest = CDI.current().select(CurrentVertxRequest.class).get();
         if (cxfServletInfos == null || cxfServletInfos.getInfos() == null || cxfServletInfos.getInfos().isEmpty()) {
             LOGGER.warn("no info transmit to servlet");
@@ -186,14 +187,18 @@ public class CxfHandler implements Handler<RoutingContext> {
 
     private Object getInstance(String className) {
         Class<?> classObj = loadClass(className);
-        try {
-            return CDI.current().select(classObj).get();
-        } catch (UnsatisfiedResolutionException e) {
-            //silent fail
-        }
-        try {
-            return classObj.getConstructor().newInstance();
-        } catch (ReflectiveOperationException | RuntimeException e) {
+        if (classObj != null) {
+            try {
+                return CDI.current().select(classObj).get();
+            } catch (UnsatisfiedResolutionException e) {
+                //silent fail
+            }
+            try {
+                return classObj.getConstructor().newInstance();
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                return null;
+            }
+        } else {
             return null;
         }
     }
@@ -318,9 +323,9 @@ public class CxfHandler implements Handler<RoutingContext> {
         } catch (ServletException se) {
             LOGGER.warn("Internal server error", se);
             event.fail(500, se);
-        } catch (IOException ioe) {
-            LOGGER.warn("Cannot list or instantiate web service", ioe);
-            event.fail(404, ioe);
+        } catch (RuntimeException re) {
+            LOGGER.warn("Cannot list or instantiate web service", re);
+            event.fail(404, re);
         } finally {
             if (requestContext.isActive()) {
                 requestContext.terminate();
