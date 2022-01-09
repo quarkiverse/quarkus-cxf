@@ -3,14 +3,13 @@
 
 The CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J]. The example below shows how to integrate with WSS4J using interceptors.
 
-To use WSS4J interceptors in your code, firstly you should add CXF's WSS4J dependency (Replace `version` with CXF version used by Quarkus).
+To use WSS4J interceptors in your code, firstly you should add CXF's WS-Security dependency.
 
 [source,xml]
 ----
 <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <version>{{cxf-version}}</version>
 </dependency>
 ----
 
