@@ -3,6 +3,18 @@
 
 The CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J]. The example below shows how to integrate with WSS4J using interceptors.
 
+To use WSS4J interceptors in your code, firstly you should add CXF's WS-Security dependency.
+
+[source,xml]
+----
+<dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-security</artifactId>
+</dependency>
+----
+
+Currently, only the programmatic WSS4JInterceptors are supported. Actions like Timestamp, UsernameToken, Signature, Encryption, etc., can be applied to the interceptors by passing the appropriate configuration properties.
+
 [[ws-security-service]]
 == Web Service Integration
 
