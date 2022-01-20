@@ -41,7 +41,7 @@
         </developer>
     </developers>
     <properties>
-        <quarkus.version>2.6.2.Final</quarkus.version>
+        <quarkus.version>2.6.3.Final</quarkus.version>
         <cxf.version>3.5.0</cxf.version>
         <jakarta.xml.ws-api.version>2.3.3</jakarta.xml.ws-api.version>
 
