@@ -283,7 +283,7 @@ class QuarkusCxfProcessor {
                      * https://github.com/quarkiverse/quarkus-cxf/issues/346
                      * https://github.com/quarkusio/quarkus/issues/7507
                      */
-                    reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, impl + "_Subclass"));
+                    reflectiveClass.produce(new ReflectiveClassBuildItem(true, false, impl + "_Subclass"));
 
                     String soapBinding = Optional.ofNullable(wsClass.classAnnotation(BINDING_TYPE_ANNOTATION))
                             .map(bindingType -> bindingType.value().asString())
