@@ -449,9 +449,12 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public StringBuffer getRequestURL() {
-        String absoluteUri = request.absoluteURI();
-        String urlWithoutParams = absoluteUri.replaceFirst("\\?.*$", "");
-        return new StringBuffer(urlWithoutParams);
+        String url = request.absoluteURI();
+        int index = url.indexOf("?");
+        if (index > -1) {
+            url = url.substring(0, index);
+        }
+        return new StringBuffer(url);
     }
 
     @Override
