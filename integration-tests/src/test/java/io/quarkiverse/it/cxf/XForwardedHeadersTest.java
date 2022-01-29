@@ -40,7 +40,7 @@ public class XForwardedHeadersTest {
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("http://localhost:8081/test/soap/greeting?wsdl"));
+                .body(containsString("http://localhost:8081/test/soap/greeting"));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class XForwardedHeadersTest {
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("https://localhost/soap/greeting?wsdl"));
+                .body(containsString("https://localhost/soap/greeting"));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class XForwardedHeadersTest {
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("http://api.example.com:8081/soap/greeting?wsdl"));
+                .body(containsString("http://api.example.com:8081/soap/greeting"));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class XForwardedHeadersTest {
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("http://localhost:443/soap/greeting?wsdl"));
+                .body(containsString("http://localhost:443/soap/greeting"));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class XForwardedHeadersTest {
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("https://api.example.com:443/test/soap/greeting?wsdl"));
+                .body(containsString("https://api.example.com:443/test/soap/greeting"));
     }
 
     @Test
@@ -122,10 +122,10 @@ public class XForwardedHeadersTest {
 
         for (Response response : responses) {
             response.then().body(CoreMatchers.anyOf(
-                    containsString("http://api1.example.com:8081/soap/greeting?wsdl"),
-                    containsString("http://localhost:443/soap/greeting?wsdl"),
-                    containsString("http://localhost:8081/test/soap/greeting?wsdl"),
-                    containsString("https://localhost:8280/soap/greeting?wsdl")));
+                    containsString("http://api1.example.com:8081/soap/greeting"),
+                    containsString("http://localhost:443/soap/greeting"),
+                    containsString("http://localhost:8081/test/soap/greeting"),
+                    containsString("https://localhost:8280/soap/greeting")));
         }
     }
 
