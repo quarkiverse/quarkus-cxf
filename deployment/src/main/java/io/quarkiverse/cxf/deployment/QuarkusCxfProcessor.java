@@ -1,7 +1,5 @@
 package io.quarkiverse.cxf.deployment;
 
-import static java.lang.String.format;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -20,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -96,6 +95,7 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
+import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarRequiredBuildItem;
@@ -134,6 +134,13 @@ class QuarkusCxfProcessor {
     @BuildStep
     public void generateSysProps(BuildProducer<SystemPropertyBuildItem> props) {
         props.produce(new SystemPropertyBuildItem("com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize", "true"));
+    }
+
+    @BuildStep
+    public void filterLogging(BuildProducer<LogCleanupFilterBuildItem> logCleanupProducer) {
+        logCleanupProducer.produce(
+                new LogCleanupFilterBuildItem(
+                        "org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean", Level.FINE, "Creating Service"));
     }
 
     @BuildStep
@@ -467,9 +474,7 @@ class QuarkusCxfProcessor {
                 .filter(CxfWebServiceBuildItem::IsClient)
                 .map(QuarkusCxfProcessor::clientData)
                 .map(cxf -> {
-                    String fmt = "producing dedicated CXFClientInfo bean named '%s' for SEI %s";
-                    String msg = format(fmt, cxf.getSei(), cxf.getSei());
-                    LOGGER.info(msg);
+                    LOGGER.debugf("producing dedicated CXFClientInfo bean named '%s' for SEI %s", cxf.getSei(), cxf.getSei());
                     return SyntheticBeanBuildItem
                             .configure(CXFClientInfo.class)
                             .named(cxf.getSei())
