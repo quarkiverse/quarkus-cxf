@@ -82,9 +82,8 @@ public abstract class CxfClientProducer {
         bus.setExtension(new FactoryClassLoader(bus), FactoryClassCreator.class);
         bus.setExtension(new GeneratedNamespaceClassLoader(bus), NamespaceClassCreator.class);
         factory.setServiceClass(seiClass);
-        LOGGER.info(format("using servicename %s%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
+        LOGGER.debugf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
         factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
-        LOGGER.info(format("using  servicename %s", factory.getServiceName()));
         if (cxfClientInfo.getEpName() != null) {
             factory.setEndpointName(new QName(cxfClientInfo.getEpNamespace(), cxfClientInfo.getEpName()));
         }
@@ -117,7 +116,7 @@ public abstract class CxfClientProducer {
             addToCols(inFaultInterceptor, factory.getInFaultInterceptors());
         }
 
-        LOGGER.info("cxf client loaded for " + cxfClientInfo.getSei());
+        LOGGER.debug("cxf client loaded for " + cxfClientInfo.getSei());
         return factory.create();
     }
 
@@ -137,7 +136,7 @@ public abstract class CxfClientProducer {
         try {
             cls = Class.forName(className, false, Thread.currentThread().getContextClassLoader()).asSubclass(clazz);
         } catch (ClassNotFoundException | ClassCastException e) {
-            LOGGER.warn(format("no such class %s", className));
+            LOGGER.warnf("no such class %s", className);
             return;
         }
         T item = null;
@@ -155,7 +154,7 @@ public abstract class CxfClientProducer {
         }
 
         if (item == null) {
-            LOGGER.warn(format("unable to create instance of class %s", className));
+            LOGGER.warnf("unable to create instance of class %s", className);
         } else {
             cols.add(item);
         }
@@ -221,9 +220,7 @@ public abstract class CxfClientProducer {
         // the service itself.
 
         if (keylist.isEmpty()) {
-            String fmt;
-            fmt = "no matching configuration found for SEI %s, using derived value %s.";
-            LOGGER.warn(format(fmt, meta.getSei(), meta));
+            LOGGER.warnf("no matching configuration found for SEI %s, using derived value %s.", meta.getSei(), meta);
             return meta;
         }
 
