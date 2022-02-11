@@ -80,7 +80,7 @@ The corresponding client implementation would be slightly different.Use the `WSS
 
 [source,properties]
 ----
-quarkus.cxf.endpoint."/client".out-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor
+quarkus.cxf.client."client-identifier".out-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor
 ----
 
 Add the following to your client class to instantiate the `WSS4JOutInterceptor`.
@@ -91,7 +91,7 @@ Add the following to your client class to instantiate the `WSS4JOutInterceptor`.
     public WSS4JOutInterceptor getWSS4JOutInterceptor() {
         Map<String,Object> outProps = new HashMap<String,Object>();
         outProps.put(ConfigurationConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
-        outProps.put(ConfigurationConstants.PASSWORD_TYPE, WSConstants.PASSWORD_DIGEST);
+        outProps.put(ConfigurationConstants.PASSWORD_TYPE, WSConstants.PW_DIGEST);
         outProps.put(ConfigurationConstants.PW_CALLBACK_CLASS, UsernameTokenPasswordClientCallback.class.getName());
         outProps.put(ConfigurationConstants.USER, "joe");
         return new WSS4JOutInterceptor(outProps);
