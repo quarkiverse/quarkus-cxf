@@ -1,17 +1,21 @@
+# Quarkus CXF
+
+This extension enables you to develop web services that consume and produce SOAP payloads using the [Apache CXF](https://cxf.apache.org/) libraries.
+
 ![Build](https://github.com/quarkiverse/quarkiverse-cxf/workflows/Build/badge.svg) ![Maven Central](https://img.shields.io/maven-central/v/io.quarkiverse.cxf/quarkus-cxf.svg?label=Maven%20Central) ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
--   [Contributors](##contributors)
+-   [Contributors](#contributors-)
 
--   [Configuration](##configuration)
+-   [Configuration](#configuration)
 
--   [Documentation](##documentation)
+-   [Documentation](#documentation)
 
--   [Sample Code](##sample-code-integration-tests)
+-   [Sample Code](#sample-code)
 
--   [Issues and Support](##issues-and-support)
+-   [Issues and Support](#issues-and-support)
 
 ## Contributors ✨
 
