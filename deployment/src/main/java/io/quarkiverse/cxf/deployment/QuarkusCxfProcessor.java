@@ -76,6 +76,7 @@ import io.quarkus.arc.deployment.BeanContainerBuildItem;
 import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
+import io.quarkus.arc.deployment.ReflectiveBeanClassBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
@@ -229,6 +230,7 @@ class QuarkusCxfProcessor {
             CxfBuildTimeConfig cxfBuildTimeConfig,
             BuildProducer<FeatureBuildItem> feature,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
+            BuildProducer<ReflectiveBeanClassBuildItem> reflectiveBeanClass,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
             BuildProducer<CxfWebServiceBuildItem> cxfWebServices,
@@ -285,12 +287,8 @@ class QuarkusCxfProcessor {
                     String wsName = impl.contains(".") ? impl.substring(impl.lastIndexOf('.') + 1) : impl;
                     additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(impl));
 
-                    /*
-                     * Address issue #346; though this really should be handled in ArC
-                     * https://github.com/quarkiverse/quarkus-cxf/issues/346
-                     * https://github.com/quarkusio/quarkus/issues/7507
-                     */
-                    reflectiveClass.produce(new ReflectiveClassBuildItem(true, false, impl + "_Subclass"));
+                    // Registers ArC generated subclasses for native reflection
+                    reflectiveBeanClass.produce(new ReflectiveBeanClassBuildItem(impl));
 
                     String soapBinding = Optional.ofNullable(wsClass.classAnnotation(BINDING_TYPE_ANNOTATION))
                             .map(bindingType -> bindingType.value().asString())
