@@ -514,8 +514,6 @@ class QuarkusCxfProcessor {
                     //factory.getBus().setExtension();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(openStream));
                     String line = reader.readLine();
-                    out.write(line);
-                    out.newLine();
                     while (line != null) {
                         String[] cols = line.split(":");
                         //org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
@@ -527,6 +525,8 @@ class QuarkusCxfProcessor {
                                 reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[1]));
                             }
                         }
+                        out.write(line);
+                        out.newLine();
                         line = reader.readLine();
                     }
                 }
