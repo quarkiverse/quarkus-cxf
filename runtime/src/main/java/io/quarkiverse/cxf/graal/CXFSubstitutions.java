@@ -76,7 +76,7 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperClassGenerator {
             Method[] getMethods, Method[] jaxbMethods,
             Field[] fields, Object objectFactory) {
         Logger LOG = LogUtils.getL7dLogger(Target_org_apache_cxf_jaxb_WrapperHelperClassGenerator.class);
-        LOG.info("compileWrapperHelper substitution");
+        LOG.fine("compileWrapperHelper substitution");
         int count = 1;
         String newClassName = wrapperType.getName() + "_WrapperTypeHelper" + count;
         newClassName = newClassName.replaceAll("\\$", ".");
@@ -100,7 +100,7 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperClassGenerator {
                     try {
                         cls = Thread.currentThread().getContextClassLoader().loadClass(newClassName);
                     } catch (ClassNotFoundException e) {
-                        LOG.warning("Wrapper helper class not found : " + e.toString());
+                        LOG.fine("Wrapper helper class not found : " + e.toString());
                         break;
                     }
                 } else {
