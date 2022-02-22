@@ -129,14 +129,28 @@ public class UsernameTokenPasswordClientCallback implements CallbackHandler {
 
 Native mode is supported for WS-Security when implemented using interceptors as shown above.
 
-Kindly note however, that CXF requires the https://cxf.apache.org/faq.html#FAQ-CanCXFrunwithouttheSunreferenceSAAJimplementation?[Sun reference SAAJ implementation] when using WS-Security.  By default, `cxf-rt-ws-security` will include the Sun SAAJ implementation.
+Note that CXF requires the https://cxf.apache.org/faq.html#FAQ-CanCXFrunwithouttheSunreferenceSAAJimplementation?[Sun reference SAAJ implementation] when using WS-Security.  By default, `cxf-rt-ws-security` will include the Sun SAAJ implementation dependency.  SAAJ in turn has an optional dependency on `org.jvnet.mimepull:mimepull`, which you will need to add to your project, in order for the native build process to complete successfully.
 
-The SAAJ dependency in turn has an *optional* dependency on the following, which you will need to add to your project, in order for the native build process to complete successfully.
+Additionally, `cxf-ws-security` has an optional dependency on `org.apache.cxf:cxf-rt-ws-mex` that will also need to be in the classpath for the native build to complete successfully.
+
+In short, you will need to add the following two dependencies to your project to leverage WS-Security in native mode. These are not pulled in as transitive dependencies as they are marked optional, but are required for the native build to succeed.
 
 [source,xml]
 ----
 <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-mex</artifactId>
+</dependency>
+
+<dependency>
       <groupId>org.jvnet.mimepull</groupId>
       <artifactId>mimepull</artifactId>
 </dependency>
+----
+
+Note that it is possible to bypass the addition of these dependencies to you project using the `application.properties` entry below, but this may mask various issues and is therefore not recommended.
+
+[source,properties]
+----
+quarkus.native.additional-build-args=--allow-incomplete-classpath
 ----

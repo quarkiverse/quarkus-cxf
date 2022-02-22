@@ -2,8 +2,6 @@ package io.quarkiverse.cxf.graal;
 
 import java.util.ServiceLoader;
 
-import org.apache.cxf.ws.addressing.EndpointReferenceType;
-
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
@@ -29,16 +27,6 @@ final class Target_org_jasypt_normalization_Normalizer {
     @Substitute
     public static char[] normalizeToNfc(final char[] message) {
         return normalizeWithJavaNormalizer(message);
-    }
-
-}
-
-@TargetClass(className = "org.apache.cxf.ws.security.trust.AbstractSTSClient", onlyWith = IsWsSecurityPresent.class)
-final class Target_org_apache_cxf_ws_security_trust_AbstractSTSClient {
-
-    @Substitute
-    public void configureViaEPR(EndpointReferenceType ref, boolean useEPRWSAAddrAsMEXLocation) {
-        return;
     }
 
 }
