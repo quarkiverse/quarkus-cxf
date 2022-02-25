@@ -58,8 +58,5 @@ jobs:
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build - JVM
-        run: mvn -B formatter:validate verify --file pom.xml
-        
-      - name: Build - Native
-        run: mvn -B verify -Pnative --file integration-tests/pom.xml
+      - name: Build (JVM + native)
+        run: mvn -B formatter:validate verify -Dnative
