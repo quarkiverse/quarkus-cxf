@@ -48,7 +48,7 @@ jobs:
       - name: Extract GraalVM version
         id: graalvm
         run: |
-          echo "::set-output name=version::$(mvn -ntp dependency:list -DincludeArtifactIds=graal-sdk | grep graal-sdk | cut -d: -f4)"
+          echo "::set-output name=version::$(mvn -pl runtime -ntp dependency:list -DincludeArtifactIds=graal-sdk | grep graal-sdk | cut -d: -f4)"
           
       - name: Setup GraalVM ${{ steps.graalvm.outputs.version }}
         uses: graalvm/setup-graalvm@v1
@@ -59,7 +59,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build - JVM
-        run: mvn -B formatter:validate install --file pom.xml
+        run: mvn -B formatter:validate verify --file pom.xml
         
       - name: Build - Native
         run: mvn -B verify -Pnative --file integration-tests/pom.xml
