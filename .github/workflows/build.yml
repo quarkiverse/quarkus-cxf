@@ -37,13 +37,18 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Cache local Maven repository
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y-%m")"
+        shell: bash
+      - name: Cache Maven Repository
+        id: cache-maven
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          # refresh cache every month to avoid unlimited growth
+          key: maven-repo-${{ runner.os }}-${{ steps.get-date.outputs.date }}
 
       - name: Extract GraalVM version
         id: graalvm
