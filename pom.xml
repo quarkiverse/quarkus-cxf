@@ -42,7 +42,7 @@
     </developers>
     <properties>
         <quarkus.version>2.7.2.Final</quarkus.version>
-        <cxf.version>3.5.0</cxf.version>
+        <cxf.version>3.5.1</cxf.version>
         <jakarta.xml.ws-api.version>2.3.3</jakarta.xml.ws-api.version>
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
