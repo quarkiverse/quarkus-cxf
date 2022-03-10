@@ -16,6 +16,7 @@
 * xref:ws-security.adoc[WS-Security]
 ** xref:ws-security.adoc#ws-security-service[Web Service Integration]
 ** xref:ws-security.adoc#ws-security-client[Client Integration]
+** xref:ws-security.adoc#ws-security-native-mode[Native Mode Support]
 * xref:micrometer-metrics.adoc[Micrometer Metrics]
 * xref:properties.adoc[Properties Reference]
 * xref:tips-and-tricks.adoc[Tips & tricks]
