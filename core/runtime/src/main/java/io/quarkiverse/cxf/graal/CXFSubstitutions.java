@@ -84,7 +84,7 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperClassGenerator {
         try {
             cls = Thread.currentThread().getContextClassLoader().loadClass(newClassName);
         } catch (ClassNotFoundException e) {
-            LOG.warning("Wrapper helper class not found : " + e.toString());
+            LOG.fine("Wrapper helper class not found : " + e.toString());
         }
         while (cls != null) {
             try {
