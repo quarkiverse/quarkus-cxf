@@ -13,17 +13,21 @@ import io.quarkus.runtime.annotations.ConfigItem;
 public class CxfClientConfig {
 
     /**
-     * The WSDL path
+     * The client WSDL path
      */
     @ConfigItem(name = "wsdl")
     public Optional<String> wsdlPath;
 
     /**
      * The URL of the SOAP Binding, should be one of four values:
-     * {@code "http://schemas.xmlsoap.org/wsdl/soap/http"} for SOAP11HTTP_BINDING<br/>
-     * {@code "http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true"} for SOAP11HTTP_MTOM_BINDING<br/>
-     * {@code "http://www.w3.org/2003/05/soap/bindings/HTTP/"} for SOAP12HTTP_BINDING<br/>
-     * {@code "http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true"} for SOAP12HTTP_MTOM_BINDING<br/>
+     *
+     * {@code "http://schemas.xmlsoap.org/wsdl/soap/http"} for SOAP11HTTP_BINDING
+     *
+     * {@code "http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true"} for SOAP11HTTP_MTOM_BINDING
+     *
+     * {@code "http://www.w3.org/2003/05/soap/bindings/HTTP/"} for SOAP12HTTP_BINDING
+     *
+     * {@code "http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true"} for SOAP12HTTP_MTOM_BINDING
      */
     @ConfigItem
     public Optional<String> soapBinding;
@@ -35,7 +39,7 @@ public class CxfClientConfig {
     public Optional<String> clientEndpointUrl;
 
     /**
-     * The client interface
+     * The client interface class
      */
     @ConfigItem
     public Optional<String> serviceInterface;
