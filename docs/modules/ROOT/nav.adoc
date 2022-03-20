@@ -13,6 +13,7 @@
 ** xref:client.adoc#code-config[Advanced Client Configurations]
 ** xref:client.adoc#pure-client[Pure Client Applications]
 * xref:interceptors-and-features.adoc[Interceptors and Features]
+* xref:handlers.adoc[JAX-WS Handlers]
 * xref:ws-security.adoc[WS-Security]
 ** xref:ws-security.adoc#ws-security-service[Web Service Integration]
 ** xref:ws-security.adoc#ws-security-client[Client Integration]
