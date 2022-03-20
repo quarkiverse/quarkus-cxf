@@ -15,7 +15,7 @@ To take advantage of this feature within your https://quarkus.io/guides/micromet
 
 The provided `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature` class helps plug in the CXF Micrometer integration as described https://cxf.apache.org/docs/micrometer.html#Micrometer-IntegrationwithJAX-WS[in the CXF docs].  It also allows metrics to work in native mode.
 
-Simply add the following to your `application.properties` file to start collecting metrics.  Please note that the same class can be applied to both server and client definitions.
+Simply add the following to your `application.properties` to start collecting metrics.  Please note that the same class can be applied to both server and client definitions.
 
 [source,properties]
 ----
