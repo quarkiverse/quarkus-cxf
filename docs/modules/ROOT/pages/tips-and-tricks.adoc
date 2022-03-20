@@ -1,8 +1,10 @@
 [[Tips-Tricks]]
 = Tips and Tricks
-Several issues may appear during the development, testing, and native image building process of your `quarkus-cxf` project;
+
+Some issues may appear during the development, testing, and native image building process of your `quarkus-cxf` project;
 below are some common ones and how to address them.
 
+[[rest-and-soap-endpoints]]
 == REST and SOAP Endpoints
 
 Sometimes a REST endpoint may be needed in the same project where the Quarkus CXF Extension is used.
@@ -117,7 +119,7 @@ This exception is thrown if errors should be reported at runtime. The proposed o
 fields at run time when they are accessed the first time, instead of as an error
 during image building.
 
-The issue can easily be addressed by specifying the following properties in your pom.xml:
+The issue can easily be addressed by specifying the `quarkus.native.report-errors-at-runtime` property in your pom.xml:
 [source,xml]
 ----
   <profiles>
@@ -266,3 +268,15 @@ public enum OperationOrderStatusType {
     }
 }
 ----
+
+[[native-image-additional-resources]]
+== Native Image: Additional Resources
+
+You may also refer to the links below which contain tips on how to work with native images.
+
+* https://quarkus.io/guides/building-native-image[Quarkus: Building a Native Executable]
+* https://quarkus.io/guides/writing-native-applications-tips[Quarkus: Tips for Writing Native Applications]
+* https://quarkus.io/guides/native-reference[Quarkus: Native Reference Guide]
+* https://www.graalvm.org/22.0/reference-manual/native-image/Resources/[GraalVM: Accessing Resources in Native Images]
+* https://www.graalvm.org/22.0/reference-manual/native-image/Reflection/[GraalVM: Reflection Use in Native Images]
+* https://www.graalvm.org/22.0/reference-manual/native-image/Agent/[GraalVM: Tracing Agent]

@@ -35,6 +35,7 @@ Various SOAP client properties can be configured. To do so, prefix `quarkus.cxf.
 * `endpoint-name`
 * `endpoint-namespace`
 * `features`
+* `handlers`
 * `in-fault-interceptors`
 * `in-interceptors`
 * `out-fault-interceptors`
@@ -99,7 +100,7 @@ public class MySoapClient {
 }
 ----
 
-Notice the absence of property `service-interface` in quarkus.cxf.client."my-featured-fruitservice-client" cause this configuration is meant to be an alternative to the default configuration.
+Notice the absence of property `service-interface` in `quarkus.cxf.client."my-featured-fruitservice-client"` because this configuration is meant to be an alternative to the default configuration.
 
 Eventually a word of warning before closing this chapter. You may expect to get a SOAP client injected at this injection point
 as well:
@@ -180,7 +181,7 @@ To configure the `HttpConduit` for a single client in your application, use the 
 [[pure-client]]
 == Pure Client Applications
 
-Quarkus batch (e.g. periodically scheduled), or command line applications, may sometimes not require an HTTP server to be launched at startup.  To disable listenening on a host:port, you can use the property below:
+Quarkus batch (e.g. periodically scheduled), or command line applications, may sometimes not require an HTTP server to be launched at startup.  To disable listenening on a `host:port`, you can use the property below:
 
 [source,properties]
 ----

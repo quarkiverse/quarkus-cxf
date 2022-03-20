@@ -12,7 +12,7 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.path]]`link:#qu
 
 [.description]
 --
-Set this to override the default path for CXF resources
+The default path for CXF resources
 --|string 
 |`/`
 
@@ -21,7 +21,7 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.wsdl-path]]`lin
 
 [.description]
 --
-The comma-separated list of wsdl resource paths used by CXF
+The comma-separated list of WSDL resource paths used by CXF
 --|list of string 
 |
 
@@ -30,7 +30,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.implementor]]`link:#quarkus-cx
 
 [.description]
 --
-The server class implementor
+The service endpoint implementation class
 --|string 
 |
 
@@ -39,7 +39,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.wsdl]]`link:#quarkus-cxf_quark
 
 [.description]
 --
-The wsdl path
+The service endpoint WSDL path
 --|string 
 |
 
@@ -48,10 +48,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.soap-binding]]`link:#quarkus-c
 
 [.description]
 --
-The URL of the SOAP Binding, should be one of four values: `"http://schemas.xmlsoap.org/wsdl/soap/http"` for SOAP11HTTP_BINDING
- `"http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true"` for SOAP11HTTP_MTOM_BINDING
- `"http://www.w3.org/2003/05/soap/bindings/HTTP/"` for SOAP12HTTP_BINDING
- `"http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true"` for SOAP12HTTP_MTOM_BINDING
+The URL of the SOAP Binding, should be one of four values: `"http://schemas.xmlsoap.org/wsdl/soap/http"` for SOAP11HTTP_BINDING `"http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true"` for SOAP11HTTP_MTOM_BINDING `"http://www.w3.org/2003/05/soap/bindings/HTTP/"` for SOAP12HTTP_BINDING `"http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true"` for SOAP12HTTP_MTOM_BINDING
 --|string 
 |
 
@@ -60,7 +57,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.published-endpoint-url]]`link:
 
 [.description]
 --
-The server endpoint url
+The published service endpoint URL
 --|string 
 |
 
@@ -123,7 +120,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.wsdl]]`link:#quarkus-cxf_quarkus.c
 
 [.description]
 --
-The WSDL path
+The client WSDL path
 --|string 
 |
 
@@ -132,10 +129,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.soap-binding]]`link:#quarkus-cxf_q
 
 [.description]
 --
-The URL of the SOAP Binding, should be one of four values: `"http://schemas.xmlsoap.org/wsdl/soap/http"` for SOAP11HTTP_BINDING
- `"http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true"` for SOAP11HTTP_MTOM_BINDING
- `"http://www.w3.org/2003/05/soap/bindings/HTTP/"` for SOAP12HTTP_BINDING
- `"http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true"` for SOAP12HTTP_MTOM_BINDING
+The URL of the SOAP Binding, should be one of four values: `"http://schemas.xmlsoap.org/wsdl/soap/http"` for SOAP11HTTP_BINDING `"http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true"` for SOAP11HTTP_MTOM_BINDING `"http://www.w3.org/2003/05/soap/bindings/HTTP/"` for SOAP12HTTP_BINDING `"http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true"` for SOAP12HTTP_MTOM_BINDING
 --|string 
 |
 
@@ -153,7 +147,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.service-interface]]`link:#quarkus-
 
 [.description]
 --
-The client interface
+The client interface class
 --|string 
 |
 

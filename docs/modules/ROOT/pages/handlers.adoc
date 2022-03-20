@@ -3,7 +3,9 @@
 
 As an alternative to the `@HandlerChain` annotation, https://javaee.github.io/metro-jax-ws/doc/user-guide/ch03.html#users-guide-handler[JAX-WS Handlers] can be added to both your client or server using `application.properties` configurations.
 
-Custom `Handler` classes can be configured as a comma-separated list in the `application.properties` file.  An example is provided below.
+Custom `Handler` classes can be configured as a comma-separated list in the `application.properties` file.
+
+An example is provided below; given the following sample class:
 
 [source,java]
 ----
@@ -17,7 +19,7 @@ public class MySOAPHandler implements SOAPHandler<SOAPMessageContext> {
 }
 ----
 
-The `application.properties` file can then be configured as shown below.
+The `application.properties` can be configured as shown below.
 
 [source,properties]
 ----
