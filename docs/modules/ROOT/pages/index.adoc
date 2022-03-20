@@ -14,7 +14,9 @@ This extension provides access to all these specifications for your Quarkus appl
 [[native-mode-support]]
 == Native Mode Support
 
-Native mode is currently supported for both Java 8 and Java 11.
+Native mode is currently supported for Java 11.
+
+In addition to the core `quarkus-cxf` module, you may also leverage the `quarkus-cxf-rt-features-logging`, `quarkus-cxf-rt-features-metrics` and `quarkus-cxf-rt-ws-security` modules for full native support of the respective CXF modules.
 
 [[contract-code-first]]
 == Contract vs Code First

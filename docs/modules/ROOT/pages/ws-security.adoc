@@ -3,13 +3,13 @@
 
 The CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J]. The example below shows how to integrate with WSS4J using interceptors.
 
-To use WSS4J interceptors in your code, you should first add CXF's WS-Security dependency.
+To use WSS4J interceptors in your code, you should first add the Quarkus CXF WS-Security dependency.  The benefit of using this module is that will be able to build and run a native executable.
 
 [source,xml]
 ----
 <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-security</artifactId>
+      <groupId>io.quarkiverse.cxf</groupId>
+      <artifactId>quarkus-cxf-rt-ws-security</artifactId>
 </dependency>
 ----
 
@@ -127,30 +127,4 @@ public class UsernameTokenPasswordClientCallback implements CallbackHandler {
 [[ws-security-native-mode]]
 == Native Mode Support
 
-Native mode is supported for WS-Security when implemented using interceptors as shown above.
-
-Note that CXF requires the https://cxf.apache.org/faq.html#FAQ-CanCXFrunwithouttheSunreferenceSAAJimplementation?[Sun reference SAAJ implementation] when using WS-Security.  By default, `cxf-rt-ws-security` will include the Sun SAAJ implementation dependency.  SAAJ in turn has an optional dependency on `org.jvnet.mimepull:mimepull`, which you will need to add to your project, in order for the native build process to complete successfully.
-
-Additionally, `cxf-ws-security` has an optional dependency on `org.apache.cxf:cxf-rt-ws-mex` that will also need to be in the classpath for the native build to complete successfully.
-
-In short, you will need to add the following two dependencies to your project to leverage WS-Security in native mode. These are not pulled in as transitive dependencies as they are marked optional, but are required for the native build to succeed.
-
-[source,xml]
-----
-<dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-ws-mex</artifactId>
-</dependency>
-
-<dependency>
-      <groupId>org.jvnet.mimepull</groupId>
-      <artifactId>mimepull</artifactId>
-</dependency>
-----
-
-Note that it is possible to bypass the addition of these dependencies to you project using the `application.properties` entry below, but this may mask various issues and is therefore not recommended.
-
-[source,properties]
-----
-quarkus.native.additional-build-args=--allow-incomplete-classpath
-----
+Native mode is supported for WS-Security when implemented using the `quarkus-cxf-rt-ws-security` module as shown above.  This module will package the necessary libraries to compile a native executable successfully.
