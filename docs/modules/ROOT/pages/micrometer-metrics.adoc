@@ -19,5 +19,10 @@ Simply add the following to your `application.properties` file to start collecti
 
 [source,properties]
 ----
-quarkus.cxf.endpoint."/fruit".features=io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
+# A web service endpoint with metrics enabled
+quarkus.cxf.endpoint."/fruit-service".features=io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
+
+# A web service client with metrics enabled
+quarkus.cxf.client."/fruit-client".features=io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
+
 ----

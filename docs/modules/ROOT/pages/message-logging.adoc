@@ -12,7 +12,7 @@ For CXF https://cxf.apache.org/docs/message-logging.html[message logging], you c
 </dependency>
 ----
 
-As an example, you could create a `Producers` class which creates a pre-configured LogginFeature instance.
+As an example, you could create a `Producers` class which creates a pre-configured `LoggingFeature` instance.
 
 [source,java]
 ----
