@@ -3,7 +3,7 @@
 
 The CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J]. The example below shows how to integrate with WSS4J using interceptors.
 
-To use WSS4J interceptors in your code, you should first add the Quarkus CXF WS-Security dependency.  The benefit of using this module is that will be able to build and run a native executable.
+To use WSS4J interceptors in your code, you should first add the Quarkus CXF WS-Security dependency.
 
 [source,xml]
 ----
@@ -25,11 +25,12 @@ Use the `WSS4JInInterceptor` to add WS-Security to your web service. You can upd
 quarkus.cxf.endpoint."/greeting".in-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor
 ----
 
-Add the following to your web service class to instantiate the `WSS4JInInterceptor`.
+Add the following to your producer class to instantiate the `WSS4JInInterceptor`.
 
 [source,java]
 ----
     @Produces
+    @ApplicationScoped
     public WSS4JInInterceptor getWSS4JInInterceptor() {
         Map<String,Object> inProps = new HashMap<String,Object>();
         inProps.put(ConfigurationConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
@@ -51,6 +52,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@RegisterForReflection
 public class UsernameTokenPasswordServerCallback implements CallbackHandler {
 
     private Map<String, String> passwords = new HashMap();
@@ -83,11 +85,12 @@ The corresponding client implementation would be slightly different.Use the `WSS
 quarkus.cxf.client."client-identifier".out-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor
 ----
 
-Add the following to your client class to instantiate the `WSS4JOutInterceptor`.
+Add the following to your producer class to instantiate the `WSS4JOutInterceptor`.
 
 [source,java]
 ----
     @Produces
+    @ApplicationScoped
     public WSS4JOutInterceptor getWSS4JOutInterceptor() {
         Map<String,Object> outProps = new HashMap<String,Object>();
         outProps.put(ConfigurationConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
@@ -109,6 +112,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import java.io.IOException;
 
+@RegisterForReflection
 public class UsernameTokenPasswordClientCallback implements CallbackHandler {
 
     @Override
