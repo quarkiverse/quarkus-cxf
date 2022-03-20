@@ -1,0 +1,56 @@
+[[message-logging]]
+= Message Logging
+
+For CXF https://cxf.apache.org/docs/message-logging.html[message logging], you can use the `quarkus-cxf-rt-features-logging` dependency, which supports native mode.
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf-rt-features-logging</artifactId>
+    <version>${latest.release.version}</version>
+</dependency>
+----
+
+As an example, you could create a `Producers` class which creates a pre-configured LogginFeature instance.
+
+[source,java]
+----
+import org.apache.cxf.ext.logging.LoggingFeature;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+
+class Producers {
+
+    @Inject
+    @ConfigProperty(name = "mask.sensitiveElementNames")
+    List<String> sensitiveElementNames;
+
+    @Produces
+    @ApplicationScoped
+    LoggingFeature loggingFeature() {
+        LoggingFeature loggingFeature = new LoggingFeature();
+        loggingFeature.addSensitiveElementNames(new HashSet<>(sensitiveElementNames));
+        loggingFeature.addSensitiveProtocolHeaderNames(new HashSet<>(Arrays.asList("Server", "Accept", "Date")));
+        loggingFeature.setPrettyLogging(true);
+        return loggingFeature;
+    }
+}
+----
+
+The `application.properties` file can then be configured as shown below.
+
+[source,properties]
+----
+# Indexed properties to define which elements should be masked by the logger
+mask.sensitiveElementNames[0]=password
+mask.sensitiveElementNames[1]=ssn
+mask.sensitiveElementNames[2]=address
+
+# A web service endpoint with logging enabled
+quarkus.cxf.endpoint."/greeting-service".features=org.apache.cxf.ext.logging.LoggingFeature
+
+# A web service client with logging enabled
+quarkus.cxf.client."/greeting-client".features=org.apache.cxf.ext.logging.LoggingFeature
+----
