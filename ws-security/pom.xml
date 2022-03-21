@@ -17,7 +17,7 @@
         <xmlsec.version>2.3.0</xmlsec.version>
         <woodstox-core.version>6.2.7</woodstox-core.version>
         <saaj-impl.version>1.5.3</saaj-impl.version>
-        <mimepull.version>1.9.14</mimepull.version>
+        <mimepull.version>1.9.15</mimepull.version>
         <neethi.version>3.2.0</neethi.version>
     </properties>
 
