@@ -1,10 +1,7 @@
 package io.quarkiverse.cxf.transport;
 
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -24,10 +21,8 @@ import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
-import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.DestinationRegistryImpl;
-import org.apache.cxf.transport.servlet.BaseUrlHelper;
 import org.apache.cxf.transport.servlet.ServletController;
 import org.apache.cxf.transport.servlet.servicelist.ServiceListGeneratorServlet;
 import org.jboss.logging.Logger;
@@ -44,13 +39,10 @@ import io.quarkus.vertx.http.runtime.CurrentVertxRequest;
 import io.quarkus.vertx.http.runtime.HttpConfiguration;
 import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
 import io.vertx.core.Handler;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 
 public class CxfHandler implements Handler<RoutingContext> {
     private static final Logger LOGGER = Logger.getLogger(CxfHandler.class);
-    private static final String ALLOWED_METHODS = "POST, GET, PUT, DELETE, HEAD, OPTIONS, TRACE";
     private ServiceListGeneratorServlet serviceListGeneratorServlet;
     private Bus bus;
     private ClassLoader loader;
@@ -64,24 +56,9 @@ public class CxfHandler implements Handler<RoutingContext> {
     private CurrentVertxRequest currentVertxRequest;
     private HttpConfiguration httpConfiguration;
 
-    private static final Map<String, String> RESPONSE_HEADERS = new HashMap<>();
-
     private static final String X_FORWARDED_PROTO_HEADER = "X-Forwarded-Proto";
     private static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
-    private static final String X_FORWARDED_PREFIX_HEADER = "X-Forwarded-Prefix";
-    private static final String X_FORWARDED_HOST_HEADER = "X-Forwarded-Host";
     private static final String X_FORWARDED_PORT_HEADER = "X-Forwarded-Port";
-
-    static {
-        RESPONSE_HEADERS.put("Access-Control-Allow-Origin", "*");
-        RESPONSE_HEADERS.put("Access-Control-Allow-Credentials", "true");
-        RESPONSE_HEADERS.put("Access-Control-Allow-Methods", ALLOWED_METHODS);
-        RESPONSE_HEADERS.put("Access-Control-Allow-Headers", "Content-Type, Authorization");
-        RESPONSE_HEADERS.put("Access-Control-Max-Age", "86400");
-    }
-
-    public CxfHandler() {
-    }
 
     public CxfHandler(CXFServletInfos cxfServletInfos, BeanContainer beanContainer, HttpConfiguration httpConfiguration) {
         LOGGER.trace("CxfHandler created");
@@ -235,45 +212,6 @@ public class CxfHandler implements Handler<RoutingContext> {
             }
 
         }
-    }
-
-    protected void generateNotFound(HttpServerRequest request, HttpServerResponse res) {
-        res.setStatusCode(404);
-        res.headers().add("Content-Type", "text/html");
-        res.end("<html><body>No service was found.</body></html>");
-    }
-
-    protected void updateDestination(HttpServerRequest request, AbstractHTTPDestination d) {
-        String base = getBaseURL(request);
-        String ad = d.getEndpointInfo().getAddress();
-        if (ad == null && d.getAddress() != null && d.getAddress().getAddress() != null) {
-            ad = d.getAddress().getAddress().getValue();
-            if (ad == null) {
-                ad = "/";
-            }
-        }
-
-        if (ad != null && !ad.startsWith("http")) {
-            BaseUrlHelper.setAddress(d, base + ad);
-        }
-
-    }
-
-    private String getBaseURL(HttpServerRequest request) {
-        String reqPrefix = request.uri();
-        String pathInfo = request.path();
-        if (!"/".equals(pathInfo) || reqPrefix.contains(";")) {
-            StringBuilder sb = new StringBuilder();
-            URI uri = URI.create(reqPrefix);
-            sb.append(uri.getScheme()).append("://").append(uri.getRawAuthority());
-            String path = request.path();
-            if (path != null) {
-                sb.append(path);
-            }
-            reqPrefix = sb.toString();
-        }
-
-        return reqPrefix;
     }
 
     /**

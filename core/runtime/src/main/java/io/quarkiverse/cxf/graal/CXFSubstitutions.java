@@ -119,7 +119,7 @@ final class Target_org_apache_cxf_jaxb_WrapperHelperClassGenerator {
         } catch (Exception e) {
             LOG.warning("Wrapper helper class not created : " + e.toString());
         }
-        throw new UnsupportedOperationException(cls.getName() + " wrapperHelper not implemented yet for GraalVM native images");
+        throw new UnsupportedOperationException(newClassName + " wrapperHelper not implemented yet for GraalVM native images");
     }
 
 }

@@ -506,17 +506,16 @@ class QuarkusCxfProcessor {
             PackageConfig packageConfig,
             BuildProducer<GeneratedResourceBuildItem> generatedResources) {
 
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os));
-        try {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os))) {
             Enumeration<URL> urls = ExtensionManagerImpl.class.getClassLoader().getResources("META-INF/cxf/bus-extensions.txt");
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
-                try (InputStream openStream = url.openStream()) {
+                try (InputStream openStream = url.openStream();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(openStream))) {
                     //todo set directly extension and avoid load of file at runtime
                     //List<Extension> exts = new TextExtensionFragmentParser(loader).getExtensions(is);
                     //factory.getBus().setExtension();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(openStream));
                     String line = reader.readLine();
                     while (line != null) {
                         String[] cols = line.split(":");
@@ -535,14 +534,15 @@ class QuarkusCxfProcessor {
                     }
                 }
             }
+
+            // for uber jar merge bus-extensions
+            if ((!uberJarRequired.isEmpty() || packageConfig.type.equalsIgnoreCase(PackageConfig.UBER_JAR))
+                    && (os.size() > 0)) {
+                generatedResources.produce(
+                        new GeneratedResourceBuildItem("META-INF/cxf/bus-extensions.txt", os.toByteArray()));
+            }
         } catch (IOException e) {
             LOGGER.warn("can not merge bus-extensions.txt");
-        }
-        // for uber jar merge bus-extensions
-        if ((!uberJarRequired.isEmpty() || packageConfig.type.equalsIgnoreCase(PackageConfig.UBER_JAR))
-                && (os.size() > 0)) {
-            generatedResources.produce(
-                    new GeneratedResourceBuildItem("META-INF/cxf/bus-extensions.txt", os.toByteArray()));
         }
     }
 
@@ -555,8 +555,7 @@ class QuarkusCxfProcessor {
         if (uberJarRequired.isEmpty() && !packageConfig.type.equalsIgnoreCase(PackageConfig.UBER_JAR)) {
             return;
         }
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             XPath xpath = XPathFactory.newInstance().newXPath();
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -571,12 +570,14 @@ class QuarkusCxfProcessor {
             Element root = mergedXmlDocument.createElement("properties");
             mergedXmlDocument.appendChild(root);
             for (URL url : Collections.list(urls)) {
-                Document dDoc = builder.parse(new InputSource(new InputStreamReader(url.openStream())));
-                NodeList nodeList = (NodeList) xpath.compile("//entry").evaluate(dDoc, XPathConstants.NODESET);
-                for (int i = 0; i < nodeList.getLength(); i++) {
-                    Node node = nodeList.item(i);
-                    Node copyNode = mergedXmlDocument.importNode(node, true);
-                    root.appendChild(copyNode);
+                try (InputStreamReader inputStreamReader = new InputStreamReader(url.openStream())) {
+                    Document dDoc = builder.parse(new InputSource(inputStreamReader));
+                    NodeList nodeList = (NodeList) xpath.compile("//entry").evaluate(dDoc, XPathConstants.NODESET);
+                    for (int i = 0; i < nodeList.getLength(); i++) {
+                        Node node = nodeList.item(i);
+                        Node copyNode = mergedXmlDocument.importNode(node, true);
+                        root.appendChild(copyNode);
+                    }
                 }
             }
 
@@ -587,16 +588,18 @@ class QuarkusCxfProcessor {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(mergedXmlDocument),
                     new StreamResult(new OutputStreamWriter(os, "UTF-8")));
+
+            if (os.size() > 0) {
+                generatedResources.produce(
+                        new GeneratedResourceBuildItem("META-INF/wsdl.plugin.xml", os.toByteArray()));
+            }
+
         } catch (XPathExpressionException
                 | ParserConfigurationException
                 | IOException
                 | SAXException
                 | TransformerException e) {
             LOGGER.warn("can not merge wsdl.plugin.xml");
-        }
-        if (os.size() > 0) {
-            generatedResources.produce(
-                    new GeneratedResourceBuildItem("META-INF/wsdl.plugin.xml", os.toByteArray()));
         }
     }
 

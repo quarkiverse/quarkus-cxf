@@ -11,3 +11,5 @@ extraction:
         # Specify the required Maven version.
         # Default: the Maven version is determined automatically, where feasible.
         version: 3.6.2
+queries:
+  - exclude: java/useless-null-check
