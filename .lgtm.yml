@@ -1,0 +1,13 @@
+# LGTM Settings (https://lgtm.com/)
+# For reference, see https://lgtm.com/help/lgtm/lgtm.yml-configuration-file
+# or template at https://lgtm.com/static/downloads/lgtm.template.yml
+
+extraction:
+  java:
+    index:
+      # Specify the Java version required to build the project
+      java_version: 11
+      maven:
+        # Specify the required Maven version.
+        # Default: the Maven version is determined automatically, where feasible.
+        version: 3.6.2
