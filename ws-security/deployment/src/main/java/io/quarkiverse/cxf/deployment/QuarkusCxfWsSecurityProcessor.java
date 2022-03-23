@@ -275,15 +275,14 @@ public class QuarkusCxfWsSecurityProcessor {
     void buildMergedResources(BuildProducer<NativeImageResourceBuildItem> nativeResources,
             BuildProducer<GeneratedResourceBuildItem> generatedResources) {
 
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os));
-        try {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os))) {
             URL wss4jErrors = Thread.currentThread().getContextClassLoader()
                     .getResource("messages/wss4j_errors.properties");
             URL xmlsecurity = Thread.currentThread().getContextClassLoader()
                     .getResource("org/apache/xml/security/resource/xmlsecurity_en.properties");
-            try (InputStream openStream = wss4jErrors.openStream()) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(openStream));
+            try (InputStream openStream = wss4jErrors.openStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(openStream))) {
                 String line = reader.readLine();
                 while (line != null) {
                     out.write(line);
@@ -291,8 +290,8 @@ public class QuarkusCxfWsSecurityProcessor {
                     line = reader.readLine();
                 }
             }
-            try (InputStream openStream = xmlsecurity.openStream()) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(openStream));
+            try (InputStream openStream = xmlsecurity.openStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(openStream))) {
                 String line = reader.readLine();
                 while (line != null) {
                     out.write(line);
@@ -300,15 +299,17 @@ public class QuarkusCxfWsSecurityProcessor {
                     line = reader.readLine();
                 }
             }
+
+            if (os.size() > 0) {
+                generatedResources.produce(
+                        new GeneratedResourceBuildItem("org/apache/xml/security/resource/xmlsecurity.properties",
+                                os.toByteArray()));
+                nativeResources
+                        .produce(new NativeImageResourceBuildItem("org/apache/xml/security/resource/xmlsecurity.properties"));
+            }
+
         } catch (IOException e) {
             LOGGER.warn("cannot merge wss4j_errors and xmlsecurity properties");
-        }
-        if (os.size() > 0) {
-            generatedResources.produce(
-                    new GeneratedResourceBuildItem("org/apache/xml/security/resource/xmlsecurity.properties",
-                            os.toByteArray()));
-            nativeResources
-                    .produce(new NativeImageResourceBuildItem("org/apache/xml/security/resource/xmlsecurity.properties"));
         }
     }
 

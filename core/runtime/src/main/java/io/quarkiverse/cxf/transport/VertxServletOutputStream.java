@@ -137,8 +137,10 @@ public class VertxServletOutputStream extends ServletOutputStream {
                     if (overflow == null) {
                         overflow = new ByteArrayOutputStream();
                     }
-                    overflow.write(data.array(), data.arrayOffset() + data.readerIndex(),
-                            data.arrayOffset() + data.writerIndex());
+                    if (data != null) {
+                        overflow.write(data.array(), data.arrayOffset() + data.readerIndex(),
+                                data.arrayOffset() + data.writerIndex());
+                    }
                     if (last) {
                         closed = true;
                     }
