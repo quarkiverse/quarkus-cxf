@@ -2,7 +2,10 @@
 
 This extension enables you to develop web services that consume and produce SOAP payloads using the [Apache CXF](https://cxf.apache.org/) libraries.
 
-![Build](https://github.com/quarkiverse/quarkiverse-cxf/workflows/Build/badge.svg) ![Maven Central](https://img.shields.io/maven-central/v/io.quarkiverse.cxf/quarkus-cxf.svg?label=Maven%20Central) ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
+[![Maven Central](https://img.shields.io/maven-central/v/io.quarkiverse.cxf/quarkus-cxf?logo=apache-maven&style=for-the-badge)](https://search.maven.org/artifact/io.quarkiverse.cxf/quarkus-cxf)
+[![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/quarkiverse/quarkus-cxf?logo=lgtm&style=for-the-badge)](https://lgtm.com/projects/g/quarkiverse/quarkus-cxf/alerts/)
+[![LGTM Grade](https://img.shields.io/lgtm/grade/java/github/quarkiverse/quarkus-cxf?logo=lgtm&style=for-the-badge)](https://lgtm.com/projects/g/quarkiverse/quarkus-cxf/context:java)
+[![GitHub](https://img.shields.io/github/license/quarkiverse/quarkus-cxf?color=blue&style=for-the-badge)](https://github.com/quarkiverse/quarkus-cxf/blob/master/LICENSE)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
