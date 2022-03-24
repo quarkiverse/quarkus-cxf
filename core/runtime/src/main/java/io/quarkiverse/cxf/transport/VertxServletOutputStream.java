@@ -231,17 +231,15 @@ public class VertxServletOutputStream extends ServletOutputStream {
         if (closed) {
             throw new IOException("Stream is closed");
         }
-        try {
-            if (pooledBuffer != null) {
+        if (pooledBuffer != null) {
+            try {
                 writeBlocking(pooledBuffer, false);
                 pooledBuffer = null;
-            }
-        } catch (IOException | RuntimeException e) {
-            if (pooledBuffer != null) {
+            } catch (IOException | RuntimeException e) {
                 pooledBuffer.release();
                 pooledBuffer = null;
+                throw new IOException(e);
             }
-            throw new IOException(e);
         }
     }
 
