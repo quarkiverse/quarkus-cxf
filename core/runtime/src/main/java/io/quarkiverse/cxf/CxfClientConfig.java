@@ -21,13 +21,12 @@ public class CxfClientConfig {
     /**
      * The URL of the SOAP Binding, should be one of four values:
      *
-     * {@code "http://schemas.xmlsoap.org/wsdl/soap/http"} for SOAP11HTTP_BINDING
+     * * `+http://schemas.xmlsoap.org/wsdl/soap/http+` for SOAP11HTTP_BINDING
+     * * `+http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true+` for SOAP11HTTP_MTOM_BINDING
+     * * `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
+     * * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
      *
-     * {@code "http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true"} for SOAP11HTTP_MTOM_BINDING
-     *
-     * {@code "http://www.w3.org/2003/05/soap/bindings/HTTP/"} for SOAP12HTTP_BINDING
-     *
-     * {@code "http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true"} for SOAP12HTTP_MTOM_BINDING
+     * @asciidoclet
      */
     @ConfigItem
     public Optional<String> soapBinding;
