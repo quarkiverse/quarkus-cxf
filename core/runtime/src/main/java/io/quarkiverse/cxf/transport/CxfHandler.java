@@ -17,6 +17,7 @@ import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.jaxws.JAXWSMethodInvoker;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.ConduitInitiatorManager;
@@ -76,7 +77,7 @@ public class CxfHandler implements Handler<RoutingContext> {
             return;
         }
         this.bus = BusFactory.getDefaultBus();
-        BusFactory.setDefaultBus(bus);
+
         this.loader = this.bus.getExtension(ClassLoader.class);
 
         LOGGER.trace("load destination");
@@ -94,19 +95,29 @@ public class CxfHandler implements Handler<RoutingContext> {
         serviceListGeneratorServlet.init(new VertxServletConfig());
         servletPath = cxfServletInfos.getPath();
         contextPath = cxfServletInfos.getContextPath();
+
+        //suboptimal because done it in loop but not a real issue...
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
-            JaxWsServerFactoryBean factory = new JaxWsServerFactoryBean(
-                    new QuarkusJaxWsServiceFactoryBean(cxfServletInfos.getWrappersclasses()));
-            factory.setDestinationFactory(destinationFactory);
-            factory.setBus(bus);
-            //suboptimal because done it in loop but not a real issue...
+            QuarkusJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusJaxWsServiceFactoryBean(
+                    cxfServletInfos.getWrappersclasses());
+            JaxWsServerFactoryBean jaxWsServerFactoryBean = new JaxWsServerFactoryBean(jaxWsServiceFactoryBean);
+            jaxWsServerFactoryBean.setDestinationFactory(destinationFactory);
+            jaxWsServerFactoryBean.setBus(bus);
             Object instanceService = getInstance(servletInfo.getClassName());
+
+            if (servletInfo.isProvider()) {
+                jaxWsServiceFactoryBean.setServiceClass(instanceService.getClass());
+                jaxWsServiceFactoryBean.setBus(bus);
+                // Needed for any Provider interface implementations
+                jaxWsServiceFactoryBean.setInvoker(new JAXWSMethodInvoker(instanceService));
+            }
+
             if (instanceService != null) {
-                factory.setServiceClass(instanceService.getClass());
-                factory.setAddress(servletInfo.getRelativePath());
-                factory.setServiceBean(instanceService);
+                jaxWsServerFactoryBean.setServiceClass(instanceService.getClass());
+                jaxWsServerFactoryBean.setAddress(servletInfo.getRelativePath());
+                jaxWsServerFactoryBean.setServiceBean(instanceService);
                 if (servletInfo.getWsdlPath() != null) {
-                    factory.setWsdlLocation(servletInfo.getWsdlPath());
+                    jaxWsServerFactoryBean.setWsdlLocation(servletInfo.getWsdlPath());
                 }
                 if (!servletInfo.getFeatures().isEmpty()) {
                     List<Feature> features = new ArrayList<>();
@@ -114,7 +125,7 @@ public class CxfHandler implements Handler<RoutingContext> {
                         Feature instanceFeature = (Feature) getInstance(feature);
                         features.add(instanceFeature);
                     }
-                    factory.setFeatures(features);
+                    jaxWsServerFactoryBean.setFeatures(features);
                 }
                 if (!servletInfo.getHandlers().isEmpty()) {
                     List<javax.xml.ws.handler.Handler> handlers = new ArrayList<>();
@@ -122,16 +133,16 @@ public class CxfHandler implements Handler<RoutingContext> {
                         javax.xml.ws.handler.Handler instanceHandler = (javax.xml.ws.handler.Handler) getInstance(handler);
                         handlers.add(instanceHandler);
                     }
-                    factory.setHandlers(handlers);
+                    jaxWsServerFactoryBean.setHandlers(handlers);
                 }
                 if (servletInfo.getSOAPBinding() != null) {
-                    factory.setBindingId(servletInfo.getSOAPBinding());
+                    jaxWsServerFactoryBean.setBindingId(servletInfo.getSOAPBinding());
                 }
                 if (servletInfo.getEndpointUrl() != null) {
-                    factory.setPublishedEndpointUrl(servletInfo.getEndpointUrl());
+                    jaxWsServerFactoryBean.setPublishedEndpointUrl(servletInfo.getEndpointUrl());
                 }
 
-                Server server = factory.create();
+                Server server = jaxWsServerFactoryBean.create();
                 for (String className : servletInfo.getInFaultInterceptors()) {
                     Interceptor<? extends Message> interceptor = (Interceptor<? extends Message>) getInstance(className);
                     server.getEndpoint().getInFaultInterceptors().add(interceptor);
