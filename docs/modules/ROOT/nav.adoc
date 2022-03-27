@@ -14,6 +14,7 @@
 ** xref:client.adoc#code-config[Advanced Client Configurations]
 ** xref:client.adoc#pure-client[Pure Client Applications]
 * xref:interceptors-and-features.adoc[Interceptors and Features]
+* xref:providers.adoc[JAX-WS Providers]
 * xref:handlers.adoc[JAX-WS Handlers]
 * xref:message-logging.adoc[Message Logging]
 * xref:ws-security.adoc[WS-Security]
