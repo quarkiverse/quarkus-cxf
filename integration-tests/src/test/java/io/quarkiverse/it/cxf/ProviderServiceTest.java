@@ -1,34 +1,33 @@
 package io.quarkiverse.it.cxf;
 
-import javax.inject.Inject;
-
-import io.quarkiverse.it.cxf.provider.SourcePayloadProvider;
-import io.quarkiverse.it.cxf.provider.SOAPMessageProvider;
-import io.quarkiverse.it.cxf.provider.SourceMessageProvider;
-import io.quarkiverse.it.cxf.provider.StreamSourcePayloadProvider;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import io.quarkus.test.junit.QuarkusTest;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.not;
 
+import javax.inject.Inject;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import io.quarkiverse.it.cxf.provider.SOAPMessageProvider;
+import io.quarkiverse.it.cxf.provider.SourceMessageProvider;
+import io.quarkiverse.it.cxf.provider.SourcePayloadProvider;
+import io.quarkiverse.it.cxf.provider.StreamSourcePayloadProvider;
+import io.quarkus.test.junit.QuarkusTest;
+
 @QuarkusTest
 public class ProviderServiceTest {
 
-    private static final String SOAP_PAYLOAD_XML =
-                    "           <sayHello xmlns=\"http://provider.cxf.it.quarkiverse.io/\">\n" +
-                    "               <text>Hello</text>\n" +
-                    "           </sayHello>\n";
+    private static final String SOAP_PAYLOAD_XML = "           <sayHello xmlns=\"http://provider.cxf.it.quarkiverse.io/\">\n" +
+            "               <text>Hello</text>\n" +
+            "           </sayHello>\n";
 
-    private static final String SOAP_ENVELOPE_XML =
-            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:prov=\"http://provider.cxf.it.quarkiverse.io/\">\n" +
+    private static final String SOAP_ENVELOPE_XML = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:prov=\"http://provider.cxf.it.quarkiverse.io/\">\n"
+            +
             "   <soapenv:Header/>\n" +
             "   <soapenv:Body>\n" +
             "      <prov:invoke>\n" +
-                    SOAP_PAYLOAD_XML +
+            SOAP_PAYLOAD_XML +
             "      </prov:invoke>\n" +
             "   </soapenv:Body>\n" +
             "</soapenv:Envelope>";

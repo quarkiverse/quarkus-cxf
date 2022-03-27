@@ -1,6 +1,6 @@
 package io.quarkiverse.it.cxf.provider;
 
-import org.apache.cxf.staxutils.StaxUtils;
+import java.io.StringReader;
 
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.BindingType;
@@ -8,7 +8,8 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
-import java.io.StringReader;
+
+import org.apache.cxf.staxutils.StaxUtils;
 
 @WebServiceProvider
 @ServiceMode(value = Service.Mode.PAYLOAD)

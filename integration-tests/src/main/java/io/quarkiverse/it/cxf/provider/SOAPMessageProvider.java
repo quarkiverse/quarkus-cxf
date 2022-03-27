@@ -1,6 +1,6 @@
 package io.quarkiverse.it.cxf.provider;
 
-import org.apache.cxf.staxutils.StaxUtils;
+import java.io.StringReader;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
@@ -12,7 +12,8 @@ import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
-import java.io.StringReader;
+
+import org.apache.cxf.staxutils.StaxUtils;
 
 @WebServiceProvider
 @ServiceMode(value = Service.Mode.MESSAGE)
