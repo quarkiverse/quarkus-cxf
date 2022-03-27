@@ -263,7 +263,7 @@ class QuarkusCxfProcessor {
             }
 
             ClassInfo wsClassInfo = annotation.target().asClass();
-            Boolean isProvider = wsClassInfo.interfaceNames().contains(WEBSERVICE_PROVIDER_INTERFACE);
+            boolean isProvider = wsClassInfo.interfaceNames().contains(WEBSERVICE_PROVIDER_INTERFACE);
 
             String sei = wsClassInfo.name().toString();
 
@@ -291,7 +291,7 @@ class QuarkusCxfProcessor {
                 implementors.add(wsClassInfo);
             }
 
-            if (implementors != null && !implementors.isEmpty()) {
+            if (!implementors.isEmpty()) {
                 factoryBean = factoryBean == null ? createQuarkusJaxWsServiceFactoryBean(sei, bus) : factoryBean;
 
                 for (ClassInfo wsClass : implementors) {
