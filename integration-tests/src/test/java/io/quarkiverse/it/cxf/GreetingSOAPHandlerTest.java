@@ -24,7 +24,9 @@ public class GreetingSOAPHandlerTest {
         String cnt = "";
 
         given()
-                .header("Content-Type", "text/xml").and().body(xml)
+                .header("Content-Type", "text/xml")
+                .and()
+                .body(xml)
                 .when().post("/soap/greeting-soap-handler")
                 .then()
                 .statusCode(200)

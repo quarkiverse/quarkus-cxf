@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -121,6 +122,8 @@ class QuarkusCxfProcessor {
     private static final DotName CXFCLIENT_ANNOTATION = DotName.createSimple(CXFClient.class.getName());
     private static final DotName INJECT_INSTANCE = DotName.createSimple(Instance.class.getName());
     private static final DotName WEBSERVICE_ANNOTATION = DotName.createSimple("javax.jws.WebService");
+    private static final DotName WEBSERVICE_PROVIDER_ANNOTATION = DotName.createSimple("javax.xml.ws.WebServiceProvider");
+    private static final DotName WEBSERVICE_PROVIDER_INTERFACE = DotName.createSimple("javax.xml.ws.Provider");
     private static final DotName WEBSERVICE_CLIENT = DotName.createSimple("javax.xml.ws.WebServiceClient");
     private static final DotName REQUEST_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.RequestWrapper");
     private static final DotName RESPONSE_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.ResponseWrapper");
@@ -251,12 +254,16 @@ class QuarkusCxfProcessor {
 
         Set<String> clientSEIsInUse = findClientSEIsInUse(index);
 
-        for (AnnotationInstance annotation : index.getAnnotations(WEBSERVICE_ANNOTATION)) {
+        Collection<AnnotationInstance> webserviceAnnotations = new ArrayList<>(index.getAnnotations(WEBSERVICE_ANNOTATION));
+        webserviceAnnotations.addAll(index.getAnnotations(WEBSERVICE_PROVIDER_ANNOTATION));
+
+        for (AnnotationInstance annotation : webserviceAnnotations) {
             if (annotation.target().kind() != AnnotationTarget.Kind.CLASS) {
                 continue;
             }
 
             ClassInfo wsClassInfo = annotation.target().asClass();
+            boolean isProvider = wsClassInfo.interfaceNames().contains(WEBSERVICE_PROVIDER_INTERFACE);
 
             String sei = wsClassInfo.name().toString();
 
@@ -265,7 +272,7 @@ class QuarkusCxfProcessor {
             unremovableBeans.produce(new UnremovableBeanBuildItem(
                     new UnremovableBeanBuildItem.BeanClassNameExclusion(sei)));
 
-            if (!Modifier.isInterface(wsClassInfo.flags())) {
+            if (!isProvider && !Modifier.isInterface(wsClassInfo.flags())) {
                 continue;
             }
 
@@ -280,7 +287,11 @@ class QuarkusCxfProcessor {
 
             Collection<ClassInfo> implementors = index.getAllKnownImplementors(DotName.createSimple(sei));
 
-            if (implementors != null && !implementors.isEmpty()) {
+            if (isProvider) {
+                implementors.add(wsClassInfo);
+            }
+
+            if (!implementors.isEmpty()) {
                 factoryBean = factoryBean == null ? createQuarkusJaxWsServiceFactoryBean(sei, bus) : factoryBean;
 
                 for (ClassInfo wsClass : implementors) {
@@ -294,8 +305,9 @@ class QuarkusCxfProcessor {
                     String soapBinding = Optional.ofNullable(wsClass.classAnnotation(BINDING_TYPE_ANNOTATION))
                             .map(bindingType -> bindingType.value().asString())
                             .orElse(soapBindingDefault);
+
                     cxfWebServices.produce(new CxfWebServiceBuildItem(cxfBuildTimeConfig.path, sei, soapBinding,
-                            wsNamespace, wsName, factoryBean.getWrappersClassNames(), impl));
+                            wsNamespace, wsName, factoryBean.getWrappersClassNames(), impl, isProvider));
                 }
             }
 
@@ -411,7 +423,7 @@ class QuarkusCxfProcessor {
             BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
         cxfItems
                 .stream()
-                .filter(CxfWebServiceBuildItem::IsClient)
+                .filter(CxfWebServiceBuildItem::isClient)
                 .map(CxfWebServiceBuildItem::getSei)
                 .forEach(sei -> {
                     generateCxfClientProducer(sei, generatedBeans, unremovableBeans);
@@ -433,12 +445,12 @@ class QuarkusCxfProcessor {
         if (!cxfWebServices.isEmpty()) {
             RuntimeValue<CXFServletInfos> infos = recorder.createInfos();
             for (CxfWebServiceBuildItem cxfWebService : cxfWebServices) {
-                if (cxfWebService.IsClient()) {
+                if (cxfWebService.isClient()) {
                     continue;
                 }
                 recorder.registerCXFServlet(infos, cxfWebService.getPath(), cxfWebService.getSei(),
                         cxfConfig, cxfWebService.getSoapBinding(), cxfWebService.getClassNames(),
-                        cxfWebService.getImplementor());
+                        cxfWebService.getImplementor(), cxfWebService.isProvider());
                 if (cxfWebService.getImplementor() != null && !cxfWebService.getImplementor().isEmpty()) {
                     startRoute = true;
                 }
@@ -473,7 +485,7 @@ class QuarkusCxfProcessor {
         // producer bean producing CXF proxy clients.
         cxfWebServices
                 .stream()
-                .filter(CxfWebServiceBuildItem::IsClient)
+                .filter(CxfWebServiceBuildItem::isClient)
                 .map(QuarkusCxfProcessor::clientData)
                 .map(cxf -> {
                     LOGGER.debugf("producing dedicated CXFClientInfo bean named '%s' for SEI %s", cxf.getSei(), cxf.getSei());

@@ -5,7 +5,7 @@ import java.util.List;
 import io.quarkus.builder.item.MultiBuildItem;
 
 /**
- * CxfWebServiceBuildItem is instanciate for each SEI and each implementor
+ * CxfWebServiceBuildItem is instantiated for each SEI and each implementor
  * it mean that if an interface have 2 implementors
  * it generate 3 items (1 for client and 2 for implementors)
  */
@@ -17,10 +17,11 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
     private final List<String> classNames;
     private final String implementor;
     private final String path;
-    private final boolean isClient;
+    private final Boolean isClient;
+    private final Boolean isProvider;
 
     public CxfWebServiceBuildItem(String path, String sei, String soapBinding, String wsNamespace,
-            String wsName, List<String> classNames, String implementor) {
+            String wsName, List<String> classNames, String implementor, Boolean isProvider) {
         this.path = path;
         this.sei = sei;
         this.soapBinding = soapBinding;
@@ -28,6 +29,7 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
         this.wsName = wsName;
         this.classNames = classNames;
         this.implementor = implementor;
+        this.isProvider = isProvider;
         this.isClient = false;
     }
 
@@ -39,6 +41,7 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
         this.wsNamespace = wsNamespace;
         this.wsName = wsName;
         this.classNames = classNames;
+        this.isProvider = false;
         this.isClient = true;
         this.implementor = "";
     }
@@ -71,7 +74,11 @@ public final class CxfWebServiceBuildItem extends MultiBuildItem {
         return implementor;
     }
 
-    public boolean IsClient() {
+    public Boolean isClient() {
         return isClient;
+    }
+
+    public Boolean isProvider() {
+        return isProvider;
     }
 }

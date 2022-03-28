@@ -1,0 +1,45 @@
+[[providers]]
+= JAX-WS Providers
+
+https://cxf.apache.org/docs/provider-services.html[JAX-WS Providers] are fully supported, and can be implemented as shown below.
+
+Given the following sample `Provider` implementation:
+
+[source,java]
+----
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.BindingType;
+import javax.xml.ws.Provider;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceProvider;
+import java.io.StringReader;
+
+@WebServiceProvider
+@ServiceMode(value = Service.Mode.PAYLOAD)
+public class StreamSourcePayloadProvider implements Provider<StreamSource> {
+
+    public StreamSourcePayloadProvider() {
+    }
+
+    public StreamSource invoke(StreamSource request) {
+        String payload = StaxUtils.toString(request);
+
+        // Do some interesting things ...
+
+        StreamSource response = new StreamSource(new StringReader(payload));
+        return response;
+    }
+}
+
+----
+
+The `application.properties` can be configured as shown below.
+
+[source,properties]
+----
+# A web service endpoint with the Provider implementation class
+quarkus.cxf.endpoint."/stream-source".implementor=com.example.StreamSourcePayloadProvider
+----
+
+Please note that `Provider` classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.
