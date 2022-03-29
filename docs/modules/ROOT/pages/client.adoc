@@ -39,7 +39,7 @@ Various SOAP client properties can be configured. To do so, prefix `quarkus.cxf.
 * `in-fault-interceptors`
 * `in-interceptors`
 * `out-fault-interceptors`
-* `out-fnterceptors`
+* `out-interceptors`
 * `password`
 * `service-interface`
 * `username`
