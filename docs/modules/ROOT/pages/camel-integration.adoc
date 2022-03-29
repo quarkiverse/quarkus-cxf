@@ -1,0 +1,141 @@
+[[camel-integration]]
+= Camel Quarkus Integration
+
+It is fairly trivial to integrate this extension with https://camel.apache.org/camel-quarkus/2.7.x/index.html[Camel Quarkus] via https://camel.apache.org/camel-quarkus/2.7.x/user-guide/cdi.html[CDI integration].
+
+There are no specific dependencies required for this integration other than the Camel Quarkus dependencies you will already have for your project.  An example is provided below.
+
+[source,xml]
+----
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-log</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel.quarkus</groupId>
+        <artifactId>camel-quarkus-timer</artifactId>
+    </dependency>
+----
+
+[[web-service-integration]]
+== Web Service Integration
+
+To invoke a Camel route from your `@WebService` or `@WebServiceProvider` class, you can implement it as shown in the example below.
+
+Given a `GreetingRoute` defined as:
+
+[source,java]
+----
+import org.apache.camel.builder.RouteBuilder;
+
+import javax.enterprise.context.ApplicationScoped;
+
+/**
+ * A {@link RouteBuilder} demonstrating the use of CDI (Contexts and Dependency Injection).
+ * <p>
+ * Note that for the {@code @Inject} and {@code @ConfigProperty} annotations to work, this class has to be annotated
+ * with {@code @ApplicationScoped}.
+ */
+@ApplicationScoped
+public class GreetingRoute extends RouteBuilder {
+
+    @Override
+    public void configure() throws Exception {
+        fromF("direct:greeting")
+                .setBody(exchange -> "Hello from Camel, " + exchange.getMessage().getBody(String.class))
+                .to("log:greeting");
+    }
+}
+
+----
+
+Your web service can call the `GreetingRoute` as shown below.
+
+[source,java]
+----
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.xml.ws.BindingType;
+
+@WebService(endpointInterface = "org.acme.cdi.greeting.GreetingWebService", serviceName = "GreetingWebService")
+@BindingType(javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
+public class GreetingWebServiceImpl implements GreetingWebService {
+
+    /**
+     * Injects the Camel ProducerTemplate
+     */
+    @Produce("direct:greeting")
+    ProducerTemplate producerTemplate;
+
+    @Override
+    public String ping(@WebParam(name = "text") String text) throws GreetingException {
+        /**
+         * Invokes the Camel "direct:greeting" endpoint
+         */
+        String response = producerTemplate.requestBody((Object) text, String.class);
+        return response;
+    }
+
+}
+----
+
+There are various other ways to inject and invoke a Camel route endpoint from your web service, that are covered at https://camel.apache.org/camel-quarkus/2.7.x/user-guide/cdi.html#_endpointinject_and_produce[here].
+
+[[client-integration]]
+== Client Integration
+
+To call a `@CXFClient` SOAP web service from your Camel route, you can implement it as shown in the example below.
+
+[source,java]
+----
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import io.quarkiverse.cxf.annotation.CXFClient;
+import org.apache.camel.builder.RouteBuilder;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.tempuri.CalculatorSoap;
+
+/**
+ * A {@link RouteBuilder} demonstrating the use of CDI (Contexts and Dependency Injection).
+ * <p>
+ * Note that for the {@code @Inject} and {@code @ConfigProperty} annotations to work, this class has to be annotated
+ * with {@code @ApplicationScoped}.
+ */
+@ApplicationScoped
+public class TimerRoute extends RouteBuilder {
+
+    /**
+     * {@code timer.period} is defined in {@code src/main/resources/application.properties}
+     */
+    @ConfigProperty(name = "timer.period", defaultValue = "1000")
+    String period;
+
+    /**
+     * An injected bean
+     */
+    @Inject
+    Counter counter;
+
+    /**
+    * An injected web service client
+    */
+    @Inject
+    @CXFClient
+    CalculatorSoap calculatorSoap;
+
+    @Override
+    public void configure() throws Exception {
+        fromF("timer:foo?period=%s", period)
+                .setProperty("counter", () -> counter.increment())
+                .setBody(exchange ->
+                        calculatorSoap.multiply(exchange.getProperty("counter", Integer.class),8))
+                .to("log:example");
+    }
+}
+----
+
+A similar injection pattern can be used in your Camel `Processor` https://camel.apache.org/manual/processor.html[implementation classes].
