@@ -24,10 +24,10 @@ The `application.properties` can be configured as shown below.
 [source,properties]
 ----
 # A web service endpoint with multiple Handler classes
-quarkus.cxf.endpoint."/greeting-service".handlers=com.example.MySOAPHandler,com.example.AnotherSOAPHandler
+quarkus.cxf.endpoint."/greeting-service".handlers=org.acme.MySOAPHandler,org.acme.AnotherSOAPHandler
 
 # A web service client with a single Handler
-quarkus.cxf.client."/greeting-client".in-interceptors=com.example.MySOAPHandler
+quarkus.cxf.client."/greeting-client".in-interceptors=org.acme.MySOAPHandler
 ----
 
 Please note that `Handler` classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.

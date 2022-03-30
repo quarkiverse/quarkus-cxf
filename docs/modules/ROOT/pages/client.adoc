@@ -5,11 +5,11 @@ Quarkus-CXF supports SOAP clients. Assuming a given SEI like `FruitWebService`, 
 
 [source,java]
 ----
-import com.example.FruitWebService;                   // SEI
+import org.acme.FruitWebService;                   // SEI
 import javax.enterprise.context.ApplicationScoped;
 import io.quarkiverse.cxf.annotation.CXFClient;
 
-@Application  // or any other CDI scope
+@ApplicationScoped  // or any other CDI scope
 public class MySoapClient {
 
     @Inject @CXFClient
@@ -26,7 +26,7 @@ Without any further configuration Quarkus-CXF assumes a service to be published 
 * config property `quarkus.cxf.path` (if present); and the
 * SEI’s lowercased class name
 
-Given `quarkus.cxf.path=/ws`, Quarkus-CXF would use http://localhost:8080/ws/com.example.fruitwebservice as `FruitWebService` 's endpoint URL and otherwise just  http://localhost:8080/ws/com.example.fruitwebservice.
+Given `quarkus.cxf.path=/ws`, Quarkus-CXF would use http://localhost:8080/ws/org.acme.fruitwebservice as `FruitWebService` 's endpoint URL and otherwise just  http://localhost:8080/ws/org.acme.fruitwebservice.
 
 
 Various SOAP client properties can be configured. To do so, prefix `quarkus.cxf.client.{name}` creates a logical client configuration unit. The name of such a unit, here denoted as `{name}`, can be arbitrarily choosen as long as not (whitespace) empty. The following properties are available on such a configuration unit:
@@ -48,7 +48,7 @@ Various SOAP client properties can be configured. To do so, prefix `quarkus.cxf.
 A typical example configuration example is given below. Here unit name `my-fruitservice-client` is used. The goal of this configuration is the change the service endpoint address to http://localhost:8080/fruit:
 [source,properties]
 ----
-quarkus.cxf.client."my-fruitservice-client".service-interface=com.example.FruitWebService
+quarkus.cxf.client."my-fruitservice-client".service-interface=org.acme.FruitWebService
 quarkus.cxf.client."my-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit
 ----
 
@@ -67,7 +67,7 @@ Default configurations must be unique per SEI while it is otherwise perfectly va
 
 [source,properties]
 ----
-quarkus.cxf.client."my-fruitservice-client".service-interface=com.example.FruitWebService
+quarkus.cxf.client."my-fruitservice-client".service-interface=org.acme.FruitWebService
 quarkus.cxf.client."my-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit
 
 quarkus.cxf.client."my-featured-fruitservice-client".client-endpoint-url=http://localhost:8080/fruit
@@ -79,11 +79,11 @@ Here a second configuration named `my-featured-fruitservice-client` has been def
 be useful for tracing or debugging. An example for the purpose of illustration:
 [source,java]
 ----
-import com.example.FruitWebService;
+import org.acme.FruitWebService;
 import javax.enterprise.context.ApplicationScoped;
 import io.quarkiverse.cxf.annotation.CXFClient;
 
-@Application    // or any other CDI scope
+@ApplicationScoped    // or any other CDI scope
 public class MySoapClient {
 
     private boolean logging = ..  // depending on context, logging is on or off
