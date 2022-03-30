@@ -10,7 +10,7 @@
 
     <artifactId>quarkus-cxf</artifactId>
     <name>Quarkus CXF Core</name>
-    <description>Enables you to develop web services using Apache CXF</description>
+    <description>Consume and produce SOAP web services with Apache CXF</description>
     
     <dependencies>
         <dependency>
