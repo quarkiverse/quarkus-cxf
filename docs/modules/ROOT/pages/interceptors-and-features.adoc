@@ -10,10 +10,10 @@ Annotations can be used on either the service interface or implementor classes.
 [source,java]
 ----
 @org.apache.cxf.feature.Features (features = {"org.apache.cxf.feature.LoggingFeature"})
-@org.apache.cxf.interceptor.InInterceptors (interceptors = {"com.example.Test1Interceptor" })
-@org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"com.example.Test2Interceptor" })
-@org.apache.cxf.interceptor.OutInterceptors (interceptors = {"com.example.Test1Interceptor" })
-@org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"com.example.Test2Interceptor","com.example.Test3Intercetpor" })
+@org.apache.cxf.interceptor.InInterceptors (interceptors = {"org.acme.Test1Interceptor" })
+@org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"org.acme.Test2Interceptor" })
+@org.apache.cxf.interceptor.OutInterceptors (interceptors = {"org.acme.Test1Interceptor" })
+@org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"org.acme.Test2Interceptor","org.acme.Test3Intercetpor" })
 @WebService(endpointInterface = "org.apache.cxf.javascript.fortest.SimpleDocLitBare",
             targetNamespace = "uri:org.apache.cxf.javascript.fortest")
 public class SayHiImplementation implements SayHi {
@@ -31,9 +31,9 @@ Both feature and interceptor classes will be attempted to be loaded via CDI firs
 [source,properties]
 ----
 quarkus.cxf.endpoint."/greeting".features=org.apache.cxf.feature.LoggingFeature
-quarkus.cxf.endpoint."/greeting".in-interceptors=com.example.MyInterceptor
-quarkus.cxf.endpoint."/greeting".out-interceptors=com.example.MyInterceptor
-quarkus.cxf.endpoint."/greeting".in-fault-interceptors=com.example.MyInterceptor
-quarkus.cxf.endpoint."/greeting".out-fault-interceptors=com.example.MyInterceptor
+quarkus.cxf.endpoint."/greeting".in-interceptors=org.acme.MyInterceptor
+quarkus.cxf.endpoint."/greeting".out-interceptors=org.acme.MyInterceptor
+quarkus.cxf.endpoint."/greeting".in-fault-interceptors=org.acme.MyInterceptor
+quarkus.cxf.endpoint."/greeting".out-fault-interceptors=org.acme.MyInterceptor
 ----
 
