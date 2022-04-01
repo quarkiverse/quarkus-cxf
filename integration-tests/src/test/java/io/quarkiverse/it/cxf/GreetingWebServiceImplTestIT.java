@@ -5,9 +5,9 @@ import static org.hamcrest.CoreMatchers.containsString;
 
 import org.junit.jupiter.api.Test;
 
-import io.quarkus.test.junit.NativeImageTest;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 
-@NativeImageTest
+@QuarkusIntegrationTest
 class GreetingWebServiceImplTestIT {
     @Test
     void testSoapEndpoint() {
