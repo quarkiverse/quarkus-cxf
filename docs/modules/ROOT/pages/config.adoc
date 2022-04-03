@@ -8,9 +8,9 @@ After configuring the `Quarkus BOM`:
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>io.quarkus</groupId>
+            <groupId>io.quarkus.platform</groupId>
             <artifactId>quarkus-bom</artifactId>
-            <version>${insert.newest.quarkus.version.here}</version>
+            <version>${latest.quarkus.version}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
