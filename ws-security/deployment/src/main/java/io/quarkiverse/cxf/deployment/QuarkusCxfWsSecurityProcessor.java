@@ -1,13 +1,5 @@
 package io.quarkiverse.cxf.deployment;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,9 +7,9 @@ import org.jboss.logging.Logger;
 
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.builditem.GeneratedResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 
@@ -272,45 +264,11 @@ public class QuarkusCxfWsSecurityProcessor {
     }
 
     @BuildStep
-    void buildMergedResources(BuildProducer<NativeImageResourceBuildItem> nativeResources,
-            BuildProducer<GeneratedResourceBuildItem> generatedResources) {
-
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(os))) {
-            URL wss4jErrors = Thread.currentThread().getContextClassLoader()
-                    .getResource("messages/wss4j_errors.properties");
-            URL xmlsecurity = Thread.currentThread().getContextClassLoader()
-                    .getResource("org/apache/xml/security/resource/xmlsecurity_en.properties");
-            try (InputStream openStream = wss4jErrors.openStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(openStream))) {
-                String line = reader.readLine();
-                while (line != null) {
-                    out.write(line);
-                    out.newLine();
-                    line = reader.readLine();
-                }
-            }
-            try (InputStream openStream = xmlsecurity.openStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(openStream))) {
-                String line = reader.readLine();
-                while (line != null) {
-                    out.write(line);
-                    out.newLine();
-                    line = reader.readLine();
-                }
-            }
-
-            if (os.size() > 0) {
-                generatedResources.produce(
-                        new GeneratedResourceBuildItem("org/apache/xml/security/resource/xmlsecurity.properties",
-                                os.toByteArray()));
-                nativeResources
-                        .produce(new NativeImageResourceBuildItem("org/apache/xml/security/resource/xmlsecurity.properties"));
-            }
-
-        } catch (IOException e) {
-            LOGGER.warn("cannot merge wss4j_errors and xmlsecurity properties");
-        }
+    void xmlSecurityResourceBundle(BuildProducer<NativeImageResourceBundleBuildItem> resourceBundle) {
+        resourceBundle.produce(
+                new NativeImageResourceBundleBuildItem("org.apache.xml.security.resource.xmlsecurity"));
+        resourceBundle.produce(
+                new NativeImageResourceBundleBuildItem("messages.wss4j_errors"));
     }
 
     @BuildStep
@@ -319,8 +277,6 @@ public class QuarkusCxfWsSecurityProcessor {
                 new RuntimeInitializedClassBuildItem("com.sun.xml.bind.v2.runtime.output.XMLStreamWriterOutput"),
                 new RuntimeInitializedClassBuildItem("org.apache.wss4j.common.saml.builder.SAML1ComponentBuilder"),
                 new RuntimeInitializedClassBuildItem("org.apache.wss4j.common.saml.builder.SAML2ComponentBuilder"),
-                new RuntimeInitializedClassBuildItem("org.apache.wss4j.stax.setup.WSSec"),
-                new RuntimeInitializedClassBuildItem("org.apache.xml.security.stax.ext.XMLSecurityConstants"),
                 new RuntimeInitializedClassBuildItem("org.apache.xml.security.stax.impl.InboundSecurityContextImpl"),
                 new RuntimeInitializedClassBuildItem(
                         "org.apache.xml.security.stax.impl.processor.input.XMLEventReaderInputProcessor"),
