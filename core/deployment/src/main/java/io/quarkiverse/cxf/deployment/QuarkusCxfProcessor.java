@@ -285,7 +285,7 @@ class QuarkusCxfProcessor {
 
             final String soapBindingDefault = SOAPBinding.SOAP11HTTP_BINDING;
 
-            Collection<ClassInfo> implementors = index.getAllKnownImplementors(DotName.createSimple(sei));
+            Collection<ClassInfo> implementors = new ArrayList<>(index.getAllKnownImplementors(DotName.createSimple(sei)));
 
             if (isProvider) {
                 implementors.add(wsClassInfo);
