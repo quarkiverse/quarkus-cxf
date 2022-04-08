@@ -70,7 +70,7 @@ public abstract class CxfClientProducer {
         try {
             seiClass = Class.forName(cxfClientInfo.getSei(), false, Thread.currentThread().getContextClassLoader());
         } catch (ClassNotFoundException e) {
-            LOGGER.error("either webservice interface (client) or implementation (server) is mandatory");
+            LOGGER.errorf("WebService interface (client) class %s not found", cxfClientInfo.getSei());
             return null;
         }
         QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean(cxfClientInfo.getClassNames());
