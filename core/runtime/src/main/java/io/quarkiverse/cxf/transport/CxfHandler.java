@@ -105,14 +105,12 @@ public class CxfHandler implements Handler<RoutingContext> {
             jaxWsServerFactoryBean.setBus(bus);
             Object instanceService = getInstance(servletInfo.getClassName());
 
-            if (instanceService != null && servletInfo.isProvider()) {
-                jaxWsServiceFactoryBean.setServiceClass(instanceService.getClass());
-                jaxWsServiceFactoryBean.setBus(bus);
-                // Needed for any Provider interface implementations
-                jaxWsServiceFactoryBean.setInvoker(new JAXWSMethodInvoker(instanceService));
-            }
-
             if (instanceService != null) {
+                if (servletInfo.isProvider()) {
+                    // Needed for any Provider interface implementations
+                    jaxWsServiceFactoryBean.setInvoker(new JAXWSMethodInvoker(instanceService));
+                }
+
                 jaxWsServerFactoryBean.setServiceClass(instanceService.getClass());
                 jaxWsServerFactoryBean.setAddress(servletInfo.getRelativePath());
                 jaxWsServerFactoryBean.setServiceBean(instanceService);
