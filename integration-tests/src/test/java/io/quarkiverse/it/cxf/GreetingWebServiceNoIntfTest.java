@@ -13,26 +13,26 @@ import org.junit.jupiter.api.Test;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-class GreetingWebServiceImplTest {
+class GreetingWebServiceNoIntfTest {
 
     @Inject
-    public GreetingWebService greetingWS;
+    public GreetingWebServiceNoIntf greetingWebServiceNoIntf;
 
     @Test
     void testIsNotProxy() {
-        Assertions.assertFalse(Proxy.isProxyClass(greetingWS.getClass()));
+        Assertions.assertFalse(Proxy.isProxyClass(greetingWebServiceNoIntf.getClass()));
     }
 
     @Test
     void testCxfClient() {
-        Assertions.assertEquals("Hello bar", greetingWS.reply("bar"));
+        Assertions.assertEquals("Hello bar", greetingWebServiceNoIntf.reply("bar"));
     }
 
     @Test
     void testPing() {
         String ret = null;
         try {
-            ret = greetingWS.ping("bar");
+            ret = greetingWebServiceNoIntf.ping("bar");
         } catch (GreetingException e) {
         }
         Assertions.assertEquals("Hello bar", ret);
@@ -52,7 +52,7 @@ class GreetingWebServiceImplTest {
 
         given()
                 .header("Content-Type", "text/xml").and().body(xml)
-                .when().post("/soap/greeting")
+                .when().post("/soap/greeting-no-intf")
                 .then()
                 .statusCode(200)
                 .body(containsString("Hello foo"));
@@ -61,18 +61,10 @@ class GreetingWebServiceImplTest {
     @Test
     void testSoap12Binding() {
         given()
-                .when().get("/soap/greeting?wsdl")
+                .when().get("/soap/greeting-no-intf?wsdl")
                 .then()
                 .statusCode(200)
                 .body(containsString("http://schemas.xmlsoap.org/wsdl/soap12/"));
     }
 
-    @Test
-    void testRestCxfClient() {
-        given()
-                .when().get("/rest")
-                .then()
-                .statusCode(200)
-                .body(containsString("Hello foo"));
-    }
 }
