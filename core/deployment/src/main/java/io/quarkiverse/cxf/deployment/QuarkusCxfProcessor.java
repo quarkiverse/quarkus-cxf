@@ -264,6 +264,10 @@ class QuarkusCxfProcessor {
 
             ClassInfo wsClassInfo = annotation.target().asClass();
             boolean isProvider = wsClassInfo.interfaceNames().contains(WEBSERVICE_PROVIDER_INTERFACE);
+            boolean isWebService = wsClassInfo.annotations().containsKey(WEBSERVICE_ANNOTATION);
+            boolean isInterface = Modifier.isInterface(wsClassInfo.flags());
+            boolean isImplementingAnInterface = !wsClassInfo.interfaceTypes().isEmpty();
+            boolean isWebServiceWithoutInterface = isWebService && !isInterface && !isImplementingAnInterface;
 
             String sei = wsClassInfo.name().toString();
 
@@ -272,7 +276,7 @@ class QuarkusCxfProcessor {
             unremovableBeans.produce(new UnremovableBeanBuildItem(
                     new UnremovableBeanBuildItem.BeanClassNameExclusion(sei)));
 
-            if (!isProvider && !Modifier.isInterface(wsClassInfo.flags())) {
+            if (!isProvider && !isInterface && !isWebServiceWithoutInterface) {
                 continue;
             }
 
@@ -287,7 +291,7 @@ class QuarkusCxfProcessor {
 
             Collection<ClassInfo> implementors = new ArrayList<>(index.getAllKnownImplementors(DotName.createSimple(sei)));
 
-            if (isProvider) {
+            if (isProvider || isWebServiceWithoutInterface) {
                 implementors.add(wsClassInfo);
             }
 
