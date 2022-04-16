@@ -100,15 +100,15 @@ Then, create the `org.acme.cxf.FruitWebServiceImpl` class as follows:
 package org.acme.cxf;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.HashSet;
 
 import javax.jws.WebService;
 
 @WebService(endpointInterface = "org.acme.cxf.FruitWebService")
 public class FruitWebServiceImpl implements FruitWebService {
 
-    private Set<Fruit> fruits = Collections.newSetFromMap(Collections.synchronizedMap(new LinkedHashMap<>()));
+    private Set<Fruit> fruits = Collections.synchronizedSet(new HashSet<>());
 
     public FruitWebServiceImpl() {
         fruits.add(new Fruit("Apple", "Winter fruit"));
