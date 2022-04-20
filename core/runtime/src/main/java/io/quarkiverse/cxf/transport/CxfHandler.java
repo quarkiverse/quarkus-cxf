@@ -44,7 +44,6 @@ import io.vertx.ext.web.RoutingContext;
 
 public class CxfHandler implements Handler<RoutingContext> {
     private static final Logger LOGGER = Logger.getLogger(CxfHandler.class);
-    private ServiceListGeneratorServlet serviceListGeneratorServlet;
     private Bus bus;
     private ClassLoader loader;
     private DestinationRegistry destinationRegistry;
@@ -73,7 +72,7 @@ public class CxfHandler implements Handler<RoutingContext> {
                 : null;
         this.currentVertxRequest = CDI.current().select(CurrentVertxRequest.class).get();
         if (cxfServletInfos == null || cxfServletInfos.getInfos() == null || cxfServletInfos.getInfos().isEmpty()) {
-            LOGGER.warn("no info transmit to servlet");
+            LOGGER.warn("no info transmitted to servlet");
             return;
         }
         this.bus = BusFactory.getDefaultBus();
@@ -88,11 +87,10 @@ public class CxfHandler implements Handler<RoutingContext> {
         ConduitInitiatorManager extension = bus.getExtension(ConduitInitiatorManager.class);
         extension.registerConduitInitiator("http://cxf.apache.org/transports/quarkus", destinationFactory);
 
-        serviceListGeneratorServlet = new ServiceListGeneratorServlet(destinationRegistry, bus);
+        ServiceListGeneratorServlet serviceListGeneratorServlet = new ServiceListGeneratorServlet(destinationRegistry, bus);
         VertxServletConfig servletConfig = new VertxServletConfig();
         serviceListGeneratorServlet.init(servletConfig);
         this.controller = new ServletController(destinationRegistry, servletConfig, serviceListGeneratorServlet);
-        serviceListGeneratorServlet.init(new VertxServletConfig());
         servletPath = cxfServletInfos.getPath();
         contextPath = cxfServletInfos.getContextPath();
 

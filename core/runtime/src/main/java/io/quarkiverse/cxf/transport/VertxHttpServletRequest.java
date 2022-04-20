@@ -46,10 +46,10 @@ import io.vertx.ext.web.RoutingContext;
 
 public class VertxHttpServletRequest implements HttpServletRequest {
     private static final Logger LOG = Logger.getLogger(VertxHttpServletRequest.class);
-    protected final RoutingContext context;
+    private final RoutingContext context;
     private final VertxInputStream in;
     private final HttpServerRequest request;
-    protected final HttpServerResponse response;
+    private final HttpServerResponse response;
     private final String contextPath;
     private final String servletPath;
     private final Map<String, Object> attributes;
