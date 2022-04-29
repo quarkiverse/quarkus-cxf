@@ -128,7 +128,9 @@ quarkus.cxf.client."my-fruitservice-client".password=password
 [[async-support]]
 == Asynchronous Client HTTP Transport
 
-By default, the CXF client uses `HttpURLConnection` to perform HTTP requests.  In order to have non-blocking (asynchronous) invocations you can add the  `cxf-rt-transports-http-hc` dependency to your project.
+By default, the CXF client uses `HttpURLConnection` to perform HTTP requests.
+
+In order to have non-blocking (asynchronous) invocations you can add the  `quarkus-cxf-rt-transports-http-hc` dependency to your project.  This module provides full support for native mode.
 
 Once the dependency is available in the classpath, CXF will use `HttpAsyncClient` for asynchronous calls and will continue using `HttpURLConnection` for synchronous calls.
 

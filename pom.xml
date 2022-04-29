@@ -67,6 +67,7 @@
         <module>features-logging</module>
         <module>features-metrics</module>
         <module>ws-security</module>
+        <module>transports-http-hc5</module>
         <module>docs</module>
         <module>integration-tests</module>
     </modules>
