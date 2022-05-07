@@ -52,5 +52,14 @@ mask.sensitiveElementNames[2]=address
 quarkus.cxf.endpoint."/greeting-service".features=org.apache.cxf.ext.logging.LoggingFeature
 
 # A web service client with logging enabled
-quarkus.cxf.client."/greeting-client".features=org.apache.cxf.ext.logging.LoggingFeature
+quarkus.cxf.client."greeting-client".features=org.apache.cxf.ext.logging.LoggingFeature
+----
+
+It is also possible to use the `LoggingInInterceptor` and `LoggingOutInterceptor` directly in your `application.properties` files as shown below.  The interceptors can be used for both service and client configurations.
+
+[source,properties]
+----
+# A web service client with logging enabled using interceptors
+quarkus.cxf.client."greeting-client".in-interceptors=org.apache.cxf.ext.logging.LoggingInInterceptor
+quarkus.cxf.client."greeting-client".out-interceptors=org.apache.cxf.ext.logging.LoggingOutInterceptor
 ----
