@@ -1,15 +1,18 @@
 [[micrometer-metrics]]
 = Micrometer Metrics
 
+include::./attributes.adoc[]
+
 CXF provides https://micrometer.io/[Micrometer] integration using https://github.com/apache/cxf/blob/master/rt/features/metrics/src/main/java/org/apache/cxf/metrics/micrometer/MicrometerMetricsProvider.java[MicrometerMetricsProvider].
 
 To take advantage of this feature within your https://quarkus.io/guides/micrometer[Quarkus Micrometer] ecosystem, first ensure that you have the following dependency:
 
-[source,xml]
+[source,xml,subs=attributes+]
 ----
     <dependency>
       <groupId>io.quarkiverse.cxf</groupId>
       <artifactId>quarkus-cxf-rt-features-metrics</artifactId>
+      <version>{quarkus-cxf-version}</version>
     </dependency>
 ----
 

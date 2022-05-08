@@ -1,6 +1,8 @@
 [[creating-a-soap-client]]
 = SOAP Clients
 
+include::./attributes.adoc[]
+
 Quarkus-CXF supports SOAP clients. Assuming a given Service Endpoint Interface (SEI) like `FruitWebService`, Quarkus-CXF is able to inject a ready-to-use client proxy:
 
 [source,java]
@@ -132,9 +134,18 @@ By default, the CXF client uses `HttpURLConnection` to perform HTTP requests.
 
 In order to have non-blocking (asynchronous) invocations you can add the  `quarkus-cxf-rt-transports-http-hc5` dependency to your project.  This module provides full support for native mode.
 
+[source,xml,subs=attributes+]
+----
+    <dependency>
+      <groupId>io.quarkiverse.cxf</groupId>
+      <artifactId>quarkus-cxf-rt-transports-http-hc5</artifactId>
+      <version>{quarkus-cxf-version}</version>
+    </dependency>
+----
+
 Once the dependency is available in the classpath, CXF will use `HttpAsyncClient` for asynchronous calls and will continue using `HttpURLConnection` for synchronous calls.
 
-You can see more details about the CXF asynchronous client and how to tune it further at https://cxf.apache.org/docs/asynchronous-client-http-transport.html[this link].
+NOTE: You can see more details about the CXF asynchronous client and how to tune it further at https://cxf.apache.org/docs/asynchronous-client-http-transport.html[this link].
 
 [[async-uni]]
 == Asynchronous Clients and Unis
@@ -156,7 +167,7 @@ Once the asynchronous stubs are available, it is possible to wrap a client call 
     }
 ----
 
-A sample application demonstrating this flow is provided https://github.com/quarkiverse/quarkus-cxf/issues/4#issuecomment-1106487964[here].
+NOTE: A sample application demonstrating this flow is provided https://github.com/quarkiverse/quarkus-cxf/issues/4#issuecomment-1106487964[here].
 
 
 [[code-config]]

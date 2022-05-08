@@ -42,4 +42,4 @@ The `application.properties` can be configured as shown below.
 quarkus.cxf.endpoint."/stream-source".implementor=org.acme.StreamSourcePayloadProvider
 ----
 
-Please note that `Provider` classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.
+NOTE: `Provider` classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.

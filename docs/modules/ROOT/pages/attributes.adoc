@@ -1,0 +1,2 @@
+:quarkus-version: 2.9.0.Final
+:quarkus-cxf-version: 1.1.0
