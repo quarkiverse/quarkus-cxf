@@ -1,16 +1,18 @@
 [[configuration]]
 = Configuration
 
+include::./attributes.adoc[]
+
 After configuring the `Quarkus BOM`:
 
-[source,xml]
+[source,xml,subs=attributes+]
 ----
 <dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>io.quarkus.platform</groupId>
             <artifactId>quarkus-bom</artifactId>
-            <version>${latest.quarkus.version}</version>
+            <version>{quarkus-version}</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -18,14 +20,51 @@ After configuring the `Quarkus BOM`:
 </dependencyManagement>
 ----
 
-You can configure the `quarkus-cxf` extension by adding the following dependency:
+You can configure the `quarkus-cxf` extension by adding the following core dependency:
 
-[source,xml]
+[source,xml,subs=attributes+]
 ----
 <dependency>
     <groupId>io.quarkiverse.cxf</groupId>
     <artifactId>quarkus-cxf</artifactId>
-    <version>${latest.release.version}</version>
+    <version>{quarkus-cxf-version}</version>
 </dependency>
+----
 
+You can also include any of the following *optional* dependencies for full native support of the respective CXF modules.
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf-rt-features-logging</artifactId>
+    <version>{quarkus-cxf-version}</version>
+</dependency>
+----
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf-rt-features-metrics</artifactId>
+    <version>{quarkus-cxf-version}</version>
+</dependency>
+----
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf-rt-ws-security</artifactId>
+    <version>{quarkus-cxf-version}</version>
+</dependency>
+----
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf-rt-transports-http-hc5</artifactId>
+    <version>{quarkus-cxf-version}</version>
+</dependency>
 ----

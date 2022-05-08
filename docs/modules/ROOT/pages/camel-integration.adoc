@@ -79,7 +79,7 @@ public class GreetingWebServiceImpl implements GreetingWebService {
 }
 ----
 
-There are various other ways to inject and invoke a Camel route endpoint from your web service, that are covered https://camel.apache.org/camel-quarkus/2.7.x/user-guide/cdi.html#_endpointinject_and_produce[here].
+NOTE: There are various other ways to inject and invoke a Camel route endpoint from your web service, that are covered https://camel.apache.org/camel-quarkus/2.7.x/user-guide/cdi.html#_endpointinject_and_produce[here].
 
 [[client-integration]]
 == Client Integration
@@ -129,4 +129,4 @@ public class TimerRoute extends RouteBuilder {
 }
 ----
 
-A similar injection pattern can be used in your Camel `Processor` https://camel.apache.org/manual/processor.html[implementation classes].
+NOTE: A similar injection pattern can be used in your Camel `Processor` https://camel.apache.org/manual/processor.html[implementation classes].

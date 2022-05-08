@@ -1,19 +1,22 @@
 [[ws-security]]
 = WS-Security
 
+include::./attributes.adoc[]
+
 The CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J]. The example below shows how to integrate with WSS4J using interceptors.
 
 To use WSS4J interceptors in your code, you should first add the Quarkus CXF WS-Security dependency.
 
-[source,xml]
+[source,xml,subs=attributes+]
 ----
 <dependency>
       <groupId>io.quarkiverse.cxf</groupId>
       <artifactId>quarkus-cxf-rt-ws-security</artifactId>
+      <version>{quarkus-cxf-version}</version>
 </dependency>
 ----
 
-Currently, only the programmatic WSS4JInterceptors are supported. Actions like Timestamp, UsernameToken, Signature, Encryption, etc., can be applied to the interceptors by passing the appropriate configuration properties.
+NOTE: Currently, only the programmatic WSS4JInterceptors are supported. Actions like Timestamp, UsernameToken, Signature, Encryption, etc., can be applied to the interceptors by passing the appropriate configuration properties.
 
 [[ws-security-service]]
 == Web Service Integration
@@ -22,7 +25,7 @@ Use the `WSS4JInInterceptor` to add WS-Security to your web service. You can upd
 
 [source,properties]
 ----
-quarkus.cxf.endpoint."/greeting".in-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor
+quarkus.cxf.endpoint."/greeting-service".in-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor
 ----
 
 Add the following to your producer class to instantiate the `WSS4JInInterceptor`.
@@ -82,7 +85,7 @@ The corresponding client implementation would be slightly different.Use the `WSS
 
 [source,properties]
 ----
-quarkus.cxf.client."client-identifier".out-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor
+quarkus.cxf.client."greeting-client".out-interceptors=org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor
 ----
 
 Add the following to your producer class to instantiate the `WSS4JOutInterceptor`.

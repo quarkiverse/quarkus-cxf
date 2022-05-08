@@ -9,7 +9,7 @@ This extension enables you to develop web services that consume and produce SOAP
 
 - CXF supports a variety of web service specifications including http://cxf.apache.org/docs/ws-addressing.html[WS-Addressing], http://cxf.apache.org/docs/ws-policy.html[WS-Policy], http://cxf.apache.org/docs/ws-reliablemessaging.html[WS-Reliable Messaging] and http://cxf.apache.org/docs/ws-security.html[WS-Security].
 
-This extension provides access to all these specifications for your Quarkus applications (testing and documentation in progress).
+This extension provides access to all these specifications for your Quarkus applications.
 
 [[native-mode-support]]
 == Native Mode Support

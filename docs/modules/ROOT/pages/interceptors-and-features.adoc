@@ -9,13 +9,12 @@ Annotations can be used on either the service interface or implementor classes.
 
 [source,java]
 ----
-@org.apache.cxf.feature.Features (features = {"org.apache.cxf.feature.LoggingFeature"})
+@org.apache.cxf.feature.Features (features = {"org.apache.cxf.ext.logging.LoggingFeature"})
 @org.apache.cxf.interceptor.InInterceptors (interceptors = {"org.acme.Test1Interceptor" })
 @org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"org.acme.Test2Interceptor" })
 @org.apache.cxf.interceptor.OutInterceptors (interceptors = {"org.acme.Test1Interceptor" })
 @org.apache.cxf.interceptor.InFaultInterceptors (interceptors = {"org.acme.Test2Interceptor","org.acme.Test3Intercetpor" })
-@WebService(endpointInterface = "org.apache.cxf.javascript.fortest.SimpleDocLitBare",
-            targetNamespace = "uri:org.apache.cxf.javascript.fortest")
+@WebService(endpointInterface = "org.acme.SayHi", targetNamespace = "uri:org.acme")
 public class SayHiImplementation implements SayHi {
    public long sayHi(long arg) {
        return arg;
@@ -26,14 +25,13 @@ public class SayHiImplementation implements SayHi {
 
 You may also define your configurations in the `application.properties` file.
 
-Both feature and interceptor classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.
-
 [source,properties]
 ----
-quarkus.cxf.endpoint."/greeting".features=org.apache.cxf.feature.LoggingFeature
-quarkus.cxf.endpoint."/greeting".in-interceptors=org.acme.MyInterceptor
-quarkus.cxf.endpoint."/greeting".out-interceptors=org.acme.MyInterceptor
-quarkus.cxf.endpoint."/greeting".in-fault-interceptors=org.acme.MyInterceptor
-quarkus.cxf.endpoint."/greeting".out-fault-interceptors=org.acme.MyInterceptor
+quarkus.cxf.endpoint."/greeting-service".features=org.apache.cxf.ext.logging.LoggingFeature
+quarkus.cxf.endpoint."/greeting-service".in-interceptors=org.acme.Test1Interceptor
+quarkus.cxf.endpoint."/greeting-service".out-interceptors=org.acme.Test1Interceptor
+quarkus.cxf.endpoint."/greeting-service".in-fault-interceptors=org.acme.Test2Interceptor,org.acme.Test3Intercetpor
+quarkus.cxf.endpoint."/greeting-service".out-fault-interceptors=org.acme.Test1Intercetpor
 ----
 
+NOTE: Both feature and interceptor classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.
