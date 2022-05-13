@@ -300,7 +300,9 @@ class QuarkusCxfProcessor {
 
                 for (ClassInfo wsClass : implementors) {
                     String impl = wsClass.name().toString();
-                    String wsName = impl.contains(".") ? impl.substring(impl.lastIndexOf('.') + 1) : impl;
+                    String wsName = Optional.ofNullable(wsClass.classAnnotation(WEBSERVICE_ANNOTATION))
+                            .map(serviceName -> serviceName.value("serviceName").asString())
+                            .orElse(impl.contains(".") ? impl.substring(impl.lastIndexOf('.') + 1) : impl);
                     additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(impl));
 
                     // Registers ArC generated subclasses for native reflection
@@ -453,7 +455,8 @@ class QuarkusCxfProcessor {
                     continue;
                 }
                 recorder.registerCXFServlet(infos, cxfWebService.getPath(), cxfWebService.getSei(),
-                        cxfConfig, cxfWebService.getSoapBinding(), cxfWebService.getClassNames(),
+                        cxfConfig, cxfWebService.getWsName(), cxfWebService.getWsNamespace(),
+                        cxfWebService.getSoapBinding(), cxfWebService.getClassNames(),
                         cxfWebService.getImplementor(), cxfWebService.isProvider());
                 if (cxfWebService.getImplementor() != null && !cxfWebService.getImplementor().isEmpty()) {
                     startRoute = true;
