@@ -10,6 +10,7 @@ import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.CDI;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.namespace.QName;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -109,6 +110,8 @@ public class CxfHandler implements Handler<RoutingContext> {
                     jaxWsServiceFactoryBean.setInvoker(new JAXWSMethodInvoker(instanceService));
                 }
 
+                jaxWsServerFactoryBean
+                        .setServiceName(new QName(servletInfo.getServiceTargetNamespace(), servletInfo.getServiceName()));
                 jaxWsServerFactoryBean.setServiceClass(instanceService.getClass());
                 jaxWsServerFactoryBean.setAddress(servletInfo.getRelativePath());
                 jaxWsServerFactoryBean.setServiceBean(instanceService);

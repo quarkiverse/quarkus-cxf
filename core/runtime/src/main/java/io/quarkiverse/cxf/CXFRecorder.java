@@ -50,8 +50,8 @@ public class CXFRecorder {
     }
 
     public void registerCXFServlet(RuntimeValue<CXFServletInfos> runtimeInfos, String path, String sei,
-            CxfConfig cxfConfig, String soapBinding, List<String> wrapperClassNames, String wsImplementor,
-            Boolean isProvider) {
+            CxfConfig cxfConfig, String serviceName, String serviceTargetNamepsace, String soapBinding,
+            List<String> wrapperClassNames, String wsImplementor, Boolean isProvider) {
         CXFServletInfos infos = runtimeInfos.getValue();
         Map<String, List<ServletConfig>> implementorToCfg = new HashMap<>();
         for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
@@ -75,21 +75,25 @@ public class CXFRecorder {
             for (ServletConfig cfg : cfgs) {
                 CxfEndpointConfig cxfEndPointConfig = cfg.config;
                 String relativePath = cfg.path;
-                startRoute(path, sei, soapBinding, wrapperClassNames, wsImplementor, infos,
+                startRoute(path, sei, serviceName, serviceTargetNamepsace, soapBinding,
+                        wrapperClassNames, wsImplementor, infos,
                         cxfEndPointConfig, relativePath, isProvider);
             }
         } else {
-            String serviceName = sei.toLowerCase();
-            if (serviceName.contains(".")) {
-                serviceName = serviceName.substring(serviceName.lastIndexOf('.') + 1);
+            if (serviceName == null || serviceName.isEmpty()) {
+                serviceName = sei.toLowerCase();
+                if (serviceName.contains(".")) {
+                    serviceName = serviceName.substring(serviceName.lastIndexOf('.') + 1);
+                }
             }
             String relativePath = "/" + serviceName;
-            startRoute(path, sei, soapBinding, wrapperClassNames, wsImplementor, infos, null,
-                    relativePath, isProvider);
+            startRoute(path, sei, serviceName, serviceTargetNamepsace, soapBinding, wrapperClassNames,
+                    wsImplementor, infos, null, relativePath, isProvider);
         }
     }
 
-    private void startRoute(String path, String sei, String soapBinding, List<String> wrapperClassNames, String wsImplementor,
+    private void startRoute(String path, String sei, String serviceName, String serviceTargetNamespace,
+            String soapBinding, List<String> wrapperClassNames, String wsImplementor,
             CXFServletInfos infos, CxfEndpointConfig cxfEndPointConfig, String relativePath, Boolean isProvider) {
         if (wsImplementor != null && !wsImplementor.equals("")) {
             CXFServletInfo cfg = new CXFServletInfo(path,
@@ -97,6 +101,8 @@ public class CXFRecorder {
                     wsImplementor,
                     sei,
                     cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath.orElse(null) : null,
+                    serviceName,
+                    serviceTargetNamespace,
                     cxfEndPointConfig != null ? cxfEndPointConfig.soapBinding.orElse(soapBinding) : soapBinding,
                     wrapperClassNames,
                     isProvider,

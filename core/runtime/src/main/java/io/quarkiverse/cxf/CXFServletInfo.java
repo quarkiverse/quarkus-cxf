@@ -17,6 +17,8 @@ public class CXFServletInfo {
     private final List<String> handlers;
     private final String sei;
     private final String wsdlPath;
+    private final String serviceName;
+    private final String serviceTargetNamespace;
     private final String soapBinding;
     private final List<String> wrapperClassNames;
     private final Boolean isProvider;
@@ -24,7 +26,8 @@ public class CXFServletInfo {
 
     private static final Logger LOGGER = Logger.getLogger(CXFServletInfo.class);
 
-    public CXFServletInfo(String path, String relativePath, String className, String sei, String wsdlPath, String soapBinding,
+    public CXFServletInfo(String path, String relativePath, String className, String sei, String wsdlPath,
+            String serviceName, String serviceTargetNamespace, String soapBinding,
             List<String> wrapperClassNames, Boolean provider, String endpointUrl) {
         LOGGER.trace("new CXFServletInfo");
         this.path = path;
@@ -38,6 +41,8 @@ public class CXFServletInfo {
         this.handlers = new ArrayList<>();
         this.sei = sei;
         this.wsdlPath = wsdlPath;
+        this.serviceName = serviceName;
+        this.serviceTargetNamespace = serviceTargetNamespace;
         this.soapBinding = soapBinding;
         this.wrapperClassNames = wrapperClassNames;
         this.isProvider = provider;
@@ -86,6 +91,14 @@ public class CXFServletInfo {
 
     public List<String> getInFaultInterceptors() {
         return inFaultInterceptors;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public String getServiceTargetNamespace() {
+        return serviceTargetNamespace;
     }
 
     public String getSOAPBinding() {
