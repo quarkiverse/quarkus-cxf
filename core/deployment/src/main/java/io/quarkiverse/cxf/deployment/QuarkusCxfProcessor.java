@@ -301,7 +301,8 @@ class QuarkusCxfProcessor {
                 for (ClassInfo wsClass : implementors) {
                     String impl = wsClass.name().toString();
                     String wsName = Optional.ofNullable(wsClass.classAnnotation(WEBSERVICE_ANNOTATION))
-                            .map(serviceName -> serviceName.value("serviceName").asString())
+                            .filter(classAnno -> Objects.nonNull(classAnno.value("serviceName")))
+                            .map(classAnno -> classAnno.value("serviceName").asString())
                             .orElse(impl.contains(".") ? impl.substring(impl.lastIndexOf('.') + 1) : impl);
                     additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(impl));
 
