@@ -26,6 +26,6 @@ Simply add the following to your `application.properties` to start collecting me
 quarkus.cxf.endpoint."/fruit-service".features=io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
 
 # A web service client with metrics enabled
-quarkus.cxf.client."/fruit-client".features=io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
+quarkus.cxf.client."fruit-client".features=io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
 
 ----
