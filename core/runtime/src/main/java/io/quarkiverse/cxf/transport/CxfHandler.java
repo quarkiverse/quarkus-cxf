@@ -227,7 +227,7 @@ public class CxfHandler implements Handler<RoutingContext> {
     /**
      * Leverages the Quarkus HTTP proxy configuration properties,
      * instead of relying on pure HTTP headers, and is based on the method referenced below.
-     * 
+     *
      * @see org.apache.cxf.transport.servlet.AbstractHTTPServlet#checkXForwardedHeaders(HttpServletRequest)
      * @see io.quarkus.vertx.http.runtime.ProxyConfig
      */
