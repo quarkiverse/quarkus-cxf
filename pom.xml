@@ -43,7 +43,6 @@
     <properties>
         <quarkus.version>2.10.2.Final</quarkus.version>
         <cxf.version>3.5.3</cxf.version>
-        <jakarta.xml.ws-api.version>2.3.3</jakarta.xml.ws-api.version>
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
@@ -63,6 +62,7 @@
     </scm>
 
     <modules>
+        <module>bom</module>
         <module>core</module>
         <module>features-logging</module>
         <module>features-metrics</module>
@@ -71,18 +71,6 @@
         <module>docs</module>
         <module>integration-tests</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <pluginManagement>

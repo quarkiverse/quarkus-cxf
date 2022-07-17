@@ -20,15 +20,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-features-metrics</artifactId>
-                <version>${cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.geronimo.specs</groupId>
-                        <artifactId>geronimo-jta_1.1_spec</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
