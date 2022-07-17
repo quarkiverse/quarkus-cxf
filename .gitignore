@@ -62,3 +62,8 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
+
+# Ignore attributes.adoc as it is updated during release process;
+# this is used to provide the correct versions for Quarkus
+# and the Quarkus-CXF extensions in the documentation.
+docs/modules/ROOT/pages/attributes.adoc
