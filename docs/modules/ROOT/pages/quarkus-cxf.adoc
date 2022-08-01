@@ -1,3 +1,5 @@
+
+:summaryTableId: quarkus-cxf
 [.configuration-legend]
 icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
 [.configuration-reference.searchable, cols="80,.^10,.^10"]
@@ -13,6 +15,8 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.path]]`link:#qu
 [.description]
 --
 The default path for CXF resources
+
+Environment variable: `+++QUARKUS_CXF_PATH+++`
 --|string 
 |`/`
 
@@ -22,6 +26,8 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.wsdl-path]]`lin
 [.description]
 --
 The comma-separated list of WSDL resource paths used by CXF
+
+Environment variable: `+++QUARKUS_CXF_WSDL_PATH+++`
 --|list of string 
 |
 
@@ -31,6 +37,8 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.implementor]]`link:#quarkus-cx
 [.description]
 --
 The service endpoint implementation class
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IMPLEMENTOR+++`
 --|string 
 |
 
@@ -40,6 +48,8 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.wsdl]]`link:#quarkus-cxf_quark
 [.description]
 --
 The service endpoint WSDL path
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__WSDL+++`
 --|string 
 |
 
@@ -54,6 +64,8 @@ The URL of the SOAP Binding, should be one of four values:
 * `+http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true+` for SOAP11HTTP_MTOM_BINDING
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SOAP_BINDING+++`
 --|string 
 |
 
@@ -63,6 +75,8 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.published-endpoint-url]]`link:
 [.description]
 --
 The published service endpoint URL
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__PUBLISHED_ENDPOINT_URL+++`
 --|string 
 |
 
@@ -72,6 +86,8 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.features]]`link:#quarkus-cxf_q
 [.description]
 --
 The comma-separated list of Feature classes
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__FEATURES+++`
 --|list of string 
 |
 
@@ -81,6 +97,8 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.handlers]]`link:#quarkus-cxf_q
 [.description]
 --
 The comma-separated list of Handler classes
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__HANDLERS+++`
 --|list of string 
 |
 
@@ -90,6 +108,8 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-interceptors]]`link:#quarku
 [.description]
 --
 The comma-separated list of InInterceptor classes
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_INTERCEPTORS+++`
 --|list of string 
 |
 
@@ -99,6 +119,8 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-interceptors]]`link:#quark
 [.description]
 --
 The comma-separated list of OutInterceptor classes
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_INTERCEPTORS+++`
 --|list of string 
 |
 
@@ -108,6 +130,8 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-fault-interceptors]]`link:
 [.description]
 --
 The comma-separated list of OutFaultInterceptor classes
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_FAULT_INTERCEPTORS+++`
 --|list of string 
 |
 
@@ -117,6 +141,8 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-fault-interceptors]]`link:#
 [.description]
 --
 The comma-separated list of InFaultInterceptor classes
+
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_FAULT_INTERCEPTORS+++`
 --|list of string 
 |
 
@@ -126,6 +152,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.wsdl]]`link:#quarkus-cxf_quarkus.c
 [.description]
 --
 The client WSDL path
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__WSDL+++`
 --|string 
 |
 
@@ -140,6 +168,8 @@ The URL of the SOAP Binding, should be one of four values:
 * `+http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true+` for SOAP11HTTP_MTOM_BINDING
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SOAP_BINDING+++`
 --|string 
 |
 
@@ -149,6 +179,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.client-endpoint-url]]`link:#quarku
 [.description]
 --
 The client endpoint URL
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CLIENT_ENDPOINT_URL+++`
 --|string 
 |
 
@@ -158,6 +190,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.service-interface]]`link:#quarkus-
 [.description]
 --
 The client interface class
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++`
 --|string 
 |
 
@@ -167,6 +201,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-namespace]]`link:#quarkus
 [.description]
 --
 The client endpoint namespace
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAMESPACE+++`
 --|string 
 |
 
@@ -176,6 +212,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-name]]`link:#quarkus-cxf_
 [.description]
 --
 The client endpoint name
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAME+++`
 --|string 
 |
 
@@ -185,6 +223,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.username]]`link:#quarkus-cxf_quark
 [.description]
 --
 The username for HTTP Basic auth
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__USERNAME+++`
 --|string 
 |
 
@@ -194,6 +234,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.password]]`link:#quarkus-cxf_quark
 [.description]
 --
 The password for HTTP Basic auth
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__PASSWORD+++`
 --|string 
 |
 
@@ -203,6 +245,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.features]]`link:#quarkus-cxf_quark
 [.description]
 --
 The comma-separated list of Feature classes
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__FEATURES+++`
 --|list of string 
 |
 
@@ -212,6 +256,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.handlers]]`link:#quarkus-cxf_quark
 [.description]
 --
 The comma-separated list of Handler classes
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__HANDLERS+++`
 --|list of string 
 |
 
@@ -221,6 +267,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.in-interceptors]]`link:#quarkus-cx
 [.description]
 --
 The comma-separated list of InInterceptor classes
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_INTERCEPTORS+++`
 --|list of string 
 |
 
@@ -230,6 +278,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.out-interceptors]]`link:#quarkus-c
 [.description]
 --
 The comma-separated list of OutInterceptor classes
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_INTERCEPTORS+++`
 --|list of string 
 |
 
@@ -239,6 +289,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.out-fault-interceptors]]`link:#qua
 [.description]
 --
 The comma-separated list of OutFaultInterceptor classes
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_FAULT_INTERCEPTORS+++`
 --|list of string 
 |
 
@@ -248,6 +300,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.in-fault-interceptors]]`link:#quar
 [.description]
 --
 The comma-separated list of InFaultInterceptor classes
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_FAULT_INTERCEPTORS+++`
 --|list of string 
 |
 
@@ -257,6 +311,8 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.alternative]]`link:#quarkus-cxf_qu
 [.description]
 --
 Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when configuring a client without annotation `@CXFClient`.
+
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++`
 --|boolean 
 |`false`
 
