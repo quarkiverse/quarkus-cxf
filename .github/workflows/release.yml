@@ -50,7 +50,6 @@ jobs:
         run: |
           gpg --quiet --batch --yes --decrypt --passphrase="${{secrets.GPG_PASSPHRASE}}" --output maven-settings.xml .github/release/maven-settings.xml.gpg
           git checkout -b release
-          mvn -B prepare-package -Pdocs-version-updates -Ddocs-version-updates -DskipTests
           mvn -B release:prepare -Prelease -DreleaseVersion=${{steps.metadata.outputs.current-version}} -DdevelopmentVersion=${{steps.metadata.outputs.next-version}} -s maven-settings.xml
           if ! git diff --quiet docs/modules/ROOT/pages/attributes.adoc; then
             git add -f docs/modules/ROOT/pages/attributes.adoc
