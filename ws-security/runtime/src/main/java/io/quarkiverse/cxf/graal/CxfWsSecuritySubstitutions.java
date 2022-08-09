@@ -12,6 +12,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.stream.XMLOutputFactory;
 
 import org.apache.wss4j.stax.setup.WSSec;
+import org.apache.xml.security.exceptions.XMLSecurityException;
 import org.apache.xml.security.utils.Constants;
 
 import com.oracle.svm.core.annotate.Alias;
@@ -88,13 +89,25 @@ final class Target_org_apache_xml_security_stax_ext_XMLSecurityConstants {
 
     @Substitute
     public Target_org_apache_xml_security_stax_ext_XMLSecurityConstants() {
-        try {
-            SECURE_RANDOM = SecureRandom.getInstance("SHA1PRNG");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 
+    @Substitute
+    public static byte[] generateBytes(int length) throws XMLSecurityException {
+        if (SECURE_RANDOM == null) {
+            try {
+                SECURE_RANDOM = SecureRandom.getInstance("SHA1PRNG");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try {
+            byte[] temp = new byte[length];
+            SECURE_RANDOM.nextBytes(temp);
+            return temp;
+        } catch (Exception ex) {
+            throw new XMLSecurityException(ex);
+        }
+    }
 }
 
 @TargetClass(className = "org.apache.wss4j.common.crypto.WSS4JResourceBundle")
