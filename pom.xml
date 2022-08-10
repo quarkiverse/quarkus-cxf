@@ -41,8 +41,14 @@
         </developer>
     </developers>
     <properties>
-        <quarkus.version>2.11.2.Final</quarkus.version>
         <cxf.version>3.5.3</cxf.version>
+        <ehcache.version>3.9.3</ehcache.version>
+        <neethi.version>3.2.0</neethi.version>
+        <mimepull.version>1.9.14</mimepull.version>
+        <quarkus.version>2.11.2.Final</quarkus.version>
+        <saaj-impl.version>1.5.3</saaj-impl.version>
+        <woodstox-core.version>6.2.7</woodstox-core.version>
+        <xmlsec.version>2.3.0</xmlsec.version>
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 

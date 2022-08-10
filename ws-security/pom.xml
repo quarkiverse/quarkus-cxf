@@ -12,15 +12,6 @@
     <name>Quarkus CXF WS Security - Parent</name>
     <packaging>pom</packaging>
 
-    <properties>
-        <ehcache.version>3.9.3</ehcache.version>
-        <xmlsec.version>2.3.0</xmlsec.version>
-        <woodstox-core.version>6.2.7</woodstox-core.version>
-        <saaj-impl.version>1.5.3</saaj-impl.version>
-        <mimepull.version>1.9.14</mimepull.version>
-        <neethi.version>3.2.0</neethi.version>
-    </properties>
-
     <modules>
         <module>deployment</module>
         <module>runtime</module>
@@ -34,36 +25,6 @@
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>${ehcache.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.santuario</groupId>
-                <artifactId>xmlsec</artifactId>
-                <version>${xmlsec.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.woodstox</groupId>
-                <artifactId>woodstox-core</artifactId>
-                <version>${woodstox-core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.messaging.saaj</groupId>
-                <artifactId>saaj-impl</artifactId>
-                <version>${saaj-impl.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jvnet.mimepull</groupId>
-                <artifactId>mimepull</artifactId>
-                <version>${mimepull.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.neethi</groupId>
-                <artifactId>neethi</artifactId>
-                <version>${neethi.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
