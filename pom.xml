@@ -58,6 +58,10 @@
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+
+        <!-- maven-compiler-plugin -->
+        <maven.compiler.release>11</maven.compiler.release>
+
     </properties>
 
     <scm>
@@ -168,6 +172,9 @@
                         <id>enforce</id>
                         <configuration>
                             <rules>
+                                <requireJavaVersion>
+                                    <version>${maven.compiler.release}</version>
+                                </requireJavaVersion>
                                 <dependencyConvergence />
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
