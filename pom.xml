@@ -52,12 +52,14 @@
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
+        <cq-maven-plugin.version>3.1.1</cq-maven-plugin.version>
         <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
         <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
         <maven-idea-plugin.version>2.2.1</maven-idea-plugin.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <quarkus-platform-bom-plugin.version>0.0.51</quarkus-platform-bom-plugin.version>
 
         <!-- maven-compiler-plugin -->
         <maven.compiler.release>11</maven.compiler.release>
@@ -149,6 +151,11 @@
                     <groupId>io.quarkus</groupId>
                     <artifactId>quarkus-maven-plugin</artifactId>
                     <version>${quarkus.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.l2x6.cq</groupId>
+                    <artifactId>cq-maven-plugin</artifactId>
+                    <version>${cq-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

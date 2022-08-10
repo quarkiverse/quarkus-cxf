@@ -114,6 +114,14 @@
                 <version>${cxf.version}</version>
                 <exclusions>
                     <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.apache.geronimo.specs</groupId>
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
                     </exclusion>
@@ -167,6 +175,14 @@
                 <artifactId>cxf-rt-ws-mex</artifactId>
                 <version>${cxf.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>org.apache.geronimo.specs</groupId>
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
@@ -277,4 +293,39 @@
         </dependencies>
     </dependencyManagement>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.l2x6.cq</groupId>
+                <artifactId>cq-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>flatten-bom</id>
+                        <goals>
+                            <goal>flatten-bom</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <originExcludes>
+                                <!-- originExcludes should not be necessary, as we do not import any third party -->
+                                <!-- BOMs that would transitively import quarkus-bom. It is left there, because -->
+                                <!-- the plugin is buggy when it is not set. -->
+                                <!-- See https://github.com/l2x6/cq-maven-plugin/issues/82 -->
+                                <originExclude>io.quarkus:quarkus-bom</originExclude>
+                            </originExcludes>
+                            <resolutionEntryPointIncludes>
+                                <!-- We not only flatten the BOM, we also shrink it down so that includes -->
+                                <!-- entries that our extensions need. Here we define the set of our artifacts -->
+                                <!-- whose dependencies we want to cover in the flattened BOM -->
+                                <resolutionEntryPointInclude>io.quarkiverse.cxf:*</resolutionEntryPointInclude>
+                            </resolutionEntryPointIncludes>
+                            <flattenedFullPomFile>${project.build.directory}/flattened-full-pom.xml</flattenedFullPomFile>
+                            <flattenedReducedPomFile>${project.build.directory}/flattened-reduced-pom.xml</flattenedReducedPomFile>
+                            <flattenedReducedVerbosePomFile>${project.build.directory}/flattened-reduced-verbose-pom.xml</flattenedReducedVerbosePomFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
