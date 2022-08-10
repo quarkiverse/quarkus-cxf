@@ -264,7 +264,7 @@ class QuarkusCxfProcessor {
 
             ClassInfo wsClassInfo = annotation.target().asClass();
             boolean isProvider = wsClassInfo.interfaceNames().contains(WEBSERVICE_PROVIDER_INTERFACE);
-            boolean isWebService = wsClassInfo.annotations().containsKey(WEBSERVICE_ANNOTATION);
+            boolean isWebService = wsClassInfo.annotationsMap().containsKey(WEBSERVICE_ANNOTATION);
             boolean isInterface = Modifier.isInterface(wsClassInfo.flags());
             boolean isImplementingAnInterface = !wsClassInfo.interfaceTypes().isEmpty();
             boolean isWebServiceWithoutInterface = isWebService && !isInterface && !isImplementingAnInterface;
@@ -384,7 +384,7 @@ class QuarkusCxfProcessor {
                             return target.asField().type();
                         case METHOD_PARAMETER:
                             MethodParameterInfo paramInfo = target.asMethodParameter();
-                            return paramInfo.method().parameters().get(paramInfo.position());
+                            return paramInfo.method().parameterTypes().get(paramInfo.position());
                         default:
                             return null;
                     }
