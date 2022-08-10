@@ -12,6 +12,10 @@
     <name>Quarkus CXF Bill Of Material</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <quarkus-cxf.version>1.5.0-SNAPSHOT</quarkus-cxf.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -151,6 +155,57 @@
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-deployment</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-rt-features-logging</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-rt-features-logging-deployment</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-rt-features-metrics</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-rt-features-metrics-deployment</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-rt-transports-http-hc5</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-rt-transports-http-hc5-deployment</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-rt-ws-security</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-rt-ws-security-deployment</artifactId>
+                <version>${quarkus-cxf.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
