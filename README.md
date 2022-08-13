@@ -7,7 +7,7 @@ This extension enables you to develop web services that consume and produce SOAP
 [![LGTM Grade](https://img.shields.io/lgtm/grade/java/github/quarkiverse/quarkus-cxf?logo=lgtm&style=for-the-badge)](https://lgtm.com/projects/g/quarkiverse/quarkus-cxf/context:java)
 [![GitHub](https://img.shields.io/github/license/quarkiverse/quarkus-cxf?color=blue&style=for-the-badge)](https://github.com/quarkiverse/quarkus-cxf/blob/master/LICENSE)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 -   [Contributors](#contributors-)
@@ -33,6 +33,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/dufoli"><img src="https://avatars0.githubusercontent.com/u/202057?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dufoli</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-cxf/commits?author=dufoli" title="Code">💻</a> <a href="#maintenance-dufoli" title="Maintenance">🚧</a></td>
     <td align="center"><a href="https://github.com/dufgui"><img src="https://avatars0.githubusercontent.com/u/237211?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dufgui</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-cxf/commits?author=dufgui" title="Code">💻</a> <a href="#maintenance-dufgui" title="Maintenance">🚧</a></td>
     <td align="center"><a href="https://github.com/famod"><img src="https://avatars.githubusercontent.com/u/22860528?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Falko Modler</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-cxf/commits?author=famod" title="Code">💻</a> <a href="#maintenance-famod" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://twitter.com/ppalaga"><img src="https://avatars.githubusercontent.com/u/1826249?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Peter Palaga</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-cxf/commits?author=ppalaga" title="Code">💻</a></td>
   </tr>
 </table>
 
