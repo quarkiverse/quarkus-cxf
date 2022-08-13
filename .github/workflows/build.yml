@@ -36,5 +36,5 @@ jobs:
       run: ./mvnw -B formatter:validate install --file pom.xml
 
     - name: Build - Native
-      run: ./mvnw -B verify -Pnative -Dquarkus.native.container-build=true --file integration-tests/pom.xml
+      run: cd integration-tests && ../mvnw -B verify -Pnative -Dquarkus.native.container-build=true
 
