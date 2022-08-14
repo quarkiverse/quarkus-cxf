@@ -1,4 +1,4 @@
-package io.quarkiverse.it.cxf;
+package io.quarkiverse.cxf.client.it;
 
 import javax.xml.ws.soap.SOAPFaultException;
 
@@ -24,6 +24,6 @@ public class SOAPExceptionInterceptor extends AbstractPhaseInterceptor<Message> 
     }
 
     public void handleMessage(Message msg) {
-        throw new IllegalStateException();
+        throw new IllegalStateException("No luck at this time, Luke!");
     }
 }
