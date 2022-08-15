@@ -13,7 +13,7 @@ import javax.xml.ws.BindingType;
 public class GreetingWebServiceNoIntf {
 
     @Inject
-    public HelloBean helloResource;
+    HelloBean helloResource;
 
     public String reply(@WebParam(name = "text") String text) {
         return helloResource.getHello() + text;
