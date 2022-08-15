@@ -32,6 +32,10 @@ public class CxfClientResource {
     CalculatorService mySkewedCalculator;
 
     @Inject
+    @CXFClient("codeFirstClient") // name used in application.properties
+    CodeFirstClient codeFirstClient;
+
+    @Inject
     @CXFClient("myFaultyCalculator") // name used in application.properties
     CalculatorService myFaultyCalculator;
 
@@ -48,6 +52,13 @@ public class CxfClientResource {
         } catch (Exception e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
+    }
+
+    @GET
+    @Path("/codeFirstClient/multiply")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int codeFirstClient(@PathParam("client") String client, @QueryParam("a") int a, @QueryParam("b") int b) {
+        return codeFirstClient.multiply(a, b);
     }
 
     @GET
