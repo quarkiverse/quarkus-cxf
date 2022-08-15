@@ -3,43 +3,42 @@ package io.quarkiverse.it.cxf;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
-import java.lang.reflect.Proxy;
+import java.net.MalformedURLException;
 
-import javax.inject.Inject;
-
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 class GreetingWebServiceImplTest {
+    private static GreetingWebService greetingWS;
 
-    @Inject
-    public GreetingWebService greetingWS;
-
-    @Test
-    void testIsNotProxy() {
-        Assertions.assertFalse(Proxy.isProxyClass(greetingWS.getClass()));
+    @BeforeAll
+    public static void setup() throws MalformedURLException {
+        greetingWS = ClientTestUtil.getClient(GreetingWebService.class);
     }
 
     @Test
-    void testCxfClient() {
-        Assertions.assertEquals("Hello bar", greetingWS.reply("bar"));
+    void reply() {
+        Assertions.assertThat(greetingWS.reply("bar")).isEqualTo("Hello bar");
     }
 
     @Test
-    void testPing() {
-        String ret = null;
-        try {
-            ret = greetingWS.ping("bar");
-        } catch (GreetingException e) {
-        }
-        Assertions.assertEquals("Hello bar", ret);
+    void ping() throws GreetingException {
+        Assertions.assertThat(greetingWS.ping("foo")).isEqualTo("Hello foo");
     }
 
     @Test
-    void testSoapEndpoint() {
+    void greetingException() {
+        Assertions.assertThatExceptionOfType(GreetingException.class)
+                .isThrownBy(() -> greetingWS.ping("error"))
+                .withMessage("foo");
+    }
+
+    @Test
+    void rawSoap() {
         String xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://cxf.it.quarkiverse.io/\">\n"
                 +
                 "   <x:Header/>\n" +
@@ -59,20 +58,16 @@ class GreetingWebServiceImplTest {
     }
 
     @Test
-    void testSoap12Binding() {
+    void soap12Binding() {
         given()
                 .when().get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("http://schemas.xmlsoap.org/wsdl/soap12/"));
+                .body(
+                        containsString("http://schemas.xmlsoap.org/wsdl/soap12/"),
+                        containsString("<wsdl:portType name=\"GreetingWebService\">"),
+                        containsString("<wsdl:operation name=\"reply\">"),
+                        containsString("<wsdl:operation name=\"ping\">"));
     }
 
-    @Test
-    void testRestCxfClient() {
-        given()
-                .when().get("/rest")
-                .then()
-                .statusCode(200)
-                .body(containsString("Hello foo"));
-    }
 }
