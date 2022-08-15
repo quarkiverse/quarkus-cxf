@@ -10,8 +10,11 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 public class GreetingSOAPHandlerTest {
 
+    /**
+     * Make sure that the handler gets installed properly
+     */
     @Test
-    void testSoapEndpoint() {
+    void soapHandler() {
         String xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://cxf.it.quarkiverse.io/\">\n"
                 +
                 "   <x:Header/>\n" +
@@ -21,7 +24,6 @@ public class GreetingSOAPHandlerTest {
                 "      </cxf:reply>\n" +
                 "   </x:Body>\n" +
                 "</x:Envelope>";
-        String cnt = "";
 
         given()
                 .header("Content-Type", "text/xml")
