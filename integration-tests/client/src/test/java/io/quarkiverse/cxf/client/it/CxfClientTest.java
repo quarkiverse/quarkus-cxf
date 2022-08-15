@@ -77,6 +77,20 @@ public class CxfClientTest {
     }
 
     /**
+     * Test whether a code-first client (without WSDL) works properly.
+     */
+    @Test
+    void codeFirstClient() {
+        RestAssured.given()
+                .queryParam("a", 3)
+                .queryParam("b", 4)
+                .get("/cxf/client/codeFirstClient/multiply")
+                .then()
+                .statusCode(200)
+                .body(is("12"));
+    }
+
+    /**
      * Check whether we can get the WSDL URL configured in application.properties from the application code via
      * {@link CXFClientInfo}.
      */
@@ -126,6 +140,7 @@ public class CxfClientTest {
                 .getValue("quarkus.cxf.client.myCalculator.wsdl", String.class);
 
         final String staticCopyPath = "src/main/cxf-codegen-resources/wsdl/CalculatorService.wsdl";
+        /* The changing Docker IP address in the WSDL should not matter */
         final String sanitizerRegex = "<soap:address location=\"http://[^/]*/calculator-ws/CalculatorService\"></soap:address>";
         final String staticCopyContent = Files
                 .readString(Paths.get(staticCopyPath), StandardCharsets.UTF_8)
