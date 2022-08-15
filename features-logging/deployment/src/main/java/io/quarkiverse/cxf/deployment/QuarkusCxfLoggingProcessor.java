@@ -1,7 +1,5 @@
 package io.quarkiverse.cxf.deployment;
 
-import javax.xml.ws.WebServiceFeature;
-
 import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;
 import org.apache.cxf.ext.logging.LoggingOutInterceptor;
@@ -21,7 +19,6 @@ public class QuarkusCxfLoggingProcessor {
                 AbstractPortableFeature.class.getName(),
                 DelegatingFeature.class.getName(),
                 LoggingFeature.Portable.class.getName(),
-                WebServiceFeature.class.getName(),
                 LoggingInInterceptor.class.getName(),
                 LoggingOutInterceptor.class.getName()));
     }

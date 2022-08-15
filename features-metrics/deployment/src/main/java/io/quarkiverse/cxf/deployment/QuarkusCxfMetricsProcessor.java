@@ -1,7 +1,5 @@
 package io.quarkiverse.cxf.deployment;
 
-import javax.xml.ws.WebServiceFeature;
-
 import org.apache.cxf.feature.AbstractPortableFeature;
 import org.apache.cxf.feature.DelegatingFeature;
 import org.apache.cxf.metrics.MetricsFeature;
@@ -20,8 +18,7 @@ public class QuarkusCxfMetricsProcessor {
                 AbstractPortableFeature.class.getName(),
                 MetricsFeature.class.getName(),
                 DelegatingFeature.class.getName(),
-                MetricsFeature.Portable.class.getName(),
-                WebServiceFeature.class.getName()));
+                MetricsFeature.Portable.class.getName()));
     }
 
 }

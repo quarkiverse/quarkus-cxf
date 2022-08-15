@@ -1,0 +1,12 @@
+---
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+name: "Quarkus CXF Woodstox"
+description: "Native support for Woodstox StAX and SAX parsers"
+metadata:
+  unlisted: true
+  keywords:
+    - "xml"
+  categories:
+    - "xml"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html"
+  status: "stable"

@@ -97,6 +97,7 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
@@ -135,6 +136,32 @@ class QuarkusCxfProcessor {
     private static final DotName XML_NAMESPACE = DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace");
     private static final DotName XML_SEE_ALSO = DotName.createSimple("javax.xml.bind.annotation.XmlSeeAlso");
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
+
+    @BuildStep
+    void serviceProviders(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
+        String[] soapVersions = new String[] { "1_1", "1_2" };
+        for (String version : soapVersions) {
+            serviceProvider.produce(
+                    new ServiceProviderBuildItem(
+                            "javax.xml.soap.MessageFactory",
+                            "com.sun.xml.messaging.saaj.soap.ver" + version + ".SOAPMessageFactory" + version + "Impl"));
+
+            serviceProvider.produce(
+                    new ServiceProviderBuildItem(
+                            "javax.xml.soap.SOAPFactory",
+                            "com.sun.xml.messaging.saaj.soap.ver" + version + ".SOAPFactory" + version + "Impl"));
+        }
+
+        serviceProvider.produce(
+                new ServiceProviderBuildItem(
+                        "javax.xml.soap.SOAPConnectionFactory",
+                        "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory"));
+
+        serviceProvider.produce(
+                new ServiceProviderBuildItem(
+                        "javax.xml.soap.SAAJMetaFactory",
+                        "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl"));
+    }
 
     @BuildStep
     public void generateSysProps(BuildProducer<SystemPropertyBuildItem> props) {
@@ -941,7 +968,6 @@ class QuarkusCxfProcessor {
                 "com.sun.xml.internal.bind.api.JAXBRIContext",
                 "com.sun.xml.bind.api.JAXBRIContext",
                 "org.apache.cxf.common.util.ReflectionInvokationHandler",
-                "javax.xml.ws.wsaddressing.W3CEndpointReference",
                 "org.apache.cxf.common.jaxb.JAXBBeanInfo",
                 "javax.xml.bind.JAXBContext",
                 "com.sun.xml.bind.v2.runtime.LeafBeanInfoImpl",
@@ -1100,17 +1126,6 @@ class QuarkusCxfProcessor {
                 "javax.xml.bind.annotation.XmlSeeAlso",
                 "javax.xml.soap.SOAPMessage",
                 "javax.xml.transform.stax.StAXSource",
-                "javax.xml.ws.Action",
-                "javax.xml.ws.BindingType",
-                "javax.xml.ws.Provider",
-                "javax.xml.ws.RespectBinding",
-                "javax.xml.ws.Service",
-                "javax.xml.ws.ServiceMode",
-                "javax.xml.ws.soap.Addressing",
-                "javax.xml.ws.soap.MTOM",
-                "javax.xml.ws.soap.SOAPBinding",
-                "javax.xml.ws.WebFault",
-                "javax.xml.ws.WebServiceProvider",
                 "net.sf.cglib.proxy.Enhancer",
                 "net.sf.cglib.proxy.MethodInterceptor",
                 "net.sf.cglib.proxy.MethodProxy",
@@ -1179,7 +1194,6 @@ class QuarkusCxfProcessor {
         //TODO add @HandlerChain (file) and parse it to add class loading
         return new NativeImageResourceBuildItem("com/sun/xml/fastinfoset/resources/ResourceBundle.properties",
                 "META-INF/cxf/bus-extensions.txt",
-                "META-INF/services/javax.xml.ws.spi.Provider",
                 "META-INF/cxf/cxf.xml",
                 "META-INF/cxf/org.apache.cxf.bus.factory",
                 "META-INF/services/org.apache.cxf.bus.factory",

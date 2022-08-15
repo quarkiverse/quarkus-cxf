@@ -155,10 +155,6 @@ public class QuarkusCxfWsSecurityProcessor {
     @BuildStep
     NativeImageResourceBuildItem wsSecurityResources() {
         return new NativeImageResourceBuildItem(
-                "META-INF/services/javax.xml.soap.SAAJMetaFactory",
-                "META-INF/services/javax.xml.stream.XMLEventFactory",
-                "META-INF/services/javax.xml.stream.XMLInputFactory",
-                "META-INF/services/javax.xml.stream.XMLOutputFactory",
                 "META-INF/services/org.ehcache.core.spi.service.ServiceFactory",
                 "META-INF/services/org.ehcache.xml.CacheManagerServiceConfigurationParser",
                 "META-INF/services/org.ehcache.xml.CacheServiceConfigurationParser",
