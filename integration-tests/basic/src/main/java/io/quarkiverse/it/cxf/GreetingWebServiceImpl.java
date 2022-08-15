@@ -10,7 +10,7 @@ import javax.xml.ws.BindingType;
 public class GreetingWebServiceImpl implements GreetingWebService {
 
     @Inject
-    public HelloResource helloResource;
+    public HelloBean helloResource;
 
     @Override
     public String reply(@WebParam(name = "text") String text) {
