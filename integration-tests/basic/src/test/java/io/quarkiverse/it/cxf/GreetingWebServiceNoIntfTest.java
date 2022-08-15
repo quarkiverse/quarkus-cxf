@@ -1,70 +1,36 @@
 package io.quarkiverse.it.cxf;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.containsString;
+import javax.jws.WebService;
 
-import java.lang.reflect.Proxy;
-
-import javax.inject.Inject;
-
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-class GreetingWebServiceNoIntfTest {
+class GreetingWebServiceNoIntfTest extends AbstractGreetingWebServiceTest {
 
-    @Inject
-    public GreetingWebServiceNoIntf greetingWebServiceNoIntf;
-
-    @Test
-    void testIsNotProxy() {
-        Assertions.assertFalse(Proxy.isProxyClass(greetingWebServiceNoIntf.getClass()));
+    @BeforeAll
+    static void setup() {
+        greetingWS = ClientTestUtil.getClient(GreetingWebServiceNoIntf.class, "/soap/greeting-no-intf");
     }
 
     @Test
-    void testCxfClient() {
-        Assertions.assertEquals("Hello bar", greetingWebServiceNoIntf.reply("bar"));
+    void endpointUrl() {
+        Assertions.assertThat(ClientTestUtil.getEndpointUrl(greetingWS)).endsWith("/soap/greeting-no-intf");
     }
 
-    @Test
-    void testPing() {
-        String ret = null;
-        try {
-            ret = greetingWebServiceNoIntf.ping("bar");
-        } catch (GreetingException e) {
-        }
-        Assertions.assertEquals("Hello bar", ret);
+    @Override
+    protected String getServiceInterface() {
+        return "GreetingWebServiceNoIntf";
     }
 
-    @Test
-    void testSoapEndpoint() {
-        String xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://cxf.it.quarkiverse.io/\">\n"
-                +
-                "   <x:Header/>\n" +
-                "   <x:Body>\n" +
-                "      <cxf:reply>\n" +
-                "          <text>foo</text>\n" +
-                "      </cxf:reply>\n" +
-                "   </x:Body>\n" +
-                "</x:Envelope>";
-
-        given()
-                .header("Content-Type", "text/xml").and().body(xml)
-                .when().post("/soap/greeting-no-intf")
-                .then()
-                .statusCode(200)
-                .body(containsString("Hello foo"));
+    /**
+     * We need an interface for javax.xml.ws.Service.getPort(Class<T>) to be able to create a dynamic proxy.
+     * Otherwise, the client is served by GreetingWebServiceNoIntf
+     */
+    @WebService(targetNamespace = "http://cxf.it.quarkiverse.io/", name = "GreetingWebServiceNoIntf")
+    public interface GreetingWebServiceNoIntf extends GreetingWebService {
     }
-
-    @Test
-    void testSoap12Binding() {
-        given()
-                .when().get("/soap/greeting-no-intf?wsdl")
-                .then()
-                .statusCode(200)
-                .body(containsString("http://schemas.xmlsoap.org/wsdl/soap12/"));
-    }
-
 }
