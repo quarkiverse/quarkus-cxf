@@ -128,7 +128,6 @@ class QuarkusCxfProcessor {
     private static final DotName REQUEST_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.RequestWrapper");
     private static final DotName RESPONSE_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.ResponseWrapper");
     private static final DotName ABSTRACT_FEATURE = DotName.createSimple("org.apache.cxf.feature.AbstractFeature");
-    private static final DotName JAXWS_HANLDER = DotName.createSimple("javax.xml.ws.handler.Handler");
     private static final DotName ABSTRACT_INTERCEPTOR = DotName.createSimple("org.apache.cxf.phase.AbstractPhaseInterceptor");
     private static final DotName DATABINDING = DotName.createSimple("org.apache.cxf.databinding");
     private static final DotName BINDING_TYPE_ANNOTATION = DotName.createSimple("javax.xml.ws.BindingType");
@@ -364,9 +363,6 @@ class QuarkusCxfProcessor {
         }
 
         for (ClassInfo subclass : index.getAllKnownSubclasses(ABSTRACT_FEATURE)) {
-            reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
-        }
-        for (ClassInfo subclass : index.getAllKnownImplementors(JAXWS_HANLDER)) {
             reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
         }
         for (ClassInfo subclass : index.getAllKnownSubclasses(ABSTRACT_INTERCEPTOR)) {
