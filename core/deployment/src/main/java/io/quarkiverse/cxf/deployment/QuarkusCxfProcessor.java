@@ -97,7 +97,6 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
@@ -140,32 +139,6 @@ class QuarkusCxfProcessor {
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE_CXF);
-    }
-
-    @BuildStep
-    void serviceProviders(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
-        String[] soapVersions = new String[] { "1_1", "1_2" };
-        for (String version : soapVersions) {
-            serviceProvider.produce(
-                    new ServiceProviderBuildItem(
-                            "javax.xml.soap.MessageFactory",
-                            "com.sun.xml.messaging.saaj.soap.ver" + version + ".SOAPMessageFactory" + version + "Impl"));
-
-            serviceProvider.produce(
-                    new ServiceProviderBuildItem(
-                            "javax.xml.soap.SOAPFactory",
-                            "com.sun.xml.messaging.saaj.soap.ver" + version + ".SOAPFactory" + version + "Impl"));
-        }
-
-        serviceProvider.produce(
-                new ServiceProviderBuildItem(
-                        "javax.xml.soap.SOAPConnectionFactory",
-                        "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory"));
-
-        serviceProvider.produce(
-                new ServiceProviderBuildItem(
-                        "javax.xml.soap.SAAJMetaFactory",
-                        "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl"));
     }
 
     @BuildStep
@@ -981,8 +954,6 @@ class QuarkusCxfProcessor {
                 "com.sun.xml.bind.v2.runtime.CompositeStructureBeanInfo",
                 "com.sun.xml.bind.v2.runtime.ElementBeanInfoImpl",
                 "com.sun.xml.bind.v2.runtime.MarshallerImpl",
-                "com.sun.xml.messaging.saaj.soap.SOAPDocumentImpl",
-                "com.sun.xml.internal.messaging.saaj.soap.SOAPDocumentImpl",
                 "com.sun.org.apache.xerces.internal.dom.DOMXSImplementationSourceImpl",
                 "javax.wsdl.Types",
                 "javax.wsdl.extensions.mime.MIMEPart",
