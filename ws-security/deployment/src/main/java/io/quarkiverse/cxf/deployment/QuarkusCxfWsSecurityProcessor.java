@@ -27,7 +27,6 @@ public class QuarkusCxfWsSecurityProcessor {
     private static final List<String> indexDepedenciesClasses = Arrays.asList(
             "javax.xml.bind.annotation.W3CDomHandler",
             "org.ehcache.xml.model.ObjectFactory",
-            "com.sun.xml.messaging.saaj.soap.impl.BodyImpl",
             "javax.xml.soap.SOAPBodyElement",
             "org.apache.wss4j.dom.WSConstants");
 
@@ -62,7 +61,6 @@ public class QuarkusCxfWsSecurityProcessor {
                         c.startsWith("org.apache.wss4j.dom.transform.") ||
                         c.startsWith("org.apache.wss4j.dom.action.") ||
                         c.startsWith("org.apache.wss4j.dom.processor.") ||
-                        c.startsWith("com.sun.xml.messaging.saaj.") ||
                         c.startsWith("org.apache.wss4j.dom.validate.")) && !c.contains("$"))
                 .forEach(c -> reflectiveItems.produce(new ReflectiveClassBuildItem(true, false, c)));
 
