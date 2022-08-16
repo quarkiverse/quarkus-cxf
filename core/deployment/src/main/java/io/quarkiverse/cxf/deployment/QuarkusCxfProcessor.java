@@ -127,9 +127,6 @@ class QuarkusCxfProcessor {
     private static final DotName WEBSERVICE_CLIENT = DotName.createSimple("javax.xml.ws.WebServiceClient");
     private static final DotName REQUEST_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.RequestWrapper");
     private static final DotName RESPONSE_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.ResponseWrapper");
-    private static final DotName ABSTRACT_FEATURE = DotName.createSimple("org.apache.cxf.feature.AbstractFeature");
-    private static final DotName ABSTRACT_INTERCEPTOR = DotName.createSimple("org.apache.cxf.phase.AbstractPhaseInterceptor");
-    private static final DotName DATABINDING = DotName.createSimple("org.apache.cxf.databinding");
     private static final DotName BINDING_TYPE_ANNOTATION = DotName.createSimple("javax.xml.ws.BindingType");
     private static final DotName XML_NAMESPACE = DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace");
     private static final DotName XML_SEE_ALSO = DotName.createSimple("javax.xml.bind.annotation.XmlSeeAlso");
@@ -362,15 +359,6 @@ class QuarkusCxfProcessor {
             }
         }
 
-        for (ClassInfo subclass : index.getAllKnownSubclasses(ABSTRACT_FEATURE)) {
-            reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
-        }
-        for (ClassInfo subclass : index.getAllKnownSubclasses(ABSTRACT_INTERCEPTOR)) {
-            reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
-        }
-        for (ClassInfo subclass : index.getAllKnownImplementors(DATABINDING)) {
-            reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
-        }
     }
 
     private Set<String> findClientSEIsInUse(IndexView index) {
@@ -627,36 +615,54 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    List<RuntimeInitializedClassBuildItem> runtimeInitializedClasses() {
-        return Arrays.asList(
-                new RuntimeInitializedClassBuildItem("io.netty.buffer.PooledByteBufAllocator"),
-                new RuntimeInitializedClassBuildItem("io.netty.buffer.UnpooledHeapByteBuf"),
-                new RuntimeInitializedClassBuildItem("io.netty.buffer.UnpooledUnsafeHeapByteBuf"),
-                new RuntimeInitializedClassBuildItem(
-                        "io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeHeapByteBuf"),
-                new RuntimeInitializedClassBuildItem("io.netty.buffer.AbstractReferenceCountedByteBuf"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.staxutils.validation.W3CMultiSchemaFactory"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.endpoint.ClientImpl"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.phase.PhaseInterceptorChain"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.interceptor.AttachmentOutInterceptor"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.attachment.AttachmentSerializer"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.attachment.AttachmentUtil"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.attachment.ImageDataContentHandler"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.service.factory.AbstractServiceFactoryBean"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.interceptor.OneWayProcessorInterceptor"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.interceptor.OneWayProcessorInterceptor$1"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.ws.addressing.impl.InternalContextUtils"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.ws.addressing.impl.InternalContextUtils$1"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.transport.http.HTTPConduit"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream"),
-                new RuntimeInitializedClassBuildItem("org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream$1"),
-                new RuntimeInitializedClassBuildItem("com.sun.xml.bind.v2.runtime.output.FastInfosetStreamWriterOutput"));
+    void runtimeInitializedClasses(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitializedClass) {
+        // TODO check whether the non-org.apache.cxf classes really need to be here
+        Stream.of(
+                "io.netty.buffer.PooledByteBufAllocator",
+                "io.netty.buffer.UnpooledHeapByteBuf",
+                "io.netty.buffer.UnpooledUnsafeHeapByteBuf",
+                "io.netty.buffer.UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeHeapByteBuf",
+                "io.netty.buffer.AbstractReferenceCountedByteBuf",
+                "org.apache.cxf.attachment.AttachmentSerializer",
+                "org.apache.cxf.attachment.AttachmentUtil",
+                "org.apache.cxf.attachment.ImageDataContentHandler",
+                "org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser",
+                "org.apache.cxf.endpoint.ClientImpl",
+                "org.apache.cxf.interceptor.AttachmentOutInterceptor",
+                "org.apache.cxf.interceptor.OneWayProcessorInterceptor",
+                "org.apache.cxf.interceptor.OneWayProcessorInterceptor$1",
+                "org.apache.cxf.phase.PhaseInterceptorChain",
+                "org.apache.cxf.service.factory.AbstractServiceFactoryBean",
+                "org.apache.cxf.staxutils.validation.W3CMultiSchemaFactory",
+                "org.apache.cxf.transport.http.HTTPConduit",
+                "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
+                "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream$1",
+                "org.apache.cxf.ws.addressing.impl.InternalContextUtils",
+                "org.apache.cxf.ws.addressing.impl.InternalContextUtils$1",
+                "com.sun.xml.bind.v2.runtime.output.FastInfosetStreamWriterOutput")
+                .map(RuntimeInitializedClassBuildItem::new)
+                .forEach(runtimeInitializedClass::produce);
     }
 
     @BuildStep
     void addDependencies(BuildProducer<IndexDependencyBuildItem> indexDependency) {
-        indexDependency.produce(new IndexDependencyBuildItem("org.glassfish.jaxb", "txw2"));
-        indexDependency.produce(new IndexDependencyBuildItem("org.glassfish.jaxb", "jaxb-runtime"));
+        Stream.of(
+                "org.apache.cxf:cxf-core",
+                "org.apache.cxf:cxf-rt-frontend-jaxws",
+                "org.apache.cxf:cxf-rt-bindings-soap",
+                "org.apache.cxf:cxf-rt-wsdl",
+                "org.apache.cxf:cxf-rt-databinding-jaxb",
+                "org.apache.cxf:cxf-rt-bindings-xml",
+                "org.apache.cxf:cxf-rt-frontend-simple",
+                "org.apache.cxf:cxf-rt-ws-addr",
+                "org.apache.cxf:cxf-rt-ws-policy",
+                "org.apache.cxf:cxf-rt-transports-http",
+                "org.glassfish.jaxb:txw2",
+                "org.glassfish.jaxb:jaxb-runtime")
+                .forEach(ga -> {
+                    String[] coords = ga.split(":");
+                    indexDependency.produce(new IndexDependencyBuildItem(coords[0], coords[1]));
+                });
     }
 
     @BuildStep
@@ -671,14 +677,35 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    void seeAlso(CombinedIndexBuildItem combinedIndexBuildItem,
-            BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
+    void reflectiveClasses(CombinedIndexBuildItem combinedIndexBuildItem,
+            BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
         IndexView index = combinedIndexBuildItem.getIndex();
+
+        Stream.of(
+                "org.apache.cxf.databinding.DataBinding",
+                "org.apache.cxf.interceptor.Interceptor",
+                "org.apache.cxf.binding.soap.interceptor.SoapInterceptor",
+                "org.apache.cxf.phase.PhaseInterceptor")
+                .map(DotName::createSimple)
+                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .map(classInfo -> classInfo.name().toString())
+                .filter(className -> !className.startsWith("org.apache.cxf.") || !className.contains(".blueprint."))
+                .map(className -> new ReflectiveClassBuildItem(false, false, className))
+                .forEach(reflectiveClass::produce);
+
+        Stream.of(
+                "org.apache.cxf.feature.Feature")
+                .map(DotName::createSimple)
+                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .map(classInfo -> classInfo.name().toString())
+                .map(className -> new ReflectiveClassBuildItem(true, false, className))
+                .forEach(reflectiveClass::produce);
+
         for (AnnotationInstance xmlSeeAlsoAnn : index.getAnnotations(XML_SEE_ALSO)) {
             AnnotationValue value = xmlSeeAlsoAnn.value();
             Type[] types = value.asClassArray();
             for (Type t : types) {
-                reflectiveItems.produce(new ReflectiveClassBuildItem(false, false, t.name().toString()));
+                reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, t.name().toString()));
             }
         }
     }

@@ -140,8 +140,7 @@ public abstract class CxfClientProducer {
         try {
             cls = Class.forName(className, false, Thread.currentThread().getContextClassLoader()).asSubclass(clazz);
         } catch (ClassNotFoundException | ClassCastException e) {
-            LOGGER.warnf("no such class %s", className);
-            return;
+            throw new RuntimeException("No such class " + className, e);
         }
         T item = null;
         try {
