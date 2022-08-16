@@ -138,6 +138,11 @@ class QuarkusCxfProcessor {
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
 
     @BuildStep
+    FeatureBuildItem feature() {
+        return new FeatureBuildItem(FEATURE_CXF);
+    }
+
+    @BuildStep
     void serviceProviders(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
         String[] soapVersions = new String[] { "1_1", "1_2" };
         for (String version : soapVersions) {
@@ -259,7 +264,6 @@ class QuarkusCxfProcessor {
     public void build(
             CombinedIndexBuildItem combinedIndexBuildItem,
             CxfBuildTimeConfig cxfBuildTimeConfig,
-            BuildProducer<FeatureBuildItem> feature,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
             BuildProducer<ReflectiveBeanClassBuildItem> reflectiveBeanClass,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
@@ -385,8 +389,6 @@ class QuarkusCxfProcessor {
                 }
             }
         }
-
-        feature.produce(new FeatureBuildItem(FEATURE_CXF));
 
         for (ClassInfo subclass : index.getAllKnownSubclasses(ABSTRACT_FEATURE)) {
             reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, subclass.name().toString()));
