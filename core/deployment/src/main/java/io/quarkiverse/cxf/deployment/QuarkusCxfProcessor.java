@@ -128,8 +128,6 @@ class QuarkusCxfProcessor {
     private static final DotName REQUEST_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.RequestWrapper");
     private static final DotName RESPONSE_WRAPPER_ANNOTATION = DotName.createSimple("javax.xml.ws.ResponseWrapper");
     private static final DotName BINDING_TYPE_ANNOTATION = DotName.createSimple("javax.xml.ws.BindingType");
-    private static final DotName XML_NAMESPACE = DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace");
-    private static final DotName XML_SEE_ALSO = DotName.createSimple("javax.xml.bind.annotation.XmlSeeAlso");
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
 
     @BuildStep
@@ -241,11 +239,6 @@ class QuarkusCxfProcessor {
             BuildProducer<AdditionalBeanBuildItem> additionalBeans,
             BuildProducer<UnremovableBeanBuildItem> unremovableBeans) throws ClassNotFoundException {
         IndexView index = combinedIndexBuildItem.getIndex();
-        // Register package-infos for reflection
-        for (AnnotationInstance xmlNamespaceInstance : index.getAnnotations(XML_NAMESPACE)) {
-            reflectiveClass.produce(
-                    new ReflectiveClassBuildItem(true, true, xmlNamespaceInstance.target().asClass().name().toString()));
-        }
 
         Bus bus = BusFactory.getDefaultBus();
         // setup class capturing
@@ -701,7 +694,14 @@ class QuarkusCxfProcessor {
                 .map(className -> new ReflectiveClassBuildItem(true, false, className))
                 .forEach(reflectiveClass::produce);
 
-        for (AnnotationInstance xmlSeeAlsoAnn : index.getAnnotations(XML_SEE_ALSO)) {
+        for (AnnotationInstance xmlNamespaceInstance : index
+                .getAnnotations(DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace"))) {
+            reflectiveClass.produce(
+                    new ReflectiveClassBuildItem(true, true, xmlNamespaceInstance.target().asClass().name().toString()));
+        }
+
+        for (AnnotationInstance xmlSeeAlsoAnn : index
+                .getAnnotations(DotName.createSimple("javax.xml.bind.annotation.XmlSeeAlso"))) {
             AnnotationValue value = xmlSeeAlsoAnn.value();
             Type[] types = value.asClassArray();
             for (Type t : types) {
