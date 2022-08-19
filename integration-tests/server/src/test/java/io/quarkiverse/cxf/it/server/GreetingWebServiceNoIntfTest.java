@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
@@ -13,12 +14,12 @@ class GreetingWebServiceNoIntfTest extends AbstractGreetingWebServiceTest {
 
     @BeforeAll
     static void setup() {
-        greetingWS = ClientTestUtil.getClient(GreetingWebServiceNoIntf.class, "/soap/greeting-no-intf");
+        greetingWS = QuarkusCxfClientTestUtil.getClient(GreetingWebServiceNoIntf.class, "/soap/greeting-no-intf");
     }
 
     @Test
     void endpointUrl() {
-        Assertions.assertThat(ClientTestUtil.getEndpointUrl(greetingWS)).endsWith("/soap/greeting-no-intf");
+        Assertions.assertThat(QuarkusCxfClientTestUtil.getEndpointUrl(greetingWS)).endsWith("/soap/greeting-no-intf");
     }
 
     @Override

@@ -8,21 +8,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-integration-tests</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>quarkus-cxf-test-util</artifactId>
 
-    <name>Quarkus CXF Extension - Integration Tests</name>
-
-    <modules>
-        <module>client</module>
-        <module>server</module>
-        <module>logging</module>
-        <module>ws-security-client</module>
-    </modules>
-
-    <properties>
-        <maven.compiler.parameters>true</maven.compiler.parameters>
-    </properties>
+    <name>Quarkus CXF - Test Utilities</name>
 
     <dependencyManagement>
         <dependencies>
@@ -49,5 +37,20 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-core</artifactId>
+        </dependency>
+        <dependency><!-- We'd actually need jakarta.xml.ws:jakarta.xml.ws-api but that one is not managed anywhere -->
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
