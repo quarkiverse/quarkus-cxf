@@ -21,10 +21,18 @@ import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.databinding.WrapperHelper;
 import org.apache.cxf.interceptor.FIStaxInInterceptor;
 import org.apache.cxf.interceptor.FIStaxOutInterceptor;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Node;
 
 import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
+import com.sun.xml.messaging.saaj.soap.SOAPDocumentFragment;
+import com.sun.xml.messaging.saaj.soap.SOAPDocumentImpl;
+import com.sun.xml.messaging.saaj.soap.impl.CDATAImpl;
+import com.sun.xml.messaging.saaj.soap.impl.ElementImpl;
+import com.sun.xml.messaging.saaj.soap.impl.SOAPCommentImpl;
+import com.sun.xml.messaging.saaj.soap.impl.SOAPTextImpl;
 
 import io.quarkiverse.cxf.CXFException;
 
@@ -32,7 +40,8 @@ import io.quarkiverse.cxf.CXFException;
 final class Traget_javax_xml_soap_FactoryFinder {
 
     /**
-     * The target method wants to read a properties file under {@code java.home} which does not work on GraalVM (there is no
+     * The target method wants to read a properties file under {@code java.home} which does not work on GraalVM (there
+     * is no
      * JRE distro at native runtime).
      *
      * @param factoryId
@@ -148,7 +157,7 @@ final class Target_org_apache_cxf_endpoint_dynamic_ExceptionClassGenerator {
     public Class<?> createExceptionClass(Class<?> bean) throws ClassNotFoundException {
         Logger LOG = LogUtils.getL7dLogger(org.apache.cxf.endpoint.dynamic.TypeClassInitializer.class);
         LOG.info("Substitute TypeClassInitializer$ExceptionCreator.createExceptionClass");
-        //TODO not sure if I use CXFException or generated one. I have both system in place. but I use CXFEx currently.
+        // TODO not sure if I use CXFException or generated one. I have both system in place. but I use CXFEx currently.
         String newClassName = CXFException.class.getSimpleName();
 
         try {
@@ -231,7 +240,7 @@ final class Target_org_apache_cxf_common_util_ReflectionInvokationHandler {
 
     @Substitute
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        //add this to handle args null bug
+        // add this to handle args null bug
         if (args == null)
             args = new Object[0];
         ReflectionInvokationHandler.WrapReturn wr = (ReflectionInvokationHandler.WrapReturn) method
@@ -397,6 +406,58 @@ final class Target_org_apache_cxf_interceptor_FIStaxOutInterceptor {
     private XMLStreamWriter getOutput(OutputStream out) {
         throw new UnsupportedOperationException(
                 "FastInfoset support was requested but its classes are not present in the classpath.");
+    }
+
+}
+
+/**
+ */
+@TargetClass(className = "org.apache.cxf.helpers.DOMUtils")
+final class Target_org_apache_cxf_helpers_DOMUtils {
+
+    static {
+        /* Our baseline is Java 11, so we do not need to detect using reflection whether we are on Java >9 */
+        setJava9SAAJ(true);
+    }
+
+    @Alias
+    private static ClassValue<Method> GET_DOM_ELEMENTS_METHODS = null;
+
+    @Alias
+    private static void setJava9SAAJ(boolean isJava9SAAJ) {
+    }
+
+    @Alias
+    public static boolean isJava9SAAJ() {
+        return true;
+    }
+
+    @Substitute
+    public static Node getDomElement(Node node) {
+        /* Simplified without reflection */
+        if (node instanceof SOAPDocumentImpl) {
+            return ((SOAPDocumentImpl) node).getDomElement();
+        } else if (node instanceof ElementImpl) {
+            return ((ElementImpl) node).getDomElement();
+        } else if (node instanceof SOAPTextImpl) {
+            return ((SOAPTextImpl) node).getDomElement();
+        } else if (node instanceof SOAPCommentImpl) {
+            return ((SOAPCommentImpl) node).getDomElement();
+        } else if (node instanceof CDATAImpl) {
+            return ((CDATAImpl) node).getDomElement();
+        } else if (node instanceof SOAPDocumentFragment) {
+            return ((SOAPDocumentFragment) node).getDomNode();
+        }
+        return node;
+    }
+
+    @Substitute
+    public static DocumentFragment getDomDocumentFragment(DocumentFragment fragment) {
+        /* Simplified without reflection */
+        if (fragment instanceof SOAPDocumentFragment) {
+            return (DocumentFragment) ((SOAPDocumentFragment) fragment).getDomNode();
+        }
+        return fragment;
     }
 
 }
