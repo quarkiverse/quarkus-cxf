@@ -17,6 +17,7 @@
         <module>client</module>
         <module>server</module>
         <module>logging</module>
+        <module>ws-security-client</module>
     </modules>
 
     <properties>
