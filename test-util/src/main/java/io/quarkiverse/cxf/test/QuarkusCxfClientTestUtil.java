@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.it.server;
+package io.quarkiverse.cxf.test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,9 +12,9 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 import io.quarkus.runtime.LaunchMode;
 
-public class ClientTestUtil {
+public class QuarkusCxfClientTestUtil {
 
-    private ClientTestUtil() {
+    private QuarkusCxfClientTestUtil() {
     }
 
     public static <T> T getClient(Class<T> serviceInterface, String path) {

@@ -6,6 +6,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+
 abstract class AbstractGreetingWebServiceTest {
     protected static GreetingWebService greetingWS;
 
@@ -40,7 +42,7 @@ abstract class AbstractGreetingWebServiceTest {
 
         given()
                 .header("Content-Type", "text/xml").and().body(xml)
-                .when().post(ClientTestUtil.getEndpointUrl(greetingWS))
+                .when().post(QuarkusCxfClientTestUtil.getEndpointUrl(greetingWS))
                 .then()
                 .statusCode(200)
                 .body(containsString("Hello foo"));
@@ -49,7 +51,7 @@ abstract class AbstractGreetingWebServiceTest {
     @Test
     void soap12Binding() {
         given()
-                .when().get(ClientTestUtil.getEndpointUrl(greetingWS) + "?wsdl")
+                .when().get(QuarkusCxfClientTestUtil.getEndpointUrl(greetingWS) + "?wsdl")
                 .then()
                 .statusCode(200)
                 .body(

@@ -83,6 +83,8 @@
         <module>ws-security</module>
         <module>transports-http-hc5</module>
         <module>docs</module>
+        <module>bom-test</module>
+        <module>test-util</module>
         <module>integration-tests</module>
     </modules>
 
