@@ -1,0 +1,57 @@
+<?xml version="1.0" ?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.jboss.org/eap/quickstarts/wscalculator/WssCalculator" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="WssCalculatorService" targetNamespace="http://www.jboss.org/eap/quickstarts/wscalculator/WssCalculator">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.jboss.org/eap/quickstarts/wscalculator/WssCalculator" elementFormDefault="unqualified" targetNamespace="http://www.jboss.org/eap/quickstarts/wscalculator/WssCalculator" version="1.0">
+
+  <xs:element name="modulo" type="tns:modulo"></xs:element>
+
+  <xs:element name="moduloResponse" type="tns:moduloResponse"></xs:element>
+
+  <xs:complexType name="modulo">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:int"></xs:element>
+      <xs:element name="arg1" type="xs:int"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="moduloResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:int"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="moduloResponse">
+    <wsdl:part element="tns:moduloResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="modulo">
+    <wsdl:part element="tns:modulo" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="WssCalculatorService">
+    <wsdl:operation name="modulo">
+      <wsdl:input message="tns:modulo" name="modulo">
+    </wsdl:input>
+      <wsdl:output message="tns:moduloResponse" name="moduloResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WssCalculatorServiceSoapBinding" type="tns:WssCalculatorService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"></soap:binding>
+    <wsdl:operation name="modulo">
+      <soap:operation soapAction="" style="document"></soap:operation>
+      <wsdl:input name="modulo">
+        <soap:body use="literal"></soap:body>
+      </wsdl:input>
+      <wsdl:output name="moduloResponse">
+        <soap:body use="literal"></soap:body>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WssCalculatorService">
+    <wsdl:port binding="tns:WssCalculatorServiceSoapBinding" name="WssCalculator">
+      <soap:address location="http://localhost:8080/calculator-ws/WssCalculatorService"></soap:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
