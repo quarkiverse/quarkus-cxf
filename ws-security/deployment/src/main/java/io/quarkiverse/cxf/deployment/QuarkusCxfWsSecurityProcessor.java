@@ -23,14 +23,12 @@ public class QuarkusCxfWsSecurityProcessor {
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfWsSecurityProcessor.class);
 
     private static final List<String> interfaceImplsToRegister = Arrays.asList(
-            "javax.xml.soap.SOAPBodyElement",
             "org.ehcache.core.spi.service.ServiceFactory");
 
     @BuildStep
     void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
         Stream.of(
                 "org.ehcache:ehcache",
-                "jakarta.xml.soap:jakarta.xml.soap-api",
                 "org.apache.wss4j:wss4j-ws-security-dom")
                 .forEach(ga -> {
                     String[] coords = ga.split(":");
