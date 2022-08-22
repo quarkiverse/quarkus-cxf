@@ -3,6 +3,7 @@ package io.quarkiverse.cxf.deployment;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
@@ -170,14 +171,23 @@ public class QuarkusCxfWsSecurityProcessor {
     }
 
     @BuildStep
-    List<RuntimeInitializedClassBuildItem> runtimeInitializedClasses() {
+    List<RuntimeInitializedClassBuildItem> runtimeInitializedClasses(CombinedIndexBuildItem combinedIndexBuildItem) {
+
         return Arrays.asList(
                 new RuntimeInitializedClassBuildItem("org.apache.wss4j.common.saml.builder.SAML1ComponentBuilder"),
                 new RuntimeInitializedClassBuildItem("org.apache.wss4j.common.saml.builder.SAML2ComponentBuilder"),
                 new RuntimeInitializedClassBuildItem("org.apache.xml.security.stax.impl.InboundSecurityContextImpl"),
-                new RuntimeInitializedClassBuildItem("org.terracotta.utilities.io.Files"),
+                new RuntimeInitializedClassBuildItem("org.ehcache.shadow.org.terracotta.utilities.io.Files"),
                 new RuntimeInitializedClassBuildItem(
                         "org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.BooleanPortability"));
+    }
+
+    @BuildStep
+    void runtimeReinitializedClass(BuildProducer<RuntimeInitializedClassBuildItem> runtimeReinitializedClass) {
+        Stream.of("org.ehcache.xml.XmlConfiguration",
+                "org.ehcache.xml.ResourceConfigurationParser")
+                .map(RuntimeInitializedClassBuildItem::new)
+                .forEach(runtimeReinitializedClass::produce);
     }
 
 }
