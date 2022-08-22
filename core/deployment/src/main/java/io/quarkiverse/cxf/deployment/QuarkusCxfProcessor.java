@@ -982,7 +982,6 @@ class QuarkusCxfProcessor {
                 "javax.wsdl.Service",
                 "javax.wsdl.Types",
                 "javax.wsdl.extensions.soap.SOAPBody",
-                "javax.xml.soap.SOAPMessage",
                 "javax.xml.stream.XMLStreamReader",
                 "javax.xml.stream.XMLStreamReader",
                 "javax.xml.stream.XMLStreamWriter",
