@@ -24,13 +24,11 @@ public class QuarkusCxfWsSecurityProcessor {
 
     private static final List<String> interfaceImplsToRegister = Arrays.asList(
             "javax.xml.soap.SOAPBodyElement",
-            "com.sun.xml.bind.v2.runtime.property.Property",
             "org.ehcache.core.spi.service.ServiceFactory");
 
     @BuildStep
     void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
         Stream.of(
-                "org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.3_spec",
                 "org.ehcache:ehcache",
                 "jakarta.xml.soap:jakarta.xml.soap-api",
                 "org.apache.wss4j:wss4j-ws-security-dom")
@@ -52,8 +50,7 @@ public class QuarkusCxfWsSecurityProcessor {
 
         indexView.getKnownClasses().stream()
                 .map(ci -> ci.name().toString())
-                .filter(c -> (c.startsWith("javax.xml.bind.annotation.") ||
-                        c.startsWith("org.apache.wss4j.dom.transform.") ||
+                .filter(c -> (c.startsWith("org.apache.wss4j.dom.transform.") ||
                         c.startsWith("org.apache.wss4j.dom.action.") ||
                         c.startsWith("org.apache.wss4j.dom.processor.") ||
                         c.startsWith("org.apache.wss4j.dom.validate.")) && !c.contains("$"))

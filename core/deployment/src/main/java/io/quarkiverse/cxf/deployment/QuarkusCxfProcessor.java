@@ -56,7 +56,6 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.MethodParameterInfo;
-import org.jboss.jandex.Type;
 import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -91,7 +90,6 @@ import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.GeneratedResourceBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
-import io.quarkus.deployment.builditem.SystemPropertyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
@@ -133,11 +131,6 @@ class QuarkusCxfProcessor {
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE_CXF);
-    }
-
-    @BuildStep
-    public void generateSysProps(BuildProducer<SystemPropertyBuildItem> props) {
-        props.produce(new SystemPropertyBuildItem("com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize", "true"));
     }
 
     @BuildStep
@@ -631,8 +624,7 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream",
                 "org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream$1",
                 "org.apache.cxf.ws.addressing.impl.InternalContextUtils",
-                "org.apache.cxf.ws.addressing.impl.InternalContextUtils$1",
-                "com.sun.xml.bind.v2.runtime.output.FastInfosetStreamWriterOutput")
+                "org.apache.cxf.ws.addressing.impl.InternalContextUtils$1")
                 .map(RuntimeInitializedClassBuildItem::new)
                 .forEach(runtimeInitializedClass::produce);
     }
@@ -649,9 +641,7 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf:cxf-rt-transports-http",
                 "org.apache.cxf:cxf-rt-wsdl",
                 "org.apache.cxf:cxf-rt-ws-addr",
-                "org.apache.cxf:cxf-rt-ws-policy",
-                "org.glassfish.jaxb:txw2",
-                "org.glassfish.jaxb:jaxb-runtime")
+                "org.apache.cxf:cxf-rt-ws-policy")
                 .forEach(ga -> {
                     String[] coords = ga.split(":");
                     indexDependency.produce(new IndexDependencyBuildItem(coords[0], coords[1]));
@@ -700,14 +690,6 @@ class QuarkusCxfProcessor {
                     new ReflectiveClassBuildItem(true, true, xmlNamespaceInstance.target().asClass().name().toString()));
         }
 
-        for (AnnotationInstance xmlSeeAlsoAnn : index
-                .getAnnotations(DotName.createSimple("javax.xml.bind.annotation.XmlSeeAlso"))) {
-            AnnotationValue value = xmlSeeAlsoAnn.value();
-            Type[] types = value.asClassArray();
-            for (Type t : types) {
-                reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, t.name().toString()));
-            }
-        }
     }
 
     void produceRecursiveProxies(IndexView index,
@@ -747,14 +729,6 @@ class QuarkusCxfProcessor {
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapFault"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapOperation"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapHeaderFault"));
-        produceProxyIfExist(proxies, "com.sun.xml.bind.marshaller.CharacterEscapeHandler");
-        produceProxyIfExist(proxies, "com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.core.marshaller.CharacterEscapeHandler");
-        produceProxyIfExist(proxies, "com.sun.xml.txw2.output.CharacterEscapeHandler");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.characterEscapeHandler");
-        produceProxyIfExist(proxies, "org.glassfish.jaxb.marshaller.CharacterEscapeHandler");
-        //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.impl.PropertySeed"));
-        //proxies.produce(new NativeImageProxyDefinitionBuildItem("com.sun.xml.bind.v2.model.core.TypeInfo"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$S2JJAXBModel"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$Options"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$JCodeModel"));
@@ -827,38 +801,6 @@ class QuarkusCxfProcessor {
                 "com.sun.org.apache.xpath.internal.domapi.XPathEvaluatorImpl",
                 "com.sun.tools.internal.xjc.api.XJC",
                 "com.sun.tools.xjc.api.XJC",
-                "com.sun.xml.bind.XmlAccessorFactory",
-                "com.sun.xml.bind.api.CompositeStructure",
-                "com.sun.xml.bind.api.JAXBRIContext",
-                "com.sun.xml.bind.c14n",
-                "com.sun.xml.bind.defaultNamespaceRemap",
-                "com.sun.xml.bind.marshaller.CharacterEscapeHandler",
-                "com.sun.xml.bind.marshaller.DumbEscapeHandler",
-                "com.sun.xml.bind.marshaller.MinimumEscapeHandler",
-                "com.sun.xml.bind.marshaller.NioEscapeHandler",
-                "com.sun.xml.bind.marshaller.NoEscapeHandler",
-                "com.sun.xml.bind.retainReferenceToInfo",
-                "com.sun.xml.bind.subclassReplacements",
-                "com.sun.xml.bind.treatEverythingNillable",
-                "com.sun.xml.bind.v2.model.annotation.RuntimeAnnotationReader",
-                "com.sun.xml.bind.v2.model.nav.ReflectionNavigator",
-                "com.sun.xml.bind.v2.runtime.AnyTypeBeanInfo",
-                "com.sun.xml.bind.v2.runtime.ArrayBeanInfoImpl",
-                "com.sun.xml.bind.v2.runtime.BridgeContextImpl",
-                "com.sun.xml.bind.v2.runtime.ClassBeanInfoImpl",
-                "com.sun.xml.bind.v2.runtime.CompositeStructureBeanInfo",
-                "com.sun.xml.bind.v2.runtime.ElementBeanInfoImpl",
-                "com.sun.xml.bind.v2.runtime.JAXBContextImpl",
-                "com.sun.xml.bind.v2.runtime.JaxBeanInfo",
-                "com.sun.xml.bind.v2.runtime.LeafBeanInfoImpl",
-                "com.sun.xml.bind.v2.runtime.MarshallerImpl",
-                "com.sun.xml.bind.v2.runtime.ValueListBeanInfoImpl",
-                "com.sun.xml.bind.v2.runtime.output.FastInfosetStreamWriterOutput",
-                "com.sun.xml.bind.v2.runtime.output.StAXExStreamWriterOutput",
-                "com.sun.xml.bind.v2.runtime.unmarshaller.FastInfosetConnector",
-                "com.sun.xml.bind.v2.runtime.unmarshaller.StAXExConnector",
-                "com.sun.xml.bind.v2.schemagen.xmlschema.Schema",
-                "com.sun.xml.bind.v2.schemagen.xmlschema.package-info",
                 "com.sun.xml.fastinfoset.stax.StAXDocumentParser",
                 "com.sun.xml.fastinfoset.stax.StAXDocumentSerializer",
                 "com.sun.xml.internal.bind.XmlAccessorFactory",
@@ -916,8 +858,6 @@ class QuarkusCxfProcessor {
                 "javax.activation.DataHandler",
                 "javax.wsdl.Types",
                 "javax.wsdl.extensions.mime.MIMEPart",
-                "javax.xml.bind.JAXBContext",
-                "javax.xml.bind.JAXBElement",
                 "javax.xml.datatype.Duration",
                 "javax.xml.datatype.XMLGregorianCalendar",
                 "javax.xml.namespace.QName",
@@ -1004,9 +944,6 @@ class QuarkusCxfProcessor {
                 "com.sun.msv.reader.GrammarReaderController",
                 "com.sun.org.apache.xerces.internal.utils.XMLSecurityManager",
                 "com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager",
-                "com.sun.xml.bind.DatatypeConverterImpl",
-                "com.sun.xml.bind.api.TypeReference",
-                "com.sun.xml.bind.v2.JAXBContextFactory",
                 "com.sun.xml.internal.bind.DatatypeConverterImpl",
                 "com.sun.xml.internal.bind.api.TypeReference",
                 "ibm.wsdl.DefinitionImpl",
@@ -1045,7 +982,6 @@ class QuarkusCxfProcessor {
                 "javax.wsdl.Service",
                 "javax.wsdl.Types",
                 "javax.wsdl.extensions.soap.SOAPBody",
-                "javax.xml.bind.annotation.XmlSeeAlso",
                 "javax.xml.soap.SOAPMessage",
                 "javax.xml.stream.XMLStreamReader",
                 "javax.xml.stream.XMLStreamReader",
