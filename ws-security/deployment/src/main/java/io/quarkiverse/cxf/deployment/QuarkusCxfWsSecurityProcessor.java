@@ -2,7 +2,6 @@ package io.quarkiverse.cxf.deployment;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import org.jboss.jandex.DotName;
@@ -18,18 +17,10 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
-import io.quarkus.deployment.pkg.builditem.CurateOutcomeBuildItem;
-import io.quarkus.deployment.util.ArtifactInfoUtil;
 
 public class QuarkusCxfWsSecurityProcessor {
 
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfWsSecurityProcessor.class);
-
-    private static final List<String> indexDepedenciesClasses = Arrays.asList(
-            "javax.xml.bind.annotation.W3CDomHandler",
-            "org.ehcache.xml.model.ObjectFactory",
-            "javax.xml.soap.SOAPBodyElement",
-            "org.apache.wss4j.dom.WSConstants");
 
     private static final List<String> interfaceImplsToRegister = Arrays.asList(
             "javax.xml.soap.SOAPBodyElement",
@@ -37,13 +28,16 @@ public class QuarkusCxfWsSecurityProcessor {
             "org.ehcache.core.spi.service.ServiceFactory");
 
     @BuildStep
-    void indexDependencies(CurateOutcomeBuildItem curateOutcome,
-            BuildProducer<IndexDependencyBuildItem> indexDependencyBuildItems) throws ClassNotFoundException {
-        for (String className : indexDepedenciesClasses) {
-            Class clazz = Class.forName(className);
-            Map.Entry<String, String> entry = ArtifactInfoUtil.groupIdAndArtifactId(clazz, curateOutcome);
-            indexDependencyBuildItems.produce(new IndexDependencyBuildItem(entry.getKey(), entry.getValue()));
-        }
+    void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
+        Stream.of(
+                "org.jboss.spec.javax.xml.bind:jboss-jaxb-api_2.3_spec",
+                "org.ehcache:ehcache",
+                "jakarta.xml.soap:jakarta.xml.soap-api",
+                "org.apache.wss4j:wss4j-ws-security-dom")
+                .forEach(ga -> {
+                    String[] coords = ga.split(":");
+                    indexDependencies.produce(new IndexDependencyBuildItem(coords[0], coords[1]));
+                });
     }
 
     @BuildStep
