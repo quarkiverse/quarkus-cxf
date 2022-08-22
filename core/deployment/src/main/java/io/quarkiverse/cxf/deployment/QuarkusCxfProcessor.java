@@ -641,15 +641,15 @@ class QuarkusCxfProcessor {
     void addDependencies(BuildProducer<IndexDependencyBuildItem> indexDependency) {
         Stream.of(
                 "org.apache.cxf:cxf-core",
-                "org.apache.cxf:cxf-rt-frontend-jaxws",
                 "org.apache.cxf:cxf-rt-bindings-soap",
-                "org.apache.cxf:cxf-rt-wsdl",
-                "org.apache.cxf:cxf-rt-databinding-jaxb",
                 "org.apache.cxf:cxf-rt-bindings-xml",
+                "org.apache.cxf:cxf-rt-frontend-jaxws",
+                "org.apache.cxf:cxf-rt-databinding-jaxb",
                 "org.apache.cxf:cxf-rt-frontend-simple",
+                "org.apache.cxf:cxf-rt-transports-http",
+                "org.apache.cxf:cxf-rt-wsdl",
                 "org.apache.cxf:cxf-rt-ws-addr",
                 "org.apache.cxf:cxf-rt-ws-policy",
-                "org.apache.cxf:cxf-rt-transports-http",
                 "org.glassfish.jaxb:txw2",
                 "org.glassfish.jaxb:jaxb-runtime")
                 .forEach(ga -> {
