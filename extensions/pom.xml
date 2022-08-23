@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.quarkiverse.cxf</groupId>
+        <artifactId>quarkus-cxf-parent</artifactId>
+        <version>1.5.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>quarkus-cxf-extensions</artifactId>
+    <name>Quarkus CXF - Extensions</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>woodstox</module>
+        <module>core</module>
+        <module>features-logging</module>
+        <module>features-metrics</module>
+        <module>ws-security</module>
+        <module>transports-http-hc5</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>set-enforce-non-deployment-property</id>
+                        <inherited>false</inherited>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <source>
+                                if (project.artifactId.endsWith('-deployment')) {
+                                    properties['enforce-non-deployment.skip'] = true;
+                                }
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-non-deployment</id>
+                        <configuration>
+                            <skip>${enforce-non-deployment.skip}</skip>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <!-- <exclude>org.ow2.asm:asm</exclude> -->
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
