@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.jboss.jandex.DotName;
+import org.jboss.jandex.IndexView;
+
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
@@ -34,6 +38,7 @@ public class EhcacheProcessor {
     void registerServices(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
         Stream.of(
                 "org.ehcache.core.spi.service.ServiceFactory",
+                "org.ehcache.core.spi.service.StatisticsService",
                 "org.ehcache.xml.CacheManagerServiceConfigurationParser",
                 "org.ehcache.xml.CacheServiceConfigurationParser")
                 .forEach(serviceName -> {
@@ -48,53 +53,35 @@ public class EhcacheProcessor {
     }
 
     @BuildStep
-    void reflectiveClass(BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
+    void reflectiveClass(CombinedIndexBuildItem combinedIndexBuildItem,
+            BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
+        final IndexView index = combinedIndexBuildItem.getIndex();
 
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, true,
-                "org.ehcache.CacheManager",
-                "org.ehcache.core.Ehcache",
-                "org.ehcache.core.EhcacheBase",
-                "org.ehcache.core.internal.statistics.StatsUtils$1",
-                "org.ehcache.core.internal.statistics.StatsUtils$2",
-                "org.ehcache.core.internal.statistics.StatsUtils$3",
-                "org.ehcache.core.spi.service.StatisticsService",
-                "org.ehcache.impl.copy.IdentityCopier",
-                "org.ehcache.impl.internal.concurrent.ConcurrentHashMap",
-                "org.ehcache.impl.internal.concurrent.ConcurrentHashMap$CounterCell",
-                "org.ehcache.impl.internal.concurrent.ConcurrentHashMap$TreeBin",
-                "org.ehcache.impl.internal.resilience.RobustResilienceStrategy",
-                "org.ehcache.impl.internal.store.disk.OffHeapDiskStore",
-                "org.ehcache.impl.internal.store.heap.OnHeapStore",
-                "org.ehcache.impl.internal.store.offheap.AbstractOffHeapStore",
-                "org.ehcache.impl.internal.store.tiering.TieredStore",
-                "org.ehcache.impl.serialization.CompactJavaSerializer",
-                "org.ehcache.impl.serialization.StringSerializer",
-                "org.ehcache.impl.store.BaseStore",
-                "org.ehcache.shadow.org.terracotta.context.query.Matchers$1",
-                "org.ehcache.shadow.org.terracotta.context.query.Matchers$2",
-                "org.ehcache.shadow.org.terracotta.context.query.Matchers$3",
-                "org.ehcache.shadow.org.terracotta.context.query.Matchers$4",
-                "org.ehcache.shadow.org.terracotta.context.query.Matchers$5",
-                "org.ehcache.shadow.org.terracotta.context.query.Matchers$6",
-                "org.ehcache.shadow.org.terracotta.context.query.Matchers$8",
-                "org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.Portability",
-                "org.ehcache.shadow.org.terracotta.statistics.AbstractOperationStatistic",
-                "org.ehcache.shadow.org.terracotta.statistics.AbstractSourceStatistic",
-                "org.ehcache.shadow.org.terracotta.statistics.GeneralOperationStatistic",
-                "org.ehcache.shadow.org.terracotta.statistics.MappedOperationStatistic",
-                "org.ehcache.shadow.org.terracotta.statistics.MappedOperationStatistic$1",
-                "org.ehcache.shadow.org.terracotta.statistics.PassThroughStatistic"));
+        Stream.of(
+                "org.ehcache.spi.copy.Copier",
+                "org.ehcache.spi.resilience.ResilienceStrategy",
+                "org.ehcache.spi.serialization.Serializer")
+                .map(DotName::createSimple)
+                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .map(classInfo -> classInfo.name().toString())
+                .map(className -> new ReflectiveClassBuildItem(false, false, className))
+                .forEach(reflectiveClass::produce);
 
-        reflectiveClass.produce(ReflectiveClassBuildItem.serializationClass(
-                "java.lang.Enum",
-                "java.lang.String",
-                "java.time.Instant",
-                "java.time.Ser",
-                "java.util.ArrayList",
-                "java.util.Arrays$ArrayList",
-                "java.util.Collections$EmptyMap",
-                "java.util.Collections$SingletonList",
-                "java.util.HashMap"));
+        Stream.of(
+                "org.ehcache.shadow.org.terracotta.statistics.SourceStatistic")
+                .map(DotName::createSimple)
+                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .map(classInfo -> classInfo.name().toString())
+                .map(className -> new ReflectiveClassBuildItem(false, true, className))
+                .forEach(reflectiveClass::produce);
+
+        Stream.of(
+                "org.ehcache.shadow.org.terracotta.context.query.Matcher")
+                .map(DotName::createSimple)
+                .flatMap(dotName -> index.getAllKnownSubclasses(dotName).stream())
+                .map(classInfo -> classInfo.name().toString())
+                .map(className -> new ReflectiveClassBuildItem(true, false, className))
+                .forEach(reflectiveClass::produce);
 
     }
 
