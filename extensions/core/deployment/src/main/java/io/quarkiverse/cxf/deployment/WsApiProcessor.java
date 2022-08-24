@@ -51,7 +51,8 @@ class WsApiProcessor {
 
         // TODO check whether these are required at all or whether some can be registered with false, false
         reflectiveClass.produce(new ReflectiveClassBuildItem(true, false,
-                "javax.xml.ws.WebServiceFeature"));
+                "javax.xml.ws.WebServiceFeature",
+                "javax.xml.ws.EndpointReference"));
 
         final IndexView index = combinedIndex.getIndex();
         Stream.of(
