@@ -1,8 +1,10 @@
 package io.quarkiverse.cxf.deployment;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.stream.Stream;
 
-import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -13,6 +15,8 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBui
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
+import io.quarkus.deployment.util.ServiceUtil;
 
 /**
  * {@link BuildStep}s related to {@code org.ehcache:*}
@@ -30,24 +34,32 @@ public class EhcacheProcessor {
     }
 
     @BuildStep
+    void registerServices(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
+        Stream.of(
+                "org.ehcache.core.spi.service.ServiceFactory",
+                "org.ehcache.xml.CacheManagerServiceConfigurationParser",
+                "org.ehcache.xml.CacheServiceConfigurationParser")
+                .forEach(serviceName -> {
+                    try {
+                        final Set<String> names = ServiceUtil.classNamesNamedIn(Thread.currentThread().getContextClassLoader(),
+                                ServiceProviderBuildItem.SPI_ROOT + serviceName);
+                        serviceProvider.produce(new ServiceProviderBuildItem(serviceName, new ArrayList<>(names)));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+    }
+
+    @BuildStep
     void reflectiveClass(CombinedIndexBuildItem combinedIndexBuildItem,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
         final IndexView index = combinedIndexBuildItem.getIndex();
-
-        index.getAllKnownImplementors(DotName.createSimple("org.ehcache.core.spi.service.ServiceFactory")).stream()
-                .map(classInfo -> classInfo.name().toString())
-                .map(className -> new ReflectiveClassBuildItem(true, false, className))
-                .forEach(reflectiveClass::produce);
 
         index.getKnownClasses().stream()
                 .map(ci -> ci.name().toString())
                 .filter(c -> c.startsWith("org.ehcache.xml.model."))
                 .map(className -> new ReflectiveClassBuildItem(true, true, className))
                 .forEach(reflectiveClass::produce);
-
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, false,
-                "org.ehcache.jsr107.internal.Jsr107ServiceConfigurationParser",
-                "org.ehcache.jsr107.internal.Jsr107CacheConfigurationParser"));
 
         reflectiveClass.produce(new ReflectiveClassBuildItem(true, true,
                 "org.ehcache.CacheManager",
@@ -110,9 +122,6 @@ public class EhcacheProcessor {
     @BuildStep
     NativeImageResourceBuildItem nativeImageResource() {
         return new NativeImageResourceBuildItem(
-                "META-INF/services/org.ehcache.core.spi.service.ServiceFactory",
-                "META-INF/services/org.ehcache.xml.CacheManagerServiceConfigurationParser",
-                "META-INF/services/org.ehcache.xml.CacheServiceConfigurationParser",
                 "cxf-ehcache.xml",
                 "ehcache-107-ext.xsd",
                 "ehcache-core.xsd");
