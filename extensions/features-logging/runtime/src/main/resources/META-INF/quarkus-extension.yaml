@@ -1,13 +1,15 @@
 ---
 artifact: ${project.groupId}:${project.artifactId}:${project.version}
 name: "Quarkus CXF Logging"
+description: "Levearge advanced Apache CXF logging options, such as logging of SOAP messages"
 metadata:
   keywords:
-    - "soap"
     - "cxf"
+    - "jaxws"
+    - "jax-ws"
     - "services"
+    - "soap"
   categories:
     - "integration"
   guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html"
   status: "stable"
-  unlisted: true
