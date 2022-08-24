@@ -4,9 +4,11 @@ name: "Quarkus CXF"
 description: "Consume and produce SOAP web services with Apache CXF"
 metadata:
   keywords:
-    - "soap"
     - "cxf"
+    - "jaxws"
+    - "jax-ws"
     - "services"
+    - "soap"
   categories:
     - "integration"
   guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html"
