@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.jboss.jandex.IndexView;
-
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
@@ -51,15 +48,7 @@ public class EhcacheProcessor {
     }
 
     @BuildStep
-    void reflectiveClass(CombinedIndexBuildItem combinedIndexBuildItem,
-            BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
-        final IndexView index = combinedIndexBuildItem.getIndex();
-
-        index.getKnownClasses().stream()
-                .map(ci -> ci.name().toString())
-                .filter(c -> c.startsWith("org.ehcache.xml.model."))
-                .map(className -> new ReflectiveClassBuildItem(true, true, className))
-                .forEach(reflectiveClass::produce);
+    void reflectiveClass(BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
 
         reflectiveClass.produce(new ReflectiveClassBuildItem(true, true,
                 "org.ehcache.CacheManager",

@@ -32,7 +32,10 @@ class JaxbProcessor {
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
         final IndexView index = combinedIndexBuildItem.getIndex();
 
-        index.getAllKnownSubclasses(DotName.createSimple("com.sun.xml.bind.v2.runtime.JaxBeanInfo")).stream()
+        Stream.of(
+                "javax.xml.bind.JAXBElement",
+                "com.sun.xml.bind.v2.runtime.JaxBeanInfo")
+                .flatMap(className -> index.getAllKnownSubclasses(DotName.createSimple(className)).stream())
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> new ReflectiveClassBuildItem(true, false, className))
                 .forEach(reflectiveClass::produce);
