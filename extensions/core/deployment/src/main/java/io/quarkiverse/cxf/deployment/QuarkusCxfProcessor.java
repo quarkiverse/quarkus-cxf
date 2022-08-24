@@ -690,6 +690,13 @@ class QuarkusCxfProcessor {
                     new ReflectiveClassBuildItem(true, true, xmlNamespaceInstance.target().asClass().name().toString()));
         }
 
+        reflectiveClass.produce(new ReflectiveClassBuildItem(true, false,
+                "org.apache.cxf.catalog.OASISCatalogManager",
+                "org.apache.cxf.common.util.ASMHelperImpl$2",
+                "org.apache.cxf.common.util.OpcodesProxy",
+                "org.apache.cxf.headers.HeaderManager",
+                "org.apache.cxf.policy.PolicyDataEngine"));
+
     }
 
     void produceRecursiveProxies(IndexView index,
