@@ -11,6 +11,7 @@ import org.jboss.logging.Logger;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
+import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
@@ -24,6 +25,11 @@ public class QuarkusCxfWsSecurityProcessor {
 
     private static final List<String> interfaceImplsToRegister = Arrays.asList(
             "org.ehcache.core.spi.service.ServiceFactory");
+
+    @BuildStep
+    FeatureBuildItem feature() {
+        return new FeatureBuildItem("cxf-rt-ws-security");
+    }
 
     @BuildStep
     void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
