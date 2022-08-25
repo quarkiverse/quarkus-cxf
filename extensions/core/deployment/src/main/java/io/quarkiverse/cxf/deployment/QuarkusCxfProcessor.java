@@ -739,15 +739,6 @@ class QuarkusCxfProcessor {
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$JDefinedClass"));
     }
 
-    private void produceProxyIfExist(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies, String s) {
-        try {
-            Class.forName(s);
-            proxies.produce(new NativeImageProxyDefinitionBuildItem(s));
-        } catch (ClassNotFoundException e) {
-            //silent fail
-        }
-    }
-
     @BuildStep
     public void registerReflectionItems(BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
         //TODO load all bus-extensions.txt file and parse it to generate the reflective class.
@@ -755,7 +746,6 @@ class QuarkusCxfProcessor {
         reflectiveItems.produce(new ReflectiveClassBuildItem(true, false, "org.apache.cxf.common.jaxb.NamespaceMapper"));
 
         reflectiveItems.produce(new ReflectiveClassBuildItem(true, true,
-                "com.oracle.xmlns.webservices.jaxws_databinding.ObjectFactory",
                 "io.quarkiverse.cxf.AddressTypeExtensibility",
                 "io.quarkiverse.cxf.CXFException",
                 "io.quarkiverse.cxf.CxfInfoProducer",
@@ -772,7 +762,6 @@ class QuarkusCxfProcessor {
                 "javax.xml.stream.XMLStreamConstants",
                 "javax.xml.transform.Source",
                 "javax.xml.validation.ValidatorHandler",
-                "org.apache.crimson.parser.Parser2",
                 "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassCreator",
                 "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassCreatorProxyService",
                 "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassLoader",
@@ -824,23 +813,11 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.wsdl.ExtensionClassCreatorProxyService",
                 "org.apache.cxf.wsdl.ExtensionClassGenerator",
                 "org.apache.cxf.wsdl.ExtensionClassLoader",
-                "org.apache.cxf.wsdl.http.ObjectFactory",
-                "org.apache.tools.ant.Main",
-                "org.apache.xml.resolver.readers.OASISXMLCatalogReader",
-                "org.jvnet.fastinfoset.stax.FastInfosetStreamReader",
-                "org.jvnet.fastinfoset.stax.LowLevelFastInfosetStreamWriter",
-                "org.jvnet.staxex.XMLStreamReaderEx",
-                "org.jvnet.staxex.XMLStreamWriterEx",
-                "sun.security.ssl.SSLLogger"));
+                "org.apache.cxf.wsdl.http.ObjectFactory"));
         reflectiveItems.produce(new ReflectiveClassBuildItem(
                 false,
                 false,
                 //manually added
-                "StaxSchemaValidationInInterceptor",
-                "com.ctc.wstx.sax.WstxSAXParserFactory",
-                "ibm.wsdl.DefinitionImpl",
-                "io.swagger.jaxrs.DefaultParameterExtension",
-                "javax.enterprise.inject.spi.CDI",
                 "javax.jws.Oneway",
                 "javax.jws.WebMethod",
                 "javax.jws.WebParam",
@@ -852,11 +829,6 @@ class QuarkusCxfProcessor {
                 "javax.xml.stream.XMLStreamReader",
                 "javax.xml.stream.XMLStreamWriter",
                 "javax.xml.transform.stax.StAXSource",
-                "net.sf.cglib.proxy.Enhancer",
-                "net.sf.cglib.proxy.MethodInterceptor",
-                "net.sf.cglib.proxy.MethodProxy",
-                "net.sf.ehcache.CacheManager",
-                "org.apache.commons.logging.LogFactory",
                 "org.apache.cxf.binding.soap.SoapBinding",
                 "org.apache.cxf.binding.soap.SoapFault",
                 "org.apache.cxf.binding.soap.SoapHeader",
@@ -911,29 +883,9 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.wsdl.http.AddressType",
                 "org.apache.cxf.wsdl.interceptors.BareInInterceptor",
                 "org.apache.cxf.wsdl.interceptors.DocLiteralInInterceptor",
-                "org.apache.hello_world.Greeter",
-                "org.apache.hello_world_soap_http.types.StringStruct",
-                "org.apache.karaf.jaas.boot.principal.Group",
                 "org.apache.yoko.orb.OB.BootManager",
                 "org.apache.yoko.orb.OB.BootManagerHelper",
-                "org.codehaus.stax2.XMLStreamReader2",
-                "org.eclipse.jetty.jaas.spi.PropertyFileLoginModule",
-                "org.eclipse.jetty.jmx.MBeanContainer",
-                "org.eclipse.jetty.plus.jaas.spi.PropertyFileLoginModule",
-                "org.hsqldb.jdbcDriver",
-                "org.jdom.Document",
-                "org.jdom.Element",
-                "org.osgi.framework.Bundle",
-                "org.osgi.framework.BundleContext",
-                "org.osgi.framework.FrameworkUtil",
-                "org.slf4j.LoggerFactory",
-                "org.slf4j.impl.StaticLoggerBinder",
-                "org.springframework.aop.framework.Advised",
-                "org.springframework.aop.support.AopUtils",
-                "org.springframework.core.io.support.PathMatchingResourcePatternResolver",
-                "org.springframework.core.type.classreading.CachingMetadataReaderFactory",
-                "org.springframework.osgi.io.OsgiBundleResourcePatternResolver",
-                "org.springframework.osgi.util.BundleDelegatingClassLoader"));
+                "org.codehaus.stax2.XMLStreamReader2"));
     }
 
     @BuildStep
