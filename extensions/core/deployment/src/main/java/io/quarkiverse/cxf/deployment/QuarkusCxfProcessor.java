@@ -95,6 +95,7 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
@@ -690,12 +691,18 @@ class QuarkusCxfProcessor {
                     new ReflectiveClassBuildItem(true, true, xmlNamespaceInstance.target().asClass().name().toString()));
         }
 
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, false,
-                "org.apache.cxf.catalog.OASISCatalogManager",
-                "org.apache.cxf.common.util.ASMHelperImpl$2",
-                "org.apache.cxf.common.util.OpcodesProxy",
-                "org.apache.cxf.headers.HeaderManager",
-                "org.apache.cxf.policy.PolicyDataEngine"));
+        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false,
+                "org.apache.cxf.common.logging.Slf4jLogger"));
+
+    }
+
+    @BuildStep
+    void serviceProviders(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
+
+        serviceProvider.produce(
+                new ServiceProviderBuildItem(
+                        "org.apache.cxf.bus.factory",
+                        "org.apache.cxf.bus.CXFBusFactory"));
 
     }
 
@@ -740,104 +747,6 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    public void registerReflectionItems(BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
-        //TODO load all bus-extensions.txt file and parse it to generate the reflective class.
-        reflectiveItems.produce(new ReflectiveClassBuildItem(true, false, "org.apache.cxf.common.jaxb.NamespaceMapper"));
-
-        reflectiveItems.produce(new ReflectiveClassBuildItem(true, true,
-                "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassCreator",
-                "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassCreatorProxyService",
-                "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassLoader",
-                "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplGenerator",
-                "org.apache.cxf.bindings.xformat.ObjectFactory",
-                "org.apache.cxf.common.jaxb.JAXBBeanInfo",
-                "org.apache.cxf.common.jaxb.JAXBUtils$JCodeModel",
-                "org.apache.cxf.common.jaxb.JAXBUtils$JDefinedClass",
-                "org.apache.cxf.common.jaxb.JAXBUtils$JPackage",
-                "org.apache.cxf.common.jaxb.JAXBUtils$JType",
-                "org.apache.cxf.common.jaxb.JAXBUtils$Mapping",
-                "org.apache.cxf.common.jaxb.JAXBUtils$Options",
-                "org.apache.cxf.common.jaxb.JAXBUtils$S2JJAXBModel",
-                "org.apache.cxf.common.jaxb.JAXBUtils$TypeAndAnnotation",
-                "org.apache.cxf.common.jaxb.SchemaCollectionContextProxy",
-                "org.apache.cxf.common.logging.Slf4jLogger",
-                "org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader",
-                "org.apache.cxf.common.spi.ClassLoaderProxyService",
-                "org.apache.cxf.common.spi.ClassLoaderService",
-                "org.apache.cxf.common.spi.GeneratedClassClassLoaderCapture",
-                "org.apache.cxf.common.spi.GeneratedNamespaceClassLoader",
-                "org.apache.cxf.common.spi.NamespaceClassCreator",
-                "org.apache.cxf.common.spi.NamespaceClassGenerator",
-                "org.apache.cxf.common.util.ASMHelper",
-                "org.apache.cxf.common.util.ASMHelperImpl",
-                "org.apache.cxf.common.util.ReflectionInvokationHandler",
-                "org.apache.cxf.common.util.ReflectionInvokationHandler",
-                "org.apache.cxf.endpoint.dynamic.ExceptionClassCreator",
-                "org.apache.cxf.endpoint.dynamic.ExceptionClassCreatorProxyService",
-                "org.apache.cxf.endpoint.dynamic.ExceptionClassGenerator",
-                "org.apache.cxf.endpoint.dynamic.ExceptionClassLoader",
-                "org.apache.cxf.jaxb.FactoryClassCreator",
-                "org.apache.cxf.jaxb.FactoryClassGenerator",
-                "org.apache.cxf.jaxb.FactoryClassLoader",
-                "org.apache.cxf.jaxb.FactoryClassProxyService",
-                "org.apache.cxf.jaxb.WrapperHelperClassGenerator",
-                "org.apache.cxf.jaxb.WrapperHelperClassLoader",
-                "org.apache.cxf.jaxb.WrapperHelperCreator",
-                "org.apache.cxf.jaxb.WrapperHelperProxyService",
-                "org.apache.cxf.jaxws.spi.WrapperClassCreator",
-                "org.apache.cxf.jaxws.spi.WrapperClassCreatorProxyService",
-                "org.apache.cxf.jaxws.spi.WrapperClassGenerator",
-                "org.apache.cxf.jaxws.spi.WrapperClassLoader",
-                "org.apache.cxf.transports.http.configuration.ObjectFactory",
-                "org.apache.cxf.ws.addressing.WSAddressingFeature",
-                "org.apache.cxf.ws.addressing.impl.AddressingWSDLExtensionLoader",
-                "org.apache.cxf.ws.addressing.wsdl.ObjectFactory",
-                "org.apache.cxf.wsdl.ExtensionClassCreator",
-                "org.apache.cxf.wsdl.ExtensionClassCreatorProxyService",
-                "org.apache.cxf.wsdl.ExtensionClassGenerator",
-                "org.apache.cxf.wsdl.ExtensionClassLoader",
-                "org.apache.cxf.wsdl.http.ObjectFactory"));
-        reflectiveItems.produce(new ReflectiveClassBuildItem(
-                false,
-                false,
-                //manually added
-                "org.apache.cxf.binding.soap.SoapBinding",
-                "org.apache.cxf.binding.soap.SoapHeader",
-                "org.apache.cxf.binding.soap.SoapMessage",
-                "org.apache.cxf.binding.soap.model.SoapHeaderInfo",
-                "org.apache.cxf.binding.soap.model.SoapOperationInfo",
-                "org.apache.cxf.binding.soap.wsdl.extensions.SoapBody",
-                "org.apache.cxf.bindings.xformat.XMLBindingMessageFormat",
-                "org.apache.cxf.bindings.xformat.XMLFormatBinding",
-                "org.apache.cxf.bus.CXFBusFactory",
-                "org.apache.cxf.bus.managers.BindingFactoryManagerImpl",
-                "org.apache.cxf.common.jaxb.JAXBContextCache",
-                "org.apache.cxf.jaxb.DatatypeFactory",
-                "org.apache.cxf.jaxb.JAXBDataBinding",
-                "org.apache.cxf.jaxrs.utils.JAXRSUtils",
-                "org.apache.cxf.jaxws.binding.soap.SOAPBindingImpl",
-                "org.apache.cxf.jaxws.spi.ProviderImpl",
-                "org.apache.cxf.message.Exchange",
-                "org.apache.cxf.message.ExchangeImpl",
-                "org.apache.cxf.message.StringMap",
-                "org.apache.cxf.message.StringMapImpl",
-                "org.apache.cxf.metrics.codahale.CodahaleMetricsProvider",
-                "org.apache.cxf.service.model.BindingOperationInfo",
-                "org.apache.cxf.service.model.MessageInfo",
-                "org.apache.cxf.staxutils.W3CDOMStreamWriter",
-                "org.apache.cxf.tools.fortest.cxf523.DBServiceFault",
-                "org.apache.cxf.tools.fortest.cxf523.Database",
-                "org.apache.cxf.tools.fortest.withannotation.doc.HelloWrapped",
-                "org.apache.cxf.transports.http.configuration.HTTPClientPolicy",
-                "org.apache.cxf.transports.http.configuration.HTTPServerPolicy",
-                "org.apache.cxf.ws.addressing.wsdl.AttributedQNameType",
-                "org.apache.cxf.ws.addressing.wsdl.ServiceNameType",
-                "org.apache.cxf.wsdl.http.AddressType",
-                "org.apache.cxf.wsdl.interceptors.BareInInterceptor",
-                "org.apache.cxf.wsdl.interceptors.DocLiteralInInterceptor"));
-    }
-
-    @BuildStep
     NativeImageResourceBundleBuildItem nativeImageResourceBundleBuildItem() {
         return new NativeImageResourceBundleBuildItem("org.apache.cxf.interceptor.Messages");
     }
@@ -849,7 +758,6 @@ class QuarkusCxfProcessor {
                 "META-INF/cxf/bus-extensions.txt",
                 "META-INF/cxf/cxf.xml",
                 "META-INF/cxf/org.apache.cxf.bus.factory",
-                "META-INF/services/org.apache.cxf.bus.factory",
                 "META-INF/blueprint.handlers",
                 "META-INF/spring.handlers",
                 "META-INF/spring.schemas",
