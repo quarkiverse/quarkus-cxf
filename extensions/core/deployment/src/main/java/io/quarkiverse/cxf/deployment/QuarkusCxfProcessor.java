@@ -742,7 +742,6 @@ class QuarkusCxfProcessor {
     @BuildStep
     public void registerReflectionItems(BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
         //TODO load all bus-extensions.txt file and parse it to generate the reflective class.
-        //TODO load all handler from https://github.com/apache/cxf/tree/master/rt/frontend/jaxws/src/main/java/org/apache/cxf/jaxws/handler/types
         reflectiveItems.produce(new ReflectiveClassBuildItem(true, false, "org.apache.cxf.common.jaxb.NamespaceMapper"));
 
         reflectiveItems.produce(new ReflectiveClassBuildItem(true, true,
