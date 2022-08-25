@@ -5,7 +5,6 @@ import java.util.stream.Stream;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 
 /**
@@ -47,15 +46,6 @@ class SaajImplProcessor {
                 new ServiceProviderBuildItem(
                         "javax.xml.soap.SAAJMetaFactory",
                         "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl"));
-    }
-
-    @BuildStep
-    void registerForReflection(BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
-
-        // TODO check whether these are required at all or whether some can be registered with false, false
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, true,
-                "com.sun.xml.messaging.saaj.soap.SOAPDocumentImpl"));
-
     }
 
 }

@@ -34,26 +34,6 @@ class WsApiProcessor {
     @BuildStep
     void registerForReflection(BuildProducer<ReflectiveClassBuildItem> reflectiveClass, CombinedIndexBuildItem combinedIndex) {
 
-        // TODO check whether these are required at all or whether some can be registered with false, false
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, true,
-                "javax.xml.ws.wsaddressing.W3CEndpointReference",
-                "javax.xml.ws.Action",
-                "javax.xml.ws.BindingType",
-                "javax.xml.ws.Provider",
-                "javax.xml.ws.RespectBinding",
-                "javax.xml.ws.Service",
-                "javax.xml.ws.ServiceMode",
-                "javax.xml.ws.soap.Addressing",
-                "javax.xml.ws.soap.MTOM",
-                "javax.xml.ws.soap.SOAPBinding",
-                "javax.xml.ws.WebFault",
-                "javax.xml.ws.WebServiceProvider"));
-
-        // TODO check whether these are required at all or whether some can be registered with false, false
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, false,
-                "javax.xml.ws.WebServiceFeature",
-                "javax.xml.ws.EndpointReference"));
-
         final IndexView index = combinedIndex.getIndex();
         Stream.of(
                 "javax.xml.ws.handler.Handler")
