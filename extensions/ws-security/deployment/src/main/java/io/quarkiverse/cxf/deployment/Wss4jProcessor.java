@@ -2,6 +2,7 @@ package io.quarkiverse.cxf.deployment;
 
 import java.util.stream.Stream;
 
+import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -29,18 +30,15 @@ public class Wss4jProcessor {
     void reflectiveClass(CombinedIndexBuildItem combinedIndexBuildItem,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
         final IndexView index = combinedIndexBuildItem.getIndex();
-
-        index.getKnownClasses().stream()
-                .map(ci -> ci.name().toString())
-                .filter(c -> (c.startsWith("org.apache.wss4j.dom.transform.") ||
-                        c.startsWith("org.apache.wss4j.dom.action.") ||
-                        c.startsWith("org.apache.wss4j.dom.processor.") ||
-                        c.startsWith("org.apache.wss4j.dom.validate.")) && !c.contains("$"))
-                .map(className -> new ReflectiveClassBuildItem(true, false, className))
+        Stream.of(
+                "org.apache.wss4j.dom.action.Action",
+                "org.apache.wss4j.dom.processor.Processor",
+                "org.apache.wss4j.dom.validate.Validator")
+                .map(DotName::createSimple)
+                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .map(classInfo -> classInfo.name().toString())
+                .map(className -> new ReflectiveClassBuildItem(false, false, className))
                 .forEach(reflectiveClass::produce);
-
-        reflectiveClass.produce(ReflectiveClassBuildItem.serializationClass(
-                "org.apache.wss4j.common.cache.EHCacheValue"));
 
     }
 
