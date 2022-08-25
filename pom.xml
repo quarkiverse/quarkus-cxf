@@ -46,7 +46,7 @@
         <ehcache.version>3.10.0</ehcache.version>
         <neethi.version>3.2.0</neethi.version>
         <mimepull.version>1.9.14</mimepull.version>
-        <quarkus.version>2.12.0.CR1</quarkus.version>
+        <quarkus.version>2.12.0.Final</quarkus.version>
         <saaj-impl.version>1.5.3</saaj-impl.version>
         <woodstox-core.version>6.3.1</woodstox-core.version>
         <xmlsec.version>2.3.0</xmlsec.version>
