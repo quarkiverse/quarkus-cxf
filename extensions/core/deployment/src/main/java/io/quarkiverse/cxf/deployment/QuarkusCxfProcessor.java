@@ -810,13 +810,11 @@ class QuarkusCxfProcessor {
                 false,
                 //manually added
                 "org.apache.cxf.binding.soap.SoapBinding",
-                "org.apache.cxf.binding.soap.SoapFault",
                 "org.apache.cxf.binding.soap.SoapHeader",
                 "org.apache.cxf.binding.soap.SoapMessage",
                 "org.apache.cxf.binding.soap.model.SoapHeaderInfo",
                 "org.apache.cxf.binding.soap.model.SoapOperationInfo",
                 "org.apache.cxf.binding.soap.wsdl.extensions.SoapBody",
-                "org.apache.cxf.binding.xml.XMLFault",
                 "org.apache.cxf.bindings.xformat.XMLBindingMessageFormat",
                 "org.apache.cxf.bindings.xformat.XMLFormatBinding",
                 "org.apache.cxf.bus.CXFBusFactory",
