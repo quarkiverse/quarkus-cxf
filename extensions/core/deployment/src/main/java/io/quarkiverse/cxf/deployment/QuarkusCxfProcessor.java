@@ -745,14 +745,6 @@ class QuarkusCxfProcessor {
         reflectiveItems.produce(new ReflectiveClassBuildItem(true, false, "org.apache.cxf.common.jaxb.NamespaceMapper"));
 
         reflectiveItems.produce(new ReflectiveClassBuildItem(true, true,
-                "io.quarkiverse.cxf.AddressTypeExtensibility",
-                "io.quarkiverse.cxf.CXFException",
-                "io.quarkiverse.cxf.CxfInfoProducer",
-                "io.quarkiverse.cxf.HTTPClientPolicyExtensibility",
-                "io.quarkiverse.cxf.HTTPServerPolicyExtensibility",
-                "io.quarkiverse.cxf.UsingAddressingExtensibility",
-                "io.quarkiverse.cxf.XMLBindingMessageFormatExtensibility",
-                "io.quarkiverse.cxf.XMLFormatBindingExtensibility",
                 "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassCreator",
                 "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassCreatorProxyService",
                 "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassLoader",
