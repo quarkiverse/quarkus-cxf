@@ -754,14 +754,6 @@ class QuarkusCxfProcessor {
                 "io.quarkiverse.cxf.UsingAddressingExtensibility",
                 "io.quarkiverse.cxf.XMLBindingMessageFormatExtensibility",
                 "io.quarkiverse.cxf.XMLFormatBindingExtensibility",
-                "javax.activation.DataHandler",
-                "javax.xml.datatype.Duration",
-                "javax.xml.datatype.XMLGregorianCalendar",
-                "javax.xml.namespace.QName",
-                "javax.xml.parsers.DocumentBuilderFactory",
-                "javax.xml.stream.XMLStreamConstants",
-                "javax.xml.transform.Source",
-                "javax.xml.validation.ValidatorHandler",
                 "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassCreator",
                 "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassCreatorProxyService",
                 "org.apache.cxf.binding.corba.utils.CorbaFixedAnyImplClassLoader",
@@ -818,17 +810,6 @@ class QuarkusCxfProcessor {
                 false,
                 false,
                 //manually added
-                "javax.jws.Oneway",
-                "javax.jws.WebMethod",
-                "javax.jws.WebParam",
-                "javax.jws.WebResult",
-                "javax.jws.WebService",
-                "javax.security.auth.login.Configuration",
-                "javax.servlet.WriteListener",
-                "javax.xml.stream.XMLStreamReader",
-                "javax.xml.stream.XMLStreamReader",
-                "javax.xml.stream.XMLStreamWriter",
-                "javax.xml.transform.stax.StAXSource",
                 "org.apache.cxf.binding.soap.SoapBinding",
                 "org.apache.cxf.binding.soap.SoapFault",
                 "org.apache.cxf.binding.soap.SoapHeader",
@@ -882,10 +863,7 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.ws.addressing.wsdl.ServiceNameType",
                 "org.apache.cxf.wsdl.http.AddressType",
                 "org.apache.cxf.wsdl.interceptors.BareInInterceptor",
-                "org.apache.cxf.wsdl.interceptors.DocLiteralInInterceptor",
-                "org.apache.yoko.orb.OB.BootManager",
-                "org.apache.yoko.orb.OB.BootManagerHelper",
-                "org.codehaus.stax2.XMLStreamReader2"));
+                "org.apache.cxf.wsdl.interceptors.DocLiteralInInterceptor"));
     }
 
     @BuildStep
