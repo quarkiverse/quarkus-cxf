@@ -182,6 +182,7 @@ final class Target_org_apache_cxf_common_spi_NamespaceClassGenerator {
 
     @Substitute
     private synchronized Class<?> createNamespaceWrapperClass(Class<?> mcls, Map<String, String> map) {
+        // TODO decide whether we should register the referenced classes for reflection or remove the ifs from here - see https://github.com/quarkiverse/quarkus-cxf/issues/518
         LOG.info("Substitute NamespaceClassGenerator.createNamespaceWrapper");
         Class<?> NamespaceWrapperClass = null;
         Throwable t = null;
