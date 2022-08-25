@@ -1,82 +1,22 @@
 package io.quarkiverse.cxf.deployment;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Stream;
+
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
+import io.quarkus.deployment.util.ServiceUtil;
 
 /**
  * {@link BuildStep}s related to {wsdl4j:wsdl4j}
  */
 class Wsdl4jProcessor {
-
-    @BuildStep
-    void reflectiveClass(BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
-
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, true,
-                "javax.wsdl.Types",
-                "javax.wsdl.extensions.mime.MIMEPart",
-                "com.ibm.wsdl.extensions.schema.SchemaImpl",
-                "com.ibm.wsdl.extensions.soap12.SOAP12AddressImpl",
-                "com.ibm.wsdl.extensions.soap12.SOAP12AddressSerializer",
-                "com.ibm.wsdl.extensions.soap12.SOAP12BindingImpl",
-                "com.ibm.wsdl.extensions.soap12.SOAP12BindingSerializer",
-                "com.ibm.wsdl.extensions.soap12.SOAP12BodyImpl",
-                "com.ibm.wsdl.extensions.soap12.SOAP12BodySerializer",
-                "com.ibm.wsdl.extensions.soap12.SOAP12Constants",
-                "com.ibm.wsdl.extensions.soap12.SOAP12FaultImpl",
-                "com.ibm.wsdl.extensions.soap12.SOAP12FaultSerializer",
-                "com.ibm.wsdl.extensions.soap12.SOAP12HeaderFaultImpl",
-                "com.ibm.wsdl.extensions.soap12.SOAP12HeaderImpl",
-                "com.ibm.wsdl.extensions.soap12.SOAP12HeaderSerializer",
-                "com.ibm.wsdl.extensions.soap12.SOAP12OperationImpl",
-                "com.ibm.wsdl.extensions.soap12.SOAP12OperationSerializer"));
-
-        reflectiveClass.produce(new ReflectiveClassBuildItem(
-                false,
-                false,
-                "javax.wsdl.Binding",
-                "javax.wsdl.BindingFault",
-                "javax.wsdl.BindingInput",
-                "javax.wsdl.BindingOperation",
-                "javax.wsdl.BindingOutput",
-                "javax.wsdl.Definition",
-                "javax.wsdl.Fault",
-                "javax.wsdl.Import",
-                "javax.wsdl.Input",
-                "javax.wsdl.Message",
-                "javax.wsdl.Operation",
-                "javax.wsdl.Output",
-                "javax.wsdl.Part",
-                "javax.wsdl.Port",
-                "javax.wsdl.PortType",
-                "javax.wsdl.Service",
-                "javax.wsdl.Types",
-                "javax.wsdl.extensions.soap.SOAPBody",
-                "com.ibm.wsdl.BindingFaultImpl",
-                "com.ibm.wsdl.BindingImpl",
-                "com.ibm.wsdl.BindingInputImpl",
-                "com.ibm.wsdl.BindingOperationImpl",
-                "com.ibm.wsdl.BindingOutputImpl",
-                "com.ibm.wsdl.FaultImpl",
-                "com.ibm.wsdl.InputImpl",
-                "com.ibm.wsdl.MessageImpl",
-                "com.ibm.wsdl.OperationImpl",
-                "com.ibm.wsdl.OutputImpl",
-                "com.ibm.wsdl.PartImpl",
-                "com.ibm.wsdl.PortImpl",
-                "com.ibm.wsdl.PortTypeImpl",
-                "com.ibm.wsdl.ServiceImpl",
-                "com.ibm.wsdl.TypesImpl",
-                "com.ibm.wsdl.extensions.soap.SOAPAddressImpl",
-                "com.ibm.wsdl.extensions.soap.SOAPBindingImpl",
-                "com.ibm.wsdl.extensions.soap.SOAPBodyImpl",
-                "com.ibm.wsdl.extensions.soap.SOAPFaultImpl",
-                "com.ibm.wsdl.extensions.soap.SOAPHeaderImpl",
-                "com.ibm.wsdl.extensions.soap.SOAPOperationImpl",
-                "com.ibm.wsdl.factory.WSDLFactoryImpl"));
-
-    }
 
     @BuildStep
     void httpProxies(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies) {
@@ -89,4 +29,42 @@ class Wsdl4jProcessor {
         proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPHeaderFault"));
     }
 
+    @BuildStep
+    void reflectiveClass(BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
+
+        Stream.of("12", "")
+                .map(version -> new ReflectiveClassBuildItem(
+                        true,
+                        false,
+                        "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "AddressImpl",
+                        "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "BindingImpl",
+                        "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "BodyImpl",
+                        "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "FaultImpl",
+                        "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "HeaderImpl",
+                        "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "OperationImpl"))
+                .forEach(reflectiveClass::produce);
+
+        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, "com.ibm.wsdl.extensions.schema.SchemaImpl"));
+
+    }
+
+    @BuildStep
+    void serviceProviders(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
+
+        Stream.of(
+                "javax.wsdl.factory.WSDLFactory")
+                .forEach(serviceName -> {
+                    try {
+                        Set<String> names = ServiceUtil.classNamesNamedIn(Thread.currentThread().getContextClassLoader(),
+                                ServiceProviderBuildItem.SPI_ROOT + serviceName);
+                        if (names.isEmpty()) {
+                            names = Collections.singleton("com.ibm.wsdl.factory.WSDLFactoryImpl");
+                        }
+                        serviceProvider.produce(new ServiceProviderBuildItem(serviceName, new ArrayList<>(names)));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+    }
 }
