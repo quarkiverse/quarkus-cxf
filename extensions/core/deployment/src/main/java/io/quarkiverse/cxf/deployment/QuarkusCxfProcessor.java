@@ -722,13 +722,6 @@ class QuarkusCxfProcessor {
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$BridgeWrapper"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.jaxb.JAXBUtils$SchemaCompiler"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.common.util.ASMHelper$ClassWriter"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPOperation"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPBody"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPHeader"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPAddress"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPBinding"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPFault"));
-        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPHeaderFault"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapBinding"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapAddress"));
         proxies.produce(new NativeImageProxyDefinitionBuildItem("org.apache.cxf.binding.soap.wsdl.extensions.SoapHeader"));
@@ -772,8 +765,6 @@ class QuarkusCxfProcessor {
                 "io.quarkiverse.cxf.XMLBindingMessageFormatExtensibility",
                 "io.quarkiverse.cxf.XMLFormatBindingExtensibility",
                 "javax.activation.DataHandler",
-                "javax.wsdl.Types",
-                "javax.wsdl.extensions.mime.MIMEPart",
                 "javax.xml.datatype.Duration",
                 "javax.xml.datatype.XMLGregorianCalendar",
                 "javax.xml.namespace.QName",
@@ -857,24 +848,6 @@ class QuarkusCxfProcessor {
                 "javax.jws.WebService",
                 "javax.security.auth.login.Configuration",
                 "javax.servlet.WriteListener",
-                "javax.wsdl.Binding",
-                "javax.wsdl.BindingFault",
-                "javax.wsdl.BindingInput",
-                "javax.wsdl.BindingOperation",
-                "javax.wsdl.BindingOutput",
-                "javax.wsdl.Definition",
-                "javax.wsdl.Fault",
-                "javax.wsdl.Import",
-                "javax.wsdl.Input",
-                "javax.wsdl.Message",
-                "javax.wsdl.Operation",
-                "javax.wsdl.Output",
-                "javax.wsdl.Part",
-                "javax.wsdl.Port",
-                "javax.wsdl.PortType",
-                "javax.wsdl.Service",
-                "javax.wsdl.Types",
-                "javax.wsdl.extensions.soap.SOAPBody",
                 "javax.xml.stream.XMLStreamReader",
                 "javax.xml.stream.XMLStreamReader",
                 "javax.xml.stream.XMLStreamWriter",

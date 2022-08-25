@@ -2,6 +2,7 @@ package io.quarkiverse.cxf.deployment;
 
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 
 /**
@@ -13,6 +14,8 @@ class Wsdl4jProcessor {
     void reflectiveClass(BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
 
         reflectiveClass.produce(new ReflectiveClassBuildItem(true, true,
+                "javax.wsdl.Types",
+                "javax.wsdl.extensions.mime.MIMEPart",
                 "com.ibm.wsdl.extensions.schema.SchemaImpl",
                 "com.ibm.wsdl.extensions.soap12.SOAP12AddressImpl",
                 "com.ibm.wsdl.extensions.soap12.SOAP12AddressSerializer",
@@ -32,6 +35,24 @@ class Wsdl4jProcessor {
         reflectiveClass.produce(new ReflectiveClassBuildItem(
                 false,
                 false,
+                "javax.wsdl.Binding",
+                "javax.wsdl.BindingFault",
+                "javax.wsdl.BindingInput",
+                "javax.wsdl.BindingOperation",
+                "javax.wsdl.BindingOutput",
+                "javax.wsdl.Definition",
+                "javax.wsdl.Fault",
+                "javax.wsdl.Import",
+                "javax.wsdl.Input",
+                "javax.wsdl.Message",
+                "javax.wsdl.Operation",
+                "javax.wsdl.Output",
+                "javax.wsdl.Part",
+                "javax.wsdl.Port",
+                "javax.wsdl.PortType",
+                "javax.wsdl.Service",
+                "javax.wsdl.Types",
+                "javax.wsdl.extensions.soap.SOAPBody",
                 "com.ibm.wsdl.BindingFaultImpl",
                 "com.ibm.wsdl.BindingImpl",
                 "com.ibm.wsdl.BindingInputImpl",
@@ -55,6 +76,17 @@ class Wsdl4jProcessor {
                 "com.ibm.wsdl.extensions.soap.SOAPOperationImpl",
                 "com.ibm.wsdl.factory.WSDLFactoryImpl"));
 
+    }
+
+    @BuildStep
+    void httpProxies(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies) {
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPOperation"));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPBody"));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPHeader"));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPAddress"));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPBinding"));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPFault"));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("javax.wsdl.extensions.soap.SOAPHeaderFault"));
     }
 
 }
