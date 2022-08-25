@@ -1,15 +1,15 @@
-package io.quarkiverse.cxf;
+package io.quarkiverse.cxf.extensibility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 
-import org.apache.cxf.transports.http.configuration.HTTPServerPolicy;
+import org.apache.cxf.wsdl.http.AddressType;
 
 @ApplicationScoped
-public class HTTPServerPolicyExtensibility extends HTTPServerPolicy implements ExtensibilityElement {
+public class AddressTypeExtensibility extends AddressType implements ExtensibilityElement {
     private static final QName WSDL_REQUIRED = new QName("javax/xml/namespace/QName", "required");
-    QName qn = new QName("http://cxf.apache.org/transports/http/configuration", "server");
+    QName qn = new QName("http://schemas.xmlsoap.org/wsdl/http/", "address");
 
     @Override
     public void setElementType(QName elementType) {
@@ -32,4 +32,5 @@ public class HTTPServerPolicyExtensibility extends HTTPServerPolicy implements E
         String s = this.getOtherAttributes().get(WSDL_REQUIRED);
         return s != null ? false : Boolean.valueOf(s);
     }
+
 }
