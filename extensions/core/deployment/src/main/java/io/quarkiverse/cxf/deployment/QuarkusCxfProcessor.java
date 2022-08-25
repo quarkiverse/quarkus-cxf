@@ -763,10 +763,6 @@ class QuarkusCxfProcessor {
 
         reflectiveItems.produce(new ReflectiveClassBuildItem(true, true,
                 "com.oracle.xmlns.webservices.jaxws_databinding.ObjectFactory",
-                "com.sun.codemodel.internal.writer.FileCodeWriter",
-                "com.sun.codemodel.writer.FileCodeWriter",
-                "com.sun.tools.internal.xjc.api.XJC",
-                "com.sun.tools.xjc.api.XJC",
                 "io.quarkiverse.cxf.AddressTypeExtensibility",
                 "io.quarkiverse.cxf.CXFException",
                 "io.quarkiverse.cxf.CxfInfoProducer",
@@ -851,7 +847,6 @@ class QuarkusCxfProcessor {
                 //manually added
                 "StaxSchemaValidationInInterceptor",
                 "com.ctc.wstx.sax.WstxSAXParserFactory",
-                "com.sun.msv.reader.GrammarReaderController",
                 "ibm.wsdl.DefinitionImpl",
                 "io.swagger.jaxrs.DefaultParameterExtension",
                 "javax.enterprise.inject.spi.CDI",
