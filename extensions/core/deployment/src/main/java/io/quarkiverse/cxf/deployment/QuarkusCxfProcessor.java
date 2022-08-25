@@ -695,6 +695,13 @@ class QuarkusCxfProcessor {
         reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, extensibilities.toArray(new String[0])));
         unremovables
                 .produce(new UnremovableBeanBuildItem(new UnremovableBeanBuildItem.BeanClassNamesExclusion(extensibilities)));
+
+        /* Referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_endpoint_dynamic_ExceptionClassGenerator */
+        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, "io.quarkiverse.cxf.CXFException"));
+
+        /* Referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_common_spi_NamespaceClassGenerator */
+        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, "org.apache.cxf.common.jaxb.NamespaceMapper"));
+
     }
 
     @BuildStep
