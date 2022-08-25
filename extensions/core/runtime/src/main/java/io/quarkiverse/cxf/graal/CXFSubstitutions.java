@@ -61,7 +61,7 @@ final class Target_org_apache_cxf_wsdl_ExtensionClassGenerator {
         Logger LOG = LogUtils.getL7dLogger(Target_org_apache_cxf_wsdl_ExtensionClassGenerator.class);
         try {
             LOG.info("extensibility class substitute: " + cls.getName());
-            Class<?> clz = Class.forName("io.quarkiverse.cxf." + cls.getSimpleName() + "Extensibility");
+            Class<?> clz = Class.forName("io.quarkiverse.cxf.extensibility." + cls.getSimpleName() + "Extensibility");
             return clz;
         } catch (ClassNotFoundException e) {
             LOG.warning("extensibility class to create: " + cls.getName());

@@ -157,7 +157,7 @@ class QuarkusCxfProcessor {
         if (idx != -1 && idx < pkg.length() - 1) {
             pkg = pkg.substring(0, idx);
         }
-        //TODO XRootElement then XmlSchema then derived of package
+        // TODO XRootElement then XmlSchema then derived of package
         String[] strs = pkg.split("\\.");
         StringBuilder b = new StringBuilder("http://");
         for (int i = strs.length - 1; i >= 0; i--) {
@@ -176,15 +176,6 @@ class QuarkusCxfProcessor {
             String nameWithPackage = beanInfo.getBeanClass().local();
             return nameWithPackage.contains(".jaxws_asm") || nameWithPackage.endsWith("ObjectFactory");
         }));
-        Set<String> extensibilities = new HashSet<>(Arrays.asList(
-                "io.quarkiverse.cxf.AddressTypeExtensibility",
-                "io.quarkiverse.cxf.UsingAddressingExtensibility",
-                "io.quarkiverse.cxf.HTTPClientPolicyExtensibility",
-                "io.quarkiverse.cxf.HTTPServerPolicyExtensibility",
-                "io.quarkiverse.cxf.XMLBindingMessageFormatExtensibility",
-                "io.quarkiverse.cxf.XMLFormatBindingExtensibility"));
-        unremovables
-                .produce(new UnremovableBeanBuildItem(new UnremovableBeanBuildItem.BeanClassNamesExclusion(extensibilities)));
     }
 
     class QuarkusCapture implements GeneratedClassClassLoaderCapture {
@@ -387,7 +378,7 @@ class QuarkusCxfProcessor {
             throws ClassNotFoundException {
         QuarkusJaxWsServiceFactoryBean jaxwsFac = new QuarkusJaxWsServiceFactoryBean();
         jaxwsFac.setBus(bus);
-        //TODO here add all class
+        // TODO here add all class
         jaxwsFac.setServiceClass(Thread.currentThread().getContextClassLoader().loadClass(sei));
         jaxwsFac.create();
         return jaxwsFac;
@@ -506,13 +497,13 @@ class QuarkusCxfProcessor {
                 URL url = urls.nextElement();
                 try (InputStream openStream = url.openStream();
                         BufferedReader reader = new BufferedReader(new InputStreamReader(openStream))) {
-                    //todo set directly extension and avoid load of file at runtime
-                    //List<Extension> exts = new TextExtensionFragmentParser(loader).getExtensions(is);
-                    //factory.getBus().setExtension();
+                    // todo set directly extension and avoid load of file at runtime
+                    // List<Extension> exts = new TextExtensionFragmentParser(loader).getExtensions(is);
+                    // factory.getBus().setExtension();
                     String line = reader.readLine();
                     while (line != null) {
                         String[] cols = line.split(":");
-                        //org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
+                        // org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
                         if (cols.length > 1) {
                             if (!"".equals(cols[0])) {
                                 reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[0]));
@@ -662,7 +653,8 @@ class QuarkusCxfProcessor {
 
     @BuildStep
     void reflectiveClasses(CombinedIndexBuildItem combinedIndexBuildItem,
-            BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
+            BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
+            BuildProducer<UnremovableBeanBuildItem> unremovables) {
         IndexView index = combinedIndexBuildItem.getIndex();
 
         Stream.of(
@@ -694,6 +686,15 @@ class QuarkusCxfProcessor {
         reflectiveClass.produce(new ReflectiveClassBuildItem(false, false,
                 "org.apache.cxf.common.logging.Slf4jLogger"));
 
+        /* These are referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_wsdl_ExtensionClassGenerator */
+        final Set<String> extensibilities = index.getKnownClasses().stream()
+                .map(classInfo -> classInfo.name().toString())
+                .filter(className -> className.startsWith("io.quarkiverse.cxf.extensibility")
+                        && className.endsWith("Extensibility"))
+                .collect(Collectors.toSet());
+        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, extensibilities.toArray(new String[0])));
+        unremovables
+                .produce(new UnremovableBeanBuildItem(new UnremovableBeanBuildItem.BeanClassNamesExclusion(extensibilities)));
     }
 
     @BuildStep
@@ -753,7 +754,7 @@ class QuarkusCxfProcessor {
 
     @BuildStep
     NativeImageResourceBuildItem nativeImageResourceBuildItem() {
-        //TODO add @HandlerChain (file) and parse it to add class loading
+        // TODO add @HandlerChain (file) and parse it to add class loading
         return new NativeImageResourceBuildItem("com/sun/xml/fastinfoset/resources/ResourceBundle.properties",
                 "META-INF/cxf/bus-extensions.txt",
                 "META-INF/cxf/cxf.xml",
@@ -819,21 +820,21 @@ class QuarkusCxfProcessor {
         //
         // >> @ApplicationScoped
         // >> [public] {SEI}CxfClientProducer implements CxfClientProducer {
-        // >>   @Inject
-        // >>   @Named(value="{SEI}")
-        // >>   public CXFClientInfo info;
+        // >> @Inject
+        // >> @Named(value="{SEI}")
+        // >> public CXFClientInfo info;
         // >>
-        // >>   @Produces
-        // >>   @CXFClient
-        // >>   {SEI} createService(InjectionPoint ip) {
-        // >>     return ({SEI}) super().loadCxfClient(ip, this.info);
-        // >>   }
+        // >> @Produces
+        // >> @CXFClient
+        // >> {SEI} createService(InjectionPoint ip) {
+        // >> return ({SEI}) super().loadCxfClient(ip, this.info);
+        // >> }
         // >>
-        // >>   @Produces
-        // >>   @CXFClient
-        // >>   CXFClientInfo createInfo(InjectionPoint ip) {
-        // >>     return ({SEI}) super().loadCxfClientInfo(ip, this.info);
-        // >>   }
+        // >> @Produces
+        // >> @CXFClient
+        // >> CXFClientInfo createInfo(InjectionPoint ip) {
+        // >> return ({SEI}) super().loadCxfClientInfo(ip, this.info);
+        // >> }
         // >> }
         String cxfClientProducerClassName = sei + "CxfClientProducer";
 
@@ -878,8 +879,8 @@ class QuarkusCxfProcessor {
             // >> @CXFClient
             // >> {SEI} createService(InjectionPoint ip) { .. }
 
-            //String p0class = InjectionPoint.class.getName();
-            //String p1class = CXFClientInfo.class.getName();
+            // String p0class = InjectionPoint.class.getName();
+            // String p1class = CXFClientInfo.class.getName();
             try (MethodCreator createService = classCreator.getMethodCreator("createService", sei, InjectionPoint.class)) {
                 createService.addAnnotation(Produces.class);
                 createService.addAnnotation(CXFClient.class);
@@ -899,44 +900,44 @@ class QuarkusCxfProcessor {
                         InjectionPoint.class,
                         CXFClientInfo.class);
                 // >> .. {
-                // >>       Object cxfClient = this.loadCxfClient(ip, this.info);
-                // >>       return ({SEI})cxfClient;
-                // >>    }
+                // >> Object cxfClient = this.loadCxfClient(ip, this.info);
+                // >> return ({SEI})cxfClient;
+                // >> }
 
                 cxfClient = createService.invokeVirtualMethod(loadCxfClient, p0, p1, p2);
                 createService.returnValue(createService.checkCast(cxfClient, sei));
             }
 
-            //            try (MethodCreator createInfo = classCreator.getMethodCreator(
-            //                    "createInfo",
-            //                    "io.quarkiverse.cxf.CXFClientInfo",
-            //                    p0class)) {
-            //                createInfo.addAnnotation(Produces.class);
-            //                createInfo.addAnnotation(CXFClient.class);
+            // try (MethodCreator createInfo = classCreator.getMethodCreator(
+            // "createInfo",
+            // "io.quarkiverse.cxf.CXFClientInfo",
+            // p0class)) {
+            // createInfo.addAnnotation(Produces.class);
+            // createInfo.addAnnotation(CXFClient.class);
             //
-            //                // p0 (InjectionPoint);
-            //                ResultHandle p0;
-            //                ResultHandle p1;
-            //                ResultHandle cxfClient;
+            // // p0 (InjectionPoint);
+            // ResultHandle p0;
+            // ResultHandle p1;
+            // ResultHandle cxfClient;
             //
-            //                p0 = createInfo.getMethodParam(0);
+            // p0 = createInfo.getMethodParam(0);
             //
-            //                MethodDescriptor loadCxfInfo = MethodDescriptor.ofMethod(
-            //                        CxfClientProducer.class,
-            //                        "loadCxfClientInfo",
-            //                        "java.lang.Object",
-            //                        p0class,
-            //                        p1class);
-            //                // >> .. {
-            //                // >>       Object cxfInfo = this().loadCxfInfo(ip, this.info);
-            //                // >>       return (CXFClientInfo)cxfInfo;
-            //                // >>    }
+            // MethodDescriptor loadCxfInfo = MethodDescriptor.ofMethod(
+            // CxfClientProducer.class,
+            // "loadCxfClientInfo",
+            // "java.lang.Object",
+            // p0class,
+            // p1class);
+            // // >> .. {
+            // // >> Object cxfInfo = this().loadCxfInfo(ip, this.info);
+            // // >> return (CXFClientInfo)cxfInfo;
+            // // >> }
             //
-            //                p1 = createInfo.readInstanceField(info.getFieldDescriptor(), createInfo.getThis());
-            //                cxfClient = createInfo.invokeVirtualMethod(loadCxfInfo, createInfo.getThis(), p0, p1);
-            //                createInfo.returnValue(createInfo.checkCast(cxfClient, "io.quarkiverse.cxf
-            //                .CXFClientInfo"));
-            //            }
+            // p1 = createInfo.readInstanceField(info.getFieldDescriptor(), createInfo.getThis());
+            // cxfClient = createInfo.invokeVirtualMethod(loadCxfInfo, createInfo.getThis(), p0, p1);
+            // createInfo.returnValue(createInfo.checkCast(cxfClient, "io.quarkiverse.cxf
+            // .CXFClientInfo"));
+            // }
 
         }
 

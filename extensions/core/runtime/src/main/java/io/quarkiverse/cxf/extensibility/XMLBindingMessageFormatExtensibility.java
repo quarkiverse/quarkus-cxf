@@ -1,15 +1,15 @@
-package io.quarkiverse.cxf;
+package io.quarkiverse.cxf.extensibility;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
 
-import org.apache.cxf.ws.addressing.wsdl.UsingAddressing;
+import org.apache.cxf.bindings.xformat.XMLBindingMessageFormat;
 
 @ApplicationScoped
-public class UsingAddressingExtensibility extends UsingAddressing implements ExtensibilityElement {
+public class XMLBindingMessageFormatExtensibility extends XMLBindingMessageFormat implements ExtensibilityElement {
     private static final QName WSDL_REQUIRED = new QName("javax/xml/namespace/QName", "required");
-    QName qn = new QName("http://www.w3.org/2006/05/addressing/wsdl", "UsingAddressing");
+    QName qn = new QName("http://cxf.apache.org/bindings/xformat", "body");
 
     @Override
     public void setElementType(QName elementType) {
