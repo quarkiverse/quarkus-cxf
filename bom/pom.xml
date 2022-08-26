@@ -269,6 +269,16 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-santuario</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-santuario-deployment</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-woodstox</artifactId>
                 <version>${quarkus-cxf.version}</version>
             </dependency>
@@ -297,6 +307,16 @@
                 <groupId>org.apache.santuario</groupId>
                 <artifactId>xmlsec</artifactId>
                 <version>${xmlsec.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.ehcache</groupId>
