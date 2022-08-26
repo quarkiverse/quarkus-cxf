@@ -14,6 +14,7 @@
 
     <modules>
         <module>woodstox</module>
+        <module>santuario</module>
         <module>core</module>
         <module>features-logging</module>
         <module>features-metrics</module>

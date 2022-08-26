@@ -3,35 +3,44 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
-        <artifactId>quarkus-cxf-rt-ws-security-parent</artifactId>
+        <artifactId>quarkus-cxf-santuario-parent</artifactId>
         <version>1.5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-rt-ws-security-deployment</artifactId>
-    <name>Quarkus CXF WS-Security - Deployment</name>
+    <artifactId>quarkus-cxf-santuario</artifactId>
+    <name>Quarkus CXF - Santuario - Runtime</name>
+    <description>Consume and produce SOAP web services with Apache CXF</description>
 
     <dependencies>
         <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-deployment</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-woodstox-deployment</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-santuario-deployment</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-rt-ws-security</artifactId>
+            <groupId>org.apache.santuario</groupId>
+            <artifactId>xmlsec</artifactId>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-extension-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>extension-descriptor</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}
+                            </deployment>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -47,5 +56,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

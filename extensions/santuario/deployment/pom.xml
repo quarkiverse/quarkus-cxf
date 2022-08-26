@@ -3,30 +3,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
-        <artifactId>quarkus-cxf-rt-ws-security-parent</artifactId>
+        <artifactId>quarkus-cxf-santuario-parent</artifactId>
         <version>1.5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-rt-ws-security-deployment</artifactId>
-    <name>Quarkus CXF WS-Security - Deployment</name>
+    <artifactId>quarkus-cxf-santuario-deployment</artifactId>
+    <name>Quarkus CXF - Santuario - Deployment</name>
 
     <dependencies>
         <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-deployment</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-core-deployment</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-woodstox-deployment</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-santuario-deployment</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-rt-ws-security</artifactId>
+            <artifactId>quarkus-cxf-santuario</artifactId>
         </dependency>
     </dependencies>
 
