@@ -1,10 +1,11 @@
 package io.quarkiverse.cxf.graal;
 
+import java.text.Normalizer;
 import java.util.ServiceLoader;
 
 import org.apache.wss4j.stax.setup.WSSec;
+import org.jasypt.exceptions.EncryptionInitializationException;
 
-import com.oracle.svm.core.annotate.Alias;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
 
@@ -21,15 +22,26 @@ final class Target_org_ehcache_core_util_ClassLoading {
 @TargetClass(className = "org.jasypt.normalization.Normalizer")
 final class Target_org_jasypt_normalization_Normalizer {
 
-    @Alias
-    static char[] normalizeWithJavaNormalizer(final char[] message) {
-        // TODO: Returning null here does not feel right https://github.com/quarkiverse/quarkus-cxf/issues/519
-        return null;
+    @Substitute
+    public static String normalizeToNfc(final String message) {
+        /*
+         * Because we are on Java 1.4+ we can afford to skip the reflection based detection
+         * done in org.jasypt.normalization.Normalizer.normalizeToNfc(char[])
+         * whether icu4j is in class path and whether the current Java is 1.4+
+         * and go straight to calling the JDK's Normalizer.normalize()
+         */
+        try {
+            return Normalizer.normalize(message, java.text.Normalizer.Form.NFC);
+        } catch (final Exception e) {
+            throw new EncryptionInitializationException(
+                    "Could not perform a valid UNICODE normalization", e);
+        }
     }
 
     @Substitute
     public static char[] normalizeToNfc(final char[] message) {
-        return normalizeWithJavaNormalizer(message);
+        final String result = normalizeToNfc(new String(message));
+        return result.toCharArray();
     }
 
 }
