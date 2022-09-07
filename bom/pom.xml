@@ -370,6 +370,9 @@
                                 <!-- whose dependencies we want to cover in the flattened BOM -->
                                 <resolutionEntryPointInclude>io.quarkiverse.cxf:*</resolutionEntryPointInclude>
                             </resolutionEntryPointIncludes>
+                            <requiredBomEntryIncludes>
+                                <requiredBomEntryInclude>org.apache.cxf</requiredBomEntryInclude>
+                            </requiredBomEntryIncludes>
                             <flattenedFullPomFile>${project.build.directory}/flattened-full-pom.xml</flattenedFullPomFile>
                             <flattenedReducedPomFile>${project.build.directory}/flattened-reduced-pom.xml</flattenedReducedPomFile>
                             <flattenedReducedVerbosePomFile>${project.build.directory}/flattened-reduced-verbose-pom.xml</flattenedReducedVerbosePomFile>
