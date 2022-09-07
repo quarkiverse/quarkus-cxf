@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf.client.it;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
@@ -71,9 +70,7 @@ public class CxfClientTest {
                 .get("/cxf/client/calculator/myFaultyCalculator/multiply")
                 .then()
                 .statusCode(500)
-                // Should be .body(is("No luck at this time, Luke!"));
-                // see https://github.com/quarkiverse/quarkus-cxf/issues/497
-                .body(containsString("No luck at this time, Luke!"));
+                .body(is("No luck at this time, Luke!"));
     }
 
     /**
