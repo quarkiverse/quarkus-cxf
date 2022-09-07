@@ -21,8 +21,8 @@
             <artifactId>quarkus-cxf-woodstox-deployment</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-santuario-deployment</artifactId>
+            <groupId>io.quarkiverse.xmlsec</groupId>
+            <artifactId>quarkus-xmlsec-deployment</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>

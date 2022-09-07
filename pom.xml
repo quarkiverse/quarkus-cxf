@@ -47,6 +47,7 @@
         <neethi.version>3.2.0</neethi.version>
         <mimepull.version>1.9.14</mimepull.version>
         <quarkus.version>2.12.0.Final</quarkus.version>
+        <quarkus-xmlsec.version>1.1.0</quarkus-xmlsec.version>
         <saaj-impl.version>1.5.3</saaj-impl.version>
         <woodstox-core.version>6.3.1</woodstox-core.version>
         <xmlsec.version>2.3.0</xmlsec.version>
