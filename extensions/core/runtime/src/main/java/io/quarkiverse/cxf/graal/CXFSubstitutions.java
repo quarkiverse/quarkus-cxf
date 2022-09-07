@@ -6,9 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.function.BooleanSupplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
@@ -172,60 +170,6 @@ final class Target_org_apache_cxf_endpoint_dynamic_ExceptionClassGenerator {
                         newClassName + " exception not implemented yet for GraalVM native images", ex);
             }
         }
-    }
-}
-
-@TargetClass(className = "org.apache.cxf.common.spi.NamespaceClassGenerator")
-final class Target_org_apache_cxf_common_spi_NamespaceClassGenerator {
-    @Alias
-    private static Logger LOG = null;
-
-    @Substitute
-    private synchronized Class<?> createNamespaceWrapperClass(Class<?> mcls, Map<String, String> map) {
-        // TODO decide whether we should register the referenced classes for reflection or remove the ifs from here - see https://github.com/quarkiverse/quarkus-cxf/issues/518
-        LOG.info("Substitute NamespaceClassGenerator.createNamespaceWrapper");
-        Class<?> NamespaceWrapperClass = null;
-        Throwable t = null;
-        try {
-            NamespaceWrapperClass = Class.forName("org.apache.cxf.jaxb.EclipseNamespaceMapper");
-        } catch (ClassNotFoundException e) {
-            // ignore
-            t = e;
-        }
-        if (NamespaceWrapperClass == null) {
-            try {
-                NamespaceWrapperClass = Class.forName("org.apache.cxf.jaxb.NamespaceMapper");
-            } catch (ClassNotFoundException e) {
-                // ignore
-                t = e;
-            }
-        }
-        if (NamespaceWrapperClass == null) {
-            try {
-                NamespaceWrapperClass = Class.forName("org.apache.cxf.jaxb.NamespaceMapperRI");
-            } catch (ClassNotFoundException e) {
-                // ignore
-                t = e;
-            }
-        }
-        if (NamespaceWrapperClass == null && (!mcls.getName().contains(".internal.") && mcls.getName().contains("com.sun"))) {
-            try {
-                NamespaceWrapperClass = Class.forName("org.apache.cxf.common.jaxb.NamespaceMapper");
-            } catch (Throwable ex2) {
-                // ignore
-                t = ex2;
-            }
-        }
-        if (NamespaceWrapperClass != null) {
-            try {
-                return NamespaceWrapperClass;
-            } catch (Exception e) {
-                // ignore
-                t = e;
-            }
-        }
-        LOG.log(Level.INFO, "Could not create a NamespaceMapper compatible with Marshaller class " + mcls.getName(), t);
-        return null;
     }
 }
 
