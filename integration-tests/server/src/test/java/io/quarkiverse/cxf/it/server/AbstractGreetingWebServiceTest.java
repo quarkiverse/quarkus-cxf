@@ -10,6 +10,15 @@ import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 
 abstract class AbstractGreetingWebServiceTest {
     protected static GreetingWebService greetingWS;
+    static final String SOAP_REQUEST = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://server.it.cxf.quarkiverse.io/\">\n"
+            +
+            "   <x:Header/>\n" +
+            "   <x:Body>\n" +
+            "      <cxf:reply>\n" +
+            "          <text>foo</text>\n" +
+            "      </cxf:reply>\n" +
+            "   </x:Body>\n" +
+            "</x:Envelope>";
 
     @Test
     void reply() {
@@ -30,18 +39,8 @@ abstract class AbstractGreetingWebServiceTest {
 
     @Test
     void rawSoap() {
-        String xml = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://server.it.cxf.quarkiverse.io/\">\n"
-                +
-                "   <x:Header/>\n" +
-                "   <x:Body>\n" +
-                "      <cxf:reply>\n" +
-                "          <text>foo</text>\n" +
-                "      </cxf:reply>\n" +
-                "   </x:Body>\n" +
-                "</x:Envelope>";
-
         given()
-                .header("Content-Type", "text/xml").and().body(xml)
+                .header("Content-Type", "text/xml").and().body(SOAP_REQUEST)
                 .when().post(QuarkusCxfClientTestUtil.getEndpointUrl(greetingWS))
                 .then()
                 .statusCode(200)

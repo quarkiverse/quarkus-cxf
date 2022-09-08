@@ -13,12 +13,18 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.apache.cxf.bindings.xformat.XMLBindingMessageFormat;
+import org.apache.cxf.bindings.xformat.XMLFormatBinding;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.common.util.ReflectionInvokationHandler;
 import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.databinding.WrapperHelper;
 import org.apache.cxf.interceptor.FIStaxInInterceptor;
 import org.apache.cxf.interceptor.FIStaxOutInterceptor;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import org.apache.cxf.transports.http.configuration.HTTPServerPolicy;
+import org.apache.cxf.ws.addressing.wsdl.UsingAddressing;
+import org.apache.cxf.wsdl.http.AddressType;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Node;
 
@@ -56,16 +62,26 @@ final class Traget_javax_xml_soap_FactoryFinder {
 final class Target_org_apache_cxf_wsdl_ExtensionClassGenerator {
     @Substitute()
     public Class<?> createExtensionClass(Class<?> cls, QName qname, ClassLoader loader) {
-        Logger LOG = LogUtils.getL7dLogger(Target_org_apache_cxf_wsdl_ExtensionClassGenerator.class);
-        try {
-            LOG.info("extensibility class substitute: " + cls.getName());
-            Class<?> clz = Class.forName("io.quarkiverse.cxf.extensibility." + cls.getSimpleName() + "Extensibility");
-            return clz;
-        } catch (ClassNotFoundException e) {
-            LOG.warning("extensibility class to create: " + cls.getName());
-            throw new UnsupportedOperationException(
-                    cls.getName() + " extensibility not implemented yet for GraalVM native images", e);
-            // TODO CORBA support : org.apache.cxf.wsdl.http.OperationType and org.apache.cxf.wsdl.http.BindingType
+        if (cls == AddressType.class) {
+            return io.quarkiverse.cxf.extensibility.AddressTypeExtensibility.class;
+        } else if (cls == HTTPClientPolicy.class) {
+            return io.quarkiverse.cxf.extensibility.HTTPClientPolicyExtensibility.class;
+        } else if (cls == HTTPServerPolicy.class) {
+            return io.quarkiverse.cxf.extensibility.HTTPServerPolicyExtensibility.class;
+        } else if (cls == UsingAddressing.class) {
+            return io.quarkiverse.cxf.extensibility.UsingAddressingExtensibility.class;
+        } else if (cls == XMLBindingMessageFormat.class) {
+            return io.quarkiverse.cxf.extensibility.XMLBindingMessageFormatExtensibility.class;
+        } else if (cls == XMLFormatBinding.class) {
+            return io.quarkiverse.cxf.extensibility.XMLFormatBindingExtensibility.class;
+        } else {
+            final Logger LOG = LogUtils.getL7dLogger(Target_org_apache_cxf_wsdl_ExtensionClassGenerator.class);
+            final String msg = "Class io.quarkiverse.cxf.extensibility." + cls.getSimpleName()
+                    + "Extensibility needs to be created for "
+                    + cls.getName();
+            LOG.severe(msg);
+            /* The exception gets swallowed somewhere in the caller chain. It is left here only to make the compiler happy. */
+            throw new IllegalStateException(msg);
         }
     }
 }
