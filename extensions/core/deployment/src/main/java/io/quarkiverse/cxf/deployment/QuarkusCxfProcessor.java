@@ -624,6 +624,7 @@ class QuarkusCxfProcessor {
     @BuildStep
     void addDependencies(BuildProducer<IndexDependencyBuildItem> indexDependency) {
         Stream.of(
+                "io.quarkiverse.cxf:quarkus-cxf",
                 "org.apache.cxf:cxf-core",
                 "org.apache.cxf:cxf-rt-bindings-soap",
                 "org.apache.cxf:cxf-rt-bindings-xml",
@@ -686,7 +687,6 @@ class QuarkusCxfProcessor {
         reflectiveClass.produce(new ReflectiveClassBuildItem(false, false,
                 "org.apache.cxf.common.logging.Slf4jLogger"));
 
-        /* These are referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_wsdl_ExtensionClassGenerator */
         final Set<String> extensibilities = index.getKnownClasses().stream()
                 .map(classInfo -> classInfo.name().toString())
                 .filter(className -> className.startsWith("io.quarkiverse.cxf.extensibility")
