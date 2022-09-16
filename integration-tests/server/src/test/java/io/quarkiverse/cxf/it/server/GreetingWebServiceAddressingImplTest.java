@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.it.server;
 
+import static io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.anyNs;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -34,10 +35,11 @@ public class GreetingWebServiceAddressingImplTest extends AbstractGreetingWebSer
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                "/*[local-name() = 'definitions']/*[local-name() = 'binding']/*[local-name() = 'UsingAddressing']/@*[local-name() = 'required']",
+                                anyNs("definitions", "binding", "UsingAddressing")
+                                        + "/@*[local-name() = 'required']",
                                 CoreMatchers.is("true")),
                         Matchers.hasXPath(
-                                "local-name(/*[local-name() = 'definitions']/*[local-name() = 'Policy']/*[local-name() = 'Addressing'])",
+                                "local-name(" + anyNs("definitions", "Policy", "Addressing") + ")",
                                 CoreMatchers.is("Addressing")));
     }
 
@@ -80,17 +82,17 @@ public class GreetingWebServiceAddressingImplTest extends AbstractGreetingWebSer
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                "/*[local-name() = 'Envelope']/*[local-name() = 'Header']/*[local-name() = 'Action']/text()",
+                                anyNs("Envelope", "Header", "Action") + "/text()",
                                 CoreMatchers.is(
                                         "http://server.it.cxf.quarkiverse.io/GreetingWebServiceAddressingImpl/replyResponse")),
                         Matchers.hasXPath(
-                                "/*[local-name() = 'Envelope']/*[local-name() = 'Header']/*[local-name() = 'MessageID']/text()",
+                                anyNs("Envelope", "Header", "MessageID") + "/text()",
                                 Matchers.notNullValue(String.class)),
                         Matchers.hasXPath(
-                                "/*[local-name() = 'Envelope']/*[local-name() = 'Header']/*[local-name() = 'To']/text()",
+                                anyNs("Envelope", "Header", "To") + "/text()",
                                 CoreMatchers.is("http://www.w3.org/2005/08/addressing/anonymous")),
                         Matchers.hasXPath(
-                                "/*[local-name() = 'Envelope']/*[local-name() = 'Header']/*[local-name() = 'RelatesTo']/text()",
+                                anyNs("Envelope", "Header", "RelatesTo") + "/text()",
                                 CoreMatchers.is(ID)));
     }
 

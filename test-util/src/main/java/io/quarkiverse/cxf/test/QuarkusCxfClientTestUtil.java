@@ -2,6 +2,8 @@ package io.quarkiverse.cxf.test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
@@ -55,5 +57,10 @@ public class QuarkusCxfClientTestUtil {
         }
         b.append("/");
         return b.toString();
+    }
+
+    public static String anyNs(String... elementNames) {
+        return Stream.of(elementNames)
+                .collect(Collectors.joining("']/*[local-name() = '", "/*[local-name() = '", "']"));
     }
 }
