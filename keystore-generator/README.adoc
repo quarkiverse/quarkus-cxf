@@ -1,0 +1,4 @@
+= Test KeyStore generator
+
+This code generates KeyStores that we use in our integration tests.
+It is a separate Maven module so that we do not pollute test class path with `wildfly-elytron` and its transitives.

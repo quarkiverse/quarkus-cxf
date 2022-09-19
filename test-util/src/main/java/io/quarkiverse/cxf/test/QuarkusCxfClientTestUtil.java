@@ -20,9 +20,13 @@ public class QuarkusCxfClientTestUtil {
     }
 
     public static <T> T getClient(Class<T> serviceInterface, String path) {
+        return getClient(getDefaultNameSpace(serviceInterface), serviceInterface, path);
+    }
+
+    public static <T> T getClient(String namespace, Class<T> serviceInterface, String path) {
         try {
             final URL serviceUrl = new URL(getServerUrl() + path + "?wsdl");
-            final QName qName = new QName(getDefaultNameSpace(serviceInterface), serviceInterface.getSimpleName());
+            final QName qName = new QName(namespace, serviceInterface.getSimpleName());
             final Service service = javax.xml.ws.Service.create(serviceUrl, qName);
             return service.getPort(serviceInterface);
         } catch (MalformedURLException e) {
@@ -59,6 +63,12 @@ public class QuarkusCxfClientTestUtil {
         return b.toString();
     }
 
+    /**
+     * Returns an XPath 1.0 equivalent {@code /*[local-name() = 'foo']/*[local-name() = 'bar']} of XPath 2.0 {@code *:foo/*:bar}
+     *
+     * @param elementNames
+     * @return an XPath 1.0 compatible expression matching the named elements regardless of their namespace
+     */
     public static String anyNs(String... elementNames) {
         return Stream.of(elementNames)
                 .collect(Collectors.joining("']/*[local-name() = '", "/*[local-name() = '", "']"));
