@@ -49,6 +49,7 @@
         <quarkus.version>2.12.2.Final</quarkus.version>
         <quarkus-xmlsec.version>1.1.0</quarkus-xmlsec.version>
         <saaj-impl.version>1.5.3</saaj-impl.version>
+        <wildfly-elytron.version>1.7.0.Final</wildfly-elytron.version>
         <woodstox-core.version>6.3.1</woodstox-core.version>
         <xmlsec.version>2.3.0</xmlsec.version>
 
@@ -57,6 +58,7 @@
         <cq-maven-plugin.version>3.2.0</cq-maven-plugin.version>
         <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
         <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
         <maven-idea-plugin.version>2.2.1</maven-idea-plugin.version>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
@@ -84,6 +86,7 @@
         <module>docs</module>
         <module>bom-test</module>
         <module>test-util</module>
+        <module>keystore-generator</module>
         <module>integration-tests</module>
     </modules>
 
@@ -113,6 +116,11 @@
                         <downloadSources>true</downloadSources>
                         <downloadJavadocs>true</downloadJavadocs>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
