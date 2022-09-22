@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>saaj</module>
         <module>woodstox</module>
         <module>core</module>
         <module>features-logging</module>

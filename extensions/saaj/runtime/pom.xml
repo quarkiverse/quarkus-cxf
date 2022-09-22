@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
-        <artifactId>quarkus-cxf-woodstox-parent</artifactId>
+        <artifactId>quarkus-cxf-saaj-parent</artifactId>
         <version>1.6.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-woodstox</artifactId>
-    <name>Quarkus CXF - Woodstox - Runtime</name>
-    <description>Native support for Woodstox StAX and SAX parsers</description>
+    <artifactId>quarkus-cxf-saaj</artifactId>
+    <name>Quarkus CXF - SAAJ - Runtime</name>
+    <description>Native support for SOAP with Attachments API for Java (SAAJ)</description>
 
     <dependencies>
         <dependency>
@@ -18,8 +18,13 @@
             <artifactId>quarkus-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.woodstox</groupId>
-            <artifactId>woodstox-core</artifactId>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.nativeimage</groupId>
+            <artifactId>svm</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

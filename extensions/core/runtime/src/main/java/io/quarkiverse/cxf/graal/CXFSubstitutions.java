@@ -40,24 +40,6 @@ import com.sun.xml.messaging.saaj.soap.impl.SOAPTextImpl;
 
 import io.quarkiverse.cxf.CXFException;
 
-@TargetClass(className = "javax.xml.soap.FactoryFinder")
-final class Traget_javax_xml_soap_FactoryFinder {
-
-    /**
-     * The target method wants to read a properties file under {@code java.home} which does not work on GraalVM (there
-     * is no
-     * JRE distro at native runtime).
-     *
-     * @param factoryId
-     * @param deprecatedFactoryId
-     * @return
-     */
-    @Substitute
-    private static String fromJDKProperties(String factoryId, String deprecatedFactoryId) {
-        return null;
-    }
-}
-
 @TargetClass(className = "org.apache.cxf.wsdl.ExtensionClassGenerator")
 final class Target_org_apache_cxf_wsdl_ExtensionClassGenerator {
     @Substitute()

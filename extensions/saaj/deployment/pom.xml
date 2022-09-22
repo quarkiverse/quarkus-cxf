@@ -3,44 +3,27 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
-        <artifactId>quarkus-cxf-woodstox-parent</artifactId>
+        <artifactId>quarkus-cxf-saaj-parent</artifactId>
         <version>1.6.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-woodstox</artifactId>
-    <name>Quarkus CXF - Woodstox - Runtime</name>
-    <description>Native support for Woodstox StAX and SAX parsers</description>
+    <artifactId>quarkus-cxf-saaj-deployment</artifactId>
+    <name>Quarkus CXF - SAAJ - Deployment</name>
 
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-core</artifactId>
+            <artifactId>quarkus-core-deployment</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.woodstox</groupId>
-            <artifactId>woodstox-core</artifactId>
+            <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-saaj</artifactId>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-extension-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>extension-descriptor</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}
-                            </deployment>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -56,4 +39,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
