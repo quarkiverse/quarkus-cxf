@@ -225,6 +225,22 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.cxf.xjc-utils</groupId>
+                <artifactId>cxf-xjc-runtime</artifactId>
+                <version>${cxf.xjc-utils.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf</artifactId>
                 <version>${quarkus-cxf.version}</version>
@@ -354,10 +370,17 @@
                                 <!-- entries that our extensions need. Here we define the set of our artifacts -->
                                 <!-- whose dependencies we want to cover in the flattened BOM -->
                                 <resolutionEntryPointInclude>io.quarkiverse.cxf:*</resolutionEntryPointInclude>
+                                <resolutionEntryPointInclude>org.apache.cxf.xjc-utils:cxf-xjc-runtime</resolutionEntryPointInclude>
                             </resolutionEntryPointIncludes>
                             <requiredBomEntryIncludes>
                                 <requiredBomEntryInclude>org.apache.cxf</requiredBomEntryInclude>
                             </requiredBomEntryIncludes>
+                            <bomEntryTransformations>
+                                <bomEntryTransformation>
+                                    <gavPattern>org.apache.cxf:cxf-rt-ws-policy</gavPattern>
+                                    <addExclusions>org.apache.geronimo.specs:geronimo-jta_1.1_spec,jakarta.activation:jakarta.activation-api,jakarta.xml.bind:jakarta.xml.bind-api</addExclusions>
+                                </bomEntryTransformation>
+                            </bomEntryTransformations>
                             <flattenedFullPomFile>${project.build.directory}/flattened-full-pom.xml</flattenedFullPomFile>
                             <flattenedReducedPomFile>${project.build.directory}/flattened-reduced-pom.xml</flattenedReducedPomFile>
                             <flattenedReducedVerbosePomFile>${project.build.directory}/flattened-reduced-verbose-pom.xml</flattenedReducedVerbosePomFile>
