@@ -292,12 +292,12 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-santuario</artifactId>
+                <artifactId>quarkus-cxf-saaj</artifactId>
                 <version>${quarkus-cxf.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-santuario-deployment</artifactId>
+                <artifactId>quarkus-cxf-saaj-deployment</artifactId>
                 <version>${quarkus-cxf.version}</version>
             </dependency>
             <dependency>

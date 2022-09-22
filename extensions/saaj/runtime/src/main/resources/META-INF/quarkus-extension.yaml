@@ -1,0 +1,15 @@
+---
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+name: "Quarkus CXF SAAJ"
+description: "Native support for SOAP with Attachments API for Java (SAAJ)"
+metadata:
+  unlisted: true
+  keywords:
+    - "attachments"
+    - "saaj"
+    - "soap"
+    - "xml"
+  categories:
+    - "xml"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html"
+  status: "stable"
