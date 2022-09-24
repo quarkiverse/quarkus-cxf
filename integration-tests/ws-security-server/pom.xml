@@ -62,6 +62,7 @@
                         <id>generate-cxfca-keypair</id>
                         <phase>generate-sources</phase>
                         <goals>
+                            <goal>clean</goal>
                             <goal>generateKeyPair</goal>
                         </goals>
                         <configuration>
@@ -91,6 +92,7 @@
                         <id>generate-alice-keypair</id>
                         <phase>generate-sources</phase>
                         <goals>
+                            <goal>clean</goal>
                             <goal>generateKeyPair</goal>
                         </goals>
                         <configuration>
@@ -107,6 +109,7 @@
                         <id>generate-bob-keypair</id>
                         <phase>generate-sources</phase>
                         <goals>
+                            <goal>clean</goal>
                             <goal>generateKeyPair</goal>
                         </goals>
                         <configuration>
