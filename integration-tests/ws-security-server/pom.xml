@@ -54,7 +54,6 @@
                     <keypass>password</keypass>
                     <validity>365</validity>
                     <keyalg>RSA</keyalg>
-                    <keysize>1024</keysize>
                     <storepass>password</storepass>
                 </configuration>
                 <executions>
