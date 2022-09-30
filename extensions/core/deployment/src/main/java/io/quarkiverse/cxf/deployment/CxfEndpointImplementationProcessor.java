@@ -1,0 +1,225 @@
+package io.quarkiverse.cxf.deployment;
+
+import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.xml.ws.soap.SOAPBinding;
+
+import org.jboss.jandex.AnnotationValue;
+import org.jboss.jandex.ClassInfo;
+import org.jboss.jandex.DotName;
+import org.jboss.jandex.IndexView;
+import org.jboss.logging.Logger;
+
+import io.quarkiverse.cxf.CXFRecorder;
+import io.quarkiverse.cxf.CXFServletInfos;
+import io.quarkiverse.cxf.CxfConfig;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import io.quarkus.arc.deployment.BeanContainerBuildItem;
+import io.quarkus.arc.deployment.ReflectiveBeanClassBuildItem;
+import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
+import io.quarkus.deployment.annotations.BuildProducer;
+import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.annotations.ExecutionTime;
+import io.quarkus.deployment.annotations.Record;
+import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.runtime.RuntimeValue;
+import io.quarkus.vertx.http.deployment.DefaultRouteBuildItem;
+import io.quarkus.vertx.http.deployment.RouteBuildItem;
+import io.quarkus.vertx.http.runtime.HandlerType;
+import io.quarkus.vertx.http.runtime.HttpBuildTimeConfig;
+import io.quarkus.vertx.http.runtime.HttpConfiguration;
+import io.vertx.core.Handler;
+import io.vertx.ext.web.RoutingContext;
+
+/**
+ * Find WebService implementations and deploy them.
+ */
+public class CxfEndpointImplementationProcessor {
+
+    private static final Logger LOGGER = Logger.getLogger(CxfEndpointImplementationProcessor.class);
+
+    @BuildStep
+    void collectEndpoints(
+            CombinedIndexBuildItem combinedIndexBuildItem,
+            CxfBuildTimeConfig cxfBuildTimeConfig,
+            BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
+            BuildProducer<ReflectiveBeanClassBuildItem> reflectiveBeanClass,
+            BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
+            BuildProducer<CxfEndpointImplementationBuildItem> endpointImplementations,
+            BuildProducer<AdditionalBeanBuildItem> additionalBeans,
+            BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
+        IndexView index = combinedIndexBuildItem.getIndex();
+
+        Set<String> reflectives = new TreeSet<>();
+        CxfDeploymentUtils.webServiceAnnotations(index)
+                .forEach(annotation -> {
+                    final ClassInfo wsClassInfo = annotation.target().asClass();
+
+                    final boolean hasWebServiceAnnotation = wsClassInfo.annotationsMap()
+                            .containsKey(CxfDotNames.WEBSERVICE_ANNOTATION);
+                    final boolean hasWebServiceProviderAnnotation = wsClassInfo.annotationsMap()
+                            .containsKey(CxfDotNames.WEBSERVICE_PROVIDER_ANNOTATION);
+
+                    if (isJaxwsEndpoint(annotation.target().asClass(), index, true, hasWebServiceAnnotation,
+                            hasWebServiceProviderAnnotation)) {
+                        final String impl = wsClassInfo.name().toString();
+
+                        try {
+                            CxfDeploymentUtils.walkParents(
+                                    Thread.currentThread().getContextClassLoader().loadClass(impl),
+                                    reflectives::add);
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException("Could not load " + impl + " at build time", e);
+                        }
+                        additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(impl));
+                        // Registers ArC generated subclasses for native reflection
+                        //reflectiveBeanClass.produce(new ReflectiveBeanClassBuildItem(impl));
+
+                        final String wsNamespace = Optional.ofNullable(annotation.value("targetNamespace"))
+                                .map(AnnotationValue::asString)
+                                .orElseGet(() -> CxfDeploymentUtils.getNameSpaceFromClassInfo(wsClassInfo));
+
+                        final String wsName = Optional.ofNullable(annotation.value("serviceName"))
+                                .map(AnnotationValue::asString)
+                                .orElse(impl.contains(".") ? impl.substring(impl.lastIndexOf('.') + 1) : impl);
+
+                        String soapBinding = Optional
+                                .ofNullable(wsClassInfo.classAnnotation(CxfDotNames.BINDING_TYPE_ANNOTATION))
+                                .map(bindingType -> bindingType.value().asString())
+                                .orElse(SOAPBinding.SOAP11HTTP_BINDING);
+
+                        endpointImplementations.produce(
+                                new CxfEndpointImplementationBuildItem(
+                                        cxfBuildTimeConfig.path,
+                                        impl,
+                                        soapBinding,
+                                        wsNamespace,
+                                        wsName,
+                                        hasWebServiceProviderAnnotation));
+
+                    } else if (Modifier.isInterface(wsClassInfo.flags())) {
+                        String cl = wsClassInfo.name().toString();
+                        try {
+                            CxfDeploymentUtils.walkParents(
+                                    Thread.currentThread().getContextClassLoader().loadClass(cl),
+                                    reflectives::add);
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException("Could not load " + cl + " at build time", e);
+                        }
+                    }
+
+                });
+        reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, reflectives.toArray(new String[0])));
+    }
+
+    @BuildStep
+    @Record(ExecutionTime.RUNTIME_INIT)
+    void startRoute(CXFRecorder recorder,
+            BuildProducer<DefaultRouteBuildItem> defaultRoutes,
+            BuildProducer<RouteBuildItem> routes,
+            BeanContainerBuildItem beanContainer,
+            List<CxfEndpointImplementationBuildItem> cxfEndpoints,
+            CxfWrapperClassNamesBuildItem cxfWrapperClassNames,
+            HttpBuildTimeConfig httpBuildTimeConfig,
+            HttpConfiguration httpConfiguration,
+            CxfConfig cxfConfig) {
+        String path = null;
+        boolean startRoute = false;
+        if (!cxfEndpoints.isEmpty()) {
+            RuntimeValue<CXFServletInfos> infos = recorder.createInfos();
+            final Map<String, List<String>> wrapperClassNames = cxfWrapperClassNames.getWrapperClassNames();
+            for (CxfEndpointImplementationBuildItem cxfWebService : cxfEndpoints) {
+                recorder.registerCXFServlet(infos, cxfWebService.getPath(), cxfWebService.getImplementor(),
+                        cxfConfig, cxfWebService.getWsName(), cxfWebService.getWsNamespace(),
+                        cxfWebService.getSoapBinding(), wrapperClassNames.get(cxfWebService.getImplementor()),
+                        cxfWebService.getImplementor(), cxfWebService.isProvider());
+                if (cxfWebService.getImplementor() != null && !cxfWebService.getImplementor().isEmpty()) {
+                    startRoute = true;
+                }
+                if (path == null) {
+                    path = cxfWebService.getPath();
+                    recorder.setPath(infos, path, httpBuildTimeConfig.rootPath);
+                }
+            }
+            if (startRoute) {
+                Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(),
+                        httpConfiguration);
+                if (path != null) {
+                    routes.produce(RouteBuildItem.builder()
+                            .route(getMappingPath(path))
+                            .handler(handler)
+                            .handlerType(HandlerType.BLOCKING)
+                            .build());
+
+                }
+            }
+        }
+    }
+
+    private static String getMappingPath(String path) {
+        String mappingPath;
+        if (path.endsWith("/")) {
+            mappingPath = path + "*";
+        } else {
+            mappingPath = path + "/*";
+        }
+        return mappingPath;
+    }
+
+    /**
+     * Adapted from <a href=
+     * "https://github.com/wildfly/wildfly/blob/26.x/webservices/server-integration/src/main/java/org/jboss/as/webservices/util/ASHelper.java#L220-L245">WildFly<a>
+     */
+    private static boolean isJaxwsEndpoint(final ClassInfo clazz, final IndexView index, boolean log,
+            boolean hasWebServiceAnnotation, boolean hasWebServiceProviderAnnotation) {
+        // assert JAXWS endpoint class flags
+        final short flags = clazz.flags();
+        if (Modifier.isInterface(flags))
+            return false;
+        if (Modifier.isAbstract(flags))
+            return false;
+        if (!Modifier.isPublic(flags))
+            return false;
+        if (isJaxwsService(clazz, index))
+            return false;
+        if (!hasWebServiceAnnotation && !hasWebServiceProviderAnnotation) {
+            return false;
+        }
+        if (hasWebServiceAnnotation && hasWebServiceProviderAnnotation) {
+            if (log) {
+                LOGGER.warnf(
+                        "[JAXWS 2.2 spec, section 7.7] The @WebService and @WebServiceProvider annotations are mutually exclusive - %s won't be considered as a webservice endpoint, since it doesn't meet that requirement",
+                        clazz.name().toString());
+            }
+            return false;
+        }
+        if (Modifier.isFinal(flags)) {
+            if (log) {
+                LOGGER.warnf("WebService endpoint class cannot be final - %s won't be considered as a webservice endpoint",
+                        clazz.name().toString());
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isJaxwsService(final ClassInfo current, final IndexView index) {
+        ClassInfo tmp = current;
+        while (tmp != null) {
+            final DotName superName = tmp.superName();
+            if (CxfDotNames.JAXWS_SERVICE_CLASS.equals(superName)) {
+                return true;
+            }
+            tmp = index.getClassByName(superName);
+        }
+        return false;
+    }
+
+}
