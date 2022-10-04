@@ -10,7 +10,7 @@
 
     <artifactId>quarkus-cxf-integration-test-ws-security-server</artifactId>
 
-    <name>Quarkus CXF Extension - Integration Test - WS Security Server</name>
+    <name>Quarkus CXF - Integration Test - WS-Security Server</name>
 
     <dependencies>
         <dependency>

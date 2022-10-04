@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-features-metrics-deployment</artifactId>
-    <name>Quarkus CXF Features Metrics - Deployment</name>
+    <name>Quarkus CXF - Metrics Feature - Deployment</name>
 
     <dependencies>
         <dependency>

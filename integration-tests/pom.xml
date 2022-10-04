@@ -11,7 +11,7 @@
     <artifactId>quarkus-cxf-integration-tests</artifactId>
     <packaging>pom</packaging>
 
-    <name>Quarkus CXF Extension - Integration Tests</name>
+    <name>Quarkus CXF - Integration Tests</name>
 
     <modules>
         <module>client</module>

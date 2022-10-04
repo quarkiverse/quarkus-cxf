@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-features-logging</artifactId>
-    <name>Quarkus CXF Features Logging</name>
+    <name>Quarkus CXF - Advanced Logging Feature</name>
 
     <dependencies>
         <dependency>

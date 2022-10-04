@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-bom</artifactId>
-    <name>Quarkus CXF Bill Of Material</name>
+    <name>Quarkus CXF - Bill of Materials</name>
     <packaging>pom</packaging>
 
     <properties>

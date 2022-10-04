@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-docs</artifactId>
-    <name>Quarkus CXF Documentation</name>
+    <name>Quarkus CXF - Documentation</name>
 
     <profiles>
         <profile>

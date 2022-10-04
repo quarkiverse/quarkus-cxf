@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-features-metrics-parent</artifactId>
-    <name>Quarkus CXF Features Metrics - Parent</name>
+    <name>Quarkus CXF - Metrics Feature - Parent</name>
     <packaging>pom</packaging>
 
     <modules>

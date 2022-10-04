@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-bom-test</artifactId>
-    <name>Bill Of Materials for testing Quarkus CXF applications</name>
+    <name>Quarkus CXF - Bill Of Materials for testing</name>
     <packaging>pom</packaging>
 
     <properties>

@@ -10,7 +10,7 @@
 
     <artifactId>quarkus-cxf-integration-test-logging</artifactId>
 
-    <name>Quarkus CXF Extension - Integration Test - Logging</name>
+    <name>Quarkus CXF - Integration Test - Logging</name>
 
     <dependencies>
         <dependency>

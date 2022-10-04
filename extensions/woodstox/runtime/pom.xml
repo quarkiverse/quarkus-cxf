@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-woodstox</artifactId>
-    <name>Quarkus CXF - Woodstox - Runtime</name>
+    <name>Quarkus CXF - Woodstox</name>
     <description>Native support for Woodstox StAX and SAX parsers</description>
 
     <dependencies>

@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-transports-http-hc5-parent</artifactId>
-    <name>Quarkus CXF Transports HTTP Async - Parent</name>
+    <name>Quarkus CXF - HTTP Async Transport - Parent</name>
     <packaging>pom</packaging>
 
     <modules>

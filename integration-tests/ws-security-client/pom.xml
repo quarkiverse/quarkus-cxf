@@ -10,7 +10,7 @@
 
     <artifactId>quarkus-cxf-integration-test-ws-security-client</artifactId>
 
-    <name>Quarkus CXF Extension - Integration Test - WS Security Client</name>
+    <name>Quarkus CXF - Integration Test - WS-Security Client</name>
 
     <dependencies>
         <dependency>
