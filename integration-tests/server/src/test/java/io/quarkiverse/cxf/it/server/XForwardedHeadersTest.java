@@ -1,11 +1,11 @@
 package io.quarkiverse.cxf.it.server;
 
+import static io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.anyNs;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -14,12 +14,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
-import io.restassured.http.Header;
-import io.restassured.http.Headers;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
@@ -36,72 +35,87 @@ public class XForwardedHeadersTest {
     void testXForwardedPrefixHeader() {
         given()
                 .when()
-                .headers(new Headers(new Header(X_FORWARDED_PREFIX_HEADER, "/test")))
+                .header(X_FORWARDED_PREFIX_HEADER, "/test")
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("http://localhost:8081/test/soap/greeting"));
+                .body(
+                        Matchers.hasXPath(
+                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                CoreMatchers.is(
+                                        "http://localhost:8081/test/soap/greeting")));
     }
 
     @Test
     void testXForwardedProtoHeader() {
         given()
                 .when()
-                .headers(Map.of(
-                        X_FORWARDED_PROTO_HEADER, "https"))
+                .header(X_FORWARDED_PROTO_HEADER, "https")
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("https://localhost/soap/greeting"));
+                .body(
+                        Matchers.hasXPath(
+                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                CoreMatchers.is(
+                                        "https://localhost/soap/greeting")));
     }
 
     @Test
     void testXForwardedHostHeader() {
         given()
                 .when()
-                .headers(Map.of(
-                        X_FORWARDED_HOST_HEADER, "api.example.com"))
+                .header(X_FORWARDED_HOST_HEADER, "api.example.com")
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("http://api.example.com:8081/soap/greeting"));
+                .body(
+                        Matchers.hasXPath(
+                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                CoreMatchers.is(
+                                        "http://api.example.com:8081/soap/greeting")));
     }
 
     @Test
     void testXForwardedPortHeader() {
         given()
                 .when()
-                .headers(Map.of(
-                        X_FORWARDED_PORT_HEADER, "443"))
+                .header(X_FORWARDED_PORT_HEADER, "443")
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("http://localhost:443/soap/greeting"));
+                .body(
+                        Matchers.hasXPath(
+                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                CoreMatchers.is(
+                                        "http://localhost:443/soap/greeting")));
     }
 
     @Test
     void testXForwardedHeaders() {
         given()
                 .when()
-                .headers(Map.of(
-                        X_FORWARDED_PREFIX_HEADER, "/test",
-                        X_FORWARDED_PROTO_HEADER, "https",
-                        X_FORWARDED_HOST_HEADER, "api.example.com",
-                        X_FORWARDED_PORT_HEADER, "443"))
+                .header(X_FORWARDED_PREFIX_HEADER, "/test")
+                .header(X_FORWARDED_PROTO_HEADER, "https")
+                .header(X_FORWARDED_HOST_HEADER, "api.example.com")
+                .header(X_FORWARDED_PORT_HEADER, "443")
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
-                .body(containsString("https://api.example.com:443/test/soap/greeting"));
+                .body(
+                        Matchers.hasXPath(
+                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                CoreMatchers.is(
+                                        "https://api.example.com:443/test/soap/greeting")));
     }
 
     @Test
     void testXForwardedHeadersParrallel() throws ExecutionException, InterruptedException {
         List<RequestSpecification> specs = List.of(
-                given().headers(Map.of(X_FORWARDED_HOST_HEADER, "api1.example.com")),
-                given().headers(Map.of(X_FORWARDED_PORT_HEADER, "443")),
-                given().headers(Map.of(X_FORWARDED_PREFIX_HEADER, "/test")),
-                given().headers(Map.of(X_FORWARDED_PROTO_HEADER, "https",
-                        X_FORWARDED_PORT_HEADER, "8280")));
+                given().header(X_FORWARDED_HOST_HEADER, "api1.example.com"),
+                given().header(X_FORWARDED_PORT_HEADER, "443"),
+                given().header(X_FORWARDED_PREFIX_HEADER, "/test"),
+                given().header(X_FORWARDED_PROTO_HEADER, "https").header(X_FORWARDED_PORT_HEADER, "8280"));
 
         int requestCount = 20;
 
