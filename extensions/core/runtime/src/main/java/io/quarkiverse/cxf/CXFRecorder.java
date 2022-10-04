@@ -11,6 +11,7 @@ import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.devconsole.DevCxfServerInfosSupplier;
 import io.quarkiverse.cxf.transport.CxfHandler;
+import io.quarkiverse.cxf.transport.VertxDestinationRegistryFactory;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
@@ -140,6 +141,7 @@ public class CXFRecorder {
         LOGGER.trace("init server");
         // There may be a better way to handle this
         DevCxfServerInfosSupplier.setServletInfos(infos.getValue());
+        VertxDestinationRegistryFactory.reset();
         return new CxfHandler(infos.getValue(), beanContainer, httpConfiguration);
     }
 
