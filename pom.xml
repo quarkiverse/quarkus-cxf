@@ -54,6 +54,8 @@
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
         <cq-maven-plugin.version>3.2.1</cq-maven-plugin.version>
+        <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
+        <groovy.version>3.0.8</groovy.version>
         <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
         <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
         <keytool-maven-plugin.version>1.6</keytool-maven-plugin.version>
@@ -113,6 +115,26 @@
                         <downloadSources>true</downloadSources>
                         <downloadJavadocs>true</downloadJavadocs>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>groovy-maven-plugin</artifactId>
+                    <version>${groovy-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-all</artifactId>
+                            <version>${groovy.version}</version>
+                            <type>pom</type>
+                            <exclusions>
+                                <exclusion>
+                                    <!-- groovy-testng depends on testng 7.2.0 which is not on maven central -->
+                                    <groupId>org.codehaus.groovy</groupId>
+                                    <artifactId>groovy-testng</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -307,6 +329,57 @@
                         <goals>
                             <goal>enforce</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>update-github-workflows</id>
+                        <inherited>false</inherited>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <source>
+                                import java.nio.file.Files
+                                import java.nio.file.Path
+                                import java.nio.file.Paths
+
+                                def buildYaml = '.github/workflows/build.yml'
+                                def buildXmlPath = project.basedir.toPath().resolve(buildYaml)
+                                def buildXmlSource = buildXmlPath.getText('UTF-8')
+                                def pattern = java.util.regex.Pattern.compile('testModule: *\\[([^\\]]*)\\]')
+                                def matcher = pattern.matcher(buildXmlSource)
+                                if (!matcher.find()) {
+                                    throw new IllegalStateException('Pattern ' + pattern + ' does not match ' + buildXmlPath)
+                                }
+                                def foundTestModules = matcher.group(1)
+
+                                def expectedTestModules;
+                                def iTestsDir = project.basedir.toPath().resolve('integration-tests')
+                                try (java.util.stream.Stream files = Files.list(iTestsDir)) {
+                                    expectedTestModules = files
+                                        .filter(path -> Files.isRegularFile(iTestsDir.resolve(path).resolve('pom.xml')))
+                                        .map(Path::getFileName)
+                                        .map(Path::toString)
+                                        .sorted()
+                                        .collect(java.util.stream.Collectors.joining(', '))
+                                }
+                                if (!foundTestModules.equals(expectedTestModules)) {
+                                    println('Updating testModule attribute in ' + buildYaml + ':\n  old: ' + foundTestModules + '\n  new: '+expectedTestModules)
+                                    def newSource = new StringBuilder()
+                                    matcher.appendReplacement(newSource, 'testModule: ['+ expectedTestModules +']')
+                                    matcher.appendTail(newSource)
+                                    buildXmlPath.setText(newSource.toString(), 'UTF-8')
+                                } else {
+                                    println('testModule attribute in ' + buildYaml + ' is up to date')
+                                }
+                            </source>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
