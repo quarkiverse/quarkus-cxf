@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf</artifactId>
-    <name>Quarkus CXF Core</name>
+    <name>Quarkus CXF - Core</name>
     <description>Consume and produce SOAP web services with Apache CXF</description>
 
     <dependencies>

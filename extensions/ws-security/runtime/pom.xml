@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-ws-security</artifactId>
-    <name>Quarkus CXF WS-Security</name>
+    <name>Quarkus CXF - WS-Security</name>
 
     <dependencies>
         <dependency>

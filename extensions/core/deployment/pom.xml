@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-deployment</artifactId>
-    <name>Quarkus CXF Core - Deployment</name>
+    <name>Quarkus CXF - Core - Deployment</name>
 
     <dependencies>
         <dependency>

@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-core</artifactId>
-    <name>Quarkus CXF Core - Parent</name>
+    <name>Quarkus CXF - Core - Parent</name>
     <packaging>pom</packaging>
 
     <modules>

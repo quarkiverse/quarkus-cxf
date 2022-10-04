@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-saaj</artifactId>
-    <name>Quarkus CXF - SAAJ - Runtime</name>
+    <name>Quarkus CXF - SAAJ</name>
     <description>Native support for SOAP with Attachments API for Java (SAAJ)</description>
 
     <dependencies>

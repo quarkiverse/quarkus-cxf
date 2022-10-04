@@ -10,7 +10,7 @@
 
     <artifactId>quarkus-cxf-integration-test-client</artifactId>
 
-    <name>Quarkus CXF Extension - Integration Test - Client</name>
+    <name>Quarkus CXF - Integration Test - Client</name>
 
     <dependencies>
         <dependency>
