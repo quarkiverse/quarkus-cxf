@@ -18,10 +18,6 @@ public class VertxDestinationFactory extends SoapTransportFactory implements Des
 
     protected final DestinationRegistry registry;
 
-    public VertxDestinationFactory() {
-        this(VertxDestinationRegistryFactory.getDestinationRegistry());
-    }
-
     protected VertxDestinationFactory(DestinationRegistry registry) {
         super();
         this.registry = registry;
