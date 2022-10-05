@@ -12,11 +12,13 @@ public class CXFServletInfos {
 
     private final List<CXFServletInfo> infos;
     private static final Logger LOGGER = Logger.getLogger(CXFServletInfos.class);
-    private String path = null;
-    private String contextPath = null;
+    private final String path;
+    private final String contextPath;
 
-    public CXFServletInfos() {
+    public CXFServletInfos(String path, String contextPath) {
         LOGGER.trace("new CXFServletInfos");
+        this.path = path;
+        this.contextPath = contextPath;
         infos = new ArrayList<>();
     }
 
@@ -35,7 +37,9 @@ public class CXFServletInfos {
     public List<String> getWrappersclasses() {
         if (infos == null)
             return Collections.emptyList();
-        return infos.stream().map(CXFServletInfo::getWrapperClassNames).flatMap(List::stream)
+        return infos.stream()
+                .map(CXFServletInfo::getWrapperClassNames)
+                .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 
@@ -43,11 +47,4 @@ public class CXFServletInfos {
         infos.add(cfg);
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
 }

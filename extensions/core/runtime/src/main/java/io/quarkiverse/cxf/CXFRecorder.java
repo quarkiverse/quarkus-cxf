@@ -130,8 +130,8 @@ public class CXFRecorder {
         }
     }
 
-    public RuntimeValue<CXFServletInfos> createInfos() {
-        CXFServletInfos infos = new CXFServletInfos();
+    public RuntimeValue<CXFServletInfos> createInfos(String path, String contextPath) {
+        CXFServletInfos infos = new CXFServletInfos(path, contextPath);
         return new RuntimeValue<>(infos);
     }
 
@@ -141,10 +141,5 @@ public class CXFRecorder {
         // There may be a better way to handle this
         DevCxfServerInfosSupplier.setServletInfos(infos.getValue());
         return new CxfHandler(infos.getValue(), beanContainer, httpConfiguration);
-    }
-
-    public void setPath(RuntimeValue<CXFServletInfos> infos, String path, String contextPath) {
-        infos.getValue().setPath(path);
-        infos.getValue().setContextPath(contextPath);
     }
 }
