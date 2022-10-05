@@ -106,6 +106,7 @@ public class EhcacheProcessor {
     @BuildStep
     void runtimeInitializedClass(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitializedClass) {
         Stream.of(
+                "org.ehcache.sizeof.impl.JvmInformation",
                 "org.ehcache.shadow.org.terracotta.utilities.io.Files",
                 "org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.BooleanPortability",
                 "org.ehcache.xml.XmlConfiguration",

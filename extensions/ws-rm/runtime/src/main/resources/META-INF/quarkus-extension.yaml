@@ -1,0 +1,20 @@
+---
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+name: "Quarkus CXF WS-ReliableMessaging"
+description: "Consume and produce web services with Web Services Reliable Messaging (WS-ReliableMessaging, WSRM)"
+metadata:
+  keywords:
+    - "cxf"
+    - "jaxws"
+    - "jax-ws"
+    - "services"
+    - "soap"
+    - "ws"
+    - "wsrm"
+    - "reliable"
+    - "messaging"
+    - "ws-reliablemessaging"
+  categories:
+    - "integration"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html"
+  status: "stable"
