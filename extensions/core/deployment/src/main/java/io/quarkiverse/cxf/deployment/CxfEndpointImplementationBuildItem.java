@@ -8,9 +8,9 @@ public final class CxfEndpointImplementationBuildItem extends AbstractEndpointBu
     private final String implementor;
     private final boolean provider;
 
-    public CxfEndpointImplementationBuildItem(String path, String implementor, String soapBinding, String wsNamespace,
+    public CxfEndpointImplementationBuildItem(String implementor, String soapBinding, String wsNamespace,
             String wsName, boolean provider) {
-        super(soapBinding, wsNamespace, wsName, path);
+        super(soapBinding, wsNamespace, wsName);
         this.implementor = implementor;
         this.provider = provider;
     }

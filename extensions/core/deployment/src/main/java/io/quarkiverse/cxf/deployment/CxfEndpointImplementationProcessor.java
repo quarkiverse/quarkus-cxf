@@ -48,7 +48,6 @@ public class CxfEndpointImplementationProcessor {
     @BuildStep
     void collectEndpoints(
             CombinedIndexBuildItem combinedIndexBuildItem,
-            CxfBuildTimeConfig cxfBuildTimeConfig,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
             BuildProducer<ReflectiveBeanClassBuildItem> reflectiveBeanClass,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
@@ -97,7 +96,6 @@ public class CxfEndpointImplementationProcessor {
 
                         endpointImplementations.produce(
                                 new CxfEndpointImplementationBuildItem(
-                                        cxfBuildTimeConfig.path,
                                         impl,
                                         soapBinding,
                                         wsNamespace,
@@ -129,31 +127,27 @@ public class CxfEndpointImplementationProcessor {
             CxfWrapperClassNamesBuildItem cxfWrapperClassNames,
             HttpBuildTimeConfig httpBuildTimeConfig,
             HttpConfiguration httpConfiguration,
+            CxfBuildTimeConfig cxfBuildTimeConfig,
             CxfConfig cxfConfig) {
-        String path = null;
         boolean startRoute = false;
         if (!cxfEndpoints.isEmpty()) {
-            RuntimeValue<CXFServletInfos> infos = recorder.createInfos();
+            RuntimeValue<CXFServletInfos> infos = recorder.createInfos(cxfBuildTimeConfig.path, httpBuildTimeConfig.rootPath);
             final Map<String, List<String>> wrapperClassNames = cxfWrapperClassNames.getWrapperClassNames();
             for (CxfEndpointImplementationBuildItem cxfWebService : cxfEndpoints) {
-                recorder.registerCXFServlet(infos, cxfWebService.getPath(), cxfWebService.getImplementor(),
+                recorder.registerCXFServlet(infos, cxfBuildTimeConfig.path, cxfWebService.getImplementor(),
                         cxfConfig, cxfWebService.getWsName(), cxfWebService.getWsNamespace(),
                         cxfWebService.getSoapBinding(), wrapperClassNames.get(cxfWebService.getImplementor()),
                         cxfWebService.getImplementor(), cxfWebService.isProvider());
                 if (cxfWebService.getImplementor() != null && !cxfWebService.getImplementor().isEmpty()) {
                     startRoute = true;
                 }
-                if (path == null) {
-                    path = cxfWebService.getPath();
-                    recorder.setPath(infos, path, httpBuildTimeConfig.rootPath);
-                }
             }
             if (startRoute) {
                 Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(),
                         httpConfiguration);
-                if (path != null) {
+                if (cxfBuildTimeConfig.path != null) {
                     routes.produce(RouteBuildItem.builder()
-                            .route(getMappingPath(path))
+                            .route(getMappingPath(cxfBuildTimeConfig.path))
                             .handler(handler)
                             .handlerType(HandlerType.BLOCKING)
                             .build());

@@ -62,7 +62,6 @@ public class CxfClientProcessor {
     @BuildStep
     void collectClients(
             CombinedIndexBuildItem combinedIndexBuildItem,
-            CxfBuildTimeConfig cxfBuildTimeConfig,
             CxfBusBuildItem bus,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
             BuildProducer<ReflectiveBeanClassBuildItem> reflectiveBeanClass,
@@ -98,7 +97,7 @@ public class CxfClientProcessor {
                                 .orElse(SOAPBinding.SOAP11HTTP_BINDING);
 
                         clients.produce(
-                                new CxfClientBuildItem(cxfBuildTimeConfig.path, sei, soapBinding, wsNamespace, wsName));
+                                new CxfClientBuildItem(sei, soapBinding, wsNamespace, wsName));
                         proxies.produce(new NativeImageProxyDefinitionBuildItem(wsClassInfo.name().toString(),
                                 "javax.xml.ws.BindingProvider", "java.io.Closeable", "org.apache.cxf.endpoint.Client"));
 
