@@ -43,7 +43,7 @@
     <properties>
         <assertj.version>3.23.1</assertj.version>
         <cxf.version>3.5.3</cxf.version>
-        <ehcache.version>3.10.1</ehcache.version>
+        <ehcache.version>3.10.2</ehcache.version>
         <neethi.version>3.2.0</neethi.version>
         <mimepull.version>1.9.14</mimepull.version>
         <quarkus.version>2.13.1.Final</quarkus.version>
