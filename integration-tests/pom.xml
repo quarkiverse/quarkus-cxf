@@ -21,6 +21,7 @@
         <module>ws-security-server</module>
         <module>ws-trust</module>
         <module>ws-rm</module>
+        <module>mtom</module>
     </modules>
 
     <properties>
