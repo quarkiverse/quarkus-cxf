@@ -41,8 +41,11 @@
         </developer>
     </developers>
     <properties>
+        <!-- Compile dependency versions (keep sorted alphabetically) -->
+        <!-- Items annotated with @sync can be updated by running mvn cq:sync-versions -N -->
         <assertj.version>3.23.1</assertj.version>
         <cxf.version>3.5.3</cxf.version>
+        <cxf.xjc-utils.version>3.3.2</cxf.xjc-utils.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
         <ehcache.version>3.10.2</ehcache.version>
         <neethi.version>3.2.0</neethi.version>
         <mimepull.version>1.9.14</mimepull.version>
@@ -217,7 +220,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
