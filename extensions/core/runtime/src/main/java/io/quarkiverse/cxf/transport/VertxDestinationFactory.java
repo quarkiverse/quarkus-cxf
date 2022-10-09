@@ -3,6 +3,7 @@ package io.quarkiverse.cxf.transport;
 import static java.lang.String.format;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.SoapTransportFactory;
@@ -11,16 +12,27 @@ import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
+import org.apache.cxf.transport.http.DestinationRegistryImpl;
 import org.jboss.logging.Logger;
 
 public class VertxDestinationFactory extends SoapTransportFactory implements DestinationFactory {
     private static final Logger LOGGER = Logger.getLogger(VertxDestinationFactory.class);
 
-    protected final DestinationRegistry registry;
+    private static final DestinationRegistry registry = new DestinationRegistryImpl();
 
-    protected VertxDestinationFactory(DestinationRegistry registry) {
+    /*
+     * This is to make Camel Quarkus happy. It would be nice to come up with a prettier solution
+     */
+    public static void resetRegistry() {
+        synchronized (registry) {
+            for (String path : new ArrayList<>(registry.getDestinationsPaths())) {
+                registry.removeDestination(path);
+            }
+        }
+    }
+
+    public VertxDestinationFactory() {
         super();
-        this.registry = registry;
     }
 
     @Override
@@ -41,5 +53,9 @@ public class VertxDestinationFactory extends SoapTransportFactory implements Des
             LOGGER.debug(format("Destination for address %s is %s", endpointAddress, d));
             return d;
         }
+    }
+
+    public DestinationRegistry getDestinationRegistry() {
+        return registry;
     }
 }
