@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.xml.ws.soap.SOAPBinding;
 
@@ -124,36 +125,39 @@ public class CxfEndpointImplementationProcessor {
             BuildProducer<RouteBuildItem> routes,
             BeanContainerBuildItem beanContainer,
             List<CxfEndpointImplementationBuildItem> cxfEndpoints,
+            List<CxfRouteRegistrationRequestorBuildItem> cxfRouteRegistrationRequestors,
             CxfWrapperClassNamesBuildItem cxfWrapperClassNames,
             HttpBuildTimeConfig httpBuildTimeConfig,
             HttpConfiguration httpConfiguration,
             CxfBuildTimeConfig cxfBuildTimeConfig,
             CxfConfig cxfConfig) {
-        boolean startRoute = false;
+        final RuntimeValue<CXFServletInfos> infos = recorder.createInfos(cxfBuildTimeConfig.path, httpBuildTimeConfig.rootPath);
+        final List<String> requestors = cxfRouteRegistrationRequestors.stream()
+                .map(CxfRouteRegistrationRequestorBuildItem::getRequestorName)
+                .collect(Collectors.toList());
         if (!cxfEndpoints.isEmpty()) {
-            RuntimeValue<CXFServletInfos> infos = recorder.createInfos(cxfBuildTimeConfig.path, httpBuildTimeConfig.rootPath);
             final Map<String, List<String>> wrapperClassNames = cxfWrapperClassNames.getWrapperClassNames();
             for (CxfEndpointImplementationBuildItem cxfWebService : cxfEndpoints) {
-                recorder.registerCXFServlet(infos, cxfBuildTimeConfig.path, cxfWebService.getImplementor(),
+                recorder.addCxfServletInfo(infos, cxfBuildTimeConfig.path, cxfWebService.getImplementor(),
                         cxfConfig, cxfWebService.getWsName(), cxfWebService.getWsNamespace(),
                         cxfWebService.getSoapBinding(), wrapperClassNames.get(cxfWebService.getImplementor()),
                         cxfWebService.getImplementor(), cxfWebService.isProvider());
-                if (cxfWebService.getImplementor() != null && !cxfWebService.getImplementor().isEmpty()) {
-                    startRoute = true;
-                }
+                requestors.add(cxfWebService.getImplementor());
             }
-            if (startRoute) {
-                Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(),
-                        httpConfiguration);
-                if (cxfBuildTimeConfig.path != null) {
-                    routes.produce(RouteBuildItem.builder()
-                            .route(getMappingPath(cxfBuildTimeConfig.path))
-                            .handler(handler)
-                            .handlerType(HandlerType.BLOCKING)
-                            .build());
-
-                }
-            }
+        }
+        if (!requestors.isEmpty()) {
+            final Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(),
+                    httpConfiguration);
+            final String mappingPath = getMappingPath(cxfBuildTimeConfig.path);
+            LOGGER.infof("Mapping a Vert.x handler for CXF to %s as requested by %s", mappingPath, requestors);
+            routes.produce(RouteBuildItem.builder()
+                    .route(mappingPath)
+                    .handler(handler)
+                    .handlerType(HandlerType.BLOCKING)
+                    .build());
+        } else {
+            LOGGER.info(
+                    "Not registering a Vert.x handler for CXF as no WS endpoints were found at build time and no other extension requested it");
         }
     }
 

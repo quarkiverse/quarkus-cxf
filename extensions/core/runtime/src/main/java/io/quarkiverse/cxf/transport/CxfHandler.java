@@ -44,16 +44,16 @@ import io.vertx.ext.web.RoutingContext;
 
 public class CxfHandler implements Handler<RoutingContext> {
     private static final Logger LOGGER = Logger.getLogger(CxfHandler.class);
-    private Bus bus;
-    private ClassLoader loader;
-    private String contextPath;
-    private String servletPath;
-    private ServletController controller;
-    private BeanContainer beanContainer;
-    private CurrentIdentityAssociation association;
-    private IdentityProviderManager identityProviderManager;
-    private CurrentVertxRequest currentVertxRequest;
-    private HttpConfiguration httpConfiguration;
+    private final Bus bus;
+    private final ClassLoader loader;
+    private final String contextPath;
+    private final String servletPath;
+    private final ServletController controller;
+    private final BeanContainer beanContainer;
+    private final CurrentIdentityAssociation association;
+    private final IdentityProviderManager identityProviderManager;
+    private final CurrentVertxRequest currentVertxRequest;
+    private final HttpConfiguration httpConfiguration;
 
     private static final String X_FORWARDED_PROTO_HEADER = "X-Forwarded-Proto";
     private static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
@@ -70,10 +70,6 @@ public class CxfHandler implements Handler<RoutingContext> {
         this.identityProviderManager = identityProviderManagerInstance.isResolvable() ? identityProviderManagerInstance.get()
                 : null;
         this.currentVertxRequest = CDI.current().select(CurrentVertxRequest.class).get();
-        if (cxfServletInfos == null || cxfServletInfos.getInfos() == null || cxfServletInfos.getInfos().isEmpty()) {
-            LOGGER.warn("no info transmitted to servlet");
-            return;
-        }
         this.bus = BusFactory.getDefaultBus();
 
         this.loader = this.bus.getExtension(ClassLoader.class);

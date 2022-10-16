@@ -267,13 +267,9 @@ public class CxfClientProcessor {
                 createService.addAnnotation(Produces.class);
                 createService.addAnnotation(CXFClient.class);
 
-                // p0 (InjectionPoint);
-                ResultHandle p0, p1, p2;
-                ResultHandle cxfClient;
-
-                p0 = createService.getThis();
-                p1 = createService.getMethodParam(0);
-                p2 = createService.readInstanceField(info.getFieldDescriptor(), p0);
+                final ResultHandle thisHandle = createService.getThis();
+                final ResultHandle injectionPointHandle = createService.getMethodParam(0);
+                final ResultHandle cxfClientInfoHandle = createService.readInstanceField(info.getFieldDescriptor(), thisHandle);
 
                 MethodDescriptor loadCxfClient = MethodDescriptor.ofMethod(
                         CxfClientProducer.class,
@@ -286,8 +282,15 @@ public class CxfClientProcessor {
                 // >> return ({SEI})cxfClient;
                 // >> }
 
-                cxfClient = createService.invokeVirtualMethod(loadCxfClient, p0, p1, p2);
+                final ResultHandle cxfClient = createService.invokeVirtualMethod(loadCxfClient, thisHandle,
+                        injectionPointHandle,
+                        cxfClientInfoHandle);
                 createService.returnValue(createService.checkCast(cxfClient, sei));
+
+                //                CatchBlockCreator print = overallCatch.addCatch(Throwable.class);
+                //                print.invokeVirtualMethod(MethodDescriptor.ofMethod(Throwable.class, "printStackTrace", void.class),
+                //                        print.getCaughtException());
+
             }
 
             // try (MethodCreator createInfo = classCreator.getMethodCreator(
