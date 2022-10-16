@@ -1,5 +1,7 @@
 package io.quarkiverse.cxf.deployment;
 
+import java.util.Objects;
+
 /**
  * Holds service endpoint implementation metadata.
  */
@@ -11,7 +13,7 @@ public final class CxfEndpointImplementationBuildItem extends AbstractEndpointBu
     public CxfEndpointImplementationBuildItem(String implementor, String soapBinding, String wsNamespace,
             String wsName, boolean provider) {
         super(soapBinding, wsNamespace, wsName);
-        this.implementor = implementor;
+        this.implementor = Objects.requireNonNull(implementor, "implementor cannot be null");
         this.provider = provider;
     }
 

@@ -1,5 +1,7 @@
 package io.quarkiverse.cxf.deployment;
 
+import java.util.Objects;
+
 import io.quarkus.builder.item.MultiBuildItem;
 
 /**
@@ -11,9 +13,9 @@ abstract class AbstractEndpointBuildItem extends MultiBuildItem {
 
     AbstractEndpointBuildItem(String soapBinding, String wsNamespace, String wsName) {
         super();
-        this.soapBinding = soapBinding;
-        this.wsNamespace = wsNamespace;
-        this.wsName = wsName;
+        this.soapBinding = Objects.requireNonNull(soapBinding, "soapBinding cannot be null");
+        this.wsNamespace = Objects.requireNonNull(wsNamespace, "wsNamespace cannot be null");
+        this.wsName = Objects.requireNonNull(wsName, "wsName cannot be null");
     }
 
     public String getSoapBinding() {
