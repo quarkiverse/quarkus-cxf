@@ -2,8 +2,6 @@ package io.quarkiverse.cxf.it.ws.mtom.server;
 
 import java.io.IOException;
 
-import javax.activation.CommandInfo;
-import javax.activation.CommandMap;
 import javax.activation.DataHandler;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -21,10 +19,6 @@ public class MtomServiceImpl implements MtomService {
 
         DataHandler dataHandler = request.getDataHandler();
 
-        CommandMap cm = CommandMap.getDefaultCommandMap();
-        for (CommandInfo cmd : cm.getAllCommands("text/plain")) {
-            log.infof(" ====== cmd %s: %s", cmd.getCommandName(), cmd.getCommandClass());
-        }
         log.infof("Received content type %s", dataHandler.getContentType());
         try {
             String message = (String) dataHandler.getContent();
