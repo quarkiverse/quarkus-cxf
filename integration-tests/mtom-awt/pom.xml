@@ -8,9 +8,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-integration-test-mtom</artifactId>
+    <artifactId>quarkus-cxf-integration-test-mtom-awt</artifactId>
 
-    <name>Quarkus CXF - Integration Test - SOAP Message Transmission Optimization Mechanism (MTOM)</name>
+    <name>Quarkus CXF - Integration Test - SOAP Message Transmission Optimization Mechanism (MTOM) with java.awt.Image</name>
 
     <dependencies>
         <dependency>
@@ -21,15 +21,18 @@
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-rt-features-logging</artifactId>
         </dependency>
+        <dependency><!-- for java.awt.Image -->
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-awt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-test-util</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
