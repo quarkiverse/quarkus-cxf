@@ -22,6 +22,7 @@
         <module>ws-trust</module>
         <module>ws-rm</module>
         <module>mtom</module>
+        <module>mtom-awt</module>
     </modules>
 
     <properties>

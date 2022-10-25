@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 
 /**
@@ -48,4 +49,20 @@ class SaajImplProcessor {
                         "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl"));
     }
 
+    @BuildStep
+    void runtimeInitializedClasses(
+            BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitializedClasses) {
+
+        Stream.of(
+                /*
+                 * The following classes instantiate a javax.activation.ActivationDataFlavor in their class initializers
+                 * GraalVM does not like that
+                 */
+                "com.sun.xml.messaging.saaj.soap.GifDataContentHandler",
+                "com.sun.xml.messaging.saaj.soap.MultipartDataContentHandler",
+                "com.sun.xml.messaging.saaj.soap.StringDataContentHandler")
+                .map(RuntimeInitializedClassBuildItem::new)
+                .forEach(runtimeInitializedClasses::produce);
+
+    }
 }
