@@ -32,7 +32,7 @@ public class MtomAwtResource {
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.TEXT_PLAIN)
     public Response upload(@PathParam("imageName") String imageName, InputStream in) throws Exception {
-        String response = imageServiceClient.uploadImage(new ImageData(ImageIO.read(in), imageName));
+        String response = imageServiceClient.uploadImage(ImageIO.read(in), imageName);
         return Response
                 .created(new URI("https://quarkus.io/"))
                 .entity(response)
@@ -43,9 +43,9 @@ public class MtomAwtResource {
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
     public byte[] download(@PathParam("imageName") String imageName) throws Exception {
-        ImageData image = imageServiceClient.downloadImage(imageName);
+        java.awt.Image image = imageServiceClient.downloadImage(imageName);
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            ImageIO.write((BufferedImage) image.getData(), "png", baos);
+            ImageIO.write((BufferedImage) image, "png", baos);
             return baos.toByteArray();
         }
     }
