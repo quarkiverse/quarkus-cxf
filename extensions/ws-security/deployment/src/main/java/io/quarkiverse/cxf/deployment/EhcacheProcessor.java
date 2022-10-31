@@ -14,7 +14,6 @@ import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.NativeImageSystemPropertyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
@@ -102,12 +101,6 @@ public class EhcacheProcessor {
                 "cxf-ehcache.xml",
                 "ehcache-107-ext.xsd",
                 "ehcache-core.xsd");
-    }
-
-    @BuildStep
-    void nativeImageSystemProperties(BuildProducer<NativeImageSystemPropertyBuildItem> nativeImageSystemProperties) {
-        nativeImageSystemProperties
-                .produce(new NativeImageSystemPropertyBuildItem("org.ehcache.sizeof.AgentSizeOf.bypass", "true"));
     }
 
     @BuildStep
