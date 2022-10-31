@@ -14,6 +14,7 @@ import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageSystemPropertyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
@@ -104,9 +105,14 @@ public class EhcacheProcessor {
     }
 
     @BuildStep
+    void nativeImageSystemProperties(BuildProducer<NativeImageSystemPropertyBuildItem> nativeImageSystemProperties) {
+        nativeImageSystemProperties
+                .produce(new NativeImageSystemPropertyBuildItem("org.ehcache.sizeof.AgentSizeOf.bypass", "true"));
+    }
+
+    @BuildStep
     void runtimeInitializedClass(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitializedClass) {
         Stream.of(
-                "org.ehcache.sizeof.impl.AgentSizeOf",
                 "org.ehcache.sizeof.impl.JvmInformation",
                 "org.ehcache.shadow.org.terracotta.utilities.io.Files",
                 "org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.BooleanPortability",
