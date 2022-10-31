@@ -68,4 +68,4 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: Native tests
-      run: cd integration-tests/${{matrix.testModule}} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true
+      run: cd integration-tests/${{matrix.testModule}} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-native-image:22.3.0-java17
