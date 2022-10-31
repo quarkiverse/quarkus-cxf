@@ -46,6 +46,7 @@ jobs:
 
   native-tests:
     strategy:
+      fail-fast: false
       matrix:
         testModule: [client, logging, mtom, mtom-awt, server, ws-rm, ws-security-client, ws-security-server, ws-trust]
     name: ${{matrix.testModule}} native tests
