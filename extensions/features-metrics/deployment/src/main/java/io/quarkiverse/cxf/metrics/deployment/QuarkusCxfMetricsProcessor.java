@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.deployment;
+package io.quarkiverse.cxf.metrics.deployment;
 
 import org.apache.cxf.feature.AbstractPortableFeature;
 import org.apache.cxf.feature.DelegatingFeature;

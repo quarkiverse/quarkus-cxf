@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.graal;
+package io.quarkiverse.cxf.ws.security.graal;
 
 import java.text.Normalizer;
 import java.util.ServiceLoader;

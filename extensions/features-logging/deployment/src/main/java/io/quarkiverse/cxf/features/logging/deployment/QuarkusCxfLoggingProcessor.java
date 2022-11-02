@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.deployment;
+package io.quarkiverse.cxf.features.logging.deployment;
 
 import java.util.stream.Stream;
 

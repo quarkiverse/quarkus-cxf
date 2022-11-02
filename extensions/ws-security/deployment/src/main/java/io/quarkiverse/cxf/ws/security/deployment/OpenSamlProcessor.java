@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.deployment;
+package io.quarkiverse.cxf.ws.security.deployment;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.deployment;
+package io.quarkiverse.cxf.transport.http.hc5.deployment;
 
 import java.util.Arrays;
 import java.util.List;

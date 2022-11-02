@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.deployment;
+package io.quarkiverse.cxf.ws.security.deployment;
 
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourcePatternsBuildItem;

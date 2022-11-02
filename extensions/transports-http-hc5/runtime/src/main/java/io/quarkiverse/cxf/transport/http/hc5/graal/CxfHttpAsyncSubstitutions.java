@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.graal;
+package io.quarkiverse.cxf.transport.http.hc5.graal;
 
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLParameters;
