@@ -20,6 +20,8 @@ As an example, you could create a `Producers` class which creates a pre-configur
 ----
 import org.apache.cxf.ext.logging.LoggingFeature;
 
+import io.quarkus.arc.Unremovable;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
@@ -31,6 +33,7 @@ class Producers {
 
     @Produces
     @ApplicationScoped
+    @Unremovable
     LoggingFeature loggingFeature() {
         LoggingFeature loggingFeature = new LoggingFeature();
         loggingFeature.addSensitiveElementNames(new HashSet<>(sensitiveElementNames));
