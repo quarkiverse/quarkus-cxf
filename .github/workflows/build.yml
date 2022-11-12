@@ -47,7 +47,7 @@ jobs:
   native-tests:
     strategy:
       matrix:
-        testModule: [client, logging, mtom, mtom-awt, server, ws-rm, ws-security-client, ws-security-server, ws-trust]
+        testModule: [client, logging, mtom, mtom-awt, server, ws-addressing, ws-rm, ws-security-client, ws-security-server, ws-trust]
     name: ${{matrix.testModule}} native tests
     needs: build-and-run-jvm-tests
     runs-on: ubuntu-latest
