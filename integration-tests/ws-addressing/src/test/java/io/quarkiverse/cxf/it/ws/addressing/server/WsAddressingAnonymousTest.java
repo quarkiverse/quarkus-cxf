@@ -1,28 +1,28 @@
-package io.quarkiverse.cxf.it.server;
+package io.quarkiverse.cxf.it.ws.addressing.server;
 
 import static io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.anyNs;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
-import javax.jws.WebService;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
 
 @QuarkusTest
-public class GreetingWebServiceAddressingImplTest extends AbstractGreetingWebServiceTest {
-
-    @BeforeAll
-    static void setup() {
-        greetingWS = QuarkusCxfClientTestUtil.getClient(GreetingWebServiceAddressingImpl.class, "/soap/greeting-addressing");
-    }
+public class WsAddressingAnonymousTest {
+    static final String SOAP_REQUEST = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://server.it.cxf.quarkiverse.io/\">\n"
+            +
+            "   <x:Header/>\n" +
+            "   <x:Body>\n" +
+            "      <cxf:reply>\n" +
+            "          <text>foo</text>\n" +
+            "      </cxf:reply>\n" +
+            "   </x:Body>\n" +
+            "</x:Envelope>";
 
     @Test
     void wsdl() {
@@ -30,7 +30,7 @@ public class GreetingWebServiceAddressingImplTest extends AbstractGreetingWebSer
         config.getXmlConfig().namespaceAware(false);
         given()
                 .config(config)
-                .when().get(QuarkusCxfClientTestUtil.getEndpointUrl(greetingWS) + "?wsdl")
+                .when().get("/soap/addressing-anonymous?wsdl")
                 .then()
                 .statusCode(200)
                 .body(
@@ -44,12 +44,11 @@ public class GreetingWebServiceAddressingImplTest extends AbstractGreetingWebSer
     }
 
     @Test
-    @Override
     void rawSoap() {
         // The service has @Addressing(required = true) so sending a message without addressing headers must fail
         given()
                 .header("Content-Type", "text/xml").and().body(SOAP_REQUEST)
-                .when().post(QuarkusCxfClientTestUtil.getEndpointUrl(greetingWS))
+                .when().post("/soap/addressing-anonymous")
                 .then()
                 .statusCode(500)
                 .body(containsString("A required header representing a Message Addressing Property is not present"));
@@ -77,14 +76,14 @@ public class GreetingWebServiceAddressingImplTest extends AbstractGreetingWebSer
 
         given()
                 .header("Content-Type", "text/xml").and().body(request)
-                .when().post(QuarkusCxfClientTestUtil.getEndpointUrl(greetingWS))
+                .when().post("/soap/addressing-anonymous")
                 .then()
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
                                 anyNs("Envelope", "Header", "Action") + "/text()",
                                 CoreMatchers.is(
-                                        "http://server.it.cxf.quarkiverse.io/GreetingWebServiceAddressingImpl/replyResponse")),
+                                        "http://anonymous.server.addressing.ws.it.cxf.quarkiverse.io/AddressingAnonymousImpl/replyResponse")),
                         Matchers.hasXPath(
                                 anyNs("Envelope", "Header", "MessageID") + "/text()",
                                 Matchers.notNullValue(String.class)),
@@ -94,19 +93,6 @@ public class GreetingWebServiceAddressingImplTest extends AbstractGreetingWebSer
                         Matchers.hasXPath(
                                 anyNs("Envelope", "Header", "RelatesTo") + "/text()",
                                 CoreMatchers.is(ID)));
-    }
-
-    @Override
-    protected String getServiceInterface() {
-        return "GreetingWebServiceAddressingImpl";
-    }
-
-    /**
-     * We need an interface for javax.xml.ws.Service.getPort(Class<T>) to be able to create a dynamic proxy.
-     * Otherwise, the client is served by GreetingWebServiceAddressingImpl
-     */
-    @WebService(targetNamespace = "http://server.it.cxf.quarkiverse.io/", name = "GreetingWebServiceAddressingImpl")
-    public interface GreetingWebServiceAddressingImpl extends GreetingWebService {
     }
 
 }
