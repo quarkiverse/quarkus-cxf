@@ -46,7 +46,7 @@
         <assertj.version>3.23.1</assertj.version>
         <cxf.version>3.5.3</cxf.version>
         <cxf.xjc-utils.version>3.3.2</cxf.xjc-utils.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
-        <ehcache.version>3.10.3</ehcache.version>
+        <ehcache.version>3.10.7</ehcache.version>
         <neethi.version>3.2.0</neethi.version>
         <mimepull.version>1.9.14</mimepull.version>
         <quarkus.version>2.14.0.Final</quarkus.version>
