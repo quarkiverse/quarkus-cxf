@@ -26,6 +26,11 @@
             <artifactId>quarkus-cxf-rt-features-logging</artifactId>
         </dependency>
 
+        <dependency><!-- Make the native compiler happy -->
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
