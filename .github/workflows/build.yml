@@ -67,5 +67,5 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    - name: Native tests
+    - name: cd integration-tests/${{matrix.testModule}} && mvn verify -Pnative
       run: cd integration-tests/${{matrix.testModule}} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true
