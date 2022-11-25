@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.AmbiguousResolutionException;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.CDI;
@@ -89,14 +90,15 @@ public class CxfHandler implements Handler<RoutingContext> {
         servletPath = cxfServletInfos.getPath();
         contextPath = cxfServletInfos.getContextPath();
 
-        //suboptimal because done it in loop but not a real issue...
+        // suboptimal because done it in loop but not a real issue...
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
             QuarkusJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusJaxWsServiceFactoryBean(
                     cxfServletInfos.getWrappersclasses());
             JaxWsServerFactoryBean jaxWsServerFactoryBean = new JaxWsServerFactoryBean(jaxWsServiceFactoryBean);
             jaxWsServerFactoryBean.setDestinationFactory(destinationFactory);
             jaxWsServerFactoryBean.setBus(bus);
-            Object instanceService = getInstance(servletInfo.getClassName());
+            final String endpointType = servletInfo.getClassName();
+            Object instanceService = getInstance(endpointType);
 
             if (instanceService != null) {
                 if (servletInfo.isProvider()) {
@@ -115,7 +117,7 @@ public class CxfHandler implements Handler<RoutingContext> {
                 if (!servletInfo.getFeatures().isEmpty()) {
                     List<Feature> features = new ArrayList<>();
                     for (String feature : servletInfo.getFeatures()) {
-                        Feature instanceFeature = (Feature) getInstance(feature);
+                        Feature instanceFeature = getInstance(feature, "feature", endpointType);
                         features.add(instanceFeature);
                     }
                     jaxWsServerFactoryBean.setFeatures(features);
@@ -123,7 +125,7 @@ public class CxfHandler implements Handler<RoutingContext> {
                 if (!servletInfo.getHandlers().isEmpty()) {
                     List<javax.xml.ws.handler.Handler> handlers = new ArrayList<>();
                     for (String handler : servletInfo.getHandlers()) {
-                        javax.xml.ws.handler.Handler instanceHandler = (javax.xml.ws.handler.Handler) getInstance(handler);
+                        javax.xml.ws.handler.Handler instanceHandler = getInstance(handler, "handler", endpointType);
                         handlers.add(instanceHandler);
                     }
                     jaxWsServerFactoryBean.setHandlers(handlers);
@@ -137,19 +139,19 @@ public class CxfHandler implements Handler<RoutingContext> {
 
                 Server server = jaxWsServerFactoryBean.create();
                 for (String className : servletInfo.getInFaultInterceptors()) {
-                    Interceptor<? extends Message> interceptor = (Interceptor<? extends Message>) getInstance(className);
+                    Interceptor<? extends Message> interceptor = getInstance(className, "inFaultInterceptor", endpointType);
                     server.getEndpoint().getInFaultInterceptors().add(interceptor);
                 }
                 for (String className : servletInfo.getInInterceptors()) {
-                    Interceptor<? extends Message> interceptor = (Interceptor<? extends Message>) getInstance(className);
+                    Interceptor<? extends Message> interceptor = getInstance(className, "inInterceptor", endpointType);
                     server.getEndpoint().getInInterceptors().add(interceptor);
                 }
                 for (String className : servletInfo.getOutFaultInterceptors()) {
-                    Interceptor<? extends Message> interceptor = (Interceptor<? extends Message>) getInstance(className);
+                    Interceptor<? extends Message> interceptor = getInstance(className, "outFaultInterceptor", endpointType);
                     server.getEndpoint().getOutFaultInterceptors().add(interceptor);
                 }
                 for (String className : servletInfo.getOutInterceptors()) {
-                    Interceptor<? extends Message> interceptor = (Interceptor<? extends Message>) getInstance(className);
+                    Interceptor<? extends Message> interceptor = getInstance(className, "outInterceptor", endpointType);
                     server.getEndpoint().getOutInterceptors().add(interceptor);
                 }
 
@@ -160,11 +162,11 @@ public class CxfHandler implements Handler<RoutingContext> {
         }
     }
 
-    private Class<?> loadClass(String className) {
+    private static Class<?> loadClass(String className) {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
-            //silent fail
+            // silent fail
         }
         try {
             return Class.forName(className);
@@ -174,13 +176,13 @@ public class CxfHandler implements Handler<RoutingContext> {
         }
     }
 
-    private Object getInstance(String className) {
-        Class<?> classObj = loadClass(className);
+    private static <T> T getInstance(String className) {
+        Class<T> classObj = (Class<T>) loadClass(className);
         if (classObj != null) {
             try {
                 return CDI.current().select(classObj).get();
             } catch (UnsatisfiedResolutionException e) {
-                //silent fail
+                // silent fail
             }
             try {
                 return classObj.getConstructor().newInstance();
@@ -189,6 +191,21 @@ public class CxfHandler implements Handler<RoutingContext> {
             }
         } else {
             return null;
+        }
+    }
+
+    private static <T> T getInstance(String className, String kind, String targetType) {
+        try {
+            return getInstance(className);
+        } catch (AmbiguousResolutionException e) {
+            /*
+             * There are multiple beans of this type
+             * and we do not know which one to use
+             */
+            throw new IllegalStateException("Unable to add a " + kind + " to CXF endpoint " + targetType + ":"
+                    + " there are multiple instances of " + className + " available in the CDI container."
+                    + " Either make sure there is only one instance available in the container"
+                    + " or create a unique subtype of " + className + " and set that one on " + targetType, e);
         }
     }
 
