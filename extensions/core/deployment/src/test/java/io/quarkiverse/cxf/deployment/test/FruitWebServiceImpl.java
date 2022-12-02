@@ -31,4 +31,13 @@ public class FruitWebServiceImpl implements FruitWebService {
     public void delete(@WebParam(name = "fruit") Fruit fruit) {
         fruits.remove(fruit);
     }
+
+    @Override
+    public String getDescriptionByName(String name) {
+        return fruits.stream()
+                .filter(f -> name.equals(f.getName()))
+                .map(Fruit::getDescription)
+                .findFirst()
+                .orElse(null);
+    }
 }

@@ -32,6 +32,7 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.CXFServletInfo;
 import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.QuarkusJaxWsServiceFactoryBean;
+import io.quarkus.arc.Arc;
 import io.quarkus.arc.ManagedContext;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.security.identity.CurrentIdentityAssociation;
@@ -98,7 +99,7 @@ public class CxfHandler implements Handler<RoutingContext> {
             jaxWsServerFactoryBean.setDestinationFactory(destinationFactory);
             jaxWsServerFactoryBean.setBus(bus);
             final String endpointType = servletInfo.getClassName();
-            Object instanceService = getInstance(endpointType);
+            Object instanceService = getInstance(endpointType, false);
 
             if (instanceService != null) {
                 if (servletInfo.isProvider()) {
@@ -176,8 +177,20 @@ public class CxfHandler implements Handler<RoutingContext> {
         }
     }
 
-    private static <T> T getInstance(String className) {
-        Class<T> classObj = (Class<T>) loadClass(className);
+    /**
+     * @param <T> a type to which the returned bean can be casted
+     * @param beanRef a fully qualified class name or a name of a {@code @Named} bean prefixed with hash mark ({@code '#'})
+     * @param namedBeansSupported if {@code true} then the {@code beanRef} argument may contain a name of a {@code @Named} bean;
+     *        otherwise only fully qualified class names can be passed via {@code beanRef}
+     * @return an instance of a Bean
+     */
+    private static <T> T getInstance(String beanRef, boolean namedBeansSupported) {
+        if (namedBeansSupported && beanRef != null && beanRef.startsWith("#")) {
+            final String beanName = beanRef.substring(1);
+            return (T) Arc.container().instance(beanName).get();
+        }
+
+        Class<T> classObj = (Class<T>) loadClass(beanRef);
         if (classObj != null) {
             try {
                 return CDI.current().select(classObj).get();
@@ -196,7 +209,7 @@ public class CxfHandler implements Handler<RoutingContext> {
 
     private static <T> T getInstance(String className, String kind, String targetType) {
         try {
-            return getInstance(className);
+            return getInstance(className, true);
         } catch (AmbiguousResolutionException e) {
             /*
              * There are multiple beans of this type
@@ -205,7 +218,10 @@ public class CxfHandler implements Handler<RoutingContext> {
             throw new IllegalStateException("Unable to add a " + kind + " to CXF endpoint " + targetType + ":"
                     + " there are multiple instances of " + className + " available in the CDI container."
                     + " Either make sure there is only one instance available in the container"
-                    + " or create a unique subtype of " + className + " and set that one on " + targetType, e);
+                    + " or create a unique subtype of " + className + " and set that one on " + targetType
+                    + " or add @javax.inject.Named(\"myName\") to some of the beans and refer to that bean by #myName on "
+                    + targetType,
+                    e);
         }
     }
 
