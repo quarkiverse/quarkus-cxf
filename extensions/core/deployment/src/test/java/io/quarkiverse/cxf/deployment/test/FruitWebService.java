@@ -20,4 +20,8 @@ public interface FruitWebService {
     @WebMethod
     @RequestWrapper(localName = "delete", targetNamespace = "http://test.deployment.cxf.quarkiverse.io/", className = "io.quarkiverse.cxf.deployment.test.Delete")
     void delete(@WebParam(name = "deletedfruit") Fruit fruit);
+
+    @WebMethod
+    String getDescriptionByName(@WebParam(name = "name") String name);
+
 }
