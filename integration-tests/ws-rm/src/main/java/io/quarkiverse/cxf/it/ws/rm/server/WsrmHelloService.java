@@ -11,5 +11,5 @@ import org.apache.cxf.interceptor.InInterceptors;
 @InInterceptors(interceptors = { "io.quarkiverse.cxf.it.ws.rm.server.RMStoreCheckInterceptor" })
 public interface WsrmHelloService {
     @WebMethod
-    String sayHello();
+    String sayHello(String name);
 }

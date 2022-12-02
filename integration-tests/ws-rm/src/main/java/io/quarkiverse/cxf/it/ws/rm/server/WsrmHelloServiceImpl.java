@@ -11,8 +11,8 @@ public class WsrmHelloServiceImpl implements WsrmHelloService {
 
     @WebMethod
     @Override
-    public String sayHello() {
-        return "WS-ReliableMessaging Hello World! seqSize: " + RMStoreCheckInterceptor.seqSize;
+    public String sayHello(String name) {
+        return "WS-ReliableMessaging Hello " + name + "! seqSize: " + RMStoreCheckInterceptor.seqSize;
     }
 
 }

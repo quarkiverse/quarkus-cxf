@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf.it.ws.rm.server;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
@@ -32,6 +33,12 @@ public class RMStoreCheckInterceptor extends AbstractPhaseInterceptor<Message> {
         Collection<SourceSequence> seqs = rmManager.getStore().getSourceSequences(endpointIdentifier);
         if (seqs != null) {
             seqSize = seqs.size();
+
+            for (Iterator<SourceSequence> iterator = seqs.iterator(); iterator.hasNext();) {
+                SourceSequence sourceSequence = iterator.next();
+                System.out.println("===== sourceSequence " + sourceSequence.getEndpointIdentifier() + " "
+                        + sourceSequence.getIdentifier() + ": " + sourceSequence.getCurrentMessageNr());
+            }
         }
     }
 

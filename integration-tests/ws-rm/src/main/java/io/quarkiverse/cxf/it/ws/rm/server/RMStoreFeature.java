@@ -20,6 +20,8 @@ import org.apache.cxf.ws.rm.DestinationSequence;
 import org.apache.cxf.ws.rm.RM11Constants;
 import org.apache.cxf.ws.rm.SourceSequence;
 import org.apache.cxf.ws.rm.feature.RMFeature;
+import org.apache.cxf.ws.rm.manager.AcksPolicyType;
+import org.apache.cxf.ws.rm.manager.DestinationPolicyType;
 import org.apache.cxf.ws.rm.persistence.RMMessage;
 import org.apache.cxf.ws.rm.persistence.RMStore;
 import org.apache.cxf.ws.rm.persistence.jdbc.RMTxStore;
@@ -55,10 +57,23 @@ public class RMStoreFeature extends RMFeature {
         // with @Addressing
         this.setRMNamespace(RM11Constants.NAMESPACE_URI);
         RMAssertion assertion = new RMAssertion();
+
         BaseRetransmissionInterval retransMissionInveral = new BaseRetransmissionInterval();
-        retransMissionInveral.setMilliseconds(10000L);
+        retransMissionInveral.setMilliseconds(4000L);
         assertion.setBaseRetransmissionInterval(retransMissionInveral);
+
+        RMAssertion.AcknowledgementInterval acknowledgementInterval = new RMAssertion.AcknowledgementInterval();
+        acknowledgementInterval.setMilliseconds(2000L);
+        assertion.setAcknowledgementInterval(acknowledgementInterval);
+
         this.setRMAssertion(assertion);
+
+        AcksPolicyType acksPolicy = new AcksPolicyType();
+        acksPolicy.setIntraMessageThreshold(0);
+        DestinationPolicyType destinationPolicy = new DestinationPolicyType();
+        destinationPolicy.setAcksPolicy(acksPolicy);
+        this.setDestinationPolicy(destinationPolicy);
+
         super.initializeProvider(provider, bus);
     }
 
@@ -156,14 +171,17 @@ public class RMStoreFeature extends RMFeature {
 
         private void removeMessages(Identifier sid, Collection<Long> messageNrs,
                 Map<Identifier, Collection<RMMessage>> map) {
-            for (Iterator<RMMessage> it = map.get(sid).iterator(); it.hasNext();) {
-                RMMessage m = it.next();
-                if (messageNrs.contains(m.getMessageNumber())) {
-                    it.remove();
+            Collection<RMMessage> messages = map.get(sid);
+            if (messages != null) {
+                for (Iterator<RMMessage> it = messages.iterator(); it.hasNext();) {
+                    RMMessage m = it.next();
+                    if (messageNrs.contains(m.getMessageNumber())) {
+                        it.remove();
+                    }
                 }
-            }
-            if (map.get(sid).isEmpty()) {
-                map.remove(sid);
+                if (messages.isEmpty()) {
+                    map.remove(sid);
+                }
             }
         }
     }
