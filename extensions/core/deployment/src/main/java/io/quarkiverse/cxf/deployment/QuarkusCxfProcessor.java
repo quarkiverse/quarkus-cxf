@@ -262,7 +262,9 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    void runtimeInitializedClasses(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitializedClass) {
+    void runtimeInitializedClasses(
+            CombinedIndexBuildItem combinedIndexBuildItem,
+            BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitializedClass) {
         // TODO check whether the non-org.apache.cxf classes really need to be here
         Stream.of(
                 "io.netty.buffer.PooledByteBufAllocator",
@@ -273,7 +275,6 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.attachment.AttachmentSerializer",
                 "org.apache.cxf.attachment.AttachmentUtil",
                 "org.apache.cxf.attachment.ImageDataContentHandler",
-                "org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser",
                 "org.apache.cxf.endpoint.ClientImpl",
                 "org.apache.cxf.interceptor.AttachmentOutInterceptor",
                 "org.apache.cxf.interceptor.OneWayProcessorInterceptor",
@@ -288,6 +289,15 @@ class QuarkusCxfProcessor {
                 "org.apache.cxf.ws.addressing.impl.InternalContextUtils$1")
                 .map(RuntimeInitializedClassBuildItem::new)
                 .forEach(runtimeInitializedClass::produce);
+
+        final IndexView index = combinedIndexBuildItem.getIndex();
+        Stream.of(
+                /* org.apache.cxf.configuration.blueprint package is not present in some downstream rebuilds of CXF */
+                "org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser")
+                .filter(cl -> index.getClassByName(DotName.createSimple(cl)) != null)
+                .map(RuntimeInitializedClassBuildItem::new)
+                .forEach(runtimeInitializedClass::produce);
+
     }
 
     @BuildStep
