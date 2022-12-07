@@ -47,7 +47,7 @@
         <cxf.version>3.5.3</cxf.version>
         <cxf.xjc-utils.version>3.3.2</cxf.xjc-utils.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
         <ehcache.version>3.10.8</ehcache.version>
-        <jakarta.jws-api.version>2.1.0</jakarta.jws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.jwsapi.version -->
+        <jakarta.jws-api.version>3.0.0</jakarta.jws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.jwsapi.version -->
         <jakarta.xml.soap-api.version>1.4.2</jakarta.xml.soap-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.soapapi.version -->
         <jakarta.xml.ws-api.version>2.3.3</jakarta.xml.ws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.wsapi.version -->
         <neethi.version>3.2.0</neethi.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
