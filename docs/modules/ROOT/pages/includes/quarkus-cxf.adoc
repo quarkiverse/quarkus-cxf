@@ -1,0 +1,454 @@
+
+:summaryTableId: quarkus-cxf
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[[quarkus-cxf_configuration]]link:#quarkus-cxf_configuration[Configuration property]
+
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.path]]`link:#quarkus-cxf_quarkus.cxf.path[quarkus.cxf.path]`
+
+[.description]
+--
+The default path for CXF resources
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_PATH+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`/`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.wsdl-path]]`link:#quarkus-cxf_quarkus.cxf.wsdl-path[quarkus.cxf.wsdl-path]`
+
+[.description]
+--
+The comma-separated list of WSDL resource paths used by CXF
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_WSDL_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_WSDL_PATH+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.implementor]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.implementor[quarkus.cxf.endpoint."endpoints".implementor]`
+
+[.description]
+--
+The service endpoint implementation class
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IMPLEMENTOR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IMPLEMENTOR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.wsdl]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.wsdl[quarkus.cxf.endpoint."endpoints".wsdl]`
+
+[.description]
+--
+The service endpoint WSDL path
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__WSDL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__WSDL+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.soap-binding]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.soap-binding[quarkus.cxf.endpoint."endpoints".soap-binding]`
+
+[.description]
+--
+The URL of the SOAP Binding, should be one of four values:
+
+* `+http://schemas.xmlsoap.org/wsdl/soap/http+` for SOAP11HTTP_BINDING
+* `+http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true+` for SOAP11HTTP_MTOM_BINDING
+* `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
+* `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SOAP_BINDING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SOAP_BINDING+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.published-endpoint-url]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.published-endpoint-url[quarkus.cxf.endpoint."endpoints".published-endpoint-url]`
+
+[.description]
+--
+The published service endpoint URL
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__PUBLISHED_ENDPOINT_URL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__PUBLISHED_ENDPOINT_URL+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.features]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.features[quarkus.cxf.endpoint."endpoints".features]`
+
+[.description]
+--
+The comma-separated list of Feature classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__FEATURES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__FEATURES+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.handlers]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.handlers[quarkus.cxf.endpoint."endpoints".handlers]`
+
+[.description]
+--
+The comma-separated list of Handler classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__HANDLERS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__HANDLERS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-interceptors]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-interceptors[quarkus.cxf.endpoint."endpoints".in-interceptors]`
+
+[.description]
+--
+The comma-separated list of InInterceptor classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-interceptors]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-interceptors[quarkus.cxf.endpoint."endpoints".out-interceptors]`
+
+[.description]
+--
+The comma-separated list of OutInterceptor classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-fault-interceptors]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-fault-interceptors[quarkus.cxf.endpoint."endpoints".out-fault-interceptors]`
+
+[.description]
+--
+The comma-separated list of OutFaultInterceptor classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_FAULT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_FAULT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-fault-interceptors]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-fault-interceptors[quarkus.cxf.endpoint."endpoints".in-fault-interceptors]`
+
+[.description]
+--
+The comma-separated list of InFaultInterceptor classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_FAULT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_FAULT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.wsdl]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.wsdl[quarkus.cxf.client."clients".wsdl]`
+
+[.description]
+--
+The client WSDL path
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__WSDL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__WSDL+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.soap-binding]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.soap-binding[quarkus.cxf.client."clients".soap-binding]`
+
+[.description]
+--
+The URL of the SOAP Binding, should be one of four values:
+
+* `+http://schemas.xmlsoap.org/wsdl/soap/http+` for SOAP11HTTP_BINDING
+* `+http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true+` for SOAP11HTTP_MTOM_BINDING
+* `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
+* `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SOAP_BINDING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SOAP_BINDING+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.client-endpoint-url]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.client-endpoint-url[quarkus.cxf.client."clients".client-endpoint-url]`
+
+[.description]
+--
+The client endpoint URL
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__CLIENT_ENDPOINT_URL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CLIENT_ENDPOINT_URL+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.service-interface]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.service-interface[quarkus.cxf.client."clients".service-interface]`
+
+[.description]
+--
+The client interface class
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-namespace]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-namespace[quarkus.cxf.client."clients".endpoint-namespace]`
+
+[.description]
+--
+The client endpoint namespace
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAMESPACE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAMESPACE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-name]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-name[quarkus.cxf.client."clients".endpoint-name]`
+
+[.description]
+--
+The client endpoint name
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.username]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.username[quarkus.cxf.client."clients".username]`
+
+[.description]
+--
+The username for HTTP Basic auth
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.password]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.password[quarkus.cxf.client."clients".password]`
+
+[.description]
+--
+The password for HTTP Basic auth
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.features]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.features[quarkus.cxf.client."clients".features]`
+
+[.description]
+--
+The comma-separated list of Feature classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__FEATURES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__FEATURES+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.handlers]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.handlers[quarkus.cxf.client."clients".handlers]`
+
+[.description]
+--
+The comma-separated list of Handler classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__HANDLERS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__HANDLERS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.in-interceptors]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.in-interceptors[quarkus.cxf.client."clients".in-interceptors]`
+
+[.description]
+--
+The comma-separated list of InInterceptor classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__IN_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.out-interceptors]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.out-interceptors[quarkus.cxf.client."clients".out-interceptors]`
+
+[.description]
+--
+The comma-separated list of OutInterceptor classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.out-fault-interceptors]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.out-fault-interceptors[quarkus.cxf.client."clients".out-fault-interceptors]`
+
+[.description]
+--
+The comma-separated list of OutFaultInterceptor classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_FAULT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_FAULT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.in-fault-interceptors]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.in-fault-interceptors[quarkus.cxf.client."clients".in-fault-interceptors]`
+
+[.description]
+--
+The comma-separated list of InFaultInterceptor classes
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__IN_FAULT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_FAULT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.alternative]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.alternative[quarkus.cxf.client."clients".alternative]`
+
+[.description]
+--
+Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when configuring a client without annotation `@CXFClient`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+|===

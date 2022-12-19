@@ -11,64 +11,8 @@
     <artifactId>quarkus-cxf-docs</artifactId>
     <name>Quarkus CXF - Documentation</name>
 
-    <profiles>
-        <profile>
-            <id>docs-version-updates</id>
-            <activation>
-                <property>
-                    <name>docs-version-updates</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.basedir}/modules/ROOT/pages/</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.basedir}/../target/asciidoc/generated/config/</directory>
-                                            <include>quarkus-cxf.adoc</include>
-                                            <filtering>false</filtering>
-                                        </resource>
-                                        <resource>
-                                            <directory>${project.basedir}/templates/includes</directory>
-                                            <include>attributes.adoc</include>
-                                            <filtering>true</filtering>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-help-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>show-profiles</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>active-profiles</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>it.ozimov</groupId>
                 <artifactId>yaml-properties-maven-plugin</artifactId>
@@ -87,10 +31,54 @@
                 </executions>
             </plugin>
             <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/modules/ROOT/pages/includes/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../target/asciidoc/generated/config/</directory>
+                                    <include>quarkus-cxf.adoc</include>
+                                    <filtering>false</filtering>
+                                </resource>
+                                <resource>
+                                    <directory>${project.basedir}/templates/includes</directory>
+                                    <include>attributes.adoc</include>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-images</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-docs/_images/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/modules/ROOT/assets/images/</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
+
 
 </project>
