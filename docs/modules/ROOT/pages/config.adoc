@@ -1,7 +1,7 @@
 [[configuration]]
 = Configuration
 
-include::./attributes.adoc[]
+include::./includes/attributes.adoc[]
 
 After configuring the `Quarkus BOM`:
 
@@ -68,3 +68,4 @@ You can also include any of the following *optional* dependencies for full nativ
     <version>{quarkus-cxf-version}</version>
 </dependency>
 ----
+

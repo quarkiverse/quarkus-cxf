@@ -1,7 +1,7 @@
 [[message-logging]]
 = Message Logging
 
-include::./attributes.adoc[]
+include::./includes/attributes.adoc[]
 
 For CXF https://cxf.apache.org/docs/message-logging.html[message logging], you can use the `quarkus-cxf-rt-features-logging` dependency, which supports native mode.
 

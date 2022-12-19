@@ -1,7 +1,7 @@
 [[creating-a-soap-client]]
 = SOAP Clients
 
-include::./attributes.adoc[]
+include::./includes/attributes.adoc[]
 
 Quarkus-CXF supports SOAP clients. Assuming a given Service Endpoint Interface (SEI) like `FruitWebService`, Quarkus-CXF is able to inject a ready-to-use client proxy:
 
