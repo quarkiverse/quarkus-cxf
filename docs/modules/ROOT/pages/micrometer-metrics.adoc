@@ -1,7 +1,7 @@
 [[micrometer-metrics]]
 = Micrometer Metrics
 
-include::./attributes.adoc[]
+include::./includes/attributes.adoc[]
 
 CXF provides https://micrometer.io/[Micrometer] integration using https://github.com/apache/cxf/blob/master/rt/features/metrics/src/main/java/org/apache/cxf/metrics/micrometer/MicrometerMetricsProvider.java[MicrometerMetricsProvider].
 

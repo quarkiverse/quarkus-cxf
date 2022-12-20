@@ -1,7 +1,7 @@
 [[ws-security]]
 = WS-Security
 
-include::./attributes.adoc[]
+include::./includes/attributes.adoc[]
 
 The CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J]. The example below shows how to integrate with WSS4J using interceptors.
 

@@ -16,7 +16,12 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.path]]`link:#qu
 --
 The default path for CXF resources
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_PATH+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |`/`
 
@@ -27,7 +32,12 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.wsdl-path]]`lin
 --
 The comma-separated list of WSDL resource paths used by CXF
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_WSDL_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_WSDL_PATH+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -38,7 +48,12 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.implementor]]`link:#quarkus-cx
 --
 The service endpoint implementation class
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IMPLEMENTOR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IMPLEMENTOR+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -49,7 +64,12 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.wsdl]]`link:#quarkus-cxf_quark
 --
 The service endpoint WSDL path
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__WSDL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__WSDL+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -65,7 +85,12 @@ The URL of the SOAP Binding, should be one of four values:
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SOAP_BINDING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SOAP_BINDING+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -76,7 +101,12 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.published-endpoint-url]]`link:
 --
 The published service endpoint URL
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__PUBLISHED_ENDPOINT_URL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__PUBLISHED_ENDPOINT_URL+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -87,7 +117,12 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.features]]`link:#quarkus-cxf_q
 --
 The comma-separated list of Feature classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__FEATURES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__FEATURES+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -98,7 +133,12 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.handlers]]`link:#quarkus-cxf_q
 --
 The comma-separated list of Handler classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__HANDLERS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__HANDLERS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -109,7 +149,12 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-interceptors]]`link:#quarku
 --
 The comma-separated list of InInterceptor classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -120,7 +165,12 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-interceptors]]`link:#quark
 --
 The comma-separated list of OutInterceptor classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -131,7 +181,12 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-fault-interceptors]]`link:
 --
 The comma-separated list of OutFaultInterceptor classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_FAULT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_FAULT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -142,7 +197,12 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-fault-interceptors]]`link:#
 --
 The comma-separated list of InFaultInterceptor classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_FAULT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_FAULT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -153,7 +213,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.wsdl]]`link:#quarkus-cxf_quarkus.c
 --
 The client WSDL path
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__WSDL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__WSDL+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -169,7 +234,12 @@ The URL of the SOAP Binding, should be one of four values:
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SOAP_BINDING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SOAP_BINDING+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -180,7 +250,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.client-endpoint-url]]`link:#quarku
 --
 The client endpoint URL
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__CLIENT_ENDPOINT_URL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CLIENT_ENDPOINT_URL+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -191,7 +266,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.service-interface]]`link:#quarkus-
 --
 The client interface class
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -202,7 +282,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-namespace]]`link:#quarkus
 --
 The client endpoint namespace
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAMESPACE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAMESPACE+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -213,7 +298,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-name]]`link:#quarkus-cxf_
 --
 The client endpoint name
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAME+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -224,7 +314,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.username]]`link:#quarkus-cxf_quark
 --
 The username for HTTP Basic auth
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__USERNAME+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -235,7 +330,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.password]]`link:#quarkus-cxf_quark
 --
 The password for HTTP Basic auth
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__PASSWORD+++`
+endif::add-copy-button-to-env-var[]
 --|string 
 |
 
@@ -246,7 +346,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.features]]`link:#quarkus-cxf_quark
 --
 The comma-separated list of Feature classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__FEATURES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__FEATURES+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -257,7 +362,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.handlers]]`link:#quarkus-cxf_quark
 --
 The comma-separated list of Handler classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__HANDLERS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__HANDLERS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -268,7 +378,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.in-interceptors]]`link:#quarkus-cx
 --
 The comma-separated list of InInterceptor classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__IN_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -279,7 +394,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.out-interceptors]]`link:#quarkus-c
 --
 The comma-separated list of OutInterceptor classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -290,7 +410,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.out-fault-interceptors]]`link:#qua
 --
 The comma-separated list of OutFaultInterceptor classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_FAULT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_FAULT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -301,7 +426,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.in-fault-interceptors]]`link:#quar
 --
 The comma-separated list of InFaultInterceptor classes
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__IN_FAULT_INTERCEPTORS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_FAULT_INTERCEPTORS+++`
+endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
@@ -312,7 +442,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.alternative]]`link:#quarkus-cxf_qu
 --
 Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when configuring a client without annotation `@CXFClient`.
 
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++`
+endif::add-copy-button-to-env-var[]
 --|boolean 
 |`false`
 
