@@ -191,7 +191,7 @@ class QuarkusCxfProcessor {
                         new GeneratedResourceBuildItem("META-INF/cxf/bus-extensions.txt", os.toByteArray()));
             }
         } catch (IOException e) {
-            LOGGER.warn("can not merge bus-extensions.txt");
+            LOGGER.warn("cannot merge bus-extensions.txt");
         }
     }
 
@@ -206,8 +206,9 @@ class QuarkusCxfProcessor {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             XPath xpath = XPathFactory.newInstance().newXPath();
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "http");
+
             DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -230,8 +231,7 @@ class QuarkusCxfProcessor {
             }
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(mergedXmlDocument),
@@ -247,7 +247,7 @@ class QuarkusCxfProcessor {
                 | IOException
                 | SAXException
                 | TransformerException e) {
-            LOGGER.warn("can not merge wsdl.plugin.xml");
+            LOGGER.warn("cannot merge wsdl.plugin.xml");
         }
     }
 
