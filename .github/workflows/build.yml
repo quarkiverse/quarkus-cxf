@@ -45,8 +45,6 @@ jobs:
         [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; exit 1; }
 
   native-tests:
-    # Skip native tests for CodeQL Security Scans
-    if: "${{ env.SKIP_NATIVE_TESTS == '' }}"
     strategy:
       matrix:
         testModule: [client, logging, mtom, mtom-awt, server, ws-addressing, ws-rm, ws-security-client, ws-security-server, ws-trust]
@@ -70,4 +68,6 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: cd integration-tests/${{matrix.testModule}} && mvn verify -Pnative
+      # Skip native tests for CodeQL Security Scans
+      if: "${{ env.SKIP_NATIVE_TESTS != 'true' }}"
       run: cd integration-tests/${{matrix.testModule}} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true
