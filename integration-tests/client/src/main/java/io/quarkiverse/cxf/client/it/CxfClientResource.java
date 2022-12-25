@@ -57,7 +57,7 @@ public class CxfClientResource {
     @GET
     @Path("/codeFirstClient/multiply")
     @Produces(MediaType.TEXT_PLAIN)
-    public int codeFirstClient(@PathParam("client") String client, @QueryParam("a") int a, @QueryParam("b") int b) {
+    public int codeFirstClient(@QueryParam("a") int a, @QueryParam("b") int b) {
         return codeFirstClient.multiply(a, b);
     }
 

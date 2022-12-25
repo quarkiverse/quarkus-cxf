@@ -23,6 +23,7 @@ public class SOAPExceptionInterceptor extends AbstractPhaseInterceptor<Message> 
         addBefore(SoapPreProtocolOutInterceptor.class.getName());
     }
 
+    @Override
     public void handleMessage(Message msg) {
         throw new IllegalStateException("No luck at this time, Luke!");
     }

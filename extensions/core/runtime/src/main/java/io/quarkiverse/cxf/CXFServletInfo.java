@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.logging.Logger;
@@ -70,27 +71,27 @@ public class CXFServletInfo {
     }
 
     public List<String> getFeatures() {
-        return features;
+        return Collections.unmodifiableList(features);
     }
 
     public List<String> getHandlers() {
-        return handlers;
+        return Collections.unmodifiableList(handlers);
     }
 
     public List<String> getInInterceptors() {
-        return inInterceptors;
+        return Collections.unmodifiableList(inInterceptors);
     }
 
     public List<String> getOutInterceptors() {
-        return outInterceptors;
+        return Collections.unmodifiableList(outInterceptors);
     }
 
     public List<String> getOutFaultInterceptors() {
-        return outFaultInterceptors;
+        return Collections.unmodifiableList(outFaultInterceptors);
     }
 
     public List<String> getInFaultInterceptors() {
-        return inFaultInterceptors;
+        return Collections.unmodifiableList(inFaultInterceptors);
     }
 
     public String getServiceName() {
@@ -115,6 +116,30 @@ public class CXFServletInfo {
 
     public String getEndpointUrl() {
         return endpointUrl;
+    }
+
+    public void addFeatures(List<String> features) {
+        this.features.addAll(features);
+    }
+
+    public void addHandlers(List<String> handlers) {
+        this.handlers.addAll(handlers);
+    }
+
+    public void addInInterceptors(List<String> inInterceptors) {
+        this.inInterceptors.addAll(inInterceptors);
+    }
+
+    public void addOutInterceptors(List<String> outInterceptors) {
+        this.outInterceptors.addAll(outInterceptors);
+    }
+
+    public void addOutFaultInterceptors(List<String> outFaultInterceptors) {
+        this.outFaultInterceptors.addAll(outFaultInterceptors);
+    }
+
+    public void addInFaultInterceptors(List<String> inFaultInterceptors) {
+        this.inFaultInterceptors.addAll(inFaultInterceptors);
     }
 
     @Override

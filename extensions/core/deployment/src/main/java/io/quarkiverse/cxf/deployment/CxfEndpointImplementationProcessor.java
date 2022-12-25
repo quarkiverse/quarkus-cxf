@@ -21,17 +21,13 @@ import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfConfig;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
-import io.quarkus.arc.deployment.ReflectiveBeanClassBuildItem;
-import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.runtime.RuntimeValue;
-import io.quarkus.vertx.http.deployment.DefaultRouteBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
 import io.quarkus.vertx.http.runtime.HandlerType;
 import io.quarkus.vertx.http.runtime.HttpBuildTimeConfig;
@@ -50,11 +46,8 @@ public class CxfEndpointImplementationProcessor {
     void collectEndpoints(
             CombinedIndexBuildItem combinedIndexBuildItem,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
-            BuildProducer<ReflectiveBeanClassBuildItem> reflectiveBeanClass,
-            BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
             BuildProducer<CxfEndpointImplementationBuildItem> endpointImplementations,
-            BuildProducer<AdditionalBeanBuildItem> additionalBeans,
-            BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
+            BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
         IndexView index = combinedIndexBuildItem.getIndex();
 
         Set<String> reflectives = new TreeSet<>();
@@ -91,7 +84,7 @@ public class CxfEndpointImplementationProcessor {
                                 .orElse(impl.contains(".") ? impl.substring(impl.lastIndexOf('.') + 1) : impl);
 
                         String soapBinding = Optional
-                                .ofNullable(wsClassInfo.classAnnotation(CxfDotNames.BINDING_TYPE_ANNOTATION))
+                                .ofNullable(wsClassInfo.declaredAnnotation(CxfDotNames.BINDING_TYPE_ANNOTATION))
                                 .map(bindingType -> bindingType.value().asString())
                                 .orElse(SOAPBinding.SOAP11HTTP_BINDING);
 
@@ -121,7 +114,6 @@ public class CxfEndpointImplementationProcessor {
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
     void startRoute(CXFRecorder recorder,
-            BuildProducer<DefaultRouteBuildItem> defaultRoutes,
             BuildProducer<RouteBuildItem> routes,
             BeanContainerBuildItem beanContainer,
             List<CxfEndpointImplementationBuildItem> cxfEndpoints,

@@ -25,6 +25,7 @@ public class PasswordCallbackHandler implements CallbackHandler {
     /**
      * It attempts to get the password from the private alias/passwords map.
      */
+    @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (int i = 0; i < callbacks.length; i++) {
             WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];

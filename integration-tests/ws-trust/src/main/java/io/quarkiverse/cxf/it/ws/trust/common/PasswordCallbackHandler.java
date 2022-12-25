@@ -12,16 +12,17 @@ import org.apache.wss4j.common.ext.WSPasswordCallback;
 
 public class PasswordCallbackHandler implements CallbackHandler {
 
-    private Map<String, String> passwords = new HashMap<String, String>();
+    private Map<String, String> passwords = new HashMap<>();
 
     public PasswordCallbackHandler(Map<String, String> initMap) {
         passwords.putAll(initMap);
     }
 
+    @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (int i = 0; i < callbacks.length; i++) {
             final Callback c = callbacks[i];
-            if (c != null && c instanceof WSPasswordCallback) {
+            if (c instanceof WSPasswordCallback) {
                 final WSPasswordCallback pc = (WSPasswordCallback) c;
 
                 String pass = passwords.get(pc.getIdentifier());

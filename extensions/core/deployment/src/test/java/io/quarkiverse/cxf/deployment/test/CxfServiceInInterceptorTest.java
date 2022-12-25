@@ -43,9 +43,9 @@ public class CxfServiceInInterceptorTest {
     @Test
     public void intercepted() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
-        Assertions.assertThat(AnnotationCounterImplInterceptor.counter.get()).isEqualTo(0);
-        Assertions.assertThat(AnnotationCounterIntfInterceptor.counter.get()).isEqualTo(0);
-        Assertions.assertThat(PropertiesCounterInterceptor.counter.get()).isEqualTo(0);
+        Assertions.assertThat(AnnotationCounterImplInterceptor.counter.get()).isZero();
+        Assertions.assertThat(AnnotationCounterIntfInterceptor.counter.get()).isZero();
+        Assertions.assertThat(PropertiesCounterInterceptor.counter.get()).isZero();
 
         QName serviceName = new QName("http://test.deployment.cxf.quarkiverse.io/", "HelloService");
         Service service = Service
@@ -55,7 +55,7 @@ public class CxfServiceInInterceptorTest {
 
         Assertions.assertThat(AnnotationCounterImplInterceptor.counter.get()).isEqualTo(1);
         // the interceptor on the interface seem to have no effect when getting the WSDL
-        Assertions.assertThat(AnnotationCounterIntfInterceptor.counter.get()).isEqualTo(0);
+        Assertions.assertThat(AnnotationCounterIntfInterceptor.counter.get()).isZero();
         Assertions.assertThat(PropertiesCounterInterceptor.counter.get()).isEqualTo(1);
 
         Assertions.assertThat(proxy.sayHi()).isEqualTo("hi");
@@ -78,6 +78,7 @@ public class CxfServiceInInterceptorTest {
     @InInterceptors(classes = AnnotationCounterImplInterceptor.class)
     public static class HelloServiceImpl implements HelloService {
         @WebMethod
+        @Override
         public String sayHi() {
             return "hi";
         }
@@ -90,6 +91,7 @@ public class CxfServiceInInterceptorTest {
             super(Phase.RECEIVE);
         }
 
+        @Override
         public void handleMessage(Message message) {
             counter.incrementAndGet();
         }
@@ -103,6 +105,7 @@ public class CxfServiceInInterceptorTest {
             super(Phase.SEND);
         }
 
+        @Override
         public void handleMessage(Message message) {
             counter.incrementAndGet();
         }
@@ -116,6 +119,7 @@ public class CxfServiceInInterceptorTest {
             super(Phase.RECEIVE);
         }
 
+        @Override
         public void handleMessage(Message message) {
             counter.incrementAndGet();
         }

@@ -29,12 +29,9 @@ import io.quarkiverse.cxf.CXFClientData;
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.CxfClientProducer;
-import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
-import io.quarkus.arc.deployment.ReflectiveBeanClassBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.arc.processor.DotNames;
@@ -44,7 +41,6 @@ import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.gizmo.ClassCreator;
 import io.quarkus.gizmo.ClassOutput;
 import io.quarkus.gizmo.FieldCreator;
@@ -62,13 +58,8 @@ public class CxfClientProcessor {
     @BuildStep
     void collectClients(
             CombinedIndexBuildItem combinedIndexBuildItem,
-            CxfBusBuildItem bus,
-            BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
-            BuildProducer<ReflectiveBeanClassBuildItem> reflectiveBeanClass,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
-            BuildProducer<CxfClientBuildItem> clients,
-            BuildProducer<AdditionalBeanBuildItem> additionalBeans,
-            BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
+            BuildProducer<CxfClientBuildItem> clients) {
         IndexView index = combinedIndexBuildItem.getIndex();
 
         final Set<String> clientSEIsInUse = findClientSEIsInUse(index);
@@ -92,7 +83,7 @@ public class CxfClientProcessor {
                                     .orElseGet(() -> CxfDeploymentUtils.getNameSpaceFromClassInfo(wsClassInfo));
                         }
                         final String soapBinding = Optional
-                                .ofNullable(wsClassInfo.classAnnotation(CxfDotNames.BINDING_TYPE_ANNOTATION))
+                                .ofNullable(wsClassInfo.declaredAnnotation(CxfDotNames.BINDING_TYPE_ANNOTATION))
                                 .map(bindingType -> bindingType.value().asString())
                                 .orElse(SOAPBinding.SOAP11HTTP_BINDING);
 
@@ -110,7 +101,6 @@ public class CxfClientProcessor {
     @Record(ExecutionTime.RUNTIME_INIT)
     void startClient(
             CXFRecorder recorder,
-            CxfConfig cxfConfig,
             List<CxfClientBuildItem> clients,
             CxfWrapperClassNamesBuildItem cxfWrapperClassNames,
             BuildProducer<SyntheticBeanBuildItem> synthetics) {
@@ -183,7 +173,6 @@ public class CxfClientProcessor {
     @BuildStep
     void generateClientProducers(
             List<CxfClientBuildItem> clients,
-            CxfWrapperClassNamesBuildItem cxfWrapperClassNames,
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
             BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
         clients

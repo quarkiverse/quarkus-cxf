@@ -10,6 +10,7 @@ import org.apache.cxf.feature.Features;
 public class WsrmHelloServiceImpl implements WsrmHelloService {
 
     @WebMethod
+    @Override
     public String sayHello() {
         return "WS-ReliableMessaging Hello World! seqSize: " + RMStoreCheckInterceptor.seqSize;
     }
