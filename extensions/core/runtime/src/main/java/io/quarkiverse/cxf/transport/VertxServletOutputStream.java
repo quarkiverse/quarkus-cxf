@@ -134,13 +134,8 @@ public class VertxServletOutputStream extends ServletOutputStream {
                 } else {
                     response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "" + buffer.readableBytes());
                 }
-            } else {
-                if (!request.response().headers().contains(HttpHeaderNames.CONTENT_LENGTH)) {
-                    request.response().setChunked(true);
-                } else {
-                    Object contentLength = request.response().headers().get(HttpHeaders.CONTENT_LENGTH);
-                    request.response().headers().set(HttpHeaderNames.CONTENT_LENGTH, contentLength.toString());
-                }
+            } else if (!request.response().headers().contains(HttpHeaderNames.CONTENT_LENGTH)) {
+                request.response().setChunked(true);
             }
         }
     }
