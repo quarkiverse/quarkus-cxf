@@ -192,7 +192,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
                 HttpConnection connection = request.connection();
                 synchronized (LOCK) {
                     if (waitingForDrain) {
-                        connection.notifyAll();
+                        LOCK.notifyAll();
                     }
                     if (overflow != null && overflow.size() > 0) {
                         if (closed) {
