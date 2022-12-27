@@ -7,6 +7,8 @@ import java.io.InterruptedIOException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 
+import org.jboss.logging.Logger;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -14,11 +16,13 @@ import io.quarkus.vertx.core.runtime.VertxBufferImpl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpConnection;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 
 public class VertxServletOutputStream extends ServletOutputStream {
+
+    private static final Logger log = Logger.getLogger(VertxServletOutputStream.class);
 
     private final HttpServerRequest request;
     protected HttpServerResponse response;
@@ -42,6 +46,24 @@ public class VertxServletOutputStream extends ServletOutputStream {
     public VertxServletOutputStream(HttpServerRequest request, HttpServerResponse response) {
         this.response = response;
         this.request = request;
+        request.response().exceptionHandler(event -> {
+            throwable = event;
+            log.debugf(event, "IO Exception ");
+            request.connection().close();
+            synchronized (LOCK) {
+                if (waitingForDrain) {
+                    LOCK.notifyAll();
+                }
+            }
+        });
+
+        request.response().endHandler(unused -> {
+            synchronized (LOCK) {
+                if (waitingForDrain) {
+                    LOCK.notifyAll();
+                }
+            }
+        });
     }
 
     /**
@@ -112,8 +134,13 @@ public class VertxServletOutputStream extends ServletOutputStream {
                 } else {
                     response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "" + buffer.readableBytes());
                 }
-            } else if (!request.response().headers().contains(HttpHeaderNames.CONTENT_LENGTH)) {
-                request.response().setChunked(true);
+            } else {
+                if (!request.response().headers().contains(HttpHeaderNames.CONTENT_LENGTH)) {
+                    request.response().setChunked(true);
+                } else {
+                    Object contentLength = request.response().headers().get(HttpHeaders.CONTENT_LENGTH);
+                    request.response().headers().set(HttpHeaderNames.CONTENT_LENGTH, contentLength.toString());
+                }
             }
         }
     }
@@ -133,13 +160,15 @@ public class VertxServletOutputStream extends ServletOutputStream {
                     if (overflow == null) {
                         overflow = new ByteArrayOutputStream();
                     }
-                    if (data != null) {
-                        overflow.write(data.array(), data.arrayOffset() + data.readerIndex(),
-                                data.arrayOffset() + data.writerIndex());
+                    if (data.hasArray()) {
+                        overflow.write(data.array(), data.arrayOffset() + data.readerIndex(), data.readableBytes());
+                    } else {
+                        data.getBytes(data.readerIndex(), overflow, data.readableBytes());
                     }
                     if (last) {
                         closed = true;
                     }
+                    data.release();
                 } else {
                     if (last) {
                         request.response().end(createBuffer(data));
@@ -189,7 +218,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
         if (!drainHandlerRegistered) {
             drainHandlerRegistered = true;
             Handler<Void> handler = event -> {
-                HttpConnection connection = request.connection();
                 synchronized (LOCK) {
                     if (waitingForDrain) {
                         LOCK.notifyAll();
