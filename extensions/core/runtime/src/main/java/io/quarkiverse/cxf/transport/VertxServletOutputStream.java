@@ -150,39 +150,39 @@ public class VertxServletOutputStream extends ServletOutputStream {
             request.response().end();
             return;
         }
-        if (data != null) {
-            //do all this in the same lock
-            synchronized (LOCK) {
-                try {
-                    boolean bufferRequired = awaitWriteable() || (overflow != null && overflow.size() > 0);
-                    if (bufferRequired) {
-                        //just buffer everything
-                        registerDrainHandler();
-                        if (overflow == null) {
-                            overflow = new ByteArrayOutputStream();
-                        }
-                        if (data.hasArray()) {
-                            overflow.write(data.array(), data.arrayOffset() + data.readerIndex(), data.readableBytes());
-                        } else {
-                            data.getBytes(data.readerIndex(), overflow, data.readableBytes());
-                        }
-                        if (last) {
-                            closed = true;
-                        }
+        //do all this in the same lock
+        synchronized (LOCK) {
+            try {
+                boolean bufferRequired = awaitWriteable() || (overflow != null && overflow.size() > 0);
+                if (bufferRequired) {
+                    //just buffer everything
+                    registerDrainHandler();
+                    if (overflow == null) {
+                        overflow = new ByteArrayOutputStream();
+                    }
+                    if (data != null && data.hasArray()) {
+                        overflow.write(data.array(), data.arrayOffset() + data.readerIndex(), data.readableBytes());
+                    } else if (data != null) {
+                        data.getBytes(data.readerIndex(), overflow, data.readableBytes());
+                    }
+                    if (last) {
+                        closed = true;
+                    }
+                    if (data != null) {
                         data.release();
+                    }
+                } else {
+                    if (last) {
+                        request.response().end(createBuffer(data));
                     } else {
-                        if (last) {
-                            request.response().end(createBuffer(data));
-                        } else {
-                            request.response().write(createBuffer(data));
-                        }
+                        request.response().write(createBuffer(data));
                     }
-                } catch (IOException | RuntimeException e) {
-                    if (data != null && data.refCnt() > 0) {
-                        data.release();
-                    }
-                    throw new IOException("Failed to write", e);
                 }
+            } catch (IOException | RuntimeException e) {
+                if (data != null && data.refCnt() > 0) {
+                    data.release();
+                }
+                throw new IOException("Failed to write", e);
             }
         }
     }
