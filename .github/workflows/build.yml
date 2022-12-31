@@ -10,14 +10,13 @@ on:
       - 'LICENSE'
       - 'README*'
   pull_request:
-
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
   build-and-run-jvm-tests:
-
+    if: startsWith(github.head_ref, 'trigger-release-') == false
     runs-on: ubuntu-latest
 
     steps:
