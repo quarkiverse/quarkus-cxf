@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   build-and-run-jvm-tests:
-
+    if: startsWith(github.head_ref, 'trigger-release-') == false
     runs-on: ubuntu-latest
 
     steps:
