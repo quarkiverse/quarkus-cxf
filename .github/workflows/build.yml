@@ -10,7 +10,8 @@ on:
       - 'LICENSE'
       - 'README*'
   pull_request:
-
+    branches:
+      - '!trigger-release-*'
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
