@@ -77,6 +77,9 @@
         <!-- maven-enforcer-plugin -->
         <enforce-non-deployment.skip>false</enforce-non-deployment.skip>
 
+        <!-- keytool-maven-plugin -->
+        <keytool.skip>false</keytool.skip>
+
     </properties>
 
     <scm>
