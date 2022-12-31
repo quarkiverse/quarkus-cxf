@@ -63,4 +63,6 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
 
       - name: Push changes to ${{github.base_ref}} branch
-        run: git push
+        run: |
+          git push
+          git push origin ${{steps.metadata.outputs.current-version}}
