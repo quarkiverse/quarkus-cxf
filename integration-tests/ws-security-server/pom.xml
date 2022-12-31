@@ -55,6 +55,7 @@
                     <validity>365</validity>
                     <keyalg>RSA</keyalg>
                     <storepass>password</storepass>
+                    <skip>${keytool.skip}</skip>
                 </configuration>
                 <executions>
                     <execution>
