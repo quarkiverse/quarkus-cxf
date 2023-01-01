@@ -385,12 +385,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     public int getIntHeader(String name) {
         LOG.trace("getIntHeader");
         String v = getHeader(name);
-        try {
-            return v != null ? Integer.parseInt(v) : 0;
-        } catch (NumberFormatException nfe) {
-            LOG.error(nfe);
-        }
-        return 0;
+        return v == null ? -1 : Integer.parseInt(v);
     }
 
     @Override
