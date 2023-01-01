@@ -22,6 +22,7 @@ public class SOAPMessageProvider implements Provider<SOAPMessage> {
     public SOAPMessageProvider() {
     }
 
+    @Override
     public SOAPMessage invoke(SOAPMessage request) throws WebServiceException {
         try {
             String payload = StaxUtils.toString(request.getSOAPBody().extractContentAsDocument());

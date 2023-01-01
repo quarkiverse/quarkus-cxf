@@ -7,6 +7,7 @@ import javax.jws.WebService;
 public class WsAddressingImpl implements WsAddressingService {
 
     @WebMethod
+    @Override
     public String echo(String message) {
         return message + " from WsAddressingService";
     }

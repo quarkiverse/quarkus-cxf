@@ -15,6 +15,7 @@ import org.apache.cxf.annotations.EndpointProperty;
 })
 public class TrustHelloServiceImpl implements TrustHelloService {
     @WebMethod
+    @Override
     public String sayHello() {
         return "WS-Trust Hello World!";
     }

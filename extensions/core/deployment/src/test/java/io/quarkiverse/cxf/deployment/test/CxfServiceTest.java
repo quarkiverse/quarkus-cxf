@@ -98,7 +98,6 @@ public class CxfServiceTest {
                 "      </tem:add>\n" +
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
-        String val = "";
 
         Response response = RestAssured.given().header("Content-Type", "text/xml").and().body(xml).when().post("/fruit");
         response.then().statusCode(200);
