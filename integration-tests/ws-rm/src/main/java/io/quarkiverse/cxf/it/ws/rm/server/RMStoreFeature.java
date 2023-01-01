@@ -35,6 +35,7 @@ import org.apache.cxf.ws.rmp.v200502.RMAssertion.BaseRetransmissionInterval;
  */
 public class RMStoreFeature extends RMFeature {
 
+    @Override
     protected void initializeProvider(InterceptorProvider provider, Bus bus) {
 
         if (provider instanceof Client) {

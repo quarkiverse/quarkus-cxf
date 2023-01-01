@@ -153,8 +153,7 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    void buildResources(BuildProducer<NativeImageResourceBuildItem> resources,
-            BuildProducer<ReflectiveClassBuildItem> reflectiveItems,
+    void buildResources(BuildProducer<ReflectiveClassBuildItem> reflectiveItems,
             List<UberJarRequiredBuildItem> uberJarRequired,
             PackageConfig packageConfig,
             BuildProducer<GeneratedResourceBuildItem> generatedResources) {
@@ -166,18 +165,15 @@ class QuarkusCxfProcessor {
                 URL url = urls.nextElement();
                 try (InputStream openStream = url.openStream();
                         BufferedReader reader = new BufferedReader(new InputStreamReader(openStream, StandardCharsets.UTF_8))) {
-                    // todo set directly extension and avoid load of file at runtime
-                    // List<Extension> exts = new TextExtensionFragmentParser(loader).getExtensions(is);
-                    // factory.getBus().setExtension();
                     String line = reader.readLine();
                     while (line != null) {
                         String[] cols = line.split(":");
                         // org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
                         if (cols.length > 1) {
-                            if (!"".equals(cols[0])) {
+                            if (cols[0].length() > 0) {
                                 reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[0]));
                             }
-                            if (!"".equals(cols[1])) {
+                            if (cols[1].length() > 0) {
                                 reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[1]));
                             }
                         }
@@ -200,8 +196,7 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    void buildXmlResources(BuildProducer<NativeImageResourceBuildItem> resources,
-            List<UberJarRequiredBuildItem> uberJarRequired,
+    void buildXmlResources(List<UberJarRequiredBuildItem> uberJarRequired,
             PackageConfig packageConfig,
             BuildProducer<GeneratedResourceBuildItem> generatedResources) {
         // for uber jar only merge xml resource
@@ -240,7 +235,7 @@ class QuarkusCxfProcessor {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(new DOMSource(mergedXmlDocument),
-                    new StreamResult(new OutputStreamWriter(os, "UTF-8")));
+                    new StreamResult(new OutputStreamWriter(os, StandardCharsets.UTF_8)));
 
             if (os.size() > 0) {
                 generatedResources.produce(
@@ -407,7 +402,7 @@ class QuarkusCxfProcessor {
         index.getKnownDirectImplementors(interfaceDN).stream()
                 .filter(classinfo -> Modifier.isInterface(classinfo.flags()))
                 .map(ClassInfo::name)
-                .forEach((className) -> {
+                .forEach(className -> {
                     if (!proxiesCreated.contains(className.toString())) {
                         proxies.produce(new NativeImageProxyDefinitionBuildItem(className.toString()));
                         produceRecursiveProxies(index, className, proxies, proxiesCreated);

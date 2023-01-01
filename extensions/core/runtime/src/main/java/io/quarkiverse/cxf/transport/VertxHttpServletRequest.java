@@ -41,7 +41,6 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.vertx.http.runtime.VertxInputStream;
 import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 
 public class VertxHttpServletRequest implements HttpServletRequest {
@@ -49,14 +48,12 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     private final RoutingContext context;
     private final VertxInputStream in;
     private final HttpServerRequest request;
-    private final HttpServerResponse response;
     private final String contextPath;
     private final String servletPath;
     private final Map<String, Object> attributes;
 
     public VertxHttpServletRequest(RoutingContext context, String contextPath, String servletPath) {
         this.request = context.request();
-        this.response = context.response();
         this.contextPath = contextPath;
         this.servletPath = servletPath;
         this.attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -230,7 +227,6 @@ public class VertxHttpServletRequest implements HttpServletRequest {
     }
 
     @Override
-    @Deprecated
     public String getRealPath(String path) {
         LOG.trace("getRealPath");
         return null;

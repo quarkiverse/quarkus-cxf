@@ -22,12 +22,12 @@ public class SourcePayloadProvider implements Provider<DOMSource> {
     public SourcePayloadProvider() {
     }
 
+    @Override
     public DOMSource invoke(DOMSource request) throws WebServiceException {
         try {
             String payload = StaxUtils.toString(request.getNode());
             payload = payload.replace("<text>Hello</text>", "<text>Hello from SourcePayloadProvider</text>");
-            DOMSource response = new DOMSource(StaxUtils.read(new StreamSource(new StringReader(payload))));
-            return response;
+            return new DOMSource(StaxUtils.read(new StreamSource(new StringReader(payload))));
         } catch (XMLStreamException e) {
             throw new WebServiceException(e);
         }

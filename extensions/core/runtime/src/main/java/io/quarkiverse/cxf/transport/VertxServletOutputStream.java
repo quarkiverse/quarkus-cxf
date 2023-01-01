@@ -7,6 +7,8 @@ import java.io.InterruptedIOException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 
+import org.jboss.logging.Logger;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -14,24 +16,25 @@ import io.quarkus.vertx.core.runtime.VertxBufferImpl;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpConnection;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 
 public class VertxServletOutputStream extends ServletOutputStream {
 
+    private static final Logger log = Logger.getLogger(VertxServletOutputStream.class);
+
     private final HttpServerRequest request;
     protected HttpServerResponse response;
     private ByteBuf pooledBuffer;
-    private long written;
     private boolean committed;
     protected boolean waitingForDrain;
     protected boolean drainHandlerRegistered;
     private boolean closed;
-    private boolean finished;
     protected boolean first = true;
     protected Throwable throwable;
     private ByteArrayOutputStream overflow;
+
+    private Object LOCK = new Object();
 
     /**
      * Construct a new instance.No write timeout is configured.
@@ -42,6 +45,24 @@ public class VertxServletOutputStream extends ServletOutputStream {
     public VertxServletOutputStream(HttpServerRequest request, HttpServerResponse response) {
         this.response = response;
         this.request = request;
+        request.response().exceptionHandler(event -> {
+            throwable = event;
+            log.debugf(event, "IO Exception ");
+            request.connection().close();
+            synchronized (LOCK) {
+                if (waitingForDrain) {
+                    LOCK.notifyAll();
+                }
+            }
+        });
+
+        request.response().endHandler(unused -> {
+            synchronized (LOCK) {
+                if (waitingForDrain) {
+                    LOCK.notifyAll();
+                }
+            }
+        });
     }
 
     /**
@@ -96,7 +117,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
             }
             throw new IOException(e);
         }
-        updateWritten(len);
     }
 
     public void writeBlocking(ByteBuf buffer, boolean finished) throws IOException {
@@ -104,7 +124,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
         write(buffer, finished);
     }
 
-    private void prepareWrite(ByteBuf buffer, boolean finished) throws IOException {
+    private void prepareWrite(ByteBuf buffer, boolean finished) {
         if (!committed) {
             committed = true;
             if (finished) {
@@ -117,9 +137,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
                 request.response().setChunked(true);
             }
         }
-        if (finished) {
-            this.finished = true;
-        }
     }
 
     public void write(ByteBuf data, boolean last) throws IOException {
@@ -128,7 +145,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
             return;
         }
         //do all this in the same lock
-        synchronized (request.connection()) {
+        synchronized (LOCK) {
             try {
                 boolean bufferRequired = awaitWriteable() || (overflow != null && overflow.size() > 0);
                 if (bufferRequired) {
@@ -137,12 +154,16 @@ public class VertxServletOutputStream extends ServletOutputStream {
                     if (overflow == null) {
                         overflow = new ByteArrayOutputStream();
                     }
-                    if (data != null) {
-                        overflow.write(data.array(), data.arrayOffset() + data.readerIndex(),
-                                data.arrayOffset() + data.writerIndex());
+                    if (data != null && data.hasArray()) {
+                        overflow.write(data.array(), data.arrayOffset() + data.readerIndex(), data.readableBytes());
+                    } else if (data != null) {
+                        data.getBytes(data.readerIndex(), overflow, data.readableBytes());
                     }
                     if (last) {
                         closed = true;
+                    }
+                    if (data != null) {
+                        data.release();
                     }
                 } else {
                     if (last) {
@@ -168,7 +189,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
             first = false;
             return false;
         }
-        assert Thread.holdsLock(request.connection());
+        assert Thread.holdsLock(LOCK);
         while (request.response().writeQueueFull()) {
             if (throwable != null) {
                 throw new IOException(throwable);
@@ -179,7 +200,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
             registerDrainHandler();
             try {
                 waitingForDrain = true;
-                request.connection().wait();
+                LOCK.wait();
             } catch (InterruptedException e) {
                 throw new InterruptedIOException(e.getMessage());
             } finally {
@@ -193,20 +214,17 @@ public class VertxServletOutputStream extends ServletOutputStream {
         if (!drainHandlerRegistered) {
             drainHandlerRegistered = true;
             Handler<Void> handler = event -> {
-                HttpConnection connection = request.connection();
-                synchronized (connection) {
+                synchronized (LOCK) {
                     if (waitingForDrain) {
-                        connection.notifyAll();
+                        LOCK.notifyAll();
                     }
-                    if (overflow != null) {
-                        if (overflow.size() > 0) {
-                            if (closed) {
-                                request.response().end(Buffer.buffer(overflow.toByteArray()));
-                            } else {
-                                request.response().write(Buffer.buffer(overflow.toByteArray()));
-                            }
-                            overflow.reset();
+                    if (overflow != null && overflow.size() > 0) {
+                        if (closed) {
+                            request.response().end(Buffer.buffer(overflow.toByteArray()));
+                        } else {
+                            request.response().write(Buffer.buffer(overflow.toByteArray()));
                         }
+                        overflow.reset();
                     }
                 }
             };
@@ -217,10 +235,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
 
     Buffer createBuffer(ByteBuf data) {
         return new VertxBufferImpl(data);
-    }
-
-    void updateWritten(final long len) throws IOException {
-        this.written += len;
     }
 
     /**

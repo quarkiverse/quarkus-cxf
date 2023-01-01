@@ -41,7 +41,7 @@ public class CXFRecorder {
                 cxfClientData.getClassNames()));
     }
 
-    private class ServletConfig {
+    private static class ServletConfig {
         public CxfEndpointConfig config;
         public String path;
 
@@ -112,22 +112,22 @@ public class CXFRecorder {
                 isProvider,
                 cxfEndPointConfig != null ? cxfEndPointConfig.publishedEndpointUrl.orElse(null) : null);
         if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors.isPresent()) {
-            cfg.getInInterceptors().addAll(cxfEndPointConfig.inInterceptors.get());
+            cfg.addInInterceptors(cxfEndPointConfig.inInterceptors.get());
         }
         if (cxfEndPointConfig != null && cxfEndPointConfig.outInterceptors.isPresent()) {
-            cfg.getOutInterceptors().addAll(cxfEndPointConfig.outInterceptors.get());
+            cfg.addOutInterceptors(cxfEndPointConfig.outInterceptors.get());
         }
         if (cxfEndPointConfig != null && cxfEndPointConfig.outFaultInterceptors.isPresent()) {
-            cfg.getOutFaultInterceptors().addAll(cxfEndPointConfig.outFaultInterceptors.get());
+            cfg.addOutFaultInterceptors(cxfEndPointConfig.outFaultInterceptors.get());
         }
         if (cxfEndPointConfig != null && cxfEndPointConfig.inFaultInterceptors.isPresent()) {
-            cfg.getInFaultInterceptors().addAll(cxfEndPointConfig.inFaultInterceptors.get());
+            cfg.addInFaultInterceptors(cxfEndPointConfig.inFaultInterceptors.get());
         }
         if (cxfEndPointConfig != null && cxfEndPointConfig.features.isPresent()) {
-            cfg.getFeatures().addAll(cxfEndPointConfig.features.get());
+            cfg.addFeatures(cxfEndPointConfig.features.get());
         }
         if (cxfEndPointConfig != null && cxfEndPointConfig.handlers.isPresent()) {
-            cfg.getHandlers().addAll(cxfEndPointConfig.handlers.get());
+            cfg.addHandlers(cxfEndPointConfig.handlers.get());
         }
         LOGGER.tracef("Registering CXF Servlet info %s", cfg);
         return cfg;

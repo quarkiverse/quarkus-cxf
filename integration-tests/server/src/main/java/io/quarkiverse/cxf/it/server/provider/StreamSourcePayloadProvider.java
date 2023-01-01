@@ -19,10 +19,10 @@ public class StreamSourcePayloadProvider implements Provider<StreamSource> {
     public StreamSourcePayloadProvider() {
     }
 
+    @Override
     public StreamSource invoke(StreamSource request) {
         String payload = StaxUtils.toString(request);
         payload = payload.replace("<text>Hello</text>", "<text>Hello from StreamSourcePayloadProvider</text>");
-        StreamSource response = new StreamSource(new StringReader(payload));
-        return response;
+        return new StreamSource(new StringReader(payload));
     }
 }
