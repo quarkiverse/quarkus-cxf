@@ -18,10 +18,10 @@ public class SourceMessageProvider implements Provider<Source> {
     public SourceMessageProvider() {
     }
 
+    @Override
     public Source invoke(Source request) {
         String payload = StaxUtils.toString(request);
         payload = payload.replace("<text>Hello</text>", "<text>Hello from SourceMessageProvider</text>");
-        Source response = new StreamSource(new StringReader(payload));
-        return response;
+        return new StreamSource(new StringReader(payload));
     }
 }

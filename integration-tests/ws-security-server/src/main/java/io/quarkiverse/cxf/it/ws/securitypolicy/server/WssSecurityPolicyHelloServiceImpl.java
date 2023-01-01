@@ -17,6 +17,7 @@ import org.apache.cxf.annotations.Policy;
 })
 public class WssSecurityPolicyHelloServiceImpl implements WssSecurityPolicyHelloService {
 
+    @Override
     public String sayHello(String name) {
         return "Secure Hello " + name + "!";
     }

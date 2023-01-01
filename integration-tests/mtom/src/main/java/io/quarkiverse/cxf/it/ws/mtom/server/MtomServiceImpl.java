@@ -15,6 +15,7 @@ public class MtomServiceImpl implements MtomService {
     private Logger log = Logger.getLogger(MtomServiceImpl.class);
 
     @WebMethod
+    @Override
     public DHResponse echoDataHandler(DHRequest request) {
 
         DataHandler dataHandler = request.getDataHandler();

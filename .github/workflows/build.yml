@@ -67,4 +67,6 @@ jobs:
           ${{ runner.os }}-maven-
 
     - name: cd integration-tests/${{matrix.testModule}} && mvn verify -Pnative
+      # Skip native tests for CodeQL Security Scans
+      if: "${{ env.SKIP_NATIVE_TESTS != 'true' }}"
       run: cd integration-tests/${{matrix.testModule}} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true

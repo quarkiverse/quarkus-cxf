@@ -3,8 +3,7 @@
 This extension enables you to develop web services that consume and produce SOAP payloads using the [Apache CXF](https://cxf.apache.org/) libraries.
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.quarkiverse.cxf/quarkus-cxf?logo=apache-maven&style=for-the-badge)](https://search.maven.org/artifact/io.quarkiverse.cxf/quarkus-cxf)
-[![LGTM Alerts](https://img.shields.io/lgtm/alerts/github/quarkiverse/quarkus-cxf?logo=lgtm&style=for-the-badge)](https://lgtm.com/projects/g/quarkiverse/quarkus-cxf/alerts/)
-[![LGTM Grade](https://img.shields.io/lgtm/grade/java/github/quarkiverse/quarkus-cxf?logo=lgtm&style=for-the-badge)](https://lgtm.com/projects/g/quarkiverse/quarkus-cxf/context:java)
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/quarkiverse/quarkus-cxf/codeql.yml?label=CodeQL&style=for-the-badge)](https://github.com/quarkiverse/quarkus-cxf/security/code-scanning)
 [![GitHub](https://img.shields.io/github/license/quarkiverse/quarkus-cxf?color=blue&style=for-the-badge)](https://github.com/quarkiverse/quarkus-cxf/blob/main/LICENSE)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
