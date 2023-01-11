@@ -17,12 +17,4 @@ public class GreetingWebServiceImpl implements GreetingWebService {
         return helloResource.getHello() + text;
     }
 
-    @Override
-    public String ping(@WebParam(name = "text") String text) throws GreetingException {
-        if (text.equals("error")) {
-            throw new GreetingException("foo", "bar");
-        }
-        return helloResource.getHello() + text;
-    }
-
 }
