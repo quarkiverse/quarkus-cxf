@@ -26,18 +26,6 @@ abstract class AbstractGreetingWebServiceTest {
     }
 
     @Test
-    void ping() throws GreetingException {
-        Assertions.assertThat(greetingWS.ping("foo")).isEqualTo("Hello foo");
-    }
-
-    @Test
-    void greetingException() {
-        Assertions.assertThatExceptionOfType(GreetingException.class)
-                .isThrownBy(() -> greetingWS.ping("error"))
-                .withMessage("foo");
-    }
-
-    @Test
     void rawSoap() {
         given()
                 .header("Content-Type", "text/xml").and().body(SOAP_REQUEST)
@@ -56,8 +44,7 @@ abstract class AbstractGreetingWebServiceTest {
                 .body(
                         containsString("http://schemas.xmlsoap.org/wsdl/soap12/"),
                         containsString("<wsdl:portType name=\"" + getServiceInterface() + "\">"),
-                        containsString("<wsdl:operation name=\"reply\">"),
-                        containsString("<wsdl:operation name=\"ping\">"));
+                        containsString("<wsdl:operation name=\"reply\">"));
     }
 
     protected abstract String getServiceInterface();
