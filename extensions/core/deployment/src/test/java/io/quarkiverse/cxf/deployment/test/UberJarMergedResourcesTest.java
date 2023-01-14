@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.logging.LogRecord;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -13,11 +14,12 @@ import io.quarkus.test.ProdBuildResults;
 import io.quarkus.test.ProdModeTestResults;
 import io.quarkus.test.QuarkusProdModeTest;
 
+@Tag("ProdModeTest")
 public class UberJarMergedResourcesTest {
 
     @RegisterExtension
     static final QuarkusProdModeTest runner = new QuarkusProdModeTest()
-            .withApplicationRoot((jar) -> jar
+            .withApplicationRoot(jar -> jar
                     .addClass(UberJarMain.class))
             .setApplicationName("uber-jar")
             .setApplicationVersion("0.1-SNAPSHOT")
