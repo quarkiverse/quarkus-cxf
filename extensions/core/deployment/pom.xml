@@ -104,7 +104,47 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <groups>!ProdModeTest</groups>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <!-- Isolate QuarkusProdModeTests because of a RestAssured port reset issue (upstream problem).
+             This is in a profile to allow deactivation via "-P'!ProdModeTests'". -->
+        <profile>
+            <id>ProdModeTests</id>
+            <activation>
+                <!-- Basically active by default, but with the advantage over <activeByDefault>
+                     that "-P unrelated-profile"" will not deactivate this profile. -->
+                <property>
+                    <name>java.version</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>ProdModeTests</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <groups>ProdModeTest</groups>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
