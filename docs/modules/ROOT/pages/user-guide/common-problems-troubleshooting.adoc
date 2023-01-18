@@ -1,5 +1,7 @@
 [[Tips-Tricks]]
-= Tips and Tricks
+= Common problems and troubleshooting
+
+include::../includes/attributes.adoc[]
 
 Some issues may appear during the development, testing, and native image building process of your `quarkus-cxf` project;
 below are some common ones and how to address them.
@@ -81,73 +83,13 @@ public class HealthCheckResource {
 You can separate your REST endpoint by configuring the REASTEasy path:
 [source,properties]
 ----
-quarkus.resteasy.path=/services
+quarkus.resteasy.path=/rest
 ----
 
 You should now be able to send requests to both your REST and SOAP endpoints deployed within a single project, at:
 
-*REST request*: http://localhost:8080/services/healthcheck
-
-*SOAP request*: http://localhost:8080/soap/weather
-
-
-[[Native-Image-Building]]
-== Native Image Building
-During a native image build, specifically during the "analysis" phase, your build may throw
-the following exception:
-
-[source,bash]
-----
-Error: com.oracle.svm.hosted.substitute.DeletedElementException: Unsupported method java.lang.ClassLoader.defineClass(String, byte[], int, int) is reachable
-To diagnose the issue, you can add the option --report-unsupported-elements-at-runtime. The unsupported element is then reported at run time when it is accessed the first time.
-Detailed message:
-Trace:
-	at parsing org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader.java:108)
-Call path from entry point to org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader$TypeHelperClassLoader, String, byte[], int, int):
-	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.access$001(ClassGeneratorClassLoader.java:108)
-	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader.lambda$defineClass$0(ClassGeneratorClassLoader.java:148)
-	at org.apache.cxf.common.spi.ClassGeneratorClassLoader$TypeHelperClassLoader$$Lambda$915/0x00000007c1dc1440.apply(Unknown Source)
-	at sun.security.ec.XECParameters$1.get(XECParameters.java:183)
-	at com.oracle.svm.core.jdk.SystemPropertiesSupport.initializeLazyValue(SystemPropertiesSupport.java:190)
-	at com.oracle.svm.core.jdk.SystemPropertiesSupport.getProperty(SystemPropertiesSupport.java:143)
-	at com.oracle.svm.core.jdk.Target_java_lang_System.getProperty(JavaLangSubstitutions.java:338)
-	at com.oracle.svm.jni.JNIJavaCallWrappers.jniInvoke_ARRAY:Ljava_lang_System_2_0002egetProperty_00028Ljava_lang_String_2_00029Ljava_lang_String_2(generated:0)
-----
-
-This exception is thrown if errors should be reported at runtime. The proposed option
-`report-unsupported-elements-at-runtime` reports usage of unsupported methods and
-fields at run time when they are accessed the first time, instead of as an error
-during image building.
-
-The issue can easily be addressed by specifying the `quarkus.native.report-errors-at-runtime` property in your pom.xml:
-[source,xml]
-----
-  <profiles>
-        <profile>
-            <id>native</id>
-            <activation>
-                <property>
-                    <name>native</name>
-                </property>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <quarkus.package.type>native</quarkus.package.type>
-                <quarkus.native.report-errors-at-runtime>true</quarkus.native.report-errors-at-runtime>
-            </properties>
-            ...
-        </profile>
- </profiles>
-----
-
-And finally generate the native image with the `native` maven profile activation like this:
-
-[source,bash]
-----
-mvn clean package -Pnative -am -Dquarkus.native.container-build=true
-----
-
-
+* http://localhost:8080/rest/healthcheck for REST
+* http://localhost:8080/soap/weather for SOAP
 
 [[Non-ASCII-Characters]]
 == Non ASCII Characters
@@ -245,14 +187,3 @@ public enum OperationOrderStatusType {
 }
 ----
 
-[[native-image-additional-resources]]
-== Native Image: Additional Resources
-
-You may also refer to the links below which contain tips on how to work with native images.
-
-* https://quarkus.io/guides/building-native-image[Quarkus: Building a Native Executable]
-* https://quarkus.io/guides/writing-native-applications-tips[Quarkus: Tips for Writing Native Applications]
-* https://quarkus.io/guides/native-reference[Quarkus: Native Reference Guide]
-* https://www.graalvm.org/22.0/reference-manual/native-image/Resources/[GraalVM: Accessing Resources in Native Images]
-* https://www.graalvm.org/22.0/reference-manual/native-image/Reflection/[GraalVM: Reflection Use in Native Images]
-* https://www.graalvm.org/22.0/reference-manual/native-image/Agent/[GraalVM: Tracing Agent]

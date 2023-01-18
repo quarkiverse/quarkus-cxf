@@ -1,7 +1,7 @@
 [[micrometer-metrics]]
 = Micrometer Metrics
 
-include::./includes/attributes.adoc[]
+include::../includes/attributes.adoc[]
 
 CXF provides https://micrometer.io/[Micrometer] integration using https://github.com/apache/cxf/blob/master/rt/features/metrics/src/main/java/org/apache/cxf/metrics/micrometer/MicrometerMetricsProvider.java[MicrometerMetricsProvider].
 
@@ -9,14 +9,17 @@ To take advantage of this feature within your https://quarkus.io/guides/micromet
 
 [source,xml,subs=attributes+]
 ----
-    <dependency>
-      <groupId>io.quarkiverse.cxf</groupId>
-      <artifactId>quarkus-cxf-rt-features-metrics</artifactId>
-      <version>{quarkus-cxf-version}</version>
-    </dependency>
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf-rt-features-metrics</artifactId>
+</dependency>
 ----
 
-The provided `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature` class helps plug in the CXF Micrometer integration as described https://cxf.apache.org/docs/micrometer.html#Micrometer-IntegrationwithJAX-WS[in the CXF docs].  It also allows metrics to work in native mode.
+TIP: Check the xref:user-guide/create-project.adoc#dependency-management[dependency management] section.
+
+The provided `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature` class helps plug in the CXF Micrometer integration
+as described in https://cxf.apache.org/docs/micrometer.html#Micrometer-IntegrationwithJAX-WS[CXF documentation].
+It also allows metrics to work in native mode.
 
 Simply add the following to your `application.properties` to start collecting metrics.  Please note that the same class can be applied to both server and client definitions.
 
@@ -27,5 +30,4 @@ quarkus.cxf.endpoint."/fruit-service".features=io.quarkiverse.cxf.metrics.Quarku
 
 # A web service client with metrics enabled
 quarkus.cxf.client."fruit-client".features=io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
-
 ----

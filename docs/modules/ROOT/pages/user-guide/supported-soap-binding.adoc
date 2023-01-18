@@ -1,0 +1,11 @@
+= Supported SOAP Bindings
+
+By default, a SOAP 1.1 binding is used. In order to switch to SOAP 1.2 and/or support MTOM, the config `quarkus.cxf.endpoint.key.soap-binding` must be set to one of the following values:
+
+|===
+| Binding | Property Value
+| SOAP 1.1 | http://schemas.xmlsoap.org/wsdl/soap/http
+| SOAP 1.2 | http://www.w3.org/2003/05/soap/bindings/HTTP/
+| SOAP 1.1 with MTOM | http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true
+| SOAP 1.2 with MTOM | http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true
+|===

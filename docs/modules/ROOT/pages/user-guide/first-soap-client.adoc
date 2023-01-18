@@ -1,0 +1,182 @@
+= Your first SOAP Client on Quarkus
+
+include::../includes/attributes.adoc[]
+
+In this guide we explain how to create a simple Quarkus application acting as a client of a remote Web service.
+
+NOTE: Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
+
+== Remote Web service for testing
+
+First, we need some remote Web service to connect to.
+We can use a simple https://github.com/l2x6/calculator-ws[Calculator Web service] running in a container for that purpose.
+
+[source,shell]
+----
+$ docker run docker run -p 8082:8080 quay.io/l2x6/calculator-ws:1.0
+----
+
+Once the container is up and running, we can inspect its http://localhost:8082/calculator-ws/CalculatorService?wsdl[WSDL]
+
+[source,shell]
+----
+$ curl -s http://localhost:8082/calculator-ws/CalculatorService?wsdl
+<?xml version="1.0" ?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="CalculatorService" targetNamespace="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator">
+
+  ...
+
+  <wsdl:binding name="CalculatorServiceSoapBinding" type="tns:CalculatorService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"></soap:binding>
+    <wsdl:operation name="add">
+      <soap:operation soapAction="" style="document"></soap:operation>
+      <wsdl:input name="add">
+        <soap:body use="literal"></soap:body>
+      </wsdl:input>
+      <wsdl:output name="addResponse">
+        <soap:body use="literal"></soap:body>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="subtract">
+      <soap:operation soapAction="" style="document"></soap:operation>
+      <wsdl:input name="subtract">
+        <soap:body use="literal"></soap:body>
+      </wsdl:input>
+      <wsdl:output name="subtractResponse">
+        <soap:body use="literal"></soap:body>
+      </wsdl:output>
+    </wsdl:operation>
+
+    ...
+
+  </wsdl:binding>
+
+  ...
+
+</wsdl:definitions>
+----
+
+As you can see in the WSDL, the service offers some basic arithmetic operations, such as `add`, `subtract`, etc.
+
+Let's test it with `curl`:
+
+[source,shell]
+----
+$ curl -s \
+    -X POST \
+    -H "Content-Type: text/xml;charset=UTF-8" \
+    -d \
+        '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+            <Body>
+                <add xmlns="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator">
+                    <arg0 xmlns="">7</arg0> # <1>
+                    <arg1 xmlns="">4</arg1>
+                </add>
+            </Body>
+        </Envelope>' \
+    http://localhost:8082/calculator-ws/CalculatorService
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <ns2:addResponse xmlns:ns2="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator">
+      <return>11</return> # <2>
+    </ns2:addResponse>
+  </soap:Body>
+</soap:Envelope>
+----
+
+<1> The request to add `7` and `4`
+<2> `11` - return value of the operation
+
+== SOAP client
+
+Now let's have a look how we can get the client inside a Quarkus application.
+
+First, we need the Service Endpoint Interface (SEI) and all other model classes it requires.
+
+There are several ways to get them:
+
+* Write by hand
+* Copy from the Web Sevice project, if it is written in Java
+* Have a Maven artifact containing the model classes, perhaps it is offered by the Service project
+* Generate the model classes from WSDL
+
+The last option tends to be the easiest and most flexible for client applications.
+
+=== Generate the Model classes from WSDL
+
+If you use Maven, the https://cxf.apache.org/docs/maven-cxf-codegen-plugin-wsdl-to-java.html[cxf-codegen-plugin] provided by CXF
+might be the handiest option.
+There is also https://cxf.apache.org/docs/wsdl-to-java.html[wsdl2java] utility likewise provided by CXF.
+
+NOTE: The sample code snippets used in this section come from the
+     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client[client integration test]
+     in the source tree of {quarkus-cxf-project-name}
+
+We need to invoke the `wsdl2java` goal of `cxf-codegen-plugin` to generate the model classes from the WSDL:
+
+.pom.xml
+[source,xml]
+----
+include::example$calculator-client/pom.xml[tag=first-soap-client.adoc-cxf-codegen-plugin]
+----
+
+<1> We need to store a copy of the WSDL locally.
+
+This will generate the model classes in `target/generated-sources` directory
+where they will be automatically picked by the compiler plugin
+so we are free to refer to them from our application code.
+
+== Using SEI as a client
+
+In our case, the Service Endpoint Interface (SEI) is `org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService`.
+
+As usual on Quarkus, we can obtain an instance of it via CDI.
+
+To make it testable easily, we'll wrap it in a REST service:
+
+.CxfClientResource.java
+[source,java]
+----
+include::example$calculator-client/CxfClientRestResource.java[]
+----
+
+<1> Let the CDI container inject an instance of the client. `@CXFClient("myCalculator")` is actually equivalent to `@Inject @CXFClient("myCalculator")`
+<2> Invoke the `add` operation thus calling the remote Web service
+
+Is this all we need for the client to work?
+- No, in addition to the above, we need to tell a few other things to the CXF Quarkus extension in `application.properties`:
+
+.application.properties
+[source,properties]
+----
+cxf.it.calculator.baseUri=http://localhost:8082
+include::example$calculator-client/application.properties[tag=first-soap-client.adoc]
+----
+
+TIP: All client configuration properties are documented in the xref:reference/configuration-properties.adoc[Configuration properties] reference.
+
+With all the above files in place, we should be able to start the application in Quarkus https://quarkus.io/guides/maven-tooling#dev-mode[`dev` mode]
+
+[source,shell]
+----
+$ mvn quarkus:dev
+...
+INFO  [io.quarkus] (Quarkus Main Thread) ... Listening on: http://localhost:8080
+----
+
+and test it by sending some requests to it:
+
+[source,shell]
+----
+$ curl -s 'http://localhost:8080/cxf/calculator-client/add?a=5&b=6'
+11
+----
+
+where `11` is the correct result of adding `5` and `6`.
+
+== Further steps
+
+You may want to proceed with
+
+* xref:user-guide/package-for-jvm-and-native.adoc[Package for JVM and native].
+* xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
