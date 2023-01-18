@@ -17,6 +17,10 @@
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-rt-features-logging</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
@@ -41,6 +45,45 @@
                         <goals>
                             <goal>build</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Copy the sample code to docs module where Antora can see it -->
+                        <id>copy-resources-for-antora</id>
+                        <phase>compile</phase><!-- after source formatting -->
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/soap-service</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/java/io/quarkiverse/cxf/it/server</directory>
+                                    <includes>
+                                        <include>HelloService*.java</include>
+                                        <include>Fruit*.java</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>application.properties</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/test/java/io/quarkiverse/cxf/it/server</directory>
+                                    <includes>
+                                        <include>HelloServiceTest.java</include>
+                                        <include>HelloServiceIT.java</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

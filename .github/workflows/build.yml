@@ -35,8 +35,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    - name: Build - JVM
-      run: ./mvnw -B formatter:validate install --file pom.xml
+    - name: mvn -B formatter:validate install
+      run: ./mvnw -B formatter:validate install
+
+    - name: 'Upload generated Antora docs site'
+      uses: actions/upload-artifact@v3
+      with:
+        name: docs
+        path: docs/target/site
 
     - name: Fail if there are uncommitted changes
       shell: bash
@@ -45,6 +51,7 @@ jobs:
 
   native-tests:
     strategy:
+      fail-fast: false
       matrix:
         testModule: [client, logging, mtom, mtom-awt, server, ws-addressing, ws-rm, ws-security-client, ws-security-server, ws-trust]
     name: ${{matrix.testModule}} native tests

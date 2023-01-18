@@ -1,0 +1,193 @@
+[[first-steps]]
+= Your first SOAP Web service on Quarkus
+
+include::../includes/attributes.adoc[]
+
+In this guide we explain how to create a Quarkus application exposing a simple SOAP Web service.
+
+NOTE: Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
+
+== Hello world! Web service
+
+Having the `pom.xml` in place, you can add a simple Hello world! Web service in `src/main/java`.
+
+NOTE: The sample code snippets used in this section come from the
+     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
+     in the source tree of {quarkus-cxf-project-name}
+
+First add the service interface:
+
+.HelloService.java
+[source,java]
+----
+include::example$soap-service/HelloService.java[]
+----
+
+and then the implementation:
+
+.HelloServiceImpl.java
+[source,java]
+----
+include::example$soap-service/HelloServiceImpl.java[]
+----
+
+For the implementation to get exposed under a certain path, you need to add the following configuration to `application.properties`:
+
+[source,properties]
+----
+include::example$soap-service/application.properties[tag=first-web-service.adoc]
+----
+
+TIP: All configuration properties are documented in the xref:reference/configuration-properties.adoc[Configuration properties] reference.
+
+With these files in place, you can start Quarkus in https://quarkus.io/guides/maven-tooling#dev-mode[`dev` mode]:
+
+[source,shell]
+----
+$ mvn quarkus:dev
+----
+
+This will compile the project and start the application on the background.
+
+You can test the service using `curl` or some other SOAP client.
+
+First let's have a look at the auto-generated WSDL under http://localhost:8080/soap/hello?wsdl[http://localhost:8080/soap/hello?wsdl]:
+
+[source,shell]
+----
+$ curl http://localhost:8080/soap/hello?wsdl
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://server.it.cxf.quarkiverse.io/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http"
+    name="HelloService" targetNamespace="http://server.it.cxf.quarkiverse.io/">
+  <wsdl:types>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://server.it.cxf.quarkiverse.io/" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://server.it.cxf.quarkiverse.io/">
+  <xsd:element name="hello" type="tns:hello"/>
+  <xsd:complexType name="hello">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="arg0" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="helloResponse" type="tns:helloResponse"/>
+  <xsd:complexType name="helloResponse">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="return" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="helloResponse">
+    <wsdl:part element="tns:helloResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="hello">
+    <wsdl:part element="tns:hello" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="HelloService">
+    <wsdl:operation name="hello">
+      <wsdl:input message="tns:hello" name="hello">
+    </wsdl:input>
+      <wsdl:output message="tns:helloResponse" name="helloResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="HelloServiceSoapBinding" type="tns:HelloService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="hello">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="hello">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="helloResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="HelloService">
+    <wsdl:port binding="tns:HelloServiceSoapBinding" name="HelloServicePort">
+      <soap:address location="http://localhost:8080/soap/hello"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
+----
+
+Second, let's send a SOAP request to the service:
+
+[source,shell]
+----
+$ curl -v -X POST -H "Content-Type: text/xml;charset=UTF-8" \
+    -d \
+      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body><ns2:hello xmlns:ns2="http://server.it.cxf.quarkiverse.io/"><arg0>World</arg0></ns2:hello></soap:Body>
+       </soap:Envelope>' \
+    http://localhost:8080/soap/hello
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <ns1:helloResponse xmlns:ns1="http://server.it.cxf.quarkiverse.io/">
+      <return>Hello World!</return>
+    </ns1:helloResponse>
+  </soap:Body>
+</soap:Envelope>
+----
+
+Note the expected `<return>Hello World!</return>` in the SOAP response.
+
+[[logging-feature]]
+== Add the logging feature while dev mode is running
+
+Sometimes it may come in handy to be able to inspect the SOAP messages received or sent by the server or client.
+This is easily doable by adding the `quarkus-cxf-rt-features-logging` extension to `pom.xml`.
+
+TIP: Try to do that while Quarkus dev mode is running.
+     You should see the application being recompiled and redeployed upon saving your changes in the source tree.
+
+.Add this to `pom.xml`
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf-rt-features-logging</artifactId>
+</dependency>
+----
+
+.Enable SOAP payload logging in `application.properties`
+[source,xml,subs=attributes+]
+----
+quarkus.cxf.endpoint."/hello".features=org.apache.cxf.ext.logging.LoggingFeature
+----
+
+After that you can send a new SOAP request and see some SOAP payloads in the application console:
+
+[source,shell]
+----
+2023-01-11 22:12:21,315 INFO  [org.apa.cxf.ser.Hel.REQ_IN] (vert.x-worker-thread-0) REQ_IN
+    Address: http://localhost:8080/soap/hello
+    HttpMethod: POST
+    Content-Type: text/xml;charset=UTF-8
+    ExchangeId: af10747a-8477-4c17-bf5f-2a4a3a95d61c
+    ServiceName: HelloService
+    PortName: HelloServicePort
+    PortTypeName: HelloService
+    Headers: {Accept=*/*, User-Agent=curl/7.79.1, content-type=text/xml;charset=UTF-8, Host=localhost:8080, Content-Length=203, x-quarkus-hot-deployment-done=true}
+    Payload: <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body><ns2:hello xmlns:ns2="http://server.it.cxf.quarkiverse.io/"><arg0>World</arg0></ns2:hello></soap:Body>
+</soap:Envelope>
+
+
+2023-01-11 22:12:21,327 INFO  [org.apa.cxf.ser.Hel.RESP_OUT] (vert.x-worker-thread-0) RESP_OUT
+    Address: http://localhost:8080/soap/hello
+    Content-Type: text/xml
+    ResponseCode: 200
+    ExchangeId: af10747a-8477-4c17-bf5f-2a4a3a95d61c
+    ServiceName: HelloService
+    PortName: HelloServicePort
+    PortTypeName: HelloService
+    Headers: {}
+    Payload: <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns1:helloResponse xmlns:ns1="http://server.it.cxf.quarkiverse.io/"><return>Hello World!</return></ns1:helloResponse></soap:Body></soap:Envelope>
+----
+
+== Further steps
+
+You may want to proceed with xref:user-guide/package-for-jvm-and-native.adoc[packaging your application for running on a JVM or natively].
