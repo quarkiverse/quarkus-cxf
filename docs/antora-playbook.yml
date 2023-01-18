@@ -1,0 +1,19 @@
+site:
+  title: CXF Extensions for Quarkus
+  start_page: quarkus-cxf:ROOT:index.adoc
+content:
+  sources: 
+  - url: ./../
+    branches: HEAD
+    start_path: docs
+ui: 
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+
+asciidoc:
+  attributes:
+    kroki-fetch-diagram: true
+
+output:
+  dir: ./target/site

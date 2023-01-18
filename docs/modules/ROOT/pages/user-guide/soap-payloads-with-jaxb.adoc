@@ -1,0 +1,151 @@
+= Complex SOAP payloads with JAXB
+
+include::../includes/attributes.adoc[]
+
+Our introductory guides for Quarkus xref:user-guide/first-soap-client.adoc[SOAP client]
+and xref:user-guide/first-soap-web-service.adoc[SOAP service] dealt with services
+having only primitive parameters and return values such as integers and strings.
+Let's have a look at passing and receiving more complex objects.
+
+As an example, let's create an application for managing fruits.
+
+NOTE: The sample code snippets used in this section come from the
+     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
+     in the source tree of {quarkus-cxf-project-name}
+
+Because our representation of fruit is supposed to be a complex, let's model it as a Java bean with a couple of attributes:
+
+[source,java]
+----
+include::example$soap-service/Fruit.java[]
+----
+
+As you may have noticed, we have used some https://docs.oracle.com/javase/tutorial/jaxb/intro/index.html[JAXB] annotations,
+such as `@XmlElement`, `@XmlRootElement` and `@XmlType`.
+This is to control the serialization and deserialization of the bean from and to XML.
+
+== Automatic registration for reflection
+
+JAXB is a reflection based serialization framework.
+When learning about GraalVM native images, one of the first things you typically hear is
+that you have to register classes, fields and methods for reflection at build time.
+With plain GraalVM you'd have to do this through `reflection-config.json` manually.
+Well, at least for the classes you have written yourself.
+Not so with Quarkus. `quarkus-jaxb` extension (which `quarkus-cxf` depends on)
+is able to scan your application's class path for classes annotated with JAXB annotations
+and register them for reflection automatically.
+
+Hence working with complex payloads on Quarkus is not different from stock CXF.
+The JAXB serialization and deserialization will work out of the box without any additional configuration.
+
+== SEI and implementation
+
+The Service Endpoint Interface (SEI) for managing fruits might look like the following:
+
+[source,java]
+----
+include::example$soap-service/FruitService.java[]
+----
+
+We can implement the SEI as simply as possible:
+
+[source,java]
+----
+include::example$soap-service/FruitServiceImpl.java[]
+----
+
+== `application.properties`
+
+The implementation is pretty straightforward and you just need to define your endpoints using the `application.properties`.
+
+[source,properties]
+----
+include::example$soap-service/application.properties[tag=soap-payloads-with-jaxb.adoc]
+----
+
+== Test with Quarkus `dev` mode and `curl`
+
+Having the above files in place, you can start Quarkus tooling in https://quarkus.io/guides/maven-tooling#dev-mode[`dev` mode]:
+
+[source,shell]
+----
+$ mvn quarkus:dev
+...
+INFO  [io.quarkus] (Quarkus Main Thread) ... Listening on: http://localhost:8080
+----
+
+and then check whether the service is working by invoking its `list` operation:
+
+[source,bash]
+----
+$ curl -v -X POST -H "Content-Type: text/xml;charset=UTF-8" \
+    -d \
+      '<soapenv:Envelope
+      xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+      xmlns:ns1="http://server.it.cxf.quarkiverse.io/">
+        <soapenv:Body>
+            <ns1:list/>
+        </soapenv:Body>
+    </soapenv:Envelope>' \
+    http://localhost:8080/soap/fruits
+...
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <ns1:listResponse xmlns:ns1="http://server.it.cxf.quarkiverse.io/">
+      <return xmlns:ns2="http://server.it.cxf.quarkiverse.io/">
+        <description>Winter fruit</description>
+        <name>Apple</name>
+      </return>
+      <return xmlns:ns2="http://server.it.cxf.quarkiverse.io/">
+        <description>Tropical fruit</description>
+        <name>Pineapple</name>
+      </return>
+    </ns1:listResponse>
+  </soap:Body>
+</soap:Envelope>
+----
+
+As you can see, the endpoint has returned the two fruits `Apple` and `Pineapple` available by default.
+
+Now let's add another fruit, say an `Orange`:
+
+[source,bash]
+----
+$ curl -v -X POST -H "Content-Type: text/xml;charset=UTF-8" \
+    -d \
+     '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+          <ns2:add xmlns:ns2="http://server.it.cxf.quarkiverse.io/">
+            <arg0>
+              <description>Mediterranean fruit</description>
+              <name>Orange</name>
+            </arg0>
+          </ns2:add>
+       </soap:Body></soap:Envelope>' \
+    http://localhost:8080/soap/fruits
+...
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <ns1:addResponse xmlns:ns1="http://server.it.cxf.quarkiverse.io/">
+      <return xmlns:ns2="http://server.it.cxf.quarkiverse.io/">
+        <description>Winter fruit</description>
+        <name>Apple</name>
+      </return>
+      <return xmlns:ns2="http://server.it.cxf.quarkiverse.io/">
+        <description>Tropical fruit</description>
+        <name>Pineapple</name>
+      </return>
+      <return xmlns:ns2="http://server.it.cxf.quarkiverse.io/">
+        <description>Mediterranean fruit</description>
+        <name>Orange</name>
+      </return>
+    </ns1:addResponse>
+  </soap:Body>
+</soap:Envelope>
+----
+
+We can see `Orange` having been added in the returned list as expected.
+
+== Further steps
+
+You may want to proceed with xref:user-guide/package-for-jvm-and-native.adoc[packaging your application for running on a JVM or natively].

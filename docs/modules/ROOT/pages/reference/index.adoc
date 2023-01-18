@@ -1,0 +1,13 @@
+[[reference]]
+= Reference
+
+include::../includes/attributes.adoc[]
+
+Specifications and use cases suported by {quarkus-cxf-project-name}:
+
+* https://cxf.apache.org/docs/ws-addressing.html[WS-Addressing]
+* https://cxf.apache.org/docs/ws-policy.html[WS-Policy]
+* https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging]
+* https://cxf.apache.org/docs/ws-security.html[WS-Security]
+* https://cxf.apache.org/docs/ws-securitypolicy.html[WS-SecurityPolicy]
+* https://cxf.apache.org/docs/ws-trust.html[WS-Trust]
