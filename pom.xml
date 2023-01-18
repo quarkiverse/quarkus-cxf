@@ -55,6 +55,7 @@
         <quarkus.version>2.13.7.Final</quarkus.version>
         <quarkus-xmlsec.version>1.1.1</quarkus-xmlsec.version>
         <saaj-impl.version>1.5.3</saaj-impl.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.saaj-impl.version -->
+        <slf4j.version>1.7.36</slf4j.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.slf4j:slf4j-api -->
         <woodstox-core.version>6.5.0</woodstox-core.version>
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>

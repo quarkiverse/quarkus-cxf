@@ -1,0 +1,39 @@
+[[handlers]]
+= JAX-WS Handlers
+
+include::../includes/attributes.adoc[]
+
+As an alternative to the `@HandlerChain` annotation,
+https://javaee.github.io/metro-jax-ws/doc/user-guide/ch03.html#users-guide-handler[JAX-WS Handlers] can be added
+to both your client or server via `application.properties`:
+
+.application.properties
+[source,properties]
+----
+# A web service endpoint with multiple Handler classes
+quarkus.cxf.endpoint."/greeting-service".handlers=org.acme.MySOAPHandler,org.acme.AnotherSOAPHandler
+
+# A web service client with a single Handler
+quarkus.cxf.client."greeting-client".handlers=org.acme.MySOAPHandler
+----
+
+Where `MySOAPHandler` could look like below:
+
+[source,java]
+----
+import javax.xml.ws.handler.soap.SOAPHandler;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
+
+public class MySOAPHandler implements SOAPHandler<SOAPMessageContext> {
+
+    public boolean handleMessage(SOAPMessageContext messageContext) {
+        SOAPMessage msg = messageContext.getMessage();
+        return true;
+    }
+    // other methods
+}
+----
+
+NOTE: The `SOAPHandler` classes will be attempted to be loaded via CDI first.
+     If no CDI beans are available for the given type, then the no parameters constructor will used
+     to instantiate each class.

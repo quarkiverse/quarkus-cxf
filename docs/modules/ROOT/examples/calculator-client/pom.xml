@@ -4,13 +4,13 @@
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
         <artifactId>quarkus-cxf-integration-tests</artifactId>
-        <version>1.5.11-SNAPSHOT</version>
+        <version>1.8.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-integration-test-server</artifactId>
+    <artifactId>quarkus-cxf-integration-test-client</artifactId>
 
-    <name>Quarkus CXF - Integration Test - Server</name>
+    <name>Quarkus CXF - Integration Test - Client</name>
 
     <dependencies>
         <dependency>
@@ -18,21 +18,31 @@
             <artifactId>quarkus-cxf</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-rt-features-logging</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-test-util</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit4-mock</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -48,6 +58,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- tag::first-soap-client.adoc-cxf-codegen-plugin[] -->
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlOptions>
+                                <wsdlOption> <!--1-->
+                                    <wsdl>${basedir}/src/main/cxf-codegen-resources/wsdl/CalculatorService.wsdl</wsdl>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- end::first-soap-client.adoc-cxf-codegen-plugin[] -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -60,13 +90,12 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/soap-service</outputDirectory>
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/calculator-client</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/java/io/quarkiverse/cxf/it/server</directory>
+                                    <directory>.</directory>
                                     <includes>
-                                        <include>HelloService*.java</include>
-                                        <include>Fruit*.java</include>
+                                        <include>pom.xml</include>
                                     </includes>
                                 </resource>
                                 <resource>
@@ -76,10 +105,9 @@
                                     </includes>
                                 </resource>
                                 <resource>
-                                    <directory>src/test/java/io/quarkiverse/cxf/it/server</directory>
+                                    <directory>src/main/java/io/quarkiverse/cxf/client/it</directory>
                                     <includes>
-                                        <include>HelloServiceTest.java</include>
-                                        <include>HelloServiceIT.java</include>
+                                        <include>CxfClientRestResource.java</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -98,7 +126,6 @@
             </activation>
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
-                <quarkus.native.report-errors-at-runtime>true</quarkus.native.report-errors-at-runtime>
             </properties>
             <build>
                 <plugins>
@@ -111,11 +138,6 @@
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
                                 </goals>
-                                <configuration>
-                                    <systemProperties>
-                                        <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
-                                    </systemProperties>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

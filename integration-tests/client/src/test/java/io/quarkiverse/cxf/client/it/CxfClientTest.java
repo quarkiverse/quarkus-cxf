@@ -23,6 +23,17 @@ import io.restassured.RestAssured;
 @QuarkusTestResource(CxfClientTestResource.class)
 public class CxfClientTest {
 
+    @Test
+    void add() {
+        RestAssured.given()
+                .queryParam("a", 7)
+                .queryParam("b", 4)
+                .get("/cxf/calculator-client/add")
+                .then()
+                .statusCode(200)
+                .body(is("11"));
+    }
+
     /**
      * Test whether all ways of injecting a client work properly
      *
