@@ -65,10 +65,23 @@ public class CxfLoggingTest {
                                 final String content = Files.readString(logFile, StandardCharsets.UTF_8);
                                 if (content.contains("org.apa.cxf.ser.Cal.REQ_OUT")
                                         && content.contains(
-                                                "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:multiply xmlns:ns2=\"http://www.jboss.org/eap/quickstarts/wscalculator/Calculator\"><arg0>3</arg0><arg1>4</arg1></ns2:multiply></soap:Body></soap:Envelope>")
+                                                "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                                                        + "  <soap:Body>\n"
+                                                        + "    <ns2:multiply xmlns:ns2=\"http://www.jboss.org/eap/quickstarts/wscalculator/Calculator\">\n"
+                                                        + "      <arg0>3</arg0>\n"
+                                                        + "      <arg1>4</arg1>\n"
+                                                        + "    </ns2:multiply>\n"
+                                                        + "  </soap:Body>\n"
+                                                        + "</soap:Envelope>")
                                         && content.contains("org.apa.cxf.ser.Cal.RESP_IN")
                                         && content.contains(
-                                                "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:multiplyResponse xmlns:ns2=\"http://www.jboss.org/eap/quickstarts/wscalculator/Calculator\"><return>12</return></ns2:multiplyResponse></soap:Body></soap:Envelope>")) {
+                                                "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                                                        + "  <soap:Body>\n"
+                                                        + "    <ns2:multiplyResponse xmlns:ns2=\"http://www.jboss.org/eap/quickstarts/wscalculator/Calculator\">\n"
+                                                        + "      <return>12</return>\n"
+                                                        + "    </ns2:multiplyResponse>\n"
+                                                        + "  </soap:Body>\n"
+                                                        + "</soap:Envelope>")) {
                                     return true;
                                 }
                             }
