@@ -11,6 +11,18 @@
     <artifactId>quarkus-cxf-rt-features-logging-deployment</artifactId>
     <name>Quarkus CXF - Advanced Logging Feature - Deployment</name>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-bom-test</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
@@ -19,6 +31,23 @@
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-rt-features-logging</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5-internal</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-test-util</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
