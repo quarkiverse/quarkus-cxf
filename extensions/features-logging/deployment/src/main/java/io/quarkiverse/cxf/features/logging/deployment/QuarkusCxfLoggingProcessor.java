@@ -2,6 +2,9 @@ package io.quarkiverse.cxf.features.logging.deployment;
 
 import java.util.stream.Stream;
 
+import org.apache.cxf.ext.logging.LoggingFeature;
+
+import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -22,6 +25,11 @@ public class QuarkusCxfLoggingProcessor {
                     String[] coords = ga.split(":");
                     indexDependencies.produce(new IndexDependencyBuildItem(coords[0], coords[1]));
                 });
+    }
+
+    @BuildStep
+    void unremovableBean(BuildProducer<UnremovableBeanBuildItem> unremovable) {
+        unremovable.produce(UnremovableBeanBuildItem.beanTypes(LoggingFeature.class));
     }
 
 }
