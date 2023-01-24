@@ -166,14 +166,14 @@ public class CxfHandler implements Handler<RoutingContext> {
     private static Class<?> loadClass(String className) {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(className);
-        } catch (ClassNotFoundException e) {
-            // silent fail
-        }
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            LOGGER.warn("failed to load class " + className);
-            return null;
+        } catch (ClassNotFoundException e1) {
+            try {
+                return Class.forName(className);
+            } catch (ClassNotFoundException e2) {
+                e1.addSuppressed(e2);
+                throw new RuntimeException("Could not load " + className + " using current thread class loader nor "
+                        + CxfHandler.class.getName() + " class loader", e1);
+            }
         }
     }
 
