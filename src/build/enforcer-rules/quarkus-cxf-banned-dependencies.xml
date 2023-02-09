@@ -1,0 +1,13 @@
+<enforcer>
+    <rules>
+        <!-- Quarkus CXF specific dependency bans -->
+        <bannedDependencies>
+            <excludes>
+                <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.4_mail</exclude><!-- use com.sun.mail:jakarta.mail instead -->
+                <exclude>org.apache.geronimo.specs:geronimo-jta*</exclude>
+                <exclude>org.apache.geronimo.specs:geronimo-jms*</exclude>
+                <exclude>junit:junit</exclude><!-- should not be needed at all. In the worst case, use io.quarkus:quarkus-junit4-mock instead -->
+            </excludes>
+        </bannedDependencies>
+    </rules>
+</enforcer>

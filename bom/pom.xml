@@ -46,6 +46,10 @@
                         <groupId>jakarta.xml.bind</groupId>
                         <artifactId>jakarta.xml.bind-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -458,6 +462,13 @@
             <plugin>
                 <groupId>org.l2x6.cq</groupId>
                 <artifactId>cq-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.quarkus</groupId>
+                        <artifactId>quarkus-enforcer-rules</artifactId>
+                        <version>${quarkus.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>flatten-bom</id>
@@ -483,6 +494,14 @@
                             <requiredBomEntryIncludes>
                                 <requiredBomEntryInclude>org.apache.cxf</requiredBomEntryInclude>
                             </requiredBomEntryIncludes>
+                            <bannedDependencyResources>
+                                <bannedDependencyResource>
+                                    <location>classpath:enforcer-rules/quarkus-require-maven-version.xml</location>
+                                </bannedDependencyResource>
+                                <bannedDependencyResource>
+                                    <location>${maven.multiModuleProjectDirectory}/src/build/enforcer-rules/quarkus-cxf-banned-dependencies.xml</location>
+                                </bannedDependencyResource>
+                            </bannedDependencyResources>
                             <bomEntryTransformations>
                                 <bomEntryTransformation>
                                     <gavPattern>org.apache.cxf:cxf-rt-ws-policy</gavPattern>
