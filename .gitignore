@@ -51,10 +51,6 @@ nb-configuration.xml
 *.orig
 *.rej
 
-# Gradle
-.gradle/
-build/
-
 # Maven
 target/
 pom.xml.tag
