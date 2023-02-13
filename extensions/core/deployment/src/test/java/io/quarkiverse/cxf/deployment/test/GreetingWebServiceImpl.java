@@ -1,6 +1,6 @@
 package io.quarkiverse.cxf.deployment.test;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(endpointInterface = "io.quarkiverse.cxf.deployment.test.GreetingWebService", serviceName = "GreetingWebService")
 public class GreetingWebServiceImpl implements GreetingWebService {

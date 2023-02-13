@@ -3,8 +3,8 @@ package io.quarkiverse.cxf.it.ws.mtom.awt.server;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.WebService;
+import jakarta.jws.soap.SOAPBinding;
 
 import org.jboss.logging.Logger;
 

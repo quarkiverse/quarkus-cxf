@@ -16,7 +16,7 @@
  */
 package io.quarkiverse.cxf.it.wss.server;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 /**
  * The implementation of the {@link WssRounderService}

@@ -1,6 +1,6 @@
 package io.quarkiverse.cxf.it.server;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,7 +28,7 @@ class GreetingWebServiceNoIntfTest extends AbstractGreetingWebServiceTest {
     }
 
     /**
-     * We need an interface for javax.xml.ws.Service.getPort(Class<T>) to be able to create a dynamic proxy.
+     * We need an interface for jakarta.xml.ws.Service.getPort(Class<T>) to be able to create a dynamic proxy.
      * Otherwise, the client is served by GreetingWebServiceNoIntf
      */
     @WebService(targetNamespace = "http://server.it.cxf.quarkiverse.io/", name = "GreetingWebServiceNoIntf")

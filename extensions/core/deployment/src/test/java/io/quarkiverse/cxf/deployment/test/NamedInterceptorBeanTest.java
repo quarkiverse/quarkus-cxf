@@ -1,8 +1,8 @@
 package io.quarkiverse.cxf.deployment.test;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -34,13 +34,13 @@ public class NamedInterceptorBeanTest {
     FruitWebService client;
 
     @Produces
-    @Named
+    @Named("fooDescriptionAppender")
     FruitDescriptionAppender fooDescriptionAppender() {
         return new FruitDescriptionAppender(" Foo");
     }
 
     @Produces
-    @Named
+    @Named("barDescriptionAppender")
     FruitDescriptionAppender barDescriptionAppender() {
         return new FruitDescriptionAppender(" Bar");
     }

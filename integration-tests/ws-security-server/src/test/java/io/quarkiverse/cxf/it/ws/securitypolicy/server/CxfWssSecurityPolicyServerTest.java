@@ -6,7 +6,7 @@ import static io.restassured.RestAssured.given;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.cxf.ws.security.SecurityConstants;
 import org.assertj.core.api.Assertions;
@@ -42,7 +42,7 @@ public class CxfWssSecurityPolicyServerTest {
     void noSecurityConfig() throws IOException {
         WssSecurityPolicyHelloService client = getPlainClient();
         /* Make sure that it fails properly when called without a password */
-        Assertions.assertThatExceptionOfType(javax.xml.ws.soap.SOAPFaultException.class)
+        Assertions.assertThatExceptionOfType(jakarta.xml.ws.soap.SOAPFaultException.class)
                 .isThrownBy(() -> client.sayHello("bar"))
                 .withMessage(
                         "A encryption username needs to be declared.");
@@ -80,7 +80,7 @@ public class CxfWssSecurityPolicyServerTest {
         final String SOAP_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                 + "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                 + "   <soap:Header>\n"
-                + "      <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" soap:mustUnderstand=\"1\">\n"
+                + "      <wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" soap:mustUnderstand=\"0\">\n"
                 + "         <wsse:BinarySecurityToken EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\" ValueType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3\" wsu:Id=\"X509-53f34474-bcdf-424c-bb90-61b11537cb3f\">MIICnjCCAgmgAwIBAgIEAvQDETALBgkqhkiG9w0BAQUwMzETMBEGA1UEChMKYXBhY2hlLm9yZzEMMAoGA1UECxMDZW5nMQ4wDAYDVQQDEwVjeGZjYTAiGA8yMDIyMDkxOTEyMDA0NFoYDzk5OTkxMjMxMjM1OTU5WjAzMRMwEQYDVQQKEwphcGFjaGUub3JnMQwwCgYDVQQLEwNlbmcxDjAMBgNVBAMTBWFsaWNlMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApBH8SACzUp8ymvPMfQrUVmbvJBfyzOunHVmCDgYN+aTY+if3PBeJc6rdSSTNe7Auyua7HsVLFX/JUFpyKVw7qd21l4TuCA76YHXeRjkLip+uuD/ApKCz1AfJ0QfQ1rnMKcWRm3pla+ONAb2pf2Hz9vbdlDf9R0hQk+Dy7Y4vsH5uRmAw8Sjx8EhkCn54p61qyVJIyp/YZX88AcRUmeOEbwocNbHMAfpKvpsLzNdEfA7fCJcSFBjPrzEALlGiexI3jIQ8LSvXzUPFr8O/NPu4426sYxkB69kgrBd1SJF2FFNm3oiqcVqOY3qMytDdcBOIQPlU6Fro/hcsj8hj3XbaFQIDAQABozswOTAhBgNVHRIEGjAYghZOT1RfRk9SX1BST0RVQ1RJT05fVVNFMBQGA1UdEQQNMAuCCWxvY2FsaG9zdDALBgkqhkiG9w0BAQUDgYEAgkP32oMizt+e5Cv8HZ0WI2XM7YOLav29h9FQCGNNXd8DnXGX4GcAUdkD5FJjiWtgAC2LGcGiY3cA7TPvSTb+o+tLG0masnsq7U0T6X6M/EkOEHh/3IAlLOntYLAK2m1SidWrdcGckxi6ftDbgXfMHgI4GCK0oMMqfCx+NAOFpUY=</wsse:BinarySecurityToken>\n"
                 + "         <wsu:Timestamp wsu:Id=\"TS-ccfad22e-b376-4349-a625-8896061d6cfd\">\n"
                 + "            <wsu:Created>2022-09-19T12:00:51.226Z</wsu:Created>\n"

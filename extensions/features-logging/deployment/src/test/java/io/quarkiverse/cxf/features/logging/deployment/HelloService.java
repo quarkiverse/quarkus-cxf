@@ -1,7 +1,7 @@
 package io.quarkiverse.cxf.features.logging.deployment;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
 
 /**
  * The simplest Hello service.

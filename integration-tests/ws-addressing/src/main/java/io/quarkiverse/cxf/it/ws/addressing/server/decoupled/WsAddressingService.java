@@ -1,8 +1,8 @@
 package io.quarkiverse.cxf.it.ws.addressing.server.decoupled;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.xml.ws.soap.Addressing;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.soap.Addressing;
 
 @WebService
 @Addressing(required = true)

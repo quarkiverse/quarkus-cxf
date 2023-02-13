@@ -2,7 +2,7 @@ package io.quarkiverse.cxf.deployment.test;
 
 import java.lang.reflect.Proxy;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;

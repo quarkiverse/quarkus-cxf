@@ -2,16 +2,13 @@ package io.quarkiverse.cxf.it.server.provider;
 
 import java.io.StringReader;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.Provider;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.WebServiceProvider;
+
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
+import jakarta.xml.ws.*;
 
 import org.apache.cxf.staxutils.StaxUtils;
 
@@ -34,7 +31,7 @@ public class SOAPMessageProvider implements Provider<SOAPMessage> {
             response.saveChanges();
             return response;
 
-        } catch (SOAPException | XMLStreamException e) {
+        } catch (XMLStreamException | SOAPException e) {
             throw new WebServiceException(e);
         }
     }

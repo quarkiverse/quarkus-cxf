@@ -31,7 +31,7 @@ class SoapApiProcessor {
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
         final IndexView index = combinedIndexBuildItem.getIndex();
 
-        index.getAllKnownImplementors(DotName.createSimple("javax.xml.soap.SOAPBodyElement")).stream()
+        index.getAllKnownImplementors(DotName.createSimple("jakarta.xml.soap.SOAPBodyElement")).stream()
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> new ReflectiveClassBuildItem(true, false, className))
                 .forEach(reflectiveClass::produce);

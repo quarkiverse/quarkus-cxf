@@ -1,6 +1,6 @@
 package io.quarkiverse.cxf.it.ws.securitypolicy.server;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 import org.apache.cxf.annotations.EndpointProperties;
 import org.apache.cxf.annotations.EndpointProperty;

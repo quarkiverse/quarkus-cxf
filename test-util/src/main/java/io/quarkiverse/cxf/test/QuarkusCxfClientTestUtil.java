@@ -6,8 +6,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
+
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -27,7 +28,7 @@ public class QuarkusCxfClientTestUtil {
         try {
             final URL serviceUrl = new URL(getServerUrl() + path + "?wsdl");
             final QName qName = new QName(namespace, serviceInterface.getSimpleName());
-            final Service service = javax.xml.ws.Service.create(serviceUrl, qName);
+            final Service service = Service.create(serviceUrl, qName);
             return service.getPort(serviceInterface);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);

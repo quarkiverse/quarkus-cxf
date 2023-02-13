@@ -1,8 +1,8 @@
 package io.quarkiverse.cxf.it.ws.mtom.server;
 
-import javax.activation.DataHandler;
-import javax.xml.bind.annotation.XmlMimeType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.activation.DataHandler;
+import jakarta.xml.bind.annotation.XmlMimeType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name = "dataRequest", namespace = "http://org.jboss.ws/xop/doclit")
 public class DHRequest {

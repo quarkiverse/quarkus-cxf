@@ -2,8 +2,8 @@ package io.quarkiverse.cxf.it.server;
 
 import java.util.Set;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
 
 @WebService
 public interface FruitService {

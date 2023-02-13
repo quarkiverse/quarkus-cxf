@@ -1,7 +1,7 @@
 package io.quarkiverse.cxf.deployment.test;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.annotation.CXFClient;

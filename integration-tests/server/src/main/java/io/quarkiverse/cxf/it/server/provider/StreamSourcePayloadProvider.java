@@ -3,11 +3,8 @@ package io.quarkiverse.cxf.it.server.provider;
 import java.io.StringReader;
 
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
+
+import jakarta.xml.ws.*;
 
 import org.apache.cxf.staxutils.StaxUtils;
 

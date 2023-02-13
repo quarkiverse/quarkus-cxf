@@ -1,15 +1,16 @@
 package io.quarkiverse.cxf.it.server;
 
-import javax.inject.Inject;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.xml.ws.BindingType;
+import jakarta.inject.Inject;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 /**
  * Greeting web service that does not implement an interface
  */
 @WebService(serviceName = "GreetingWebServiceNoIntf")
-@BindingType(javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING)
+@BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 public class GreetingWebServiceNoIntf {
 
     @Inject

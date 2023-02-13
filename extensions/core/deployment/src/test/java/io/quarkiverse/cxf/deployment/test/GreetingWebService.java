@@ -1,8 +1,8 @@
 package io.quarkiverse.cxf.deployment.test;
 
-import javax.jws.WebMethod;
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
 
 @WebService
 public interface GreetingWebService {

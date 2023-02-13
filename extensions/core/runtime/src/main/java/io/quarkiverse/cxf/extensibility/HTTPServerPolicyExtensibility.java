@@ -1,8 +1,9 @@
 package io.quarkiverse.cxf.extensibility;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.cxf.transports.http.configuration.HTTPServerPolicy;
 

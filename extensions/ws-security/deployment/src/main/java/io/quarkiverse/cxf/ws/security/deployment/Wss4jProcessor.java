@@ -19,7 +19,11 @@ import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildI
 public class Wss4jProcessor {
     @BuildStep
     void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
-        Stream.of("org.apache.wss4j:wss4j-ws-security-dom")
+        Stream.of("org.apache.wss4j:wss4j-ws-security-dom",
+                "org.apache.wss4j:wss4j-ws-security-common",
+                "org.opensaml:opensaml-core",
+                "org.opensaml:opensaml-xmlsec-api",
+                "org.opensaml:opensaml-xmlsec-impl")
                 .forEach(ga -> {
                     String[] coords = ga.split(":");
                     indexDependencies.produce(new IndexDependencyBuildItem(coords[0], coords[1]));
@@ -33,7 +37,8 @@ public class Wss4jProcessor {
         Stream.of(
                 "org.apache.wss4j.dom.action.Action",
                 "org.apache.wss4j.dom.processor.Processor",
-                "org.apache.wss4j.dom.validate.Validator")
+                "org.apache.wss4j.dom.validate.Validator",
+                "org.opensaml.core.xml.io.Unmarshaller")
                 .map(DotName::createSimple)
                 .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
