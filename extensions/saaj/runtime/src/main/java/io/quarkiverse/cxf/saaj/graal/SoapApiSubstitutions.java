@@ -3,7 +3,7 @@ package io.quarkiverse.cxf.saaj.graal;
 import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
 
-@TargetClass(className = "javax.xml.soap.FactoryFinder")
+@TargetClass(className = "jakarta.xml.soap.FactoryFinder")
 final class Traget_javax_xml_soap_FactoryFinder {
 
     /**

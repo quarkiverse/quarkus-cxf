@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.jws.WebService;
-import javax.xml.ws.WebServiceProvider;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceProvider;
 
 import org.jboss.jandex.ClassInfo;
 

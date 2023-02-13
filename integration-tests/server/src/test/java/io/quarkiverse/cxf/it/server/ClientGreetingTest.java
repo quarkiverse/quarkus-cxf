@@ -3,8 +3,8 @@ package io.quarkiverse.cxf.it.server;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -3,13 +3,16 @@ package io.quarkiverse.cxf.it.ws.rm.server;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+
+import jakarta.xml.ws.Service;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.derby.DerbyDatabaseTestResource;
+// import io.quarkus.test.common.QuarkusTestResource;
+// import io.quarkus.test.derby.DerbyDatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest

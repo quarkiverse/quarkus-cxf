@@ -1,6 +1,6 @@
 package io.quarkiverse.cxf.it.server;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 @WebFault(name = "GreetingFault")
 public class GreetingException extends Exception {

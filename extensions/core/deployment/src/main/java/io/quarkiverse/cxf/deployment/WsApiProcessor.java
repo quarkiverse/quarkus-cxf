@@ -36,7 +36,7 @@ class WsApiProcessor {
 
         final IndexView index = combinedIndex.getIndex();
         Stream.of(
-                "javax.xml.ws.handler.Handler")
+                "jakarta.xml.ws.handler.Handler")
                 .map(DotName::createSimple)
                 .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
@@ -47,7 +47,7 @@ class WsApiProcessor {
     @BuildStep
     void registerServices(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
         Stream.of(
-                "javax.xml.ws.spi.Provider")
+                "jakarta.xml.ws.spi.Provider")
                 .forEach(serviceName -> {
                     try {
                         final Set<String> names = ServiceUtil.classNamesNamedIn(Thread.currentThread().getContextClassLoader(),

@@ -2,9 +2,10 @@ package io.quarkiverse.cxf.it.ws.mtom.server;
 
 import java.net.URL;
 
-import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+
+import jakarta.activation.DataHandler;
+import jakarta.xml.ws.Service;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class MtomTest {
         final URL serviceUrl = new URL(QuarkusCxfClientTestUtil.getServerUrl() + "/mtom?wsdl");
         final QName qName = new QName("https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/mtom",
                 MtomService.class.getSimpleName());
-        final Service service = javax.xml.ws.Service.create(serviceUrl, qName);
+        final Service service = jakarta.xml.ws.Service.create(serviceUrl, qName);
         final MtomService proxy = service.getPort(MtomService.class);
 
         DataHandler dh = new DataHandler("Hello from client", "text/plain");

@@ -10,11 +10,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.inject.Inject;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.inject.Inject;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
@@ -90,7 +90,7 @@ public class CxfClientProcessor {
                         clients.produce(
                                 new CxfClientBuildItem(sei, soapBinding, wsNamespace, wsName));
                         proxies.produce(new NativeImageProxyDefinitionBuildItem(wsClassInfo.name().toString(),
-                                "javax.xml.ws.BindingProvider", "java.io.Closeable", "org.apache.cxf.endpoint.Client"));
+                                "jakarta.xml.ws.BindingProvider", "java.io.Closeable", "org.apache.cxf.endpoint.Client"));
 
                     }
                 });

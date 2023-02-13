@@ -1,6 +1,6 @@
 package io.quarkiverse.cxf.it.server;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * A simple bean for testing whether injecting into service implementation works.

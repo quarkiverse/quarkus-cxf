@@ -30,7 +30,7 @@ public class CxfWssServerTest {
     void anonymous() throws IOException {
         final WssRounderService client = QuarkusCxfClientTestUtil.getClient(WssRounderService.class, "/soap/rounder");
         /* Make sure that it fails properly when called without a password */
-        Assertions.assertThatExceptionOfType(javax.xml.ws.soap.SOAPFaultException.class)
+        Assertions.assertThatExceptionOfType(jakarta.xml.ws.soap.SOAPFaultException.class)
                 .isThrownBy(() -> client.round(2.8))
                 .withMessage(
                         "A security error was encountered when verifying the message");
@@ -48,7 +48,7 @@ public class CxfWssServerTest {
 
         final CallbackHandler passwordCallback = new CallbackHandler() {
             @Override
-            public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+            public void handle(Callback[] callbacks) throws UnsupportedCallbackException {
                 for (Callback callback : callbacks) {
                     if (callback instanceof WSPasswordCallback) {
                         ((WSPasswordCallback) callback).setPassword(password);

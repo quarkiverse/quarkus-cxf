@@ -23,6 +23,10 @@
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-axiom-api-stub</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-woodstox</artifactId>
         </dependency>
         <dependency>

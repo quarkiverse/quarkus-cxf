@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import org.apache.cxf.sts.rest.RESTSecurityTokenService;
 import org.apache.cxf.sts.rest.RESTSecurityTokenServiceImpl;
+import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 
 import io.quarkus.arc.deployment.BuildTimeConditionBuildItem;
@@ -45,7 +46,7 @@ public class QuarkusCxfStsProcessor {
          * So we rather hide them from RESTeasy
          */
         Stream.of(RESTSecurityTokenService.class, RESTSecurityTokenServiceImpl.class)
-                .map(cl -> new BuildTimeConditionBuildItem(index.getClassByName(cl), false))
+                .map(cl -> new BuildTimeConditionBuildItem(index.getClassByName(DotName.createSimple(cl.getName())), false))
                 .forEach(buildTimeConditions::produce);
 
     }

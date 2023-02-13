@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
 @WebService(endpointInterface = "io.quarkiverse.cxf.deployment.test.FruitWebService", serviceName = "FruitWebService")
 public class FruitWebServiceImpl implements FruitWebService {

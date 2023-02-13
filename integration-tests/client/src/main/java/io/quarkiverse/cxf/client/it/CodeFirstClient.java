@@ -16,8 +16,8 @@
  */
 package io.quarkiverse.cxf.client.it;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
 
 /**
  * An incomplete copy of

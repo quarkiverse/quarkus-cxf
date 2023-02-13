@@ -13,8 +13,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>deployment</module>
+        <module>axiom-api-stub</module>
         <module>runtime</module>
+        <module>deployment</module>
     </modules>
 
 </project>

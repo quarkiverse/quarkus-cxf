@@ -28,10 +28,10 @@ public class EhcacheProcessor {
     @BuildStep
     void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
         Stream.of(
-                "org.ehcache:ehcache")
+                "org.ehcache:ehcache:jakarta")
                 .forEach(ga -> {
                     String[] coords = ga.split(":");
-                    indexDependencies.produce(new IndexDependencyBuildItem(coords[0], coords[1]));
+                    indexDependencies.produce(new IndexDependencyBuildItem(coords[0], coords[1], coords[2]));
                 });
     }
 

@@ -376,14 +376,6 @@ class QuarkusCxfProcessor {
 
         /* Referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_common_spi_NamespaceClassGenerator */
         reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, "org.apache.cxf.common.jaxb.NamespaceMapper"));
-
-        /*
-         * See org.apache.cxf.common.jaxb.JAXBUtils.createMininumEscapeHandler(Class<?>) and
-         * org.apache.cxf.common.jaxb.JAXBUtils.createNoEscapeHandler(Class<?>)
-         */
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, "com.sun.xml.bind.marshaller.MinimumEscapeHandler",
-                "com.sun.xml.bind.marshaller.NoEscapeHandler"));
-
     }
 
     @BuildStep

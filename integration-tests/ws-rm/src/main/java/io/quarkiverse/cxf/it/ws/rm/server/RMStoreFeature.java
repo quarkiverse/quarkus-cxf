@@ -9,8 +9,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import javax.enterprise.inject.spi.CDI;
 import javax.sql.DataSource;
+
+import jakarta.enterprise.inject.spi.CDI;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;

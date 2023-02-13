@@ -29,23 +29,23 @@ class SaajImplProcessor {
         for (String version : soapVersions) {
             serviceProvider.produce(
                     new ServiceProviderBuildItem(
-                            "javax.xml.soap.MessageFactory",
+                            "jakarta.xml.soap.MessageFactory",
                             "com.sun.xml.messaging.saaj.soap.ver" + version + ".SOAPMessageFactory" + version + "Impl"));
 
             serviceProvider.produce(
                     new ServiceProviderBuildItem(
-                            "javax.xml.soap.SOAPFactory",
+                            "jakarta.xml.soap.SOAPFactory",
                             "com.sun.xml.messaging.saaj.soap.ver" + version + ".SOAPFactory" + version + "Impl"));
         }
 
         serviceProvider.produce(
                 new ServiceProviderBuildItem(
-                        "javax.xml.soap.SOAPConnectionFactory",
+                        "jakarta.xml.soap.SOAPConnectionFactory",
                         "com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory"));
 
         serviceProvider.produce(
                 new ServiceProviderBuildItem(
-                        "javax.xml.soap.SAAJMetaFactory",
+                        "jakarta.xml.soap.SAAJMetaFactory",
                         "com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl"));
     }
 

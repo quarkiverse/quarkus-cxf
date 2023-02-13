@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.deployment;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.jboss.jandex.DotName;
@@ -15,6 +16,14 @@ import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
  * {@link BuildStep}s related to {@code org.apache.neethi:neethi}
  */
 class NeethiProcessor {
+
+    /** These depend on Apache Axiom that CXF 4 is excluding */
+    private static final Set<String> BANNED_CONVERTERS = Set.of(
+            "org.apache.neethi.builders.converters.StaxToOMConverter",
+            "org.apache.neethi.builders.converters.OMToStaxConverter",
+            "org.apache.neethi.builders.converters.OMToDOMConverter",
+            "org.apache.neethi.builders.converters.DOMToOMConverter",
+            "org.apache.neethi.builders.converters.OMToOMConverter");
 
     @BuildStep
     void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
@@ -33,6 +42,7 @@ class NeethiProcessor {
 
         index.getAllKnownImplementors(DotName.createSimple("org.apache.neethi.builders.converters.Converter")).stream()
                 .map(classInfo -> classInfo.name().toString())
+                .filter(cl -> !BANNED_CONVERTERS.contains(cl))
                 .map(className -> new ReflectiveClassBuildItem(true, false, className))
                 .forEach(reflectiveClass::produce);
 
@@ -41,6 +51,7 @@ class NeethiProcessor {
         Stream.concat(Stream.of(abstractDomCoverter),
                 index.getAllKnownSubclasses(DotName.createSimple(abstractDomCoverter)).stream()
                         .map(classInfo -> classInfo.name().toString()))
+                .filter(cl -> !BANNED_CONVERTERS.contains(cl))
                 .map(className -> new ReflectiveClassBuildItem(true, false, className))
                 .forEach(reflectiveClass::produce);
 
