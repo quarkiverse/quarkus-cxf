@@ -6,6 +6,14 @@ on:
     paths:
       - '.github/project.yml'
 
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -13,7 +21,7 @@ jobs:
     if: ${{github.event.pull_request.merged == true}}
 
     steps:
-      - uses: radcortez/project-metadata-action@1.0
+      - uses: radcortez/project-metadata-action@main
         name: Retrieve project metadata
         id: metadata
         with:
@@ -26,7 +34,7 @@ jobs:
         id: import_gpg
         uses: crazy-max/ghaction-import-gpg@v5
         with:
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
       - uses: actions/setup-java@v3
@@ -45,19 +53,16 @@ jobs:
 
       - name: Update latest release version in docs
         run: |
-          git checkout -b release
-          ./mvnw -B -ntp -pl ':quarkus-cxf-docs' -am generate-resources -Denforcer.skip -Dformatter.skip -Dimpsort.skip -Dkeytool.skip -Denforce-non-deployment.skip
+          mvn -B -ntp -pl docs -am generate-resources -Denforcer.skip -Dformatter.skip -Dimpsort.skip -Dkeytool.skip -Denforce-non-deployment.skip
           if ! git diff --quiet docs/modules/ROOT/pages/includes/attributes.adoc; then
             git add docs/modules/ROOT/pages/includes/attributes.adoc
-            git commit -m "Update the latest release version in documentation"
+            git commit -m "Update the latest release version ${{steps.metadata.outputs.current-version}} in documentation"
           fi
 
       - name: Maven release ${{steps.metadata.outputs.current-version}}
         run: |
-          ./mvnw -B release:prepare -Prelease -DreleaseVersion=${{steps.metadata.outputs.current-version}} -DdevelopmentVersion=${{steps.metadata.outputs.next-version}}
-          git checkout ${{github.base_ref}}
-          git rebase release
-          ./mvnw -B release:perform -Darguments=-DperformRelease -DperformRelease -Prelease
+          mvn -B release:prepare -Prelease -DreleaseVersion=${{steps.metadata.outputs.current-version}} -DdevelopmentVersion=${{steps.metadata.outputs.next-version}}
+          mvn -B release:perform -Darguments=-DperformRelease -DperformRelease -Prelease
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
