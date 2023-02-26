@@ -48,6 +48,7 @@ jobs:
         path: docs/target/site
 
     - name: Fail if there are uncommitted changes
+      if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]'}}
       shell: bash
       run: |
         [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; exit 1; }
