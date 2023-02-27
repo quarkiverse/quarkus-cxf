@@ -59,7 +59,7 @@
                 </executions>
             </plugin>
             <!-- tag::first-soap-client.adoc-cxf-codegen-plugin[] -->
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
                 <executions>
@@ -69,14 +69,14 @@
                         </goals>
                         <configuration>
                             <wsdlOptions>
-                                <wsdlOption> <!--1-->
+                                <wsdlOption>
                                     <wsdl>${basedir}/src/main/cxf-codegen-resources/wsdl/CalculatorService.wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
             <!-- end::first-soap-client.adoc-cxf-codegen-plugin[] -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
