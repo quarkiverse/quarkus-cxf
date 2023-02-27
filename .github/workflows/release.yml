@@ -21,7 +21,7 @@ jobs:
     if: ${{github.event.pull_request.merged == true}}
 
     steps:
-      - uses: radcortez/project-metadata-action@main
+      - uses: radcortez/project-metadata-action@master
         name: Retrieve project metadata
         id: metadata
         with:
