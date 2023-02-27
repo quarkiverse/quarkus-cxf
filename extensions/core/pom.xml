@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>codegen</module>
         <module>axiom-api-stub</module>
         <module>runtime</module>
         <module>deployment</module>

@@ -117,6 +117,11 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-codegen</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-axiom-api-stub</artifactId>
                 <version>${quarkus-cxf.version}</version>
             </dependency>
@@ -248,6 +253,11 @@
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${glassfish.jaxb.version}</version>
             </dependency>
+            <dependency><!-- org.apache.cxf:cxf-tools-wsdlto-core declares an older version  -->
+              <groupId>org.glassfish.jaxb</groupId>
+              <artifactId>jaxb-xjc</artifactId>
+              <version>${glassfish.jaxb.version}</version>
+          </dependency>
             <dependency>
                 <groupId>org.jvnet.mimepull</groupId>
                 <artifactId>mimepull</artifactId>
