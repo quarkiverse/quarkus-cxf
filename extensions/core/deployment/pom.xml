@@ -35,6 +35,10 @@
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-codegen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-saaj-deployment</artifactId>
         </dependency>
         <dependency>
