@@ -355,6 +355,11 @@
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${glassfish.jaxb.version}</version>
             </dependency>
+            <dependency><!-- org.apache.cxf:cxf-tools-wsdlto-core declares an older version  -->
+              <groupId>org.glassfish.jaxb</groupId>
+              <artifactId>jaxb-xjc</artifactId>
+              <version>${glassfish.jaxb.version}</version>
+          </dependency>
             <dependency>
                 <groupId>org.jvnet.mimepull</groupId>
                 <artifactId>mimepull</artifactId>

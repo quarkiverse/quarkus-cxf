@@ -11,13 +11,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.cxf.tools.common.ToolContext;
+import org.apache.cxf.tools.wsdlto.WSDLToJava;
 import org.jboss.logging.Logger;
 
 import io.quarkus.bootstrap.model.ApplicationModel;
 import io.quarkus.bootstrap.prebuild.CodeGenException;
 import io.quarkus.deployment.CodeGenContext;
 import io.quarkus.deployment.CodeGenProvider;
-import io.quarkus.deployment.util.ProcessUtil;
 
 /**
  * Code generation for Wsdl. Generates java classes from wsdl files placed in
@@ -73,33 +74,35 @@ public class WsdlCodeGen implements CodeGenProvider {
             }
 
             if (!wsdlFiles.isEmpty()) {
-                initExecutables(workDir, context.applicationModel());
+                //initExecutables(workDir, context.applicationModel());
 
                 for (int i = 0; i < wsdlFiles.size(); i++) {
                     String wsdlFile = wsdlFiles.get(i);
 
-                    List<String> command = new ArrayList<>();
-                    command.add(wsdl2java.toString());
+                    // List<String> command = new ArrayList<>();
+                    // command.add(wsdl2java.toString());
 
                     List<String> args = List.of("-d", outDir.toString(), wsdlFile);
 
-                    command.addAll(args);
+                    ToolContext ctx = new ToolContext();
+                    new WSDLToJava(args.toArray(new String[0])).run(ctx);
 
-                    ProcessBuilder processBuilder = new ProcessBuilder(command);
+                    // command.addAll(args);
 
-                    final Process process = ProcessUtil.launchProcess(processBuilder, context.shouldRedirectIO());
-                    int resultCode = process.waitFor();
-                    if (resultCode != 0) {
-                        throw new CodeGenException("Failed to generate Java classes from wsdl file: " + wsdlFile +
-                                " to " + outDir.toAbsolutePath() + " with command " + String.join(" ", command));
-                    }
+                    // ProcessBuilder processBuilder = new ProcessBuilder(command);
+
+                    // final Process process = ProcessUtil.launchProcess(processBuilder, context.shouldRedirectIO());
+                    // int resultCode = process.waitFor();
+                    // if (resultCode != 0) {
+                    //     throw new CodeGenException("Failed to generate Java classes from wsdl file: " + wsdlFile +
+                    //             " to " + outDir.toAbsolutePath() + " with command " + String.join(" ", command));
+                    // }
                 }
 
                 log.info("Successfully finished generating and post-processing sources from wsdl files");
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new CodeGenException(
                     "Failed to generate java files from wsdl file in " + context.inputDir().toAbsolutePath(), e);
         }

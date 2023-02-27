@@ -32,6 +32,25 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-devtools-utilities</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-tools-wsdlto-core</artifactId>
+            <!-- todo move to bom -->
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-tools-wsdlto-databinding-jaxb</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-tools-wsdlto-frontend-jaxws</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+
+
     </dependencies>
 
 </project>
