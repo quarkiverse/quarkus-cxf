@@ -1,0 +1,10 @@
+<enforcer>
+    <rules>
+        <!-- Dependency bans that should only honored during BOM flattening, but not by the enforcer in our modules -->
+        <bannedDependencies>
+            <excludes>
+                <exclude>org.ow2.asm:asm</exclude><!-- Can be banned from the BOM, but is still transitively pulled by some Quarkus artifacts -->
+            </excludes>
+        </bannedDependencies>
+    </rules>
+</enforcer>

@@ -108,24 +108,12 @@
                 <groupId>org.apache.cxf.xjc-utils</groupId>
                 <artifactId>cxf-xjc-runtime</artifactId>
                 <version>${cxf.xjc-utils.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
@@ -136,34 +124,16 @@
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-deployment</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-rt-features-logging</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-rt-features-logging-deployment</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
@@ -189,113 +159,41 @@
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-rt-ws-security</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.mail</groupId>
-                        <artifactId>jakarta.mail</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-rt-ws-security-deployment</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.mail</groupId>
-                        <artifactId>jakarta.mail</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-rt-ws-rm</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.mail</groupId>
-                        <artifactId>jakarta.mail</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-rt-ws-rm-deployment</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.mail</groupId>
-                        <artifactId>jakarta.mail</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-saaj</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-saaj-deployment</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-services-sts</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.mail</groupId>
-                        <artifactId>jakarta.mail</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-services-sts-deployment</artifactId>
                 <version>${quarkus-cxf.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.mail</groupId>
-                        <artifactId>jakarta.mail</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
@@ -380,12 +278,6 @@
                 <groupId>jakarta.xml.ws</groupId>
                 <artifactId>jakarta.xml.ws-api</artifactId>
                 <version>${jakarta.xml.ws-api.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -410,6 +302,9 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
+                            <additionalBoms>
+                                <additionalBom>io.quarkus:quarkus-bom:${quarkus.version}</additionalBom>
+                            </additionalBoms>
                             <originExcludes>
                                 <!-- originExcludes should not be necessary, as we do not import any third party -->
                                 <!-- BOMs that would transitively import quarkus-bom. It is left there, because -->
@@ -434,12 +329,27 @@
                                 <bannedDependencyResource>
                                     <location>${maven.multiModuleProjectDirectory}/src/build/enforcer-rules/quarkus-cxf-banned-dependencies.xml</location>
                                 </bannedDependencyResource>
+                                <bannedDependencyResource>
+                                    <location>${maven.multiModuleProjectDirectory}/src/build/enforcer-rules/quarkus-cxf-banned-bom-dependencies.xml</location>
+                                </bannedDependencyResource>
                             </bannedDependencyResources>
                             <bomEntryTransformations>
+                                <bomEntryTransformation>
+                                    <gavPattern>org.apache.camel:camel-opentelemetry</gavPattern>
+                                    <addExclusions>io.grpc:grpc-netty-shaded</addExclusions>
+                                </bomEntryTransformation>
                             </bomEntryTransformations>
                             <flattenedFullPomFile>${project.build.directory}/flattened-full-pom.xml</flattenedFullPomFile>
                             <flattenedReducedPomFile>${project.build.directory}/flattened-reduced-pom.xml</flattenedReducedPomFile>
                             <flattenedReducedVerbosePomFile>${project.build.directory}/flattened-reduced-verbose-pom.xml</flattenedReducedVerbosePomFile>
+                            <bomEntryTransformations>
+                            </bomEntryTransformations>
+                            <autogeneratedBomEntryTransformations>
+                                <autogeneratedBomEntryTransformation>
+                                    <gavPattern>io.quarkiverse.xmlsec:quarkus-xmlsec-deployment</gavPattern>
+                                    <addExclusions>org.ow2.asm:asm</addExclusions>
+                                </autogeneratedBomEntryTransformation>
+                            </autogeneratedBomEntryTransformations>
                         </configuration>
                     </execution>
                 </executions>
