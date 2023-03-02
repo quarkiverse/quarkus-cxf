@@ -56,7 +56,7 @@
         <jakarta.mail-api.version>2.1.1</jakarta.mail-api.version><!-- @sync org.eclipse.angus:all:${angus-mail.version} prop:mail-api.version -->
         <jakarta.jws-api.version>3.0.0</jakarta.jws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.jwsapi.version -->
         <jakarta.xml.soap-api.version>2.0.1</jakarta.xml.soap-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.soapapi.version -->
-        <jakarta.xml.ws-api.version>3.0.1</jakarta.xml.ws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.wsapi.version -->
+        <jakarta.xml.ws-api.version>4.0.0</jakarta.xml.ws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.wsapi.version -->
         <neethi.version>3.2.0</neethi.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
         <mimepull.version>1.10.0</mimepull.version>
         <saaj-impl.version>2.0.1</saaj-impl.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.saaj-impl.version -->
