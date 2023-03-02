@@ -12,7 +12,7 @@
   "packageRules": [
     {
       "matchPackagePatterns": [
-        "io.quarkiverse.cxf"
+        "io.quarkiverse.cxf", "org.glassfish.jaxb:jaxb-runtime"
       ],
       "enabled": false
     }
