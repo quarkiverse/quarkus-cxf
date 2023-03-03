@@ -11,8 +11,36 @@
   ],
   "packageRules": [
     {
+      "description": "Ignore major updates for matched packages (allow only minor and patch updates)",
       "matchPackagePatterns": [
-        "io.quarkiverse.cxf", "org.glassfish.jaxb:jaxb-runtime"
+        "org.apache.cxf.xjc-utils:cxf-xjc-runtime",
+        "jakarta.mail:jakarta.mail-api",
+        "jakarta.jws:jakarta.jws-api",
+        "jakarta.xml.soap:jakarta.xml.soap-api",
+        "jakarta.xml.ws:jakarta.xml.ws-api",
+        "org.apache.neethi:neethi",
+        "com.sun.xml.messaging.saaj:saaj-impl",
+        "org.slf4j:slf4j-simple"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Ignore major and minor updates for matched packages (allow only patch updates)",
+      "matchPackagePatterns": [
+        "org.glassfish.jaxb:jaxb-runtime"
+      ],
+      "matchUpdateTypes": [
+        "major", "minor"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Ignore all updates for matched packages",
+      "matchPackagePatterns": [
+        "io.quarkiverse.cxf"
       ],
       "enabled": false
     }
