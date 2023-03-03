@@ -39,6 +39,11 @@ public class UberJarMergedResourcesTest {
                 .filteredOn(r -> r.getMessage().contains("Building uber jar"))
                 .hasSize(1);
 
+        // Verify that external DTD calls are blocked (to prevent XML External Entity Injection attacks)
+        assertThat(buildLogRecords)
+                .filteredOn(r -> r.getMessage().contains("Preventing access to http://java.sun.com/dtd/properties.dtd"))
+                .hasSize(2);
+
         // Message will show up in the logs in case of any error that leads to a merge failure for wsdl.plugin.xml
         assertThat(buildLogRecords)
                 .filteredOn(r -> r.getMessage().contains("cannot merge wsdl.plugin.xml"))
