@@ -1,12 +1,6 @@
 package io.quarkiverse.cxf.deployment;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +42,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -207,9 +202,10 @@ class QuarkusCxfProcessor {
             XPath xpath = XPathFactory.newInstance().newXPath();
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "http");
+            documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 
             DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+            builder.setEntityResolver(new NoOpEntityResolver());
 
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Enumeration<URL> urls = loader.getResources("META-INF/wsdl.plugin.xml");
@@ -488,6 +484,14 @@ class QuarkusCxfProcessor {
             CXFRecorder recorder,
             ShutdownContextBuildItem shutdownContext) {
         recorder.resetDestinationRegistry(shutdownContext);
+    }
+
+    private static final class NoOpEntityResolver implements EntityResolver {
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId) {
+            LOGGER.info("Preventing access to " + systemId);
+            return new InputSource(new StringReader(""));
+        }
     }
 
     private static class QuarkusCapture implements GeneratedClassClassLoaderCapture {
