@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,12 +21,11 @@ public class NamedInterceptorBeanTest {
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)
                     .addClass(Fruit.class)
-                    .addClass(FruitDescriptionAppender.class)
-                    .add(new StringAsset(
-                            "quarkus.cxf.endpoint.\"/fruit\".implementor=io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl\n"
-                                    + "quarkus.cxf.endpoint.\"/fruit\".handlers=#barDescriptionAppender,#fooDescriptionAppender\n"
-                                    + "quarkus.cxf.client.\"fruitClient\".client-endpoint-url=http://localhost:8081/fruit"),
-                            "application.properties"));
+                    .addClass(FruitDescriptionAppender.class))
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".implementor",
+                    "io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl")
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".handlers", "#barDescriptionAppender,#fooDescriptionAppender")
+            .overrideConfigKey("quarkus.cxf.client.\"fruitClient\".client-endpoint-url", "http://localhost:8081/fruit");
 
     @Inject
     @CXFClient("fruitClient")
