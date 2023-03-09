@@ -1,10 +1,7 @@
 package io.quarkiverse.cxf.deployment.test;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.net.URL;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.namespace.QName;
@@ -22,8 +19,6 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.assertj.core.api.Assertions;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.Asset;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -37,9 +32,12 @@ public class CxfServiceInInterceptorTest {
     public static final QuarkusUnitTest test = new QuarkusUnitTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(HelloService.class, HelloServiceImpl.class, AnnotationCounterImplInterceptor.class,
-                            AnnotationCounterIntfInterceptor.class, PropertiesCounterInterceptor.class)
-                    .addAsResource(applicationProperties(), "application.properties"))
-            .withConfigurationResource("application-cxf-server-test.properties");
+                            AnnotationCounterIntfInterceptor.class, PropertiesCounterInterceptor.class))
+            .withConfigurationResource("application-cxf-server-test.properties")
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/intercepted\".implementor",
+                    HelloServiceImpl.class.getName())
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/intercepted\".in-interceptors",
+                    PropertiesCounterInterceptor.class.getName());
 
     @Test
     public void intercepted() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
@@ -125,21 +123,6 @@ public class CxfServiceInInterceptorTest {
             counter.incrementAndGet();
         }
 
-    }
-
-    public static Asset applicationProperties() {
-        Writer writer = new StringWriter();
-        Properties props = new Properties();
-        props.setProperty("quarkus.cxf.endpoint.\"/intercepted\".implementor",
-                HelloServiceImpl.class.getName());
-        props.setProperty("quarkus.cxf.endpoint.\"/intercepted\".in-interceptors",
-                PropertiesCounterInterceptor.class.getName());
-        try {
-            props.store(writer, "");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return new StringAsset(writer.toString());
     }
 
 }
