@@ -25,6 +25,9 @@ public class UnnamedLoggingFeatureTest {
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".features", "org.apache.cxf.ext.logging.LoggingFeature")
             .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName())
             .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/hello")
+            // Workaround for https://github.com/quarkusio/quarkus/issues/31646
+            // Should not be needed with the Quarkus release coming after 3.0.0.Alpha5
+            .overrideConfigKey("quarkus.jaxb.validate-jaxb-context", "false")
             .setLogRecordPredicate(logRecord -> logRecord.getLoggerName().contains("org.apache.cxf.services.HelloService.RE")) // REQ_IN or RESP_OUT
             .assertLogRecords(records -> assertThat(records)
                     .extracting(LogRecord::getMessage)

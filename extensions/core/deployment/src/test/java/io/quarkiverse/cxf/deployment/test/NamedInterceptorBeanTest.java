@@ -25,7 +25,10 @@ public class NamedInterceptorBeanTest {
             .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".implementor",
                     "io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl")
             .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".handlers", "#barDescriptionAppender,#fooDescriptionAppender")
-            .overrideConfigKey("quarkus.cxf.client.\"fruitClient\".client-endpoint-url", "http://localhost:8081/fruit");
+            .overrideConfigKey("quarkus.cxf.client.\"fruitClient\".client-endpoint-url", "http://localhost:8081/fruit")
+            // Workaround for https://github.com/quarkusio/quarkus/issues/31646
+            // Should not be needed with the Quarkus release coming after 3.0.0.Alpha5
+            .overrideConfigKey("quarkus.jaxb.validate-jaxb-context", "false");
 
     @Inject
     @CXFClient("fruitClient")
