@@ -1,0 +1,7 @@
+= `wsdl2java` code generation test
+
+The main focus of the current test module is to make sure that the `generate-code-tests` mojo of
+`quarkus-maven-plugin` works well with `Wsdl2JavaCodeGen`.
+
+Note that we test `generate-code` mojo of `quarkus-maven-plugin` in other modules, like
+`quarkus-cxf-integration-test-client`.

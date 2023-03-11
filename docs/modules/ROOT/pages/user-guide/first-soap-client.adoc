@@ -104,27 +104,51 @@ The last option tends to be the easiest and most flexible for client application
 
 === Generate the Model classes from WSDL
 
-If you use Maven, the https://cxf.apache.org/docs/maven-cxf-codegen-plugin-wsdl-to-java.html[cxf-codegen-plugin] provided by CXF
-might be the handiest option.
-There is also https://cxf.apache.org/docs/wsdl-to-java.html[wsdl2java] utility likewise provided by CXF.
+`quarkus-cxf` extension supports generating Java classes from WSDL during Quarkus code generation phase.
 
 NOTE: The sample code snippets used in this section come from the
      https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client[client integration test]
      in the source tree of {quarkus-cxf-project-name}
 
-We need to invoke the `wsdl2java` goal of `cxf-codegen-plugin` to generate the model classes from the WSDL:
+You need to set up a couple of things for CXF code generation to work:
 
+* Have `io.quarkiverse.cxf:quarkus-cxf` dependency in your project
+* For Maven projects, the `generate-code` goal needs to be present in the configuration of `quarkus-maven-plugin`:
++
 .pom.xml
 [source,xml]
 ----
-include::example$calculator-client/pom.xml[tag=first-soap-client.adoc-cxf-codegen-plugin]
+include::example$calculator-client/pom.xml[tag=first-soap-client.adoc-quarkus-maven-plugin]
 ----
++
+* For Gradle projects no additional configurarion of `io.quarkus` plugin is needed
+* Put your WSDL files under `src/main/wsdl` or `src/test/wsdl`
 
-<1> We need to store a copy of the WSDL locally.
+This will generate Java classes in `target/generated-sources/wsdl2java` or
+`target/generated-test-sources/wsdl2java` directory.
+There, they will be automatically picked by the compiler plugin.
+Hence we are free to refer to them from our application or test code.
 
-This will generate the model classes in `target/generated-sources` directory
-where they will be automatically picked by the compiler plugin
-so we are free to refer to them from our application code.
+Note that `quarkus-cxf` code generation uses the https://cxf.apache.org/docs/wsdl-to-java.html[wsdl2Java] utility
+from CXF under the hood.
+
+Passing custom parameters to `wsdl2java` is possible through
+xref:reference/configuration-properties.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[`quarkus.cxf.codegen.wsdl2java.additional-params`] configuration parameter.
+
+It is also possible to generate from multiple WSDL files using different `wsdl2java` parameters
+for each WSDL file using named parameter sets as follows:
+
+.application.properties
+[source,properties]
+----
+# the default nameless parameter set
+quarkus.cxf.codegen.wsdl2java.includes = foo.wsdl
+quarkus.cxf.codegen.wsdl2java.additional-params = -wsdlLocation,wsdl/foo.wsdl
+
+# another parameter set bearing name "my-named-params"
+quarkus.cxf.codegen.wsdl2java.my-named-params.includes = bar.wsdl
+quarkus.cxf.codegen.wsdl2java.my-named-params.additional-params = -wsdlLocation,wsdl/bar.wsdl
+----
 
 == Using SEI as a client
 
