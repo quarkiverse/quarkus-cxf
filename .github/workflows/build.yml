@@ -56,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        testModule: [client, logging, mtom, mtom-awt, server, ws-addressing, ws-rm, ws-security-client, ws-security-server, ws-trust]
+        testModule: [client, logging, mtom, mtom-awt, server, ws-addressing, ws-rm, ws-security-client, ws-security-server, ws-trust, wsdl2java]
     name: ${{matrix.testModule}} native tests
     needs: build-and-run-jvm-tests
     runs-on: ubuntu-latest
