@@ -123,10 +123,6 @@
                         <groupId>org.apache.geronimo.specs</groupId>
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -146,10 +142,6 @@
                         <groupId>org.apache.geronimo.specs</groupId>
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -160,10 +152,6 @@
                     <exclusion>
                         <groupId>org.apache.geronimo.specs</groupId>
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -177,12 +165,90 @@
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-context</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-tools-wsdlto-core</artifactId>
+                <version>${cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-tools-wsdlto-databinding-jaxb</artifactId>
+                <version>${cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-tools-wsdlto-frontend-jaxws</artifactId>
+                <version>${cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-tools-common</artifactId>
+                <version>${cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-tools-validator</artifactId>
+                <version>${cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-wsdl</artifactId>
+                <version>${cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                        <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -202,11 +268,6 @@
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf</artifactId>
-                <version>${quarkus-cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-codegen</artifactId>
                 <version>${quarkus-cxf.version}</version>
             </dependency>
             <dependency>
@@ -321,11 +382,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency><!-- org.apache.cxf:cxf-tools-wsdlto-core declares an older version  -->
-              <groupId>org.glassfish.jaxb</groupId>
-              <artifactId>jaxb-xjc</artifactId>
-              <version>${glassfish.jaxb.version}</version>
-          </dependency>
             <dependency>
                 <groupId>org.jvnet.mimepull</groupId>
                 <artifactId>mimepull</artifactId>
@@ -469,10 +525,6 @@
                                 <autogeneratedBomEntryTransformation>
                                     <gavPattern>org.apache.cxf:cxf-rt-ws-policy</gavPattern>
                                     <addExclusions>jakarta.activation:jakarta.activation-api,jakarta.xml.bind:jakarta.xml.bind-api,org.apache.geronimo.specs:geronimo-jta_1.1_spec</addExclusions>
-                                </autogeneratedBomEntryTransformation>
-                                <autogeneratedBomEntryTransformation>
-                                    <gavPattern>org.apache.cxf:cxf-rt-wsdl</gavPattern>
-                                    <addExclusions>org.apache.geronimo.specs:geronimo-jta_1.1_spec,org.ow2.asm:asm</addExclusions>
                                 </autogeneratedBomEntryTransformation>
                             </autogeneratedBomEntryTransformations>
                         </configuration>
