@@ -24,6 +24,7 @@
         <module>ws-rm</module>
         <module>mtom</module>
         <module>mtom-awt</module>
+        <module>wsdl2java</module>
     </modules>
 
     <properties>

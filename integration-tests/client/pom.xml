@@ -47,6 +47,7 @@
 
     <build>
         <plugins>
+            <!-- tag::first-soap-client.adoc-quarkus-maven-plugin[] -->
             <plugin>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
@@ -55,11 +56,11 @@
                         <goals>
                             <goal>build</goal>
                             <goal>generate-code</goal>
-                            <goal>generate-code-tests</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+            <!-- end::first-soap-client.adoc-quarkus-maven-plugin[] -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
