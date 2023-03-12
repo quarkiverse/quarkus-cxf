@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import org.assertj.core.api.Assertions;
 import org.jboss.eap.quickstarts.wscalculator.calculator.Add;
 import org.jboss.eap.quickstarts.wscalculator.calculator.ObjectFactory;
+import org.jboss.eap.quickstarts.wscalculator.calculator.Operands;
 import org.junit.jupiter.api.Test;
 
 public class Wsdl2JavaTest {
@@ -22,10 +23,24 @@ public class Wsdl2JavaTest {
                 .isRegularFile()
                 .content(StandardCharsets.UTF_8).contains("wsdlLocation = \"classpath:wsdl/CalculatorService.wsdl\"");
 
+    }
+
+    @Test
+    void generatedCodeCompiled() {
         /* Make sure that some of the generated classes can be loaded */
         ObjectFactory of = new ObjectFactory();
         Add add = of.createAdd();
         Assertions.assertThat(add).isNotNull();
+
+    }
+
+    @Test
+    void toStringGenerated() {
+        Operands op = new Operands();
+        op.setA(1);
+        op.setB(2);
+
+        Assertions.assertThat(op.toString()).endsWith("[a=1,b=2]");
     }
 
 }

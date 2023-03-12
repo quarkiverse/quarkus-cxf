@@ -122,6 +122,10 @@ public class CxfBuildTimeConfig {
          * {@code -wsdlLocation,classpath:wsdl/CalculatorService.wsdl}. Check
          * <a href="https://cxf.apache.org/docs/wsdl-to-java.html"><code>wsdl2java</code> documentation</a> for all
          * supported options.
+         * <p>
+         * You need to add {@code io.quarkiverse.cxf:quarkus-cxf-xjc-plugins} dependency to your project to be able to
+         * use {@code -xjc-Xboolean}, {@code -xjc-Xdv}, {@code -xjc-Xjavadoc}, {@code -xjc-Xpl}, {@code -xjc-Xts} or
+         * {@code -xjc-Xwsdlextension}.
          */
         @ConfigItem
         public Optional<List<String>> additionalParams;
