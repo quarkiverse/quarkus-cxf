@@ -277,6 +277,9 @@
                         </goals>
                         <phase>validate</phase>
                         <configuration>
+                            <!-- A Groovy script that updates the list of integration test modules in -->
+                            <!-- .github/workflows/build.yml based on the real state in integration-tests -->
+                            <!-- directory -->
                             <source>
                                 import java.nio.file.Files
                                 import java.nio.file.Path
