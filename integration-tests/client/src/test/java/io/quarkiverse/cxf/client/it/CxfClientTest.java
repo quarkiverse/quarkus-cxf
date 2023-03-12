@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.Disabled;
@@ -165,6 +166,19 @@ public class CxfClientTest {
             Assertions.fail("The static WSDL copy in " + staticCopyPath
                     + " went out of sync with the WSDL served by the container. The content was updated by the test, you just need to review and commit the changes.");
         }
+
+    }
+
+    @Test
+    void wsdlIncluded() throws IOException {
+        final String wsdl = IOUtils.resourceToString("wsdl/CalculatorService.wsdl", StandardCharsets.UTF_8,
+                getClass().getClassLoader());
+        /* make sure that the WSDL was included in the native image */
+        RestAssured.given()
+                .get("/cxf/client/resource/wsdl/CalculatorService.wsdl")
+                .then()
+                .statusCode(200)
+                .body(is(wsdl));
 
     }
 
