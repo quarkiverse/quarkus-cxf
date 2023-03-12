@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -44,6 +45,8 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
     private static final Logger log = Logger.getLogger(Wsdl2JavaCodeGen.class);
     static final String WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX = "quarkus.cxf.codegen.wsdl2java.";
     static final String WSDL2JAVA_CONFIG_KEY_PREFIX = "quarkus.cxf.codegen.wsdl2java";
+    private static final Path SRC_MAIN_RESOURCES = Paths.get("src/main/resources");
+    private static final Path SRC_TEST_RESOURCES = Paths.get("src/test/resources");
 
     @Override
     public String providerId() {
@@ -85,6 +88,10 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
             result |= wsdl2java(context.inputDir(), namedParams, outDir, prefix, processedFiles);
         }
 
+        if (!result) {
+            log.warn("wsdl2java processed 0 WSDL files under "
+                    + absModuleRoot(context.inputDir()).relativize(context.inputDir()));
+        }
         return result;
     }
 
@@ -92,19 +99,17 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
             Map<String, String> processedFiles) {
 
         return scan(inputDir, params.includes, params.excludes, prefix, processedFiles, (Path wsdlFile) -> {
-
-            final List<String> args = new ArrayList<>();
-            args.add("-d");
-            args.add(outDir.toString());
-            params.additionalParams.ifPresent(args::addAll);
-            args.add(wsdlFile.toString());
-
-            log.infof("Running wsdl2java %s", args);
+            final Wsdl2JavaParams wsdl2JavaParams = new Wsdl2JavaParams(inputDir, outDir, wsdlFile,
+                    params.additionalParams.orElse(Collections.emptyList()));
+            if (log.isInfoEnabled()) {
+                log.info(wsdl2JavaParams.appendLog(new StringBuilder("Running wsdl2java")).toString());
+            }
             final ToolContext ctx = new ToolContext();
             try {
-                new WSDLToJava(args.toArray(new String[0])).run(ctx);
+                new WSDLToJava(wsdl2JavaParams.toParameterArray()).run(ctx);
             } catch (Exception e) {
-                throw new RuntimeException("Could not run wsdl2Java " + args.stream().collect(Collectors.joining(" ")), e);
+                throw new RuntimeException(wsdl2JavaParams.appendLog(new StringBuilder("Could not run wsdl2Java")).toString(),
+                        e);
             }
         });
     }
@@ -314,6 +319,51 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         result.additionalParams = additionalParams;
 
         return result;
+    }
+
+    static Path absModuleRoot(final Path inputDir) {
+        if (inputDir.endsWith(SRC_MAIN_RESOURCES) || inputDir.endsWith(SRC_TEST_RESOURCES)) {
+            return inputDir.getParent().getParent().getParent();
+        } else {
+            throw new IllegalStateException(
+                    "inputDir '" + inputDir + "' expected to end with " + SRC_MAIN_RESOURCES + " or " + SRC_TEST_RESOURCES);
+        }
+    }
+
+    static class Wsdl2JavaParams {
+        private final Path inputDir;
+        private final Path outDir;
+        private final Path wsdlFile;
+        private final List<String> additionalParams;
+
+        public Wsdl2JavaParams(Path inputDir, Path outDir, Path wsdlFile, List<String> additionalParams) {
+            super();
+            this.inputDir = inputDir;
+            this.outDir = outDir;
+            this.wsdlFile = wsdlFile;
+            this.additionalParams = additionalParams;
+        }
+
+        public StringBuilder appendLog(StringBuilder sb) {
+            final Path moduleRoot = absModuleRoot(inputDir);
+            render(path -> moduleRoot.relativize(path).toString(), value -> sb.append(' ').append(value));
+            return sb;
+        }
+
+        public String[] toParameterArray() {
+            final String[] result = new String[additionalParams.size() + 3];
+            final AtomicInteger i = new AtomicInteger(0);
+            render(Path::toString, value -> result[i.getAndIncrement()] = value);
+            return result;
+        }
+
+        void render(Function<Path, String> pathTransformer, Consumer<String> paramConsumer) {
+            paramConsumer.accept("-d");
+            paramConsumer.accept(pathTransformer.apply(outDir));
+            additionalParams.forEach(paramConsumer);
+            paramConsumer.accept(pathTransformer.apply(wsdlFile));
+        }
+
     }
 
 }
