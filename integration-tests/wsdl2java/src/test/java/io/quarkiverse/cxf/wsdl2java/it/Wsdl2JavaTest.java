@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf.wsdl2java.it;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -15,9 +16,11 @@ public class Wsdl2JavaTest {
     void codegenTests() throws IOException {
 
         /* Make sure that the java files were generated */
-        final Path javaFile = Paths.get(
-                "target/generated-test-sources/wsdl2java/org/jboss/eap/quickstarts/wscalculator/calculator/ObjectFactory.java");
-        Assertions.assertThat(javaFile).isRegularFile();
+        final Path calculatorService_Service = Paths.get(
+                "target/generated-test-sources/wsdl2java/org/jboss/eap/quickstarts/wscalculator/calculator/CalculatorService_Service.java");
+        Assertions.assertThat(calculatorService_Service)
+                .isRegularFile()
+                .content(StandardCharsets.UTF_8).contains("wsdlLocation = \"classpath:wsdl/CalculatorService.wsdl\"");
 
         /* Make sure that some of the generated classes can be loaded */
         ObjectFactory of = new ObjectFactory();

@@ -47,7 +47,7 @@ public class CxfWssClientTest {
         final String wsdlUrl = ConfigProvider.getConfig()
                 .getValue("quarkus.cxf.client.\"wss-client\".wsdl", String.class);
 
-        final String staticCopyPath = "src/main/wsdl/dir/WssCalculatorService.wsdl";
+        final String staticCopyPath = "src/main/resources/wsdl/dir/WssCalculatorService.wsdl";
         /* The changing Docker IP address in the WSDL should not matter */
         final String sanitizerRegex = "<soap:address location=\"http://[^/]*/calculator-ws/WssCalculatorService\"></soap:address>";
         final String staticCopyContent = Files
