@@ -26,22 +26,6 @@ endif::add-copy-button-to-env-var[]
 |`/`
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.wsdl-path]]`link:#quarkus-cxf_quarkus.cxf.wsdl-path[quarkus.cxf.wsdl-path]`
-
-[.description]
---
-The comma-separated list of WSDL resource paths used by CXF
-
-ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_WSDL_PATH+++[]
-endif::add-copy-button-to-env-var[]
-ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_CXF_WSDL_PATH+++`
-endif::add-copy-button-to-env-var[]
---|list of string 
-|
-
-
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.enabled]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.enabled[quarkus.cxf.codegen.wsdl2java.enabled]`
 
 [.description]
@@ -68,7 +52,8 @@ Examples:
  - `my-++*++-service.wsdl` match `src/main/resources/my-foo-service.wsdl` and `src/main/resources/my-bar-service.wsdl` 
  - `++**++.wsdl` will match any of the above  Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended. 
 The default value for `quarkus.cxf.codegen.wsdl2java.includes` is `++**++.wsdl` Named parameter sets, such as `quarkus.cxf.codegen.wsdl2java.my-name.includes` have no default and not specifying any `includes` value there will cause a build time error. 
-Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap.
+Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap. 
+The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (deprecated) or `quarkus.cxf.codegen.wsdl2java.includes/excludes`.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_INCLUDES+++[]
@@ -122,7 +107,8 @@ Examples:
  - `my-++*++-service.wsdl` match `src/main/resources/my-foo-service.wsdl` and `src/main/resources/my-bar-service.wsdl` 
  - `++**++.wsdl` will match any of the above  Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended. 
 The default value for `quarkus.cxf.codegen.wsdl2java.includes` is `++**++.wsdl` Named parameter sets, such as `quarkus.cxf.codegen.wsdl2java.my-name.includes` have no default and not specifying any `includes` value there will cause a build time error. 
-Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap.
+Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap. 
+The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (deprecated) or `quarkus.cxf.codegen.wsdl2java.includes/excludes`.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__INCLUDES+++[]

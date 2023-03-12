@@ -1,5 +1,7 @@
 package io.quarkiverse.cxf.client.it;
 
+import java.io.InputStream;
+
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.ws.rs.GET;
@@ -111,4 +113,10 @@ public class CxfClientResource {
 
     }
 
+    @GET
+    @Path("/resource/{path : .+}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public InputStream resource(@PathParam("path") String path) {
+        return getClass().getClassLoader().getResourceAsStream(path);
+    }
 }

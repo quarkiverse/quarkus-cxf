@@ -4,12 +4,20 @@ import java.io.*;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,7 +55,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import io.quarkiverse.cxf.CXFRecorder;
+import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Wsdl2JavaParameterSet;
 import io.quarkiverse.cxf.deployment.CxfWrapperClassNamesBuildItem.Builder;
+import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaCodeGen;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
@@ -69,6 +79,7 @@ import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildI
 import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
+import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarRequiredBuildItem;
 import io.quarkus.gizmo.ClassOutput;
@@ -91,13 +102,58 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    public void generateWSDL(BuildProducer<NativeImageResourceBuildItem> resources,
+    public void generateWSDL(
+            OutputTargetBuildItem target,
+            BuildProducer<NativeImageResourceBuildItem> resources,
             CxfBuildTimeConfig cxfBuildTimeConfig) {
         if (cxfBuildTimeConfig.wsdlPath.isPresent()) {
             for (String wsdlPath : cxfBuildTimeConfig.wsdlPath.get()) {
                 resources.produce(new NativeImageResourceBuildItem(wsdlPath));
             }
         }
+
+        /* Add all WSDLs configured for wsdl2java processing */
+        final Path classesDir = target.getOutputDirectory().resolve("classes");
+        if (Files.isDirectory(classesDir)) {
+            final Set<String> wsdlResourcePaths = new LinkedHashSet<>();
+            scanWsdls(
+                    classesDir,
+                    cxfBuildTimeConfig.codegen.wsdl2java.rootParameterSet,
+                    Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX,
+                    CxfBuildTimeConfig.Wsdl2JavaParameterSet.DEFAULT_INCLUDES,
+                    wsdlResourcePaths::add);
+
+            for (Entry<String, Wsdl2JavaParameterSet> en : cxfBuildTimeConfig.codegen.wsdl2java.namedParameterSets.entrySet()) {
+                scanWsdls(
+                        target.getOutputDirectory(),
+                        en.getValue(),
+                        Wsdl2JavaCodeGen.WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + en.getKey(),
+                        null,
+                        wsdlResourcePaths::add);
+            }
+
+            if (!wsdlResourcePaths.isEmpty()) {
+                resources.produce(new NativeImageResourceBuildItem(new ArrayList<>(wsdlResourcePaths)));
+            }
+        }
+
+    }
+
+    static void scanWsdls(
+            Path inputDir,
+            Wsdl2JavaParameterSet params,
+            String prefix,
+            String defaultIncludes,
+            Consumer<String> resourcePathConsumer) {
+        Wsdl2JavaCodeGen.scan(
+                inputDir,
+                params.includes.isPresent() ? params.includes
+                        : Optional.of(
+                                defaultIncludes == null ? Collections.emptyList() : Collections.singletonList(defaultIncludes)),
+                params.excludes,
+                prefix,
+                new HashMap<>(),
+                path -> resourcePathConsumer.accept(inputDir.relativize(path).toString().replace('\\', '/')));
     }
 
     @BuildStep
