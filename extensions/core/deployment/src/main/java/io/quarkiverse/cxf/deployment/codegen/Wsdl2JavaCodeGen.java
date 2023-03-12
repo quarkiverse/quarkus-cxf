@@ -170,7 +170,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
                     }
                 }
             } else {
-                throw new IllegalStateException("Expected glob split array lenght 1 or 2, found " + parts.length);
+                throw new IllegalStateException("Expected glob split array length 1 or 2, found " + parts.length);
             }
         }
         return result.get();
