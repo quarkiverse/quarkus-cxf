@@ -43,8 +43,8 @@ import io.quarkus.util.GlobUtil;
  */
 public class Wsdl2JavaCodeGen implements CodeGenProvider {
     private static final Logger log = Logger.getLogger(Wsdl2JavaCodeGen.class);
-    static final String WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX = "quarkus.cxf.codegen.wsdl2java.";
-    static final String WSDL2JAVA_CONFIG_KEY_PREFIX = "quarkus.cxf.codegen.wsdl2java";
+    public static final String WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX = "quarkus.cxf.codegen.wsdl2java.";
+    public static final String WSDL2JAVA_CONFIG_KEY_PREFIX = "quarkus.cxf.codegen.wsdl2java";
     private static final Path SRC_MAIN_RESOURCES = Paths.get("src/main/resources");
     private static final Path SRC_TEST_RESOURCES = Paths.get("src/test/resources");
 
@@ -114,7 +114,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         });
     }
 
-    static boolean scan(
+    public static boolean scan(
             Path inputDir,
             Optional<List<String>> includes,
             Optional<List<String>> excludes,
