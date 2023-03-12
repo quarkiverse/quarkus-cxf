@@ -85,7 +85,8 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 
 [.description]
 --
-A comma separated list of additional command line parameters that should passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-wsdlLocation,classpath:wsdl/CalculatorService.wsdl`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
+A comma separated list of additional command line parameters that should passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-wsdlLocation,classpath:wsdl/CalculatorService.wsdl`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options. 
+You need to add `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency to your project to be able to use `-xjc-Xboolean`, `-xjc-Xdv`, `-xjc-Xjavadoc`, `-xjc-Xpl`, `-xjc-Xts` or `-xjc-Xwsdlextension`.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ADDITIONAL_PARAMS+++[]
@@ -140,7 +141,8 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 
 [.description]
 --
-A comma separated list of additional command line parameters that should passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-wsdlLocation,classpath:wsdl/CalculatorService.wsdl`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
+A comma separated list of additional command line parameters that should passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-wsdlLocation,classpath:wsdl/CalculatorService.wsdl`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options. 
+You need to add `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency to your project to be able to use `-xjc-Xboolean`, `-xjc-Xdv`, `-xjc-Xjavadoc`, `-xjc-Xpl`, `-xjc-Xts` or `-xjc-Xwsdlextension`.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++[]
