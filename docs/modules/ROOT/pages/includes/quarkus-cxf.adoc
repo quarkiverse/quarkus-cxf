@@ -62,10 +62,10 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 
 [.description]
 --
-A comma separated list of glob patterns for selecting WSDL files which should be processed with `wsdl2java` tool. The paths are relative to `src/main/wsdl` or `src/test/wsdl` directories of the current Maven or Gradle module. The glob syntax is specified in `io.quarkus.util.GlobUtil`. 
+A comma separated list of glob patterns for selecting WSDL files which should be processed with `wsdl2java` tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module. The glob syntax is specified in `io.quarkus.util.GlobUtil`. 
 Examples:  
- - `calculator.wsdl,fruits.wsdl` will match `src/main/wsdl/calculator.wsdl` and `src/main/wsdl/fruits.wsdl` under the current Maven or Gradle module, but will not match anything like `src/main/wsdl/subdir/calculator.wsdl` 
- - `my-++*++-service.wsdl` match `src/main/wsdl/my-foo-service.wsdl` and `src/main/wsdl/my-bar-service.wsdl` 
+ - `calculator.wsdl,fruits.wsdl` will match `src/main/resources/calculator.wsdl` and `src/main/resources/fruits.wsdl` under the current Maven or Gradle module, but will not match anything like `src/main/resources/subdir/calculator.wsdl` 
+ - `my-++*++-service.wsdl` match `src/main/resources/my-foo-service.wsdl` and `src/main/resources/my-bar-service.wsdl` 
  - `++**++.wsdl` will match any of the above  Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended. 
 The default value for `quarkus.cxf.codegen.wsdl2java.includes` is `++**++.wsdl` Named parameter sets, such as `quarkus.cxf.codegen.wsdl2java.my-name.includes` have no default and not specifying any `includes` value there will cause a build time error. 
 Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap.
@@ -84,7 +84,7 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 
 [.description]
 --
-A comma separated list of path patterns for selecting WSDL files which should *not* be processed with `wsdl2java` tool. The paths are relative to `src/main/wsdl` or `src/test/wsdl` directories of the current Maven or Gradle module. Same syntax as `includes`.
+A comma separated list of path patterns for selecting WSDL files which should *not* be processed with `wsdl2java` tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module. Same syntax as `includes`.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCLUDES+++[]
@@ -100,6 +100,8 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 
 [.description]
 --
+A comma separated list of additional command line parameters that should passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-wsdlLocation,classpath:wsdl/CalculatorService.wsdl`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
+
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ADDITIONAL_PARAMS+++[]
 endif::add-copy-button-to-env-var[]
@@ -114,10 +116,10 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 
 [.description]
 --
-A comma separated list of glob patterns for selecting WSDL files which should be processed with `wsdl2java` tool. The paths are relative to `src/main/wsdl` or `src/test/wsdl` directories of the current Maven or Gradle module. The glob syntax is specified in `io.quarkus.util.GlobUtil`. 
+A comma separated list of glob patterns for selecting WSDL files which should be processed with `wsdl2java` tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module. The glob syntax is specified in `io.quarkus.util.GlobUtil`. 
 Examples:  
- - `calculator.wsdl,fruits.wsdl` will match `src/main/wsdl/calculator.wsdl` and `src/main/wsdl/fruits.wsdl` under the current Maven or Gradle module, but will not match anything like `src/main/wsdl/subdir/calculator.wsdl` 
- - `my-++*++-service.wsdl` match `src/main/wsdl/my-foo-service.wsdl` and `src/main/wsdl/my-bar-service.wsdl` 
+ - `calculator.wsdl,fruits.wsdl` will match `src/main/resources/calculator.wsdl` and `src/main/resources/fruits.wsdl` under the current Maven or Gradle module, but will not match anything like `src/main/resources/subdir/calculator.wsdl` 
+ - `my-++*++-service.wsdl` match `src/main/resources/my-foo-service.wsdl` and `src/main/resources/my-bar-service.wsdl` 
  - `++**++.wsdl` will match any of the above  Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended. 
 The default value for `quarkus.cxf.codegen.wsdl2java.includes` is `++**++.wsdl` Named parameter sets, such as `quarkus.cxf.codegen.wsdl2java.my-name.includes` have no default and not specifying any `includes` value there will cause a build time error. 
 Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap.
@@ -136,7 +138,7 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 
 [.description]
 --
-A comma separated list of path patterns for selecting WSDL files which should *not* be processed with `wsdl2java` tool. The paths are relative to `src/main/wsdl` or `src/test/wsdl` directories of the current Maven or Gradle module. Same syntax as `includes`.
+A comma separated list of path patterns for selecting WSDL files which should *not* be processed with `wsdl2java` tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module. Same syntax as `includes`.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCLUDES+++[]
@@ -152,6 +154,8 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 
 [.description]
 --
+A comma separated list of additional command line parameters that should passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-wsdlLocation,classpath:wsdl/CalculatorService.wsdl`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
+
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++[]
 endif::add-copy-button-to-env-var[]
