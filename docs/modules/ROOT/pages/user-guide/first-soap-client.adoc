@@ -152,6 +152,10 @@ quarkus.cxf.codegen.wsdl2java.my-named-params.includes = wsdl/bar.wsdl
 quarkus.cxf.codegen.wsdl2java.my-named-params.additional-params = -wsdlLocation,wsdl/bar.wsdl
 ----
 
+TIP: Add `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency to your project to be able to use
+    `-xjc-Xboolean`, `-xjc-Xdv`, `-xjc-Xjavadoc`, `-xjc-Xpl`, `-xjc-Xts` and `-xjc-Xwsdlextension`
+    wsdl2java parameters.
+
 == Using SEI as a client
 
 In our case, the Service Endpoint Interface (SEI) is `org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService`.
