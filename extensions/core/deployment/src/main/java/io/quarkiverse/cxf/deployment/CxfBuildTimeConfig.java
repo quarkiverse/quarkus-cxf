@@ -72,17 +72,17 @@ public class CxfBuildTimeConfig {
 
         /**
          * A comma separated list of glob patterns for selecting WSDL files which should be processed with
-         * {@code wsdl2java} tool. The paths are relative to {@code src/main/wsdl} or {@code src/test/wsdl}
+         * {@code wsdl2java} tool. The paths are relative to {@code src/main/resources} or {@code src/test/resources}
          * directories of the current Maven or Gradle module. The glob syntax is specified in
          * {@code io.quarkus.util.GlobUtil}.
          * <p>
          * Examples:
          * <ul>
-         * <li>{@code calculator.wsdl,fruits.wsdl} will match {@code src/main/wsdl/calculator.wsdl} and
-         * {@code src/main/wsdl/fruits.wsdl} under the current Maven or Gradle module, but will not match anything like
-         * {@code src/main/wsdl/subdir/calculator.wsdl}
-         * <li>{@code my-*-service.wsdl} match {@code src/main/wsdl/my-foo-service.wsdl} and
-         * {@code src/main/wsdl/my-bar-service.wsdl}
+         * <li>{@code calculator.wsdl,fruits.wsdl} will match {@code src/main/resources/calculator.wsdl} and
+         * {@code src/main/resources/fruits.wsdl} under the current Maven or Gradle module, but will not match anything like
+         * {@code src/main/resources/subdir/calculator.wsdl}
+         * <li>{@code my-*-service.wsdl} match {@code src/main/resources/my-foo-service.wsdl} and
+         * {@code src/main/resources/my-bar-service.wsdl}
          * <li>{@code **.wsdl} will match any of the above
          * </ul>
          * Note that file extensions other than {@code .wsdl} will work during normal builds, but changes in the
@@ -101,8 +101,8 @@ public class CxfBuildTimeConfig {
 
         /**
          * A comma separated list of path patterns for selecting WSDL files which should <strong>not</strong> be
-         * processed with {@code wsdl2java} tool. The paths are relative to {@code src/main/wsdl} or
-         * {@code src/test/wsdl} directories of the current Maven or Gradle module. Same syntax as `includes`.
+         * processed with {@code wsdl2java} tool. The paths are relative to {@code src/main/resources} or
+         * {@code src/test/resources} directories of the current Maven or Gradle module. Same syntax as `includes`.
          */
         @ConfigItem
         public Optional<List<String>> excludes;
@@ -114,6 +114,7 @@ public class CxfBuildTimeConfig {
          * <a href="https://cxf.apache.org/docs/wsdl-to-java.html"><code>wsdl2java</code> documentation</a> for all
          * supported options.
          */
+        @ConfigItem
         public Optional<List<String>> additionalParams;
 
     }

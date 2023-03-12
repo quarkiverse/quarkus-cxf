@@ -32,7 +32,7 @@ import io.quarkus.util.GlobUtil;
 
 /**
  * Generates Java classes out of WSDL files using CXF {@code wsdl2Java} tool.
- * The WSDL files have to be located under {@code src/main/wsdl} or {@code src/test/wsdl}.
+ * The WSDL files have to be located under {@code src/main/resources} or {@code src/test/resources}.
  * Additional parameters for {@code wsdl2Java} can be passed via {@code application.properties} - see the configuration
  * classes linked below:
  *
@@ -57,7 +57,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
 
     @Override
     public String inputDirectory() {
-        return "wsdl";
+        return "resources";
     }
 
     @Override
@@ -190,29 +190,31 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
             Consumer<Path> wsdlFileConsumer) {
         final Pattern includePattern = Pattern.compile(GlobUtil.toRegexPattern(includeGlob));
         final AtomicBoolean result = new AtomicBoolean(false);
-        try (Stream<Path> stream = Files.walk(directory)) {
-            stream
-                    .map(directory::resolve)
-                    .filter(absPath -> {
-                        String relPathDir; // relative to directory
-                        String relPathWorkDir; // relative to workDir
-                        if (File.separatorChar != '/') {
-                            relPathDir = directory.relativize(absPath).toString().replace(File.separatorChar, '/');
-                            relPathWorkDir = workDir.relativize(absPath).toString().replace(File.separatorChar, '/');
-                        } else {
-                            relPathDir = directory.relativize(absPath).toString();
-                            relPathWorkDir = workDir.relativize(absPath).toString();
-                        }
+        if (Files.exists(directory)) {
+            try (Stream<Path> stream = Files.walk(directory)) {
+                stream
+                        .map(directory::resolve)
+                        .filter(absPath -> {
+                            String relPathDir; // relative to directory
+                            String relPathWorkDir; // relative to workDir
+                            if (File.separatorChar != '/') {
+                                relPathDir = directory.relativize(absPath).toString().replace(File.separatorChar, '/');
+                                relPathWorkDir = workDir.relativize(absPath).toString().replace(File.separatorChar, '/');
+                            } else {
+                                relPathDir = directory.relativize(absPath).toString();
+                                relPathWorkDir = workDir.relativize(absPath).toString();
+                            }
 
-                        return includePattern.matcher(relPathDir).matches()
-                                && excludePatterns.stream()
-                                        .noneMatch(exclPattern -> exclPattern.matcher(relPathWorkDir).matches());
-                    })
-                    .filter(Files::isRegularFile)
-                    .peek(path -> result.set(true))
-                    .forEach(wsdlFileConsumer);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not walk directory " + directory);
+                            return includePattern.matcher(relPathDir).matches()
+                                    && excludePatterns.stream()
+                                            .noneMatch(exclPattern -> exclPattern.matcher(relPathWorkDir).matches());
+                        })
+                        .filter(Files::isRegularFile)
+                        .peek(path -> result.set(true))
+                        .forEach(wsdlFileConsumer);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not walk directory " + directory, e);
+            }
         }
         return result.get();
     }
