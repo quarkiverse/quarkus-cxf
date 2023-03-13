@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf.deployment.codegen;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,11 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,7 +26,8 @@ import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Wsdl2JavaParameterSet;
 import io.quarkus.bootstrap.prebuild.CodeGenException;
 import io.quarkus.deployment.CodeGenContext;
 import io.quarkus.deployment.CodeGenProvider;
-import io.quarkus.util.GlobUtil;
+import io.quarkus.paths.DirectoryPathTree;
+import io.quarkus.paths.PathFilter;
 
 /**
  * Generates Java classes out of WSDL files using CXF {@code wsdl2Java} tool.
@@ -140,125 +138,19 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
             wsdlFileConsumer.accept(wsdlFile);
         };
 
-        final List<Pattern> excludePatterns = excludes.orElse(Collections.emptyList()).stream()
-                .map(GlobUtil::toRegexPattern)
-                .map(Pattern::compile)
-                .collect(Collectors.toList());
-
-        final AtomicBoolean result = new AtomicBoolean(false);
-        for (String include : includes.get()) {
-            String[] parts = splitGlob(include);
-
-            if (parts.length == 1) {
-                Stream.of(include)
-                        .filter(relPath -> excludePatterns.stream()
-                                .noneMatch(exclPattern -> exclPattern.matcher(relPath).matches()))
-                        .map(inputDir::resolve)
-                        .filter(Files::isRegularFile)
-                        .peek(path -> result.set(true))
-                        .forEach(chainedConsumer);
-            } else if (parts.length == 2) {
-                if (parts[0].length() == 0) {
-                    /* we have to scan the whole workDir */
-                    if (walk(inputDir, inputDir, parts[1], excludePatterns, chainedConsumer)) {
-                        result.set(true);
-                    }
-                } else {
-                    /* scan the subtree of workDir */
-                    if (walk(inputDir, inputDir.resolve(parts[0]), parts[1], excludePatterns, chainedConsumer)) {
-                        result.set(true);
-                    }
+        try (DirectoryPathTree pathTree = new DirectoryPathTree(inputDir,
+                new PathFilter(includes.orElse(null), excludes.orElse(null)))) {
+            pathTree.walk(pathVisit -> {
+                Path path = pathVisit.getPath();
+                if (Files.isRegularFile(path)) {
+                    chainedConsumer.accept(path);
                 }
-            } else {
-                throw new IllegalStateException("Expected glob split array length 1 or 2, found " + parts.length);
-            }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException("Could not walk directory " + inputDir, e);
         }
-        return result.get();
-    }
 
-    /**
-     * Walk the file tree starting at {@code directory} selecting files matching {@code includeGlob} and skipping files
-     * matching any of {@code excludePatterns}; the selected files are passed to {@code wsdlFileConsumer}.
-     *
-     * @param workDir
-     * @param directory
-     * @param includeGlob
-     * @param excludePatterns
-     * @param wsdlFileConsumer
-     * @return {@code true} if some file was processed; {@code false} otherwise
-     */
-    static boolean walk(
-            Path workDir,
-            Path directory,
-            String includeGlob,
-            List<Pattern> excludePatterns,
-            Consumer<Path> wsdlFileConsumer) {
-        final Pattern includePattern = Pattern.compile(GlobUtil.toRegexPattern(includeGlob));
-        final AtomicBoolean result = new AtomicBoolean(false);
-        if (Files.exists(directory)) {
-            try (Stream<Path> stream = Files.walk(directory)) {
-                stream
-                        .map(directory::resolve)
-                        .filter(absPath -> {
-                            String relPathDir; // relative to directory
-                            String relPathWorkDir; // relative to workDir
-                            if (File.separatorChar != '/') {
-                                relPathDir = directory.relativize(absPath).toString().replace(File.separatorChar, '/');
-                                relPathWorkDir = workDir.relativize(absPath).toString().replace(File.separatorChar, '/');
-                            } else {
-                                relPathDir = directory.relativize(absPath).toString();
-                                relPathWorkDir = workDir.relativize(absPath).toString();
-                            }
-
-                            return includePattern.matcher(relPathDir).matches()
-                                    && excludePatterns.stream()
-                                            .noneMatch(exclPattern -> exclPattern.matcher(relPathWorkDir).matches());
-                        })
-                        .filter(Files::isRegularFile)
-                        .peek(path -> result.set(true))
-                        .forEach(wsdlFileConsumer);
-            } catch (IOException e) {
-                throw new RuntimeException("Could not walk directory " + directory, e);
-            }
-        }
-        return result.get();
-    }
-
-    /**
-     * Split the glob pattern into a prefix containing one or more file path segments without any glob wildcards and
-     * the rest. This will allow us to walk less directories in some situations.
-     *
-     * @param glob the glob pattern to split
-     * @return a string array consisting of one (if the whole glob contains no wildcards) or two elements
-     */
-    static String[] splitGlob(String glob) {
-        int lastSlashPos = Integer.MAX_VALUE;
-        for (int i = 0; i < glob.length(); i++) {
-            final char ch = glob.charAt(i);
-            switch (ch) {
-                case '\\':
-                    /* the next char is escaped */
-                    i++;
-                    break;
-                case '/':
-                    lastSlashPos = i;
-                    break;
-                case '[':
-                case '*':
-                case '?':
-                case '{':
-                    /* wildcard */
-                    if (i > lastSlashPos) {
-                        return new String[] { glob.substring(0, lastSlashPos), glob.substring(lastSlashPos + 1) };
-                    } else {
-                        return new String[] { "", glob };
-                    }
-                default:
-                    /* just go to the next char */
-            }
-        }
-        /* No wildcard found in the glob */
-        return new String[] { glob };
+        return !processedFiles.isEmpty();
     }
 
     static Set<String> findParamSetNames(Iterable<String> propertyNames) {
