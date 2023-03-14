@@ -71,7 +71,6 @@
         <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
         <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
         <keytool-maven-plugin.version>1.7</keytool-maven-plugin.version>
-        <plexus-utils.version>3.5.1</plexus-utils.version>
         <maven-idea-plugin.version>2.2.1</maven-idea-plugin.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
@@ -156,13 +155,6 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>keytool-maven-plugin</artifactId>
                     <version>${keytool-maven-plugin.version}</version>
-                    <dependencies>
-                        <dependency><!-- Workaround for https://github.com/mojohaus/keytool/issues/57 -->
-                            <groupId>org.codehaus.plexus</groupId>
-                            <artifactId>plexus-utils</artifactId>
-                            <version>${plexus-utils.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
