@@ -148,7 +148,7 @@ public class CxfEndpointImplementationProcessor {
                     .handlerType(HandlerType.BLOCKING)
                     .build());
         } else {
-            LOGGER.info(
+            LOGGER.debug(
                     "Not registering a Vert.x handler for CXF as no WS endpoints were found at build time and no other extension requested it");
         }
     }
