@@ -191,20 +191,21 @@ public class CxfHandler implements Handler<RoutingContext> {
             return (T) Arc.container().instance(beanName).get();
         }
 
-        Class<T> classObj = (Class<T>) loadClass(beanRef);
-        if (classObj != null) {
-            try {
-                return CDI.current().select(classObj).get();
-            } catch (UnsatisfiedResolutionException e) {
-                // silent fail
-            }
-            try {
-                return classObj.getConstructor().newInstance();
-            } catch (ReflectiveOperationException | RuntimeException e) {
-                return null;
-            }
-        } else {
-            return null;
+        final Class<T> classObj = (Class<T>) loadClass(beanRef);
+        Objects.requireNonNull(classObj, "Could not load class " + beanRef);
+        try {
+            return CDI.current().select(classObj).get();
+        } catch (UnsatisfiedResolutionException e) {
+            // silent fail
+        }
+        try {
+            return classObj.getConstructor().newInstance();
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Could not instantiate " + beanRef
+                    + " using the default constructor. Make sure that the constructor exists and that the class is static in case it is an inner class.",
+                    e);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            throw new RuntimeException("Could not instantiate " + beanRef + " using the default constructor.", e);
         }
     }
 
