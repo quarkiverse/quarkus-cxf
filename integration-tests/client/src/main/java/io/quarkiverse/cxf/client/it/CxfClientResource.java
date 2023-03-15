@@ -17,6 +17,7 @@ import org.jboss.eap.quickstarts.wscalculator.calculator.Operands;
 
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.client.it.rtinit.ClientWithRuntimeInitializedPayload;
 
 @Path("/cxf/client")
 public class CxfClientResource {
@@ -45,6 +46,10 @@ public class CxfClientResource {
     @Named("org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService")
     CXFClientInfo calculatorClientInfo;
 
+    @Inject
+    @CXFClient("clientWithRuntimeInitializedPayload") // name used in application.properties
+    ClientWithRuntimeInitializedPayload clientWithRuntimeInitializedPayload;
+
     @GET
     @Path("/calculator/{client}/multiply")
     @Produces(MediaType.TEXT_PLAIN)
@@ -61,6 +66,14 @@ public class CxfClientResource {
     @Produces(MediaType.TEXT_PLAIN)
     public int codeFirstClient(@QueryParam("a") int a, @QueryParam("b") int b) {
         return codeFirstClient.multiply(a, b);
+    }
+
+    @GET
+    @Path("/clientWithRuntimeInitializedPayload/addOperands")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int clientWithRuntimeInitializedPayload(@QueryParam("a") int a, @QueryParam("b") int b) {
+        return clientWithRuntimeInitializedPayload.addOperands(new io.quarkiverse.cxf.client.it.rtinit.Operands(a, b))
+                .getResult();
     }
 
     @GET
