@@ -182,4 +182,18 @@ public class CxfClientTest {
 
     }
 
+    /**
+     * Test whether a code-first client (without WSDL) works properly.
+     */
+    @Test
+    void clientWithRuntimeInitializedPayload() {
+        RestAssured.given()
+                .queryParam("a", 7)
+                .queryParam("b", 8)
+                .get("/cxf/client/clientWithRuntimeInitializedPayload/addOperands")
+                .then()
+                .statusCode(200)
+                .body(is("15"));
+    }
+
 }
