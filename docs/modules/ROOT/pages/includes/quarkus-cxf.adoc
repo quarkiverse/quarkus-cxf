@@ -154,6 +154,38 @@ endif::add-copy-button-to-env-var[]
 |
 
 
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.client.-clients-.service-interface]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.service-interface[quarkus.cxf.client."clients".service-interface]`
+
+[.description]
+--
+The client service interface class name
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.client.-clients-.alternative]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.alternative[quarkus.cxf.client."clients".alternative]`
+
+[.description]
+--
+Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when configuring a client without annotation `@CXFClient`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.implementor]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.implementor[quarkus.cxf.endpoint."endpoints".implementor]`
 
 [.description]
@@ -372,22 +404,6 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.service-interface]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.service-interface[quarkus.cxf.client."clients".service-interface]`
-
-[.description]
---
-The client interface class
-
-ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++[]
-endif::add-copy-button-to-env-var[]
-ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++`
-endif::add-copy-button-to-env-var[]
---|string 
-|
-
-
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-namespace]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-namespace[quarkus.cxf.client."clients".endpoint-namespace]`
 
 [.description]
@@ -546,21 +562,5 @@ Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_FAULT_INTERCEPTORS+++`
 endif::add-copy-button-to-env-var[]
 --|list of string 
 |
-
-
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.alternative]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.alternative[quarkus.cxf.client."clients".alternative]`
-
-[.description]
---
-Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when configuring a client without annotation `@CXFClient`.
-
-ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++[]
-endif::add-copy-button-to-env-var[]
-ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++`
-endif::add-copy-button-to-env-var[]
---|boolean 
-|`false`
 
 |===
