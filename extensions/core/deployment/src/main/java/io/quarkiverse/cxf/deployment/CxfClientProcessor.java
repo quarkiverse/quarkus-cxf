@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
@@ -63,6 +64,7 @@ import io.quarkus.gizmo.FieldCreator;
 import io.quarkus.gizmo.MethodCreator;
 import io.quarkus.gizmo.MethodDescriptor;
 import io.quarkus.gizmo.ResultHandle;
+import io.quarkus.runtime.util.JavaVersionUtil;
 
 /**
  * Find WebService implementations and deploy them.
@@ -88,6 +90,19 @@ public class CxfClientProcessor {
         final Set<String> rtInitPackages = runtimeInitializedPackages.stream()
                 .map(RuntimeInitializedPackageBuildItem::getPackageName)
                 .collect(Collectors.toSet());
+
+        /* Workaround for https://github.com/quarkiverse/quarkus-cxf/issues/770 */
+        Stream.of(
+                "com.sun.imageio",
+                "java.awt",
+                "javax.imageio",
+                "sun.awt",
+                "sun.font",
+                "sun.java2d")
+                .forEach(rtInitPackages::add);
+        if (JavaVersionUtil.isJava17OrHigher()) {
+            rtInitPackages.add("sun.lwawt.macosx");
+        }
 
         final AtomicBoolean hasRuntimeInitializedProxy = new AtomicBoolean(false);
         final Map<String, ClientFixedConfig> clientSEIsInUse = findClientSEIsInUse(index, config);
