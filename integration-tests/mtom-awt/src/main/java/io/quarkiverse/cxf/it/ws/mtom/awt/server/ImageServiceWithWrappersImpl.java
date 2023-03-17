@@ -4,7 +4,7 @@ import java.awt.Image;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import jakarta.jws.WebService;
+import javax.jws.WebService;
 
 @WebService(name = "ImageServiceWithWrappers", serviceName = "ImageServiceWithWrappers", endpointInterface = "io.quarkiverse.cxf.it.ws.mtom.awt.server.ImageServiceWithWrappers", targetNamespace = ImageServiceWithWrappers.NS)
 public class ImageServiceWithWrappersImpl implements ImageServiceWithWrappers {

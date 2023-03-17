@@ -4,6 +4,7 @@ import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.util.stream.Collectors.toList;
 
+import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 
@@ -12,11 +13,13 @@ import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.Handler;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.spi.GeneratedNamespaceClassLoader;
 import org.apache.cxf.common.spi.NamespaceClassCreator;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.dynamic.ExceptionClassCreator;
 import org.apache.cxf.endpoint.dynamic.ExceptionClassLoader;
 import org.apache.cxf.feature.Feature;
@@ -26,7 +29,6 @@ import org.apache.cxf.jaxb.FactoryClassCreator;
 import org.apache.cxf.jaxb.FactoryClassLoader;
 import org.apache.cxf.jaxb.WrapperHelperClassLoader;
 import org.apache.cxf.jaxb.WrapperHelperCreator;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.spi.WrapperClassCreator;
 import org.apache.cxf.jaxws.spi.WrapperClassLoader;
 import org.apache.cxf.message.Message;
@@ -48,6 +50,9 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 public abstract class CxfClientProducer {
 
     private static final Logger LOGGER = Logger.getLogger(CxfClientProducer.class);
+
+    public static final String RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_PACKAGE = "io.quarkiverse.cxf.runtime.proxy";
+    public static final String RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_NAME = "io.quarkiverse.cxf.runtime.proxy.RuntimeInitializedProxyMarker";
 
     @Inject
     CxfConfig config;
@@ -73,8 +78,26 @@ public abstract class CxfClientProducer {
             LOGGER.errorf("WebService interface (client) class %s not found", cxfClientInfo.getSei());
             return null;
         }
+        Class<?>[] interfaces;
+        try {
+            interfaces = cxfClientInfo.isProxyClassRuntimeInitialized()
+                    ? new Class<?>[] {
+                            BindingProvider.class,
+                            Closeable.class,
+                            Client.class,
+                            Class.forName(RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_NAME, true,
+                                    Thread.currentThread().getContextClassLoader())
+                    }
+                    : new Class<?>[] {
+                            BindingProvider.class,
+                            Closeable.class,
+                            Client.class
+                    };
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Could not load " + RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_NAME, e);
+        }
         QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean(cxfClientInfo.getClassNames());
-        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean(quarkusClientFactoryBean);
+        QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(quarkusClientFactoryBean, interfaces);
         Bus bus = quarkusClientFactoryBean.getBus(true);
         bus.setExtension(new WrapperHelperClassLoader(bus), WrapperHelperCreator.class);
         bus.setExtension(new ExtensionClassLoader(bus), ExtensionClassCreator.class);

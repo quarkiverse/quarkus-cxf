@@ -2,12 +2,12 @@ package io.quarkiverse.cxf.it.ws.mtom.awt.server;
 
 import java.awt.Image;
 
-import jakarta.jws.WebMethod;
-import jakarta.jws.WebParam;
-import jakarta.jws.WebService;
-import jakarta.xml.ws.RequestWrapper;
-import jakarta.xml.ws.ResponseWrapper;
-import jakarta.xml.ws.soap.MTOM;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.xml.ws.RequestWrapper;
+import javax.xml.ws.ResponseWrapper;
+import javax.xml.ws.soap.MTOM;
 
 @WebService(name = "ImageServiceWithWrappers", targetNamespace = ImageServiceWithWrappers.NS)
 @MTOM

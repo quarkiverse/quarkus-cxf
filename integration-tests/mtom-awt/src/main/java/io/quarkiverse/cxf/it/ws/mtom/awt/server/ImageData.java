@@ -2,6 +2,8 @@ package io.quarkiverse.cxf.it.ws.mtom.awt.server;
 
 import java.awt.Image;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
