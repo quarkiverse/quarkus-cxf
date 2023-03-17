@@ -3,6 +3,15 @@ package io.quarkiverse.cxf.client.it.rtinit;
 
 import java.util.Objects;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "operands", propOrder = {
+        "a",
+        "b"
+})
 public class Operands {
     private int a;
     private int b;
