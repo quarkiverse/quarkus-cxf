@@ -1,11 +1,10 @@
 package io.quarkiverse.cxf;
 
-import static java.lang.String.format;
-import static java.lang.String.join;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
@@ -53,11 +52,14 @@ public abstract class CxfClientProducer {
     @Inject
     CxfConfig config;
 
+    @Inject
+    CxfFixedConfig fixedConfig;
+
     /**
      * Must be public, otherwise: java.lang.VerifyError: Bad access to protected data in invokevirtual
      */
     public Object loadCxfClient(InjectionPoint ip, CXFClientInfo meta) {
-        return produceCxfClient(selectorCXFClientInfo(config, ip, meta));
+        return produceCxfClient(selectorCXFClientInfo(config, fixedConfig, ip, meta));
     }
 
     /**
@@ -173,7 +175,8 @@ public abstract class CxfClientProducer {
      * @return not null
      */
     private static CXFClientInfo selectorCXFClientInfo(
-            CxfConfig cxfConfig,
+            CxfConfig config,
+            CxfFixedConfig fixedConfig,
             InjectionPoint ip,
             CXFClientInfo meta) {
         CXFClientInfo info = new CXFClientInfo(meta);
@@ -185,22 +188,22 @@ public abstract class CxfClientProducer {
             CXFClient anno = ip.getAnnotated().getAnnotation(CXFClient.class);
             String configKey = anno.value();
 
-            if (cxfConfig.isClientPresent(configKey)) {
-                return info.withConfig(cxfConfig.getClient(configKey));
+            if (config.isClientPresent(configKey)) {
+                return info.withConfig(config.getClient(configKey));
             }
 
             // If config-key is present and not default: This is an error:
             if (configKey != null && !configKey.isEmpty()) {
-                throw new IllegalStateException(format(
-                        "client config key %s does not exist. This is illegal.",
-                        configKey));
+                throw new IllegalStateException(
+                        "quarkus.cxf.\"" + configKey + "\" is referenced in " + ip.getMember()
+                                + " but no such build time configuration entry exists");
             }
         }
         // User did not specify any client config value. Thus we make a smart guess
         // about which configuration is to be used.
         //
         // Determine all matching configurations for given SEI
-        List<String> keylist = cxfConfig.clients
+        List<String> keylist = fixedConfig.clients
                 .entrySet()
                 .stream()
                 .filter(kv -> kv.getValue() != null)
@@ -210,25 +213,23 @@ public abstract class CxfClientProducer {
                 .map(Map.Entry::getKey)
                 .collect(toList());
 
-        // keylist contains all configurations for given SEI. It is illegal to have multiple matching
-        // configurations.
-
-        if (keylist.size() > 1) {
-            String fmt;
-            fmt = "multiple client configurations found applicable for SEI(%s): %s. This is illegal. Consider to " +
-                    "remove all but one applicable configurations by applying config property '*.alternative = false'.";
-            throw new IllegalStateException(format(fmt, meta.getSei(), join("|", keylist)));
+        switch (keylist.size()) {
+            case 0:
+                // It is legal to have no matching configuration. Then we go ahead and use default values derived from
+                // the service itself.
+                LOGGER.warnf(
+                        "No configuration found for quarkus.cxf.*.service-interface = %s and alternative = false. Using the values from the service instead: %s.",
+                        meta.getSei(), meta);
+                return meta;
+            case 1:
+                return info.withConfig(config.clients.get(keylist.get(0)));
+            default:
+                throw new IllegalStateException("quarkus.cxf.*.service-interface = " + meta.getSei()
+                        + " with alternative = false expected once, but found " + keylist.size() + " times in "
+                        + keylist.stream().map(k -> "quarkus.cxf.\"" + k + "\".service-interface")
+                                .collect(Collectors.joining(", ")));
         }
 
-        // It is legal to have no matching configuration. Then we go ahead and use default values derived from
-        // the service itself.
-
-        if (keylist.isEmpty()) {
-            LOGGER.warnf("no matching configuration found for SEI %s, using derived value %s.", meta.getSei(), meta);
-            return meta;
-        }
-
-        return info.withConfig(cxfConfig.clients.get(keylist.get(0)));
     }
 
 }

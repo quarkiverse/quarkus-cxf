@@ -21,7 +21,8 @@ public class CxfBuildTimeConfig {
     /**
      * The comma-separated list of WSDL resource paths used by CXF.
      * Deprecated! use {@code  quarkus.native.resources.includes/excludes} instead.
-     * Note that WSDL files selected by {@code quarkus.cxf.codegen.wsdl2java.includes/excludes} are included in native image
+     * Note that WSDL files selected by {@code quarkus.cxf.codegen.wsdl2java.includes/excludes} are included in native
+     * image
      * automatically.
      */
     @Deprecated(forRemoval = true)
@@ -83,7 +84,8 @@ public class CxfBuildTimeConfig {
          * Examples:
          * <ul>
          * <li>{@code calculator.wsdl,fruits.wsdl} will match {@code src/main/resources/calculator.wsdl} and
-         * {@code src/main/resources/fruits.wsdl} under the current Maven or Gradle module, but will not match anything like
+         * {@code src/main/resources/fruits.wsdl} under the current Maven or Gradle module, but will not match anything
+         * like
          * {@code src/main/resources/subdir/calculator.wsdl}
          * <li>{@code my-*-service.wsdl} match {@code src/main/resources/my-foo-service.wsdl} and
          * {@code src/main/resources/my-bar-service.wsdl}
@@ -111,7 +113,8 @@ public class CxfBuildTimeConfig {
         /**
          * A comma separated list of path patterns for selecting WSDL files which should <strong>not</strong> be
          * processed with {@code wsdl2java} tool. The paths are relative to {@code src/main/resources} or
-         * {@code src/test/resources} directories of the current Maven or Gradle module. Same syntax as {@code includes}.
+         * {@code src/test/resources} directories of the current Maven or Gradle module. Same syntax as
+         * {@code includes}.
          */
         @ConfigItem
         public Optional<List<String>> excludes;

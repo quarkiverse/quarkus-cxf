@@ -38,12 +38,6 @@ public class CxfClientConfig {
     public Optional<String> clientEndpointUrl;
 
     /**
-     * The client interface class
-     */
-    @ConfigItem
-    public Optional<String> serviceInterface;
-
-    /**
      * The client endpoint namespace
      */
     @ConfigItem
@@ -103,11 +97,4 @@ public class CxfClientConfig {
     @ConfigItem
     public Optional<List<String>> inFaultInterceptors;
 
-    /**
-     * Indicates whether this is an alternative proxy client configuration. If
-     * true, then this configuration is ignored when configuring a client without
-     * annotation `@CXFClient`.
-     */
-    @ConfigItem
-    public boolean alternative = false;
 }
