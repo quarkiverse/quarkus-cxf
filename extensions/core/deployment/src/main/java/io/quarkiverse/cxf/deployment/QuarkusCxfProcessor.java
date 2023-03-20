@@ -222,10 +222,10 @@ class QuarkusCxfProcessor {
                         // org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
                         if (cols.length > 1) {
                             if (cols[0].length() > 0) {
-                                reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[0]));
+                                reflectiveItems.produce(ReflectiveClassBuildItem.builder(cols[0]).methods().fields().build());
                             }
                             if (cols[1].length() > 0) {
-                                reflectiveItems.produce(new ReflectiveClassBuildItem(true, true, cols[1]));
+                                reflectiveItems.produce(ReflectiveClassBuildItem.builder(cols[1]).methods().fields().build());
                             }
                         }
                         out.write(line);
@@ -394,7 +394,7 @@ class QuarkusCxfProcessor {
                 .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
                 .filter(className -> !className.startsWith("org.apache.cxf.") || !className.contains(".blueprint."))
-                .map(className -> new ReflectiveClassBuildItem(false, false, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).build())
                 .forEach(reflectiveClass::produce);
 
         Stream.of(
@@ -402,32 +402,33 @@ class QuarkusCxfProcessor {
                 .map(DotName::createSimple)
                 .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
-                .map(className -> new ReflectiveClassBuildItem(true, false, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).methods().build())
                 .forEach(reflectiveClass::produce);
 
         for (AnnotationInstance xmlNamespaceInstance : index
                 .getAnnotations(DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace"))) {
             reflectiveClass.produce(
-                    new ReflectiveClassBuildItem(true, true, xmlNamespaceInstance.target().asClass().name().toString()));
+                    ReflectiveClassBuildItem.builder(xmlNamespaceInstance.target().asClass().name().toString()).methods()
+                            .fields().build());
         }
 
-        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false,
-                "org.apache.cxf.common.logging.Slf4jLogger"));
+        reflectiveClass.produce(ReflectiveClassBuildItem.builder(
+                "org.apache.cxf.common.logging.Slf4jLogger").build());
 
         final Set<String> extensibilities = index.getKnownClasses().stream()
                 .map(classInfo -> classInfo.name().toString())
                 .filter(className -> className.startsWith("io.quarkiverse.cxf.extensibility")
                         && className.endsWith("Extensibility"))
                 .collect(Collectors.toSet());
-        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, extensibilities.toArray(new String[0])));
+        reflectiveClass.produce(ReflectiveClassBuildItem.builder(extensibilities.toArray(new String[0])).build());
         unremovables
                 .produce(new UnremovableBeanBuildItem(new UnremovableBeanBuildItem.BeanClassNamesExclusion(extensibilities)));
 
         /* Referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_endpoint_dynamic_ExceptionClassGenerator */
-        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, "io.quarkiverse.cxf.CXFException"));
+        reflectiveClass.produce(ReflectiveClassBuildItem.builder("io.quarkiverse.cxf.CXFException").build());
 
         /* Referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_common_spi_NamespaceClassGenerator */
-        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, "org.apache.cxf.common.jaxb.NamespaceMapper"));
+        reflectiveClass.produce(ReflectiveClassBuildItem.builder("org.apache.cxf.common.jaxb.NamespaceMapper").build());
     }
 
     @BuildStep

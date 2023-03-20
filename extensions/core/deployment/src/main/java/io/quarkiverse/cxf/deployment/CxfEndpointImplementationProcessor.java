@@ -108,7 +108,8 @@ public class CxfEndpointImplementationProcessor {
                     }
 
                 });
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, reflectives.toArray(new String[0])));
+        reflectiveClass
+                .produce(ReflectiveClassBuildItem.builder(reflectives.toArray(new String[0])).methods().fields().build());
     }
 
     @BuildStep

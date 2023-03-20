@@ -38,12 +38,12 @@ class JaxbProcessor {
                 "org.glassfish.jaxb.runtime.v2.runtime.JaxBeanInfo")
                 .flatMap(className -> index.getAllKnownSubclasses(DotName.createSimple(className)).stream())
                 .map(classInfo -> classInfo.name().toString())
-                .map(className -> new ReflectiveClassBuildItem(true, false, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).methods().build())
                 .forEach(reflectiveClass::produce);
 
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, false,
+        reflectiveClass.produce(ReflectiveClassBuildItem.builder(
                 "org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl",
-                "org.glassfish.jaxb.runtime.v2.runtime.JaxBeanInfo"));
+                "org.glassfish.jaxb.runtime.v2.runtime.JaxBeanInfo").methods().build());
 
     }
 
