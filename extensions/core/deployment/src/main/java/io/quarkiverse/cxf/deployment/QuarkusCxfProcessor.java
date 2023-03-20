@@ -79,6 +79,7 @@ import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildI
 import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
+import io.quarkus.deployment.pkg.PackageConfig.BuiltInType;
 import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarRequiredBuildItem;
@@ -236,7 +237,7 @@ class QuarkusCxfProcessor {
             }
 
             // for uber jar merge bus-extensions
-            if ((!uberJarRequired.isEmpty() || packageConfig.type.equalsIgnoreCase(PackageConfig.UBER_JAR))
+            if ((!uberJarRequired.isEmpty() || packageConfig.type.equalsIgnoreCase(BuiltInType.UBER_JAR.toString()))
                     && (os.size() > 0)) {
                 generatedResources.produce(
                         new GeneratedResourceBuildItem("META-INF/cxf/bus-extensions.txt", os.toByteArray()));
@@ -251,7 +252,7 @@ class QuarkusCxfProcessor {
             PackageConfig packageConfig,
             BuildProducer<GeneratedResourceBuildItem> generatedResources) {
         // for uber jar only merge xml resource
-        if (uberJarRequired.isEmpty() && !packageConfig.type.equalsIgnoreCase(PackageConfig.UBER_JAR)) {
+        if (uberJarRequired.isEmpty() && !packageConfig.type.equalsIgnoreCase(PackageConfig.BuiltInType.UBER_JAR.toString())) {
             return;
         }
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
