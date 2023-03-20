@@ -43,7 +43,7 @@ class NeethiProcessor {
         index.getAllKnownImplementors(DotName.createSimple("org.apache.neethi.builders.converters.Converter")).stream()
                 .map(classInfo -> classInfo.name().toString())
                 .filter(cl -> !BANNED_CONVERTERS.contains(cl))
-                .map(className -> new ReflectiveClassBuildItem(true, false, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).methods().build())
                 .forEach(reflectiveClass::produce);
 
         final String abstractDomCoverter = "org.apache.neethi.builders.converters.AbstractDOMConverter";
@@ -52,7 +52,7 @@ class NeethiProcessor {
                 index.getAllKnownSubclasses(DotName.createSimple(abstractDomCoverter)).stream()
                         .map(classInfo -> classInfo.name().toString()))
                 .filter(cl -> !BANNED_CONVERTERS.contains(cl))
-                .map(className -> new ReflectiveClassBuildItem(true, false, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).methods().build())
                 .forEach(reflectiveClass::produce);
 
     }

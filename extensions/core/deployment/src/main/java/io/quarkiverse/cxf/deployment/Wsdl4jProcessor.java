@@ -33,18 +33,16 @@ class Wsdl4jProcessor {
     void reflectiveClass(BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
 
         Stream.of("12", "")
-                .map(version -> new ReflectiveClassBuildItem(
-                        true,
-                        false,
+                .map(version -> ReflectiveClassBuildItem.builder(
                         "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "AddressImpl",
                         "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "BindingImpl",
                         "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "BodyImpl",
                         "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "FaultImpl",
                         "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "HeaderImpl",
-                        "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "OperationImpl"))
+                        "com.ibm.wsdl.extensions.soap" + version + ".SOAP" + version + "OperationImpl").methods().build())
                 .forEach(reflectiveClass::produce);
 
-        reflectiveClass.produce(new ReflectiveClassBuildItem(false, false, "com.ibm.wsdl.extensions.schema.SchemaImpl"));
+        reflectiveClass.produce(ReflectiveClassBuildItem.builder("com.ibm.wsdl.extensions.schema.SchemaImpl").build());
 
     }
 

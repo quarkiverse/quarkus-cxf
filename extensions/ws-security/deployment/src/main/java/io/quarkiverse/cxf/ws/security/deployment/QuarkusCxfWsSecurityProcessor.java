@@ -32,14 +32,14 @@ public class QuarkusCxfWsSecurityProcessor {
     @BuildStep
     void reflectiveClasses(BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
 
-        reflectiveClasses.produce(new ReflectiveClassBuildItem(true, false,
+        reflectiveClasses.produce(ReflectiveClassBuildItem.builder(
                 "org.apache.cxf.ws.security.policy.WSSecurityPolicyLoader",
                 "org.apache.cxf.ws.security.tokenstore.SecurityToken",
                 "org.apache.xml.resolver.CatalogManager" // xml-resolver
-        ));
+        ).methods().build());
 
-        reflectiveClasses.produce(new ReflectiveClassBuildItem(true, true,
-                "org.apache.cxf.ws.security.cache.CacheCleanupListener"));
+        reflectiveClasses.produce(ReflectiveClassBuildItem.builder(
+                "org.apache.cxf.ws.security.cache.CacheCleanupListener").methods().fields().build());
 
     }
 

@@ -13,12 +13,12 @@ public class QuarkusCxfMetricsProcessor {
 
     @BuildStep
     void registerMetricsReflectionItems(BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
-        reflectiveItems.produce(new ReflectiveClassBuildItem(true, false,
+        reflectiveItems.produce(ReflectiveClassBuildItem.builder(
                 QuarkusCxfMetricsFeature.class.getName(),
                 AbstractPortableFeature.class.getName(),
                 MetricsFeature.class.getName(),
                 DelegatingFeature.class.getName(),
-                MetricsFeature.Portable.class.getName()));
+                MetricsFeature.Portable.class.getName()).methods().build());
     }
 
 }

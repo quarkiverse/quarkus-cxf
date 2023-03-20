@@ -84,12 +84,13 @@ class JakartaActivationProcessor {
                 .map(s -> s.substring("x-java-content-handler=".length()))
                 .collect(Collectors.toList());
 
-        reflectiveClass.produce(new ReflectiveClassBuildItem(true, false, false,
+        reflectiveClass.produce(ReflectiveClassBuildItem.builder(
                 Stream.concat(providers.stream(),
                         Stream.concat(streamProviders.stream(),
                                 Stream.concat(imp1.stream(), Stream.concat(imp2.stream(), imp3.stream()))))
                         .distinct()
-                        .toArray(String[]::new)));
+                        .toArray(String[]::new))
+                .build());
 
         //jakarta activation spi
         combinedIndex.getIndex().getKnownClasses()
@@ -176,9 +177,9 @@ class JakartaActivationProcessor {
 
         index.getAllKnownImplementors(DotName.createSimple("javax.activation.DataContentHandler")).stream()
                 .map(classInfo -> classInfo.name().toString())
-                .map(className -> new ReflectiveClassBuildItem(false, false, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).build())
                 .forEach(reflectiveClasses::produce);
 
-        reflectiveClasses.produce(new ReflectiveClassBuildItem(true, false, "java.beans.Beans"));
+        reflectiveClasses.produce(ReflectiveClassBuildItem.builder("java.beans.Beans").methods().build());
     }
 }

@@ -65,7 +65,7 @@ public class EhcacheProcessor {
                 .map(DotName::createSimple)
                 .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
-                .map(className -> new ReflectiveClassBuildItem(false, false, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).build())
                 .forEach(reflectiveClass::produce);
 
         Stream.of(
@@ -73,7 +73,7 @@ public class EhcacheProcessor {
                 .map(DotName::createSimple)
                 .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
-                .map(className -> new ReflectiveClassBuildItem(false, true, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).fields().build())
                 .forEach(reflectiveClass::produce);
 
         Stream.of(
@@ -81,7 +81,7 @@ public class EhcacheProcessor {
                 .map(DotName::createSimple)
                 .flatMap(dotName -> index.getAllKnownSubclasses(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
-                .map(className -> new ReflectiveClassBuildItem(true, false, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).methods().build())
                 .forEach(reflectiveClass::produce);
 
     }

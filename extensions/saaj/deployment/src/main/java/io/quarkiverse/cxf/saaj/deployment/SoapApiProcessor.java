@@ -33,7 +33,7 @@ class SoapApiProcessor {
 
         index.getAllKnownImplementors(DotName.createSimple("jakarta.xml.soap.SOAPBodyElement")).stream()
                 .map(classInfo -> classInfo.name().toString())
-                .map(className -> new ReflectiveClassBuildItem(true, false, className))
+                .map(className -> ReflectiveClassBuildItem.builder(className).methods().build())
                 .forEach(reflectiveClass::produce);
 
     }
