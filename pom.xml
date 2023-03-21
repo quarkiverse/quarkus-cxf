@@ -60,7 +60,7 @@
         <neethi.version>3.2.0</neethi.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
         <mimepull.version>1.10.0</mimepull.version>
         <saaj-impl.version>2.0.1</saaj-impl.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.saaj-impl.version -->
-        <slf4j.version>2.0.6</slf4j.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.slf4j:slf4j-api -->
+        <slf4j.version>2.0.7</slf4j.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.slf4j:slf4j-api -->
         <woodstox-core.version>6.5.0</woodstox-core.version>
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
