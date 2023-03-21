@@ -24,9 +24,6 @@ public class UberJarMergedResourcesTest {
             .setRun(true)
             .setExpectExit(true)
             .overrideConfigKey("quarkus.package.type", "uber-jar")
-            // Workaround for https://github.com/quarkusio/quarkus/issues/31646
-            // Should not be needed with the Quarkus release coming after 3.0.0.Alpha5
-            .overrideConfigKey("quarkus.jaxb.validate-jaxb-context", "false")
             .setLogRecordPredicate(r -> "io.quarkiverse.cxf.deployment.QuarkusCxfProcessor".equals(r.getLoggerName()) ||
                     "io.quarkus.deployment.pkg.steps.JarResultBuildStep".equals(r.getLoggerName()));
 

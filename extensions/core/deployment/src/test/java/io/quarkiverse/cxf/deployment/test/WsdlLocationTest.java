@@ -40,10 +40,7 @@ public class WsdlLocationTest {
             .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation\".implementor",
                     HelloServiceImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation-provider\".implementor",
-                    HelloProvider.class.getName())
-            // Workaround for https://github.com/quarkusio/quarkus/issues/31646
-            // Should not be needed with the Quarkus release coming after 3.0.0.Alpha5
-            .overrideConfigKey("quarkus.jaxb.validate-jaxb-context", "false");
+                    HelloProvider.class.getName());
 
     @Test
     @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/557")

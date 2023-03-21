@@ -102,9 +102,6 @@ public class ServerDevModeTest {
         Properties props = new Properties();
         props.setProperty("quarkus.cxf.endpoint.\"/fruit\".implementor",
                 io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl.class.getName());
-        // Workaround for https://github.com/quarkusio/quarkus/issues/31646
-        // Should not be needed with the Quarkus release coming after 3.0.0.Alpha5
-        props.setProperty("quarkus.jaxb.validate-jaxb-context", "false");
         try {
             props.store(writer, "");
         } catch (IOException e) {
