@@ -52,6 +52,19 @@ jobs:
       run: |
         [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; exit 1; }
 
+    - name: Tar Maven Repo
+      shell: bash
+      run: |
+        tar -czf ${{ runner.temp }}/maven-repo.tgz -C ~ .m2/repository
+        # Avoid caching our own artifacts
+        rm -Rf ~/.m2/repository/io/quarkiverse/cxf
+    - name: Persist Maven Repo
+      uses: actions/upload-artifact@v3
+      with:
+        name: maven-repo
+        path: ${{ runner.temp }}/maven-repo.tgz
+        retention-days: 1
+
   native-tests:
     strategy:
       fail-fast: false
@@ -69,19 +82,17 @@ jobs:
         distribution: temurin
         java-version: 11
 
-    - name: Cache local Maven repository
-      uses: actions/cache@v3
+    - name: Download Maven Repo
+      uses: actions/download-artifact@v3
       with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+        name: maven-repo
+        path: ..
+    - name: Extract Maven Repo
+      shell: bash
+      run: |
+        tar -xzf ../maven-repo.tgz -C ~
 
-    - name: mvn -pl bom,integration-tests/${{matrix.testModule}} -am -B verify -Pnative -Dquarkus.native.container-build=true
+    - name: cd integration-tests/${{matrix.testModule}} && mvn verify -Pnative
       # Skip native tests for CodeQL Security Scans
       if: "${{ env.SKIP_NATIVE_TESTS != 'true' }}"
-      run: |
-        # make sure that -am in the subsequent mvn command really rebuilds all required modules
-        # otherwise stale cached artifacts could interfere
-        rm -Rf ~/.m2/repository/io/quarkiverse/cxf
-        ./mvnw -pl bom,integration-tests/${{matrix.testModule}} -am -B verify -Pnative -Dquarkus.native.container-build=true
+      run: cd integration-tests/${{matrix.testModule}} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true
