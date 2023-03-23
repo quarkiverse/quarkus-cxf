@@ -63,6 +63,19 @@
         <!-- Build docs after these modules from which we copy example code -->
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-integration-test-client</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-integration-test-server</artifactId>
             <version>${project.version}</version>
             <type>pom</type>
