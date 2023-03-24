@@ -8,8 +8,10 @@ import javax.imageio.ImageIO;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.it.ws.mtom.awt.server.MtomAwtResource.ClientKey;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -18,19 +20,29 @@ import io.restassured.http.ContentType;
 class MtomAwtTest {
 
     @Test
+    public void uploadDownloadMtomWithWrappers() throws IOException {
+        assertUploadDownload(ClientKey.imageServiceClientWithWrappers);
+    }
+
+    @Test
+    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/582")
     public void uploadDownloadMtom() throws IOException {
+        assertUploadDownload(ClientKey.imageServiceClient);
+    }
+
+    public void assertUploadDownload(ClientKey clientKey) throws IOException {
         byte[] imageBytes = MtomAwtTest.class.getClassLoader().getResourceAsStream("linux-image.png").readAllBytes();
         String imageName = "linux-image-name";
         RestAssured.given()
                 .contentType(ContentType.BINARY)
                 .body(imageBytes)
-                .post("/mtom-awt-rest/image/" + imageName)
+                .post("/mtom-awt-rest/image/" + clientKey + "/" + imageName)
                 .then()
                 .statusCode(201)
-                .body(CoreMatchers.equalTo(ImageServiceImpl.MSG_SUCCESS));
+                .body(CoreMatchers.equalTo(ImageServiceWithWrappersImpl.MSG_SUCCESS));
 
         byte[] downloadedImageBytes = RestAssured.given()
-                .get("/mtom-awt-rest/image/" + imageName)
+                .get("/mtom-awt-rest/image/" + clientKey + "/" + imageName)
                 .then()
                 .statusCode(200)
                 .extract().asByteArray();

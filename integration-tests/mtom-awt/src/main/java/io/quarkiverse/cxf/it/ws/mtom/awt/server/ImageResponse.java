@@ -11,7 +11,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ImageResponse", propOrder = {
         "_return"
-}, namespace = io.quarkiverse.cxf.it.ws.mtom.awt.server.ImageService.NS)
+}, namespace = ImageServiceWithWrappers.NS)
 public class ImageResponse {
 
     @XmlElement(required = true)

@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.jws.WebService;
 
-@WebService(name = "ImageService", serviceName = "ImageService", endpointInterface = "io.quarkiverse.cxf.it.ws.mtom.awt.server.ImageService", targetNamespace = ImageService.NS)
-public class ImageServiceImpl implements ImageService {
+@WebService(name = "ImageServiceWithWrappers", serviceName = "ImageServiceWithWrappers", endpointInterface = "io.quarkiverse.cxf.it.ws.mtom.awt.server.ImageServiceWithWrappers", targetNamespace = ImageServiceWithWrappers.NS)
+public class ImageServiceWithWrappersImpl implements ImageServiceWithWrappers {
 
     public static final String MSG_SUCCESS = "Upload Successful";
 
