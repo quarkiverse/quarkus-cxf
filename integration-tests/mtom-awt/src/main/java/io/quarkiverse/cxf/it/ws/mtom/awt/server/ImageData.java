@@ -12,7 +12,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlType(name = "ImageData", propOrder = {
         "data",
         "name"
-}, namespace = io.quarkiverse.cxf.it.ws.mtom.awt.server.ImageService.NS)
+}, namespace = ImageServiceWithWrappers.NS)
 public class ImageData {
 
     @XmlElement(required = true)
