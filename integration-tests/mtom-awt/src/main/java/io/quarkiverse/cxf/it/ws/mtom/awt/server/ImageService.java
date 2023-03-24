@@ -5,15 +5,17 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.soap.MTOM;
 
-@WebService(name = "ImageService", targetNamespace = "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/mtom-awt")
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT, parameterStyle = SOAPBinding.ParameterStyle.BARE)
+@WebService(name = "ImageService", targetNamespace = ImageService.NS)
 @MTOM
 public interface ImageService {
 
     @WebMethod
-    ImageData downloadImage(String name);
+    Image downloadImage(
+            @WebParam(name = "name", targetNamespace = NS) String name);
 
     @WebMethod
-    String uploadImage(ImageData image);
+    String uploadImage(
+            @WebParam(name = "data", targetNamespace = NS) Image data,
+            @WebParam(name = "name", targetNamespace = NS) String name);
 
 }

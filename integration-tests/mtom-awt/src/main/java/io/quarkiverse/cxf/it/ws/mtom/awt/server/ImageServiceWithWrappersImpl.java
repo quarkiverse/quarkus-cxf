@@ -1,15 +1,13 @@
 package io.quarkiverse.cxf.it.ws.mtom.awt.server;
 
+import java.awt.Image;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
+import jakarta.jws.WebService;
 
-import org.jboss.logging.Logger;
-
-@WebService(name = "ImageService", serviceName = "ImageService", endpointInterface = "io.quarkiverse.cxf.it.ws.mtom.awt.server.ImageService", targetNamespace = ImageService.NS)
-public class ImageServiceImpl implements ImageService {
+@WebService(name = "ImageServiceWithWrappers", serviceName = "ImageServiceWithWrappers", endpointInterface = "io.quarkiverse.cxf.it.ws.mtom.awt.server.ImageServiceWithWrappers", targetNamespace = ImageServiceWithWrappers.NS)
+public class ImageServiceWithWrappersImpl implements ImageServiceWithWrappers {
 
     public static final String MSG_SUCCESS = "Upload Successful";
 

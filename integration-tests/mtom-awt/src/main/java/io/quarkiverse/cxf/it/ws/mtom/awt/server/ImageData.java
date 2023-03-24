@@ -4,7 +4,11 @@ import java.awt.Image;
 
 import javax.xml.bind.annotation.XmlType;
 
-@XmlType(name = "imageData", namespace = "http://org.jboss.ws/xop/doclit")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ImageData", propOrder = {
+        "data",
+        "name"
+}, namespace = ImageServiceWithWrappers.NS)
 public class ImageData {
 
     private Image data;
