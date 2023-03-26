@@ -25,7 +25,6 @@ class MtomAwtTest {
     }
 
     @Test
-    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/582")
     public void uploadDownloadMtom() throws IOException {
         assertUploadDownload(ClientKey.imageServiceClient);
     }
