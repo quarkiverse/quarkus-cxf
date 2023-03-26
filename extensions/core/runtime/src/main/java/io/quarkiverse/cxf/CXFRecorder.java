@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.logging.Logger;
 
@@ -38,7 +39,7 @@ public class CXFRecorder {
                 cxfClientData.getSoapBinding(),
                 cxfClientData.getWsNamespace(),
                 cxfClientData.getWsName(),
-                cxfClientData.getClassNames(),
+                cxfClientData.getWrapperClassNames(),
                 cxfClientData.isProxyClassRuntimeInitialized()));
     }
 
@@ -54,7 +55,7 @@ public class CXFRecorder {
 
     public void addCxfServletInfo(RuntimeValue<CXFServletInfos> runtimeInfos, String path, String sei,
             CxfConfig cxfConfig, String serviceName, String serviceTargetNamepsace, String soapBinding,
-            List<String> wrapperClassNames, String wsImplementor, Boolean isProvider) {
+            Set<String> wrapperClassNames, String wsImplementor, Boolean isProvider) {
         CXFServletInfos infos = runtimeInfos.getValue();
         Map<String, List<ServletConfig>> implementorToCfg = new HashMap<>();
         for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
@@ -99,7 +100,7 @@ public class CXFRecorder {
     }
 
     private static CXFServletInfo createServletInfo(String path, String sei, String serviceName, String serviceTargetNamespace,
-            String soapBinding, List<String> wrapperClassNames, String wsImplementor,
+            String soapBinding, Set<String> wrapperClassNames, String wsImplementor,
             CxfEndpointConfig cxfEndPointConfig, String relativePath, Boolean isProvider) {
         CXFServletInfo cfg = new CXFServletInfo(path,
                 relativePath,

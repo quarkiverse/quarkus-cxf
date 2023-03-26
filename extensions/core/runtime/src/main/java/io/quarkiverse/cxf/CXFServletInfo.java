@@ -2,7 +2,9 @@ package io.quarkiverse.cxf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.logging.Logger;
 
@@ -21,7 +23,7 @@ public class CXFServletInfo {
     private final String serviceName;
     private final String serviceTargetNamespace;
     private final String soapBinding;
-    private final List<String> wrapperClassNames;
+    private final Set<String> wrapperClassNames = new LinkedHashSet<>();
     private final Boolean isProvider;
     private final String endpointUrl;
 
@@ -29,7 +31,7 @@ public class CXFServletInfo {
 
     public CXFServletInfo(String path, String relativePath, String className, String sei, String wsdlPath,
             String serviceName, String serviceTargetNamespace, String soapBinding,
-            List<String> wrapperClassNames, Boolean provider, String endpointUrl) {
+            Set<String> wrapperClassNames, Boolean provider, String endpointUrl) {
         LOGGER.trace("new CXFServletInfo");
         this.path = path;
         this.relativePath = relativePath;
@@ -45,7 +47,7 @@ public class CXFServletInfo {
         this.serviceName = serviceName;
         this.serviceTargetNamespace = serviceTargetNamespace;
         this.soapBinding = soapBinding;
-        this.wrapperClassNames = wrapperClassNames;
+        this.wrapperClassNames.addAll(wrapperClassNames);
         this.isProvider = provider;
         this.endpointUrl = endpointUrl;
     }
@@ -106,7 +108,7 @@ public class CXFServletInfo {
         return soapBinding;
     }
 
-    public List<String> getWrapperClassNames() {
+    public Set<String> getWrapperClassNames() {
         return wrapperClassNames;
     }
 

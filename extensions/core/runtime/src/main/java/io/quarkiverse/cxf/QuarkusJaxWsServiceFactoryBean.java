@@ -1,7 +1,6 @@
 package io.quarkiverse.cxf;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
@@ -23,8 +22,8 @@ public class QuarkusJaxWsServiceFactoryBean extends JaxWsServiceFactoryBean {
     private static final org.jboss.logging.Logger LOGGER = org.jboss.logging.Logger
             .getLogger(QuarkusJaxWsServiceFactoryBean.class);
 
-    public QuarkusJaxWsServiceFactoryBean(List<String> classNames) {
-        wrapperClasses = classNames.stream().distinct().map(className -> {
+    public QuarkusJaxWsServiceFactoryBean(Set<String> wrapperClassNames) {
+        wrapperClasses = wrapperClassNames.stream().map(className -> {
             try {
                 return Thread.currentThread().getContextClassLoader().loadClass(className);
             } catch (ClassNotFoundException e) {
@@ -46,7 +45,7 @@ public class QuarkusJaxWsServiceFactoryBean extends JaxWsServiceFactoryBean {
     @Override
     public void reset() {
         super.reset();
-        wrapperClasses = null;
+        //wrapperClasses = null;
     }
 
     @Override

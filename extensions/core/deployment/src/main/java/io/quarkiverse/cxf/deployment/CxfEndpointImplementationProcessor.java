@@ -128,7 +128,7 @@ public class CxfEndpointImplementationProcessor {
                 .map(CxfRouteRegistrationRequestorBuildItem::getRequestorName)
                 .collect(Collectors.toList());
         if (!cxfEndpoints.isEmpty()) {
-            final Map<String, List<String>> wrapperClassNames = cxfWrapperClassNames.getWrapperClassNames();
+            final Map<String, Set<String>> wrapperClassNames = cxfWrapperClassNames.getWrapperClassNames();
             for (CxfEndpointImplementationBuildItem cxfWebService : cxfEndpoints) {
                 recorder.addCxfServletInfo(infos, cxfBuildTimeConfig.path, cxfWebService.getImplementor(),
                         cxfConfig, cxfWebService.getWsName(), cxfWebService.getWsNamespace(),

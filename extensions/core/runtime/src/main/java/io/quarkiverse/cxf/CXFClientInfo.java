@@ -1,8 +1,11 @@
 package io.quarkiverse.cxf;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import io.quarkus.arc.Unremovable;
 
@@ -26,7 +29,7 @@ public class CXFClientInfo {
     private final List<String> inFaultInterceptors = new ArrayList<>();
     private final List<String> features = new ArrayList<>();
     private final List<String> handlers = new ArrayList<>();
-    private final List<String> classNames = new ArrayList<>();
+    private final Set<String> wrapperClassNames = new LinkedHashSet<>();
 
     public CXFClientInfo() {
     }
@@ -37,9 +40,9 @@ public class CXFClientInfo {
             String soapBinding,
             String wsNamespace,
             String wsName,
-            List<String> classNames,
+            Collection<String> wrapperClassNames,
             boolean proxyClassRuntimeInitialized) {
-        this.classNames.addAll(classNames);
+        this.wrapperClassNames.addAll(wrapperClassNames);
         this.endpointAddress = endpointAddress;
         this.epName = null;
         this.epNamespace = null;
@@ -54,7 +57,7 @@ public class CXFClientInfo {
     }
 
     public CXFClientInfo(CXFClientInfo other) {
-        this(other.sei, other.endpointAddress, other.soapBinding, other.wsNamespace, other.wsName, other.classNames,
+        this(other.sei, other.endpointAddress, other.soapBinding, other.wsNamespace, other.wsName, other.wrapperClassNames,
                 other.proxyClassRuntimeInitialized);
         this.wsdlUrl = other.wsdlUrl;
         this.epNamespace = other.epNamespace;
@@ -128,8 +131,8 @@ public class CXFClientInfo {
         return password;
     }
 
-    public List<String> getClassNames() {
-        return classNames;
+    public Set<String> getWrapperClassNames() {
+        return wrapperClassNames;
     }
 
     public boolean isProxyClassRuntimeInitialized() {
