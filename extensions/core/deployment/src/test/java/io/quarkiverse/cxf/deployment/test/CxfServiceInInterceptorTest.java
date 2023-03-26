@@ -33,7 +33,6 @@ public class CxfServiceInInterceptorTest {
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(HelloService.class, HelloServiceImpl.class, AnnotationCounterImplInterceptor.class,
                             AnnotationCounterIntfInterceptor.class, PropertiesCounterInterceptor.class))
-            .withConfigurationResource("application-cxf-server-test.properties")
             .overrideConfigKey("quarkus.cxf.endpoint.\"/intercepted\".implementor",
                     HelloServiceImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.endpoint.\"/intercepted\".in-interceptors",
