@@ -1,8 +1,9 @@
 package io.quarkiverse.cxf;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Provides runtime metadata for a CXF client.
@@ -13,7 +14,7 @@ import java.util.List;
  * </p>
  */
 public class CXFClientData implements Serializable {
-    private List<String> classNames;
+    private Set<String> wrapperClassNames;
     private String soapBinding;
     private String sei;
     private String wsName;
@@ -28,18 +29,18 @@ public class CXFClientData implements Serializable {
             String sei,
             String wsName,
             String wsNamespace,
-            List<String> classNames,
+            Collection<String> wrapperClassNames,
             boolean proxyClassRuntimeInitialized) {
         this.soapBinding = soapBinding;
         this.sei = sei;
         this.wsName = wsName;
         this.wsNamespace = wsNamespace;
-        this.classNames = Collections.unmodifiableList(classNames);
+        this.wrapperClassNames = new LinkedHashSet<>(wrapperClassNames);
         this.proxyClassRuntimeInitialized = proxyClassRuntimeInitialized;
     }
 
-    public List<String> getClassNames() {
-        return classNames;
+    public Set<String> getWrapperClassNames() {
+        return wrapperClassNames;
     }
 
     public String getSoapBinding() {
@@ -66,8 +67,8 @@ public class CXFClientData implements Serializable {
         this.proxyClassRuntimeInitialized = proxyClassRuntimeInitialized;
     }
 
-    public void setClassNames(List<String> classNames) {
-        this.classNames = Collections.unmodifiableList(classNames);
+    public void setWrapperClassNames(Set<String> classNames) {
+        this.wrapperClassNames = classNames;
     }
 
     public void setSoapBinding(String soapBinding) {

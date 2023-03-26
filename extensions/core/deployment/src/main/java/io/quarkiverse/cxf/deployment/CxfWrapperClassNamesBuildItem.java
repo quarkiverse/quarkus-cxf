@@ -1,9 +1,10 @@
 package io.quarkiverse.cxf.deployment;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import io.quarkus.builder.item.SimpleBuildItem;
@@ -12,14 +13,14 @@ import io.quarkus.builder.item.SimpleBuildItem;
  * Holds a map from SEI class names to lists of their respective wrapper class names.
  */
 public final class CxfWrapperClassNamesBuildItem extends SimpleBuildItem {
-    private final Map<String, List<String>> wrapperClassNames;
+    private final Map<String, Set<String>> wrapperClassNames;
 
-    private CxfWrapperClassNamesBuildItem(Map<String, List<String>> wrapperClassNames) {
+    private CxfWrapperClassNamesBuildItem(Map<String, Set<String>> wrapperClassNames) {
         super();
         this.wrapperClassNames = wrapperClassNames;
     }
 
-    public Map<String, List<String>> getWrapperClassNames() {
+    public Map<String, Set<String>> getWrapperClassNames() {
         return wrapperClassNames;
     }
 
@@ -28,15 +29,15 @@ public final class CxfWrapperClassNamesBuildItem extends SimpleBuildItem {
     }
 
     public static class Builder {
-        private Map<String, List<String>> wrapperClassNames = new TreeMap<>();
+        private Map<String, Set<String>> wrapperClassNames = new TreeMap<>();
 
-        public Builder put(String sei, List<String> wrapperClassNames) {
-            this.wrapperClassNames.put(sei, Collections.unmodifiableList(new ArrayList<>(wrapperClassNames)));
+        public Builder put(String sei, Collection<String> wrapperClassNames) {
+            this.wrapperClassNames.put(sei, Collections.unmodifiableSet(new LinkedHashSet<>(wrapperClassNames)));
             return this;
         }
 
         public CxfWrapperClassNamesBuildItem build() {
-            Map<String, List<String>> map = wrapperClassNames;
+            Map<String, Set<String>> map = wrapperClassNames;
             wrapperClassNames = null; // do not allow leaking the collection
             return new CxfWrapperClassNamesBuildItem(map);
         }

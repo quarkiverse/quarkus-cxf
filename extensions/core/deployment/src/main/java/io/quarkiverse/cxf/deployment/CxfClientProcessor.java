@@ -147,7 +147,7 @@ public class CxfClientProcessor {
             CxfWrapperClassNamesBuildItem cxfWrapperClassNames,
             BuildProducer<SyntheticBeanBuildItem> synthetics) {
 
-        final Map<String, List<String>> wrapperClassNames = cxfWrapperClassNames.getWrapperClassNames();
+        final Map<String, Set<String>> wrapperClassNames = cxfWrapperClassNames.getWrapperClassNames();
 
         //
         // Create injectable CXFClientInfo bean for each SEI-only interface, i.e. for each
