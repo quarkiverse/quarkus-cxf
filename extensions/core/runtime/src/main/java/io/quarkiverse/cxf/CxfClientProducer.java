@@ -99,7 +99,7 @@ public abstract class CxfClientProducer {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Could not load " + RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_NAME, e);
         }
-        QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean(cxfClientInfo.getClassNames());
+        QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean(cxfClientInfo.getWrapperClassNames());
         QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(quarkusClientFactoryBean, interfaces);
         Bus bus = quarkusClientFactoryBean.getBus(true);
         bus.setExtension(new WrapperHelperClassLoader(bus), WrapperHelperCreator.class);
