@@ -73,6 +73,63 @@ public class CxfClientTest {
     }
 
     /**
+     * Test whether passing multiple parameters to the client works properly
+     *
+     * @param clientKey
+     */
+    @ParameterizedTest
+    @ValueSource(strings = { "default", "myCalculator", "mySkewedCalculator" })
+    void addNumberAndOperands(String clientKey) {
+        final int expected = "mySkewedCalculator".equals(clientKey) ? 112 : 12;
+        RestAssured.given()
+                .queryParam("a", 3)
+                .queryParam("b", 4)
+                .queryParam("c", 5)
+                .get("/cxf/client/calculator/" + clientKey + "/addNumberAndOperands")
+                .then()
+                .statusCode(200)
+                .body(is(String.valueOf(expected)));
+    }
+
+    /**
+     * Test whether passing multiple parameters to the client works properly
+     *
+     * @param clientKey
+     */
+    @ParameterizedTest
+    @ValueSource(strings = { "default", "myCalculator", "mySkewedCalculator" })
+    void addArray(String clientKey) {
+        final int expected = "mySkewedCalculator".equals(clientKey) ? 112 : 12;
+        RestAssured.given()
+                .queryParam("a", 3)
+                .queryParam("b", 4)
+                .queryParam("c", 5)
+                .get("/cxf/client/calculator/" + clientKey + "/addArray")
+                .then()
+                .statusCode(200)
+                .body(is(String.valueOf(expected)));
+    }
+
+    /**
+     * Test whether passing multiple parameters to the client works properly
+     *
+     * @param clientKey
+     */
+    @ParameterizedTest
+    @ValueSource(strings = { "default", "myCalculator", "mySkewedCalculator" })
+    void addList(String clientKey) {
+        final int expected = "mySkewedCalculator".equals(clientKey) ? 112 : 12;
+        RestAssured.given()
+                .queryParam("a", 3)
+                .queryParam("b", 4)
+                .queryParam("c", 5)
+                .get("/cxf/client/calculator/" + clientKey + "/addList")
+                .then()
+                .statusCode(200)
+                .body(is(String.valueOf(expected)));
+    }
+
+    /**
      * Test whether the interceptor gets installed properly.
      */
     @Test

@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf.client.it;
 
 import java.io.InputStream;
+import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -84,6 +85,33 @@ public class CxfClientResource {
         ops.setA(a);
         ops.setB(b);
         return getClient(client).addOperands(ops).getResult();
+    }
+
+    @GET
+    @Path("/calculator/{client}/addNumberAndOperands")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int addNumberAndOperands(@PathParam("client") String client, @QueryParam("a") int a, @QueryParam("b") int b,
+            @QueryParam("c") int c) {
+        final Operands ops = new Operands();
+        ops.setA(b);
+        ops.setB(c);
+        return getClient(client).addNumberAndOperands(a, ops);
+    }
+
+    @GET
+    @Path("/calculator/{client}/addArray")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int addArray(@PathParam("client") String client, @QueryParam("a") int a, @QueryParam("b") int b,
+            @QueryParam("c") int c) {
+        return getClient(client).addArray(List.of(a, b, c));
+    }
+
+    @GET
+    @Path("/calculator/{client}/addList")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int addList(@PathParam("client") String client, @QueryParam("a") int a, @QueryParam("b") int b,
+            @QueryParam("c") int c) {
+        return getClient(client).addList(List.of(a, b, c));
     }
 
     private CalculatorService getClient(String client) {
