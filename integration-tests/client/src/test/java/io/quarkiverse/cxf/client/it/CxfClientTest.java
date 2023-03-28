@@ -218,6 +218,39 @@ public class CxfClientTest {
                 .body(containsString("HTTP response '401: Unauthorized'"));
     }
 
+    @Test
+    void bareEcho() {
+        RestAssured.given()
+                .queryParam("a", 7)
+                .get("/cxf/client/bare/echo")
+                .then()
+                .statusCode(200)
+                .body(is("7"));
+    }
+
+    @Test
+    void bareOperands() {
+        RestAssured.given()
+                .queryParam("a", 7)
+                .queryParam("b", 4)
+                .get("/cxf/client/bare/addOperands")
+                .then()
+                .statusCode(200)
+                .body(is("11"));
+    }
+
+    @Test
+    void bareArray() {
+        RestAssured.given()
+                .queryParam("a", 7)
+                .queryParam("b", 4)
+                .queryParam("c", 2)
+                .get("/cxf/client/bare/addArray")
+                .then()
+                .statusCode(200)
+                .body(is("13"));
+    }
+
     /**
      * Make sure that our static copies are the same as the WSDL served by the container
      *
