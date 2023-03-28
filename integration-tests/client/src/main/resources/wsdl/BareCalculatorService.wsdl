@@ -1,0 +1,113 @@
+<?xml version="1.0" ?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.jboss.org/eap/quickstarts/wscalculator/BareCalculator" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="BareCalculatorService" targetNamespace="http://www.jboss.org/eap/quickstarts/wscalculator/BareCalculator">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.jboss.org/eap/quickstarts/wscalculator/BareCalculator" xmlns:ns0="http://jaxb.dev.java.net/array" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://www.jboss.org/eap/quickstarts/wscalculator/BareCalculator" version="1.0">
+  <xs:import namespace="http://jaxb.dev.java.net/array"></xs:import>
+  <xs:complexType name="operands">
+    <xs:sequence>
+      <xs:element name="a" type="xs:int"></xs:element>
+      <xs:element name="b" type="xs:int"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="result">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="operands" type="tns:operands"></xs:element>
+      <xs:element name="result" type="xs:int"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="echo" nillable="true" type="xs:int"></xs:element>
+  <xs:element name="echoResponse" nillable="true" type="xs:int"></xs:element>
+  <xs:element name="addOperands" nillable="true" type="tns:operands"></xs:element>
+  <xs:element name="addOperandsResponse" nillable="true" type="tns:result"></xs:element>
+  <xs:element name="bareArray" nillable="true" type="ns0:longArray"></xs:element>
+  <xs:element name="addArrayResponse" nillable="true" type="xs:long"></xs:element>
+</xs:schema>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://jaxb.dev.java.net/array" version="1.0">
+
+  <xs:complexType final="#all" name="longArray">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="item" nillable="true" type="xs:long"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="addOperandsResponse">
+    <wsdl:part element="tns:addOperandsResponse" name="addOperandsResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echo">
+    <wsdl:part element="tns:echo" name="echo">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addArrayResponse">
+    <wsdl:part element="tns:addArrayResponse" name="addArrayResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="echoResponse">
+    <wsdl:part element="tns:echoResponse" name="echoResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addOperands">
+    <wsdl:part element="tns:addOperands" name="addOperands">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addArray">
+    <wsdl:part element="tns:bareArray" name="bareArray">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="BareCalculatorService">
+    <wsdl:operation name="echo">
+      <wsdl:input message="tns:echo" name="echo">
+    </wsdl:input>
+      <wsdl:output message="tns:echoResponse" name="echoResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addOperands">
+      <wsdl:input message="tns:addOperands" name="addOperands">
+    </wsdl:input>
+      <wsdl:output message="tns:addOperandsResponse" name="addOperandsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addArray">
+      <wsdl:input message="tns:addArray" name="addArray">
+    </wsdl:input>
+      <wsdl:output message="tns:addArrayResponse" name="addArrayResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BareCalculatorServiceSoapBinding" type="tns:BareCalculatorService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"></soap:binding>
+    <wsdl:operation name="echo">
+      <soap:operation soapAction="" style="document"></soap:operation>
+      <wsdl:input name="echo">
+        <soap:body use="literal"></soap:body>
+      </wsdl:input>
+      <wsdl:output name="echoResponse">
+        <soap:body use="literal"></soap:body>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addOperands">
+      <soap:operation soapAction="" style="document"></soap:operation>
+      <wsdl:input name="addOperands">
+        <soap:body use="literal"></soap:body>
+      </wsdl:input>
+      <wsdl:output name="addOperandsResponse">
+        <soap:body use="literal"></soap:body>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="addArray">
+      <soap:operation soapAction="" style="document"></soap:operation>
+      <wsdl:input name="addArray">
+        <soap:body use="literal"></soap:body>
+      </wsdl:input>
+      <wsdl:output name="addArrayResponse">
+        <soap:body use="literal"></soap:body>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BareCalculatorService">
+    <wsdl:port binding="tns:BareCalculatorServiceSoapBinding" name="BareCalculator">
+      <soap:address location="http://192.168.122.1:8080/calculator-ws/BareCalculatorService"></soap:address>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
