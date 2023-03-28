@@ -22,7 +22,7 @@ public class CxfWssClientTestResource implements QuarkusTestResourceLifecycleMan
         final String user = "cxf-user";
         final String password = "secret-password";
         try {
-            calculatorContainer = new GenericContainer<>("quay.io/l2x6/calculator-ws:1.0")
+            calculatorContainer = new GenericContainer<>("quay.io/l2x6/calculator-ws:1.1")
                     .withEnv("WSS_USER", user)
                     .withEnv("WSS_PASSWORD", password)
                     .withLogConsumer(new Slf4jLogConsumer(log))

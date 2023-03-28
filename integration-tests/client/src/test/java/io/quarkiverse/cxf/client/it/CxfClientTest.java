@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.client.it;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
@@ -138,19 +139,47 @@ public class CxfClientTest {
                 .body(is(endpointAddress));
     }
 
+    @Test
+    void basicAuth() {
+        RestAssured.given()
+                .queryParam("a", 7)
+                .queryParam("b", 4)
+                .get("/cxf/client/auth/basic/myBasicAuthCalculator/securedAdd")
+                .then()
+                .statusCode(200)
+                .body(is("11"));
+    }
+
+    @Test
+    void basicAuthAnonymous() {
+        RestAssured.given()
+                .queryParam("a", 7)
+                .queryParam("b", 4)
+                .get("/cxf/client/auth/basic/myBasicAuthAnonymousCalculator/securedAdd")
+                .then()
+                .statusCode(500)
+                .body(containsString("HTTP response '401: Unauthorized'"));
+    }
+
     /**
-     * Make sure that our static copy is the same as the WSDL served by the container
+     * Make sure that our static copies are the same as the WSDL served by the container
      *
      * @throws IOException
      */
     @Test
     void wsdlUpToDate() throws IOException {
-        final String wsdlUrl = ConfigProvider.getConfig()
-                .getValue("quarkus.cxf.client.myCalculator.wsdl", String.class);
+        wsdlUpToDate("myCalculator", "CalculatorService");
+        wsdlUpToDate("myBasicAuthCalculator", "BasicAuthCalculatorService");
+    }
 
-        final String staticCopyPath = "src/main/resources/wsdl/CalculatorService.wsdl";
+    static void wsdlUpToDate(String clientKey, String serviceName) throws IOException {
+        final String wsdlUrl = ConfigProvider.getConfig()
+                .getValue("quarkus.cxf.client." + clientKey + ".wsdl", String.class);
+
+        final String staticCopyPath = "src/main/resources/wsdl/" + serviceName + ".wsdl";
         /* The changing Docker IP address in the WSDL should not matter */
-        final String sanitizerRegex = "<soap:address location=\"http://[^/]*/calculator-ws/CalculatorService\"></soap:address>";
+        final String sanitizerRegex = "<soap:address location=\"http://[^/]*/calculator-ws/" + serviceName
+                + "\"></soap:address>";
         final String staticCopyContent = Files
                 .readString(Paths.get(staticCopyPath), StandardCharsets.UTF_8)
                 .replaceAll(sanitizerRegex, "");

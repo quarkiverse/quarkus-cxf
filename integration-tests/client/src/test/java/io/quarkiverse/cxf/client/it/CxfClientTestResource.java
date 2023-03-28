@@ -18,6 +18,7 @@
 package io.quarkiverse.cxf.client.it;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -33,14 +34,19 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
     @Override
     public Map<String, String> start() {
 
+        final String BASIC_AUTH_USER = "tester";
+        final String BASIC_AUTH_PASSWORD = UUID.randomUUID().toString();
+
         try {
-            calculatorContainer = new GenericContainer<>("quay.io/l2x6/calculator-ws:1.0")
+            calculatorContainer = new GenericContainer<>("quay.io/l2x6/calculator-ws:1.1")
                     .withExposedPorts(WILDFLY_PORT)
+                    .withEnv("BASIC_AUTH_USER", BASIC_AUTH_USER)
+                    .withEnv("BASIC_AUTH_PASSWORD", BASIC_AUTH_PASSWORD)
                     .waitingFor(Wait.forHttp("/calculator-ws/CalculatorService?wsdl"));
 
             calculatorContainer.start();
 
-            skewedCalculatorContainer = new GenericContainer<>("quay.io/l2x6/calculator-ws:1.0")
+            skewedCalculatorContainer = new GenericContainer<>("quay.io/l2x6/calculator-ws:1.1")
                     .withEnv("ADD_TO_RESULT", "100")
                     .withExposedPorts(WILDFLY_PORT)
                     .waitingFor(Wait.forHttp("/calculator-ws/CalculatorService?wsdl"));
@@ -52,7 +58,9 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
                     "http://" + calculatorContainer.getHost() + ":" + calculatorContainer.getMappedPort(WILDFLY_PORT),
                     "cxf.it.skewed-calculator.baseUri",
                     "http://" + skewedCalculatorContainer.getHost() + ":"
-                            + skewedCalculatorContainer.getMappedPort(WILDFLY_PORT));
+                            + skewedCalculatorContainer.getMappedPort(WILDFLY_PORT),
+                    "cxf.it.calculator.auth.basic.user", BASIC_AUTH_USER,
+                    "cxf.it.calculator.auth.basic.password", BASIC_AUTH_PASSWORD);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
