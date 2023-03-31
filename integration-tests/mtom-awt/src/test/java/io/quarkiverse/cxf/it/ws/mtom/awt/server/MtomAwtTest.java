@@ -8,7 +8,6 @@ import javax.imageio.ImageIO;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.it.ws.mtom.awt.server.MtomAwtResource.ClientKey;
@@ -25,7 +24,6 @@ class MtomAwtTest {
     }
 
     @Test
-    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/582")
     public void uploadDownloadMtom() throws IOException {
         assertUploadDownload(ClientKey.imageServiceClient);
     }

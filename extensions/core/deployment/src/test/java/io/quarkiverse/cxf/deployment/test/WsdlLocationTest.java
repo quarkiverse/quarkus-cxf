@@ -1,0 +1,140 @@
+package io.quarkiverse.cxf.deployment.test;
+
+import java.io.IOException;
+
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.Provider;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.WebServiceProvider;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.hamcrest.CoreMatchers;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+
+import io.quarkus.test.QuarkusUnitTest;
+import io.restassured.RestAssured;
+
+public class WsdlLocationTest {
+
+    @RegisterExtension
+    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+            .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
+                    .addClasses(HelloService.class, HelloServiceImpl.class, HelloProvider.class)
+                    .addAsResource("wsdllocation/HelloService.wsdl"))
+            .overrideConfigKey("quarkus.cxf.path", "/soap")
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation\".implementor",
+                    HelloServiceImpl.class.getName())
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation-provider\".implementor",
+                    HelloProvider.class.getName());
+
+    @Test
+    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/557")
+    public void serviceServingStaticWsdl()
+            throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+
+        RestAssured.given()
+                .body("<s11:Envelope xmlns:s11=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                        + "  <s11:Body>\n"
+                        + "    <ns1:hello xmlns:ns1=\"http://test.deployment.cxf.quarkiverse.io/\">\n"
+                        + "      <helloName>Joe</helloName>\n"
+                        + "    </ns1:hello>\n"
+                        + "  </s11:Body>\n"
+                        + "</s11:Envelope>")
+                .post("/soap/wsdllocation/HelloService")
+                .then()
+                .statusCode(200)
+                .body(CoreMatchers.containsString(
+                        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:helloResponse xmlns:ns2=\"http://test.deployment.cxf.quarkiverse.io/\"><return>Hello null</return></ns2:helloResponse></soap:Body></soap:Envelope>"));
+
+        RestAssured.get("/soap/wsdllocation/HelloService/?wsdl")
+                .then()
+                .statusCode(200)
+                .body(CoreMatchers.containsString("<!-- my custom comment -->"));
+    }
+
+    @Test
+    public void providerServingStaticWsdl()
+            throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+
+        RestAssured.given()
+                .header("Content-Type", "text/xml")
+                .body("<s11:Envelope xmlns:s11=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                        + "  <s11:Body>\n"
+                        + "    <ns1:hello xmlns:ns1=\"http://test.deployment.cxf.quarkiverse.io/\">\n"
+                        + "      <helloName>Joe</helloName>\n"
+                        + "    </ns1:hello>\n"
+                        + "  </s11:Body>\n"
+                        + "</s11:Envelope>")
+                .post("/soap/wsdllocation-provider")
+                .then()
+                .statusCode(200)
+                .body(CoreMatchers.containsString(
+                        "<return>Hello Joe</return>"));
+
+        RestAssured.get("/soap/wsdllocation-provider/?wsdl")
+                .then()
+                .statusCode(200)
+                .body(CoreMatchers.containsString("<!-- my custom comment -->"));
+
+    }
+
+    @WebService(targetNamespace = "http://test.deployment.cxf.quarkiverse.io/")
+    public interface HelloService {
+        @WebMethod
+        String hello(String name);
+    }
+
+    @WebService(serviceName = "HelloService", endpointInterface = "io.quarkiverse.cxf.deployment.test.WsdlLocationTest$HelloService", wsdlLocation = "classpath:wsdllocation/HelloService.wsdl", targetNamespace = "http://test.deployment.cxf.quarkiverse.io/")
+    public static class HelloServiceImpl implements HelloService {
+        @WebMethod
+        @Override
+        public String hello(String name) {
+            return "Hello " + name;
+        }
+    }
+
+    @WebServiceProvider(wsdlLocation = "classpath:wsdllocation/HelloService.wsdl", serviceName = "HelloService")
+    @ServiceMode(value = Service.Mode.MESSAGE)
+    public static class HelloProvider implements Provider<SOAPMessage> {
+
+        public HelloProvider() {
+        }
+
+        @Override
+        public SOAPMessage invoke(SOAPMessage request) throws WebServiceException {
+            try {
+                final Document doc = request.getSOAPBody().extractContentAsDocument();
+                final Element helloElement = doc.getDocumentElement();
+                final Element nameElement = (Element) helloElement.getElementsByTagName("helloName").item(0);
+                final String name = nameElement.getTextContent();
+                doc.renameNode(helloElement, helloElement.getNamespaceURI(), "helloResponse");
+                doc.renameNode(nameElement, nameElement.getNamespaceURI(), "return");
+                nameElement.setTextContent("Hello " + name);
+
+                MessageFactory mf = MessageFactory.newInstance();
+                SOAPMessage response = mf.createMessage();
+                response.getSOAPBody().addDocument(doc);
+                response.saveChanges();
+                return response;
+
+            } catch (SOAPException e) {
+                throw new WebServiceException(e);
+            }
+        }
+    }
+
+}

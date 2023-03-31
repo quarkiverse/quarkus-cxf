@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -55,8 +56,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import io.quarkiverse.cxf.CXFRecorder;
+import io.quarkiverse.cxf.QuarkusBusFactory;
 import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Wsdl2JavaParameterSet;
-import io.quarkiverse.cxf.deployment.CxfWrapperClassNamesBuildItem.Builder;
 import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaCodeGen;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
@@ -172,27 +173,49 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    CxfWrapperClassNamesBuildItem cxfWrapperClassNames(
+    void generateRuntimeBusServiceFile(BuildProducer<GeneratedResourceBuildItem> generatedResources) {
+        /*
+         * If we simply stored io.quarkiverse.cxf.deployment.QuarkusBusFactory
+         * to META-INF/services/org.apache.cxf.bus.factory in the runtime module
+         * then it would be also visible for the deployment module, where we want to configure
+         * the bus extensions differently
+         */
+        byte[] serviceFileContent = QuarkusBusFactory.class.getName().getBytes(StandardCharsets.UTF_8);
+        generatedResources.produce(
+                new GeneratedResourceBuildItem(
+                        "META-INF/services/" + BusFactory.BUS_FACTORY_PROPERTY_NAME,
+                        serviceFileContent));
+    }
+
+    @BuildStep
+    void generateClasses(
             CxfBusBuildItem bus,
             List<CxfClientBuildItem> clients,
             List<CxfEndpointImplementationBuildItem> endpointImplementations,
-            BuildProducer<GeneratedBeanBuildItem> generatedBeans) {
+            BuildProducer<GeneratedBeanBuildItem> generatedBeans,
+            BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
 
-        bus.getBus().setExtension(new QuarkusCapture(new GeneratedBeanGizmoAdaptor(generatedBeans)),
-                GeneratedClassClassLoaderCapture.class);
+        QuarkusCapture capture = new QuarkusCapture(new GeneratedBeanGizmoAdaptor(generatedBeans));
+        bus.getBus().setExtension(capture, GeneratedClassClassLoaderCapture.class);
 
-        Builder b = CxfWrapperClassNamesBuildItem.builder();
-
-        Stream.concat(
-                clients.stream().map(CxfClientBuildItem::getSei),
-                endpointImplementations.stream().map(CxfEndpointImplementationBuildItem::getImplementor))
+        final Random rnd = new Random(System.currentTimeMillis());
+        endpointImplementations.stream().map(CxfEndpointImplementationBuildItem::getImplementor)
                 .forEach(sei -> {
-                    final QuarkusBuildTimeJaxWsServiceFactoryBean factoryBean = CxfDeploymentUtils
-                            .createQuarkusJaxWsServiceFactoryBean(sei, bus.getBus());
-                    b.put(sei, factoryBean.getWrappersClassNames());
+                    /*
+                     * This is a fake build time server start, so it does not matter much that we
+                     * use a fake path
+                     */
+                    final String path = "/QuarkusCxfProcessor/dummy-" + rnd.nextLong();
+                    CxfDeploymentUtils.createServer(sei, path, bus.getBus());
                 });
 
-        return b.build();
+        clients.stream().map(CxfClientBuildItem::getSei)
+                .forEach(sei -> {
+                    CxfDeploymentUtils.createClient(sei, bus.getBus());
+                });
+
+        reflectiveClasses.produce(
+                new ReflectiveClassBuildItem(false, true, capture.getGeneratedClasses()));
 
     }
 
@@ -412,7 +435,8 @@ class QuarkusCxfProcessor {
         }
 
         reflectiveClass.produce(new ReflectiveClassBuildItem(false, false,
-                "org.apache.cxf.common.logging.Slf4jLogger"));
+                "org.apache.cxf.common.logging.Slf4jLogger",
+                QuarkusBusFactory.class.getName()));
 
         final Set<String> extensibilities = index.getKnownClasses().stream()
                 .map(classInfo -> classInfo.name().toString())
@@ -552,17 +576,32 @@ class QuarkusCxfProcessor {
 
     private static class QuarkusCapture implements GeneratedClassClassLoaderCapture {
         private final ClassOutput classOutput;
+        private Set<String> capturedClassNames = new LinkedHashSet<>();
+
+        private final Set<String> generatedClasses = new LinkedHashSet<>();
 
         QuarkusCapture(ClassOutput classOutput) {
             this.classOutput = classOutput;
+        }
 
+        public Set<String> getAndResetCapturedClassNames() {
+            Set<String> result = capturedClassNames;
+            capturedClassNames = new LinkedHashSet<>();
+            return result;
         }
 
         @Override
         public void capture(String name, byte[] bytes) {
-            classOutput.getSourceWriter(name);
-            LOGGER.trace("capture generation of " + name);
-            classOutput.write(name, bytes);
+            final String dotName = name.indexOf('.') >= 0 ? name : name.replace('/', '.');
+            final String slashName = name.indexOf('/') >= 0 ? name : name.replace('.', '/');
+            classOutput.getSourceWriter(slashName);
+            LOGGER.infof("Generated class %s at build time", dotName);
+            classOutput.write(slashName, bytes);
+            generatedClasses.add(dotName);
+        }
+
+        public String[] getGeneratedClasses() {
+            return generatedClasses.toArray(new String[0]);
         }
     }
 

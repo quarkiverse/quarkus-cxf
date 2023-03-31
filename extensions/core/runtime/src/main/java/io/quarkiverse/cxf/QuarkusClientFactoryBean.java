@@ -1,7 +1,5 @@
 package io.quarkiverse.cxf;
 
-import java.util.Set;
-
 import org.apache.cxf.binding.soap.SoapBindingConfiguration;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.binding.soap.JaxWsSoapBindingConfiguration;
@@ -9,8 +7,8 @@ import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 
 public class QuarkusClientFactoryBean extends ClientFactoryBean {
-    public QuarkusClientFactoryBean(Set<String> wrapperClassNames) {
-        super(new QuarkusRuntimeJaxWsServiceFactoryBean(wrapperClassNames));
+    public QuarkusClientFactoryBean() {
+        super(new QuarkusRuntimeJaxWsServiceFactoryBean());
     }
 
     @Override

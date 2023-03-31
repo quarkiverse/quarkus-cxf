@@ -14,7 +14,7 @@ import io.restassured.config.RestAssuredConfig;
 
 @QuarkusTest
 public class WsAddressingAnonymousTest {
-    static final String SOAP_REQUEST = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://server.it.cxf.quarkiverse.io/\">\n"
+    static final String SOAP_REQUEST = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://anonymous.server.addressing.ws.it.cxf.quarkiverse.io/\">\n"
             +
             "   <x:Header/>\n" +
             "   <x:Body>\n" +
@@ -59,7 +59,7 @@ public class WsAddressingAnonymousTest {
         final String ID = "urn:uuid:50784fd1-f67e-4493-b24c-5850fb38736f";
         final String request = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n"
                 + "  <soap:Header>\n"
-                + "    <Action xmlns=\"http://www.w3.org/2005/08/addressing\" soap:mustUnderstand=\"true\">http://server.it.cxf.quarkiverse.io/GreetingWebServiceAddressingImpl/replyRequest</Action>\n"
+                + "    <Action xmlns=\"http://www.w3.org/2005/08/addressing\" soap:mustUnderstand=\"true\">http://anonymous.server.addressing.ws.it.cxf.quarkiverse.io/GreetingWebServiceAddressingImpl/replyRequest</Action>\n"
                 + "    <MessageID xmlns=\"http://www.w3.org/2005/08/addressing\" soap:mustUnderstand=\"true\">" + ID
                 + "</MessageID>\n"
                 + "    <To xmlns=\"http://www.w3.org/2005/08/addressing\" soap:mustUnderstand=\"true\">http://localhost:8081/soap/greeting-addressing</To>\n"
@@ -68,7 +68,7 @@ public class WsAddressingAnonymousTest {
                 + "    </ReplyTo>\n"
                 + "  </soap:Header>\n"
                 + "  <soap:Body>\n"
-                + "    <ns2:reply xmlns:ns2=\"http://server.it.cxf.quarkiverse.io/\">\n"
+                + "    <ns2:reply xmlns:ns2=\"http://anonymous.server.addressing.ws.it.cxf.quarkiverse.io/\">\n"
                 + "      <text>bar</text>\n"
                 + "    </ns2:reply>\n"
                 + "  </soap:Body>\n"
