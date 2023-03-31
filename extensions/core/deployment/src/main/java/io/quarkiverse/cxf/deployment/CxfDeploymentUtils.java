@@ -22,8 +22,8 @@ public class CxfDeploymentUtils {
                 .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS);
     }
 
-    public static QuarkusJaxWsServiceFactoryBean createQuarkusJaxWsServiceFactoryBean(String sei, Bus bus) {
-        QuarkusJaxWsServiceFactoryBean jaxwsFac = new QuarkusJaxWsServiceFactoryBean();
+    public static QuarkusBuildTimeJaxWsServiceFactoryBean createQuarkusJaxWsServiceFactoryBean(String sei, Bus bus) {
+        QuarkusBuildTimeJaxWsServiceFactoryBean jaxwsFac = new QuarkusBuildTimeJaxWsServiceFactoryBean();
         jaxwsFac.setBus(bus);
         // TODO here add all class
         try {

@@ -32,7 +32,7 @@ import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CXFServletInfo;
 import io.quarkiverse.cxf.CXFServletInfos;
-import io.quarkiverse.cxf.QuarkusJaxWsServiceFactoryBean;
+import io.quarkiverse.cxf.QuarkusRuntimeJaxWsServiceFactoryBean;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ManagedContext;
 import io.quarkus.arc.runtime.BeanContainer;
@@ -94,7 +94,7 @@ public class CxfHandler implements Handler<RoutingContext> {
 
         // suboptimal because done it in loop but not a real issue...
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
-            QuarkusJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusJaxWsServiceFactoryBean(
+            QuarkusRuntimeJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusRuntimeJaxWsServiceFactoryBean(
                     servletInfo.getWrapperClassNames());
             JaxWsServerFactoryBean jaxWsServerFactoryBean = new JaxWsServerFactoryBean(jaxWsServiceFactoryBean);
             jaxWsServerFactoryBean.setDestinationFactory(destinationFactory);
