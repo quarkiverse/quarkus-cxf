@@ -39,7 +39,9 @@ public class RMStoreFeature extends RMFeature {
     @Override
     protected void initializeProvider(InterceptorProvider provider, Bus bus) {
 
-        if (provider instanceof Client) {
+        /* CDI.current() would not work during build time */
+        boolean atBuildTime = io.quarkus.runtime.Application.currentApplication() == null;
+        if (provider instanceof Client || atBuildTime) {
             /* As lazy as we are to bother with setting up the data source within the test class path in native mode */
             this.setStore(new RMMemoryStore());
         } else {

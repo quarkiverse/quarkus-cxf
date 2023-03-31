@@ -5,6 +5,10 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.common.spi.GeneratedClassClassLoaderCapture;
+import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
+import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.ClassInfo;
@@ -22,14 +26,40 @@ public class CxfDeploymentUtils {
                 .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS);
     }
 
-    public static QuarkusBuildTimeJaxWsServiceFactoryBean createQuarkusJaxWsServiceFactoryBean(String sei, Bus bus) {
-        QuarkusBuildTimeJaxWsServiceFactoryBean jaxwsFac = new QuarkusBuildTimeJaxWsServiceFactoryBean();
-        jaxwsFac.setBus(bus);
-        // TODO here add all class
+    /**
+     * Creates a server at runtime thus triggering the generation of all required classes. This includes
+     * CXF extensions, endpoint wrappers, etc.
+     *
+     * @param sei the fully qualified name of the service class for which the server should be created
+     * @param bus the bus to use with {@link GeneratedClassClassLoaderCapture} set properly.
+     */
+    public static void createServer(String sei, String path, Bus bus) {
+        JaxWsServerFactoryBean factoryBean = new JaxWsServerFactoryBean();
+        factoryBean.setBus(bus);
         try {
-            jaxwsFac.setServiceClass(Thread.currentThread().getContextClassLoader().loadClass(sei));
-            jaxwsFac.create();
-            return jaxwsFac;
+            factoryBean.setServiceClass(Thread.currentThread().getContextClassLoader().loadClass(sei));
+            factoryBean.setAddress(path);
+            Server server = factoryBean.create();
+            server.destroy();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Could not load " + sei, e);
+        }
+    }
+
+    /**
+     * Creates a client at runtime thus triggering the generation of all required classes. This includes
+     * CXF extensions, endpoint wrappers, etc.
+     *
+     * @param sei the fully qualified name of the service class for which the client should be created
+     * @param bus the bus to use with {@link GeneratedClassClassLoaderCapture} set properly.
+     */
+    public static void createClient(String sei, Bus bus) {
+
+        JaxWsClientFactoryBean factoryBean = new JaxWsClientFactoryBean();
+        factoryBean.setBus(bus);
+        try {
+            factoryBean.setServiceClass(Thread.currentThread().getContextClassLoader().loadClass(sei));
+            factoryBean.create();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Could not load " + sei, e);
         }

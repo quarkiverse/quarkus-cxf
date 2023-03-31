@@ -47,4 +47,13 @@ class JaxbProcessor {
 
     }
 
+    @BuildStep
+    void reflectiveClasses(BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
+        reflectiveClasses.produce(ReflectiveClassBuildItem.builder(
+                "org.glassfish.jaxb.core.marshaller.MinimumEscapeHandler",
+                "org.glassfish.jaxb.core.marshaller.NoEscapeHandler")
+                .fields()
+                .build());
+    }
+
 }

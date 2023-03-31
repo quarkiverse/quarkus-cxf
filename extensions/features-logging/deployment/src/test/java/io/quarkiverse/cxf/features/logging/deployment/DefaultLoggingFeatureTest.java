@@ -27,9 +27,9 @@ public class DefaultLoggingFeatureTest {
             .assertLogRecords(records -> assertThat(records)
                     .extracting(LogRecord::getMessage)
                     .anyMatch(msg -> msg.contains(
-                            "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns1:hello xmlns:ns1=\"http://deployment.logging.features.cxf.quarkiverse.io/\"><arg0>Dolly</arg0></ns1:hello></soap:Body></soap:Envelope>"))
+                            "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:hello xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\"><arg0>Dolly</arg0></ns2:hello></soap:Body></soap:Envelope>"))
                     .anyMatch(msg -> msg.contains(
-                            "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns1:helloResponse xmlns:ns1=\"http://deployment.logging.features.cxf.quarkiverse.io/\"><return>Hello Dolly!</return></ns1:helloResponse></soap:Body></soap:Envelope>"))
+                            "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:helloResponse xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\"><return>Hello Dolly!</return></ns2:helloResponse></soap:Body></soap:Envelope>"))
                     .hasSize(2));
 
     @CXFClient("hello")

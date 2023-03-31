@@ -94,8 +94,7 @@ public class CxfHandler implements Handler<RoutingContext> {
 
         // suboptimal because done it in loop but not a real issue...
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
-            QuarkusRuntimeJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusRuntimeJaxWsServiceFactoryBean(
-                    servletInfo.getWrapperClassNames());
+            QuarkusRuntimeJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusRuntimeJaxWsServiceFactoryBean();
             JaxWsServerFactoryBean jaxWsServerFactoryBean = new JaxWsServerFactoryBean(jaxWsServiceFactoryBean);
             jaxWsServerFactoryBean.setDestinationFactory(destinationFactory);
             jaxWsServerFactoryBean.setBus(bus);
