@@ -31,17 +31,17 @@ public class NamedLoggingFeatureTest {
                     .anyMatch(msg -> msg.contains(
                             "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                                     + "  <soap:Body>\n"
-                                    + "    <ns1:hello xmlns:ns1=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"
+                                    + "    <ns2:hello xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"
                                     + "      <arg0>Dolly</arg0>\n"
-                                    + "    </ns1:hello>\n"
+                                    + "    </ns2:hello>\n"
                                     + "  </soap:Body>\n"
                                     + "</soap:Envelope>"))
                     .anyMatch(msg -> msg.contains(
                             "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                                     + "  <soap:Body>\n"
-                                    + "    <ns1:helloResponse xmlns:ns1=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"
+                                    + "    <ns2:helloResponse xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"
                                     + "      <return>Hello Dolly!</return>\n"
-                                    + "    </ns1:helloResponse>\n"
+                                    + "    </ns2:helloResponse>\n"
                                     + "  </soap:Body>\n"
                                     + "</soap:Envelope>"))
                     .hasSize(2));

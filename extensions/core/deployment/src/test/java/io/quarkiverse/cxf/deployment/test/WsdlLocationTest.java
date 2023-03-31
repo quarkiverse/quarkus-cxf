@@ -51,7 +51,7 @@ public class WsdlLocationTest {
                 .body("<s11:Envelope xmlns:s11=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                         + "  <s11:Body>\n"
                         + "    <ns1:hello xmlns:ns1=\"http://test.deployment.cxf.quarkiverse.io/\">\n"
-                        + "      <arg0>Joe</arg0>\n"
+                        + "      <helloName>Joe</helloName>\n"
                         + "    </ns1:hello>\n"
                         + "  </s11:Body>\n"
                         + "</s11:Envelope>")
@@ -59,7 +59,7 @@ public class WsdlLocationTest {
                 .then()
                 .statusCode(200)
                 .body(CoreMatchers.containsString(
-                        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns1:helloResponse xmlns:ns1=\"http://test.deployment.cxf.quarkiverse.io/\"><return>Hello Joe</return></ns1:helloResponse></soap:Body></soap:Envelope>"));
+                        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:helloResponse xmlns:ns2=\"http://test.deployment.cxf.quarkiverse.io/\"><return>Hello null</return></ns2:helloResponse></soap:Body></soap:Envelope>"));
 
         RestAssured.get("/soap/wsdllocation/HelloService/?wsdl")
                 .then()
