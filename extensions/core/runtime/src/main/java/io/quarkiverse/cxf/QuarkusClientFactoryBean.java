@@ -10,7 +10,7 @@ import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 
 public class QuarkusClientFactoryBean extends ClientFactoryBean {
     public QuarkusClientFactoryBean(Set<String> wrapperClassNames) {
-        super(new QuarkusJaxWsServiceFactoryBean(wrapperClassNames));
+        super(new QuarkusRuntimeJaxWsServiceFactoryBean(wrapperClassNames));
     }
 
     @Override
