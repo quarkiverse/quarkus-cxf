@@ -16,24 +16,11 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.Handler;
 
-import org.apache.cxf.Bus;
-import org.apache.cxf.common.spi.GeneratedNamespaceClassLoader;
-import org.apache.cxf.common.spi.NamespaceClassCreator;
 import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.endpoint.dynamic.ExceptionClassCreator;
-import org.apache.cxf.endpoint.dynamic.ExceptionClassLoader;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.jaxb.FactoryClassCreator;
-import org.apache.cxf.jaxb.FactoryClassLoader;
-import org.apache.cxf.jaxb.WrapperHelperClassLoader;
-import org.apache.cxf.jaxb.WrapperHelperCreator;
-import org.apache.cxf.jaxws.spi.WrapperClassCreator;
-import org.apache.cxf.jaxws.spi.WrapperClassLoader;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.wsdl.ExtensionClassCreator;
-import org.apache.cxf.wsdl.ExtensionClassLoader;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
@@ -96,15 +83,8 @@ public abstract class CxfClientProducer {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Could not load " + RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_NAME, e);
         }
-        QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean(cxfClientInfo.getWrapperClassNames());
+        QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean();
         QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(quarkusClientFactoryBean, interfaces);
-        Bus bus = quarkusClientFactoryBean.getBus(true);
-        bus.setExtension(new WrapperHelperClassLoader(bus), WrapperHelperCreator.class);
-        bus.setExtension(new ExtensionClassLoader(bus), ExtensionClassCreator.class);
-        bus.setExtension(new ExceptionClassLoader(bus), ExceptionClassCreator.class);
-        bus.setExtension(new WrapperClassLoader(bus), WrapperClassCreator.class);
-        bus.setExtension(new FactoryClassLoader(bus), FactoryClassCreator.class);
-        bus.setExtension(new GeneratedNamespaceClassLoader(bus), NamespaceClassCreator.class);
         factory.setServiceClass(seiClass);
         LOGGER.debugf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
         factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
