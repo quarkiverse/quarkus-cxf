@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 
-public class QuarkusJaxWsServiceFactoryBean extends JaxWsServiceFactoryBean {
+public class QuarkusBuildTimeJaxWsServiceFactoryBean extends JaxWsServiceFactoryBean {
     public List<String> getWrappersClassNames() {
         return getExtraClass().stream().map(Class::getCanonicalName).collect(Collectors.toList());
     }

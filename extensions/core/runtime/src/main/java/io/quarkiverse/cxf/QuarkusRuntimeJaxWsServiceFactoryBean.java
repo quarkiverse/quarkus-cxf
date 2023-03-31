@@ -17,12 +17,12 @@ import org.apache.cxf.service.factory.ServiceConstructionException;
 
 import io.quarkus.arc.Subclass;
 
-public class QuarkusJaxWsServiceFactoryBean extends JaxWsServiceFactoryBean {
+public class QuarkusRuntimeJaxWsServiceFactoryBean extends JaxWsServiceFactoryBean {
 
     private static final org.jboss.logging.Logger LOGGER = org.jboss.logging.Logger
-            .getLogger(QuarkusJaxWsServiceFactoryBean.class);
+            .getLogger(QuarkusRuntimeJaxWsServiceFactoryBean.class);
 
-    public QuarkusJaxWsServiceFactoryBean(Set<String> wrapperClassNames) {
+    public QuarkusRuntimeJaxWsServiceFactoryBean(Set<String> wrapperClassNames) {
         wrapperClasses = wrapperClassNames.stream().map(className -> {
             try {
                 return Thread.currentThread().getContextClassLoader().loadClass(className);
@@ -40,7 +40,7 @@ public class QuarkusJaxWsServiceFactoryBean extends JaxWsServiceFactoryBean {
     }
 
     private Set<Class<?>> wrapperClasses;
-    private static final Logger LOG = LogUtils.getLogger(QuarkusJaxWsServiceFactoryBean.class);
+    private static final Logger LOG = LogUtils.getLogger(QuarkusRuntimeJaxWsServiceFactoryBean.class);
 
     @Override
     public void reset() {

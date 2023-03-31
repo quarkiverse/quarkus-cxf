@@ -187,7 +187,7 @@ class QuarkusCxfProcessor {
                 clients.stream().map(CxfClientBuildItem::getSei),
                 endpointImplementations.stream().map(CxfEndpointImplementationBuildItem::getImplementor))
                 .forEach(sei -> {
-                    final QuarkusJaxWsServiceFactoryBean factoryBean = CxfDeploymentUtils
+                    final QuarkusBuildTimeJaxWsServiceFactoryBean factoryBean = CxfDeploymentUtils
                             .createQuarkusJaxWsServiceFactoryBean(sei, bus.getBus());
                     b.put(sei, factoryBean.getWrappersClassNames());
                 });
