@@ -21,6 +21,8 @@ public class NamedInterceptorBeanTest {
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)
                     .addClass(Fruit.class)
+                    .addClass(Add.class)
+                    .addClass(Delete.class)
                     .addClass(FruitDescriptionAppender.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".implementor",
                     "io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl")

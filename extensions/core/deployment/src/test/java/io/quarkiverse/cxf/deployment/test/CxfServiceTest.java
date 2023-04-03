@@ -28,7 +28,9 @@ public class CxfServiceTest {
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)
-                    .addClass(Fruit.class))
+                    .addClass(Fruit.class)
+                    .addClass(Add.class)
+                    .addClass(Delete.class))
             .withConfigurationResource("application-cxf-server-test.properties");
 
     @Test
