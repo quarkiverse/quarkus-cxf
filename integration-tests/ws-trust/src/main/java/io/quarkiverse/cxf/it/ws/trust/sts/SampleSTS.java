@@ -47,9 +47,9 @@ public class SampleSTS extends SecurityTokenServiceProvider {
         final int port = LaunchMode.current().equals(LaunchMode.TEST) ? config.getValue("quarkus.http.test-port", Integer.class)
                 : config.getValue("quarkus.http.port", Integer.class);
         service.setEndpoints(Arrays.asList(
-                "http://localhost:" + port + "/jaxws-samples-wsse-policy-trust/TrustHelloService",
-                "http://localhost:" + port + "/jaxws-samples-wsse-policy-trust-actas/ActAsService",
-                "http://localhost:" + port + "/jaxws-samples-wsse-policy-trust-onbehalfof/OnBehalfOfService"));
+                "http://localhost:" + port + "/jaxws-samples-wsse-policy-trust",
+                "http://localhost:" + port + "/jaxws-samples-wsse-policy-trust-actas",
+                "http://localhost:" + port + "/jaxws-samples-wsse-policy-trust-onbehalfof"));
         services.add(service);
 
         TokenIssueOperation issueOperation = new TokenIssueOperation();
