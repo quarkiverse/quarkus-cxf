@@ -28,7 +28,12 @@ public class ServerDevModeTest {
     static final QuarkusDevModeTest TEST = new QuarkusDevModeTest()
             .setArchiveProducer(() -> ShrinkWrap
                     .create(JavaArchive.class)
-                    .addClasses(FruitWebService.class, FruitWebServiceImpl.class, Fruit.class)
+                    .addClasses(
+                            FruitWebService.class,
+                            FruitWebServiceImpl.class,
+                            Fruit.class,
+                            Add.class,
+                            Delete.class)
                     .addAsResource(applicationProperties(), "application.properties"));
 
     @Test
