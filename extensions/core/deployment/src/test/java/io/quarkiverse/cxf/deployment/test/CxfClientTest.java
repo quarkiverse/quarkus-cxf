@@ -22,6 +22,8 @@ public class CxfClientTest {
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)
                     .addClass(Fruit.class)
+                    .addClass(Add.class)
+                    .addClass(Delete.class)
                     .addClass(GreetingWebService.class)
                     .addClass(GreetingWebServiceImpl.class)
             //.addClass(HelloWebServiceImpl.class)

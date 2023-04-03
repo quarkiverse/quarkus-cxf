@@ -21,6 +21,8 @@ public class CxfClientConstructorInjectionInstanceTest {
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(FruitWebService.class)
                     .addClass(Fruit.class)
+                    .addClass(Add.class)
+                    .addClass(Delete.class)
                     .addClass(CxfClientConstructorInjectionInstanceBean.class))
             .withConfigurationResource("application-cxf-test.properties");
 

@@ -24,6 +24,8 @@ public class CxfSeiOnlyClientInstanceTest {
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(FruitWebService.class)
                     .addClass(Fruit.class)
+                    .addClass(Add.class)
+                    .addClass(Delete.class)
                     .addClass(GreetingWebService.class))
             .withConfigurationResource("application-cxf-test.properties");
 
