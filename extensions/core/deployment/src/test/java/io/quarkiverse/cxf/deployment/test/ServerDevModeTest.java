@@ -45,7 +45,7 @@ public class ServerDevModeTest {
         final String changedPath = "/new-path";
 
         assertCount(config, oldPath, 200, "2");
-        assertCount(config, changedPath, 404, ""); // does not exist before the change
+        assertCount(config, changedPath, 405, ""); // does not exist before the change
         assertWsdl(config, oldPath);
 
         /* Now change the path of the service */
@@ -53,7 +53,7 @@ public class ServerDevModeTest {
                 oldSource -> oldSource.replace("\"" + oldPath + "\"", "\"" + changedPath + "\""));
 
         assertCount(config, changedPath, 200, "2"); // should work after the change
-        assertCount(config, oldPath, 404, ""); // should not work anymore after the change
+        assertCount(config, oldPath, 405, ""); // should not work anymore after the change
         assertWsdl(config, changedPath);
 
         /* One more change: let the count endpoint always return 42 */

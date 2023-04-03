@@ -18,6 +18,12 @@ public class RestEasyTest {
     }
 
     @Test
+    public void hiCxf() {
+        final HelloService client = QuarkusCxfClientTestUtil.getClient(HelloService.class, "/hi");
+        org.assertj.core.api.Assertions.assertThat(client.hello("World")).isEqualTo("Hello World from CXF!");
+    }
+
+    @Test
     public void helloRestEasy() {
         RestAssured.given()
                 .get("/rest/hello/Joe")

@@ -15,6 +15,12 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 public class CxfFixedConfig {
 
     /**
+     * The default path for CXF resources
+     */
+    @ConfigItem(defaultValue = "/")
+    public String path;
+
+    /**
      * The build time part of the client configuration.
      */
     @ConfigItem(name = "client")
