@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.jboss.logging.Logger;
 
@@ -39,7 +38,6 @@ public class CXFRecorder {
                 cxfClientData.getSoapBinding(),
                 cxfClientData.getWsNamespace(),
                 cxfClientData.getWsName(),
-                cxfClientData.getWrapperClassNames(),
                 cxfClientData.isProxyClassRuntimeInitialized()));
     }
 
@@ -55,7 +53,7 @@ public class CXFRecorder {
 
     public void addCxfServletInfo(RuntimeValue<CXFServletInfos> runtimeInfos, String path, String sei,
             CxfConfig cxfConfig, String serviceName, String serviceTargetNamepsace, String soapBinding,
-            Set<String> wrapperClassNames, String wsImplementor, Boolean isProvider) {
+            String wsImplementor, Boolean isProvider) {
         CXFServletInfos infos = runtimeInfos.getValue();
         Map<String, List<ServletConfig>> implementorToCfg = new HashMap<>();
         for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
@@ -80,7 +78,7 @@ public class CXFRecorder {
                 CxfEndpointConfig cxfEndPointConfig = cfg.config;
                 String relativePath = cfg.path;
                 final CXFServletInfo info = createServletInfo(path, sei, serviceName, serviceTargetNamepsace, soapBinding,
-                        wrapperClassNames, wsImplementor,
+                        wsImplementor,
                         cxfEndPointConfig, relativePath, isProvider);
                 infos.add(info);
             }
@@ -93,14 +91,13 @@ public class CXFRecorder {
             }
             final String relativePath = "/" + serviceName;
             final CXFServletInfo info = createServletInfo(path, sei, serviceName, serviceTargetNamepsace, soapBinding,
-                    wrapperClassNames,
                     wsImplementor, null, relativePath, isProvider);
             infos.add(info);
         }
     }
 
     private static CXFServletInfo createServletInfo(String path, String sei, String serviceName, String serviceTargetNamespace,
-            String soapBinding, Set<String> wrapperClassNames, String wsImplementor,
+            String soapBinding, String wsImplementor,
             CxfEndpointConfig cxfEndPointConfig, String relativePath, Boolean isProvider) {
         CXFServletInfo cfg = new CXFServletInfo(path,
                 relativePath,
@@ -110,7 +107,6 @@ public class CXFRecorder {
                 serviceName,
                 serviceTargetNamespace,
                 cxfEndPointConfig != null ? cxfEndPointConfig.soapBinding.orElse(soapBinding) : soapBinding,
-                wrapperClassNames,
                 isProvider,
                 cxfEndPointConfig != null ? cxfEndPointConfig.publishedEndpointUrl.orElse(null) : null);
         if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors.isPresent()) {

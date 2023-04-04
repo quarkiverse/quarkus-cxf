@@ -2,7 +2,6 @@ package io.quarkiverse.cxf.deployment;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -118,7 +117,6 @@ public class CxfEndpointImplementationProcessor {
             BeanContainerBuildItem beanContainer,
             List<CxfEndpointImplementationBuildItem> cxfEndpoints,
             List<CxfRouteRegistrationRequestorBuildItem> cxfRouteRegistrationRequestors,
-            CxfWrapperClassNamesBuildItem cxfWrapperClassNames,
             HttpBuildTimeConfig httpBuildTimeConfig,
             HttpConfiguration httpConfiguration,
             CxfBuildTimeConfig cxfBuildTimeConfig,
@@ -128,11 +126,10 @@ public class CxfEndpointImplementationProcessor {
                 .map(CxfRouteRegistrationRequestorBuildItem::getRequestorName)
                 .collect(Collectors.toList());
         if (!cxfEndpoints.isEmpty()) {
-            final Map<String, Set<String>> wrapperClassNames = cxfWrapperClassNames.getWrapperClassNames();
             for (CxfEndpointImplementationBuildItem cxfWebService : cxfEndpoints) {
                 recorder.addCxfServletInfo(infos, cxfBuildTimeConfig.path, cxfWebService.getImplementor(),
                         cxfConfig, cxfWebService.getWsName(), cxfWebService.getWsNamespace(),
-                        cxfWebService.getSoapBinding(), wrapperClassNames.get(cxfWebService.getImplementor()),
+                        cxfWebService.getSoapBinding(),
                         cxfWebService.getImplementor(), cxfWebService.isProvider());
                 requestors.add(cxfWebService.getImplementor());
             }
