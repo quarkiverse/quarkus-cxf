@@ -2,11 +2,7 @@ package io.quarkiverse.cxf;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 
@@ -34,15 +30,6 @@ public class CXFServletInfos {
 
     public String getContextPath() {
         return contextPath;
-    }
-
-    public Set<String> getWrappersclasses() {
-        if (infos == null)
-            return Collections.emptySet();
-        return infos.stream()
-                .map(CXFServletInfo::getWrapperClassNames)
-                .flatMap(Set::stream)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public void add(CXFServletInfo cfg) {
