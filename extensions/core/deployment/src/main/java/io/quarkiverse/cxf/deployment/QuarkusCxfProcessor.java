@@ -574,18 +574,11 @@ class QuarkusCxfProcessor {
 
     private static class QuarkusCapture implements GeneratedClassClassLoaderCapture {
         private final ClassOutput classOutput;
-        private Set<String> capturedClassNames = new LinkedHashSet<>();
 
         private final Set<String> generatedClasses = new LinkedHashSet<>();
 
         QuarkusCapture(ClassOutput classOutput) {
             this.classOutput = classOutput;
-        }
-
-        public Set<String> getAndResetCapturedClassNames() {
-            Set<String> result = capturedClassNames;
-            capturedClassNames = new LinkedHashSet<>();
-            return result;
         }
 
         @Override

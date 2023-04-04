@@ -159,10 +159,7 @@ public class CxfClientProcessor {
     void startClient(
             CXFRecorder recorder,
             List<CxfClientBuildItem> clients,
-            CxfWrapperClassNamesBuildItem cxfWrapperClassNames,
             BuildProducer<SyntheticBeanBuildItem> synthetics) {
-
-        final Map<String, Set<String>> wrapperClassNames = cxfWrapperClassNames.getWrapperClassNames();
 
         //
         // Create injectable CXFClientInfo bean for each SEI-only interface, i.e. for each
@@ -175,7 +172,6 @@ public class CxfClientProcessor {
                         client.getSei(),
                         client.getWsName(),
                         client.getWsNamespace(),
-                        wrapperClassNames.get(client.getSei()),
                         client.isProxyClassRuntimeInitialized()))
                 .map(cxf -> {
                     LOGGER.debugf("producing dedicated CXFClientInfo bean named '%s' for SEI %s", cxf.getSei(), cxf.getSei());
