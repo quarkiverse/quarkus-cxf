@@ -1,8 +1,6 @@
 package io.quarkiverse.cxf;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -29,18 +27,12 @@ public class CXFClientData implements Serializable {
             String sei,
             String wsName,
             String wsNamespace,
-            Collection<String> wrapperClassNames,
             boolean proxyClassRuntimeInitialized) {
         this.soapBinding = soapBinding;
         this.sei = sei;
         this.wsName = wsName;
         this.wsNamespace = wsNamespace;
-        this.wrapperClassNames = new LinkedHashSet<>(wrapperClassNames);
         this.proxyClassRuntimeInitialized = proxyClassRuntimeInitialized;
-    }
-
-    public Set<String> getWrapperClassNames() {
-        return wrapperClassNames;
     }
 
     public String getSoapBinding() {
