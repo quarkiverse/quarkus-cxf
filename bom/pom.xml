@@ -288,14 +288,19 @@
                 <version>${glassfish.jaxb.version}</version>
             </dependency>
             <dependency><!-- org.apache.cxf:cxf-tools-wsdlto-core declares an older version  -->
-              <groupId>org.glassfish.jaxb</groupId>
-              <artifactId>jaxb-xjc</artifactId>
-              <version>${glassfish.jaxb.version}</version>
-          </dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-xjc</artifactId>
+                <version>${glassfish.jaxb.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jvnet.mimepull</groupId>
                 <artifactId>mimepull</artifactId>
                 <version>${mimepull.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mvnpm.at.vaadin</groupId>
+                <artifactId>vaadin-development-mode-detector</artifactId>
+                <version>${vaadin-development-mode-detector.version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.jws</groupId>
