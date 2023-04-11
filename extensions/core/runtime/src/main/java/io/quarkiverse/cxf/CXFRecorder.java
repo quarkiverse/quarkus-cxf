@@ -17,8 +17,8 @@ import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.ShutdownContext;
 import io.quarkus.runtime.annotations.Recorder;
 import io.quarkus.vertx.http.runtime.HttpConfiguration;
-import io.vertx.ext.web.Route;
-import io.vertx.ext.web.Router;
+import io.vertx.core.Handler;
+import io.vertx.ext.web.RoutingContext;
 
 @Recorder
 public class CXFRecorder {
@@ -136,44 +136,12 @@ public class CXFRecorder {
         return new RuntimeValue<>(infos);
     }
 
-    public void initServer(
-            RuntimeValue<CXFServletInfos> infosValue,
-            BeanContainer beanContainer,
-            HttpConfiguration httpConfiguration,
-            RuntimeValue<Router> routerValue,
-            ShutdownContext shutdown) {
+    public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos, BeanContainer beanContainer,
+            HttpConfiguration httpConfiguration) {
         LOGGER.trace("init server");
         // There may be a better way to handle this
-        final CXFServletInfos infos = infosValue.getValue();
-        DevCxfServerInfosSupplier.setServletInfos(infos);
-        CxfHandler handler = new CxfHandler(infos, beanContainer, httpConfiguration);
-
-        final String cxfPath = normalizePath(infos.getPath());
-        //LOGGER.infof("Mapping a Vert.x handler for CXF to %s as requested by %s", mappingPath, requestors);
-        final Router router = routerValue.getValue();
-        for (CXFServletInfo info : infos.getInfos()) {
-            final String effectivePath = cxfPath + info.getRelativePath();
-            LOGGER.tracef("Registering CXF route for path %s", effectivePath);
-            final Route route = router
-                    .route()
-                    .path(effectivePath)
-                    .blockingHandler(handler);
-            shutdown.addShutdownTask(route::remove);
-        }
-
-    }
-
-    static String normalizePath(String path) {
-        if (path == null || path.isEmpty() || "/".equals(path)) {
-            return "";
-        }
-        if (path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
-        }
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
-        return path;
+        DevCxfServerInfosSupplier.setServletInfos(infos.getValue());
+        return new CxfHandler(infos.getValue(), beanContainer, httpConfiguration);
     }
 
     public void resetDestinationRegistry(ShutdownContext context) {

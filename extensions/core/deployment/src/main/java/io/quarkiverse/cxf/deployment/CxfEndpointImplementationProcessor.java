@@ -18,7 +18,6 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfConfig;
-import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -26,12 +25,14 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
-import io.quarkus.deployment.builditem.ShutdownContextBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.runtime.RuntimeValue;
-import io.quarkus.vertx.http.deployment.VertxWebRouterBuildItem;
+import io.quarkus.vertx.http.deployment.RouteBuildItem;
+import io.quarkus.vertx.http.runtime.HandlerType;
 import io.quarkus.vertx.http.runtime.HttpBuildTimeConfig;
 import io.quarkus.vertx.http.runtime.HttpConfiguration;
+import io.vertx.core.Handler;
+import io.vertx.ext.web.RoutingContext;
 
 /**
  * Find WebService implementations and deploy them.
@@ -115,15 +116,14 @@ public class CxfEndpointImplementationProcessor {
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
     void startRoute(CXFRecorder recorder,
+            BuildProducer<RouteBuildItem> routes,
             BeanContainerBuildItem beanContainer,
             List<CxfEndpointImplementationBuildItem> cxfEndpoints,
             List<CxfRouteRegistrationRequestorBuildItem> cxfRouteRegistrationRequestors,
             HttpBuildTimeConfig httpBuildTimeConfig,
             HttpConfiguration httpConfiguration,
-            CxfFixedConfig cxfBuildTimeConfig,
-            CxfConfig cxfConfig,
-            VertxWebRouterBuildItem router,
-            ShutdownContextBuildItem shutdownContext) {
+            CxfBuildTimeConfig cxfBuildTimeConfig,
+            CxfConfig cxfConfig) {
         final RuntimeValue<CXFServletInfos> infos = recorder.createInfos(cxfBuildTimeConfig.path, httpBuildTimeConfig.rootPath);
         final List<String> requestors = cxfRouteRegistrationRequestors.stream()
                 .map(CxfRouteRegistrationRequestorBuildItem::getRequestorName)
@@ -138,16 +138,29 @@ public class CxfEndpointImplementationProcessor {
             }
         }
         if (!requestors.isEmpty()) {
-            recorder.initServer(
-                    infos,
-                    beanContainer.getValue(),
-                    httpConfiguration,
-                    router.getHttpRouter(),
-                    shutdownContext);
+            final Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(),
+                    httpConfiguration);
+            final String mappingPath = getMappingPath(cxfBuildTimeConfig.path);
+            LOGGER.infof("Mapping a Vert.x handler for CXF to %s as requested by %s", mappingPath, requestors);
+            routes.produce(RouteBuildItem.builder()
+                    .route(mappingPath)
+                    .handler(handler)
+                    .handlerType(HandlerType.BLOCKING)
+                    .build());
         } else {
             LOGGER.debug(
                     "Not registering a Vert.x handler for CXF as no WS endpoints were found at build time and no other extension requested it");
         }
+    }
+
+    private static String getMappingPath(String path) {
+        String mappingPath;
+        if (path.endsWith("/")) {
+            mappingPath = path + "*";
+        } else {
+            mappingPath = path + "/*";
+        }
+        return mappingPath;
     }
 
     /**
