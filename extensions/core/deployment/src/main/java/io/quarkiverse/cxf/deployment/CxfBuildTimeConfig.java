@@ -15,7 +15,7 @@ public class CxfBuildTimeConfig {
     /**
      * The default path for CXF resources
      */
-    @ConfigItem(defaultValue = "/")
+    @ConfigItem(defaultValue = "/services")
     String path;
 
     /**

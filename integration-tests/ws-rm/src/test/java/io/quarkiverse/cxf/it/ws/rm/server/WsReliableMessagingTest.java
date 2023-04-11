@@ -25,7 +25,8 @@ public class WsReliableMessagingTest {
         QName serviceName = new QName("https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/ws-rm",
                 "WsrmHelloService");
         Service service = Service
-                .create(new URL(io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.getServerUrl() + "/wsrm?wsdl"), serviceName);
+                .create(new URL(io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.getServerUrl() + "/services/wsrm?wsdl"),
+                        serviceName);
         WsrmHelloService proxy = service.getPort(WsrmHelloService.class, new RMStoreFeature());
         final String reply = proxy.sayHello();
         String prefix = "WS-ReliableMessaging Hello World! seqSize: ";

@@ -105,6 +105,7 @@ public class ServerDevModeTest {
     public static Asset applicationProperties() {
         Writer writer = new StringWriter();
         Properties props = new Properties();
+        props.setProperty("quarkus.cxf.path", "/");
         props.setProperty("quarkus.cxf.endpoint.\"/fruit\".implementor",
                 io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl.class.getName());
         try {

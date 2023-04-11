@@ -47,7 +47,7 @@ public class CxfServiceInInterceptorTest {
 
         QName serviceName = new QName("http://test.deployment.cxf.quarkiverse.io/", "HelloService");
         Service service = Service
-                .create(new URL(io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.getServerUrl() + "/intercepted?wsdl"),
+                .create(new URL(io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.getServerUrl() + "/services/intercepted?wsdl"),
                         serviceName);
         HelloService proxy = service.getPort(HelloService.class);
 

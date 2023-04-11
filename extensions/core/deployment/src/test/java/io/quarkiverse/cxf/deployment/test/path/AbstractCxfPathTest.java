@@ -49,6 +49,8 @@ abstract class AbstractCxfPathTest {
         }
         if (cxfPath != null) {
             result.overrideConfigKey("quarkus.cxf.path", cxfPath);
+        } else {
+            result.overrideConfigKey("quarkus.cxf.path", "/");
         }
         return result;
     }
