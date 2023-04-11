@@ -31,7 +31,10 @@ public class CxfServiceTest {
                     .addClass(Fruit.class)
                     .addClass(Add.class)
                     .addClass(Delete.class))
-            .withConfigurationResource("application-cxf-server-test.properties");
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".implementor",
+                    "io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl")
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".published-endpoint-url",
+                    "https://io.quarkus-cxf.com/fruit");
 
     @Test
     public void whenCheckingWsdl() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
