@@ -12,6 +12,11 @@ import io.quarkus.util.GlobUtil;
 
 @ConfigRoot(name = "cxf", phase = ConfigPhase.BUILD_TIME)
 public class CxfBuildTimeConfig {
+    /**
+     * The default path for CXF resources
+     */
+    @ConfigItem(defaultValue = "/")
+    String path;
 
     /**
      * The comma-separated list of WSDL resource paths used by CXF.
