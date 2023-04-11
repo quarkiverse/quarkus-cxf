@@ -200,7 +200,9 @@ class QuarkusCxfProcessor {
         bus.getBus().setExtension(capture, GeneratedClassClassLoaderCapture.class);
 
         final Random rnd = new Random(System.currentTimeMillis());
-        endpointImplementations.stream().map(CxfEndpointImplementationBuildItem::getImplementor)
+        endpointImplementations.stream()
+                .map(CxfEndpointImplementationBuildItem::getImplementor)
+                .distinct()
                 .forEach(sei -> {
                     /*
                      * This is a fake build time server start, so it does not matter much that we
@@ -210,7 +212,9 @@ class QuarkusCxfProcessor {
                     CxfDeploymentUtils.createServer(sei, path, bus.getBus());
                 });
 
-        clients.stream().map(CxfClientBuildItem::getSei)
+        clients.stream()
+                .map(CxfClientBuildItem::getSei)
+                .distinct()
                 .forEach(sei -> {
                     CxfDeploymentUtils.createClient(sei, bus.getBus());
                 });
