@@ -3,14 +3,12 @@ package io.quarkiverse.cxf.deployment.test;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = "Delete", propOrder = {
         "fruit"
 })
-@XmlRootElement(name = "Delete")
 public class Delete {
 
     @XmlElement(name = "fruit")
