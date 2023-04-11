@@ -34,11 +34,11 @@ public class CxfServiceTest {
             .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".implementor",
                     "io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl")
             .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".published-endpoint-url",
-                    "https://io.quarkus-cxf.com/fruit");
+                    "https://io.quarkus-cxf.com/services/fruit");
 
     @Test
     public void whenCheckingWsdl() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
-        Response response = RestAssured.given().when().get("/fruit?wsdl");
+        Response response = RestAssured.given().when().get("/services/fruit?wsdl");
         response.then().statusCode(200);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -60,7 +60,7 @@ public class CxfServiceTest {
                 .compile(
                         "/definitions/service/port/address/@location")
                 .evaluate(doc);
-        Assertions.assertEquals("https://io.quarkus-cxf.com/fruit", val);
+        Assertions.assertEquals("https://io.quarkus-cxf.com/services/fruit", val);
     }
 
     @Test
@@ -76,7 +76,8 @@ public class CxfServiceTest {
                 "</soapenv:Envelope>";
         String val = "";
 
-        Response response = RestAssured.given().header("Content-Type", "text/xml").and().body(xml).when().post("/fruit");
+        Response response = RestAssured.given().header("Content-Type", "text/xml").and().body(xml).when()
+                .post("/services/fruit");
         response.then().statusCode(200);
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -104,7 +105,8 @@ public class CxfServiceTest {
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
 
-        Response response = RestAssured.given().header("Content-Type", "text/xml").and().body(xml).when().post("/fruit");
+        Response response = RestAssured.given().header("Content-Type", "text/xml").and().body(xml).when()
+                .post("/services/fruit");
         response.then().statusCode(200);
     }
 }

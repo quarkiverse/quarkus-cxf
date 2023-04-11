@@ -23,7 +23,7 @@ public class ConfiglessServiceTest {
 
     @Test
     public void noConfig() {
-        final FruitWebService client = QuarkusCxfClientTestUtil.getClient(FruitWebService.class, "/FruitWebService");
+        final FruitWebService client = QuarkusCxfClientTestUtil.getClient(FruitWebService.class, "/services/FruitWebService");
         client.add(new Fruit("Kiwi", "Yummy"));
         assertThat(client.getDescriptionByName("Kiwi")).isEqualTo("Yummy");
     }

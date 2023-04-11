@@ -22,10 +22,10 @@ public class CxfClientConstructorInjectionTest {
                     .addClass(Add.class)
                     .addClass(Delete.class)
                     .addClass(CxfClientConstructorInjectionBean.class))
-            .overrideConfigKey("quarkus.cxf.client.\"fruitclient\".client-endpoint-url", "http://localhost:8081/fruit")
+            .overrideConfigKey("quarkus.cxf.client.\"fruitclient\".client-endpoint-url", "http://localhost:8081/services/fruit")
             .overrideConfigKey("quarkus.cxf.client.\"fruitclient\".service-interface",
                     "io.quarkiverse.cxf.deployment.test.FruitWebService")
-            .overrideConfigKey("quarkus.cxf.client.\"foo\".client-endpoint-url", "http://localhost:8081/fruit")
+            .overrideConfigKey("quarkus.cxf.client.\"foo\".client-endpoint-url", "http://localhost:8081/services/fruit")
             .overrideConfigKey("quarkus.cxf.client.\"foo\".features", "org.apache.cxf.feature.LoggingFeature");
 
     @Inject

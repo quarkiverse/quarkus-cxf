@@ -22,7 +22,7 @@ public class DefaultLoggingFeatureTest {
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor", HelloServiceImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".features", "org.apache.cxf.ext.logging.LoggingFeature")
             .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/hello")
+            .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
             .setLogRecordPredicate(logRecord -> logRecord.getLoggerName().contains("org.apache.cxf.services.HelloService.RE")) // REQ_IN or RESP_OUT
             .assertLogRecords(records -> assertThat(records)
                     .extracting(LogRecord::getMessage)

@@ -38,7 +38,7 @@ public class CxfWsTrustTest {
         config.getXmlConfig().namespaceAware(false);
         given()
                 .config(config)
-                .when().get("/jaxws-samples-wsse-policy-trust-sts?wsdl")
+                .when().get("/services/jaxws-samples-wsse-policy-trust-sts?wsdl")
                 .then()
                 .statusCode(200)
                 .body(
@@ -54,7 +54,7 @@ public class CxfWsTrustTest {
         config.getXmlConfig().namespaceAware(false);
         given()
                 .config(config)
-                .when().get("/jaxws-samples-wsse-policy-trust?wsdl")
+                .when().get("/services/jaxws-samples-wsse-policy-trust?wsdl")
                 .then()
                 .statusCode(200)
                 .body(
@@ -83,7 +83,7 @@ public class CxfWsTrustTest {
             final QName serviceName = new QName("https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/ws-trust",
                     "TrustHelloService");
             final URL wsdlURL = new URL(io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.getServerUrl()
-                    + "/jaxws-samples-wsse-policy-trust/TrustHelloService?wsdl");
+                    + "/services/jaxws-samples-wsse-policy-trust/TrustHelloService?wsdl");
             Service service = Service.create(wsdlURL, serviceName);
             TrustHelloService proxy = (TrustHelloService) service.getPort(TrustHelloService.class);
 
@@ -91,7 +91,7 @@ public class CxfWsTrustTest {
             final QName stsPortName = new QName("http://docs.oasis-open.org/ws-sx/ws-trust/200512/", "UT_Port");
 
             String stsURL = QuarkusCxfClientTestUtil.getServerUrl()
-                    + "/jaxws-samples-wsse-policy-trust-sts/SecurityTokenService?wsdl";
+                    + "/services/jaxws-samples-wsse-policy-trust-sts/SecurityTokenService?wsdl";
             setupWsseAndSTSClient(proxy, bus, stsURL, stsServiceName, stsPortName);
 
             Assertions.assertThat(proxy.sayHello()).isEqualTo("WS-Trust Hello World!");
@@ -104,7 +104,7 @@ public class CxfWsTrustTest {
     TrustHelloService getPlainClient() {
         return QuarkusCxfClientTestUtil.getClient(
                 "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/ws-trust", TrustHelloService.class,
-                "/jaxws-samples-wsse-policy-trust");
+                "/services/jaxws-samples-wsse-policy-trust");
     }
 
     public static void setupWsseAndSTSClient(TrustHelloService proxy, Bus bus, String stsWsdlLocation, QName stsService,

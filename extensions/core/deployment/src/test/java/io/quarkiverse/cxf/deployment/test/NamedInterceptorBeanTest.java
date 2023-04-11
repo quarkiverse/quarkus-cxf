@@ -27,7 +27,8 @@ public class NamedInterceptorBeanTest {
             .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".implementor",
                     "io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl")
             .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".handlers", "#barDescriptionAppender,#fooDescriptionAppender")
-            .overrideConfigKey("quarkus.cxf.client.\"fruitClient\".client-endpoint-url", "http://localhost:8081/fruit");
+            .overrideConfigKey("quarkus.cxf.client.\"fruitClient\".client-endpoint-url",
+                    "http://localhost:8081/services/fruit");
 
     @Inject
     @CXFClient("fruitClient")
