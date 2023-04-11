@@ -46,6 +46,7 @@ public class CxfEndpointImplementationProcessor {
             CombinedIndexBuildItem combinedIndexBuildItem,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
             BuildProducer<CxfEndpointImplementationBuildItem> endpointImplementations,
+            BuildProducer<ServiceSeiBuildItem> serviceSeis,
             BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
         IndexView index = combinedIndexBuildItem.getIndex();
 
@@ -94,6 +95,7 @@ public class CxfEndpointImplementationProcessor {
                                         wsNamespace,
                                         wsName,
                                         hasWebServiceProviderAnnotation));
+                        serviceSeis.produce(new ServiceSeiBuildItem(impl));
 
                     } else if (Modifier.isInterface(wsClassInfo.flags())) {
                         String cl = wsClassInfo.name().toString();
