@@ -79,7 +79,8 @@ public class CxfClientProcessor {
             List<RuntimeInitializedPackageBuildItem> runtimeInitializedPackages,
             BuildProducer<NativeImageFeatureBuildItem> nativeImageFeatures,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
-            BuildProducer<CxfClientBuildItem> clients) {
+            BuildProducer<CxfClientBuildItem> clients,
+            BuildProducer<ClientSeiBuildItem> clientSeis) {
         IndexView index = combinedIndexBuildItem.getIndex();
 
         final Set<String> rtInitClasses = runtimeInitializedClasses.stream()
@@ -127,6 +128,7 @@ public class CxfClientProcessor {
 
                         clients.produce(
                                 new CxfClientBuildItem(sei, soapBinding, wsNamespace, wsName, proxyInfo.isRuntimeInitialized));
+                        clientSeis.produce(new ClientSeiBuildItem(sei));
 
                         hasRuntimeInitializedProxy.set(hasRuntimeInitializedProxy.get() || proxyInfo.isRuntimeInitialized);
 

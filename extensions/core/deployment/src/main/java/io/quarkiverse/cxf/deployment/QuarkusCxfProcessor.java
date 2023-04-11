@@ -190,8 +190,8 @@ class QuarkusCxfProcessor {
     @BuildStep
     void generateClasses(
             CxfBusBuildItem bus,
-            List<CxfClientBuildItem> clients,
-            List<CxfEndpointImplementationBuildItem> endpointImplementations,
+            List<ClientSeiBuildItem> clients,
+            List<ServiceSeiBuildItem> endpointImplementations,
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
 
@@ -200,9 +200,10 @@ class QuarkusCxfProcessor {
 
         final Random rnd = new Random(System.currentTimeMillis());
         endpointImplementations.stream()
-                .map(CxfEndpointImplementationBuildItem::getImplementor)
+                .map(ServiceSeiBuildItem::getSei)
                 .distinct()
                 .forEach(sei -> {
+                    LOGGER.infof("Generating ancillary classes for service %s", sei);
                     /*
                      * This is a fake build time server start, so it does not matter much that we
                      * use a fake path
@@ -212,9 +213,10 @@ class QuarkusCxfProcessor {
                 });
 
         clients.stream()
-                .map(CxfClientBuildItem::getSei)
+                .map(ClientSeiBuildItem::getSei)
                 .distinct()
                 .forEach(sei -> {
+                    LOGGER.infof("Generating ancillary classes for client %s", sei);
                     CxfDeploymentUtils.createClient(sei, bus.getBus());
                 });
 
@@ -590,11 +592,13 @@ class QuarkusCxfProcessor {
         @Override
         public void capture(String name, byte[] bytes) {
             final String dotName = name.indexOf('.') >= 0 ? name : name.replace('/', '.');
-            final String slashName = name.indexOf('/') >= 0 ? name : name.replace('.', '/');
-            classOutput.getSourceWriter(slashName);
-            LOGGER.infof("Generated class %s at build time", dotName);
-            classOutput.write(slashName, bytes);
-            generatedClasses.add(dotName);
+            if (!generatedClasses.contains(dotName)) {
+                final String slashName = name.indexOf('/') >= 0 ? name : name.replace('.', '/');
+                classOutput.getSourceWriter(slashName);
+                LOGGER.infof("Generated class %s", dotName);
+                classOutput.write(slashName, bytes);
+                generatedClasses.add(dotName);
+            }
         }
 
         public String[] getGeneratedClasses() {
