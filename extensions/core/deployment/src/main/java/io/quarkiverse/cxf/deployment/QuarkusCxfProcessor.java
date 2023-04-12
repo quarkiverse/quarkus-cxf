@@ -466,6 +466,9 @@ class QuarkusCxfProcessor {
         reflectiveClass.produce(new ReflectiveClassBuildItem(true, true, "com.sun.xml.bind.marshaller.MinimumEscapeHandler",
                 "com.sun.xml.bind.marshaller.NoEscapeHandler"));
 
+        reflectiveClass.produce(
+                new ReflectiveClassBuildItem(true, false, "org.apache.cxf.ws.addressing.AddressingProperties"));
+
     }
 
     @BuildStep
