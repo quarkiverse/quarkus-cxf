@@ -464,6 +464,10 @@ class QuarkusCxfProcessor {
 
         /* Referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_common_spi_NamespaceClassGenerator */
         reflectiveClass.produce(ReflectiveClassBuildItem.builder("org.apache.cxf.common.jaxb.NamespaceMapper").build());
+
+        reflectiveClass.produce(
+                ReflectiveClassBuildItem.builder("org.apache.cxf.ws.addressing.AddressingProperties").methods().build());
+
     }
 
     @BuildStep
