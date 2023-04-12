@@ -70,6 +70,12 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-hc5</artifactId>
                 <version>${cxf.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -373,7 +379,7 @@
                             </requiredBomEntryIncludes>
                             <bannedDependencyResources>
                                 <bannedDependencyResource>
-                                    <location>classpath:enforcer-rules/quarkus-require-maven-version.xml</location>
+                                    <location>classpath:enforcer-rules/quarkus-banned-dependencies.xml</location>
                                 </bannedDependencyResource>
                                 <bannedDependencyResource>
                                     <location>${maven.multiModuleProjectDirectory}/src/build/enforcer-rules/quarkus-cxf-banned-dependencies.xml</location>
@@ -382,12 +388,6 @@
                                     <location>${maven.multiModuleProjectDirectory}/src/build/enforcer-rules/quarkus-cxf-banned-bom-dependencies.xml</location>
                                 </bannedDependencyResource>
                             </bannedDependencyResources>
-                            <bomEntryTransformations>
-                                <bomEntryTransformation>
-                                    <gavPattern>org.apache.camel:camel-opentelemetry</gavPattern>
-                                    <addExclusions>io.grpc:grpc-netty-shaded</addExclusions>
-                                </bomEntryTransformation>
-                            </bomEntryTransformations>
                             <flattenedFullPomFile>${project.build.directory}/flattened-full-pom.xml</flattenedFullPomFile>
                             <flattenedReducedPomFile>${project.build.directory}/flattened-reduced-pom.xml</flattenedReducedPomFile>
                             <flattenedReducedVerbosePomFile>${project.build.directory}/flattened-reduced-verbose-pom.xml</flattenedReducedVerbosePomFile>
