@@ -44,6 +44,13 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-vertx-http-deployment</artifactId>
+<!--            todo required for the successful build, should not be necessary  -->
+            <exclusions>
+                <exclusion>
+                    <artifactId>vaadin-development-mode-detector</artifactId>
+                    <groupId>org.mvnpm.at.vaadin</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -78,6 +85,10 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-tools-wsdlto-frontend-jaxws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-tools-java2ws</artifactId>
         </dependency>
 
         <dependency>

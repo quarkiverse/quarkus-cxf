@@ -98,6 +98,115 @@ endif::add-copy-button-to-env-var[]
 |
 
 
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.enabled]]`link:#quarkus-cxf_quarkus.cxf.java2ws.enabled[quarkus.cxf.java2ws.enabled]`
+
+[.description]
+--
+If `true` `java2ws` wsdl generation is run whenever there are Java classes annotated with `jakarta.jws.WebService` selected via following properties; otherwise `java2ws` is not executed.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.include]]`link:#quarkus-cxf_quarkus.cxf.java2ws.include[quarkus.cxf.java2ws.include]`
+
+[.description]
+--
+A Java regular expression for selecting classes which should be processed with `java2wsdl` tool. Regular expression is used for matching fully qualified names of the classes. The glob syntax is specified in `java.util.regex.Pattern`. 
+Examples:  
+ - `.++*++` will match both classes `src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/FruitWebService.java` and `src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/GreeterService.java` under the current Maven or Gradle module 
+ - `.++*++Fruit.++*++` matches `src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/FruitWebService.java` and not `src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/GreeterService.java`  
+The default value for `quarkus.cxf.java2ws.include` is `.++*++` Named parameter sets, such as `quarkus.cxf.java2ws.my-name.include` have no default and not specifying any `include` value there will cause a build time error. 
+Make sure that the class sets selected by `quarkus.cxf.java2ws.includes` and `quarkus.cxf.java2ws.++[++whatever-name++]++.include` do not overlap. 
+The generated wsdls are *not* included in native image.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS_INCLUDE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS_INCLUDE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.exclude]]`link:#quarkus-cxf_quarkus.cxf.java2ws.exclude[quarkus.cxf.java2ws.exclude]`
+
+[.description]
+--
+A Java regular expression for selecting classes which should *not* be processed with `java2ws` tool. Same syntax as `include`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS_EXCLUDE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS_EXCLUDE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.additional-params]]`link:#quarkus-cxf_quarkus.cxf.java2ws.additional-params[quarkus.cxf.java2ws.additional-params]`
+
+[.description]
+--
+A comma separated list of additional command line parameters that should be passed to CXF `java2ws` tool along with the files selected by `include` and `exclude`. Example: `-portname,12345`. Check link:https://cxf.apache.org/docs/java-to-wsdl.html[`java2ws` documentation] for all supported options.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS_ADDITIONAL_PARAMS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS_ADDITIONAL_PARAMS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.output-dir]]`link:#quarkus-cxf_quarkus.cxf.java2ws.output-dir[quarkus.cxf.java2ws.output-dir]`
+
+[.description]
+--
+The directory in which the WSDL output files are placed. The paths are relative to the working directory of the current Maven or Gradle module. If not specified, path `target/classes/wsdl` for Maven and `build/classes/wsdl` is used by default.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS_OUTPUT_DIR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS_OUTPUT_DIR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.wsdl-name-template]]`link:#quarkus-cxf_quarkus.cxf.java2ws.wsdl-name-template[quarkus.cxf.java2ws.wsdl-name-template]`
+
+[.description]
+--
+A template for the names of the generated WSDL files. 
+There are 2 placeholders, which could be used in the template  
+ - `&lt;CLASS_NAME&gt;` will be replaced by the class's simple name. 
+ - `&lt;FULLY_QUALIFIED_CLASS_NAME&gt;` will be replaced by the class's fully qualified name, where all occurrences of '.' are replaced with '_'.  
+The default value is `<CLASS_NAME>.wsdl` 
+Examples:  
+ - `&lt;CLASS_NAME&gt;.wsdl` - generated file from class `++*++.GreeterService` will be named `GreeterService.wsdl` 
+ - `&lt;FULLY_QUALIFIED_CLASS_NAME&gt;.xml` - generated file from class `my.package.GreeterService` will be named my_package_GreeterService.xml
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS_WSDL_NAME_TEMPLATE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS_WSDL_NAME_TEMPLATE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.includes]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.includes[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".includes]`
 
 [.description]
@@ -151,6 +260,99 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++`
 endif::add-copy-button-to-env-var[]
 --|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.include]]`link:#quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.include[quarkus.cxf.java2ws."named-parameter-sets".include]`
+
+[.description]
+--
+A Java regular expression for selecting classes which should be processed with `java2wsdl` tool. Regular expression is used for matching fully qualified names of the classes. The glob syntax is specified in `java.util.regex.Pattern`. 
+Examples:  
+ - `.++*++` will match both classes `src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/FruitWebService.java` and `src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/GreeterService.java` under the current Maven or Gradle module 
+ - `.++*++Fruit.++*++` matches `src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/FruitWebService.java` and not `src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/GreeterService.java`  
+The default value for `quarkus.cxf.java2ws.include` is `.++*++` Named parameter sets, such as `quarkus.cxf.java2ws.my-name.include` have no default and not specifying any `include` value there will cause a build time error. 
+Make sure that the class sets selected by `quarkus.cxf.java2ws.includes` and `quarkus.cxf.java2ws.++[++whatever-name++]++.include` do not overlap. 
+The generated wsdls are *not* included in native image.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__INCLUDE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__INCLUDE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.exclude]]`link:#quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.exclude[quarkus.cxf.java2ws."named-parameter-sets".exclude]`
+
+[.description]
+--
+A Java regular expression for selecting classes which should *not* be processed with `java2ws` tool. Same syntax as `include`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__EXCLUDE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__EXCLUDE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.additional-params]]`link:#quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.additional-params[quarkus.cxf.java2ws."named-parameter-sets".additional-params]`
+
+[.description]
+--
+A comma separated list of additional command line parameters that should be passed to CXF `java2ws` tool along with the files selected by `include` and `exclude`. Example: `-portname,12345`. Check link:https://cxf.apache.org/docs/java-to-wsdl.html[`java2ws` documentation] for all supported options.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.output-dir]]`link:#quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.output-dir[quarkus.cxf.java2ws."named-parameter-sets".output-dir]`
+
+[.description]
+--
+The directory in which the WSDL output files are placed. The paths are relative to the working directory of the current Maven or Gradle module. If not specified, path `target/classes/wsdl` for Maven and `build/classes/wsdl` is used by default.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__OUTPUT_DIR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__OUTPUT_DIR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.wsdl-name-template]]`link:#quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.wsdl-name-template[quarkus.cxf.java2ws."named-parameter-sets".wsdl-name-template]`
+
+[.description]
+--
+A template for the names of the generated WSDL files. 
+There are 2 placeholders, which could be used in the template  
+ - `&lt;CLASS_NAME&gt;` will be replaced by the class's simple name. 
+ - `&lt;FULLY_QUALIFIED_CLASS_NAME&gt;` will be replaced by the class's fully qualified name, where all occurrences of '.' are replaced with '_'.  
+The default value is `<CLASS_NAME>.wsdl` 
+Examples:  
+ - `&lt;CLASS_NAME&gt;.wsdl` - generated file from class `++*++.GreeterService` will be named `GreeterService.wsdl` 
+ - `&lt;FULLY_QUALIFIED_CLASS_NAME&gt;.xml` - generated file from class `my.package.GreeterService` will be named my_package_GreeterService.xml
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__WSDL_NAME_TEMPLATE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__WSDL_NAME_TEMPLATE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
 |
 
 

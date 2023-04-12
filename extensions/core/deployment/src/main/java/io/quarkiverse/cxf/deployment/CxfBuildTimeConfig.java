@@ -8,7 +8,6 @@ import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
-import io.quarkus.util.GlobUtil;
 
 @ConfigRoot(name = "cxf", phase = ConfigPhase.BUILD_TIME)
 public class CxfBuildTimeConfig {
@@ -35,14 +34,20 @@ public class CxfBuildTimeConfig {
     @ConfigItem
     public CodeGenConfig codegen;
 
+    /**
+     * Build time configuration options for {@code java2ws}
+     */
+    @ConfigItem(name = "java2ws")
+    public Java2WsConfig java2ws;
+
     @ConfigGroup
     public static class CodeGenConfig {
+
         /**
          * Build time configuration options for {@code wsdl2java}
          */
         @ConfigItem(name = "wsdl2java")
         public Wsdl2JavaConfig wsdl2java;
-
     }
 
     @ConfigGroup
@@ -51,6 +56,7 @@ public class CxfBuildTimeConfig {
          * If {@code true} {@code wsdl2java} code generation is run whenever there are WSDL resources found on default
          * or custom defined locations; otherwise {@code wsdl2java} is not executed.
          */
+        //todo do we want to set to false, to avoid possible java2ws and wsdl2java cycles
         @ConfigItem(defaultValue = "true")
         public boolean enabled;
 
@@ -133,6 +139,123 @@ public class CxfBuildTimeConfig {
         @ConfigItem
         public Optional<List<String>> additionalParams;
 
+    }
+
+    @ConfigGroup
+    public static class Java2WsConfig {
+
+        /**
+         * If {@code true} {@code java2ws} wsdl generation is run whenever there are Java classes annotated with
+         * {@link jakarta.jws.WebService} selected via following properties;
+         * otherwise {@code java2ws} is not executed.
+         */
+        @ConfigItem(defaultValue = "false")
+        public boolean enabled;
+
+        /**
+         * Parameters for the CXF {@code java2ws} tool. Use this when you want to generate wsdl files from all your
+         * Java classes annotated with {@link jakarta.jws.WebService}. You should use {@link #namedParameterSets} instead
+         * if you need to invoke {@code java2ws} with different parameters for some of your Java classes.
+         * <p>
+         * {@code rootParameterSet} is <strong>ignored</strong> if there is at least one {@code namedParameterSet}.
+         * </p>
+         */
+        @ConfigItem(name = ConfigItem.PARENT)
+        public Java2WsParameterSet rootParameterSet;
+
+        /**
+         * A collection of named parameter sets for the CXF {@code java2ws} tool. Each entry selects a set of Java classes
+         * annotated with {@link jakarta.jws.WebService} and defines options to be used when invoking {@code java2ws}
+         * with the selected classes.
+         */
+        @ConfigItem(name = ConfigItem.PARENT)
+        public Map<String, Java2WsParameterSet> namedParameterSets;
+
+    }
+
+    @ConfigGroup
+    public static class Java2WsParameterSet {
+        public static final String DEFAULT_WSDL_NAME_TEMPLATE = "<CLASS_NAME>.wsdl";
+        public static final String DEFAULT_INCLUDES = ".*";
+
+        /**
+         * A Java regular expression for selecting classes which should be processed with
+         * {@code java2wsdl} tool. Regular expression is used for matching fully qualified names of the classes.
+         * The glob syntax is specified in {@link java.util.regex.Pattern}.
+         * <p>
+         * Examples:
+         * <ul>
+         * <li>{@code .*} will match both classes
+         * {@code src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/FruitWebService.java} and
+         * {@code src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/GreeterService.java} under the current Maven or
+         * Gradle module
+         * <li>{@code .*Fruit.*} matches {@code src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/FruitWebService.java}
+         * and not
+         * {@code src/main/java/test/io/quarkiverse/cxf/deployment/java2ws/GreeterService.java}
+         * </ul>
+         * <p>
+         * The default value for {@code quarkus.cxf.java2ws.include} is <code>.*</code> .
+         * Named parameter sets, such as {@code quarkus.cxf.java2ws.my-name.include},
+         * have no default and not specifying any {@code include} value there will cause a build time error.
+         * <p>
+         * Make sure that the class sets selected by {@code quarkus.cxf.java2ws.includes} and
+         * {@code quarkus.cxf.java2ws.[whatever-name].include} do not overlap.
+         * <p>
+         * The generated wsdls are <strong>not</strong> included in native image.
+         */
+        @ConfigItem
+        public Optional<String> include;
+
+        /**
+         * A Java regular expression for selecting classes which should <strong>not</strong> be
+         * processed with {@code java2ws} tool. Same syntax as {@code include}.
+         */
+        @ConfigItem
+        public Optional<String> exclude;
+
+        /**
+         * A comma separated list of additional command line parameters that should be passed to CXF {@code java2ws} tool
+         * along with the files selected by {@link #include} and {@link #exclude}. Example:
+         * {@code -portname,12345}. Check
+         * <a href="https://cxf.apache.org/docs/java-to-wsdl.html"><code>java2ws</code> documentation</a> for all
+         * supported options.
+         * <p>
+         */
+        @ConfigItem
+        public Optional<List<String>> additionalParams;
+
+        /**
+         * The directory in which the WSDL output files are placed. The paths are relative to the working directory of the
+         * current
+         * Maven or Gradle module. If not specified, path {@code target/classes/wsdl} for Maven and {@code build/classes/wsdl}
+         * is used by default.
+         */
+        @ConfigItem
+        public Optional<String> outputDir;
+
+        /**
+         * A template for the names of the generated WSDL files.
+         *
+         * <p>
+         * There are 2 placeholders, which could be used in the template
+         * <ul>
+         * <li>{@code &lt;CLASS_NAME&gt;} will be replaced by the class's simple name.
+         * <li>{@code &lt;FULLY_QUALIFIED_CLASS_NAME&gt;} will be replaced by the class's fully qualified name, where all
+         * occurrences of '.' are replaced with '_'.
+         * </ul>
+         * <p>
+         * The default value is <code>&lt;CLASS_NAME&gt;.wsdl</code>
+         * <p>
+         * Examples:
+         * <ul>
+         * <li>{@code &lt;CLASS_NAME&gt;.wsdl} - generated file from class {@code *.GreeterService} will be named
+         * {@code GreeterService.wsdl}
+         * <li>{@code &lt;FULLY_QUALIFIED_CLASS_NAME&gt;.xml} - generated file from class {@code my.package.GreeterService} will
+         * be named my_package_GreeterService.xml
+         * </ul>
+         */
+        @ConfigItem
+        public Optional<String> wsdlNameTemplate;
     }
 
 }

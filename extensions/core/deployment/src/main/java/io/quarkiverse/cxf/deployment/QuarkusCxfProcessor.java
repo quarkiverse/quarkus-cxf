@@ -598,8 +598,13 @@ class QuarkusCxfProcessor {
                 final String slashName = name.indexOf('/') >= 0 ? name : name.replace('.', '/');
                 classOutput.getSourceWriter(slashName);
                 LOGGER.infof("Generated class %s", dotName);
-                classOutput.write(slashName, bytes);
-                generatedClasses.add(dotName);
+                //todo quick fix
+                try {
+                    classOutput.write(slashName, bytes);
+                    generatedClasses.add(dotName);
+                } catch (Exception e) {
+                    LOGGER.debugf("Class %s can not be used - skipping", dotName);
+                }
             }
         }
 
