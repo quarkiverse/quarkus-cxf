@@ -146,7 +146,8 @@ Note that `quarkus-cxf` code generation uses the https://cxf.apache.org/docs/wsd
 from CXF under the hood. `wsdl2Java` is called separately for each WSDL file selected by `includes` and `excludes`.
 
 Passing custom parameters to `wsdl2java` is possible through
-xref:reference/configuration-properties.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[`quarkus.cxf.codegen.wsdl2java.additional-params`] configuration parameter.
+xref:reference/configuration-properties.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[`quarkus.cxf.codegen.wsdl2java.additional-params`] 
+configuration parameter.
 
 If you need different `additional-params` for each WSDL file, you may want to define a separate named parameter set for
 each one of them. Here is an example:
