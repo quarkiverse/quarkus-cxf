@@ -6,7 +6,7 @@ import javax.jws.WebService;
 /**
  * The simplest Hello service.
  */
-@WebService
+@WebService(name = "HelloService", serviceName = "HelloService")
 public interface HelloService {
 
     @WebMethod

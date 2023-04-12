@@ -185,39 +185,48 @@ class QuarkusCxfProcessor {
 
     @BuildStep
     void generateClasses(
-            CxfBusBuildItem bus,
+            CxfBusBuildItem busBuildItem,
             List<ClientSeiBuildItem> clients,
             List<ServiceSeiBuildItem> endpointImplementations,
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
 
         QuarkusCapture capture = new QuarkusCapture(new GeneratedBeanGizmoAdaptor(generatedBeans));
-        bus.getBus().setExtension(capture, GeneratedClassClassLoaderCapture.class);
+        final Bus bus = busBuildItem.getBus();
+        final GeneratedClassClassLoaderCapture oldCapture = bus.getExtension(GeneratedClassClassLoaderCapture.class);
+        bus.setExtension(capture, GeneratedClassClassLoaderCapture.class);
+        try {
+            final Random rnd = new Random(System.currentTimeMillis());
+            endpointImplementations.stream()
+                    .map(ServiceSeiBuildItem::getSei)
+                    .distinct()
+                    .forEach(sei -> {
+                        LOGGER.infof("Generating ancillary classes for service %s", sei);
+                        /*
+                         * This is a fake build time server start, so it does not matter much that we
+                         * use a fake path
+                         */
+                        final String path = "/QuarkusCxfProcessor/dummy-" + rnd.nextLong();
+                        CxfDeploymentUtils.createServer(sei, path, bus);
+                    });
 
-        final Random rnd = new Random(System.currentTimeMillis());
-        endpointImplementations.stream()
-                .map(ServiceSeiBuildItem::getSei)
-                .distinct()
-                .forEach(sei -> {
-                    LOGGER.infof("Generating ancillary classes for service %s", sei);
-                    /*
-                     * This is a fake build time server start, so it does not matter much that we
-                     * use a fake path
-                     */
-                    final String path = "/QuarkusCxfProcessor/dummy-" + rnd.nextLong();
-                    CxfDeploymentUtils.createServer(sei, path, bus.getBus());
-                });
+            clients.stream()
+                    .map(ClientSeiBuildItem::getSei)
+                    .distinct()
+                    .forEach(sei -> {
+                        LOGGER.infof("Generating ancillary classes for client %s", sei);
+                        CxfDeploymentUtils.createClient(sei, bus);
+                    });
 
-        clients.stream()
-                .map(ClientSeiBuildItem::getSei)
-                .distinct()
-                .forEach(sei -> {
-                    LOGGER.infof("Generating ancillary classes for client %s", sei);
-                    CxfDeploymentUtils.createClient(sei, bus.getBus());
-                });
-
-        reflectiveClasses.produce(
-                new ReflectiveClassBuildItem(false, true, capture.getGeneratedClasses()));
+            reflectiveClasses.produce(
+                    new ReflectiveClassBuildItem(false, true, capture.getGeneratedClasses()));
+        } finally {
+            /*
+             * The capture is only valid only while the supplied GeneratedBeanBuildItem producer is alive anyway
+             * so let's better reset the extension back to the original value
+             */
+            bus.setExtension(oldCapture, GeneratedClassClassLoaderCapture.class);
+        }
 
     }
 
