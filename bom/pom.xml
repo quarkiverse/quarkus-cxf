@@ -43,6 +43,10 @@
                         <artifactId>jakarta.activation-api</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.apache.geronimo.specs</groupId>
                         <artifactId>geronimo-jta_1.1_spec</artifactId>
                     </exclusion>
@@ -135,6 +139,10 @@
                         <artifactId>jakarta.activation-api</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.apache.geronimo.javamail</groupId>
                         <artifactId>geronimo-javamail_1.4_mail</artifactId>
                     </exclusion>
@@ -178,6 +186,10 @@
                     <exclusion>
                         <groupId>jakarta.activation</groupId>
                         <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.geronimo.specs</groupId>
@@ -283,6 +295,10 @@
                         <groupId>jakarta.activation</groupId>
                         <artifactId>jakarta.activation-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -326,6 +342,10 @@
                     <exclusion>
                         <groupId>jakarta.activation</groupId>
                         <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -487,6 +507,10 @@
                         <groupId>jakarta.activation</groupId>
                         <artifactId>jakarta.activation-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
         </dependencies>
@@ -545,8 +569,28 @@
                             </bannedDependencyResources>
                             <bomEntryTransformations>
                                 <bomEntryTransformation>
-                                    <gavPattern>org.apache.cxf:cxf-rt-ws-policy</gavPattern>
-                                    <addExclusions>org.apache.geronimo.specs:geronimo-jta_1.1_spec,jakarta.activation:jakarta.activation-api,jakarta.xml.bind:jakarta.xml.bind-api</addExclusions>
+                                    <gavPattern>org.apache.cxf:cxf-core</gavPattern>
+                                    <addExclusions>jakarta.xml.bind:jakarta.xml.bind-api</addExclusions>
+                                </bomEntryTransformation>
+                                <bomEntryTransformation>
+                                    <gavPattern>org.apache.cxf:cxf-rt-ws-security</gavPattern>
+                                    <addExclusions>jakarta.xml.bind:jakarta.xml.bind-api</addExclusions>
+                                </bomEntryTransformation>
+                                <bomEntryTransformation>
+                                    <gavPattern>org.apache.cxf:cxf-tools-wsdlto-core</gavPattern>
+                                    <addExclusions>jakarta.xml.bind:jakarta.xml.bind-api</addExclusions>
+                                </bomEntryTransformation>
+                                <bomEntryTransformation>
+                                    <gavPattern>org.apache.cxf.xjc-utils:cxf-xjc-runtime</gavPattern>
+                                    <addExclusions>jakarta.xml.bind:jakarta.xml.bind-api</addExclusions>
+                                </bomEntryTransformation>
+                                <bomEntryTransformation>
+                                    <gavPattern>org.apache.cxf.xjcplugins:cxf-xjc-javadoc</gavPattern>
+                                    <addExclusions>jakarta.xml.bind:jakarta.xml.bind-api</addExclusions>
+                                </bomEntryTransformation>
+                                <bomEntryTransformation>
+                                    <gavPattern>jakarta.xml.ws:jakarta.xml.ws-api</gavPattern>
+                                    <addExclusions>jakarta.xml.bind:jakarta.xml.bind-api</addExclusions>
                                 </bomEntryTransformation>
                             </bomEntryTransformations>
                             <flattenedFullPomFile>${project.build.directory}/flattened-full-pom.xml</flattenedFullPomFile>
