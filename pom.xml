@@ -238,6 +238,9 @@
                                     <location>classpath:enforcer-rules/quarkus-require-maven-version.xml</location>
                                 </externalRules>
                                 <externalRules>
+                                    <location>classpath:enforcer-rules/quarkus-banned-dependencies.xml</location>
+                                </externalRules>
+                                <externalRules>
                                     <location>${maven.multiModuleProjectDirectory}/src/build/enforcer-rules/quarkus-cxf-banned-dependencies.xml</location>
                                 </externalRules>
                             </rules>
