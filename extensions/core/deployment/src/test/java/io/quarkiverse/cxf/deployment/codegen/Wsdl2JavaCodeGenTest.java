@@ -41,11 +41,9 @@ public class Wsdl2JavaCodeGenTest {
     void buildParameterSetNameLessDefaults() {
         final Wsdl2JavaParameterSet params = Wsdl2JavaCodeGen.buildParameterSet(
                 new Config(Map.of()),
-                Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX,
-                Wsdl2JavaParameterSet.DEFAULT_INCLUDES);
+                Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX);
 
-        Assertions.assertThat(params.includes).isPresent().get().asList()
-                .containsExactly(Wsdl2JavaParameterSet.DEFAULT_INCLUDES);
+        Assertions.assertThat(params.includes).isEmpty();
         Assertions.assertThat(params.excludes).isEmpty();
         Assertions.assertThat(params.additionalParams).isEmpty();
     }
@@ -54,13 +52,12 @@ public class Wsdl2JavaCodeGenTest {
     void buildParameterSetNameLess() {
         final Wsdl2JavaParameterSet params = Wsdl2JavaCodeGen.buildParameterSet(
                 new Config(Map.of(
+                        "quarkus.cxf.codegen.wsdl2java.includes", List.of("**.wsdl"),
                         "quarkus.cxf.codegen.wsdl2java.excludes", List.of("foo.wsdl"),
                         "quarkus.cxf.codegen.wsdl2java.additional-params", List.of("-foo", "bar"))),
-                Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX,
-                Wsdl2JavaParameterSet.DEFAULT_INCLUDES);
+                Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX);
 
-        Assertions.assertThat(params.includes).isPresent().get().asList()
-                .containsExactly(Wsdl2JavaParameterSet.DEFAULT_INCLUDES);
+        Assertions.assertThat(params.includes).isPresent().get().asList().containsExactly("**.wsdl");
         Assertions.assertThat(params.excludes).isPresent().get().asList().containsExactly("foo.wsdl");
         Assertions.assertThat(params.additionalParams).get().asList().containsExactly("-foo", "bar");
     }
@@ -74,8 +71,7 @@ public class Wsdl2JavaCodeGenTest {
                             new Config(Map.of(
                                     "quarkus.cxf.codegen.wsdl2java.my-name.excludes", List.of("foo.wsdl"),
                                     "quarkus.cxf.codegen.wsdl2java.my-name.additional-params", List.of("-foo", "bar"))),
-                            Wsdl2JavaCodeGen.WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + "my-name",
-                            null);
+                            Wsdl2JavaCodeGen.WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + "my-name");
                 });
     }
 
@@ -86,8 +82,7 @@ public class Wsdl2JavaCodeGenTest {
                         "quarkus.cxf.codegen.wsdl2java.my-name.includes", List.of("*.wsdl"),
                         "quarkus.cxf.codegen.wsdl2java.my-name.excludes", List.of("foo.wsdl"),
                         "quarkus.cxf.codegen.wsdl2java.my-name.additional-params", List.of("-foo", "bar"))),
-                Wsdl2JavaCodeGen.WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + "my-name",
-                null);
+                Wsdl2JavaCodeGen.WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + "my-name");
 
         Assertions.assertThat(params.includes).isPresent().get().asList()
                 .containsExactly("*.wsdl");
@@ -101,7 +96,7 @@ public class Wsdl2JavaCodeGenTest {
         final List<Path> foundFiles = new ArrayList<>();
         Wsdl2JavaCodeGen.scan(
                 tempDir,
-                Optional.of(List.of(Wsdl2JavaParameterSet.DEFAULT_INCLUDES)),
+                Optional.of(List.of("**.wsdl")),
                 Optional.empty(),
                 "",
                 new HashMap<>(),

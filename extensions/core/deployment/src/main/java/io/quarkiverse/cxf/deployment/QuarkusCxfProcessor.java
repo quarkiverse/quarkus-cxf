@@ -121,7 +121,6 @@ class QuarkusCxfProcessor {
                     classesDir,
                     cxfBuildTimeConfig.codegen.wsdl2java.rootParameterSet,
                     Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX,
-                    CxfBuildTimeConfig.Wsdl2JavaParameterSet.DEFAULT_INCLUDES,
                     wsdlResourcePaths::add);
 
             for (Entry<String, Wsdl2JavaParameterSet> en : cxfBuildTimeConfig.codegen.wsdl2java.namedParameterSets.entrySet()) {
@@ -129,7 +128,6 @@ class QuarkusCxfProcessor {
                         target.getOutputDirectory(),
                         en.getValue(),
                         Wsdl2JavaCodeGen.WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + en.getKey(),
-                        null,
                         wsdlResourcePaths::add);
             }
 
@@ -144,13 +142,11 @@ class QuarkusCxfProcessor {
             Path inputDir,
             Wsdl2JavaParameterSet params,
             String prefix,
-            String defaultIncludes,
             Consumer<String> resourcePathConsumer) {
         Wsdl2JavaCodeGen.scan(
                 inputDir,
                 params.includes.isPresent() ? params.includes
-                        : Optional.of(
-                                defaultIncludes == null ? Collections.emptyList() : Collections.singletonList(defaultIncludes)),
+                        : Optional.of(Collections.emptyList()),
                 params.excludes,
                 prefix,
                 new HashMap<>(),
