@@ -49,10 +49,17 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 A comma separated list of glob patterns for selecting WSDL files which should be processed with `wsdl2java` tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module. The glob syntax is specified in `io.quarkus.util.GlobUtil`. 
 Examples:  
  - `calculator.wsdl,fruits.wsdl` will match `src/main/resources/calculator.wsdl` and `src/main/resources/fruits.wsdl` under the current Maven or Gradle module, but will not match anything like `src/main/resources/subdir/calculator.wsdl` 
- - `my-++*++-service.wsdl` match `src/main/resources/my-foo-service.wsdl` and `src/main/resources/my-bar-service.wsdl` 
- - `++**++.wsdl` will match any of the above  Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended. 
-The default value for `quarkus.cxf.codegen.wsdl2java.includes` is `++**++.wsdl` Named parameter sets, such as `quarkus.cxf.codegen.wsdl2java.my-name.includes` have no default and not specifying any `includes` value there will cause a build time error. 
-Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap. 
+ - `my-++*++-service.wsdl` will match `src/main/resources/my-foo-service.wsdl` and `src/main/resources/my-bar-service.wsdl` 
+ - `++**++.wsdl` will match any of the above  There is a separate `wsdl2java` execution for each of the matching WSDL files. If you need different `additional-params` for each WSDL file, you may want to define a separate named parameter set for each one of them. Here is an example: `++#++ Parameters for foo.wsdl
+quarkus.cxf.codegen.wsdl2java.foo-params.includes = wsdl/foo.wsdl
+quarkus.cxf.codegen.wsdl2java.foo-params.additional-params = -wsdlLocation,wsdl/foo.wsdl
+++#++ Parameters for bar.wsdl
+quarkus.cxf.codegen.wsdl2java.bar-params.includes = wsdl/bar.wsdl
+quarkus.cxf.codegen.wsdl2java.bar-params.additional-params = -wsdlLocation,wsdl/bar.wsdl,-xjc-Xts` 
+Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended. 
+There is no default value for this option, so `wsdl2java` code generation is disabled by default. 
+Specifying `quarkus.cxf.codegen.wsdl2java.my-name.excludes` without setting any `includes` will cause a build time error. 
+Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap. Otherwise a build time exception will be thrown. 
 The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (deprecated) or `quarkus.cxf.codegen.wsdl2java.includes/excludes`.
 
 ifdef::add-copy-button-to-env-var[]
@@ -105,10 +112,17 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2ja
 A comma separated list of glob patterns for selecting WSDL files which should be processed with `wsdl2java` tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module. The glob syntax is specified in `io.quarkus.util.GlobUtil`. 
 Examples:  
  - `calculator.wsdl,fruits.wsdl` will match `src/main/resources/calculator.wsdl` and `src/main/resources/fruits.wsdl` under the current Maven or Gradle module, but will not match anything like `src/main/resources/subdir/calculator.wsdl` 
- - `my-++*++-service.wsdl` match `src/main/resources/my-foo-service.wsdl` and `src/main/resources/my-bar-service.wsdl` 
- - `++**++.wsdl` will match any of the above  Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended. 
-The default value for `quarkus.cxf.codegen.wsdl2java.includes` is `++**++.wsdl` Named parameter sets, such as `quarkus.cxf.codegen.wsdl2java.my-name.includes` have no default and not specifying any `includes` value there will cause a build time error. 
-Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap. 
+ - `my-++*++-service.wsdl` will match `src/main/resources/my-foo-service.wsdl` and `src/main/resources/my-bar-service.wsdl` 
+ - `++**++.wsdl` will match any of the above  There is a separate `wsdl2java` execution for each of the matching WSDL files. If you need different `additional-params` for each WSDL file, you may want to define a separate named parameter set for each one of them. Here is an example: `++#++ Parameters for foo.wsdl
+quarkus.cxf.codegen.wsdl2java.foo-params.includes = wsdl/foo.wsdl
+quarkus.cxf.codegen.wsdl2java.foo-params.additional-params = -wsdlLocation,wsdl/foo.wsdl
+++#++ Parameters for bar.wsdl
+quarkus.cxf.codegen.wsdl2java.bar-params.includes = wsdl/bar.wsdl
+quarkus.cxf.codegen.wsdl2java.bar-params.additional-params = -wsdlLocation,wsdl/bar.wsdl,-xjc-Xts` 
+Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended. 
+There is no default value for this option, so `wsdl2java` code generation is disabled by default. 
+Specifying `quarkus.cxf.codegen.wsdl2java.my-name.excludes` without setting any `includes` will cause a build time error. 
+Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes` and `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap. Otherwise a build time exception will be thrown. 
 The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (deprecated) or `quarkus.cxf.codegen.wsdl2java.includes/excludes`.
 
 ifdef::add-copy-button-to-env-var[]
