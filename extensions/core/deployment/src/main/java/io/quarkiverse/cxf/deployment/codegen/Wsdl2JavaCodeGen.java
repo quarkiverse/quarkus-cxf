@@ -74,8 +74,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         final Path outDir = context.outDir();
 
         final Function<String, Optional<List<String>>> configFunction = key -> config.getOptionalValues(key, String.class);
-        final Wsdl2JavaParameterSet rootParams = buildParameterSet(configFunction, WSDL2JAVA_CONFIG_KEY_PREFIX,
-                Wsdl2JavaParameterSet.DEFAULT_INCLUDES);
+        final Wsdl2JavaParameterSet rootParams = buildParameterSet(configFunction, WSDL2JAVA_CONFIG_KEY_PREFIX);
         final Map<String, String> processedFiles = new HashMap<>();
         boolean result = false;
         result |= wsdl2java(context.inputDir(), rootParams, outDir, WSDL2JAVA_CONFIG_KEY_PREFIX, processedFiles);
@@ -83,8 +82,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         final Set<String> names = findParamSetNames(config.getPropertyNames());
         for (String name : names) {
             final String prefix = WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + name;
-            final Wsdl2JavaParameterSet namedParams = buildParameterSet(configFunction,
-                    prefix, null);
+            final Wsdl2JavaParameterSet namedParams = buildParameterSet(configFunction, prefix);
             result |= wsdl2java(context.inputDir(), namedParams, outDir, prefix, processedFiles);
         }
 
@@ -289,19 +287,15 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
      *
      * @param config an abstraction of {@link Config#getOptionalValues(String, Class)} for easier testing
      * @param prefix the prefix of configuration keys from which we build the resulting {@link Wsdl2JavaParameterSet}
-     * @param defaultIncludes use this if {@code prefix + ".includes"} is not available
      * @return a new {@link Wsdl2JavaParameterSet}
      */
-    static Wsdl2JavaParameterSet buildParameterSet(Function<String, Optional<List<String>>> config, String prefix,
-            String defaultIncludes) {
+    static Wsdl2JavaParameterSet buildParameterSet(Function<String, Optional<List<String>>> config, String prefix) {
         final Wsdl2JavaParameterSet result = new Wsdl2JavaParameterSet();
 
         final Optional<List<String>> maybeIncludes = config.apply(prefix + ".includes");
         final List<String> includes;
         if (maybeIncludes.isPresent()) {
             includes = maybeIncludes.get();
-        } else if (defaultIncludes != null) {
-            includes = List.of(defaultIncludes);
         } else {
             includes = null;
         }
@@ -314,7 +308,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
                     + " any of " + prefix + ".excludes or " + prefix + ".additional-params");
         }
 
-        result.includes = Optional.of(includes);
+        result.includes = Optional.ofNullable(includes);
         result.excludes = excludes;
         result.additionalParams = additionalParams;
 

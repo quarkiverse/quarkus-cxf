@@ -72,7 +72,6 @@ public class CxfBuildTimeConfig {
 
     @ConfigGroup
     public static class Wsdl2JavaParameterSet {
-        public static final String DEFAULT_INCLUDES = "**.wsdl";
 
         /**
          * A comma separated list of glob patterns for selecting WSDL files which should be processed with
@@ -85,20 +84,35 @@ public class CxfBuildTimeConfig {
          * <li>{@code calculator.wsdl,fruits.wsdl} will match {@code src/main/resources/calculator.wsdl} and
          * {@code src/main/resources/fruits.wsdl} under the current Maven or Gradle module, but will not match anything like
          * {@code src/main/resources/subdir/calculator.wsdl}
-         * <li>{@code my-*-service.wsdl} match {@code src/main/resources/my-foo-service.wsdl} and
+         * <li>{@code my-*-service.wsdl} will match {@code src/main/resources/my-foo-service.wsdl} and
          * {@code src/main/resources/my-bar-service.wsdl}
          * <li>{@code **.wsdl} will match any of the above
          * </ul>
+         * There is a separate {@code wsdl2java} execution for each of the matching WSDL files. If you need different
+         * {@link #additionalParams} for each WSDL file, you may want to define a separate named parameter set for each
+         * one of them. Here is an example:
+         *
+         * <pre>{@code
+         * # Parameters for foo.wsdl
+         * quarkus.cxf.codegen.wsdl2java.foo-params.includes = wsdl/foo.wsdl
+         * quarkus.cxf.codegen.wsdl2java.foo-params.additional-params = -wsdlLocation,wsdl/foo.wsdl
+         * # Parameters for bar.wsdl
+         * quarkus.cxf.codegen.wsdl2java.bar-params.includes = wsdl/bar.wsdl
+         * quarkus.cxf.codegen.wsdl2java.bar-params.additional-params = -wsdlLocation,wsdl/bar.wsdl,-xjc-Xts
+         * }</pre>
+         * <p>
          * Note that file extensions other than {@code .wsdl} will work during normal builds, but changes in the
          * matching files may get overseen in Quarkus dev mode. Always using the {@code .wsdl} extension is thus
          * recommended.
          * <p>
-         * The default value for {@code quarkus.cxf.codegen.wsdl2java.includes} is <code>**.wsdl</code>
-         * Named parameter sets, such as {@code quarkus.cxf.codegen.wsdl2java.my-name.includes}
-         * have no default and not specifying any {@code includes} value there will cause a build time error.
+         * There is no default value for this option, so {@code wsdl2java} code generation is disabled by default.
+         * <p>
+         * Specifying {@code quarkus.cxf.codegen.wsdl2java.my-name.excludes} without setting any {@code includes}
+         * will cause a build time error.
          * <p>
          * Make sure that the file sets selected by {@code quarkus.cxf.codegen.wsdl2java.includes} and
-         * {@code quarkus.cxf.codegen.wsdl2java.[whatever-name].includes} do not overlap.
+         * {@code quarkus.cxf.codegen.wsdl2java.[whatever-name].includes} do not overlap. Otherwise a build time
+         * exception will be thrown.
          * <p>
          * The files from {@code src/main/resources} selected by {@code includes} and {@code excludes} are automatically
          * included in
