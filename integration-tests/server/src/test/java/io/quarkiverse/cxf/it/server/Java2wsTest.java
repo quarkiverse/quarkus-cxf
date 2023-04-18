@@ -34,14 +34,25 @@ import io.restassured.RestAssured;
 public class Java2wsTest {
 
     @Test
-    public void java2Ws() throws IOException, ParserConfigurationException, SAXException, TransformerException {
+    public void java2WsHelloService() throws IOException, ParserConfigurationException, SAXException, TransformerException {
+        java2Ws("hello", "HelloService");
+    }
+
+    @Test
+    public void java2WsFaultyHelloService()
+            throws IOException, ParserConfigurationException, SAXException, TransformerException {
+        java2Ws("faulty-hello", "FaultyHelloService");
+    }
+
+    public void java2Ws(String path, String serviceName)
+            throws IOException, ParserConfigurationException, SAXException, TransformerException {
         String servedWsdl = RestAssured.given()
-                .get("/soap/hello?wsdl")
+                .get("/soap/" + path + "?wsdl")
                 .then()
                 .statusCode(200)
                 .extract().body().asString();
         servedWsdl = normalizeNsPrefixes(servedWsdl);
-        Path generatedPath = Paths.get("target/Java2wsTest/HelloService-from-java2ws.wsdl");
+        Path generatedPath = Paths.get("target/Java2wsTest/" + serviceName + "-from-java2ws.wsdl");
         try (InputStream in = Files.newInputStream(generatedPath)) {
             final String java2WsGeneratedWsdl = new String(in.readAllBytes(), StandardCharsets.UTF_8);
 
@@ -58,9 +69,9 @@ public class Java2wsTest {
 
             boolean equal = generatedDoc.isEqualNode(servedDoc);
             String mode = this.getClass().getSimpleName().endsWith("IT") ? "native" : "jvm";
-            Path servedPath = Paths.get("target/Java2wsTest/HelloService-served-normalized-" + mode + ".wsdl")
+            Path servedPath = Paths.get("target/Java2wsTest/" + serviceName + "-served-normalized-" + mode + ".wsdl")
                     .toAbsolutePath();
-            Path generatedNormalizedPath = Paths.get("target/Java2wsTest/HelloService-from-java2ws-normalized.wsdl")
+            Path generatedNormalizedPath = Paths.get("target/Java2wsTest/" + serviceName + "-from-java2ws-normalized.wsdl")
                     .toAbsolutePath();
             save(servedDoc, servedPath);
             save(generatedDoc, generatedNormalizedPath);

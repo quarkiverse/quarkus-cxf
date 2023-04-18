@@ -33,6 +33,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.ws.WebFault;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -443,6 +444,14 @@ class QuarkusCxfProcessor {
                 .getAnnotations(DotName.createSimple("com.sun.xml.txw2.annotation.XmlNamespace"))) {
             reflectiveClass.produce(
                     new ReflectiveClassBuildItem(true, true, xmlNamespaceInstance.target().asClass().name().toString()));
+        }
+
+        {
+            String[] classes = index.getAnnotations(DotName.createSimple(WebFault.class.getName()))
+                    .stream()
+                    .map(annot -> annot.target().asClass().name().toString())
+                    .toArray(String[]::new);
+            reflectiveClass.produce(new ReflectiveClassBuildItem(true, false, classes));
         }
 
         reflectiveClass.produce(new ReflectiveClassBuildItem(false, false,
