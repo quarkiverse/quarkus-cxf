@@ -38,6 +38,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import jakarta.xml.ws.WebFault;
+
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerImpl;
@@ -448,6 +450,17 @@ class QuarkusCxfProcessor {
             reflectiveClass.produce(
                     ReflectiveClassBuildItem.builder(xmlNamespaceInstance.target().asClass().name().toString()).methods()
                             .fields().build());
+        }
+
+        {
+            String[] classes = index.getAnnotations(DotName.createSimple(WebFault.class))
+                    .stream()
+                    .map(annot -> annot.target().asClass().name().toString())
+                    .toArray(String[]::new);
+            reflectiveClass.produce(
+                    ReflectiveClassBuildItem.builder(classes)
+                            .methods()
+                            .build());
         }
 
         reflectiveClass.produce(ReflectiveClassBuildItem.builder(

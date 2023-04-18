@@ -13,7 +13,7 @@ public class FaultyHelloServiceTest {
     public void hello() {
         final FaultyHelloService client = QuarkusCxfClientTestUtil.getClient(FaultyHelloService.class, "/soap/faulty-hello");
         Assertions.assertThrows(GreetingException.class, () -> {
-            client.hello("Joe");
+            client.faultyHello("Joe");
         });
     }
 
