@@ -25,8 +25,10 @@ import org.jboss.jandex.IndexView;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Java2WsParameterSet;
+import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.annotations.Consume;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.GeneratedResourceBuildItem;
 import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
@@ -36,6 +38,13 @@ class Java2WsdlProcessor {
 
     private static final Logger log = Logger.getLogger(Java2WsdlProcessor.class);
 
+    /*
+     * We consume GeneratedBeanBuildItem to ensure that this method is executed after
+     * QuarkusCxfProcessor.generateClasses(). Otherwise the wrapper classes might be generated earlier here in this
+     * method without capturing to a GeneratedBeanBuildItem. This is because QuarkusCxfProcessor.generateClasses()
+     * does not generate classes that are loaded already.
+     */
+    @Consume(GeneratedBeanBuildItem.class)
     @BuildStep
     void java2wsdl(
             CxfBuildTimeConfig cxfBuildTimeConfig,
