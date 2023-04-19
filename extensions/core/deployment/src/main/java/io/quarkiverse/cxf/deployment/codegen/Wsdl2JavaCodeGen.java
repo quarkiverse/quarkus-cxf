@@ -87,8 +87,9 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         }
 
         if (!result) {
-            log.warn("wsdl2java processed 0 WSDL files under "
-                    + absModuleRoot(context.inputDir()).relativize(context.inputDir()));
+            log.infof(
+                    "wsdl2java processed 0 WSDL files under %s",
+                    absModuleRoot(context.inputDir()).relativize(context.inputDir()));
         }
         return result;
     }
@@ -119,6 +120,10 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
             String prefix,
             Map<String, String> processedFiles,
             Consumer<Path> wsdlFileConsumer) {
+
+        if (includes.isEmpty()) {
+            return false;
+        }
 
         final String selectors = "    " + prefix + ".includes = "
                 + includes.get().stream().collect(Collectors.joining(","))
