@@ -85,6 +85,10 @@ public class Java2wsTest {
     }
 
     protected String normalizeNsPrefixes(String servedWsdl) {
+        /*
+         * ns1 does not seem to be used anywhere in the WSDL document so it should be fine to remove it.
+         * At the same time it is the only difference against the document produced by java2ws which is also fine
+         */
         return servedWsdl.replace("xmlns:ns1=\"http://schemas.xmlsoap.org/soap/http\"", "");
     }
 
