@@ -454,6 +454,11 @@ class QuarkusCxfProcessor {
             reflectiveClass.produce(new ReflectiveClassBuildItem(true, false, classes));
         }
 
+        reflectiveClass.produce(
+                new ReflectiveClassBuildItem(false, true,
+                        org.apache.cxf.wsdl.WSDLConstants.class,
+                        org.apache.cxf.ws.addressing.JAXWSAConstants.class));
+
         reflectiveClass.produce(new ReflectiveClassBuildItem(false, false,
                 "org.apache.cxf.common.logging.Slf4jLogger",
                 QuarkusBusFactory.class.getName()));
