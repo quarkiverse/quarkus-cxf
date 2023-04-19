@@ -25,6 +25,7 @@
         <module>mtom</module>
         <module>mtom-awt</module>
         <module>wsdl2java</module>
+        <module>wsdl2java-no-config</module>
     </modules>
 
     <properties>
