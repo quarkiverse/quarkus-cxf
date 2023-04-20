@@ -4,6 +4,8 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.SoapTransportFactory;
@@ -19,6 +21,12 @@ public class VertxDestinationFactory extends SoapTransportFactory implements Des
     private static final Logger LOGGER = Logger.getLogger(VertxDestinationFactory.class);
 
     private static final DestinationRegistry registry = new DestinationRegistryImpl();
+
+    private static final Set<String> URI_PREFIXES = new HashSet<>();
+    static {
+        URI_PREFIXES.add("http://");
+        URI_PREFIXES.add("https://");
+    }
 
     /*
      * This is to make Camel Quarkus happy. It would be nice to come up with a prettier solution
@@ -53,6 +61,10 @@ public class VertxDestinationFactory extends SoapTransportFactory implements Des
             LOGGER.debug(format("Destination for address %s is %s", endpointAddress, d));
             return d;
         }
+    }
+
+    public Set<String> getUriPrefixes() {
+        return URI_PREFIXES;
     }
 
     public DestinationRegistry getDestinationRegistry() {
