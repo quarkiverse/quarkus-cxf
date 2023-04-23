@@ -10,6 +10,12 @@
 
     <artifactId>quarkus-cxf-rt-features-metrics</artifactId>
     <name>Quarkus CXF - Metrics Feature</name>
+    <description>Collect metrics using https://micrometer.io/[Micrometer].</description>
+
+    <properties>
+        <cq.since>0.14.0</cq.since>
+        <quarkus.metadata.status>experimental</quarkus.metadata.status>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -46,6 +52,19 @@
                             <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}
                             </deployment>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.l2x6.cq</groupId>
+                <artifactId>cq-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>update-doc-page</id>
+                        <goals>
+                            <goal>update-doc-page</goal>
+                        </goals>
+                        <phase>process-classes</phase>
                     </execution>
                 </executions>
             </plugin>

@@ -1,0 +1,12 @@
+XJC plugins for `wsdl2java` code generation.
+You'll need to add this extension if you want to use any of the following in
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]:
+
+* `-xjc-Xboolean`
+* `-xjc-Xdv`
+* `-xjc-Xjavadoc`
+* `-xjc-Xpl`
+* `-xjc-Xts`
+* `-xjc-Xwsdlextension`
+
+Check the xref:user-guide/first-soap-client.adoc#wsdl2java[wsdl2java] section of User guide for more details.

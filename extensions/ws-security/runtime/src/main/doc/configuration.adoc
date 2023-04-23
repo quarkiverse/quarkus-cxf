@@ -1,0 +1,4 @@
+`WSS4JInInterceptor` and `WSS4JOutInterceptor` can be associated with a SOAP services or clients using the following configuration properties:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-interceptors[quarkus.cxf.endpoint."endpoints".in-interceptors]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.out-interceptors[quarkus.cxf.client."clients".out-interceptors]`

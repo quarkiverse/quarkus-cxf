@@ -19,10 +19,10 @@ quarkus.cxf.client."greeting-client".handlers=org.acme.MySOAPHandler
 
 Where `MySOAPHandler` could look like below:
 
-[source,java]
+[source,java,subs="attributes"]
 ----
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
+import {javaxOrJakartaPackagePrefix}.xml.ws.handler.soap.SOAPHandler;
+import {javaxOrJakartaPackagePrefix}.xml.ws.handler.soap.SOAPMessageContext;
 
 public class MySOAPHandler implements SOAPHandler<SOAPMessageContext> {
 

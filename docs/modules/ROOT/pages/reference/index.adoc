@@ -3,11 +3,25 @@
 
 include::../includes/attributes.adoc[]
 
-Specifications and use cases suported by {quarkus-cxf-project-name}:
+[cols="1,1"]
+|===
+| Quarkus CXF extension | Supported standards
+// standards: START
 
-* https://cxf.apache.org/docs/ws-addressing.html[WS-Addressing]
-* https://cxf.apache.org/docs/ws-policy.html[WS-Policy]
-* https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging]
-* https://cxf.apache.org/docs/ws-security.html[WS-Security]
-* https://cxf.apache.org/docs/ws-securitypolicy.html[WS-SecurityPolicy]
-* https://cxf.apache.org/docs/ws-trust.html[WS-Trust]
+| xref:reference/extensions/quarkus-cxf.adoc[Quarkus CXF] +
+`quarkus-cxf`
+|https://cxf.apache.org/docs/jax-ws.html[JAX-WS], https://cxf.apache.org/docs/ws-addressing.html[WS-Addressing], https://cxf.apache.org/docs/ws-policy.html[WS-Policy]
+
+| xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[WS-Security] +
+`quarkus-cxf-rt-ws-security`
+|https://cxf.apache.org/docs/ws-security.html[WS-Security], https://cxf.apache.org/docs/ws-securitypolicy.html[WS-SecurityPolicy]
+
+| xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc[WS-ReliableMessaging] +
+`quarkus-cxf-rt-ws-rm`
+|https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging]
+
+| xref:reference/extensions/quarkus-cxf-services-sts.adoc[Security Token Service (STS)] +
+`quarkus-cxf-services-sts`
+|https://cxf.apache.org/docs/ws-trust.html[WS-Trust]
+// standards: END
+|===

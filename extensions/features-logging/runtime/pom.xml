@@ -9,7 +9,12 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-features-logging</artifactId>
-    <name>Quarkus CXF - Advanced Logging Feature</name>
+    <name>Quarkus CXF - Logging Feature</name>
+    <description>Allows logging HTTP headers and bodies of SOAP requests and responses for both CXF clients and services.</description>
+
+    <properties>
+        <cq.since>0.14.0</cq.since>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -37,6 +42,19 @@
                             <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}
                             </deployment>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.l2x6.cq</groupId>
+                <artifactId>cq-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>update-doc-page</id>
+                        <goals>
+                            <goal>update-doc-page</goal>
+                        </goals>
+                        <phase>process-classes</phase>
                     </execution>
                 </executions>
             </plugin>
