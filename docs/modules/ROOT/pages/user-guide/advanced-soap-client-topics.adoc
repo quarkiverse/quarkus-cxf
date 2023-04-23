@@ -1,7 +1,5 @@
 = Create a new project
 
-include::../includes/attributes.adoc[]
-
 == `client-endpoint-url` defaults
 
 If you omit the `client-endpoint-url` property in `application.properties`,

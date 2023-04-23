@@ -1,6 +1,3 @@
-
-include::./includes/attributes.adoc[]
-
 [[cxf-extension-for-quarkus]]
 = {quarkus-cxf-project-name}
 

@@ -1,8 +1,6 @@
 [[user-guide]]
 = User guide
 
-include::../includes/attributes.adoc[]
-
 This User guide explains typical use cases of {quarkus-cxf-project-name}.
 
 You may want to start with some of the following topics:

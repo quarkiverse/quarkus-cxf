@@ -7,6 +7,10 @@ nav:
 asciidoc:
   attributes:
 
+    # Versions
+    quarkus-version: 2.13.7.Final # replace ${quarkus.version}
+    quarkus-cxf-version: 1.5.13 # replace ${release.current-version}
+
     # Toggle whether some page elements are rendered
     doc-show-badges: true # Whether JVM / Native badges are rendered
     doc-show-advanced-features: true # Whether documentation relating to advanced features is rendered
