@@ -1,8 +1,6 @@
 [[handlers]]
 = JAX-WS Handlers
 
-include::../includes/attributes.adoc[]
-
 As an alternative to the `@HandlerChain` annotation,
 https://javaee.github.io/metro-jax-ws/doc/user-guide/ch03.html#users-guide-handler[JAX-WS Handlers] can be added
 to both your client or server via `application.properties`:

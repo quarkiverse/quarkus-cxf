@@ -1,7 +1,5 @@
 = Complex SOAP payloads with JAXB
 
-include::../includes/attributes.adoc[]
-
 Our introductory guides for Quarkus xref:user-guide/first-soap-client.adoc[SOAP client]
 and xref:user-guide/first-soap-web-service.adoc[SOAP service] dealt with services
 having only primitive parameters and return values such as integers and strings.

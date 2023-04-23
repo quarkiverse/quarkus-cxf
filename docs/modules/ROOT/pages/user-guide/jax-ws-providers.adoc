@@ -1,8 +1,6 @@
 [[providers]]
 = JAX-WS Providers
 
-include::../includes/attributes.adoc[]
-
 https://cxf.apache.org/docs/provider-services.html[JAX-WS Providers] are fully supported, and can be implemented as shown below.
 
 Given the following sample `Provider` implementation:

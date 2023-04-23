@@ -1,6 +1,4 @@
 = Examples
 
-include::../includes/attributes.adoc[]
-
 The https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests[`integration-tests` folder] of the codebase provides various examples
 that demonstrate how to use this extension extensively.

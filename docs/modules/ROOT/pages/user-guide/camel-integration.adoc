@@ -1,7 +1,5 @@
 = Camel Integration
 
-include::../includes/attributes.adoc[]
-
 https://camel.apache.org/camel-quarkus/latest/index.html[Camel Quarkus] supports CXF since its version 2.12.0.
 Under the hood, the implementation is based on {quarkus-cxf-project-name}.
 Therefore, all functionality available in {quarkus-cxf-project-name} is also available in Camel Quarkus.
