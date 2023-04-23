@@ -10,7 +10,12 @@
 
     <artifactId>quarkus-cxf</artifactId>
     <name>Quarkus CXF - Core</name>
-    <description>Consume and produce SOAP web services with Apache CXF</description>
+    <description>Core capabilities for implementing SOAP clients and JAX-WS services.</description>
+
+    <properties>
+        <cq.name>Quarkus CXF</cq.name>
+        <cq.since>0.1.0</cq.since>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -91,10 +96,25 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.l2x6.cq</groupId>
+                <artifactId>cq-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>update-doc-page</id>
+                        <goals>
+                            <goal>update-doc-page</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <annotationProcessorPaths>
+<!--                    <compilerArgument>-J-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000</compilerArgument>
+                    <fork>true</fork>
+-->                    <annotationProcessorPaths>
                         <path>
                             <groupId>io.quarkus</groupId>
                             <artifactId>quarkus-extension-processor</artifactId>
@@ -102,6 +122,29 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-configuration-documentation</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/pages/includes/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/</directory>
+                                    <include>${project.artifactId}.adoc</include>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

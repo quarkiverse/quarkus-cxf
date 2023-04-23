@@ -3,3 +3,19 @@ title: CXF Extensions for Quarkus
 version: dev
 nav:
   - modules/ROOT/nav.adoc
+  
+asciidoc:
+  attributes:
+
+    # Toggle whether some page elements are rendered
+    doc-show-badges: true # Whether JVM / Native badges are rendered
+    doc-show-advanced-features: true # Whether documentation relating to advanced features is rendered
+    doc-show-user-guide-link: true # Whether the user guide link is rendered in component extensions
+    doc-show-extra-content: false # Whether additional content hosted in external AsciiDoc files should be loaded via an include:: directive
+
+    # External URLs
+    link-quarkus-code-generator: code.quarkus.io
+    quarkus-cxf-project-name: CXF Extensions for Quarkus
+
+    # Misc
+    javaxOrJakartaPackagePrefix: jakarta # this can be switched to javax in older branches

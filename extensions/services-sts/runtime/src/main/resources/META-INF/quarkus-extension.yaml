@@ -15,5 +15,5 @@ metadata:
     - "ws-trust"
   categories:
     - "integration"
-  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/reference/extensions/quarkus-cxf-services-sts.html"
   status: "stable"

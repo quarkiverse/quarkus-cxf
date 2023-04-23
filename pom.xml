@@ -60,7 +60,7 @@
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
-        <cq-maven-plugin.version>4.0.0</cq-maven-plugin.version>
+        <cq-maven-plugin.version>4.1.0</cq-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <groovy.version>3.0.17</groovy.version>
         <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
@@ -200,6 +200,9 @@
                     <groupId>org.l2x6.cq</groupId>
                     <artifactId>cq-maven-plugin</artifactId>
                     <version>${cq-maven-plugin.version}</version>
+                    <configuration>
+                        <templatesUriBase>file:${maven.multiModuleProjectDirectory}/src/build/doc-templates</templatesUriBase>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -1,29 +1,11 @@
-= SOAP payload logging feature
+This extension wraps the CXF `org.apache.cxf:cxf-rt-features-logging` artifact
+thus providing the `org.apache.cxf.ext.logging.LoggingFeature` class.
 
-include::../includes/attributes.adoc[]
-
-This extension helps with outputting requests and responses including HTTP headers and SOAP payloads for both CXF clients and services.
-
-Maven users will need to add the following dependency to their `pom.xml`:
-
-[source,xml,subs=attributes+]
-----
-<dependency>
-    <groupId>io.quarkiverse.cxf</groupId>
-    <artifactId>quarkus-cxf-rt-features-logging</artifactId>
-</dependency>
-----
-
-TIP: Check the xref:user-guide/create-project.adoc#dependency-management[dependency management] section.
-
-The `quarkus-cxf-rt-features-logging` extension wraps the CXF `org.apache.cxf:cxf-rt-features-logging` artifact
-which in turn provides the `org.apache.cxf.ext.logging.LoggingFeature` class.
-
-`LoggingFeature` instances can be configured per service or client.
+`LoggingFeature` instances can be configured per service or per client.
 You can either use a `LoggingFeature` instance with default settings
 or you can produce a custom `LoggingFeature` CDI bean.
 
-== Attaching `LoggingFeature` to a client or service
+=== Attaching `LoggingFeature` to a client or service
 
 You have two options to do that:
 
@@ -36,6 +18,8 @@ quarkus.cxf.endpoint."/hello".features=org.apache.cxf.ext.logging.LoggingFeature
 # For a client:
 quarkus.cxf.client."myClient".features=org.apache.cxf.ext.logging.LoggingFeature
 ----
++
+TIP: There is an example in xref:user-guide/first-soap-web-service.adoc#logging-feature[Your first SOAP Web service] chapter of the User guide.
 +
 or alternatively
 +
@@ -53,7 +37,7 @@ public class SayHiImplementation implements SayHi {
 }
 ----
 
-== Custom `LoggingFeature`
+=== Custom `LoggingFeature`
 
 `LoggingFeature` offers some attributes that may be worth customizing in some situations.
 
@@ -65,14 +49,11 @@ TIP: Check the CXF https://cxf.apache.org/docs/message-logging.html[message logg
 To achieve this, you can produce a custom `LoggingFeature` bean that is then picked by Quarkus CXF
 for clients and services where you specified `*.features = org.apache.cxf.ext.logging.LoggingFeature`:
 
-[source,java]
+[source,java,subs="attributes"]
 ----
 import org.apache.cxf.ext.logging.LoggingFeature;
-
-import io.quarkus.arc.Unremovable;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import {javaxOrJakartaPackagePrefix}.enterprise.context.ApplicationScoped;
+import {javaxOrJakartaPackagePrefix}.enterprise.inject.Produces;
 
 class Producers {
 
@@ -87,19 +68,16 @@ class Producers {
 }
 ----
 
-=== Multiple custom `LoggingFeature`s
+=== Multiple custom ``LoggingFeature``s
 
-In case you'd like to configure the `LoggingFeature`s for your individual services or clients differently,
+In case you'd like to configure the ``LoggingFeature``s for your individual services or clients differently,
 you can so that by defining multiple `@Named` `LoggingFeature` beans:
 
-[source,java]
+[source,java,subs="attributes"]
 ----
 import org.apache.cxf.ext.logging.LoggingFeature;
-
-import io.quarkus.arc.Unremovable;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import {javaxOrJakartaPackagePrefix}.enterprise.context.ApplicationScoped;
+import {javaxOrJakartaPackagePrefix}.enterprise.inject.Produces;
 
 class Producers {
 
@@ -133,8 +111,4 @@ quarkus.cxf.endpoint."/hello".features = #limitedLoggingFeature
 quarkus.cxf.client."myClient".features = #prettyLoggingFeature
 ----
 
-
-== See also
-
-* xref:reference/configuration-properties.adoc[Configuration properties] reference
-* An example in xref:user-guide/first-soap-web-service.adoc#logging-feature[Your first SOAP Web service] chapter of the User guide.
+IMPORTANT: Please note that named Feature beans are currently https://github.com/quarkiverse/quarkus-cxf/issues/698[not supported for SOAP clients].

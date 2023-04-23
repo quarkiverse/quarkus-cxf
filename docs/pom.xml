@@ -109,6 +109,7 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
@@ -120,11 +121,6 @@
                         <configuration>
                             <outputDirectory>${project.basedir}/modules/ROOT/pages/includes/</outputDirectory>
                             <resources>
-                                <resource>
-                                    <directory>${project.basedir}/../target/asciidoc/generated/config/</directory>
-                                    <include>quarkus-cxf.adoc</include>
-                                    <filtering>false</filtering>
-                                </resource>
                                 <resource>
                                     <directory>${project.basedir}/templates/includes</directory>
                                     <include>attributes.adoc</include>
@@ -148,6 +144,19 @@
                                 </resource>
                             </resources>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.l2x6.cq</groupId>
+                <artifactId>cq-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>update-docs</id>
+                        <goals>
+                            <goal>update-docs</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
                     </execution>
                 </executions>
             </plugin>

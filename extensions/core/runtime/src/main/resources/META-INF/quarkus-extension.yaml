@@ -1,7 +1,7 @@
 ---
 artifact: ${project.groupId}:${project.artifactId}:${project.version}
 name: "Quarkus CXF"
-description: "Consume and produce SOAP web services with Apache CXF"
+description: "Core capabilities for implementing SOAP clients and JAX-WS services"
 metadata:
   keywords:
     - "cxf"
@@ -11,5 +11,5 @@ metadata:
     - "soap"
   categories:
     - "integration"
-  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/reference/extensions/quarkus-cxf.html"
   status: "stable"

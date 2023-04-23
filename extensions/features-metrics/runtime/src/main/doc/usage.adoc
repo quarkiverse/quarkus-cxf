@@ -1,0 +1,12 @@
+The integration of CXF into https://quarkus.io/guides/micrometer[Quarkus Micrometer] ecosystem is implemented using https://github.com/apache/cxf/blob/master/rt/features/metrics/src/main/java/org/apache/cxf/metrics/micrometer/MicrometerMetricsProvider.java[CXF MicrometerMetricsProvider] and `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature`.
+
+Simply add the following to your `application.properties` to start collecting metrics:
+
+[source,properties]
+----
+# Enable metrics for a service
+quarkus.cxf.endpoint."/fruit-service".features = io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
+
+# Enable metrics for a client
+quarkus.cxf.client."fruit-client".features = io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
+----

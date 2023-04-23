@@ -1,9 +1,0 @@
-[[configuration-properties]]
-= Configuration properties
-
-include::../includes/attributes.adoc[]
-
-Many of the CXF https://cxf.apache.org/docs/jax-ws-configuration.html[JAX-WS configuration] properties can be configured in your `application.properties` file as documented below.
-You may refer to the CXF page for additional details on both `endpoint` and `client` properties.
-
-include::../includes/quarkus-cxf.adoc[]

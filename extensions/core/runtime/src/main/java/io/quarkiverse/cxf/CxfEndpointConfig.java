@@ -41,7 +41,36 @@ public class CxfEndpointConfig {
     public Optional<String> publishedEndpointUrl;
 
     /**
-     * The comma-separated list of Feature classes
+     * A comma-separated list of fully qualified CXF Feature class names or named CDI beans.
+     * <p>
+     * Examples:
+     *
+     * <pre>
+     * quarkus.cxf.endpoint."/hello".features = org.apache.cxf.ext.logging.LoggingFeature
+     * quarkus.cxf.endpoint."/fruit".features = #myCustomLoggingFeature
+     * </pre>
+     *
+     * In the second case, the {@code #myCustomLoggingFeature} bean can be produced as follows:
+     *
+     * <pre>
+     * import org.apache.cxf.ext.logging.LoggingFeature;
+     * import javax.enterprise.context.ApplicationScoped;
+     * import javax.enterprise.inject.Produces;
+     *
+     * class Producers {
+     *
+     *     &#64;Produces
+     *     @ApplicationScoped
+     *     LoggingFeature myCustomLoggingFeature() {
+     *         LoggingFeature loggingFeature = new LoggingFeature();
+     *         loggingFeature.setPrettyLogging(true);
+     *         return loggingFeature;
+     *     }
+     * }
+     * </pre>
+     * <p>
+     * Note that the {@code LoggingFeature} is available through the <a href="../quarkus-cxf-rt-features-metrics.html">Logging
+     * Feature</a> extension.
      */
     @ConfigItem
     public Optional<List<String>> features;
