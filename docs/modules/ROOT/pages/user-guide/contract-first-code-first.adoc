@@ -1,7 +1,5 @@
 = Contract first and code first approaches
 
-include::../includes/attributes.adoc[]
-
 Both contract first and code first development modes are fully supported by {quarkus-cxf-project-name}.
 
 == Contract first client

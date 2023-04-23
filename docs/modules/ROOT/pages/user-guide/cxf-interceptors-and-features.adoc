@@ -1,8 +1,6 @@
 [[interceptors-and-features]]
 = CXF Interceptors and Features
 
-include::../includes/attributes.adoc[]
-
 https://cxf.apache.org/docs/interceptors.html[CXF interceptors] and https://cxf.apache.org/docs/featureslist.html[CXF features] can be added to both your client or server using either annotations or `application.properties` configurations.
 
 While CXF provides a number of out of the box embedded interceptors and features, you can also integrate your custom developed implementations.
