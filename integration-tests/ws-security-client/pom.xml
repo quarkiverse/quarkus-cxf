@@ -63,6 +63,37 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Copy the sample code to docs module where Antora can see it -->
+                        <id>copy-resources-for-antora</id>
+                        <phase>compile</phase><!-- after source formatting -->
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/ws-security-client</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/java/io/quarkiverse/cxf/it/wss/client</directory>
+                                    <includes>
+                                        <include>WSS4JOutInterceptorProducer.java</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>application.properties</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

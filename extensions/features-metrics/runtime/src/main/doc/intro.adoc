@@ -1,0 +1,3 @@
+Collect metrics using https://micrometer.io/[Micrometer].
+
+IMPORTANT: This extension is experimental, because there are https://github.com/quarkiverse/quarkus-cxf/issues/504[no tests covering it]. Contributions are welcome!

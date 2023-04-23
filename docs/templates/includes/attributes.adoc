@@ -1,4 +1,2 @@
 :quarkus-version: ${quarkus.version}
 :quarkus-cxf-version: ${release.current-version}
-:link-quarkus-code-generator: https://code.quarkus.io/
-:quarkus-cxf-project-name: CXF Extensions for Quarkus

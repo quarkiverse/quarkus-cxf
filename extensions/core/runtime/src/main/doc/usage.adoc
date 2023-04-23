@@ -1,0 +1,4 @@
+Check the following chapters of xref:user-guide/index.adoc[User guide]:
+
+** xref:user-guide/first-soap-web-service.adoc[Your first SOAP Web service]
+** xref:user-guide/first-soap-client.adoc[Your first SOAP Client]

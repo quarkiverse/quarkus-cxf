@@ -68,7 +68,16 @@ public class CxfClientConfig {
     public Optional<String> password;
 
     /**
-     * The comma-separated list of Feature classes
+     * A comma-separated list of fully qualified CXF Feature class names.
+     * <p>
+     * Example:
+     *
+     * <pre>
+     * quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeature
+     * </pre>
+     * <p>
+     * Note that the {@code LoggingFeature} is available through the <a href="../quarkus-cxf-rt-features-metrics.html">Logging
+     * Feature</a> extension.
      */
     @ConfigItem
     public Optional<List<String>> features;

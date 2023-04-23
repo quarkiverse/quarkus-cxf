@@ -7,14 +7,14 @@ https://cxf.apache.org/docs/provider-services.html[JAX-WS Providers] are fully s
 
 Given the following sample `Provider` implementation:
 
-[source,java]
+[source,java,subs="attributes"]
 ----
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Provider;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceProvider;
+import {javaxOrJakartaPackagePrefix}.xml.transform.stream.StreamSource;
+import {javaxOrJakartaPackagePrefix}.xml.ws.BindingType;
+import {javaxOrJakartaPackagePrefix}.xml.ws.Provider;
+import {javaxOrJakartaPackagePrefix}.xml.ws.Service;
+import {javaxOrJakartaPackagePrefix}.xml.ws.ServiceMode;
+import {javaxOrJakartaPackagePrefix}.xml.ws.WebServiceProvider;
 import java.io.StringReader;
 
 @WebServiceProvider

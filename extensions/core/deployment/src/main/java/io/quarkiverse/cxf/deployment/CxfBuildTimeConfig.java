@@ -12,7 +12,10 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 @ConfigRoot(name = "cxf", phase = ConfigPhase.BUILD_TIME)
 public class CxfBuildTimeConfig {
     /**
-     * The default path for CXF resources
+     * The default path for CXF resources.
+     * <p>
+     * ⚠️ Note that the default value before 3.0.0 was {@code /}.
+     * </p>
      */
     @ConfigItem(defaultValue = "/")
     String path;
@@ -97,14 +100,14 @@ public class CxfBuildTimeConfig {
          * {@link #additionalParams} for each WSDL file, you may want to define a separate named parameter set for each
          * one of them. Here is an example:
          *
-         * <pre>{@code
+         * <pre>
          * # Parameters for foo.wsdl
          * quarkus.cxf.codegen.wsdl2java.foo-params.includes = wsdl/foo.wsdl
          * quarkus.cxf.codegen.wsdl2java.foo-params.additional-params = -wsdlLocation,wsdl/foo.wsdl
          * # Parameters for bar.wsdl
          * quarkus.cxf.codegen.wsdl2java.bar-params.includes = wsdl/bar.wsdl
          * quarkus.cxf.codegen.wsdl2java.bar-params.additional-params = -wsdlLocation,wsdl/bar.wsdl,-xjc-Xts
-         * }</pre>
+         * </pre>
          * <p>
          * Note that file extensions other than {@code .wsdl} will work during normal builds, but changes in the
          * matching files may get overseen in Quarkus dev mode. Always using the {@code .wsdl} extension is thus
@@ -210,14 +213,14 @@ public class CxfBuildTimeConfig {
          * {@link #additionalParams} for each class, you may want to define a separate named parameter set for each
          * one of them. Here is an example:
          *
-         * <pre>{@code
+         * <pre>
          * # Parameters for the foo package
          * quarkus.cxf.java2ws.foo-params.includes = org.foo.*
          * quarkus.cxf.java2ws.foo-params.additional-params = -servicename,FruitService
          * # Parameters for the bar package
          * quarkus.cxf.java2ws.bar-params.includes = org.bar.*
          * quarkus.cxf.java2ws.bar-params.additional-params = -servicename,HelloService
-         * }</pre>
+         * </pre>
          * <p>
          * There is no default value for this option, so {@code java2ws} WSDL generation is effectively disabled by
          * default.

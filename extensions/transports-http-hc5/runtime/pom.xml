@@ -10,6 +10,12 @@
 
     <artifactId>quarkus-cxf-rt-transports-http-hc5</artifactId>
     <name>Quarkus CXF - HTTP Async Transport</name>
+    <description>Implement async SOAP Clients using Apache HttpComponents HttpClient 5</description>
+
+    <properties>
+        <cq.since>1.1.0</cq.since>
+        <quarkus.metadata.status>experimental</quarkus.metadata.status>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -42,6 +48,19 @@
                             <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}
                             </deployment>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.l2x6.cq</groupId>
+                <artifactId>cq-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>update-doc-page</id>
+                        <goals>
+                            <goal>update-doc-page</goal>
+                        </goals>
+                        <phase>process-classes</phase>
                     </execution>
                 </executions>
             </plugin>

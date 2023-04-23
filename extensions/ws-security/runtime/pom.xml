@@ -11,6 +11,10 @@
     <artifactId>quarkus-cxf-rt-ws-security</artifactId>
     <name>Quarkus CXF - WS-Security</name>
 
+    <properties>
+        <cq.since>0.14.0</cq.since>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
@@ -62,6 +66,19 @@
                             <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}
                             </deployment>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.l2x6.cq</groupId>
+                <artifactId>cq-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>update-doc-page</id>
+                        <goals>
+                            <goal>update-doc-page</goal>
+                        </goals>
+                        <phase>process-classes</phase>
                     </execution>
                 </executions>
             </plugin>

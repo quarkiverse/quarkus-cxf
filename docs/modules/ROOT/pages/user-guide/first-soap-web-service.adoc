@@ -38,7 +38,7 @@ For the implementation to get exposed under a certain path, you need to add the 
 include::example$soap-service/application.properties[tag=first-web-service.adoc]
 ----
 
-TIP: All configuration properties are documented in the xref:reference/configuration-properties.adoc[Configuration properties] reference.
+TIP: All configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#_configuration[Configuration properties] reference.
 
 With these files in place, you can start Quarkus in https://quarkus.io/guides/maven-tooling#dev-mode[`dev` mode]:
 
