@@ -1,0 +1,1 @@
+IMPORTANT: This extension is https://github.com/quarkiverse/quarkus-cxf/issues/627[known not to work]. Contributions are welcome!

@@ -1,0 +1,3 @@
+Implement async SOAP Clients using Apache HttpComponents HttpClient 5.
+
+IMPORTANT: This extension is experimental, because there are https://github.com/quarkiverse/quarkus-cxf/issues/505[no tests covering it]. Contributions are welcome!

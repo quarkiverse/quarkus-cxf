@@ -14,7 +14,13 @@
 ** xref:user-guide/common-problems-troubleshooting.adoc[Common problems and troubleshooting]
 ** xref:user-guide/camel-integration.adoc[Camel Integration]
 * xref:reference/index.adoc[Reference]
-** xref:reference/payload-logging-feature.adoc[Payload logging feature]
-** xref:reference/ws-security.adoc[WS-Security]
-** xref:reference/micrometer-metrics.adoc[Micrometer Metrics]
-** xref:reference/configuration-properties.adoc[Configuration properties]
+// extensions: START
+** xref:reference/extensions/quarkus-cxf.adoc[Quarkus CXF]
+** xref:reference/extensions/quarkus-cxf-rt-features-logging.adoc[Logging Feature]
+** xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Metrics Feature]
+** xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[WS-Security]
+** xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc[WS-ReliableMessaging]
+** xref:reference/extensions/quarkus-cxf-services-sts.adoc[Security Token Service (STS)]
+** xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[HTTP Async Transport]
+** xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[XJC Plugins]
+// extensions: END

@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-features-logging-parent</artifactId>
-    <name>Quarkus CXF - Advanced Logging Feature - Parent</name>
+    <name>Quarkus CXF - Logging Feature - Parent</name>
     <packaging>pom</packaging>
 
     <modules>

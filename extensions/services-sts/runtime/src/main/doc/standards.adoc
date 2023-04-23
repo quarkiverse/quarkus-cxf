@@ -1,0 +1,1 @@
+* https://cxf.apache.org/docs/ws-trust.html[WS-Trust]
