@@ -1,8 +1,6 @@
 [[Tips-Tricks]]
 = Common problems and troubleshooting
 
-include::../includes/attributes.adoc[]
-
 Some issues may appear during the development, testing, and native image building process of your `quarkus-cxf` project;
 below are some common ones and how to address them.
 

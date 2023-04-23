@@ -1,7 +1,5 @@
 = Your first SOAP Client on Quarkus
 
-include::../includes/attributes.adoc[]
-
 In this guide we explain how to create a simple Quarkus application acting as a client of a remote Web service.
 
 NOTE: Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.

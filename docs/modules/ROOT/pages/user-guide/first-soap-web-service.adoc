@@ -1,8 +1,6 @@
 [[first-steps]]
 = Your first SOAP Web service on Quarkus
 
-include::../includes/attributes.adoc[]
-
 In this guide we explain how to create a Quarkus application exposing a simple SOAP Web service.
 
 NOTE: Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.

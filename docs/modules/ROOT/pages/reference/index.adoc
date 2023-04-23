@@ -1,8 +1,6 @@
 [[reference]]
 = Reference
 
-include::../includes/attributes.adoc[]
-
 [cols="1,1"]
 |===
 | Quarkus CXF extension | Supported standards
