@@ -1,25 +1,104 @@
 [[reference]]
 = Reference
 
-[cols="1,1"]
+[[extensions]]
+== Extensions
+
+[cols="4,1,1,4"]
 |===
-| Quarkus CXF extension | Supported standards
+| Quarkus CXF extension | Support level | Since | Supported standards
 // standards: START
 
 | xref:reference/extensions/quarkus-cxf.adoc[Quarkus CXF] +
 `quarkus-cxf`
-|https://cxf.apache.org/docs/jax-ws.html[JAX-WS], https://cxf.apache.org/docs/ws-addressing.html[WS-Addressing], https://cxf.apache.org/docs/ws-policy.html[WS-Policy]
+|Stable
+|0.1.0
+|https://cxf.apache.org/docs/jax-ws.html[JAX-WS], https://cxf.apache.org/docs/jaxb.html[JAXB], https://cxf.apache.org/docs/ws-addressing.html[WS-Addressing], https://cxf.apache.org/docs/ws-policy.html[WS-Policy], https://cxf.apache.org/docs/mtom.html[MTOM]
 
-| xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[WS-Security] +
+| xref:reference/extensions/quarkus-cxf-rt-features-logging.adoc[Quarkus CXF Logging Feature] +
+`quarkus-cxf-rt-features-logging`
+|Stable
+|0.14.0
+|
+
+| xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Quarkus CXF Metrics Feature] +
+`quarkus-cxf-rt-features-metrics`
+|Experimental
+|0.14.0
+|
+
+| xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[Quarkus CXF WS-Security] +
 `quarkus-cxf-rt-ws-security`
+|Stable
+|0.14.0
 |https://cxf.apache.org/docs/ws-security.html[WS-Security], https://cxf.apache.org/docs/ws-securitypolicy.html[WS-SecurityPolicy]
 
-| xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc[WS-ReliableMessaging] +
+| xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc[Quarkus CXF WS-ReliableMessaging] +
 `quarkus-cxf-rt-ws-rm`
+|Experimental
+|1.5.3
 |https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging]
 
-| xref:reference/extensions/quarkus-cxf-services-sts.adoc[Security Token Service (STS)] +
+| xref:reference/extensions/quarkus-cxf-services-sts.adoc[Quarkus CXF Security Token Service (STS)] +
 `quarkus-cxf-services-sts`
+|Stable
+|1.5.3
 |https://cxf.apache.org/docs/ws-trust.html[WS-Trust]
+
+| xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[Quarkus CXF HTTP Async Transport] +
+`quarkus-cxf-rt-transports-http-hc5`
+|Experimental
+|1.1.0
+|
+
+| xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[Quarkus CXF XJC Plugins] +
+`quarkus-cxf-xjc-plugins`
+|Stable
+|1.5.11
+|
 // standards: END
 |===
+
+[[frontends]]
+== Front ends
+
+Out of https://cxf.apache.org/docs/frontends.html[CXF front ends] only the
+https://cxf.apache.org/docs/jax-ws.html[JAX-WS front end] is fully supported by `quarkus-cxf`.
+
+The https://cxf.apache.org/docs/simple.html[Simple front end] may work in JVM mode, but it is not tested properly.
+We advise not to use it.
+
+[[databindings]]
+== Data Bindings
+
+Out of https://cxf.apache.org/docs/databindings.html[CXF Data Bindings] only the following ones are supported:
+
+* https://cxf.apache.org/docs/jaxb.html[JAXB]
+* https://cxf.apache.org/docs/mtom-attachments-with-jaxb.html[MTOM Attachments with JAXB]
+
+[[transports]]
+== Transports
+
+Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the following ones are supported:
+
+* `quarkus-cxf` implements its own custom transport based on Quarkus and Vert.x for serving SOAP endpoints
+* HTTP client via `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]`, including
+** xref:user-guide/advanced-soap-client-topics.adoc#basic-auth[Basic Authentication]
+* https://cxf.apache.org/docs/asynchronous-client-http-transport.html[Asynchronous Client HTTP Transport]
+  via `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]`
+
+[[tools]]
+== Tools
+
+* `wsdl2Java` - see the xref:user-guide/first-soap-client.adoc#wsdl2java[Generate the Model classes from WSDL
+] section of User guide
+* `java2ws` - see the xref:user-guide/generate-wsdl-from-java.adoc[Generate WSDL from Java] section of User guide
+
+== WSDL Bindings
+
+All https://cxf.apache.org/docs/wsdl-bindings.html[CXF WSDL Bindings] are supported:
+
+* https://cxf.apache.org/docs/mtom.html[MTOM]
+* https://cxf.apache.org/docs/pure-xml.html[Pure XML]
+* https://cxf.apache.org/docs/soap-11.html[SOAP 1.1] (default)
+* https://cxf.apache.org/docs/soap-12.html[SOAP 1.2]

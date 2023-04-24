@@ -129,7 +129,7 @@ include::example$calculator-client/pom.xml[tag=first-soap-client.adoc-quarkus-ma
   to a pattern matching the WSDL files you wish to process.
   If you want to process all WSDL files under `src/main/resources/wsdl` or `src/test/resources/wsdl`, set it as follows:
 +
-.pom.xml
+.application.properties
 [source,properties]
 ----
 quarkus.cxf.codegen.wsdl2java.includes = wsdl/*.wsdl

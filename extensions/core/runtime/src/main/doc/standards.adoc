@@ -1,3 +1,5 @@
 * https://cxf.apache.org/docs/jax-ws.html[JAX-WS]
+* https://cxf.apache.org/docs/jaxb.html[JAXB]
 * https://cxf.apache.org/docs/ws-addressing.html[WS-Addressing]
 * https://cxf.apache.org/docs/ws-policy.html[WS-Policy]
+* https://cxf.apache.org/docs/mtom.html[MTOM]
