@@ -315,4 +315,21 @@ public class CxfClientTest {
                 .body(is("15"));
     }
 
+    @Test
+    void createEscapeHandler() {
+        RestAssured.given()
+                .body("Tom & Jerry")
+                .post("/cxf/client/createEscapeHandler/MinimumEscapeHandler")
+                .then()
+                .statusCode(200)
+                .body(is("Tom &amp; Jerry"));
+
+        RestAssured.given()
+                .body("Tom & Jerry")
+                .post("/cxf/client/createEscapeHandler/NoEscapeHandler")
+                .then()
+                .statusCode(200)
+                .body(is("Tom & Jerry"));
+    }
+
 }
