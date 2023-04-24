@@ -1,11 +1,14 @@
 package io.quarkiverse.cxf.client.it;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -13,6 +16,9 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import org.apache.cxf.common.jaxb.JAXBUtils;
+import org.glassfish.jaxb.core.marshaller.CharacterEscapeHandler;
+import org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl;
 import org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService;
 import org.jboss.eap.quickstarts.wscalculator.calculator.Operands;
 
@@ -160,4 +166,27 @@ public class CxfClientResource {
     public InputStream resource(@PathParam("path") String path) {
         return getClass().getClassLoader().getResourceAsStream(path);
     }
+
+    @POST
+    @Path("/createEscapeHandler/{className}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String createEscapeHandler(@PathParam("className") String className, String body) throws IOException {
+        CharacterEscapeHandler handler;
+
+        switch (className) {
+            case "MinimumEscapeHandler":
+                handler = (CharacterEscapeHandler) JAXBUtils.createMininumEscapeHandler(JAXBContextImpl.class);
+                break;
+            case "NoEscapeHandler":
+                handler = (CharacterEscapeHandler) JAXBUtils.createNoEscapeHandler(JAXBContextImpl.class);
+                break;
+            default:
+                throw new RuntimeException("Unexpected className " + className);
+        }
+        StringWriter out = new StringWriter();
+        char[] bodyChars = body.toCharArray();
+        handler.escape(bodyChars, 0, bodyChars.length, false, out);
+        return out.toString();
+    }
+
 }
