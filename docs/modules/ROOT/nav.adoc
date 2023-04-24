@@ -5,6 +5,7 @@
 ** xref:user-guide/package-for-jvm-and-native.adoc[Package for JVM and native]
 ** xref:user-guide/soap-payloads-with-jaxb.adoc[Complex SOAP payloads with JAXB]
 ** xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
+** xref:user-guide/generate-wsdl-from-java.adoc[Generate WSDL from Java]
 ** xref:user-guide/contract-first-code-first.adoc[Contract first and code first]
 ** xref:user-guide/cxf-interceptors-and-features.adoc[CXF Interceptors and Features]
 ** xref:user-guide/jax-ws-handlers.adoc[JAX-WS Handlers]
