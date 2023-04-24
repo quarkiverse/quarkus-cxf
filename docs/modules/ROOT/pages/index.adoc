@@ -4,16 +4,17 @@
 This project aims at porting http://cxf.apache.org/[Apache CXF] to https://quarkus.io/[Quarkus] runtime
 including full support for producing https://quarkus.io/container-first/[GraalVM native images].
 
-http://cxf.apache.org/[Apache CXF] is a framework for developing Web services.
-It implements a number of standards and specifications.
-{quarkus-cxf-project-name} is currently focusing only on supporting the ones related to
-Simple Object Access Protocol (https://en.wikipedia.org/wiki/SOAP[SOAP])
-and Java API for XML Web Services (https://en.wikipedia.org/wiki/JAX-WS[JAX-WS]).
+[IMPORTANT]
+While http://cxf.apache.org/[Apache CXF] implements wide range of standards and specifications,
+{quarkus-cxf-project-name} is currently focusing *only* on supporting the ones related to
+*Simple Object Access Protocol* (https://en.wikipedia.org/wiki/SOAP[SOAP])
+and *Java API for XML Web Services* (https://en.wikipedia.org/wiki/JAX-WS[JAX-WS]).
+Please refer to xref:reference/index.adoc[Reference] to learn which parts of CXF are supported.
 
 The documentation is divided in two major parts:
 
 * xref:user-guide/index.adoc[User guide] - explains the typical usage of {quarkus-cxf-project-name}
-* xref:reference/index.adoc[Reference] - the full list of supported specifications and configuration options
+* xref:reference/index.adoc[Reference] - the full list of supported specifications, use cases and configuration options
 
 [[issues-and-support]]
 == Issues and Support

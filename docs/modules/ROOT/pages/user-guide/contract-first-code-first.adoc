@@ -30,6 +30,10 @@ section of CXF documentation for a better understanding of the underlying concep
 == Code first service
 
 Another valid option at your disposal is to write your service in Java, using JAX-WS and JAXB.
-To get the WSDL contract, you can simply point your clients at http://your-host/your-service?wsdl
+Then you have two options how to obtain the WSDL contract:
 
-Check the https://cxf.apache.org/docs/developing-a-service.html#DevelopingaService-JavaFirstDevelopment[Code first development] section of CXF documentation for further information.
+1. Start your service and point your clients at http://your-host/your-service?wsdl
+2. xref:user-guide/contract-first-code-first.adoc[Generate the WSDL document from Java] classes at build time
+
+
+TIP: Check the https://cxf.apache.org/docs/developing-a-service.html#DevelopingaService-JavaFirstDevelopment[Code first development] section of CXF documentation for further information.
