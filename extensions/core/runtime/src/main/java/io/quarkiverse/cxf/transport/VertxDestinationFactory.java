@@ -4,6 +4,7 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -77,40 +78,24 @@ public class VertxDestinationFactory extends HTTPTransportFactory implements WSD
         }
     }
 
+    @Override
     public Set<String> getUriPrefixes() {
-        return URI_PREFIXES;
+        return Collections.unmodifiableSet(URI_PREFIXES);
     }
 
     public DestinationRegistry getDestinationRegistry() {
         return registry;
     }
 
+    @Override
     public void createPortExtensors(Bus b, EndpointInfo ei, Service service) {
         if (ei.getBinding() instanceof SoapBindingInfo) {
             SoapBindingInfo bi = (SoapBindingInfo) ei.getBinding();
-            createSoapExtensors(b, ei, bi, bi.getSoapVersion() instanceof Soap12);
+            createSoapExtensors(b, ei, bi.getSoapVersion() instanceof Soap12);
         }
     }
 
-    private void createSoapExtensors(Bus bus, EndpointInfo ei, SoapBindingInfo bi, boolean isSoap12) {
-        try {
-
-            String address = ei.getAddress();
-            if (address == null) {
-                address = "http://localhost:9090";
-            }
-
-            ExtensionRegistry registry = bus.getExtension(WSDLManager.class).getExtensionRegistry();
-            SoapAddress soapAddress = SOAPBindingUtil.createSoapAddress(registry, isSoap12);
-            soapAddress.setLocationURI(address);
-
-            ei.addExtensor(soapAddress);
-
-        } catch (WSDLException e) {
-            e.printStackTrace();
-        }
-    }
-
+    @Override
     public EndpointInfo createEndpointInfo(Bus bus,
             ServiceInfo serviceInfo,
             BindingInfo b,
@@ -143,6 +128,25 @@ public class VertxDestinationFactory extends HTTPTransportFactory implements WSD
         return info;
     }
 
+    private void createSoapExtensors(Bus bus, EndpointInfo ei, boolean isSoap12) {
+        try {
+
+            String address = ei.getAddress();
+            if (address == null) {
+                address = "http://localhost:9090";
+            }
+
+            ExtensionRegistry registry = bus.getExtension(WSDLManager.class).getExtensionRegistry();
+            SoapAddress soapAddress = SOAPBindingUtil.createSoapAddress(registry, isSoap12);
+            soapAddress.setLocationURI(address);
+
+            ei.addExtensor(soapAddress);
+
+        } catch (WSDLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean isJMSSpecAddress(String address) {
         return address != null && address.startsWith("jms:") && !"jms://".equals(address);
     }
@@ -154,6 +158,7 @@ public class VertxDestinationFactory extends HTTPTransportFactory implements WSD
             super(serv, trans);
         }
 
+        @Override
         public void setAddress(String s) {
             super.setAddress(s);
             if (saddress != null) {
@@ -161,6 +166,7 @@ public class VertxDestinationFactory extends HTTPTransportFactory implements WSD
             }
         }
 
+        @Override
         public void addExtensor(Object el) {
             super.addExtensor(el);
             if (el instanceof SoapAddress) {
