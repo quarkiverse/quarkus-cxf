@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
 import org.awaitility.Awaitility;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import org.testcontainers.containers.GenericContainer;
 
 @QuarkusTest
 @QuarkusTestResource(CxfClusteringTestResource1.class)
