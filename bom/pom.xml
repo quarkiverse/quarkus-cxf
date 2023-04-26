@@ -293,6 +293,11 @@
                 <version>${angus-mail.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.qi4j.library</groupId>
+                <artifactId>org.qi4j.library.circuitbreaker</artifactId>
+                <version>${qi4j-circuitbreaker.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>

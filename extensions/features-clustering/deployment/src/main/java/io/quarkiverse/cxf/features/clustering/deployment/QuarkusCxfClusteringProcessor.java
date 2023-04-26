@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import org.apache.cxf.clustering.FailoverFeature;
 import org.apache.cxf.clustering.LoadDistributorFeature;
 import org.apache.cxf.clustering.circuitbreaker.CircuitBreakerFailoverFeature;
+import org.apache.cxf.clustering.circuitbreaker.ZestCircuitBreaker;
 
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -32,7 +33,8 @@ public class QuarkusCxfClusteringProcessor {
     @BuildStep
     void unremovableBean(BuildProducer<UnremovableBeanBuildItem> unremovable) {
         unremovable.produce(UnremovableBeanBuildItem.beanTypes(FailoverFeature.class,
-                LoadDistributorFeature.class, CircuitBreakerFailoverFeature.class));
+                LoadDistributorFeature.class, CircuitBreakerFailoverFeature.class,
+                ZestCircuitBreaker.class));
     }
 
 }
