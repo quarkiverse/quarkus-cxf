@@ -14,7 +14,7 @@ public class FailoverFeatureBean extends FailoverFeature {
 
     @Inject
     public FailoverFeatureBean(@ConfigProperty(name = "cxf.it.calculator1.baseUri") String calculator1BaseUri,
-                               @ConfigProperty(name = "cxf.it.calculator2.baseUri") String calculator2BaseUri) {
+            @ConfigProperty(name = "cxf.it.calculator2.baseUri") String calculator2BaseUri) {
         SequentialStrategy sequentialStrategy = new SequentialStrategy();
         sequentialStrategy.setAlternateAddresses(
                 Arrays.asList(calculator1BaseUri + "/calculator-ws/CalculatorService"));
