@@ -1,7 +1,7 @@
 ---
 artifact: ${project.groupId}:${project.artifactId}:${project.version}
 name: "Quarkus CXF Logging"
-description: "Levearge advanced Apache CXF logging options, such as logging of SOAP messages"
+description: "Leverage advanced Apache CXF logging options, such as logging of SOAP messages"
 metadata:
   keywords:
     - "cxf"

@@ -17,6 +17,7 @@
         <module>client</module>
         <module>server</module>
         <module>logging</module>
+        <module>clustering</module>
         <module>ws-addressing</module>
         <module>ws-security-client</module>
         <module>ws-security-server</module>

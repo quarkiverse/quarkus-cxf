@@ -1,0 +1,15 @@
+---
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+name: "Quarkus CXF Clustering"
+description: "Leverage advanced Apache CXF clustering options, such as failover and load balancing"
+metadata:
+  keywords:
+    - "cxf"
+    - "jaxws"
+    - "jax-ws"
+    - "services"
+    - "soap"
+  categories:
+    - "integration"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html"
+  status: "stable"
