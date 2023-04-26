@@ -60,7 +60,7 @@
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
-        <cq-maven-plugin.version>4.1.1</cq-maven-plugin.version>
+        <cq-maven-plugin.version>4.1.2</cq-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <groovy.version>3.0.17</groovy.version>
         <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
