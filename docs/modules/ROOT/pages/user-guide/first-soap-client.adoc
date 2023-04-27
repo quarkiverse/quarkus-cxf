@@ -11,7 +11,7 @@ We can use a simple https://github.com/l2x6/calculator-ws[Calculator Web service
 
 [source,shell]
 ----
-$ docker run docker run -p 8082:8080 quay.io/l2x6/calculator-ws:1.0
+$ docker run -p 8082:8080 quay.io/l2x6/calculator-ws:1.0
 ----
 
 Once the container is up and running, we can inspect its http://localhost:8082/calculator-ws/CalculatorService?wsdl[WSDL]
