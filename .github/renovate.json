@@ -11,19 +11,21 @@
   ],
   "packageRules": [
     {
-      "description": "Ignore major updates for matched packages (allow only minor and patch updates)",
+      "description": "Ignore any updates for matched packages because we take the version from Quarkus or some other external project",
       "matchPackagePatterns": [
-        "org.apache.cxf.xjc-utils:cxf-xjc-runtime",
-        "jakarta.mail:jakarta.mail-api",
-        "jakarta.jws:jakarta.jws-api",
-        "jakarta.xml.soap:jakarta.xml.soap-api",
-        "jakarta.xml.ws:jakarta.xml.ws-api",
-        "org.apache.neethi:neethi",
-        "com.sun.xml.messaging.saaj:saaj-impl",
-        "org.slf4j:slf4j-simple"
+        "^com.sun.xml.messaging.saaj:*",
+        "^jakarta.mail:.*",
+        "^jakarta.jws:.*",
+        "^jakarta.xml.soap:.*",
+        "^jakarta.xml.ws:.*",
+        "^org.glassfish.jaxb:.*",
+        "^org.apache.cxf.xjcplugins:.*",
+        "^org.apache.cxf.xjc-utils:.*",
+        "^org.apache.neethi:.*",
+        "^org.slf4j:.*"
       ],
       "matchUpdateTypes": [
-        "major"
+        "major", "minor", "patch"
       ],
       "enabled": false
     },
