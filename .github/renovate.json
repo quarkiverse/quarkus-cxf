@@ -18,6 +18,7 @@
         "^jakarta.jws:.*",
         "^jakarta.xml.soap:.*",
         "^jakarta.xml.ws:.*",
+        "^org.codehaus.woodstox:.*",
         "^org.glassfish.jaxb:.*",
         "^org.apache.cxf.xjcplugins:.*",
         "^org.apache.cxf.xjc-utils:.*",
