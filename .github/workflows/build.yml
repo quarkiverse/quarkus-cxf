@@ -41,7 +41,7 @@ jobs:
     - name: Ensure mvn cq:sync-versions -N causes no changes
       shell: bash
       run: |
-        ./mvnw cq:sync-versions -N
+        ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N
         [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
 
     - name: mvn -B formatter:validate install
