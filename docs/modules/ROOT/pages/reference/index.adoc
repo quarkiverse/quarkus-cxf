@@ -56,7 +56,89 @@
 |Stable
 |1.5.11
 |
+
 // standards: END
+|===
+
+[[unsupported]]
+== Unsupported modules
+
+Here is a list of CXF modules currently not supported by {quarkus-cxf-project-name} along with possible alternatives and/or reasons why the given module is not supported.
+
+|===
+| CXF module | Alternative
+
+| JAX-RS +
+`cxf-rt-frontend-jaxrs` +
+`cxf-rt-rs-client`
+| https://quarkus.io/guides/rest-json[Use Quarkus RESTEasy] 
+
+| https://cxf.apache.org/fediz.html[Fediz]
+| https://quarkus.io/guides/security-oidc-bearer-token-authentication-tutorial[Use Quarkus OpenID Connect]
+
+| https://cxf.apache.org/docs/aegis-21.html[Aegis] 
+| Use JAXB and JAX-WS
+
+| https://cxf.apache.org/dosgi-architecture.html[DOSGI] +
+Karaf
+|
+
+| JiBX 
+| Use JAXB and JAX-WS
+
+| Local transport +
+`cxf-rt-transports-local`
+| Use HTTP transport
+
+| JMS transport +
+`cxf-rt-transports-jms`
+| Use HTTP transport
+
+| JBI +
+`cxf-rt-transports-jbi` +
+`cxf-rt-bindings-jbi`
+| Deprecated in CXF use HTTP transport
+
+| UDP transport +
+`cxf-rt-transports-udp`
+| Use HTTP transport
+
+| https://cxf.apache.org/docs/coloc-feature.html[Coloc transport]
+| Use HTTP transport
+
+| https://cxf.apache.org/docs/websocket.html[WebSocket transport] +
+`cxf-rt-transports-websocket`
+| Use HTTP transport
+
+| Clustering +
+`cxf-rt-features-clustering`
+| [Planned](https://github.com/quarkiverse/quarkus-cxf/issues/836)
+
+| CORBA
+`cxf-rt-bindings-corba`
+| Use JAX-WS
+
+| https://cxf.apache.org/docs/sdo.html[SDO databinding] +
+`cxf-rt-databinding-sdo`
+| 
+
+| https://cxf.apache.org/docs/xmlbeans.html[XMLBeans]
+| Deprecated in CXF
+
+| https://cxf.apache.org/docs/javascript.html[Javascript frontend]
+| Use JAX-WS 
+
+| https://cxf.apache.org/docs/using-cxf-jca-rar-in-application-server.html[JCA transport]
+| Use HTTP transport
+
+| WS-Transfer runtime +
+`cxf-rt-ws-transfer`
+|
+
+| Throttling +
+`cxf-rt-features-throttling`
+| Use load balancer
+ 
 |===
 
 [[frontends]]
