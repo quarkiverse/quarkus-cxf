@@ -528,7 +528,8 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public long getContentLengthLong() {
-        throw new UnsupportedOperationException();
+        String v = getHeader("Content-Length");
+        return v == null ? -1 : Long.parseLong(v);
     }
 
     @Override
