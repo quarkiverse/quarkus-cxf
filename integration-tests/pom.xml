@@ -29,29 +29,38 @@
     </modules>
 
     <properties>
+        <!-- Allow running our tests against alternative BOMs, such as io.quarkus.platform:quarkus-cxf-bom -->
+        <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
+        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <quarkus.platform.version>${quarkus.version}</quarkus.platform.version>
+        <quarkus-cxf.platform.group-id>io.quarkiverse.cxf</quarkus-cxf.platform.group-id>
+        <quarkus-cxf.platform.artifact-id>quarkus-cxf-bom</quarkus-cxf.platform.artifact-id>
+        <quarkus-cxf.platform.version>${project.version}</quarkus-cxf.platform.version>
+        <quarkus-cxf.version>${project.version}</quarkus-cxf.version><!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
+
         <maven.compiler.parameters>true</maven.compiler.parameters>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus.version}</version>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>${quarkus.platform.artifact-id}</artifactId>
+                <version>${quarkus.platform.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-bom</artifactId>
-                <version>${project.version}</version>
+                <groupId>${quarkus-cxf.platform.group-id}</groupId>
+                <artifactId>${quarkus-cxf.platform.artifact-id}</artifactId>
+                <version>${quarkus-cxf.platform.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-bom-test</artifactId>
-                <version>${project.version}</version>
+                <version>${quarkus-cxf.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
