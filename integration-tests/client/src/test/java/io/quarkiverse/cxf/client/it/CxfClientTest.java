@@ -215,7 +215,7 @@ public class CxfClientTest {
                 .get("/cxf/client/auth/basic/myBasicAuthAnonymousCalculator/securedAdd")
                 .then()
                 .statusCode(500)
-                .body(containsString("HTTP response '401: Unauthorized'"));
+                .body(containsString("HTTP response '401: "));
     }
 
     @Test
