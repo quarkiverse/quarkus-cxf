@@ -2,7 +2,10 @@
 = Reference
 
 [[extensions]]
-== Extensions
+== {quarkus-cxf-project-name}
+
+Here is the list of extensions produced by this project.
+Please follow the links under the extension names to learn about how to use them, about their configuration and about any known limitations.
 
 [cols="4,1,1,4"]
 |===
@@ -59,8 +62,59 @@
 // standards: END
 |===
 
+
+[[supported-cxf-modules]]
+== Supported CXF modules
+
+Here is a list of CXF modules supported by {quarkus-cxf-project-name}.
+You should typically not depend on these directly, but rather use some of the extensions listed above that brings the given CXF module as a transitive dependency.
+
+[[frontends]]
+=== Front ends
+
+Out of https://cxf.apache.org/docs/frontends.html[CXF front ends] only the
+https://cxf.apache.org/docs/jax-ws.html[JAX-WS front end] is fully supported by `quarkus-cxf`.
+
+The https://cxf.apache.org/docs/simple.html[Simple front end] may work in JVM mode, but it is not tested properly.
+We advise not to use it.
+
+[[databindings]]
+=== Data Bindings
+
+Out of https://cxf.apache.org/docs/databindings.html[CXF Data Bindings] only the following ones are supported:
+
+* https://cxf.apache.org/docs/jaxb.html[JAXB]
+* https://cxf.apache.org/docs/mtom-attachments-with-jaxb.html[MTOM Attachments with JAXB]
+
+[[transports]]
+=== Transports
+
+Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the following ones are supported:
+
+* `quarkus-cxf` implements its own custom transport based on Quarkus and Vert.x for serving SOAP endpoints
+* HTTP client via `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]`, including
+** xref:user-guide/advanced-soap-client-topics.adoc#basic-auth[Basic Authentication]
+* https://cxf.apache.org/docs/asynchronous-client-http-transport.html[Asynchronous Client HTTP Transport]
+  via `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]`
+
+[[tools]]
+=== Tools
+
+* `wsdl2Java` - see the xref:user-guide/first-soap-client.adoc#wsdl2java[Generate the Model classes from WSDL
+] section of User guide
+* `java2ws` - see the xref:user-guide/generate-wsdl-from-java.adoc[Generate WSDL from Java] section of User guide
+
+=== WSDL Bindings
+
+All https://cxf.apache.org/docs/wsdl-bindings.html[CXF WSDL Bindings] are supported:
+
+* https://cxf.apache.org/docs/mtom.html[MTOM]
+* https://cxf.apache.org/docs/pure-xml.html[Pure XML]
+* https://cxf.apache.org/docs/soap-11.html[SOAP 1.1] (default)
+* https://cxf.apache.org/docs/soap-12.html[SOAP 1.2]
+
 [[unsupported]]
-== Unsupported modules
+== Unsupported CXF modules
 
 Here is a list of CXF modules currently not supported by {quarkus-cxf-project-name} along with possible alternatives and/or reasons why the given module is not supported.
 
@@ -70,19 +124,19 @@ Here is a list of CXF modules currently not supported by {quarkus-cxf-project-na
 | JAX-RS +
 `cxf-rt-frontend-jaxrs` +
 `cxf-rt-rs-client`
-| https://quarkus.io/guides/rest-json[Use Quarkus RESTEasy] 
+| https://quarkus.io/guides/rest-json[Use Quarkus RESTEasy]
 
 | https://cxf.apache.org/fediz.html[Fediz]
 | https://quarkus.io/guides/security-oidc-bearer-token-authentication-tutorial[Use Quarkus OpenID Connect]
 
-| https://cxf.apache.org/docs/aegis-21.html[Aegis] 
+| https://cxf.apache.org/docs/aegis-21.html[Aegis]
 | Use JAXB and JAX-WS
 
 | https://cxf.apache.org/dosgi-architecture.html[DOSGI] +
 Karaf
 |
 
-| JiBX 
+| JiBX
 | Use JAXB and JAX-WS
 
 | Local transport +
@@ -111,7 +165,7 @@ Karaf
 
 | Clustering +
 `cxf-rt-features-clustering`
-| [Planned](https://github.com/quarkiverse/quarkus-cxf/issues/836)
+| https://github.com/quarkiverse/quarkus-cxf/issues/836[Planned]
 
 | CORBA
 `cxf-rt-bindings-corba`
@@ -119,13 +173,13 @@ Karaf
 
 | https://cxf.apache.org/docs/sdo.html[SDO databinding] +
 `cxf-rt-databinding-sdo`
-| 
+|
 
 | https://cxf.apache.org/docs/xmlbeans.html[XMLBeans]
 | Deprecated in CXF
 
 | https://cxf.apache.org/docs/javascript.html[Javascript frontend]
-| Use JAX-WS 
+| Use JAX-WS
 
 | https://cxf.apache.org/docs/using-cxf-jca-rar-in-application-server.html[JCA transport]
 | Use HTTP transport
@@ -137,49 +191,5 @@ Karaf
 | Throttling +
 `cxf-rt-features-throttling`
 | Use load balancer
- 
+
 |===
-
-[[frontends]]
-== Front ends
-
-Out of https://cxf.apache.org/docs/frontends.html[CXF front ends] only the
-https://cxf.apache.org/docs/jax-ws.html[JAX-WS front end] is fully supported by `quarkus-cxf`.
-
-The https://cxf.apache.org/docs/simple.html[Simple front end] may work in JVM mode, but it is not tested properly.
-We advise not to use it.
-
-[[databindings]]
-== Data Bindings
-
-Out of https://cxf.apache.org/docs/databindings.html[CXF Data Bindings] only the following ones are supported:
-
-* https://cxf.apache.org/docs/jaxb.html[JAXB]
-* https://cxf.apache.org/docs/mtom-attachments-with-jaxb.html[MTOM Attachments with JAXB]
-
-[[transports]]
-== Transports
-
-Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the following ones are supported:
-
-* `quarkus-cxf` implements its own custom transport based on Quarkus and Vert.x for serving SOAP endpoints
-* HTTP client via `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]`, including
-** xref:user-guide/advanced-soap-client-topics.adoc#basic-auth[Basic Authentication]
-* https://cxf.apache.org/docs/asynchronous-client-http-transport.html[Asynchronous Client HTTP Transport]
-  via `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]`
-
-[[tools]]
-== Tools
-
-* `wsdl2Java` - see the xref:user-guide/first-soap-client.adoc#wsdl2java[Generate the Model classes from WSDL
-] section of User guide
-* `java2ws` - see the xref:user-guide/generate-wsdl-from-java.adoc[Generate WSDL from Java] section of User guide
-
-== WSDL Bindings
-
-All https://cxf.apache.org/docs/wsdl-bindings.html[CXF WSDL Bindings] are supported:
-
-* https://cxf.apache.org/docs/mtom.html[MTOM]
-* https://cxf.apache.org/docs/pure-xml.html[Pure XML]
-* https://cxf.apache.org/docs/soap-11.html[SOAP 1.1] (default)
-* https://cxf.apache.org/docs/soap-12.html[SOAP 1.2]
