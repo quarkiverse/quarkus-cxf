@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf.doc.it;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Assertions;
@@ -33,7 +36,7 @@ public class AntoraTest {
     private static Logger log = LoggerFactory.getLogger(AntoraTest.class);
 
     @Test
-    public void antora() throws TimeoutException {
+    public void antora() throws TimeoutException, IOException {
 
         final Path targetDir = Paths.get("target");
         if (!Files.isDirectory(targetDir)) {
@@ -82,10 +85,19 @@ public class AntoraTest {
         }
         antoraFrameConsumer.assertNoErrors();
 
-        Path siteIndexHtml = Paths.get("target/site/quarkus-cxf/dev/index.html");
-        Assertions.assertTrue(Files.isRegularFile(siteIndexHtml), siteIndexHtml + " not found");
+        final String antoraYml = Files.readString(Paths.get("antora.yml"), StandardCharsets.UTF_8);
+        final String re = "\nversion: *([^ \n\t\r]*)";
+        final Matcher m = Pattern.compile(re).matcher(antoraYml);
+        if (!m.find()) {
+            throw new IllegalStateException("Unable to find " + re + " in antora.yml");
+        }
+        final String antoraVersion = m.group(1);
+        Assertions.assertNotNull(antoraVersion);
 
+        Path siteIndexHtml = Paths.get("target/site/quarkus-cxf/" + antoraVersion + "/index.html");
+        Assertions.assertTrue(Files.isRegularFile(siteIndexHtml), siteIndexHtml + " not found");
         System.out.println("\nYou may want to open\n\n    " + siteIndexHtml + "\n\nin browser");
+
     }
 
     static class AntoraFrame {
