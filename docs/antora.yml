@@ -1,6 +1,6 @@
 name: quarkus-cxf
 title: CXF Extensions for Quarkus
-version: dev
+version: 1.5 # replace ${release.current-major-minor-version}
 nav:
   - modules/ROOT/nav.adoc
   
