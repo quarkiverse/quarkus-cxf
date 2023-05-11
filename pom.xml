@@ -368,7 +368,6 @@
                 <enforcer.skip>true</enforcer.skip>
                 <formatter.skip>true</formatter.skip>
                 <impsort.skip>true</impsort.skip>
-                <keytool.skip>true</keytool.skip>
                 <skipTests>true</skipTests>
                 <quarkus.build.skip>true</quarkus.build.skip>
             </properties>
