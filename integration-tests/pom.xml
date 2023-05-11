@@ -35,8 +35,8 @@
         <quarkus.platform.version>${quarkus.version}</quarkus.platform.version>
         <quarkus-cxf.platform.group-id>io.quarkiverse.cxf</quarkus-cxf.platform.group-id>
         <quarkus-cxf.platform.artifact-id>quarkus-cxf-bom</quarkus-cxf.platform.artifact-id>
-        <quarkus-cxf.platform.version>${project.version}</quarkus-cxf.platform.version>
-        <quarkus-cxf.version>${project.version}</quarkus-cxf.version><!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
+        <quarkus-cxf.platform.version>2.1.0-SNAPSHOT</quarkus-cxf.platform.version>
+        <quarkus-cxf.version>2.1.0-SNAPSHOT</quarkus-cxf.version><!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
 
         <maven.compiler.parameters>true</maven.compiler.parameters>
     </properties>
