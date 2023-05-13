@@ -1,0 +1,74 @@
+[id="[=artifactId]"]
+= [=name]
+:linkattrs:
+:cq-artifact-id: [=artifactId]
+:cq-group-id: [=groupId]
+:cq-status: [=status]
+:cq-deprecated: [=deprecated?then('true', 'false')]
+:cq-since: [=since]
+
+ifeval::[{doc-show-badges} == true]
+[#if status == "Experimental" ]🧪[/#if][=status] • Since [=since][#if deprecated ] • ⚠️Deprecated[/#if]
+endif::[]
+
+[=intro]
+
+[id="[=artifactId]-maven-coordinates"]
+== Maven coordinates
+
+Create https://{link-quarkus-code-generator}/?extension-search=[=artifactId][a new project using `[=artifactId]` on {link-quarkus-code-generator}, window="_blank"]
+or add these coordinates to your existing project:
+
+[source,xml]
+----
+<dependency>
+    <groupId>[=groupId]</groupId>
+    <artifactId>[=artifactId]</artifactId>
+</dependency>
+----
+ifeval::[{doc-show-user-guide-link} == true]
+TIP: Check the xref:user-guide/index.adoc[User guide] and especially its
+      xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
+      for more information about writing applications with {quarkus-cxf-project-name}.
+endif::[]
+[#if standards?? ]
+
+[id="[=artifactId]-standards"]
+== Supported standards
+
+[=standards]
+[/#if]
+[#if usage?? || usageAdvanced?? ]
+[#if usage?? ]
+
+[id="[=artifactId]-usage"]
+== Usage
+
+[=usage]
+[/#if]
+[#if usageAdvanced?? ]
+
+ifeval::[{doc-show-advanced-features} == true]
+[=usageAdvanced]
+endif::[]
+[/#if]
+[/#if]
+[#if limitations?? ]
+
+[id="[=artifactId]-limitations"]
+== Limitations compared to plain CXF
+
+[=limitations]
+[/#if]
+[#if configuration?? || configurationPropertiesInclude?? ]
+
+[id="[=artifactId]-configuration"]
+== Configuration
+[#if configuration?? ]
+
+[=configuration]
+[/#if]
+[#if configurationPropertiesInclude?? ]
+include::[=configurationPropertiesInclude][]
+[/#if]
+[/#if]

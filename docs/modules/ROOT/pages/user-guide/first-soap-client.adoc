@@ -1,7 +1,5 @@
 = Your first SOAP Client on Quarkus
 
-include::../includes/attributes.adoc[]
-
 In this guide we explain how to create a simple Quarkus application acting as a client of a remote Web service.
 
 NOTE: Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
@@ -13,7 +11,7 @@ We can use a simple https://github.com/l2x6/calculator-ws[Calculator Web service
 
 [source,shell]
 ----
-$ docker run docker run -p 8082:8080 quay.io/l2x6/calculator-ws:1.0
+$ docker run -p 8082:8080 quay.io/l2x6/calculator-ws:1.0
 ----
 
 Once the container is up and running, we can inspect its http://localhost:8082/calculator-ws/CalculatorService?wsdl[WSDL]
@@ -127,11 +125,11 @@ include::example$calculator-client/pom.xml[tag=first-soap-client.adoc-quarkus-ma
 * Put your WSDL files under `src/main/resources` or `src/test/resources` or any subdirectory thereof.
 * Your WSDL file names must end with `.wsdl`
 * Set `quarkus.cxf.codegen.wsdl2java.includes`
-  xref:reference/configuration-properties.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.includes[configuration property]
+  xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.includes[configuration property]
   to a pattern matching the WSDL files you wish to process.
   If you want to process all WSDL files under `src/main/resources/wsdl` or `src/test/resources/wsdl`, set it as follows:
 +
-.pom.xml
+.application.properties
 [source,properties]
 ----
 quarkus.cxf.codegen.wsdl2java.includes = wsdl/*.wsdl
@@ -146,7 +144,7 @@ Note that `quarkus-cxf` code generation uses the https://cxf.apache.org/docs/wsd
 from CXF under the hood. `wsdl2Java` is called separately for each WSDL file selected by `includes` and `excludes`.
 
 Passing custom parameters to `wsdl2java` is possible through
-xref:reference/configuration-properties.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[`quarkus.cxf.codegen.wsdl2java.additional-params`] 
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[`quarkus.cxf.codegen.wsdl2java.additional-params`]
 configuration parameter.
 
 If you need different `additional-params` for each WSDL file, you may want to define a separate named parameter set for
@@ -194,7 +192,7 @@ cxf.it.calculator.baseUri=http://localhost:8082
 include::example$calculator-client/application.properties[tag=first-soap-client.adoc]
 ----
 
-TIP: All client configuration properties are documented in the xref:reference/configuration-properties.adoc[Configuration properties] reference.
+TIP: All client configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#_configuration[Configuration properties] reference.
 
 With all the above files in place, we should be able to start the application in Quarkus https://quarkus.io/guides/maven-tooling#dev-mode[`dev` mode]
 

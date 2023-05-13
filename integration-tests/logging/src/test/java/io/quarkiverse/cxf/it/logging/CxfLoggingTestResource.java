@@ -33,7 +33,7 @@ public class CxfLoggingTestResource implements QuarkusTestResourceLifecycleManag
     public Map<String, String> start() {
 
         try {
-            calculatorContainer = new GenericContainer<>("quay.io/l2x6/calculator-ws:1.1")
+            calculatorContainer = new GenericContainer<>("quay.io/l2x6/calculator-ws:1.2")
                     .withExposedPorts(WILDFLY_PORT)
                     .waitingFor(Wait.forHttp("/calculator-ws/CalculatorService?wsdl"));
 

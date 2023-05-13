@@ -56,7 +56,7 @@ public class CxfFixedConfig {
          * otherwise the proxy class will be initialized at build time.
          * <p>
          * Setting this to {@code true} makes sense if your service endpoint interface references some class initialized
-         * at runtime in its method signatures. E.g. Say, your service interface has method @code{int add(Operands o)}
+         * at runtime in its method signatures. E.g. Say, your service interface has method {@code int add(Operands o)}
          * and the {@code Operands} class was requested to be initialized at runtime. Then, without setting this
          * configuration parameter to {@code true}, the native compiler will throw an exception saying something like
          * {@code Classes that should be initialized at run time got initialized during image building: org.acme.Operands ... jdk.proxy<some-number>.$Proxy<some-number> caused initialization of this class}.

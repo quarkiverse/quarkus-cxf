@@ -1,0 +1,41 @@
+= Generate WSDL document from Java
+
+If the WSDL served by your service at http://your-host/your-service?wsdl is not enough
+because you e.g. want to distribute it as a Maven artifact,
+then you can use `java2ws` to generate the WSDL document at build time.
+
+You do not need to invoke the `java2ws` tool provided by CXF directly,
+neither you have to use the `cxf-java2ws-plugin`.
+
+`quarkus-cxf` wraps `java2ws` and so you can configure it in `application.properties`
+as any other aspect of your application.
+
+Here is an example:
+
+TIP: The sample code snippets used in this section come from the
+     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
+     in the source tree of {quarkus-cxf-project-name}
+
+.application.properties
+[source,properties]
+----
+include::example$soap-service/application.properties[tag=generate-wsdl-from-java.adoc[]]
+----
+
+Here we have instructed `java2ws` to generate WSDLs for two interfaces,
+namely `HelloService` and `FaultyHelloService`.
+
+Note that the Service interfaces must be annotated with `{javaxOrJakartaPackagePrefix}.xml.ws.WebService` to be selected for `java2ws` processing.
+
+The two generated WSDL documents will be stored as `target/Java2wsTest/FaultyHelloService-from-java2ws.wsdl`
+and `target/Java2wsTest/HelloService-from-java2ws.wsdl` respectively.
+
+NOTE: Unlike `wsdl2java` which is executed within Quarkus source generation phase,
+      `java2ws` is a part Quarkus augmentation that happens after compilation.
+      The input of `java2ws` are, after all, Java class files.
+      Hence you do not need to add `<goal>generate-code</goal>` to `quarkus-maven-plugin`
+      for `java2ws`.
+
+== See also
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.java2ws.enabled[quarkus.cxf.java2ws.*]` configuration properties of `quarkus-cxf`

@@ -1,20 +1,18 @@
 [[providers]]
 = JAX-WS Providers
 
-include::../includes/attributes.adoc[]
-
 https://cxf.apache.org/docs/provider-services.html[JAX-WS Providers] are fully supported, and can be implemented as shown below.
 
 Given the following sample `Provider` implementation:
 
-[source,java]
+[source,java,subs="attributes"]
 ----
-import jakarta.xml.transform.stream.StreamSource;
-import jakarta.xml.ws.BindingType;
-import jakarta.xml.ws.Provider;
-import jakarta.xml.ws.Service;
-import jakarta.xml.ws.ServiceMode;
-import jakarta.xml.ws.WebServiceProvider;
+import {javaxOrJakartaPackagePrefix}.xml.transform.stream.StreamSource;
+import {javaxOrJakartaPackagePrefix}.xml.ws.BindingType;
+import {javaxOrJakartaPackagePrefix}.xml.ws.Provider;
+import {javaxOrJakartaPackagePrefix}.xml.ws.Service;
+import {javaxOrJakartaPackagePrefix}.xml.ws.ServiceMode;
+import {javaxOrJakartaPackagePrefix}.xml.ws.WebServiceProvider;
 import java.io.StringReader;
 
 @WebServiceProvider

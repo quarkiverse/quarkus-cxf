@@ -1,7 +1,5 @@
 = Package for running on a JVM or natively
 
-include::../includes/attributes.adoc[]
-
 In this chapter, we explain how to package a Quarkus CXF application for running on a JVM or for running it natively.
 
 [[jvm-mode]]

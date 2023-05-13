@@ -1,0 +1,4 @@
+The logging feature can be associated with a SOAP client or service using the following configuration properties:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.features[quarkus.cxf.endpoint."endpoints".features]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.features[quarkus.cxf.client."clients".features]`

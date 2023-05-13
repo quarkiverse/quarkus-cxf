@@ -1,0 +1,1 @@
+Issue, renew and validate security tokens in context of https://cxf.apache.org/docs/ws-trust.html[WS-Trust].

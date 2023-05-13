@@ -1,0 +1,2 @@
+* https://cxf.apache.org/docs/ws-security.html[WS-Security]
+* https://cxf.apache.org/docs/ws-securitypolicy.html[WS-SecurityPolicy]

@@ -1,0 +1,3 @@
+Please find an example in the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-client[WS-Trust integration test] in the source tree of {quarkus-cxf-project-name}
+while we are working hard on providing a more https://github.com/quarkiverse/quarkus-cxf/issues/837[user friendly text] for this page.
