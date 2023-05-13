@@ -153,7 +153,6 @@ quarkus.cxf.endpoint."/hello".features = #limitedLoggingFeature
 quarkus.cxf.client."myClient".features = #prettyLoggingFeature
 ----
 
-IMPORTANT: Please note that named Feature beans are currently https://github.com/quarkiverse/quarkus-cxf/issues/698[not supported for SOAP clients].
 
 
 [id="quarkus-cxf-rt-features-logging-configuration"]
