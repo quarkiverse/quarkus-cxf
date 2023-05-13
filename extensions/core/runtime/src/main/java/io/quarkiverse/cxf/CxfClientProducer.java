@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
-import jakarta.enterprise.inject.UnsatisfiedResolutionException;
-import jakarta.enterprise.inject.spi.CDI;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 import jakarta.xml.ws.BindingProvider;
@@ -142,26 +140,8 @@ public abstract class CxfClientProducer {
     }
 
     private <T> void addToCols(String className, List<T> cols, Class<T> clazz) {
-        Class<? extends T> cls;
-        try {
-            cls = Class.forName(className, false, Thread.currentThread().getContextClassLoader()).asSubclass(clazz);
-        } catch (ClassNotFoundException | ClassCastException e) {
-            throw new RuntimeException("No such class " + className, e);
-        }
-        T item = null;
-        try {
-            item = CDI.current().select(cls).get();
-        } catch (ClassCastException | UnsatisfiedResolutionException e) {
-            // ignored
-        }
-        // if not found with beans just generate it.
 
-        try {
-            item = item == null ? cls.getConstructor().newInstance() : item;
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            /* ignore */
-        }
-
+        T item = CXFRuntimeUtils.getInstance(className, true);
         if (item == null) {
             LOGGER.warnf("unable to create instance of class %s", className);
         } else {
