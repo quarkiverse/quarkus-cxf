@@ -19,7 +19,7 @@ TIP: The sample code snippets used in this section come from the
 .application.properties
 [source,properties]
 ----
-include::example$soap-service/application.properties[tag=generate-wsdl-from-java.adoc[]]
+include::example$soap-service/application.properties[tag=generate-wsdl-from-java.adoc]
 ----
 
 Here we have instructed `java2ws` to generate WSDLs for two interfaces,
