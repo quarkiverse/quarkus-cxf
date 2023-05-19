@@ -11,14 +11,14 @@ CXF provides the `wsdl2java` utility for that.
 
 {quarkus-cxf-project-name} wraps `wsdl2java` in the `quarkus-cxf` extension so you do not need to use it directly.
 
-Please follow the xref:user-guide/first-soap-client.adoc#wsdl2java[Generate the Model classes from WSDL] section of the user guide
+Please follow the xref:user-guide/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL] section of the user guide
 for more details about how to use it.
 
 You may also want to check the CXF https://cxf.apache.org/docs/developing-a-consumer.html[Developing a Consumer] as a general introduction.
 
 == Contract first service
 
-When implementing a service the xref:user-guide/first-soap-client.adoc#wsdl2java[generation of Java code from WSDL]
+When implementing a service the xref:user-guide/generate-java-from-wsdl.adoc[generation of Java code from WSDL]
 may also come in handy.
 `wsdl2java` can generate the model classes (with JAXB annotations)
 and service interfaces (with JAX-WS annotations) for you.
