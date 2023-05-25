@@ -8,8 +8,8 @@ asciidoc:
   attributes:
 
     # Versions
-    quarkus-version: 3.0.3.Final # replace ${quarkus.version}
-    quarkus-cxf-version: 2.0.4 # replace ${release.current-version}
+    quarkus-version: 3.1.0.Final # replace ${quarkus.version}
+    quarkus-cxf-version: 2.1.0 # replace ${release.current-version}
 
     # Toggle whether some page elements are rendered
     doc-show-badges: true # Whether JVM / Native badges are rendered
