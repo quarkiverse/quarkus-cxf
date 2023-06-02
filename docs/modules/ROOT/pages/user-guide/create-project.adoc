@@ -18,57 +18,32 @@ In addition to that, you may need
 [[create-project]]
 == Create project
 
-New project skeletons can be generated using https://{link-quarkus-code-generator}[{link-quarkus-code-generator}].
-All extensions produced by Quarkiverse CXF project can be found using `https://code.quarkus.io/?extension-search=origin:other%20cxf[origin:other cxf]` query.
+New project skeletons can be generated using https://{link-quarkus-code-generator}/?e=io.quarkiverse.cxf%3Aquarkus-cxf&extension-search=origin:platform%20quarkus%20cxf[{link-quarkus-code-generator}].
 
 image::code.quarkus.io.png[https://code.quarkus.io]
 
 * Here you can select the extensions that you want to work with.
-* For a simple Hello world Web service or client the `quarkus-cxf`extension is enough.
+* For a simple Hello world Web service or client the `quarkus-cxf` extension is enough.
 * Click the blue `Generate your application` button to download a basic skeleton project.
 * Unpack the zip file and import the project the into your favorite IDE.
 
 [[dependency-management]]
 == Dependency management
 
-https://{link-quarkus-code-generator}[{link-quarkus-code-generator}] currently generates `pom.xml` files
-containing `quarkus-cxf*` dependencies with version literals (see issue https://github.com/quarkiverse/quarkus-cxf/issues/651[#651])
-like the following:
+{quarkus-cxf-project-name} is a part of Quarkus Platform since Quarkus Platform version 3.1.0.Final.
+Among other things, this means that https://{link-quarkus-code-generator}[{link-quarkus-code-generator}]
+and other https://quarkus.io/guides/tooling#build-tool[Quarkus development tools] generate projects with proper dependency management:
 
 [source,xml,subs=attributes+]
 ----
-...
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>${quarkus.platform.group-id}</groupId>
-        <artifactId>${quarkus.platform.artifact-id}</artifactId>
-        <version>${quarkus.platform.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <dependencies>
-    <dependency>
-      <groupId>io.quarkiverse.cxf</groupId>
-      <artifactId>quarkus-cxf</artifactId>
-      <version>{quarkus-cxf-version}</version>
-    </dependency>
+<project ...>
+  ...
+  <properties>
     ...
-  </dependencies>
-...
-----
-
-This might become impractical, once you start adding more extensions from {quarkus-cxf-project-name}
-or some optionals required for covering some specific use cases.
-
-Thus we recommend to add `quarkus-cxf-bom` manually:
-
-[source,xml,subs=attributes+]
-----
-...
+    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+    <quarkus.platform.version><!-- Check the latest https://repo1.maven.org/maven2/io/quarkus/platform/quarkus-cxf-bom/ --></quarkus.platform.version>
+  </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -79,35 +54,19 @@ Thus we recommend to add `quarkus-cxf-bom` manually:
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>io.quarkiverse.cxf</groupId>
+        <groupId>${quarkus.platform.group-id}</groupId>
         <artifactId>quarkus-cxf-bom</artifactId>
-        <version>{quarkus-cxf-version}</version>
+        <version>${quarkus.platform.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <dependencies>
-    <dependency>
-      <groupId>io.quarkiverse.cxf</groupId>
-      <artifactId>quarkus-cxf</artifactId>
-      <!-- no version required here if you import quarkus-cxf-bom above -->
-    </dependency>
-    ...
-  </dependencies>
 ...
 ----
 
-=== Which Quarkus Platform versions are compatible with a given `quarkus-cxf-bom` version?
-
-Each {quarkus-cxf-project-name} `major.minor` version stream is compatible with some specific `major.minor` stream of Quarkus.
-
-E.g. the current stable release of {quarkus-cxf-project-name} is {quarkus-cxf-version}.
-It was tested against Quarkus {quarkus-version}.
-Hence, at the given point in time, you'll best use the newest micro version of that Quarkus Platform stream.
-The available versions of `io.quarkus.platform:quarkus-bom` can be viewed on
-link:https://repo1.maven.org/maven2/io/quarkus/platform/quarkus-bom/{quarkus-version}/..[Maven Central].
+You should always take care to import the same version of `io.quarkus.platform:quarkus-bom` and `io.quarkus.platform:quarkus-cxf-bom` into your project.
+That's the most reliable way to get compatible versions of Quarkus, CXF, {quarkus-cxf-project-name} and all their transitive dependencies.
 
 == Where to go next
 
