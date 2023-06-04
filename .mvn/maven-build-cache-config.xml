@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cache xmlns="http://maven.apache.org/BUILD-CACHE-CONFIG/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://maven.apache.org/BUILD-CACHE-CONFIG/1.0.0 https://maven.apache.org/xsd/build-cache-config-1.0.0.xsd">
+
+    <configuration>
+        <enabled>false</enabled>
+        <remote enabled="false" id="remote-cache">
+            <!-- Check https://peter.palaga.org/2023/06/04/remote-maven-build-cache-with-nginx.html -->
+            <!-- if you would like to try remote Maven cache locally -->
+            <url>http://localhost:8088/</url>
+        </remote>
+        <!--
+        <validateXml>true</validateXml>
+        <local>
+            <maxBuildsCached>3</maxBuildsCached>
+        </local>
+        <projectVersioning adjustMetaInf="true"/>-->
+    </configuration>
+    <input>
+        <global>
+            <glob>*</glob>
+            <includes>
+                <include>src/</include>
+                <include>modules/</include><!-- Antora directory structure in documentation -->
+            </includes>
+            <excludes>
+                <exclude>pom.xml</exclude>
+            </excludes>
+        </global>
+    </input>
+    <executionControl>
+        <runAlways>
+            <!--<plugins>
+                <plugin artifactId="maven-failsafe-plugin"/>
+            </plugins>
+            <executions>
+                <execution artifactId="maven-deploy-plugin">
+                    <execIds>
+                        <execId>my-execution-id</execId>
+                    </execIds>
+                </execution>
+            </executions>-->
+            <goalsLists>
+                <goalsList artifactId="maven-install-plugin">
+                    <goals>
+                        <goal>install</goal>
+                    </goals>
+                </goalsList>
+                <goalsList artifactId="maven-deploy-plugin">
+                    <goals>
+                        <goal>deploy</goal>
+                    </goals>
+                </goalsList>
+            </goalsLists>
+        </runAlways>
+        <!--<reconcile logAllProperties="true">
+            <plugins>
+                <plugin artifactId="maven-compiler-plugin" goal="compile">
+                    <reconciles>
+                        <reconcile propertyName="source"/>
+                        <reconcile propertyName="target"/>
+                        <reconcile propertyName="debug"/>
+                        <reconcile propertyName="debuglevel"/>
+                    </reconciles>
+                    <! - - whitelist of logged properties - - >
+                    <logs>
+                        <log propertyName="includes"/>
+                        <log propertyName="excludes"/>
+                        <log propertyName="argLine"/>
+                    </logs>
+                </plugin>
+                <plugin artifactId="maven-enforcer-plugin" goal="enforce">
+                    <reconciles>
+                        <reconcile propertyName="skip" skipValue="true"/>
+                    </reconciles>
+                    <! - - blacklisted from logging properties- - >
+                    <nologs>
+                        <nolog propertyName="redundantProperty"/>
+                        <nolog propertyName="redundantProperty2"/>
+                    </nologs>
+                </plugin>
+            </plugins>
+        </reconcile>-->
+    </executionControl>
+</cache>
