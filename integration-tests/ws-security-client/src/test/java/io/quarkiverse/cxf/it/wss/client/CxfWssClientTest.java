@@ -49,13 +49,14 @@ public class CxfWssClientTest {
         final String wsdlUrl = ConfigProvider.getConfig()
                 .getValue("quarkus.cxf.client.\"wss-client\".wsdl", String.class);
 
-        final Path staticCopyPath = Paths.get("target/classes/wsdl/dir/WssCalculatorService.wsdl");
+        Path staticCopyPath = Paths.get("src/main/resources/wsdl/dir/WssCalculatorService.wsdl");
         if (!Files.isRegularFile(staticCopyPath)) {
             /*
              * This test can be run from the test jar on Quarkus Platform
              * In that case target/classes does not exist an we have to copy
              * what's needed manually
              */
+            staticCopyPath = Paths.get("target/classes/wsdl/dir/WssCalculatorService.wsdl");
             Files.createDirectories(staticCopyPath.getParent());
             try (InputStream in = getClass().getClassLoader().getResourceAsStream("wsdl/dir/WssCalculatorService.wsdl")) {
                 Files.copy(in, staticCopyPath);
