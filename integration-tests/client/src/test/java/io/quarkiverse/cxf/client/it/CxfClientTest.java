@@ -268,13 +268,14 @@ public class CxfClientTest {
         final String wsdlUrl = ConfigProvider.getConfig()
                 .getValue("quarkus.cxf.client." + clientKey + ".wsdl", String.class);
 
-        final Path staticCopyPath = Paths.get("target/classes/wsdl/" + serviceName + ".wsdl");
+        Path staticCopyPath = Paths.get("src/main/resources/wsdl/" + serviceName + ".wsdl");
         if (!Files.isRegularFile(staticCopyPath)) {
             /*
              * This test can be run from the test jar on Quarkus Platform
              * In that case target/classes does not exist an we have to copy
              * what's needed manually
              */
+            staticCopyPath = Paths.get("target/classes/wsdl/" + serviceName + ".wsdl");
             Files.createDirectories(staticCopyPath.getParent());
             try (InputStream in = CxfClientTest.class.getClassLoader().getResourceAsStream("wsdl/" + serviceName + ".wsdl")) {
                 Files.copy(in, staticCopyPath);
