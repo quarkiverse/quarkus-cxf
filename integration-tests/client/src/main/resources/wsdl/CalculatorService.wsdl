@@ -133,6 +133,8 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="operands" type="tns:operands"></xs:element>
       <xs:element name="result" type="xs:int"></xs:element>
+      <xs:element name="even" type="xs:boolean"></xs:element>
+      <xs:element default="42" minOccurs="0" name="theAnswer" type="xs:string"></xs:element>
     </xs:sequence>
   </xs:complexType>
 
