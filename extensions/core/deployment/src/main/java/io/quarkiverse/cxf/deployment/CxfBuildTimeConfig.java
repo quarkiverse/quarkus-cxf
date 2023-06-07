@@ -146,7 +146,7 @@ public class CxfBuildTimeConfig {
          * supported options.
          * <p>
          * You need to add {@code io.quarkiverse.cxf:quarkus-cxf-xjc-plugins} dependency to your project to be able to
-         * use {@code -xjc-Xboolean}, {@code -xjc-Xdv}, {@code -xjc-Xjavadoc}, {@code -xjc-Xpl}, {@code -xjc-Xts} or
+         * use {@code -xjc-Xbg}, {@code -xjc-Xdv}, {@code -xjc-Xjavadoc}, {@code -xjc-Xproperty-listener}, {@code -xjc-Xts} or
          * {@code -xjc-Xwsdlextension}.
          */
         @ConfigItem

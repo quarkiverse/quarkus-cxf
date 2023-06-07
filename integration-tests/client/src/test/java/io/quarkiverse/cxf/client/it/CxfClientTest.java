@@ -4,8 +4,10 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
@@ -266,12 +268,24 @@ public class CxfClientTest {
         final String wsdlUrl = ConfigProvider.getConfig()
                 .getValue("quarkus.cxf.client." + clientKey + ".wsdl", String.class);
 
-        final String staticCopyPath = "src/main/resources/wsdl/" + serviceName + ".wsdl";
+        Path staticCopyPath = Paths.get("src/main/resources/wsdl/" + serviceName + ".wsdl");
+        if (!Files.isRegularFile(staticCopyPath)) {
+            /*
+             * This test can be run from the test jar on Quarkus Platform
+             * In that case target/classes does not exist an we have to copy
+             * what's needed manually
+             */
+            staticCopyPath = Paths.get("target/classes/wsdl/" + serviceName + ".wsdl");
+            Files.createDirectories(staticCopyPath.getParent());
+            try (InputStream in = CxfClientTest.class.getClassLoader().getResourceAsStream("wsdl/" + serviceName + ".wsdl")) {
+                Files.copy(in, staticCopyPath);
+            }
+        }
         /* The changing Docker IP address in the WSDL should not matter */
         final String sanitizerRegex = "<soap:address location=\"http://[^/]*/calculator-ws/" + serviceName
                 + "\"></soap:address>";
         final String staticCopyContent = Files
-                .readString(Paths.get(staticCopyPath), StandardCharsets.UTF_8)
+                .readString(staticCopyPath, StandardCharsets.UTF_8)
                 .replaceAll(sanitizerRegex, "");
 
         final String expected = RestAssured.given()
@@ -281,7 +295,7 @@ public class CxfClientTest {
                 .extract().body().asString();
 
         if (!expected.replaceAll(sanitizerRegex, "").equals(staticCopyContent)) {
-            Files.writeString(Paths.get(staticCopyPath), expected, StandardCharsets.UTF_8);
+            Files.writeString(staticCopyPath, expected, StandardCharsets.UTF_8);
             Assertions.fail("The static WSDL copy in " + staticCopyPath
                     + " went out of sync with the WSDL served by the container. The content was updated by the test, you just need to review and commit the changes.");
         }
