@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.metrics.deployment;
 
+import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import org.apache.cxf.feature.AbstractPortableFeature;
 import org.apache.cxf.feature.DelegatingFeature;
 import org.apache.cxf.metrics.MetricsFeature;
@@ -19,6 +20,12 @@ public class QuarkusCxfMetricsProcessor {
                 MetricsFeature.class.getName(),
                 DelegatingFeature.class.getName(),
                 MetricsFeature.Portable.class.getName()).methods().build());
+    }
+
+    @BuildStep
+    void runtimeInitialize(BuildProducer<RuntimeInitializedClassBuildItem> producer) {
+        producer.produce(
+                new RuntimeInitializedClassBuildItem("org.apache.cxf.metrics.codahale.CodahaleMetricsProvider"));
     }
 
 }
