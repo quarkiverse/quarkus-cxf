@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
+import org.opensaml.xmlsec.signature.impl.X509CRLImpl;
+import org.opensaml.xmlsec.signature.impl.X509CertificateImpl;
 
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -14,6 +16,7 @@ import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 import io.quarkus.deployment.util.ServiceUtil;
 
@@ -89,6 +92,15 @@ public class OpenSamlProcessor {
                         throw new RuntimeException(e);
                     }
                 });
+    }
+
+    @BuildStep
+    void RuntimeInitializedClass(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitializedClass) {
+        Stream.of(
+                X509CertificateImpl.class.getName(),
+                X509CRLImpl.class.getName())
+                .map(RuntimeInitializedClassBuildItem::new)
+                .forEach(runtimeInitializedClass::produce);
     }
 
 }

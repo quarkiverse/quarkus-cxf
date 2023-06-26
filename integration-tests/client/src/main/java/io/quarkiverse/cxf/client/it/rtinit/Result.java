@@ -20,15 +20,17 @@ public class Result {
      * The defaulValue serves the sole purpose to be able to test {@code wsdl2java}'s {@code -xjc-Xdv} parameter
      * when generating classes from the WSDL of the {@link CalculatorService}
      */
-    @XmlElement(defaultValue = "42")
+    @XmlElement(defaultValue = "42", namespace = "")
     private int result;
 
     /**
      * Have some boolean parameter to be able to test {@code wsdl2java}'s {@code -xjc-Xbg} parameter
      * when generating classes from the WSDL of the {@link CalculatorService}
      */
+    @XmlElement(namespace = "")
     private boolean even;
 
+    @XmlElement(namespace = "")
     private Operands operands;
 
     public Result() {
