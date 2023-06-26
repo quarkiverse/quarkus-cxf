@@ -42,7 +42,7 @@
     </developers>
     <properties>
         <!-- Primary dependencies -->
-        <quarkus.version>3.1.2.Final</quarkus.version>
+        <quarkus.version>3.2.0.CR1</quarkus.version>
         <quarkus-xmlsec.version>2.0.0</quarkus-xmlsec.version>
         <cxf.version>4.0.2</cxf.version>
 
@@ -52,7 +52,7 @@
         <assertj.version>3.24.2</assertj.version>
         <cxf.xjcplugins.version>4.0.0</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
         <ehcache.version>3.10.8</ehcache.version>
-        <glassfish.jaxb.version>4.0.2</glassfish.jaxb.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.glassfish.jaxb:jaxb-runtime -->
+        <glassfish.jaxb.version>4.0.3</glassfish.jaxb.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.glassfish.jaxb:jaxb-runtime -->
         <jakarta.mail-api.version>2.1.2</jakarta.mail-api.version><!-- @sync org.eclipse.angus:all:${angus-mail.version} prop:mail-api.version -->
         <jakarta.jws-api.version>3.0.0</jakarta.jws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.jwsapi.version -->
         <jakarta.xml.soap-api.version>2.0.1</jakarta.xml.soap-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.soapapi.version -->

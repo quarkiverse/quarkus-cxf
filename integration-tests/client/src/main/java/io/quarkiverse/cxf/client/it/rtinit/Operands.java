@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -13,7 +14,9 @@ import jakarta.xml.bind.annotation.XmlType;
         "b"
 })
 public class Operands {
+    @XmlElement(namespace = "")
     private int a;
+    @XmlElement(namespace = "")
     private int b;
 
     public Operands() {

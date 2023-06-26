@@ -97,10 +97,10 @@ public class CxfServiceTest {
                 "   <soapenv:Header/>\n" +
                 "   <soapenv:Body>\n" +
                 "      <tem:add>\n" +
-                "      <fruit>\n" +
-                "      <name>Pineapple</name>\n" +
-                "      <description>Tropical fruit</description>\n" +
-                "      </fruit>\n" +
+                "      <tem:fruit>\n" +
+                "      <tem:name>Pineapple</tem:name>\n" +
+                "      <tem:description>Tropical fruit</tem:description>\n" +
+                "      </tem:fruit>\n" +
                 "      </tem:add>\n" +
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
