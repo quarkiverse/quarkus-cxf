@@ -14,13 +14,12 @@
 
     <properties>
         <cq.since>0.14.0</cq.since>
-        <quarkus.metadata.status>experimental</quarkus.metadata.status>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-arc</artifactId>
+            <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf</artifactId>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -31,10 +30,10 @@
             <artifactId>cxf-rt-features-metrics</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.graalvm.nativeimage</groupId>
-            <artifactId>svm</artifactId>
-            <scope>provided</scope>
+            <groupId>org.graalvm.sdk</groupId>
+            <artifactId>graal-sdk</artifactId>
         </dependency>
+
     </dependencies>
 
     <build>

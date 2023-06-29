@@ -5,17 +5,18 @@
 :linkattrs:
 :cq-artifact-id: quarkus-cxf-rt-features-metrics
 :cq-group-id: io.quarkiverse.cxf
-:cq-status: Experimental
+:cq-status: Stable
 :cq-deprecated: false
 :cq-since: 0.14.0
 
 ifeval::[{doc-show-badges} == true]
-🧪Experimental • Since 0.14.0
+Stable • Since 0.14.0
 endif::[]
 
 Collect metrics using https://micrometer.io/[Micrometer].
 
-IMPORTANT: This extension is experimental, because there are https://github.com/quarkiverse/quarkus-cxf/issues/504[no tests covering it]. Contributions are welcome!
+NOTE: https://cxf.apache.org/docs/dropwizard-metrics.html[Dropwizard Metrics] are unsupported.
+      They do not work in native mode and the are no tests for JVM mode.
 
 
 [id="quarkus-cxf-rt-features-metrics-maven-coordinates"]
@@ -40,17 +41,69 @@ endif::[]
 [id="quarkus-cxf-rt-features-metrics-usage"]
 == Usage
 
-The integration of CXF into https://quarkus.io/guides/micrometer[Quarkus Micrometer] ecosystem is implemented using https://github.com/apache/cxf/blob/master/rt/features/metrics/src/main/java/org/apache/cxf/metrics/micrometer/MicrometerMetricsProvider.java[CXF MicrometerMetricsProvider] and `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature`.
+The integration of CXF into https://quarkus.io/guides/micrometer[Quarkus Micrometer] ecosystem is implemented using
+https://github.com/apache/cxf/blob/master/rt/features/metrics/src/main/java/org/apache/cxf/metrics/micrometer/MicrometerMetricsProvider.java[CXF MicrometerMetricsProvider]
+and `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature`.
 
-Simply add the following to your `application.properties` to start collecting metrics:
+NOTE: The sample code snippets used in this section come from the
+     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/metrics[metrics integration test]
+     in the source tree of {quarkus-cxf-project-name}
 
+To enable metrics collection for services, just add `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature`
+to your service's features:
+
+.application.properties
 [source,properties]
 ----
-# Enable metrics for a service
-quarkus.cxf.endpoint."/fruit-service".features = io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
+include::example$metrics/application.properties[tag=metrics-server]
+----
 
-# Enable metrics for a client
-quarkus.cxf.client."fruit-client".features = io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature
+The same can be done for a client:
+
+.application.properties
+[source,properties]
+----
+include::example$metrics/application.properties[tag=metrics-client]
+----
+
+Finally, to export the metrics in json format and for Prometheus, add the following dependency to your project
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+</dependency>
+----
+
+and set the following properties
+
+.application.properties
+[source,properties]
+----
+include::example$metrics/application.properties[tag=micrometer-export]
+----
+
+After that, you should be able to see some metrics under `cxf.server.requests` and/or `cxf.client.requests` in the output of
+the endpoints you configured above:
+
+[source,shell]
+----
+$ curl http://localhost:8080/q/metrics/json
+metrics: {
+    ...
+    "cxf.server.requests": {
+        "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello": 2,
+        "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello": 64.0
+    },
+    ...
+    "cxf.client.requests": {
+        "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:808 /soap/hello": 1,
+        "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:8081/soap/hello": 34.0
+    },
+    ...
+}
 ----
 
 

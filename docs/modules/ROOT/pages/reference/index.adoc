@@ -26,7 +26,7 @@ Please follow the links under the extension names to learn about how to use them
 
 | xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Quarkus CXF Metrics Feature] +
 `quarkus-cxf-rt-features-metrics`
-|Experimental
+|Stable
 |0.14.0
 |
 
