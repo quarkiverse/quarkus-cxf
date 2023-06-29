@@ -68,7 +68,7 @@
 
         <cq-maven-plugin.version>4.4.1</cq-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
-        <groovy.version>3.0.17</groovy.version>
+        <groovy.version>3.0.18</groovy.version>
         <maven-build-cache-extension.version>1.0.1</maven-build-cache-extension.version>
         <maven-enforcer-plugin.version>3.3.0</maven-enforcer-plugin.version>
         <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
