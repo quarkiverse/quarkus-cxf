@@ -1,3 +1,4 @@
 Collect metrics using https://micrometer.io/[Micrometer].
 
-IMPORTANT: This extension is experimental, because there are https://github.com/quarkiverse/quarkus-cxf/issues/504[no tests covering it]. Contributions are welcome!
+NOTE: https://cxf.apache.org/docs/dropwizard-metrics.html[Dropwizard Metrics] are unsupported.
+      They do not work in native mode and the are no tests for JVM mode.
