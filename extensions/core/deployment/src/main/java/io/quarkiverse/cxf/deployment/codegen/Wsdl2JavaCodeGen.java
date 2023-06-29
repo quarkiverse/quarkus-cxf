@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -75,13 +77,21 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         final Wsdl2JavaParameterSet rootParams = buildParameterSet(configFunction, WSDL2JAVA_CONFIG_KEY_PREFIX);
         final Map<String, String> processedFiles = new HashMap<>();
         boolean result = false;
-        result |= wsdl2java(context.inputDir(), rootParams, outDir, WSDL2JAVA_CONFIG_KEY_PREFIX, processedFiles);
+
+        /*
+         * TODO: this is a workaround for https://github.com/quarkusio/quarkus/issues/34422
+         * While context.workDir() returns target or any other direct subdirectory of the project directory
+         * then this workaround will work. But it may fail as long as the project has configured some non-standard
+         * build directory.
+         */
+        final Path projectDir = context.workDir().getParent();
+        result |= wsdl2java(projectDir, context.inputDir(), rootParams, outDir, WSDL2JAVA_CONFIG_KEY_PREFIX, processedFiles);
 
         final Set<String> names = findParamSetNames(config.getPropertyNames());
         for (String name : names) {
             final String prefix = WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + name;
             final Wsdl2JavaParameterSet namedParams = buildParameterSet(configFunction, prefix);
-            result |= wsdl2java(context.inputDir(), namedParams, outDir, prefix, processedFiles);
+            result |= wsdl2java(projectDir, context.inputDir(), namedParams, outDir, prefix, processedFiles);
         }
 
         if (!result) {
@@ -92,11 +102,13 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         return result;
     }
 
-    static boolean wsdl2java(Path inputDir, Wsdl2JavaParameterSet params, Path outDir, String prefix,
+    static boolean wsdl2java(Path projectDir, Path inputDir, Wsdl2JavaParameterSet params, Path outDir, String prefix,
             Map<String, String> processedFiles) {
 
         return scan(inputDir, params.includes, params.excludes, prefix, processedFiles, (Path wsdlFile) -> {
-            final Wsdl2JavaParams wsdl2JavaParams = new Wsdl2JavaParams(inputDir, outDir, wsdlFile,
+            final Wsdl2JavaParams wsdl2JavaParams = new Wsdl2JavaParams(
+                    projectDir,
+                    inputDir, outDir, wsdlFile,
                     params.additionalParams.orElse(Collections.emptyList()));
             if (log.isInfoEnabled()) {
                 log.info(wsdl2JavaParams.appendLog(new StringBuilder("Running wsdl2java")).toString());
@@ -222,17 +234,36 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
     }
 
     static class Wsdl2JavaParams {
+        private final Path projectDir;
         private final Path inputDir;
         private final Path outDir;
         private final Path wsdlFile;
         private final List<String> additionalParams;
 
-        public Wsdl2JavaParams(Path inputDir, Path outDir, Path wsdlFile, List<String> additionalParams) {
+        public Wsdl2JavaParams(Path projectDir, Path inputDir, Path outDir, Path wsdlFile, List<String> additionalParams) {
             super();
+            this.projectDir = projectDir;
             this.inputDir = inputDir;
             this.outDir = outDir;
             this.wsdlFile = wsdlFile;
-            this.additionalParams = additionalParams;
+            this.additionalParams = absolutizeBindings(projectDir, additionalParams);
+        }
+
+        static List<String> absolutizeBindings(Path projectDir, List<String> additionalParams) {
+            List<String> result = new ArrayList<>(additionalParams);
+            ListIterator<String> it = result.listIterator();
+            while (it.hasNext()) {
+                String val = it.next();
+                if ("-b".equals(val) && it.hasNext()) {
+                    String rawBindingFile = it.next();
+                    Path bindingPath = Paths.get(rawBindingFile);
+                    if (!bindingPath.isAbsolute()) {
+                        /* A fix for https://github.com/quarkiverse/quarkus-cxf/issues/907 */
+                        it.set(projectDir.resolve(bindingPath).toString());
+                    }
+                }
+            }
+            return result;
         }
 
         public StringBuilder appendLog(StringBuilder sb) {
