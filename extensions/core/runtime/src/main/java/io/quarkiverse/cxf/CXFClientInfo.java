@@ -19,7 +19,6 @@ public class CXFClientInfo {
     private String epName;
     private String username;
     private String password;
-    private boolean proxyClassRuntimeInitialized;
     private final List<String> inInterceptors = new ArrayList<>();
     private final List<String> outInterceptors = new ArrayList<>();
     private final List<String> outFaultInterceptors = new ArrayList<>();
@@ -35,8 +34,7 @@ public class CXFClientInfo {
             String endpointAddress,
             String soapBinding,
             String wsNamespace,
-            String wsName,
-            boolean proxyClassRuntimeInitialized) {
+            String wsName) {
         this.endpointAddress = endpointAddress;
         this.epName = null;
         this.epNamespace = null;
@@ -47,12 +45,10 @@ public class CXFClientInfo {
         this.wsName = wsName;
         this.wsNamespace = wsNamespace;
         this.wsdlUrl = null;
-        this.proxyClassRuntimeInitialized = proxyClassRuntimeInitialized;
     }
 
     public CXFClientInfo(CXFClientInfo other) {
-        this(other.sei, other.endpointAddress, other.soapBinding, other.wsNamespace, other.wsName,
-                other.proxyClassRuntimeInitialized);
+        this(other.sei, other.endpointAddress, other.soapBinding, other.wsNamespace, other.wsName);
         this.wsdlUrl = other.wsdlUrl;
         this.epNamespace = other.epNamespace;
         this.epName = other.epName;
@@ -123,10 +119,6 @@ public class CXFClientInfo {
 
     public String getPassword() {
         return password;
-    }
-
-    public boolean isProxyClassRuntimeInitialized() {
-        return proxyClassRuntimeInitialized;
     }
 
     public List<String> getFeatures() {

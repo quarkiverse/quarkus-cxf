@@ -37,8 +37,7 @@ public class CXFRecorder {
                 format("%s/%s", DEFAULT_EP_ADDR, cxfClientData.getSei().toLowerCase()),
                 cxfClientData.getSoapBinding(),
                 cxfClientData.getWsNamespace(),
-                cxfClientData.getWsName(),
-                cxfClientData.isProxyClassRuntimeInitialized()));
+                cxfClientData.getWsName()));
     }
 
     private static class ServletConfig {

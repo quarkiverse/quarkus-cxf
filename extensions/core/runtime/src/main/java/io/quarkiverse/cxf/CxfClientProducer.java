@@ -66,24 +66,7 @@ public abstract class CxfClientProducer {
             LOGGER.errorf("WebService interface (client) class %s not found", cxfClientInfo.getSei());
             return null;
         }
-        Class<?>[] interfaces;
-        try {
-            interfaces = cxfClientInfo.isProxyClassRuntimeInitialized()
-                    ? new Class<?>[] {
-                            BindingProvider.class,
-                            Closeable.class,
-                            Client.class,
-                            Class.forName(RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_NAME, true,
-                                    Thread.currentThread().getContextClassLoader())
-                    }
-                    : new Class<?>[] {
-                            BindingProvider.class,
-                            Closeable.class,
-                            Client.class
-                    };
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Could not load " + RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_NAME, e);
-        }
+        Class<?>[] interfaces = new Class<?>[] { BindingProvider.class, Closeable.class, Client.class };
         QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean();
         QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(quarkusClientFactoryBean, interfaces);
         factory.setServiceClass(seiClass);
