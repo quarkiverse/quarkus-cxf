@@ -55,7 +55,7 @@ You can configure the `quarkus-cxf` extension by adding the following dependency
 
 Documentation for this extension is available through Quarkiverse Docs located at:
 
-<https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/index.html>
+<https://docs.quarkiverse.io/quarkus-cxf/dev/index.html>
 
 Please note that you can switch to the appropriate version of the release documentation by clicking on *dev* in the top right corner.
 
