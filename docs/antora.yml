@@ -19,7 +19,7 @@ asciidoc:
 
     # External URLs
     link-quarkus-code-generator: code.quarkus.io
-    quarkus-cxf-project-name: CXF
+    quarkus-cxf-project-name: CXF Extensions for Quarkus
 
     # Misc
     javaxOrJakartaPackagePrefix: jakarta # this can be switched to javax in older branches
