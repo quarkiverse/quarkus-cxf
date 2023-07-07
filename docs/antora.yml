@@ -1,5 +1,5 @@
 name: quarkus-cxf
-title: CXF Extensions for Quarkus
+title: CXF
 version: dev
 nav:
   - modules/ROOT/nav.adoc
@@ -19,7 +19,7 @@ asciidoc:
 
     # External URLs
     link-quarkus-code-generator: code.quarkus.io
-    quarkus-cxf-project-name: CXF Extensions for Quarkus
+    quarkus-cxf-project-name: CXF
 
     # Misc
     javaxOrJakartaPackagePrefix: jakarta # this can be switched to javax in older branches
