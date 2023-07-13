@@ -45,6 +45,7 @@ public class Wss4jProcessor {
                 .map(className -> ReflectiveClassBuildItem.builder(className).build())
                 .forEach(reflectiveClass::produce);
 
+        reflectiveClass.produce(ReflectiveClassBuildItem.builder(org.apache.wss4j.dom.transform.STRTransform.class).build());
     }
 
     @BuildStep
