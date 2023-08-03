@@ -14,7 +14,6 @@
 
     <properties>
         <cq.since>1.1.0</cq.since>
-        <quarkus.metadata.status>experimental</quarkus.metadata.status>
     </properties>
 
     <dependencies>
