@@ -50,7 +50,7 @@ Please follow the links under the extension names to learn about how to use them
 
 | xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[Quarkus CXF HTTP Async Transport] +
 `quarkus-cxf-rt-transports-http-hc5`
-|Experimental
+|Stable
 |1.1.0
 |
 
