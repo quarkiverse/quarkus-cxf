@@ -8,8 +8,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import org.assertj.core.api.Assertions;
+import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,21 +20,39 @@ import org.junit.jupiter.params.provider.ValueSource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 
 @QuarkusTest
 @QuarkusTestResource(Hc5TestResource.class)
 class Hc5Test {
 
     @ParameterizedTest
-    @ValueSource(strings = { "sync", "async" })
+    @ValueSource(strings = { "sync", "async", "sync-observable", "async-observable" })
     void add(String syncMode) {
         RestAssured.given()
+                .header(RequestScopedHeader.header, syncMode + "-header-value")
                 .queryParam("a", 7)
                 .queryParam("b", 4)
                 .get("/hc5/add-" + syncMode)
                 .then()
                 .statusCode(200)
                 .body(is("11"));
+
+        if (syncMode.endsWith("-observable")) {
+            /* Make sure that the tagging done in MeterFilterProducer actually works */
+
+            final Config config = ConfigProvider.getConfig();
+            final String baseUri = config.getValue("cxf.it.calculator.baseUri", String.class);
+            final Map<String, Object> metrics = getMetrics();
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> clientRequests = (Map<String, Object>) metrics.get("cxf.client.requests");
+            Assertions.assertThat(clientRequests).isNotNull();
+            String key = "count;exception=None;faultCode=None;method=POST;my-header=" + syncMode
+                    + "-header-value;operation=add;outcome=SUCCESS;status=200;uri="
+                    + baseUri + "/calculator-ws/CalculatorService";
+            Assertions.assertThat((Integer) clientRequests.get(key)).isGreaterThan(0);
+        }
     }
 
     /**
@@ -76,5 +96,16 @@ class Hc5Test {
                     + " went out of sync with the WSDL served by the container. The content was updated by the test, you just need to review and commit the changes.");
         }
 
+    }
+
+    private Map<String, Object> getMetrics() {
+        final String body = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .get("/q/metrics/json")
+                .then()
+                .statusCode(200)
+                .extract().body().asString();
+        final JsonPath jp = new JsonPath(body);
+        return jp.getJsonObject("$");
     }
 }

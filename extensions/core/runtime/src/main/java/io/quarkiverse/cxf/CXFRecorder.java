@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
+import org.apache.cxf.Bus;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.devconsole.DevCxfServerInfosSupplier;
@@ -146,5 +148,9 @@ public class CXFRecorder {
 
     public void resetDestinationRegistry(ShutdownContext context) {
         context.addShutdownTask(VertxDestinationFactory::resetRegistry);
+    }
+
+    public void addRuntimeBusCustomizer(RuntimeValue<Consumer<Bus>> customizer) {
+        QuarkusBusFactory.addBusCustomizer(customizer.getValue());
     }
 }

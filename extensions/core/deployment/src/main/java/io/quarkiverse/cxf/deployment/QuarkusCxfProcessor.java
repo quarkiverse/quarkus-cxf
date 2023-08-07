@@ -165,10 +165,10 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    CxfBusBuildItem bus() {
+    BuildTimeBusBuildItem bus() {
         final Bus bus = BusFactory.getDefaultBus();
         // setup class capturing
-        return new CxfBusBuildItem(bus);
+        return new BuildTimeBusBuildItem(bus);
     }
 
     @BuildStep
@@ -188,7 +188,7 @@ class QuarkusCxfProcessor {
 
     @BuildStep
     void generateClasses(
-            CxfBusBuildItem busBuildItem,
+            BuildTimeBusBuildItem busBuildItem,
             List<ClientSeiBuildItem> clients,
             List<ServiceSeiBuildItem> endpointImplementations,
             BuildProducer<GeneratedBeanBuildItem> generatedBeans,
@@ -589,6 +589,16 @@ class QuarkusCxfProcessor {
                 "schemas/configuration/parameterized-types.xsd",
                 "schemas/configuration/security.xjb",
                 "schemas/configuration/security.xsd");
+    }
+
+    @BuildStep
+    @Record(ExecutionTime.STATIC_INIT)
+    void setupRuntimeBusCustomizers(
+            CXFRecorder recorder,
+            List<RuntimeBusCustomizerBuildItem> customizers) {
+        for (RuntimeBusCustomizerBuildItem customizer : customizers) {
+            recorder.addRuntimeBusCustomizer(customizer.getCustomizer());
+        }
     }
 
     @BuildStep
