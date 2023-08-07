@@ -43,6 +43,31 @@ public class Hc5Resource {
     public int addSync(@QueryParam("a") int a, @QueryParam("b") int b) {
         return myCalculator.add(a, b);
     }
+
+    @Inject
+    @CXFClient("observableCalculator")
+    CalculatorService observableCalculator;
+
+    @SuppressWarnings("unchecked")
+    @Path("/add-async-observable")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public Uni<Integer> addAsyncObservable(@QueryParam("a") int a, @QueryParam("b") int b) {
+        return Uni.createFrom()
+                .future(
+                        (Future<AddResponse>) observableCalculator
+                                .addAsync(a, b, res -> {
+                                }))
+                .map(addResponse -> addResponse.getReturn());
+    }
+
+    @Path("/add-sync-observable")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public int addSyncObservable(@QueryParam("a") int a, @QueryParam("b") int b) {
+        return observableCalculator.add(a, b);
+    }
+
     // tag::quarkus-cxf-rt-transports-http-hc5.usage.mutiny[]
 }
 // end::quarkus-cxf-rt-transports-http-hc5.usage.mutiny[]
