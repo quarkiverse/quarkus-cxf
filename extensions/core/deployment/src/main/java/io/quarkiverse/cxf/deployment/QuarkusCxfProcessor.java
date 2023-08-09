@@ -39,15 +39,19 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import jakarta.xml.ws.WebFault;
+import jakarta.xml.ws.handler.Handler;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerImpl;
 import org.apache.cxf.common.spi.GeneratedClassClassLoaderCapture;
+import org.apache.cxf.feature.Feature;
+import org.apache.cxf.interceptor.Interceptor;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
+import org.jboss.jandex.Type;
 import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -599,6 +603,29 @@ class QuarkusCxfProcessor {
         for (RuntimeBusCustomizerBuildItem customizer : customizers) {
             recorder.addRuntimeBusCustomizer(customizer.getCustomizer());
         }
+    }
+
+    @BuildStep
+    void unremovables(BuildProducer<UnremovableBeanBuildItem> unremovables) {
+
+        /*
+         * Mark the beans that can be referenced in application.properties as unremovable.
+         * Unfortunately, we cannot be more specific here (so that we'd only register the types
+         * really referenced in application.properties) because the *interceptors options
+         * are runtime only
+         */
+        final Set<DotName> unremovableTypes = Set.of(
+                DotName.createSimple(Interceptor.class),
+                DotName.createSimple(Handler.class),
+                DotName.createSimple(Feature.class));
+
+        unremovables
+                .produce(new UnremovableBeanBuildItem(beanInfo -> {
+                    return beanInfo.getTypes().stream()
+                            .map(Type::name)
+                            .anyMatch(unremovableTypes::contains);
+                }));
+
     }
 
     @BuildStep
