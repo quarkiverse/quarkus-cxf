@@ -1,12 +1,11 @@
 package io.quarkiverse.cxf.transport.http.hc5;
 
+import java.util.concurrent.Executor;
+
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.classloader.ClassLoaderUtils.ClassLoaderHolder;
 import org.apache.cxf.workqueue.AutomaticWorkQueue;
 import org.eclipse.microprofile.context.ManagedExecutor;
-
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.InstanceHandle;
 
 /**
  * Executes the tasks using {@link ManagedExecutor} for the sake of context propagation.
@@ -14,9 +13,11 @@ import io.quarkus.arc.InstanceHandle;
 public class QuarkusWorkQueueImpl implements AutomaticWorkQueue {
 
     private final String name;
+    private final Executor executor;
 
-    public QuarkusWorkQueueImpl(String name) {
+    public QuarkusWorkQueueImpl(String name, Executor executor) {
         this.name = name;
+        this.executor = executor;
     }
 
     @Override
@@ -37,13 +38,7 @@ public class QuarkusWorkQueueImpl implements AutomaticWorkQueue {
                 }
             }
         };
-        InstanceHandle<ManagedExecutor> managedExecutorInst = Arc.container().instance(ManagedExecutor.class);
-        if (managedExecutorInst.isAvailable()) {
-            ManagedExecutor managedExecutor = managedExecutorInst.get();
-            managedExecutor.execute(r);
-        } else {
-            throw new IllegalStateException(ManagedExecutor.class.getName() + " not available in Arc");
-        }
+        executor.execute(r);
     }
 
     @Override
