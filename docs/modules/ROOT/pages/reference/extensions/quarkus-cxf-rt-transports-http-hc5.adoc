@@ -81,5 +81,13 @@ Once the asynchronous stubs are available, it is possible to wrap a client call 
 include::example$hc5/Hc5Resource.java[tag=quarkus-cxf-rt-transports-http-hc5.usage.mutiny]
 ----
 
+[id="extensions-quarkus-cxf-rt-transports-http-hc5-usage-thread-pool"]
+=== Thread pool
+
+Asynchronous clients delivered by this extension leverage `ManagedExecutor` with a thread pool provided by Quarkus.
+The thread pool can be configured using the `quarkus.thread-pool.*` family of
+https://quarkus.io/guides/all-config#quarkus-core_quarkus.thread-pool.core-threads[options].
+As a consequence of this, the executor and thread pool related attributes of `org.apache.cxf.transports.http.configuration.HTTPClientPolicy` are not honored for async clients on Quarkus.
+
 TIP: You can see more details about the CXF asynchronous client and how to tune it further in https://cxf.apache.org/docs/asynchronous-client-http-transport.html[CXF documentation].
 
