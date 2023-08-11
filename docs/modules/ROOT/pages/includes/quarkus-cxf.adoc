@@ -12,6 +12,7 @@ h|Default
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.path]]`link:#quarkus-cxf_quarkus.cxf.path[quarkus.cxf.path]`
 
+
 [.description]
 --
 The default path for CXF resources.
@@ -30,6 +31,7 @@ endif::add-copy-button-to-env-var[]
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.enabled]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.enabled[quarkus.cxf.codegen.wsdl2java.enabled]`
 
+
 [.description]
 --
 If `true` `wsdl2java` code generation is run whenever there are WSDL resources found on default or custom defined locations; otherwise `wsdl2java` is not executed.
@@ -45,6 +47,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.includes]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.includes[quarkus.cxf.codegen.wsdl2java.includes]`
+
 
 [.description]
 --
@@ -89,6 +92,7 @@ endif::add-copy-button-to-env-var[]
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.excludes]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.excludes[quarkus.cxf.codegen.wsdl2java.excludes]`
 
+
 [.description]
 --
 A comma separated list of path patterns for selecting WSDL files which should *not* be processed with `wsdl2java` tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module. Same syntax as `includes`.
@@ -104,6 +108,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]`
+
 
 [.description]
 --
@@ -123,6 +128,7 @@ endif::add-copy-button-to-env-var[]
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.enabled]]`link:#quarkus-cxf_quarkus.cxf.java2ws.enabled[quarkus.cxf.java2ws.enabled]`
 
+
 [.description]
 --
 If `true` `java2ws` WSDL generation is run whenever there are Java classes selected via `includes` and `excludes` options; otherwise `java2ws` is not executed.
@@ -138,6 +144,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.includes]]`link:#quarkus-cxf_quarkus.cxf.java2ws.includes[quarkus.cxf.java2ws.includes]`
+
 
 [.description]
 --
@@ -185,6 +192,7 @@ endif::add-copy-button-to-env-var[]
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.excludes]]`link:#quarkus-cxf_quarkus.cxf.java2ws.excludes[quarkus.cxf.java2ws.excludes]`
 
+
 [.description]
 --
 A comma separated list of glob patterns for selecting java class names which should *not* be processed with `java2ws` tool. Same syntax as `includes`.
@@ -200,6 +208,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.additional-params]]`link:#quarkus-cxf_quarkus.cxf.java2ws.additional-params[quarkus.cxf.java2ws.additional-params]`
+
 
 [.description]
 --
@@ -218,6 +227,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.wsdl-name-template]]`link:#quarkus-cxf_quarkus.cxf.java2ws.wsdl-name-template[quarkus.cxf.java2ws.wsdl-name-template]`
+
 
 [.description]
 --
@@ -241,6 +251,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.includes]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.includes[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".includes]`
+
 
 [.description]
 --
@@ -285,6 +296,7 @@ endif::add-copy-button-to-env-var[]
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.excludes]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.excludes[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".excludes]`
 
+
 [.description]
 --
 A comma separated list of path patterns for selecting WSDL files which should *not* be processed with `wsdl2java` tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module. Same syntax as `includes`.
@@ -300,6 +312,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.additional-params]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.additional-params[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".additional-params]`
+
 
 [.description]
 --
@@ -318,6 +331,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.includes]]`link:#quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.includes[quarkus.cxf.java2ws."named-parameter-sets".includes]`
+
 
 [.description]
 --
@@ -365,6 +379,7 @@ endif::add-copy-button-to-env-var[]
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.excludes]]`link:#quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.excludes[quarkus.cxf.java2ws."named-parameter-sets".excludes]`
 
+
 [.description]
 --
 A comma separated list of glob patterns for selecting java class names which should *not* be processed with `java2ws` tool. Same syntax as `includes`.
@@ -380,6 +395,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.additional-params]]`link:#quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.additional-params[quarkus.cxf.java2ws."named-parameter-sets".additional-params]`
+
 
 [.description]
 --
@@ -398,6 +414,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.wsdl-name-template]]`link:#quarkus-cxf_quarkus.cxf.java2ws.-named-parameter-sets-.wsdl-name-template[quarkus.cxf.java2ws."named-parameter-sets".wsdl-name-template]`
+
 
 [.description]
 --
@@ -422,6 +439,7 @@ endif::add-copy-button-to-env-var[]
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.client.-clients-.service-interface]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.service-interface[quarkus.cxf.client."clients".service-interface]`
 
+
 [.description]
 --
 The client service interface class name
@@ -438,6 +456,7 @@ endif::add-copy-button-to-env-var[]
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.client.-clients-.alternative]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.alternative[quarkus.cxf.client."clients".alternative]`
 
+
 [.description]
 --
 Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when configuring a client without annotation `@CXFClient`.
@@ -453,6 +472,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.client.-clients-.native.runtime-initialized]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.native.runtime-initialized[quarkus.cxf.client."clients".native.runtime-initialized]`
+
 
 [.description]
 --
@@ -474,6 +494,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.implementor]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.implementor[quarkus.cxf.endpoint."endpoints".implementor]`
 
+
 [.description]
 --
 The service endpoint implementation class
@@ -490,6 +511,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.wsdl]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.wsdl[quarkus.cxf.endpoint."endpoints".wsdl]`
 
+
 [.description]
 --
 The service endpoint WSDL path
@@ -505,6 +527,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.soap-binding]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.soap-binding[quarkus.cxf.endpoint."endpoints".soap-binding]`
+
 
 [.description]
 --
@@ -527,6 +550,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.published-endpoint-url]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.published-endpoint-url[quarkus.cxf.endpoint."endpoints".published-endpoint-url]`
 
+
 [.description]
 --
 The published service endpoint URL
@@ -542,6 +566,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.features]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.features[quarkus.cxf.endpoint."endpoints".features]`
+
 
 [.description]
 --
@@ -578,6 +603,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.handlers]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.handlers[quarkus.cxf.endpoint."endpoints".handlers]`
 
+
 [.description]
 --
 The comma-separated list of Handler classes
@@ -593,6 +619,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-interceptors]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-interceptors[quarkus.cxf.endpoint."endpoints".in-interceptors]`
+
 
 [.description]
 --
@@ -610,6 +637,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-interceptors]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-interceptors[quarkus.cxf.endpoint."endpoints".out-interceptors]`
 
+
 [.description]
 --
 The comma-separated list of OutInterceptor classes
@@ -625,6 +653,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-fault-interceptors]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.out-fault-interceptors[quarkus.cxf.endpoint."endpoints".out-fault-interceptors]`
+
 
 [.description]
 --
@@ -642,6 +671,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-fault-interceptors]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-fault-interceptors[quarkus.cxf.endpoint."endpoints".in-fault-interceptors]`
 
+
 [.description]
 --
 The comma-separated list of InFaultInterceptor classes
@@ -658,6 +688,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.wsdl]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.wsdl[quarkus.cxf.client."clients".wsdl]`
 
+
 [.description]
 --
 The client WSDL path
@@ -673,6 +704,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.soap-binding]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.soap-binding[quarkus.cxf.client."clients".soap-binding]`
+
 
 [.description]
 --
@@ -695,6 +727,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.client-endpoint-url]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.client-endpoint-url[quarkus.cxf.client."clients".client-endpoint-url]`
 
+
 [.description]
 --
 The client endpoint URL
@@ -710,6 +743,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-namespace]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-namespace[quarkus.cxf.client."clients".endpoint-namespace]`
+
 
 [.description]
 --
@@ -727,6 +761,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-name]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.endpoint-name[quarkus.cxf.client."clients".endpoint-name]`
 
+
 [.description]
 --
 The client endpoint name
@@ -742,6 +777,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.username]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.username[quarkus.cxf.client."clients".username]`
+
 
 [.description]
 --
@@ -759,6 +795,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.password]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.password[quarkus.cxf.client."clients".password]`
 
+
 [.description]
 --
 The password for HTTP Basic auth
@@ -774,6 +811,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.features]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.features[quarkus.cxf.client."clients".features]`
+
 
 [.description]
 --
@@ -801,6 +839,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.handlers]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.handlers[quarkus.cxf.client."clients".handlers]`
 
+
 [.description]
 --
 The comma-separated list of Handler classes
@@ -816,6 +855,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.in-interceptors]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.in-interceptors[quarkus.cxf.client."clients".in-interceptors]`
+
 
 [.description]
 --
@@ -833,6 +873,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.out-interceptors]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.out-interceptors[quarkus.cxf.client."clients".out-interceptors]`
 
+
 [.description]
 --
 The comma-separated list of OutInterceptor classes
@@ -849,6 +890,7 @@ endif::add-copy-button-to-env-var[]
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.out-fault-interceptors]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.out-fault-interceptors[quarkus.cxf.client."clients".out-fault-interceptors]`
 
+
 [.description]
 --
 The comma-separated list of OutFaultInterceptor classes
@@ -864,6 +906,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.in-fault-interceptors]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.in-fault-interceptors[quarkus.cxf.client."clients".in-fault-interceptors]`
+
 
 [.description]
 --
