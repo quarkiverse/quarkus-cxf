@@ -8,10 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -54,8 +52,6 @@ import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.NativeImageFeatureBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedPackageBuildItem;
 import io.quarkus.deployment.util.IoUtil;
 import io.quarkus.gizmo.ClassCreator;
 import io.quarkus.gizmo.ClassOutput;
@@ -75,20 +71,11 @@ public class CxfClientProcessor {
     void collectClients(
             CxfFixedConfig config,
             CombinedIndexBuildItem combinedIndexBuildItem,
-            List<RuntimeInitializedClassBuildItem> runtimeInitializedClasses,
-            List<RuntimeInitializedPackageBuildItem> runtimeInitializedPackages,
             BuildProducer<NativeImageFeatureBuildItem> nativeImageFeatures,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
             BuildProducer<CxfClientBuildItem> clients,
             BuildProducer<ClientSeiBuildItem> clientSeis) {
         IndexView index = combinedIndexBuildItem.getIndex();
-
-        final Set<String> rtInitClasses = runtimeInitializedClasses.stream()
-                .map(RuntimeInitializedClassBuildItem::getClassName)
-                .collect(Collectors.toSet());
-        final Set<String> rtInitPackages = runtimeInitializedPackages.stream()
-                .map(RuntimeInitializedPackageBuildItem::getPackageName)
-                .collect(Collectors.toSet());
 
         final AtomicBoolean hasRuntimeInitializedProxy = new AtomicBoolean(false);
         final Map<String, ClientFixedConfig> clientSEIsInUse = findClientSEIsInUse(index, config);
@@ -121,8 +108,6 @@ public class CxfClientProcessor {
                                 Optional.ofNullable(clientConfig.native_).map(native_ -> native_.runtimeInitialized)
                                         .orElse(false),
                                 wsClassInfo,
-                                rtInitClasses,
-                                rtInitPackages,
                                 index);
                         proxies.produce(new NativeImageProxyDefinitionBuildItem(proxyInfo.interfaces));
 
@@ -469,8 +454,6 @@ public class CxfClientProcessor {
         public static ProxyInfo of(
                 boolean refersToRuntimeInitializedClasses,
                 ClassInfo wsClassInfo,
-                Set<String> rtInitClasses,
-                Set<String> rtInitPackages,
                 IndexView index) {
             final List<String> result = new ArrayList<>();
             result.add(wsClassInfo.name().toString());
@@ -478,59 +461,10 @@ public class CxfClientProcessor {
             result.add("java.io.Closeable");
             result.add(Client.class.getName());
 
-            if (!refersToRuntimeInitializedClasses) {
-                /* Try to auto-detect unless the user decided himself */
-                Predicate<String> isRuntimeInitializedClass = className -> rtInitClasses.contains(className)
-                        || rtInitPackages.contains(getPackage(className));
-                refersToRuntimeInitializedClasses = refersToRuntimeInitializedClasses(
-                        wsClassInfo,
-                        isRuntimeInitializedClass,
-                        index);
-            }
-
             if (refersToRuntimeInitializedClasses) {
                 result.add(io.quarkiverse.cxf.CxfClientProducer.RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_NAME);
             }
             return new ProxyInfo(result, refersToRuntimeInitializedClasses);
-        }
-
-        static String getPackage(String className) {
-            int lastDot = className.lastIndexOf('.');
-            if (lastDot < 0) {
-                return "";
-            }
-            return className.substring(0, lastDot);
-        }
-
-        private static boolean refersToRuntimeInitializedClasses(ClassInfo wsClassInfo,
-                Predicate<String> isRuntimeInitializedClass, IndexView index) {
-            if (isRuntimeInitializedClass.test(wsClassInfo.name().toString())) {
-                return true;
-            }
-            boolean ownMethods = wsClassInfo.methods().stream()
-                    .filter(m -> (m.flags() & java.lang.reflect.Modifier.STATIC) == 0) // only non-static methods
-                    .anyMatch(m -> isRuntimeInitializedClass.test(m.returnType().name().toString())
-                            || m.parameterTypes().stream()
-                                    .map(Type::name)
-                                    .map(DotName::toString)
-                                    .anyMatch(isRuntimeInitializedClass));
-            if (ownMethods) {
-                return true;
-            }
-
-            /* Do the same recursively for all interfaces */
-            return wsClassInfo.interfaceNames().stream()
-                    .map(intf -> {
-                        final ClassInfo cl = index.getClassByName(intf);
-                        if (cl == null) {
-                            LOGGER.warnf(
-                                    "Could not check whether %s refers to runtime initialized classes because it was not found in Jandex",
-                                    intf);
-                        }
-                        return cl;
-                    })
-                    .filter(cl -> cl != null)
-                    .anyMatch(cl -> refersToRuntimeInitializedClasses(cl, isRuntimeInitializedClass, index));
         }
 
         private ProxyInfo(List<String> interfaces, boolean isRuntimeInitialized) {
