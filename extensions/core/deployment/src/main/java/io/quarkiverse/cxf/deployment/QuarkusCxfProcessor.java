@@ -208,21 +208,27 @@ class QuarkusCxfProcessor {
                     .map(ServiceSeiBuildItem::getSei)
                     .distinct()
                     .forEach(sei -> {
-                        LOGGER.infof("Generating ancillary classes for service %s", sei);
+                        LOGGER.debugf("Generating ancillary classes for service %s", sei);
                         /*
                          * This is a fake build time server start, so it does not matter much that we
                          * use a fake path
                          */
                         final String path = "/QuarkusCxfProcessor/dummy-" + rnd.nextLong();
+                        final int oldCnt = capture.getGeneratedClassesCount();
                         CxfDeploymentUtils.createServer(sei, path, bus);
+                        LOGGER.infof("Generated %d ancillary classes for service %s",
+                                (capture.getGeneratedClassesCount() - oldCnt), sei);
                     });
 
             clients.stream()
                     .map(ClientSeiBuildItem::getSei)
                     .distinct()
                     .forEach(sei -> {
-                        LOGGER.infof("Generating ancillary classes for client %s", sei);
+                        LOGGER.debugf("Generating ancillary classes for client %s", sei);
+                        final int oldCnt = capture.getGeneratedClassesCount();
                         CxfDeploymentUtils.createClient(sei, bus);
+                        LOGGER.infof("Generated %d ancillary classes for client %s",
+                                (capture.getGeneratedClassesCount() - oldCnt), sei);
                     });
 
             reflectiveClasses.produce(
@@ -659,10 +665,14 @@ class QuarkusCxfProcessor {
             if (!generatedClasses.contains(dotName)) {
                 final String slashName = name.indexOf('/') >= 0 ? name : name.replace('.', '/');
                 classOutput.getSourceWriter(slashName);
-                LOGGER.infof("Generated class %s", dotName);
+                LOGGER.debugf("Generated class %s", dotName);
                 classOutput.write(slashName, bytes);
                 generatedClasses.add(dotName);
             }
+        }
+
+        public int getGeneratedClassesCount() {
+            return generatedClasses.size();
         }
 
         public String[] getGeneratedClasses() {
