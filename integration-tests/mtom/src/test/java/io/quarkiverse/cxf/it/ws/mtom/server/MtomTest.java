@@ -1,5 +1,7 @@
 package io.quarkiverse.cxf.it.ws.mtom.server;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.activation.DataHandler;
@@ -7,9 +9,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import org.assertj.core.api.Assertions;
+import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
-
-import com.sun.xml.messaging.saaj.soap.AttachmentPartImpl;
 
 import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
@@ -17,29 +18,72 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 public class MtomTest {
 
+    private static final Logger log = Logger.getLogger(MtomTest.class);
+    private static final int KiB = 1024;
+
+    /**
+     * A reproducer for
+     * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/973">https://github.com/quarkiverse/quarkus-cxf/issues/973</a>
+     *
+     * @throws Exception
+     */
     @Test
-    public void dataHandler() throws Exception {
+    public void soak() throws Exception {
+        // The following fail with
+        // Http2Exception: Flow control window exceeded for stream: 0
+        //   at io.netty.handler.codec.http2.Http2Exception.connectionError(Http2Exception.java:109)
+        // final int size = 63 * KiB + 137; // fails at round 0
+        // final int size = 63 * KiB + 136; // fails at round 5
+        final int size = 63 * KiB + 135; // fails at round 5
+        // final int size = 63 * KiB + 134; // fails at round 50
+        // final int size = 63 * KiB + 133; // fails at round 50
+        // final int size = 63 * KiB + 132; // fails at round 500
+        // final int size = 63 * KiB + 131; // fails at round 500
+        // final int size = 63 * KiB + 130; // fails at round 5000
+        // final int size = 63 * KiB + 129; // fails at round 5000
 
-        /*
-         * This is required only in native mode, where the test code is isolated from the server and thus the server
-         * does not call AttachmentPartImpl.initializeJavaActivationHandlers() for us
-         */
-        AttachmentPartImpl.initializeJavaActivationHandlers();
+        // This one fails with a different exception:
+        // final int size = 63 * KiB + 128; // fails at round 10763 Corrupted channel by directly writing to native stream
+        final int requestCount = 10_000;
+        for (int i = 0; i < requestCount; i++) {
+            log.infof("Soaking with %d bytes, round %d", size, i);
+            assertMtom(size);
+        }
+    }
 
+    /**
+     * A reproducer for
+     * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/973">https://github.com/quarkiverse/quarkus-cxf/issues/973</a>
+     *
+     * @throws Exception
+     */
+    @Test
+    public void largeAttachment() throws Exception {
+
+        int increment = 10 * KiB;
+        int maxSize = 10 * KiB * KiB - 512;
+
+        for (int size = increment; size <= maxSize; size += increment) {
+            log.infof("Sending large attachment: %d bytes", size);
+            assertMtom(size);
+        }
+
+    }
+
+    static void assertMtom(int size) throws MalformedURLException, IOException {
         final URL serviceUrl = new URL(QuarkusCxfClientTestUtil.getServerUrl() + "/mtom?wsdl");
         final QName qName = new QName("https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/mtom",
                 MtomService.class.getSimpleName());
         final Service service = javax.xml.ws.Service.create(serviceUrl, qName);
         final MtomService proxy = service.getPort(MtomService.class);
 
-        DataHandler dh = new DataHandler("Hello from client", "text/plain");
+        DataHandler dh = new DataHandler(new RandomBytesDataSource(size));
         DHResponse response = proxy.echoDataHandler(new DHRequest(dh));
         Assertions.assertThat(response).isNotNull();
 
         DataHandler dataHandler = response.getDataHandler();
-        Assertions.assertThat(dataHandler.getContent()).isEqualTo("Hello from client echoed from the server");
-        Assertions.assertThat(dataHandler.getContentType()).isEqualTo("text/plain");
-
+        Assertions.assertThat(RandomBytesDataSource.count(dataHandler.getDataSource().getInputStream())).isEqualTo(size);
+        Assertions.assertThat(dataHandler.getContentType()).isEqualTo("application/octet-stream");
     }
 
 }
