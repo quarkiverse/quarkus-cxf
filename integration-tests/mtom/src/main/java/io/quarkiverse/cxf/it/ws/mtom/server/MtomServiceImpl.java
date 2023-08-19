@@ -20,16 +20,18 @@ public class MtomServiceImpl implements MtomService {
 
         DataHandler dataHandler = request.getDataHandler();
 
-        log.infof("Received content type %s", dataHandler.getContentType());
         try {
-            String message = dataHandler.getContent().toString();
-            log.infof("Received content %s", message);
+            int length = RandomBytesDataSource.count(dataHandler.getInputStream());
+            log.infof("Received %d bytes of content type %s", length, dataHandler.getContentType());
 
-            DataHandler responseData = new DataHandler(message + " echoed from the server", "text/plain");
+            /*
+             * We do not send back the original bytes, because we do not want to keep them in memory.
+             * We mainly care for testing the transport
+             */
+            DataHandler responseData = new DataHandler(new RandomBytesDataSource(length));
             return new DHResponse(responseData);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-
 }
