@@ -1,0 +1,9 @@
+= Quarkus CXF MTOM tests
+
+The number of iterations performed by `io.quarkiverse.cxf.it.ws.mtom.server.MtomTest.soak()` can be set by setting
+
+[source,shell]
+----
+$ export QUARKUS_CXF_MTOM_SOAK_ITERATIONS=100000
+$ mvn clean test -Dtest=MtomTest#soak
+----
