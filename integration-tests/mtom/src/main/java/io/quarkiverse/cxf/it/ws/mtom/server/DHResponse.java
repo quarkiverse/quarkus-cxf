@@ -16,7 +16,7 @@ public class DHResponse {
         this.dataHandler = dataHandler;
     }
 
-    @XmlMimeType("text/plain")
+    @XmlMimeType("application/octet-stream")
     public DataHandler getDataHandler() {
         return dataHandler;
     }
