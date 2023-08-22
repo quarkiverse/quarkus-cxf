@@ -1,4 +1,4 @@
-= Create a new project
+= Advanced SOAP client topics
 
 == `client-endpoint-url` defaults
 
