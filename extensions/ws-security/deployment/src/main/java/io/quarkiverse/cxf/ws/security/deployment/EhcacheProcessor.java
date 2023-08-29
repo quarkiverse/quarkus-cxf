@@ -116,6 +116,7 @@ public class EhcacheProcessor {
                 "org.ehcache.sizeof.impl.JvmInformation",
                 "org.ehcache.shadow.org.terracotta.utilities.io.Files",
                 "org.ehcache.shadow.org.terracotta.offheapstore.storage.portability.BooleanPortability",
+                "org.ehcache.shadow.org.terracotta.offheapstore.util.PhysicalMemory",
                 "org.ehcache.xml.XmlConfiguration",
                 "org.ehcache.xml.ResourceConfigurationParser")
                 .map(RuntimeInitializedClassBuildItem::new)
