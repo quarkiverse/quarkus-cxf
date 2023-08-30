@@ -1295,4 +1295,38 @@ endif::add-copy-button-to-env-var[]
 `http`, `socks` 
 |`http`
 
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.proxy-username]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.proxy-username[quarkus.cxf.client."clients".proxy-username]`
+
+
+[.description]
+--
+Username for the proxy authentication
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.proxy-password]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.proxy-password[quarkus.cxf.client."clients".proxy-password]`
+
+
+[.description]
+--
+Password for the proxy authentication
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
 |===

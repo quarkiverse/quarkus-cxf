@@ -57,6 +57,9 @@ public class CxfClientResource {
     @CXFClient("clientWithRuntimeInitializedPayload") // name used in application.properties
     ClientWithRuntimeInitializedPayload clientWithRuntimeInitializedPayload;
 
+    @CXFClient("proxiedCalculator")
+    CalculatorService proxiedCalculator;
+
     @GET
     @Path("/calculator/{client}/multiply")
     @Produces(MediaType.TEXT_PLAIN)
@@ -130,6 +133,8 @@ public class CxfClientResource {
                 return myFaultyCalculator;
             case "mySkewedCalculator":
                 return mySkewedCalculator;
+            case "proxiedCalculator":
+                return proxiedCalculator;
             default:
                 throw new IllegalStateException("Unexpected client key " + client);
         }

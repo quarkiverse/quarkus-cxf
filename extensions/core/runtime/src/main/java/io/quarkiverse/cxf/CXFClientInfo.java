@@ -152,6 +152,14 @@ public class CXFClientInfo {
      * Specifies the type of the proxy server. Can be either HTTP or SOCKS.
      */
     private ProxyServerType proxyServerType;
+    /**
+     * Username for the proxy authentication
+     */
+    private String proxyUsername;
+    /**
+     * Password for the proxy authentication
+     */
+    private String proxyPassword;
 
     public CXFClientInfo() {
     }
@@ -212,6 +220,8 @@ public class CXFClientInfo {
         this.proxyServerPort = other.proxyServerPort;
         this.nonProxyHosts = other.nonProxyHosts;
         this.proxyServerType = other.proxyServerType;
+        this.proxyUsername = other.proxyUsername;
+        this.proxyPassword = other.proxyPassword;
     }
 
     public CXFClientInfo withConfig(CxfClientConfig config) {
@@ -248,6 +258,8 @@ public class CXFClientInfo {
         this.proxyServerPort = config.proxyServerPort.orElse(null);
         this.nonProxyHosts = config.nonProxyHosts.orElse(null);
         this.proxyServerType = config.proxyServerType;
+        this.proxyUsername = config.proxyUsername.orElse(null);
+        this.proxyPassword = config.proxyPassword.orElse(null);
         return this;
     }
 
@@ -439,5 +451,13 @@ public class CXFClientInfo {
 
     public ProxyServerType getProxyServerType() {
         return proxyServerType;
+    }
+
+    public String getProxyUsername() {
+        return proxyUsername;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
     }
 }

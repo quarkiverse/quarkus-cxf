@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.Handler;
 
+import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.frontend.ClientProxy;
@@ -208,6 +209,16 @@ public abstract class CxfClientProducer {
             }
         }
         policy.setProxyServerType(cxfClientInfo.getProxyServerType());
+
+        final String proxyUsername = cxfClientInfo.getProxyUsername();
+        if (proxyUsername != null) {
+            final String proxyPassword = cxfClientInfo.getProxyPassword();
+            final ProxyAuthorizationPolicy proxyAuth = new ProxyAuthorizationPolicy();
+            proxyAuth.setUserName(proxyUsername);
+            proxyAuth.setPassword(proxyPassword);
+            httpConduit.setProxyAuthorization(proxyAuth);
+        }
+
         return result;
     }
 
