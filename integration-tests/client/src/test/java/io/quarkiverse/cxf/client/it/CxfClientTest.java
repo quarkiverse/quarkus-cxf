@@ -57,6 +57,22 @@ public class CxfClientTest {
     }
 
     /**
+     * Test whether a client with proxy and proxy auth set works properly
+     *
+     * @param clientKey
+     */
+    @Test
+    void multiplyProxy() {
+        RestAssured.given()
+                .queryParam("a", 4)
+                .queryParam("b", 5)
+                .get("/cxf/client/calculator/proxiedCalculator/multiply")
+                .then()
+                .statusCode(200)
+                .body(is(String.valueOf(20)));
+    }
+
+    /**
      * Test whether passing a complex object to the client and receiving a complex object from the client works properly
      *
      * @param clientKey
