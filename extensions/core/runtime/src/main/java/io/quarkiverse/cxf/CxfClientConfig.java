@@ -225,22 +225,22 @@ public class CxfClientConfig {
      * also be used to optimize for different SOAP stacks.
      */
     @ConfigItem
-    protected Optional<String> browserType;
+    public Optional<String> browserType;
     /**
      * Specifies the URL of a decoupled endpoint for the receipt of responses over a separate provider->consumer connection.
      */
     @ConfigItem
-    protected Optional<String> decoupledEndpoint;
+    public Optional<String> decoupledEndpoint;
     /**
      * Specifies the address of proxy server if one is used.
      */
     @ConfigItem
-    protected Optional<String> proxyServer;
+    public Optional<String> proxyServer;
     /**
      * Specifies the port number used by the proxy server.
      */
     @ConfigItem
-    protected Optional<Integer> proxyServerPort;
+    public Optional<Integer> proxyServerPort;
     /**
      * Specifies the list of hostnames that will not use the proxy configuration.
      * Examples of value:
@@ -249,11 +249,21 @@ public class CxfClientConfig {
      * * "localhost|www.google.*|*.apache.org" -> It's also possible to use a pattern-like value
      */
     @ConfigItem
-    protected Optional<String> nonProxyHosts;
+    public Optional<String> nonProxyHosts;
     /**
      * Specifies the type of the proxy server. Can be either HTTP or SOCKS.
      */
     @ConfigItem(defaultValue = "HTTP")
-    protected ProxyServerType proxyServerType;
+    public ProxyServerType proxyServerType;
+    /**
+     * Username for the proxy authentication
+     */
+    @ConfigItem
+    public Optional<String> proxyUsername;
+    /**
+     * Password for the proxy authentication
+     */
+    @ConfigItem
+    public Optional<String> proxyPassword;
 
 }
