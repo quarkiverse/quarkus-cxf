@@ -16,9 +16,12 @@ import jakarta.xml.ws.handler.Handler;
 
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.feature.Feature;
+import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
@@ -26,7 +29,7 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 /**
  * Base producer class for setting up CXF client proxies.
  * <p>
- * During augementation (build-time) a bean is created derived from this class for each SEI. The producing method calls
+ * During augmentation (build-time) a bean is created derived from this class for each SEI. The producing method calls
  * loadCxfClient() to get a WS client proxy.
  * <p>
  * Notice the InjectionPoint parameter present in signature of loadCxfClient. Via that meta information we calculate the
@@ -125,7 +128,87 @@ public abstract class CxfClientProducer {
         }
 
         LOGGER.debug("cxf client loaded for " + cxfClientInfo.getSei());
-        return factory.create();
+        Object result = factory.create();
+        final HTTPConduit httpConduit = (HTTPConduit) ClientProxy.getClient(result).getConduit();
+        final HTTPClientPolicy policy = httpConduit.getClient();
+        policy.setConnectionTimeout(cxfClientInfo.getConnectionTimeout());
+        policy.setReceiveTimeout(cxfClientInfo.getReceiveTimeout());
+        policy.setConnectionRequestTimeout(cxfClientInfo.getConnectionRequestTimeout());
+        policy.setAutoRedirect(cxfClientInfo.isAutoRedirect());
+        policy.setMaxRetransmits(cxfClientInfo.getMaxRetransmits());
+        policy.setAllowChunking(cxfClientInfo.isAllowChunking());
+        policy.setChunkingThreshold(cxfClientInfo.getChunkingThreshold());
+        policy.setChunkLength(cxfClientInfo.getChunkLength());
+        {
+            final String value = cxfClientInfo.getAccept();
+            if (value != null) {
+                policy.setAccept(value);
+            }
+        }
+        {
+            final String value = cxfClientInfo.getAcceptLanguage();
+            if (value != null) {
+                policy.setAcceptLanguage(value);
+            }
+        }
+        {
+            final String value = cxfClientInfo.getAcceptEncoding();
+            if (value != null) {
+                policy.setAcceptEncoding(value);
+            }
+        }
+        {
+            final String value = cxfClientInfo.getContentType();
+            if (value != null) {
+                policy.setContentType(value);
+            }
+        }
+        {
+            final String value = cxfClientInfo.getHost();
+            if (value != null) {
+                policy.setHost(value);
+            }
+        }
+        policy.setConnection(cxfClientInfo.getConnection());
+        {
+            final String value = cxfClientInfo.getCacheControl();
+            if (value != null) {
+                policy.setCacheControl(value);
+            }
+        }
+        policy.setVersion(cxfClientInfo.getVersion());
+        {
+            final String value = cxfClientInfo.getBrowserType();
+            if (value != null) {
+                policy.setBrowserType(value);
+            }
+        }
+        {
+            final String value = cxfClientInfo.getDecoupledEndpoint();
+            if (value != null) {
+                policy.setDecoupledEndpoint(value);
+            }
+        }
+        {
+            final String value = cxfClientInfo.getProxyServer();
+            if (value != null) {
+                policy.setProxyServer(value);
+            }
+        }
+        {
+            final Integer value = cxfClientInfo.getProxyServerPort();
+            if (value != null) {
+                policy.setProxyServerPort(value);
+            }
+        }
+        {
+            final String value = cxfClientInfo.getNonProxyHosts();
+            if (value != null) {
+                policy.setNonProxyHosts(value);
+            }
+        }
+        policy.setProxyServerType(cxfClientInfo.getProxyServerType());
+        return result;
     }
 
     private void addToCols(String className, List<Interceptor<? extends Message>> cols) {
