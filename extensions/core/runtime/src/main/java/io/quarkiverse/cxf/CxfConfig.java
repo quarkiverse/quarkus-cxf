@@ -18,7 +18,7 @@ public class CxfConfig {
     public Map<String, CxfEndpointConfig> endpoints;
 
     /**
-     * Configure client proxiess.
+     * Configure client proxies.
      */
     @ConfigItem(name = "client")
     public Map<String, CxfClientConfig> clients;

@@ -919,4 +919,380 @@ endif::add-copy-button-to-env-var[]
 --|list of string 
 |
 
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.connection-timeout]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.connection-timeout[quarkus.cxf.client."clients".connection-timeout]`
+
+
+[.description]
+--
+Specifies the amount of time, in milliseconds, that the consumer will attempt to establish a connection before it times out. 0 is infinite.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--|long 
+|`30000`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.receive-timeout]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.receive-timeout[quarkus.cxf.client."clients".receive-timeout]`
+
+
+[.description]
+--
+Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. 0 is infinite.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__RECEIVE_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__RECEIVE_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--|long 
+|`60000`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.connection-request-timeout]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.connection-request-timeout[quarkus.cxf.client."clients".connection-request-timeout]`
+
+
+[.description]
+--
+Specifies the amount of time, in milliseconds, used when requesting a connection from the connection manager(if appliable). 0 is infinite.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION_REQUEST_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION_REQUEST_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--|long 
+|`60000`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.auto-redirect]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.auto-redirect[quarkus.cxf.client."clients".auto-redirect]`
+
+
+[.description]
+--
+Specifies if the consumer will automatically follow a server issued redirection. (name is not part of standard)
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__AUTO_REDIRECT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__AUTO_REDIRECT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.max-retransmits]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.max-retransmits[quarkus.cxf.client."clients".max-retransmits]`
+
+
+[.description]
+--
+Specifies the maximum amount of retransmits that are allowed for redirects. Retransmits for authorization is included in the retransmit count. Each redirect may cause another retransmit for a UNAUTHORIZED response code, ie. 401. Any negative number indicates unlimited retransmits, although, loop protection is provided. The default is unlimited. (name is not part of standard)
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__MAX_RETRANSMITS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__MAX_RETRANSMITS+++`
+endif::add-copy-button-to-env-var[]
+--|int 
+|`-1`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.allow-chunking]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.allow-chunking[quarkus.cxf.client."clients".allow-chunking]`
+
+
+[.description]
+--
+If true, the client is free to use chunking streams if it wants, but it is not required to use chunking streams. If false, the client must use regular, non-chunked requests in all cases.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ALLOW_CHUNKING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ALLOW_CHUNKING+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.chunking-threshold]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.chunking-threshold[quarkus.cxf.client."clients".chunking-threshold]`
+
+
+[.description]
+--
+If AllowChunking is true, this sets the threshold at which messages start getting chunked. Messages under this limit do not get chunked.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__CHUNKING_THRESHOLD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CHUNKING_THRESHOLD+++`
+endif::add-copy-button-to-env-var[]
+--|int 
+|`4096`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.chunk-length]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.chunk-length[quarkus.cxf.client."clients".chunk-length]`
+
+
+[.description]
+--
+Specifies the chunk length for a HttpURLConnection. This value is used in java.net.HttpURLConnection.setChunkedStreamingMode(int chunklen). chunklen indicates the number of bytes to write in each chunk. If chunklen is less than or equal to zero, a default value will be used.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__CHUNK_LENGTH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CHUNK_LENGTH+++`
+endif::add-copy-button-to-env-var[]
+--|int 
+|`-1`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.accept]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.accept[quarkus.cxf.client."clients".accept]`
+
+
+[.description]
+--
+Specifies the MIME types the client is prepared to handle (e.g., HTML, JPEG, GIF, etc.)
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.accept-language]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.accept-language[quarkus.cxf.client."clients".accept-language]`
+
+
+[.description]
+--
+Specifies the language the client desires (e.g., English, French, etc.)
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT_LANGUAGE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT_LANGUAGE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.accept-encoding]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.accept-encoding[quarkus.cxf.client."clients".accept-encoding]`
+
+
+[.description]
+--
+Specifies the encoding the client is prepared to handle (e.g., gzip)
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT_ENCODING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT_ENCODING+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.content-type]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.content-type[quarkus.cxf.client."clients".content-type]`
+
+
+[.description]
+--
+Specifies the content type of the stream being sent in a post request. (this should be text/xml for web services, or can be set to application/x-www-form-urlencoded if the client is sending form data).
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__CONTENT_TYPE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CONTENT_TYPE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.host]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.host[quarkus.cxf.client."clients".host]`
+
+
+[.description]
+--
+Specifies the Internet host and port number of the resource on which the request is being invoked. This is sent by default based upon the URL. Certain DNS scenarios or application designs may request you to set this, but typically it is not required.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__HOST+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__HOST+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.connection]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.connection[quarkus.cxf.client."clients".connection]`
+
+
+[.description]
+--
+The connection disposition. If close the connection to the server is closed after each request/response dialog. If Keep-Alive the client requests the server to keep the connection open, and if the server honors the keep alive request, the connection is reused. Many servers and proxies do not honor keep-alive requests.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION+++`
+endif::add-copy-button-to-env-var[]
+-- a|
+`CLOSE`, `KEEP_ALIVE` 
+|`keep-alive`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.cache-control]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.cache-control[quarkus.cxf.client."clients".cache-control]`
+
+
+[.description]
+--
+Most commonly used to specify no-cache, however the standard supports a dozen or so caching related directives for requests
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__CACHE_CONTROL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CACHE_CONTROL+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.version]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.version[quarkus.cxf.client."clients".version]`
+
+
+[.description]
+--
+HTTP Version used for the connection. The "auto" default will use whatever the default is for the HTTPConduit implementation.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__VERSION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__VERSION+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`auto`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.browser-type]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.browser-type[quarkus.cxf.client."clients".browser-type]`
+
+
+[.description]
+--
+aka User-Agent Specifies the type of browser is sending the request. This is usually only needed when sites have HTML customized to Netscape vs IE, etc, but can also be used to optimize for different SOAP stacks.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__BROWSER_TYPE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__BROWSER_TYPE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.decoupled-endpoint]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.decoupled-endpoint[quarkus.cxf.client."clients".decoupled-endpoint]`
+
+
+[.description]
+--
+Specifies the URL of a decoupled endpoint for the receipt of responses over a separate provider->consumer connection.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__DECOUPLED_ENDPOINT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__DECOUPLED_ENDPOINT+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.proxy-server]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.proxy-server[quarkus.cxf.client."clients".proxy-server]`
+
+
+[.description]
+--
+Specifies the address of proxy server if one is used.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_SERVER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_SERVER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.proxy-server-port]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.proxy-server-port[quarkus.cxf.client."clients".proxy-server-port]`
+
+
+[.description]
+--
+Specifies the port number used by the proxy server.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_SERVER_PORT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_SERVER_PORT+++`
+endif::add-copy-button-to-env-var[]
+--|int 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.non-proxy-hosts]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.non-proxy-hosts[quarkus.cxf.client."clients".non-proxy-hosts]`
+
+
+[.description]
+--
+Specifies the list of hostnames that will not use the proxy configuration. Examples of value: ++*++ "localhost" -> A single hostname ++*++ "localhost++\|++www.google.com" -> 2 hostnames that will not use the proxy configuration ++*++ "localhost++\|++www.google.++*\|*++.apache.org" -> It's also possible to use a pattern-like value
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__NON_PROXY_HOSTS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__NON_PROXY_HOSTS+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.proxy-server-type]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.proxy-server-type[quarkus.cxf.client."clients".proxy-server-type]`
+
+
+[.description]
+--
+Specifies the type of the proxy server. Can be either HTTP or SOCKS.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_SERVER_TYPE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_SERVER_TYPE+++`
+endif::add-copy-button-to-env-var[]
+-- a|
+`http`, `socks` 
+|`http`
+
 |===
