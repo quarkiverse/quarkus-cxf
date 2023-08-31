@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.devconsole.DevCxfServerInfosSupplier;
@@ -152,5 +153,9 @@ public class CXFRecorder {
 
     public void addRuntimeBusCustomizer(RuntimeValue<Consumer<Bus>> customizer) {
         QuarkusBusFactory.addBusCustomizer(customizer.getValue());
+    }
+
+    public RuntimeValue<Consumer<Bus>> setURLConnectionHTTPConduit() {
+        return new RuntimeValue<>(bus -> bus.setExtension(new URLConnectionHTTPConduitFactory(), HTTPConduitFactory.class));
     }
 }

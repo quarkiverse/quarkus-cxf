@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
+import io.quarkus.runtime.annotations.ConfigDocEnumValue;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConvertWith;
@@ -265,5 +266,21 @@ public class CxfClientConfig {
      */
     @ConfigItem
     public Optional<String> proxyPassword;
+
+    /**
+     * If not set or set to {@code DefaultHTTPConduitFactory}, the selection of {@code HTTPConduitFactory} implementation will
+     * be left to CXF;
+     * if set to {@code URLConnectionHTTPConduitFactory}, the {@code HTTPConduitFactory} for this client will be set to an
+     * implementation returning {@code org.apache.cxf.transport.http.URLConnectionHTTPConduit}.
+     */
+    @ConfigItem(defaultValue = "DefaultHTTPConduitFactory")
+    public HTTPConduitImpl httpConduitFactory;
+
+    public enum HTTPConduitImpl {
+        @ConfigDocEnumValue("DefaultHTTPConduitFactory")
+        DefaultHTTPConduitFactory,
+        @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
+        URLConnectionHTTPConduitFactory;
+    }
 
 }
