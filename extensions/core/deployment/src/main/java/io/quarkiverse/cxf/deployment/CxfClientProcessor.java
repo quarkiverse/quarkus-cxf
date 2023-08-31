@@ -34,6 +34,7 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.CXFClientData;
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFRecorder;
+import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.CxfClientProducer;
 import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkiverse.cxf.CxfFixedConfig.ClientFixedConfig;
@@ -285,7 +286,8 @@ public class CxfClientProcessor {
      * to the user application. Why we have do that: First, the interface is package-visible so that adding it to
      * the client proxy definition forces GraalVM to generate the proxy class in
      * {@value CxfClientProducer#RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_PACKAGE} package rather than under a random
-     * package/class name. Thanks to that we can request the postponed initialization of the generated proxy class by package
+     * package/class name. Thanks to that we can request the postponed initialization of the generated proxy class by
+     * package
      * name.
      * More details in <a href="https://github.com/quarkiverse/quarkus-cxf/issues/580">#580</a>.
      *
@@ -447,6 +449,39 @@ public class CxfClientProcessor {
                 .map(UnremovableBeanBuildItem.BeanClassNameExclusion::new)
                 .map(UnremovableBeanBuildItem::new)
                 .forEach(unremovables::produce);
+    }
+
+    @BuildStep
+    @Record(ExecutionTime.STATIC_INIT)
+    void customizers(
+            CXFRecorder recorder,
+            CxfBuildTimeConfig config,
+            BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
+        switch (config.httpConduitFactory) {
+            case DefaultHTTPConduitFactory:
+                // nothing to do
+                break;
+            case URLConnectionHTTPConduitFactory:
+                try {
+                    Class.forName(
+                            "io.quarkiverse.cxf.transport.http.hc5.QuarkusAsyncHTTPConduitFactory.QuarkusAsyncHTTPConduitFactory");
+                    /*
+                     * This is bad: the user has to choose whether he wants URLConnectionHTTPConduitFactory or
+                     * QuarkusAsyncHTTPConduitFactory
+                     */
+                    throw new RuntimeException(
+                            "Cannot use quarkus.cxf.http-conduit-impl=URLConnectionHTTPConduitFactory and io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5 simultaneously."
+                                    + " Either remove quarkus.cxf.http-conduit-impl=URLConnectionHTTPConduitFactory from application.properties"
+                                    + " or remove the io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5 dependency");
+                } catch (ClassNotFoundException e) {
+                    /* Fine, we can set the URLConnectionHTTPConduitFactory */
+                    customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setURLConnectionHTTPConduit()));
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
+                        + config.httpConduitFactory);
+        }
     }
 
     private static class ProxyInfo {

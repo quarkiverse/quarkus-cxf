@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
+import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkus.arc.Unremovable;
 
 @Unremovable
@@ -161,6 +162,8 @@ public class CXFClientInfo {
      */
     private String proxyPassword;
 
+    private HTTPConduitImpl httpConduitImpl;
+
     public CXFClientInfo() {
     }
 
@@ -222,6 +225,7 @@ public class CXFClientInfo {
         this.proxyServerType = other.proxyServerType;
         this.proxyUsername = other.proxyUsername;
         this.proxyPassword = other.proxyPassword;
+        this.httpConduitImpl = other.httpConduitImpl;
     }
 
     public CXFClientInfo withConfig(CxfClientConfig config) {
@@ -260,6 +264,7 @@ public class CXFClientInfo {
         this.proxyServerType = config.proxyServerType;
         this.proxyUsername = config.proxyUsername.orElse(null);
         this.proxyPassword = config.proxyPassword.orElse(null);
+        this.httpConduitImpl = config.httpConduitFactory;
         return this;
     }
 
@@ -460,4 +465,9 @@ public class CXFClientInfo {
     public String getProxyPassword() {
         return proxyPassword;
     }
+
+    public HTTPConduitImpl getHttpConduitImpl() {
+        return httpConduitImpl;
+    }
+
 }

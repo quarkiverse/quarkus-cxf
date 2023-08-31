@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
@@ -42,6 +43,18 @@ public class CxfBuildTimeConfig {
      */
     @ConfigItem(name = "java2ws")
     public Java2WsConfig java2ws;
+
+    /**
+     * If not set or set to {@code DefaultHTTPConduitFactory}, the selection of {@code HTTPConduitFactory} implementation will
+     * be left to CXF.
+     * If set to {@code URLConnectionHTTPConduitFactory}, the {@code HTTPConduitFactory} for the CXF Bus will be set to an
+     * implementation returning {@code org.apache.cxf.transport.http.URLConnectionHTTPConduit} - this is equivalent to
+     * setting {@code org.apache.cxf.transport.http.forceURLConnection} system property to {@code true} in CXF 4.0.3+.
+     * Using the {@code URLConnectionHTTPConduitFactory} value in combination with
+     * {@code io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5} causes a build time error.
+     */
+    @ConfigItem(defaultValue = "DefaultHTTPConduitFactory")
+    public HTTPConduitImpl httpConduitFactory;
 
     @ConfigGroup
     public static class CodeGenConfig {

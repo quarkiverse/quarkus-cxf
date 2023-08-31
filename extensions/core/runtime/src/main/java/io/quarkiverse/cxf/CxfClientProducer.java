@@ -3,6 +3,7 @@ package io.quarkiverse.cxf;
 import static java.util.stream.Collectors.toList;
 
 import java.io.Closeable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,9 +23,11 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.annotation.CXFClient;
 
 /**
@@ -126,6 +129,20 @@ public abstract class CxfClientProducer {
         }
         for (String inFaultInterceptor : cxfClientInfo.getInFaultInterceptors()) {
             addToCols(inFaultInterceptor, factory.getInFaultInterceptors());
+        }
+
+        switch (cxfClientInfo.getHttpConduitImpl()) {
+            case DefaultHTTPConduitFactory:
+                // nothing to do
+                break;
+            case URLConnectionHTTPConduitFactory:
+                final Map<String, Object> props = new HashMap<>();
+                props.put(HTTPConduitFactory.class.getName(), new URLConnectionHTTPConduitFactory());
+                factory.setProperties(props);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
+                        + cxfClientInfo.getHttpConduitImpl());
         }
 
         LOGGER.debug("cxf client loaded for " + cxfClientInfo.getSei());
