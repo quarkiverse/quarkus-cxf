@@ -16,7 +16,3 @@ updates:
     # Prevent PRs from opening except for security updates, given Renovate
     # is used to manage the regular dependency updates
     open-pull-requests-limit: 0
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
