@@ -1,28 +1,27 @@
-package io.quarkiverse.cxf.deployment.test;
-
-import java.net.SocketTimeoutException;
-import java.util.concurrent.TimeoutException;
+package io.quarkiverse.cxf.transport.http.hc5.deployment;
 
 import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebService;
-import jakarta.xml.ws.WebServiceException;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.assertj.core.api.Assertions;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
-import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.transport.http.hc5.QuarkusAsyncHTTPConduit;
+import io.quarkiverse.cxf.transport.http.hc5.QuarkusAsyncHTTPConduitFactory;
 import io.quarkus.test.QuarkusUnitTest;
 
-public class ClientReceiveTimeoutTest {
+public class Hc5ConduitFactoryTest {
 
     @RegisterExtension
     public static final QuarkusUnitTest test = new QuarkusUnitTest()
@@ -31,36 +30,25 @@ public class ClientReceiveTimeoutTest {
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
                     SlowHelloServiceImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName())
-            /* Receive timeout is much shorter than the Thread.sleep() in the endpoint impl. */
-            .overrideConfigKey("quarkus.cxf.client.hello.receive-timeout", "100");
+            .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName());
 
-    @Inject
     @CXFClient
     HelloService helloService;
 
-    /**
-     * Ensures that the client call fails when its ReceiveTimeout is shorter than the intentionally slow endpoint response.
-     */
-    @Test
-    public void expectReceiveTimeout() {
+    @Inject
+    Logger logger;
 
+    @Test
+    void conduitFactory() {
         final Bus bus = BusFactory.getDefaultBus();
         final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
+        Assertions.assertThat(factory).isInstanceOf(QuarkusAsyncHTTPConduitFactory.class);
 
-        if (factory instanceof HttpClientHTTPConduitFactory) {
-            Assertions
-                    .assertThatExceptionOfType(WebServiceException.class)
-                    .isThrownBy(() -> helloService.hello("Joe"))
-                    .withRootCauseInstanceOf(TimeoutException.class);
-        } else if (factory instanceof URLConnectionHTTPConduitFactory) {
-            Assertions
-                    .assertThatExceptionOfType(WebServiceException.class)
-                    .isThrownBy(() -> helloService.hello("Joe"))
-                    .withRootCauseInstanceOf(SocketTimeoutException.class);
-        } else {
-            throw new IllegalStateException("Unexpected HTTPConduitFactory " + factory);
-        }
+        final Client client = ClientProxy.getClient(helloService);
+        Assertions.assertThat(client.getConduit()).isInstanceOf(QuarkusAsyncHTTPConduit.class);
+
+        /* ... and make sure that the alternative conduit works */
+        Assertions.assertThat(helloService.hello("Joe")).isEqualTo("Hello Joe");
     }
 
     @WebService
@@ -71,7 +59,7 @@ public class ClientReceiveTimeoutTest {
 
     }
 
-    @WebService(endpointInterface = "io.quarkiverse.cxf.deployment.test.ClientReceiveTimeoutTest$HelloService", serviceName = "HelloService")
+    @WebService(endpointInterface = "io.quarkiverse.cxf.transport.http.hc5.deployment.Hc5ConduitFactoryTest$HelloService", serviceName = "HelloService")
     public static class SlowHelloServiceImpl implements HelloService {
 
         @Override

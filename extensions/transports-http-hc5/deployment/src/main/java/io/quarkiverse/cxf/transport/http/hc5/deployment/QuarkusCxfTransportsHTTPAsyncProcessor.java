@@ -28,4 +28,10 @@ public class QuarkusCxfTransportsHTTPAsyncProcessor {
         customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.customizeBus()));
     }
 
+    @BuildStep
+    @Record(ExecutionTime.STATIC_INIT)
+    void setHc5Present(io.quarkiverse.cxf.CXFRecorder recorder) {
+        recorder.setHc5Present();
+    }
+
 }

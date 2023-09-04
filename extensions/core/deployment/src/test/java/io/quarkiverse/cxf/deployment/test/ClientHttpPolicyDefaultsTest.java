@@ -10,6 +10,12 @@ import jakarta.jws.WebMethod;
 import jakarta.jws.WebService;
 import jakarta.xml.bind.annotation.XmlAttribute;
 
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduitFactory;
+import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
@@ -21,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.CxfClientConfig;
+import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.QuarkusUnitTest;
 
@@ -33,8 +40,7 @@ public class ClientHttpPolicyDefaultsTest {
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
                     SlowHelloServiceImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.hello.service-interface",
-                    "io.quarkiverse.cxf.deployment.test.ClientHttpPolicyDefaultsTest$HelloService");
+            .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName());
 
     @CXFClient
     HelloService helloService;
@@ -72,6 +78,26 @@ public class ClientHttpPolicyDefaultsTest {
                 }
             }
         }
+    }
+
+    @Test
+    void defaultConduitFactory() {
+        final Bus bus = BusFactory.getDefaultBus();
+        final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
+        Assertions.assertThat(factory).isInstanceOf(URLConnectionHTTPConduitFactory.class);
+
+        final Client client = ClientProxy.getClient(helloService);
+        Assertions.assertThat(client.getConduit()).isInstanceOf(URLConnectionHTTPConduit.class);
+    }
+
+    @Test
+    void httpClientConduitFactory() {
+        final Bus bus = BusFactory.getDefaultBus();
+        final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
+        Assertions.assertThat(factory).isInstanceOf(URLConnectionHTTPConduitFactory.class);
+
+        final Client client = ClientProxy.getClient(helloService);
+        Assertions.assertThat(client.getConduit()).isInstanceOf(URLConnectionHTTPConduit.class);
     }
 
     private static String camelCaseToDash(String s) {
