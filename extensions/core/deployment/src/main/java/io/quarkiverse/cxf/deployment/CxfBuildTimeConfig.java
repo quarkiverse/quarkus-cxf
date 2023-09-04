@@ -45,16 +45,24 @@ public class CxfBuildTimeConfig {
     public Java2WsConfig java2ws;
 
     /**
-     * If not set or set to {@code DefaultHTTPConduitFactory}, the selection of {@code HTTPConduitFactory} implementation will
-     * be left to CXF.
-     * If set to {@code URLConnectionHTTPConduitFactory}, the {@code HTTPConduitFactory} for the CXF Bus will be set to an
-     * implementation returning {@code org.apache.cxf.transport.http.URLConnectionHTTPConduit} - this is equivalent to
-     * setting {@code org.apache.cxf.transport.http.forceURLConnection} system property to {@code true} in CXF 4.0.3+.
-     * Using the {@code URLConnectionHTTPConduitFactory} value in combination with
-     * {@code io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5} causes a build time error.
+     * Select the {@code HTTPConduitFactory} implementation for all clients except the ones that override this setting
+     * via {@code quarkus.cxf.client.myClient.http-conduit-factory}.
+     * <ul>
+     * <li>{@code QuarkusCXFDefault} (default): if {@code io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5} is
+     * present in class path, then its {@code HTTPConduitFactory} implementation will be used;
+     * otherwise this value is equivalent with {@code URLConnectionHTTPConduitFactory} (this may change, once
+     * issue <a href="https://github.com/quarkiverse/quarkus-cxf/issues/992">#992</a> gets resolved in CXF)
+     * <li>{@code CXFDefault}: the selection of {@code HTTPConduitFactory} implementation is left to CXF
+     * <li>{@code HttpClientHTTPConduitFactory}: the {@code HTTPConduitFactory} will be set to an
+     * implementation always returning {@code org.apache.cxf.transport.http.HttpClientHTTPConduit}. This will use
+     * {@code java.net.http.HttpClient} as the underlying HTTP client.
+     * <li>{@code URLConnectionHTTPConduitFactory}: the {@code HTTPConduitFactory} will be set to an
+     * implementation always returning {@code org.apache.cxf.transport.http.URLConnectionHTTPConduit}. This will use
+     * {@code java.net.HttpURLConnection} as the underlying HTTP client.
+     * </ul>
      */
-    @ConfigItem(defaultValue = "DefaultHTTPConduitFactory")
-    public HTTPConduitImpl httpConduitFactory;
+    @ConfigItem
+    public Optional<HTTPConduitImpl> httpConduitFactory;
 
     @ConfigGroup
     public static class CodeGenConfig {

@@ -132,14 +132,22 @@ public abstract class CxfClientProducer {
         }
 
         switch (cxfClientInfo.getHttpConduitImpl()) {
-            case DefaultHTTPConduitFactory:
+            case CXFDefault:
                 // nothing to do
                 break;
-            case URLConnectionHTTPConduitFactory:
+            case QuarkusCXFDefault:
+            case URLConnectionHTTPConduitFactory: {
                 final Map<String, Object> props = new HashMap<>();
                 props.put(HTTPConduitFactory.class.getName(), new URLConnectionHTTPConduitFactory());
                 factory.setProperties(props);
                 break;
+            }
+            case HttpClientHTTPConduitFactory: {
+                final Map<String, Object> props = new HashMap<>();
+                props.put(HTTPConduitFactory.class.getName(), new HttpClientHTTPConduitFactory());
+                factory.setProperties(props);
+                break;
+            }
             default:
                 throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
                         + cxfClientInfo.getHttpConduitImpl());
@@ -283,7 +291,7 @@ public abstract class CxfClientProducer {
             String configKey = anno.value();
 
             if (config.isClientPresent(configKey)) {
-                return info.withConfig(config.getClient(configKey));
+                return info.withConfig(config.getClient(configKey), configKey);
             }
 
             // If config-key is present and not default: This is an error:
@@ -316,7 +324,7 @@ public abstract class CxfClientProducer {
                         meta.getSei(), meta);
                 return meta;
             case 1:
-                return info.withConfig(config.clients.get(keylist.get(0)));
+                return info.withConfig(config.clients.get(keylist.get(0)), keylist.get(0));
             default:
                 throw new IllegalStateException("quarkus.cxf.*.service-interface = " + meta.getSei()
                         + " with alternative = false expected once, but found " + keylist.size() + " times in "

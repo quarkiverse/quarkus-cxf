@@ -27,6 +27,7 @@ import io.vertx.ext.web.RoutingContext;
 public class CXFRecorder {
     private static final Logger LOGGER = Logger.getLogger(CXFRecorder.class);
     private static final String DEFAULT_EP_ADDR = "http://localhost:8080";
+    private static boolean hc5Present = false;
 
     /**
      * Create CXFClientInfo supplier.
@@ -155,7 +156,19 @@ public class CXFRecorder {
         QuarkusBusFactory.addBusCustomizer(customizer.getValue());
     }
 
-    public RuntimeValue<Consumer<Bus>> setURLConnectionHTTPConduit() {
+    public RuntimeValue<Consumer<Bus>> setURLConnectionHTTPConduitFactory() {
         return new RuntimeValue<>(bus -> bus.setExtension(new URLConnectionHTTPConduitFactory(), HTTPConduitFactory.class));
+    }
+
+    public RuntimeValue<Consumer<Bus>> setHttpClientHTTPConduitFactory() {
+        return new RuntimeValue<>(bus -> bus.setExtension(new HttpClientHTTPConduitFactory(), HTTPConduitFactory.class));
+    }
+
+    public void setHc5Present() {
+        hc5Present = true;
+    }
+
+    public static boolean isHc5Present() {
+        return hc5Present;
     }
 }
