@@ -1,6 +1,9 @@
 package io.quarkiverse.cxf;
 
+import java.util.Map;
+
 import org.apache.cxf.binding.soap.SoapBindingConfiguration;
+import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.binding.soap.JaxWsSoapBindingConfiguration;
 import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
@@ -58,4 +61,17 @@ public class QuarkusClientFactoryBean extends ClientFactoryBean {
         }
 
     }
+
+    @Override
+    protected void applyProperties(Endpoint ep) {
+        super.applyProperties(ep);
+        Map<String, Object> props = this.getProperties();
+        if (props != null) {
+            Object factory = props.get("org.apache.cxf.transport.http.HTTPConduitFactory");
+            if (factory != null) {
+                ep.getEndpointInfo().setProperty("org.apache.cxf.transport.http.HTTPConduitFactory", factory);
+            }
+        }
+    }
+
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
+import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkus.runtime.annotations.ConfigDocEnumValue;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
@@ -268,19 +269,54 @@ public class CxfClientConfig {
     public Optional<String> proxyPassword;
 
     /**
-     * If not set or set to {@code DefaultHTTPConduitFactory}, the selection of {@code HTTPConduitFactory} implementation will
-     * be left to CXF;
-     * if set to {@code URLConnectionHTTPConduitFactory}, the {@code HTTPConduitFactory} for this client will be set to an
-     * implementation returning {@code org.apache.cxf.transport.http.URLConnectionHTTPConduit}.
+     * Select the {@code HTTPConduitFactory} implementation for this client.
+     * <ul>
+     * <li>{@code QuarkusCXFDefault} (default): if {@code io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5} is
+     * present in class path, then its {@code HTTPConduitFactory} implementation will be used;
+     * otherwise this value is equivalent with {@code URLConnectionHTTPConduitFactory} (this may change, once
+     * issue <a href="https://github.com/quarkiverse/quarkus-cxf/issues/992">#992</a> gets resolved in CXF)
+     * <li>{@code CXFDefault}: the selection of {@code HTTPConduitFactory} implementation is left to CXF
+     * <li>{@code HttpClientHTTPConduitFactory}: the {@code HTTPConduitFactory} for this client will be set to an
+     * implementation always returning {@code org.apache.cxf.transport.http.HttpClientHTTPConduit}. This will use
+     * {@code java.net.http.HttpClient} as the underlying HTTP client.
+     * <li>{@code URLConnectionHTTPConduitFactory}: the {@code HTTPConduitFactory} for this client will be set to an
+     * implementation always returning {@code org.apache.cxf.transport.http.URLConnectionHTTPConduit}. This will use
+     * {@code java.net.HttpURLConnection} as the underlying HTTP client.
+     * </ul>
      */
-    @ConfigItem(defaultValue = "DefaultHTTPConduitFactory")
-    public HTTPConduitImpl httpConduitFactory;
+    @ConfigItem
+    public Optional<HTTPConduitImpl> httpConduitFactory;
 
     public enum HTTPConduitImpl {
-        @ConfigDocEnumValue("DefaultHTTPConduitFactory")
-        DefaultHTTPConduitFactory,
+        @ConfigDocEnumValue("CXFDefault")
+        QuarkusCXFDefault,
+        @ConfigDocEnumValue("CXFDefault")
+        CXFDefault,
+        @ConfigDocEnumValue("HttpClientHTTPConduitFactory")
+        HttpClientHTTPConduitFactory,
         @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
         URLConnectionHTTPConduitFactory;
+
+        public static HTTPConduitImpl fromOptional(Optional<HTTPConduitImpl> optional, boolean hc5Present, String key) {
+            if (optional.isPresent()
+                    && optional.get() != HTTPConduitImpl.CXFDefault
+                    && hc5Present) {
+                /*
+                 * This is bad: the user has to choose whether he wants URLConnectionHTTPConduitFactory or
+                 * QuarkusAsyncHTTPConduitFactory
+                 */
+                throw new RuntimeException(
+                        "You cannot use " + key + "=" + optional.get().name()
+                                + " and io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5 simultaneously."
+                                + " Either remove " + key + "=" + optional.get().name() + " from application.properties"
+                                + " or remove the io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5 dependency");
+            } else if (!optional.isPresent() && hc5Present) {
+                return HTTPConduitImpl.CXFDefault;
+            } else {
+                return optional.orElse(HTTPConduitImpl.QuarkusCXFDefault);
+            }
+        }
+
     }
 
 }
