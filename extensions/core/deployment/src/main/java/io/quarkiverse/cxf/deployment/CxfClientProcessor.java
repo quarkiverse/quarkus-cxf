@@ -38,6 +38,7 @@ import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.CxfClientProducer;
 import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkiverse.cxf.CxfFixedConfig.ClientFixedConfig;
+import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.graal.QuarkusCxfFeature;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
@@ -457,30 +458,33 @@ public class CxfClientProcessor {
             CXFRecorder recorder,
             CxfBuildTimeConfig config,
             BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
-        switch (config.httpConduitFactory) {
-            case DefaultHTTPConduitFactory:
+        final HTTPConduitImpl factory = HTTPConduitImpl.fromOptional(config.httpConduitFactory, hc5Present(),
+                "quarkus.cxf.http-conduit-impl");
+        switch (factory) {
+            case CXFDefault:
                 // nothing to do
                 break;
+            case QuarkusCXFDefault:
             case URLConnectionHTTPConduitFactory:
-                try {
-                    Class.forName(
-                            "io.quarkiverse.cxf.transport.http.hc5.QuarkusAsyncHTTPConduitFactory.QuarkusAsyncHTTPConduitFactory");
-                    /*
-                     * This is bad: the user has to choose whether he wants URLConnectionHTTPConduitFactory or
-                     * QuarkusAsyncHTTPConduitFactory
-                     */
-                    throw new RuntimeException(
-                            "Cannot use quarkus.cxf.http-conduit-impl=URLConnectionHTTPConduitFactory and io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5 simultaneously."
-                                    + " Either remove quarkus.cxf.http-conduit-impl=URLConnectionHTTPConduitFactory from application.properties"
-                                    + " or remove the io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5 dependency");
-                } catch (ClassNotFoundException e) {
-                    /* Fine, we can set the URLConnectionHTTPConduitFactory */
-                    customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setURLConnectionHTTPConduit()));
-                }
+                customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setURLConnectionHTTPConduitFactory()));
                 break;
+            case HttpClientHTTPConduitFactory: {
+                customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setHttpClientHTTPConduitFactory()));
+                break;
+            }
             default:
                 throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
                         + config.httpConduitFactory);
+        }
+    }
+
+    static boolean hc5Present() {
+        try {
+            Class.forName("io.quarkiverse.cxf.transport.http.hc5.QuarkusAsyncHTTPConduitFactory");
+            return true;
+        } catch (ClassNotFoundException e) {
+            /* Fine, we can set the chosen ConduitFactory */
+            return false;
         }
     }
 

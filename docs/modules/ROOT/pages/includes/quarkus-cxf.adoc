@@ -255,7 +255,12 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.http-conduit-fa
 
 [.description]
 --
-If not set or set to `DefaultHTTPConduitFactory`, the selection of `HTTPConduitFactory` implementation will be left to CXF. If set to `URLConnectionHTTPConduitFactory`, the `HTTPConduitFactory` for the CXF Bus will be set to an implementation returning `org.apache.cxf.transport.http.URLConnectionHTTPConduit` - this is equivalent to setting `org.apache.cxf.transport.http.forceURLConnection` system property to `true` in CXF 4.0.3{plus}. Using the `URLConnectionHTTPConduitFactory` value in combination with `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` causes a build time error.
+Select the `HTTPConduitFactory` implementation for all clients except the ones that override this setting via `quarkus.cxf.client.myClient.http-conduit-factory`.
+
+ - `QuarkusCXFDefault` (default): if `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` is present in class path, then its `HTTPConduitFactory` implementation will be used; otherwise this value is equivalent with `URLConnectionHTTPConduitFactory` (this may change, once issue link:https://github.com/quarkiverse/quarkus-cxf/issues/992[++#++992] gets resolved in CXF)
+ - `CXFDefault`: the selection of `HTTPConduitFactory` implementation is left to CXF
+ - `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning `org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the underlying HTTP client.
+ - `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the underlying HTTP client.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_HTTP_CONDUIT_FACTORY+++[]
@@ -264,8 +269,8 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_HTTP_CONDUIT_FACTORY+++`
 endif::add-copy-button-to-env-var[]
 -- a|
-`DefaultHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
-|`default-http-conduit-factory`
+`CXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
+|
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.includes]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.includes[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".includes]`
@@ -1353,7 +1358,12 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.http-conduit-factory]]`link:#quark
 
 [.description]
 --
-If not set or set to `DefaultHTTPConduitFactory`, the selection of `HTTPConduitFactory` implementation will be left to CXF; if set to `URLConnectionHTTPConduitFactory`, the `HTTPConduitFactory` for this client will be set to an implementation returning `org.apache.cxf.transport.http.URLConnectionHTTPConduit`.
+Select the `HTTPConduitFactory` implementation for this client.
+
+ - `QuarkusCXFDefault` (default): if `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` is present in class path, then its `HTTPConduitFactory` implementation will be used; otherwise this value is equivalent with `URLConnectionHTTPConduitFactory` (this may change, once issue link:https://github.com/quarkiverse/quarkus-cxf/issues/992[++#++992] gets resolved in CXF)
+ - `CXFDefault`: the selection of `HTTPConduitFactory` implementation is left to CXF
+ - `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always returning `org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the underlying HTTP client.
+ - `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always returning `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the underlying HTTP client.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__HTTP_CONDUIT_FACTORY+++[]
@@ -1362,7 +1372,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__HTTP_CONDUIT_FACTORY+++`
 endif::add-copy-button-to-env-var[]
 -- a|
-`DefaultHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
-|`default-http-conduit-factory`
+`CXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
+|
 
 |===

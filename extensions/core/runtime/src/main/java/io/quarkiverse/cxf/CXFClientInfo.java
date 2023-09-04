@@ -33,12 +33,14 @@ public class CXFClientInfo {
 
     /* org.apache.cxf.transports.http.configuration.HTTPClientPolicy attributes */
     /**
-     * Specifies the amount of time, in milliseconds, that the consumer will attempt to establish a connection before it times
+     * Specifies the amount of time, in milliseconds, that the consumer will attempt to establish a connection before it
+     * times
      * out. 0 is infinite.
      */
     private long connectionTimeout;
     /**
-     * Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. 0 is
+     * Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. 0
+     * is
      * infinite.
      */
     private long receiveTimeout;
@@ -75,7 +77,8 @@ public class CXFClientInfo {
     private int chunkingThreshold;
     /**
      * Specifies the chunk length for a HttpURLConnection. This value is used in
-     * java.net.HttpURLConnection.setChunkedStreamingMode(int chunklen). chunklen indicates the number of bytes to write in each
+     * java.net.HttpURLConnection.setChunkedStreamingMode(int chunklen). chunklen indicates the number of bytes to write
+     * in each
      * chunk. If chunklen is less than or equal to zero, a default value will be used.
      */
     private int chunkLength;
@@ -130,7 +133,8 @@ public class CXFClientInfo {
      */
     private String browserType;
     /**
-     * Specifies the URL of a decoupled endpoint for the receipt of responses over a separate provider->consumer connection.
+     * Specifies the URL of a decoupled endpoint for the receipt of responses over a separate provider->consumer
+     * connection.
      */
     private String decoupledEndpoint;
     /**
@@ -228,7 +232,7 @@ public class CXFClientInfo {
         this.httpConduitImpl = other.httpConduitImpl;
     }
 
-    public CXFClientInfo withConfig(CxfClientConfig config) {
+    public CXFClientInfo withConfig(CxfClientConfig config, String configKey) {
         Objects.requireNonNull(config);
         this.wsdlUrl = config.wsdlPath.orElse(this.wsdlUrl);
         this.epNamespace = config.endpointNamespace.orElse(this.epNamespace);
@@ -264,7 +268,9 @@ public class CXFClientInfo {
         this.proxyServerType = config.proxyServerType;
         this.proxyUsername = config.proxyUsername.orElse(null);
         this.proxyPassword = config.proxyPassword.orElse(null);
-        this.httpConduitImpl = config.httpConduitFactory;
+
+        this.httpConduitImpl = HTTPConduitImpl.fromOptional(config.httpConduitFactory, CXFRecorder.isHc5Present(),
+                "quarkus.cxf.client." + configKey + ".http-conduit-impl");
         return this;
     }
 
