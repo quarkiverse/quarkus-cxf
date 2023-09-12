@@ -67,7 +67,7 @@
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
-        <cq-maven-plugin.version>4.4.3</cq-maven-plugin.version>
+        <cq-maven-plugin.version>4.4.4</cq-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <groovy.version>3.0.19</groovy.version>
         <maven-build-cache-extension.version>1.0.1</maven-build-cache-extension.version>
