@@ -60,13 +60,13 @@ public class CXFRecorder {
             String wsImplementor, Boolean isProvider) {
         CXFServletInfos infos = runtimeInfos.getValue();
         Map<String, List<ServletConfig>> implementorToCfg = new HashMap<>();
-        for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints.entrySet()) {
+        for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints().entrySet()) {
             CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
             String relativePath = webServicesByPath.getKey();
-            if (!cxfEndPointConfig.implementor.isPresent()) {
+            if (!cxfEndPointConfig.implementor().isPresent()) {
                 continue;
             }
-            String cfgImplementor = cxfEndPointConfig.implementor.get();
+            String cfgImplementor = cxfEndPointConfig.implementor().get();
             List<ServletConfig> lst;
             if (implementorToCfg.containsKey(cfgImplementor)) {
                 lst = implementorToCfg.get(cfgImplementor);
@@ -107,29 +107,29 @@ public class CXFRecorder {
                 relativePath,
                 wsImplementor,
                 sei,
-                cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath.orElse(null) : null,
+                cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath().orElse(null) : null,
                 serviceName,
                 serviceTargetNamespace,
-                cxfEndPointConfig != null ? cxfEndPointConfig.soapBinding.orElse(soapBinding) : soapBinding,
+                cxfEndPointConfig != null ? cxfEndPointConfig.soapBinding().orElse(soapBinding) : soapBinding,
                 isProvider,
-                cxfEndPointConfig != null ? cxfEndPointConfig.publishedEndpointUrl.orElse(null) : null);
-        if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors.isPresent()) {
-            cfg.addInInterceptors(cxfEndPointConfig.inInterceptors.get());
+                cxfEndPointConfig != null ? cxfEndPointConfig.publishedEndpointUrl().orElse(null) : null);
+        if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors().isPresent()) {
+            cfg.addInInterceptors(cxfEndPointConfig.inInterceptors().get());
         }
-        if (cxfEndPointConfig != null && cxfEndPointConfig.outInterceptors.isPresent()) {
-            cfg.addOutInterceptors(cxfEndPointConfig.outInterceptors.get());
+        if (cxfEndPointConfig != null && cxfEndPointConfig.outInterceptors().isPresent()) {
+            cfg.addOutInterceptors(cxfEndPointConfig.outInterceptors().get());
         }
-        if (cxfEndPointConfig != null && cxfEndPointConfig.outFaultInterceptors.isPresent()) {
-            cfg.addOutFaultInterceptors(cxfEndPointConfig.outFaultInterceptors.get());
+        if (cxfEndPointConfig != null && cxfEndPointConfig.outFaultInterceptors().isPresent()) {
+            cfg.addOutFaultInterceptors(cxfEndPointConfig.outFaultInterceptors().get());
         }
-        if (cxfEndPointConfig != null && cxfEndPointConfig.inFaultInterceptors.isPresent()) {
-            cfg.addInFaultInterceptors(cxfEndPointConfig.inFaultInterceptors.get());
+        if (cxfEndPointConfig != null && cxfEndPointConfig.inFaultInterceptors().isPresent()) {
+            cfg.addInFaultInterceptors(cxfEndPointConfig.inFaultInterceptors().get());
         }
-        if (cxfEndPointConfig != null && cxfEndPointConfig.features.isPresent()) {
-            cfg.addFeatures(cxfEndPointConfig.features.get());
+        if (cxfEndPointConfig != null && cxfEndPointConfig.features().isPresent()) {
+            cfg.addFeatures(cxfEndPointConfig.features().get());
         }
-        if (cxfEndPointConfig != null && cxfEndPointConfig.handlers.isPresent()) {
-            cfg.addHandlers(cxfEndPointConfig.handlers.get());
+        if (cxfEndPointConfig != null && cxfEndPointConfig.handlers().isPresent()) {
+            cfg.addHandlers(cxfEndPointConfig.handlers().get());
         }
         LOGGER.tracef("Registering CXF Servlet info %s", cfg);
         return cfg;

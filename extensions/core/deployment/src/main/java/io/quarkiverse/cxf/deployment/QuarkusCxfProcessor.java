@@ -114,8 +114,8 @@ class QuarkusCxfProcessor {
             OutputTargetBuildItem target,
             BuildProducer<NativeImageResourceBuildItem> resources,
             CxfBuildTimeConfig cxfBuildTimeConfig) {
-        if (cxfBuildTimeConfig.wsdlPath.isPresent()) {
-            for (String wsdlPath : cxfBuildTimeConfig.wsdlPath.get()) {
+        if (cxfBuildTimeConfig.wsdlPath().isPresent()) {
+            for (String wsdlPath : cxfBuildTimeConfig.wsdlPath().get()) {
                 resources.produce(new NativeImageResourceBuildItem(wsdlPath));
             }
         }
@@ -126,11 +126,12 @@ class QuarkusCxfProcessor {
             final Set<String> wsdlResourcePaths = new LinkedHashSet<>();
             scanWsdls(
                     classesDir,
-                    cxfBuildTimeConfig.codegen.wsdl2java.rootParameterSet,
+                    cxfBuildTimeConfig.codegen().wsdl2java().rootParameterSet(),
                     Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX,
                     wsdlResourcePaths::add);
 
-            for (Entry<String, Wsdl2JavaParameterSet> en : cxfBuildTimeConfig.codegen.wsdl2java.namedParameterSets.entrySet()) {
+            for (Entry<String, Wsdl2JavaParameterSet> en : cxfBuildTimeConfig.codegen().wsdl2java().namedParameterSets()
+                    .entrySet()) {
                 scanWsdls(
                         target.getOutputDirectory(),
                         en.getValue(),
@@ -152,9 +153,9 @@ class QuarkusCxfProcessor {
             Consumer<String> resourcePathConsumer) {
         Wsdl2JavaCodeGen.scan(
                 inputDir,
-                params.includes.isPresent() ? params.includes
+                params.includes().isPresent() ? params.includes()
                         : Optional.of(Collections.emptyList()),
-                params.excludes,
+                params.excludes(),
                 prefix,
                 new HashMap<>(),
                 path -> resourcePathConsumer.accept(inputDir.relativize(path).toString().replace('\\', '/')));

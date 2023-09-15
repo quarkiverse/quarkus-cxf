@@ -1178,7 +1178,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION+++`
 endif::add-copy-button-to-env-var[]
 -- a|
-`CLOSE`, `KEEP_ALIVE` 
+`close`, `keep-alive` 
 |`keep-alive`
 
 

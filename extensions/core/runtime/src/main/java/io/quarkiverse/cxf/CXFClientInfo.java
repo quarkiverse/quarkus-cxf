@@ -234,42 +234,42 @@ public class CXFClientInfo {
 
     public CXFClientInfo withConfig(CxfClientConfig config, String configKey) {
         Objects.requireNonNull(config);
-        this.wsdlUrl = config.wsdlPath.orElse(this.wsdlUrl);
-        this.epNamespace = config.endpointNamespace.orElse(this.epNamespace);
-        this.epName = config.endpointName.orElse(this.epName);
-        this.username = config.username.orElse(this.username);
-        this.password = config.password.orElse(this.password);
-        this.soapBinding = config.soapBinding.orElse(this.soapBinding);
-        this.endpointAddress = config.clientEndpointUrl.orElse(this.endpointAddress);
+        this.wsdlUrl = config.wsdlPath().orElse(this.wsdlUrl);
+        this.epNamespace = config.endpointNamespace().orElse(this.epNamespace);
+        this.epName = config.endpointName().orElse(this.epName);
+        this.username = config.username().orElse(this.username);
+        this.password = config.password().orElse(this.password);
+        this.soapBinding = config.soapBinding().orElse(this.soapBinding);
+        this.endpointAddress = config.clientEndpointUrl().orElse(this.endpointAddress);
         addFeatures(config);
         addHandlers(config);
         addInterceptors(config);
-        this.connectionTimeout = config.connectionTimeout;
-        this.receiveTimeout = config.receiveTimeout;
-        this.connectionRequestTimeout = config.connectionRequestTimeout;
-        this.autoRedirect = config.autoRedirect;
-        this.maxRetransmits = config.maxRetransmits;
-        this.allowChunking = config.allowChunking;
-        this.chunkingThreshold = config.chunkingThreshold;
-        this.chunkLength = config.chunkLength;
-        this.accept = config.accept.orElse(null);
-        this.acceptLanguage = config.acceptLanguage.orElse(null);
-        this.acceptEncoding = config.acceptEncoding.orElse(null);
-        this.contentType = config.contentType.orElse(null);
-        this.host = config.host.orElse(null);
-        this.connection = config.connection;
-        this.cacheControl = config.cacheControl.orElse(null);
-        this.version = config.version;
-        this.browserType = config.browserType.orElse(null);
-        this.decoupledEndpoint = config.decoupledEndpoint.orElse(null);
-        this.proxyServer = config.proxyServer.orElse(null);
-        this.proxyServerPort = config.proxyServerPort.orElse(null);
-        this.nonProxyHosts = config.nonProxyHosts.orElse(null);
-        this.proxyServerType = config.proxyServerType;
-        this.proxyUsername = config.proxyUsername.orElse(null);
-        this.proxyPassword = config.proxyPassword.orElse(null);
+        this.connectionTimeout = config.connectionTimeout();
+        this.receiveTimeout = config.receiveTimeout();
+        this.connectionRequestTimeout = config.connectionRequestTimeout();
+        this.autoRedirect = config.autoRedirect();
+        this.maxRetransmits = config.maxRetransmits();
+        this.allowChunking = config.allowChunking();
+        this.chunkingThreshold = config.chunkingThreshold();
+        this.chunkLength = config.chunkLength();
+        this.accept = config.accept().orElse(null);
+        this.acceptLanguage = config.acceptLanguage().orElse(null);
+        this.acceptEncoding = config.acceptEncoding().orElse(null);
+        this.contentType = config.contentType().orElse(null);
+        this.host = config.host().orElse(null);
+        this.connection = config.connection();
+        this.cacheControl = config.cacheControl().orElse(null);
+        this.version = config.version();
+        this.browserType = config.browserType().orElse(null);
+        this.decoupledEndpoint = config.decoupledEndpoint().orElse(null);
+        this.proxyServer = config.proxyServer().orElse(null);
+        this.proxyServerPort = config.proxyServerPort().orElse(null);
+        this.nonProxyHosts = config.nonProxyHosts().orElse(null);
+        this.proxyServerType = config.proxyServerType();
+        this.proxyUsername = config.proxyUsername().orElse(null);
+        this.proxyPassword = config.proxyPassword().orElse(null);
 
-        this.httpConduitImpl = HTTPConduitImpl.fromOptional(config.httpConduitFactory, CXFRecorder.isHc5Present(),
+        this.httpConduitImpl = HTTPConduitImpl.fromOptional(config.httpConduitFactory(), CXFRecorder.isHc5Present(),
                 "quarkus.cxf.client." + configKey + ".http-conduit-impl");
         return this;
     }
@@ -347,31 +347,31 @@ public class CXFClientInfo {
     }
 
     private CXFClientInfo addInterceptors(CxfClientConfig cxfEndPointConfig) {
-        if (cxfEndPointConfig.inInterceptors.isPresent()) {
-            this.inInterceptors.addAll(cxfEndPointConfig.inInterceptors.get());
+        if (cxfEndPointConfig.inInterceptors().isPresent()) {
+            this.inInterceptors.addAll(cxfEndPointConfig.inInterceptors().get());
         }
-        if (cxfEndPointConfig.outInterceptors.isPresent()) {
-            this.outInterceptors.addAll(cxfEndPointConfig.outInterceptors.get());
+        if (cxfEndPointConfig.outInterceptors().isPresent()) {
+            this.outInterceptors.addAll(cxfEndPointConfig.outInterceptors().get());
         }
-        if (cxfEndPointConfig.outFaultInterceptors.isPresent()) {
-            this.outFaultInterceptors.addAll(cxfEndPointConfig.outFaultInterceptors.get());
+        if (cxfEndPointConfig.outFaultInterceptors().isPresent()) {
+            this.outFaultInterceptors.addAll(cxfEndPointConfig.outFaultInterceptors().get());
         }
-        if (cxfEndPointConfig.inFaultInterceptors.isPresent()) {
-            this.inFaultInterceptors.addAll(cxfEndPointConfig.inFaultInterceptors.get());
+        if (cxfEndPointConfig.inFaultInterceptors().isPresent()) {
+            this.inFaultInterceptors.addAll(cxfEndPointConfig.inFaultInterceptors().get());
         }
         return this;
     }
 
     private CXFClientInfo addFeatures(CxfClientConfig cxfEndPointConfig) {
-        if (cxfEndPointConfig.features.isPresent()) {
-            this.features.addAll(cxfEndPointConfig.features.get());
+        if (cxfEndPointConfig.features().isPresent()) {
+            this.features.addAll(cxfEndPointConfig.features().get());
         }
         return this;
     }
 
     private CXFClientInfo addHandlers(CxfClientConfig cxfEndPointConfig) {
-        if (cxfEndPointConfig.handlers.isPresent()) {
-            this.handlers.addAll(cxfEndPointConfig.handlers.get());
+        if (cxfEndPointConfig.handlers().isPresent()) {
+            this.handlers.addAll(cxfEndPointConfig.handlers().get());
         }
         return this;
     }
