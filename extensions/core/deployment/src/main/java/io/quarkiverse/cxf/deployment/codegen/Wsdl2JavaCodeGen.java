@@ -1,19 +1,20 @@
 package io.quarkiverse.cxf.deployment.codegen;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,15 +22,22 @@ import java.util.stream.Stream;
 
 import org.apache.cxf.tools.common.ToolContext;
 import org.apache.cxf.tools.wsdlto.WSDLToJava;
-import org.eclipse.microprofile.config.Config;
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig;
+import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Wsdl2JavaConfig;
 import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Wsdl2JavaParameterSet;
+import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaParam.Wsdl2JavaParamCollection;
+import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaParam.Wsdl2JavaParamTransformer;
 import io.quarkus.bootstrap.prebuild.CodeGenException;
 import io.quarkus.deployment.CodeGenContext;
 import io.quarkus.deployment.CodeGenProvider;
+import io.quarkus.deployment.configuration.BuildTimeConfigurationReader;
+import io.quarkus.deployment.configuration.BuildTimeConfigurationReader.ReadResult;
 import io.quarkus.paths.DirectoryPathTree;
 import io.quarkus.paths.PathFilter;
+import io.smallrye.config.SmallRyeConfig;
+import io.smallrye.config.WithDefault;
 
 /**
  * Generates Java classes out of WSDL files using CXF {@code wsdl2Java} tool.
@@ -65,41 +73,53 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
 
     @Override
     public boolean trigger(CodeGenContext context) throws CodeGenException {
-        final Config config = context.config();
-        if (!config.getOptionalValue("quarkus.cxf.codegen.wsdl2java.enabled", Boolean.class).orElse(true)) {
-            log.info("Skipping " + this.getClass() + " invocation on user's request");
-            return false;
+        try {
+            BuildTimeConfigurationReader reader = new BuildTimeConfigurationReader(
+                    Thread.currentThread().getContextClassLoader());
+            final ReadResult readResult = reader.readConfiguration((SmallRyeConfig) context.config());
+            final Wsdl2JavaConfig config = ((CxfBuildTimeConfig) readResult.requireObjectForClass(CxfBuildTimeConfig.class))
+                    .codegen().wsdl2java();
+
+            // TODO once https://github.com/quarkusio/quarkus/pull/35963 reaches us we can replace the above with
+            // final Wsdl2JavaConfig config = context.config().getValue("quarkus.cxf", CxfBuildTimeConfig.class)
+            //      .codegen().wsdl2java();
+
+            if (!config.enabled()) {
+                log.info("Skipping " + this.getClass() + " invocation on user's request");
+                return false;
+            }
+
+            final Path outDir = context.outDir();
+
+            final Wsdl2JavaParameterSet rootParams = config.rootParameterSet();
+            final Map<String, String> processedFiles = new HashMap<>();
+            boolean result = false;
+
+            /*
+             * TODO: this is a workaround for https://github.com/quarkusio/quarkus/issues/34422
+             * While context.workDir() returns target or any other direct subdirectory of the project directory
+             * then this workaround will work. But it may fail as long as the project has configured some non-standard
+             * build directory.
+             */
+            final Path projectDir = context.workDir().getParent();
+            result |= wsdl2java(projectDir, context.inputDir(), rootParams, outDir, WSDL2JAVA_CONFIG_KEY_PREFIX,
+                    processedFiles);
+
+            for (Entry<String, Wsdl2JavaParameterSet> en : config.namedParameterSets().entrySet()) {
+                final String prefix = WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + en.getKey();
+                final Wsdl2JavaParameterSet namedParams = en.getValue();
+                result |= wsdl2java(projectDir, context.inputDir(), namedParams, outDir, prefix, processedFiles);
+            }
+
+            if (!result) {
+                log.infof(
+                        "wsdl2java processed 0 WSDL files under %s",
+                        absModuleRoot(context.inputDir()).relativize(context.inputDir()));
+            }
+            return result;
+        } catch (ClassNotFoundException | IOException e) {
+            throw new RuntimeException(e);
         }
-
-        final Path outDir = context.outDir();
-
-        final Function<String, Optional<List<String>>> configFunction = key -> config.getOptionalValues(key, String.class);
-        final Wsdl2JavaParameterSet rootParams = buildParameterSet(configFunction, WSDL2JAVA_CONFIG_KEY_PREFIX);
-        final Map<String, String> processedFiles = new HashMap<>();
-        boolean result = false;
-
-        /*
-         * TODO: this is a workaround for https://github.com/quarkusio/quarkus/issues/34422
-         * While context.workDir() returns target or any other direct subdirectory of the project directory
-         * then this workaround will work. But it may fail as long as the project has configured some non-standard
-         * build directory.
-         */
-        final Path projectDir = context.workDir().getParent();
-        result |= wsdl2java(projectDir, context.inputDir(), rootParams, outDir, WSDL2JAVA_CONFIG_KEY_PREFIX, processedFiles);
-
-        final Set<String> names = findParamSetNames(config.getPropertyNames());
-        for (String name : names) {
-            final String prefix = WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + name;
-            final Wsdl2JavaParameterSet namedParams = buildParameterSet(configFunction, prefix);
-            result |= wsdl2java(projectDir, context.inputDir(), namedParams, outDir, prefix, processedFiles);
-        }
-
-        if (!result) {
-            log.infof(
-                    "wsdl2java processed 0 WSDL files under %s",
-                    absModuleRoot(context.inputDir()).relativize(context.inputDir()));
-        }
-        return result;
     }
 
     static boolean wsdl2java(Path projectDir, Path inputDir, Wsdl2JavaParameterSet params, Path outDir, String prefix,
@@ -109,7 +129,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
             final Wsdl2JavaParams wsdl2JavaParams = new Wsdl2JavaParams(
                     projectDir,
                     inputDir, outDir, wsdlFile,
-                    params.additionalParams().orElse(Collections.emptyList()));
+                    params);
             if (log.isInfoEnabled()) {
                 log.info(wsdl2JavaParams.appendLog(new StringBuilder("Running wsdl2java")).toString());
             }
@@ -168,57 +188,6 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         return !processedFiles.isEmpty();
     }
 
-    static Set<String> findParamSetNames(Iterable<String> propertyNames) {
-        final Set<String> result = new TreeSet<>();
-        for (String key : propertyNames) {
-            if (key.startsWith(WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX)) {
-                Stream.of(".includes", ".excludes", ".additional-params")
-                        .filter(suffix -> key.endsWith(suffix))
-                        .findFirst()
-                        .ifPresent(suffix -> {
-                            if (WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX.length() + suffix.length() < key.length()) {
-                                /* this is a named param set key */
-                                final String name = key.substring(WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX.length(),
-                                        key.length() - suffix.length());
-                                result.add(name);
-                            }
-                        });
-            }
-        }
-        return result;
-    }
-
-    /**
-     * An inelegant way to assemble {@link Wsdl2JavaParameterSet} out of {@link Config} as long as something like
-     * {@code config.getValue("quarkus.cxf.codegen.wsdl2java", Wsdl2JavaParameterSet.class)} is not supported.
-     * See also
-     * <a href="https://github.com/quarkusio/quarkus/issues/31783">https://github.com/quarkusio/quarkus/issues/31783</a>.
-     *
-     * @param config an abstraction of {@link Config#getOptionalValues(String, Class)} for easier testing
-     * @param prefix the prefix of configuration keys from which we build the resulting {@link Wsdl2JavaParameterSet}
-     * @return a new {@link Wsdl2JavaParameterSet}
-     */
-    static Wsdl2JavaParameterSet buildParameterSet(Function<String, Optional<List<String>>> config, String prefix) {
-
-        final Optional<List<String>> maybeIncludes = config.apply(prefix + ".includes");
-        final List<String> includes;
-        if (maybeIncludes.isPresent()) {
-            includes = maybeIncludes.get();
-        } else {
-            includes = null;
-        }
-
-        final Optional<List<String>> excludes = config.apply(prefix + ".excludes");
-        final Optional<List<String>> additionalParams = config.apply(prefix + ".additional-params");
-
-        if (includes == null && (excludes.isPresent() || additionalParams.isPresent())) {
-            throw new IllegalStateException("Incomplete configuration: you must set " + prefix + ".includes if you set"
-                    + " any of " + prefix + ".excludes or " + prefix + ".additional-params");
-        }
-
-        return new Wsdl2JavaParameterSetImpl(Optional.ofNullable(includes), excludes, additionalParams);
-    }
-
     static Path absModuleRoot(final Path inputDir) {
         if (inputDir.endsWith(SRC_MAIN_RESOURCES) || inputDir.endsWith(SRC_TEST_RESOURCES)) {
             return inputDir.getParent().getParent().getParent();
@@ -233,15 +202,26 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         private final Path inputDir;
         private final Path outDir;
         private final Path wsdlFile;
-        private final List<String> additionalParams;
+        private final Wsdl2JavaParameterSet params;
 
-        public Wsdl2JavaParams(Path projectDir, Path inputDir, Path outDir, Path wsdlFile, List<String> additionalParams) {
+        public Wsdl2JavaParams(Path projectDir, Path inputDir, Path outDir, Path wsdlFile, Wsdl2JavaParameterSet params) {
             super();
             this.projectDir = projectDir;
             this.inputDir = inputDir;
             this.outDir = outDir;
             this.wsdlFile = wsdlFile;
-            this.additionalParams = absolutizeBindings(projectDir, additionalParams);
+            this.params = params;
+        }
+
+        /* A fix for https://github.com/quarkiverse/quarkus-cxf/issues/907 */
+        static String absolutizeBindings(Path projectDir, String rawBindingFile) {
+            Path bindingPath = Paths.get(rawBindingFile);
+            if (!bindingPath.isAbsolute()) {
+                /* A fix for https://github.com/quarkiverse/quarkus-cxf/issues/907 */
+                return projectDir.resolve(bindingPath).toString();
+            } else {
+                return rawBindingFile;
+            }
         }
 
         static List<String> absolutizeBindings(Path projectDir, List<String> additionalParams) {
@@ -250,66 +230,127 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
             while (it.hasNext()) {
                 String val = it.next();
                 if ("-b".equals(val) && it.hasNext()) {
-                    String rawBindingFile = it.next();
-                    Path bindingPath = Paths.get(rawBindingFile);
-                    if (!bindingPath.isAbsolute()) {
-                        /* A fix for https://github.com/quarkiverse/quarkus-cxf/issues/907 */
-                        it.set(projectDir.resolve(bindingPath).toString());
-                    }
+                    it.set(absolutizeBindings(projectDir, it.next()));
                 }
             }
             return result;
         }
 
         public StringBuilder appendLog(StringBuilder sb) {
-            final Path moduleRoot = absModuleRoot(inputDir);
-            render(path -> moduleRoot.relativize(path).toString(), value -> sb.append(' ').append(value));
+            //            final Path moduleRoot = absModuleRoot(inputDir);
+            //            render(path -> moduleRoot.relativize(path).toString(), value -> sb.append(' ').append(value));
+            render(Path::toString, value -> sb.append(' ').append(value));
             return sb;
         }
 
         public String[] toParameterArray() {
-            final String[] result = new String[additionalParams.size() + 3];
-            final AtomicInteger i = new AtomicInteger(0);
-            render(Path::toString, value -> result[i.getAndIncrement()] = value);
-            return result;
+            final List<String> result = new ArrayList<>();
+            render(Path::toString, result::add);
+            return result.toArray(new String[0]);
         }
 
         void render(Function<Path, String> pathTransformer, Consumer<String> paramConsumer) {
             paramConsumer.accept("-d");
             paramConsumer.accept(pathTransformer.apply(outDir));
-            additionalParams.forEach(paramConsumer);
+
+            Stream.of(Wsdl2JavaParameterSet.class.getDeclaredMethods())
+                    .sorted(Comparator.comparing(Method::getName))
+                    .forEach(method -> {
+                        final Wsdl2JavaParam wsdl2JavaParam = method.getAnnotation(Wsdl2JavaParam.class);
+                        final WithDefault withDefault = method.getAnnotation(WithDefault.class);
+                        if (wsdl2JavaParam != null) {
+                            final String paramName = wsdl2JavaParam.value();
+                            try {
+                                final Object value = params.getClass().getDeclaredMethod(method.getName()).invoke(params);
+                                if (value instanceof Optional) {
+                                    if (((Optional<?>) value).isPresent()) {
+                                        final Object optValue = ((Optional<?>) value).get();
+                                        if (optValue instanceof Collection) {
+                                            renderCollection(paramName, (Collection<?>) optValue, wsdl2JavaParam, paramConsumer,
+                                                    projectDir);
+                                        } else {
+                                            renderSingle(paramName, optValue, wsdl2JavaParam, null, paramConsumer);
+                                        }
+                                    }
+                                } else if (value instanceof Collection) {
+                                    renderCollection(paramName, (Collection<?>) value, wsdl2JavaParam, paramConsumer,
+                                            projectDir);
+                                } else {
+                                    renderSingle(paramName, value, wsdl2JavaParam, withDefault, paramConsumer);
+                                }
+                            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                                    | NoSuchMethodException | SecurityException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
+            params.additionalParams().ifPresent(vals -> absolutizeBindings(projectDir, vals).forEach(paramConsumer));
             paramConsumer.accept(pathTransformer.apply(wsdlFile));
         }
 
-    }
-
-    static class Wsdl2JavaParameterSetImpl implements Wsdl2JavaParameterSet {
-
-        private final Optional<List<String>> includes;
-        private final Optional<List<String>> excludes;
-        private final Optional<List<String>> additionalParams;
-
-        public Wsdl2JavaParameterSetImpl(Optional<List<String>> includes, Optional<List<String>> excludes,
-                Optional<List<String>> additionalParams) {
-            super();
-            this.includes = includes;
-            this.excludes = excludes;
-            this.additionalParams = additionalParams;
+        static void renderSingle(String paramName, Object value, Wsdl2JavaParam wsdl2JavaParam,
+                WithDefault withDefault, Consumer<String> paramConsumer) {
+            switch (wsdl2JavaParam.transformer()) {
+                case bool:
+                    System.out.println("bool " + value + " " + value.getClass().getName());
+                    if (paramName != null && Boolean.TRUE.equals(value)) {
+                        paramConsumer.accept(paramName);
+                    }
+                    break;
+                case toString:
+                    final String stringValue = value.toString();
+                    if (withDefault == null || !stringValue.equals(withDefault.value())) {
+                        if (paramName != null) {
+                            paramConsumer.accept(paramName);
+                        }
+                        paramConsumer.accept(stringValue);
+                    }
+                    break;
+                default:
+                    throw new IllegalStateException(
+                            "Unexpected " + Wsdl2JavaParamTransformer.class.getName() + ": " + wsdl2JavaParam.transformer());
+            }
         }
 
-        @Override
-        public Optional<List<String>> includes() {
-            return includes;
-        }
-
-        @Override
-        public Optional<List<String>> excludes() {
-            return excludes;
-        }
-
-        @Override
-        public Optional<List<String>> additionalParams() {
-            return additionalParams;
+        static void renderCollection(
+                String paramName,
+                Collection<?> collection,
+                Wsdl2JavaParam wsdl2JavaParam,
+                Consumer<String> paramConsumer,
+                Path projectDir) {
+            switch (wsdl2JavaParam.collection()) {
+                case commaSeparated:
+                    paramConsumer.accept(paramName);
+                    boolean first = true;
+                    final StringBuilder sb = new StringBuilder();
+                    for (Object value : collection) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            sb.append(',');
+                        }
+                        renderSingle(null, value, wsdl2JavaParam, null, sb::append);
+                    }
+                    paramConsumer.accept(sb.toString());
+                    break;
+                case multiParam:
+                    for (Object value : collection) {
+                        paramConsumer.accept(paramName);
+                        if (paramName.equals("-b")) {
+                            value = absolutizeBindings(projectDir, (String) value);
+                        }
+                        renderSingle(null, value, wsdl2JavaParam, null, paramConsumer);
+                    }
+                    break;
+                case xjc:
+                    for (Object value : collection) {
+                        paramConsumer.accept(paramName + "-X" + value);
+                    }
+                    break;
+                default:
+                    throw new IllegalStateException(
+                            "Unexpected " + Wsdl2JavaParamCollection.class.getName() + ": " + wsdl2JavaParam.collection());
+            }
         }
 
     }

@@ -62,10 +62,11 @@ Examples:
 ```
 # Parameters for foo.wsdl
 quarkus.cxf.codegen.wsdl2java.foo-params.includes = wsdl/foo.wsdl
-quarkus.cxf.codegen.wsdl2java.foo-params.additional-params = -wsdlLocation,wsdl/foo.wsdl
+quarkus.cxf.codegen.wsdl2java.foo-params.wsdl-location = wsdl/foo.wsdl
 # Parameters for bar.wsdl
 quarkus.cxf.codegen.wsdl2java.bar-params.includes = wsdl/bar.wsdl
-quarkus.cxf.codegen.wsdl2java.bar-params.additional-params = -wsdlLocation,wsdl/bar.wsdl,-xjc-Xts
+quarkus.cxf.codegen.wsdl2java.bar-params.wsdl-location = wsdl/bar.wsdl
+quarkus.cxf.codegen.wsdl2java.bar-params.xjc = ts
 ```
 
 
@@ -107,14 +108,232 @@ endif::add-copy-button-to-env-var[]
 |
 
 
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.package-names]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.package-names[quarkus.cxf.codegen.wsdl2java.package-names]`
+
+
+[.description]
+--
+A comma separated list of tokens; each token can be one of the following:
+
+ - A Java package under which the Java source files should be generated
+ - A string of the form `namespaceURI=packageName` - in this case the entities coming from the given namespace URI will be generated under the given Java package.
+
+This will be passed as option `-p` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_PACKAGE_NAMES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_PACKAGE_NAMES+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.exclude-namespace-uris]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.exclude-namespace-uris[quarkus.cxf.codegen.wsdl2java.exclude-namespace-uris]`
+
+
+[.description]
+--
+A comma separated list of WSDL schema namespace URIs to ignore when generating Java code.
+
+This will be passed as option `-nexclude` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCLUDE_NAMESPACE_URIS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCLUDE_NAMESPACE_URIS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.service-name]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.service-name[quarkus.cxf.codegen.wsdl2java.service-name]`
+
+
+[.description]
+--
+The WSDL service name to use for the generated code.
+
+This will be passed as option `-sn` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_SERVICE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_SERVICE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.bindings]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.bindings[quarkus.cxf.codegen.wsdl2java.bindings]`
+
+
+[.description]
+--
+A list of paths pointing at JAXWS or JAXB binding files or XMLBeans context files. The path to be either absolute or relative to the current Maven or Gradle module.
+
+This will be passed as option `-b` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_BINDINGS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_BINDINGS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.validate]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.validate[quarkus.cxf.codegen.wsdl2java.validate]`
+
+
+[.description]
+--
+If `true`, WSDLs are validated before processing; otherwise the WSDLs are not validated.
+
+This will be passed as option `-validate` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_VALIDATE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_VALIDATE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.wsdl-location]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.wsdl-location[quarkus.cxf.codegen.wsdl2java.wsdl-location]`
+
+
+[.description]
+--
+Specifies the value of the `@WebServiceClient` annotation's wsdlLocation property.
+
+This will be passed as option `-wsdlLocation` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_WSDL_LOCATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_WSDL_LOCATION+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.xjc]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.xjc[quarkus.cxf.codegen.wsdl2java.xjc]`
+
+
+[.description]
+--
+A comma separated list of XJC extensions to enable. The following extensions are available through `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency:
+
+ - `bg` - generate `getX()` methods for boolean fields instead of `isX()`
+ - `bgi` - generate both `isX()` and `getX()` methods for boolean fields
+ - `dv` - initialize fields mapped from elements/attributes with their default values
+ - `javadoc` - generates JavaDoc based on `xsd:documentation`
+ - `property-listener` - add a property listener and the code for triggering the property change events to setter methods
+ - `ts` - generate `toString()` methods
+ - `wsdlextension` - generate WSDL extension methods in root classes
+
+These values correspond to `-wsdl2java` options `-xjc-Xbg`, `-xjc-Xbgi`, `-xjc-Xdv`, `-xjc-Xjavadoc`, `-xjc-Xproperty-listener`, `-xjc-Xts` and `-xjc-Xwsdlextension` respectively.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_XJC+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_XJC+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.exception-super]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.exception-super[quarkus.cxf.codegen.wsdl2java.exception-super]`
+
+
+[.description]
+--
+A fully qualified class name to use as a superclass for fault beans generated from `wsdl:fault` elements
+
+This will be passed as option `-exceptionSuper` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCEPTION_SUPER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCEPTION_SUPER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`java.lang.Exception`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.async-methods]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.async-methods[quarkus.cxf.codegen.wsdl2java.async-methods]`
+
+
+[.description]
+--
+A comma separated list of SEI methods for which asynchronous sibling methods should be generated; similar to `enableAsyncMapping` in a JAX-WS binding file
+
+This will be passed as option `-asyncMethods` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ASYNC_METHODS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ASYNC_METHODS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.bare-methods]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.bare-methods[quarkus.cxf.codegen.wsdl2java.bare-methods]`
+
+
+[.description]
+--
+A comma separated list of SEI methods for which wrapper style sibling methods should be generated; similar to `enableWrapperStyle` in JAX-WS binding file
+
+This will be passed as option `-bareMethods` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_BARE_METHODS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_BARE_METHODS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.mime-methods]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.mime-methods[quarkus.cxf.codegen.wsdl2java.mime-methods]`
+
+
+[.description]
+--
+A comma separated list of SEI methods for which `mime:content` mapping should be enabled; similar to `enableMIMEContent` in JAX-WS binding file
+
+This will be passed as option `-mimeMethods` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_MIME_METHODS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_MIME_METHODS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]`
 
 
 [.description]
 --
-A comma separated list of additional command line parameters that should passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-wsdlLocation,classpath:wsdl/CalculatorService.wsdl`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
-
-You need to add `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency to your project to be able to use `-xjc-Xbg`, `-xjc-Xdv`, `-xjc-Xjavadoc`, `-xjc-Xproperty-listener`, `-xjc-Xts` or `-xjc-Xwsdlextension`.
+A comma separated list of additional command line parameters that should be passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-keep,-dex,false`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ADDITIONAL_PARAMS+++[]
@@ -289,10 +508,11 @@ Examples:
 ```
 # Parameters for foo.wsdl
 quarkus.cxf.codegen.wsdl2java.foo-params.includes = wsdl/foo.wsdl
-quarkus.cxf.codegen.wsdl2java.foo-params.additional-params = -wsdlLocation,wsdl/foo.wsdl
+quarkus.cxf.codegen.wsdl2java.foo-params.wsdl-location = wsdl/foo.wsdl
 # Parameters for bar.wsdl
 quarkus.cxf.codegen.wsdl2java.bar-params.includes = wsdl/bar.wsdl
-quarkus.cxf.codegen.wsdl2java.bar-params.additional-params = -wsdlLocation,wsdl/bar.wsdl,-xjc-Xts
+quarkus.cxf.codegen.wsdl2java.bar-params.wsdl-location = wsdl/bar.wsdl
+quarkus.cxf.codegen.wsdl2java.bar-params.xjc = ts
 ```
 
 
@@ -334,14 +554,232 @@ endif::add-copy-button-to-env-var[]
 |
 
 
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.package-names]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.package-names[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".package-names]`
+
+
+[.description]
+--
+A comma separated list of tokens; each token can be one of the following:
+
+ - A Java package under which the Java source files should be generated
+ - A string of the form `namespaceURI=packageName` - in this case the entities coming from the given namespace URI will be generated under the given Java package.
+
+This will be passed as option `-p` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__PACKAGE_NAMES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__PACKAGE_NAMES+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.exclude-namespace-uris]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.exclude-namespace-uris[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".exclude-namespace-uris]`
+
+
+[.description]
+--
+A comma separated list of WSDL schema namespace URIs to ignore when generating Java code.
+
+This will be passed as option `-nexclude` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCLUDE_NAMESPACE_URIS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCLUDE_NAMESPACE_URIS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.service-name]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.service-name[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".service-name]`
+
+
+[.description]
+--
+The WSDL service name to use for the generated code.
+
+This will be passed as option `-sn` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__SERVICE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__SERVICE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.bindings]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.bindings[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".bindings]`
+
+
+[.description]
+--
+A list of paths pointing at JAXWS or JAXB binding files or XMLBeans context files. The path to be either absolute or relative to the current Maven or Gradle module.
+
+This will be passed as option `-b` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__BINDINGS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__BINDINGS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.validate]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.validate[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".validate]`
+
+
+[.description]
+--
+If `true`, WSDLs are validated before processing; otherwise the WSDLs are not validated.
+
+This will be passed as option `-validate` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__VALIDATE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__VALIDATE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.wsdl-location]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.wsdl-location[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".wsdl-location]`
+
+
+[.description]
+--
+Specifies the value of the `@WebServiceClient` annotation's wsdlLocation property.
+
+This will be passed as option `-wsdlLocation` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__WSDL_LOCATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__WSDL_LOCATION+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.xjc]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.xjc[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".xjc]`
+
+
+[.description]
+--
+A comma separated list of XJC extensions to enable. The following extensions are available through `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency:
+
+ - `bg` - generate `getX()` methods for boolean fields instead of `isX()`
+ - `bgi` - generate both `isX()` and `getX()` methods for boolean fields
+ - `dv` - initialize fields mapped from elements/attributes with their default values
+ - `javadoc` - generates JavaDoc based on `xsd:documentation`
+ - `property-listener` - add a property listener and the code for triggering the property change events to setter methods
+ - `ts` - generate `toString()` methods
+ - `wsdlextension` - generate WSDL extension methods in root classes
+
+These values correspond to `-wsdl2java` options `-xjc-Xbg`, `-xjc-Xbgi`, `-xjc-Xdv`, `-xjc-Xjavadoc`, `-xjc-Xproperty-listener`, `-xjc-Xts` and `-xjc-Xwsdlextension` respectively.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__XJC+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__XJC+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.exception-super]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.exception-super[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".exception-super]`
+
+
+[.description]
+--
+A fully qualified class name to use as a superclass for fault beans generated from `wsdl:fault` elements
+
+This will be passed as option `-exceptionSuper` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCEPTION_SUPER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCEPTION_SUPER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`java.lang.Exception`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.async-methods]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.async-methods[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".async-methods]`
+
+
+[.description]
+--
+A comma separated list of SEI methods for which asynchronous sibling methods should be generated; similar to `enableAsyncMapping` in a JAX-WS binding file
+
+This will be passed as option `-asyncMethods` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ASYNC_METHODS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ASYNC_METHODS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.bare-methods]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.bare-methods[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".bare-methods]`
+
+
+[.description]
+--
+A comma separated list of SEI methods for which wrapper style sibling methods should be generated; similar to `enableWrapperStyle` in JAX-WS binding file
+
+This will be passed as option `-bareMethods` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__BARE_METHODS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__BARE_METHODS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.mime-methods]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.mime-methods[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".mime-methods]`
+
+
+[.description]
+--
+A comma separated list of SEI methods for which `mime:content` mapping should be enabled; similar to `enableMIMEContent` in JAX-WS binding file
+
+This will be passed as option `-mimeMethods` to `wsdl2java`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__MIME_METHODS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__MIME_METHODS+++`
+endif::add-copy-button-to-env-var[]
+--|list of string 
+|
+
+
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.additional-params]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.-named-parameter-sets-.additional-params[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".additional-params]`
 
 
 [.description]
 --
-A comma separated list of additional command line parameters that should passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-wsdlLocation,classpath:wsdl/CalculatorService.wsdl`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
-
-You need to add `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency to your project to be able to use `-xjc-Xbg`, `-xjc-Xdv`, `-xjc-Xjavadoc`, `-xjc-Xproperty-listener`, `-xjc-Xts` or `-xjc-Xwsdlextension`.
+A comma separated list of additional command line parameters that should be passed to CXF `wsdl2java` tool along with the files selected by `includes` and `excludes`. Example: `-keep,-dex,false`. Check link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++[]
