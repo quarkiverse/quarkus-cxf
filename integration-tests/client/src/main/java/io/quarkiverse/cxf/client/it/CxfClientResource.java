@@ -6,7 +6,6 @@ import java.io.StringWriter;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -50,7 +49,7 @@ public class CxfClientResource {
     CalculatorService myFaultyCalculator;
 
     @Inject
-    @Named("org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService")
+    @CXFClient("myCalculator") // name used in application.properties
     CXFClientInfo calculatorClientInfo;
 
     @Inject

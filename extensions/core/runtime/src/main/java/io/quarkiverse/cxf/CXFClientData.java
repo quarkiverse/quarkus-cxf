@@ -1,26 +1,17 @@
 package io.quarkiverse.cxf;
 
 import java.io.Serializable;
-import java.util.Set;
 
 /**
- * Provides runtime metadata for a CXF client.
- *
- * <p>
- * This class contains extracted from a SEI. It contains basic data to
- * setup a proxy client for a given SEI.
- * </p>
+ * That specific part of CXF client metadata that is known at build time.
  */
 public class CXFClientData implements Serializable {
-    private Set<String> wrapperClassNames;
-    private String soapBinding;
-    private String sei;
-    private String wsName;
-    private String wsNamespace;
-    private boolean proxyClassRuntimeInitialized;
-
-    public CXFClientData() {
-    }
+    private static final long serialVersionUID = 1L;
+    final private String soapBinding;
+    final private String sei;
+    final private String wsName;
+    final private String wsNamespace;
+    final private boolean proxyClassRuntimeInitialized;
 
     public CXFClientData(
             String soapBinding,
@@ -53,29 +44,5 @@ public class CXFClientData implements Serializable {
 
     public boolean isProxyClassRuntimeInitialized() {
         return proxyClassRuntimeInitialized;
-    }
-
-    public void setProxyClassRuntimeInitialized(boolean proxyClassRuntimeInitialized) {
-        this.proxyClassRuntimeInitialized = proxyClassRuntimeInitialized;
-    }
-
-    public void setWrapperClassNames(Set<String> classNames) {
-        this.wrapperClassNames = classNames;
-    }
-
-    public void setSoapBinding(String soapBinding) {
-        this.soapBinding = soapBinding;
-    }
-
-    public void setSei(String sei) {
-        this.sei = sei;
-    }
-
-    public void setWsName(String wsName) {
-        this.wsName = wsName;
-    }
-
-    public void setWsNamespace(String wsNamespace) {
-        this.wsNamespace = wsNamespace;
     }
 }

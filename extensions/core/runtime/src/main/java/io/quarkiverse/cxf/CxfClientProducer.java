@@ -31,13 +31,13 @@ import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.annotation.CXFClient;
 
 /**
- * Base producer class for setting up CXF client proxies.
+ * Base producer class for setting up CXF client proxies and {@link CXFClientInfo}s.
  * <p>
- * During augmentation (build-time) a bean is created derived from this class for each SEI. The producing method calls
- * loadCxfClient() to get a WS client proxy.
+ * A class extending this class is generated for each Service Endpoint Interface (SEI) at build time. Those generated
+ * classes delegate the client creation to {@link #loadCxfClient(InjectionPoint, CXFClientData)}.
  * <p>
- * Notice the InjectionPoint parameter present in signature of loadCxfClient. Via that meta information we calculate the
- * proper configuration to use.
+ * Notice the {@link InjectionPoint} parameter of {@link #loadCxfClient(InjectionPoint, CXFClientData)}. It is used to
+ * find the configuration for the specific client by key given in <code>@CXFClient("myClient")</code>.
  */
 public abstract class CxfClientProducer {
 
@@ -55,8 +55,15 @@ public abstract class CxfClientProducer {
     /**
      * Must be public, otherwise: java.lang.VerifyError: Bad access to protected data in invokevirtual
      */
-    public Object loadCxfClient(InjectionPoint ip, CXFClientInfo meta) {
+    public Object loadCxfClient(InjectionPoint ip, CXFClientData meta) {
         return produceCxfClient(selectorCXFClientInfo(config, fixedConfig, ip, meta));
+    }
+
+    /**
+     * Must be public, otherwise: java.lang.VerifyError: Bad access to protected data in invokevirtual
+     */
+    public CXFClientInfo loadCxfClientInfo(InjectionPoint ip, CXFClientData meta) {
+        return selectorCXFClientInfo(config, fixedConfig, ip, meta);
     }
 
     /**
@@ -94,7 +101,7 @@ public abstract class CxfClientProducer {
         QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean();
         QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(quarkusClientFactoryBean, interfaces);
         factory.setServiceClass(seiClass);
-        LOGGER.debugf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
+        LOGGER.warnf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
         factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
         if (cxfClientInfo.getEpName() != null) {
             factory.setEndpointName(new QName(cxfClientInfo.getEpNamespace(), cxfClientInfo.getEpName()));
@@ -276,12 +283,11 @@ public abstract class CxfClientProducer {
      * @param meta The default to return
      * @return not null
      */
-    private static CXFClientInfo selectorCXFClientInfo(
+    protected static CXFClientInfo selectorCXFClientInfo(
             CxfConfig config,
             CxfFixedConfig fixedConfig,
             InjectionPoint ip,
-            CXFClientInfo meta) {
-        CXFClientInfo info = new CXFClientInfo(meta);
+            CXFClientData meta) {
 
         // If injection point is annotated with @CXFClient then determine a
         // configuration by looking up annotated config value:
@@ -291,7 +297,7 @@ public abstract class CxfClientProducer {
             String configKey = anno.value();
 
             if (config.isClientPresent(configKey)) {
-                return info.withConfig(config.getClient(configKey), configKey);
+                return new CXFClientInfo(meta, config.getClient(configKey), configKey);
             }
 
             // If config-key is present and not default: This is an error:
@@ -322,9 +328,9 @@ public abstract class CxfClientProducer {
                 LOGGER.warnf(
                         "No configuration found for quarkus.cxf.*.service-interface = %s and alternative = false. Using the values from the service instead: %s.",
                         meta.getSei(), meta);
-                return meta;
+                return new CXFClientInfo(meta, config.internal().client(), null);
             case 1:
-                return info.withConfig(config.clients().get(keylist.get(0)), keylist.get(0));
+                return new CXFClientInfo(meta, config.clients().get(keylist.get(0)), keylist.get(0));
             default:
                 throw new IllegalStateException("quarkus.cxf.*.service-interface = " + meta.getSei()
                         + " with alternative = false expected once, but found " + keylist.size() + " times in "

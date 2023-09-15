@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import io.quarkiverse.cxf.CXFClientData;
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.QuarkusUnitTest;
@@ -26,18 +27,22 @@ public class CxfSeiOnlyClientTest {
                     .addClass(Add.class)
                     .addClass(Delete.class)
                     .addClass(GreetingWebService.class))
-            .overrideConfigKey("quarkus.cxf.client.\"fruitclient\".client-endpoint-url", "http://localhost:8081/services/fruit")
-            .overrideConfigKey("quarkus.cxf.client.\"fruitclient\".service-interface",
+            .overrideConfigKey("quarkus.cxf.client.fruitclient.client-endpoint-url", "http://localhost:8081/services/fruit")
+            .overrideConfigKey("quarkus.cxf.client.fruitclient.service-interface",
                     "io.quarkiverse.cxf.deployment.test.FruitWebService")
-            .overrideConfigKey("quarkus.cxf.client.\"foo\".client-endpoint-url", "http://localhost:8081/services/fruit")
-            .overrideConfigKey("quarkus.cxf.client.\"foo\".features", "org.apache.cxf.feature.LoggingFeature");
+            .overrideConfigKey("quarkus.cxf.client.foo.client-endpoint-url", "http://localhost:8081/services/fruit")
+            .overrideConfigKey("quarkus.cxf.client.foo.features", "org.apache.cxf.feature.LoggingFeature")
+            .overrideConfigKey("quarkus.cxf.client.foo.alternative", "true")
+            .overrideConfigKey("quarkus.cxf.client.foo.service-interface",
+                    "io.quarkiverse.cxf.deployment.test.FruitWebService");
 
     @Inject
+    @CXFClient("fruitclient")
     CXFClientInfo clientInfo;
 
     @Inject
     @Named("io.quarkiverse.cxf.deployment.test.FruitWebService")
-    CXFClientInfo namedClientInfo;
+    CXFClientData namedClientData;
 
     @Inject
     @CXFClient
@@ -51,7 +56,7 @@ public class CxfSeiOnlyClientTest {
         Assertions.assertFalse(Proxy.isProxyClass(clientInfo.getClass()));
         Assertions.assertTrue(Proxy.isProxyClass(clientProxy.getClass()));
 
-        Assertions.assertEquals(namedClientInfo, clientInfo);
+        Assertions.assertNotNull(namedClientData);
     }
 
     @Test

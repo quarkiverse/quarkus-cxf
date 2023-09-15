@@ -124,24 +124,21 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-configuration-documentation</id>
-                        <phase>process-classes</phase>
+                        <id>filter-and-move-config-options-docs</id>
                         <goals>
-                            <goal>copy-resources</goal>
+                            <goal>execute</goal>
                         </goals>
+                        <phase>process-classes</phase>
                         <configuration>
-                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/pages/includes/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/</directory>
-                                    <include>${project.artifactId}.adoc</include>
-                                    <filtering>false</filtering>
-                                </resource>
-                            </resources>
+                            <source>file:${maven.multiModuleProjectDirectory}/src/build/scripts/filter-and-move-config-options-docs.groovy</source>
+                            <properties>
+                                <inputFile>${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/quarkus-cxf.adoc</inputFile>
+                                <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/pages/includes</outputDirectory>
+                            </properties>
                         </configuration>
                     </execution>
                 </executions>

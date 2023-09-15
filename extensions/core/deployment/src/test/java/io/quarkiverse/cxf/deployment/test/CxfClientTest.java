@@ -33,6 +33,7 @@ public class CxfClientTest {
             .overrideConfigKey("quarkus.cxf.client.\"foo\".features", "org.apache.cxf.feature.LoggingFeature");
 
     @Inject
+    @CXFClient("fruitclient")
     CXFClientInfo clientInfo;
 
     @Inject
