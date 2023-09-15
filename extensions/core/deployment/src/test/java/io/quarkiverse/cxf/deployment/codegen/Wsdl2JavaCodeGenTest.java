@@ -8,87 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Wsdl2JavaParameterSet;
-
 public class Wsdl2JavaCodeGenTest {
-
-    @Test
-    void findParamSetNames() {
-
-        Assertions.assertThat(Wsdl2JavaCodeGen.findParamSetNames(
-                Set.of(
-                        "quarkus.cxf.codegen.wsdl2java.includes")))
-                .containsExactly();
-        Assertions.assertThat(Wsdl2JavaCodeGen.findParamSetNames(
-                Set.of(
-                        "quarkus.cxf.codegen.wsdl2java.name1.includes")))
-                .containsExactly("name1");
-        Assertions.assertThat(Wsdl2JavaCodeGen.findParamSetNames(
-                Set.of(
-                        "quarkus.cxf.codegen.wsdl2java.name1.includes",
-                        "quarkus.cxf.codegen.wsdl2java.name2.includes")))
-                .containsExactly("name1", "name2");
-    }
-
-    @Test
-    void buildParameterSetNameLessDefaults() {
-        final Wsdl2JavaParameterSet params = Wsdl2JavaCodeGen.buildParameterSet(
-                new Config(Map.of()),
-                Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX);
-
-        Assertions.assertThat(params.includes()).isEmpty();
-        Assertions.assertThat(params.excludes()).isEmpty();
-        Assertions.assertThat(params.additionalParams()).isEmpty();
-    }
-
-    @Test
-    void buildParameterSetNameLess() {
-        final Wsdl2JavaParameterSet params = Wsdl2JavaCodeGen.buildParameterSet(
-                new Config(Map.of(
-                        "quarkus.cxf.codegen.wsdl2java.includes", List.of("**.wsdl"),
-                        "quarkus.cxf.codegen.wsdl2java.excludes", List.of("foo.wsdl"),
-                        "quarkus.cxf.codegen.wsdl2java.additional-params", List.of("-foo", "bar"))),
-                Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX);
-
-        Assertions.assertThat(params.includes()).isPresent().get().asList().containsExactly("**.wsdl");
-        Assertions.assertThat(params.excludes()).isPresent().get().asList().containsExactly("foo.wsdl");
-        Assertions.assertThat(params.additionalParams()).get().asList().containsExactly("-foo", "bar");
-    }
-
-    @Test
-    void buildParameterSetNamedIllegal() {
-        Assertions
-                .assertThatExceptionOfType(IllegalStateException.class)
-                .isThrownBy(() -> {
-                    Wsdl2JavaCodeGen.buildParameterSet(
-                            new Config(Map.of(
-                                    "quarkus.cxf.codegen.wsdl2java.my-name.excludes", List.of("foo.wsdl"),
-                                    "quarkus.cxf.codegen.wsdl2java.my-name.additional-params", List.of("-foo", "bar"))),
-                            Wsdl2JavaCodeGen.WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + "my-name");
-                });
-    }
-
-    @Test
-    void buildParameterSetNamed() {
-        final Wsdl2JavaParameterSet params = Wsdl2JavaCodeGen.buildParameterSet(
-                new Config(Map.of(
-                        "quarkus.cxf.codegen.wsdl2java.my-name.includes", List.of("*.wsdl"),
-                        "quarkus.cxf.codegen.wsdl2java.my-name.excludes", List.of("foo.wsdl"),
-                        "quarkus.cxf.codegen.wsdl2java.my-name.additional-params", List.of("-foo", "bar"))),
-                Wsdl2JavaCodeGen.WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + "my-name");
-
-        Assertions.assertThat(params.includes()).isPresent().get().asList()
-                .containsExactly("*.wsdl");
-        Assertions.assertThat(params.excludes()).isPresent().get().asList().containsExactly("foo.wsdl");
-        Assertions.assertThat(params.additionalParams()).get().asList().containsExactly("-foo", "bar");
-    }
 
     @Test
     void scanRecursive() throws IOException {
@@ -223,17 +148,4 @@ public class Wsdl2JavaCodeGenTest {
         return tempDir;
     }
 
-    private static class Config implements Function<String, Optional<List<String>>> {
-        private final Map<String, List<String>> values;
-
-        public Config(Map<String, List<String>> values) {
-            super();
-            this.values = values;
-        }
-
-        @Override
-        public Optional<List<String>> apply(String key) {
-            return Optional.ofNullable(values.get(key));
-        }
-    }
 }

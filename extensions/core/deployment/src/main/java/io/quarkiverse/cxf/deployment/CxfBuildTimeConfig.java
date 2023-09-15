@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaParam;
+import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaParam.Wsdl2JavaParamCollection;
+import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaParam.Wsdl2JavaParamTransformer;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -127,10 +130,11 @@ public interface CxfBuildTimeConfig {
          * <pre>
          * # Parameters for foo.wsdl
          * quarkus.cxf.codegen.wsdl2java.foo-params.includes = wsdl/foo.wsdl
-         * quarkus.cxf.codegen.wsdl2java.foo-params.additional-params = -wsdlLocation,wsdl/foo.wsdl
+         * quarkus.cxf.codegen.wsdl2java.foo-params.wsdl-location = wsdl/foo.wsdl
          * # Parameters for bar.wsdl
          * quarkus.cxf.codegen.wsdl2java.bar-params.includes = wsdl/bar.wsdl
-         * quarkus.cxf.codegen.wsdl2java.bar-params.additional-params = -wsdlLocation,wsdl/bar.wsdl,-xjc-Xts
+         * quarkus.cxf.codegen.wsdl2java.bar-params.wsdl-location = wsdl/bar.wsdl
+         * quarkus.cxf.codegen.wsdl2java.bar-params.xjc = ts
          * </pre>
          * <p>
          * Note that file extensions other than {@code .wsdl} will work during normal builds, but changes in the
@@ -162,15 +166,123 @@ public interface CxfBuildTimeConfig {
         public Optional<List<String>> excludes();
 
         /**
-         * A comma separated list of additional command line parameters that should passed to CXF {@code wsdl2java} tool
+         * A comma separated list of tokens; each token can be one of the following:
+         * <ul>
+         * <li>A Java package under which the Java source files should be generated
+         * <li>A string of the form {@code namespaceURI=packageName} - in this case the entities coming from the given
+         * namespace URI will be generated under the given Java package.
+         * </ul>
+         * <p>
+         * This will be passed as option {@code -p} to {@code wsdl2java}
+         */
+        @Wsdl2JavaParam(value = "-p", collection = Wsdl2JavaParamCollection.commaSeparated)
+        public Optional<List<String>> packageNames();
+
+        /**
+         * A comma separated list of WSDL schema namespace URIs to ignore when generating Java code.
+         * <p>
+         * This will be passed as option {@code -nexclude} to {@code wsdl2java}
+         */
+        @Wsdl2JavaParam(value = "-nexclude", collection = Wsdl2JavaParamCollection.multiParam)
+        public Optional<List<String>> excludeNamespaceUris();
+
+        /**
+         * The WSDL service name to use for the generated code.
+         * <p>
+         * This will be passed as option {@code -sn} to {@code wsdl2java}
+         */
+        @Wsdl2JavaParam("-sn")
+        public Optional<String> serviceName();
+
+        /**
+         * A list of paths pointing at JAXWS or JAXB binding files or XMLBeans context files. The path to be either
+         * absolute or relative to the current Maven or Gradle module.
+         * <p>
+         * This will be passed as option {@code -b} to {@code wsdl2java}
+         */
+        @Wsdl2JavaParam(value = "-b", collection = Wsdl2JavaParamCollection.multiParam)
+        public Optional<List<String>> bindings();
+
+        /**
+         * If {@code true}, WSDLs are validated before processing; otherwise the WSDLs are not validated.
+         * <p>
+         * This will be passed as option {@code -validate} to {@code wsdl2java}
+         */
+        @WithDefault("false")
+        @Wsdl2JavaParam(value = "-validate", transformer = Wsdl2JavaParamTransformer.bool)
+        public boolean validate();
+
+        /**
+         * Specifies the value of the {@code @WebServiceClient} annotation's wsdlLocation property.
+         * <p>
+         * This will be passed as option {@code -wsdlLocation} to {@code wsdl2java}
+         */
+        @Wsdl2JavaParam("-wsdlLocation")
+        public Optional<String> wsdlLocation();
+
+        /**
+         * A comma separated list of XJC extensions to enable. The following extensions are available through
+         * {@code io.quarkiverse.cxf:quarkus-cxf-xjc-plugins} dependency:
+         * <ul>
+         * <li>{@code bg} - generate {@code getX()} methods for boolean fields instead of {@code isX()}
+         * <li>{@code bgi} - generate both {@code isX()} and {@code getX()} methods for boolean fields
+         * <li>{@code dv} - initialize fields mapped from elements/attributes with their default values
+         * <li>{@code javadoc} - generates JavaDoc based on {@code xsd:documentation}
+         * <li>{@code property-listener} - add a property listener and the code for triggering the property change events to
+         * setter methods
+         * <li>{@code ts} - generate {@code toString()} methods
+         * <li>{@code wsdlextension} - generate WSDL extension methods in root classes
+         * </ul>
+         * <p>
+         * These values correspond to {@code -wsdl2java} options {@code -xjc-Xbg}, {@code -xjc-Xbgi},
+         * {@code -xjc-Xdv}, {@code -xjc-Xjavadoc}, {@code -xjc-Xproperty-listener}, {@code -xjc-Xts} and
+         * {@code -xjc-Xwsdlextension} respectively.
+         */
+        @Wsdl2JavaParam(value = "-xjc", collection = Wsdl2JavaParamCollection.xjc)
+        public Optional<List<String>> xjc();
+
+        /**
+         * A fully qualified class name to use as a superclass for fault beans generated from {@code wsdl:fault} elements
+         * <p>
+         * This will be passed as option {@code -exceptionSuper} to {@code wsdl2java}
+         */
+        @WithDefault("java.lang.Exception")
+        @Wsdl2JavaParam("-exceptionSuper")
+        public String exceptionSuper();
+
+        /**
+         * A comma separated list of SEI methods for which asynchronous sibling methods should be generated; similar to
+         * {@code enableAsyncMapping} in a JAX-WS binding file
+         * <p>
+         * This will be passed as option {@code -asyncMethods} to {@code wsdl2java}
+         */
+        @Wsdl2JavaParam(value = "-asyncMethods", collection = Wsdl2JavaParamCollection.commaSeparated)
+        public Optional<List<String>> asyncMethods();
+
+        /**
+         * A comma separated list of SEI methods for which wrapper style sibling methods should be generated; similar to
+         * {@code enableWrapperStyle} in JAX-WS binding file
+         * <p>
+         * This will be passed as option {@code -bareMethods} to {@code wsdl2java}
+         */
+        @Wsdl2JavaParam(value = "-bareMethods", collection = Wsdl2JavaParamCollection.commaSeparated)
+        public Optional<List<String>> bareMethods();
+
+        /**
+         * A comma separated list of SEI methods for which {@code mime:content} mapping should be enabled; similar to
+         * {@code enableMIMEContent} in JAX-WS binding file
+         * <p>
+         * This will be passed as option {@code -mimeMethods} to {@code wsdl2java}
+         */
+        @Wsdl2JavaParam(value = "-mimeMethods", collection = Wsdl2JavaParamCollection.commaSeparated)
+        public Optional<List<String>> mimeMethods();
+
+        /**
+         * A comma separated list of additional command line parameters that should be passed to CXF {@code wsdl2java} tool
          * along with the files selected by {@link #includes} and {@link #excludes}. Example:
-         * {@code -wsdlLocation,classpath:wsdl/CalculatorService.wsdl}. Check
+         * {@code -keep,-dex,false}. Check
          * <a href="https://cxf.apache.org/docs/wsdl-to-java.html"><code>wsdl2java</code> documentation</a> for all
          * supported options.
-         * <p>
-         * You need to add {@code io.quarkiverse.cxf:quarkus-cxf-xjc-plugins} dependency to your project to be able to
-         * use {@code -xjc-Xbg}, {@code -xjc-Xdv}, {@code -xjc-Xjavadoc}, {@code -xjc-Xproperty-listener}, {@code -xjc-Xts} or
-         * {@code -xjc-Xwsdlextension}.
          */
         public Optional<List<String>> additionalParams();
 

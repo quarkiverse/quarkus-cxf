@@ -52,10 +52,11 @@ each one of them. Here is an example:
 ----
 # Parameters for foo.wsdl
 quarkus.cxf.codegen.wsdl2java.foo-params.includes = wsdl/foo.wsdl
-quarkus.cxf.codegen.wsdl2java.foo-params.additional-params = -wsdlLocation,wsdl/foo.wsdl
+quarkus.cxf.codegen.wsdl2java.foo-params.wsdl-location = wsdl/foo.wsdl
 # Parameters for bar.wsdl
 quarkus.cxf.codegen.wsdl2java.bar-params.includes = wsdl/bar.wsdl
-quarkus.cxf.codegen.wsdl2java.bar-params.additional-params = -wsdlLocation,wsdl/bar.wsdl,-xjc-Xts
+quarkus.cxf.codegen.wsdl2java.bar-params.wsdl-location = wsdl/bar.wsdl
+quarkus.cxf.codegen.wsdl2java.bar-params.xjc = ts
 ----
 
 TIP: Add `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]` dependency to your project to be able to use
