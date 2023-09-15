@@ -3,6 +3,7 @@ package io.quarkiverse.cxf;
 import java.util.Map;
 import java.util.Optional;
 
+import io.quarkus.runtime.annotations.ConfigDocIgnore;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
@@ -24,11 +25,22 @@ public interface CxfConfig {
     @WithName("client")
     public Map<String, CxfClientConfig> clients();
 
+    /**
+     * This exists just as a convenient way to get a {@link CxfClientConfig} with all defaults set.
+     * It is not intended to be used by end users.
+     */
+    public InternalConfig internal();
+
     default boolean isClientPresent(String key) {
         return Optional.ofNullable(clients()).map(m -> m.containsKey(key)).orElse(false);
     }
 
     default CxfClientConfig getClient(String key) {
         return Optional.ofNullable(clients()).map(m -> m.get(key)).orElse(null);
+    }
+
+    public interface InternalConfig {
+        @ConfigDocIgnore
+        public CxfClientConfig client();
     }
 }

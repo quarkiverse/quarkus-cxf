@@ -1,7 +1,5 @@
 package io.quarkiverse.cxf;
 
-import static java.lang.String.format;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,23 +24,13 @@ import io.vertx.ext.web.RoutingContext;
 @Recorder
 public class CXFRecorder {
     private static final Logger LOGGER = Logger.getLogger(CXFRecorder.class);
-    private static final String DEFAULT_EP_ADDR = "http://localhost:8080";
     private static boolean hc5Present = false;
 
     /**
-     * Create CXFClientInfo supplier.
-     * <p>
-     * This method is called once per @WebService *interface*. The idea is to produce a default client config for a
-     * given SEI.
+     * Stores the given {@link CXFClientData} in the application.
      */
-    public RuntimeValue<CXFClientInfo> cxfClientInfoSupplier(CXFClientData cxfClientData) {
-        return new RuntimeValue<>(new CXFClientInfo(
-                cxfClientData.getSei(),
-                format("%s/%s", DEFAULT_EP_ADDR, cxfClientData.getSei().toLowerCase()),
-                cxfClientData.getSoapBinding(),
-                cxfClientData.getWsNamespace(),
-                cxfClientData.getWsName(),
-                cxfClientData.isProxyClassRuntimeInitialized()));
+    public RuntimeValue<CXFClientData> cxfClientData(CXFClientData cxfClientData) {
+        return new RuntimeValue<>(cxfClientData);
     }
 
     private static class ServletConfig {

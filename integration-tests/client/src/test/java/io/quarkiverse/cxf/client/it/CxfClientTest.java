@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -180,7 +179,6 @@ public class CxfClientTest {
      * {@link CXFClientInfo}.
      */
     @Test
-    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/491")
     void wsdlUrl() {
 
         final String wsdlUrl = ConfigProvider.getConfig()
@@ -200,7 +198,6 @@ public class CxfClientTest {
      * {@link CXFClientInfo}.
      */
     @Test
-    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/491")
     void endpointAddress() {
 
         final String endpointAddress = ConfigProvider.getConfig()

@@ -150,9 +150,9 @@ public class CxfClientProcessor {
                 .map(cxf -> {
                     LOGGER.debugf("producing dedicated CXFClientInfo bean named '%s' for SEI %s", cxf.getSei(), cxf.getSei());
                     return SyntheticBeanBuildItem
-                            .configure(CXFClientInfo.class)
+                            .configure(CXFClientData.class)
                             .named(cxf.getSei())
-                            .runtimeValue(recorder.cxfClientInfoSupplier(cxf))
+                            .runtimeValue(recorder.cxfClientData(cxf))
                             .unremovable()
                             .setRuntimeInit()
                             .done();
@@ -251,7 +251,7 @@ public class CxfClientProcessor {
             default:
                 throw new IllegalStateException("quarkus.cxf.*.service-interface = " + serviceInterfaceName
                         + " with alternative = false expected once, but found " + configsBySei.size() + " times in "
-                        + configsBySei.stream().map(k -> "quarkus.cxf.\"" + k + "\".service-interface")
+                        + configsBySei.stream().map(k -> "quarkus.cxf.\"" + k.getKey() + "\".service-interface")
                                 .collect(Collectors.joining(", ")));
         }
 
@@ -341,20 +341,17 @@ public class CxfClientProcessor {
                 .superClass(CxfClientProducer.class)
                 .build()) {
 
-            FieldCreator info;
-
             classCreator.addAnnotation(ApplicationScoped.class);
 
             // generates:
-            // >> public CXFClientInfo info;
-
-            info = classCreator
-                    .getFieldCreator("info", "io.quarkiverse.cxf.CXFClientInfo")
+            // >> public CXFClientData info;
+            final FieldCreator info = classCreator
+                    .getFieldCreator("info", CXFClientData.class.getName())
                     .setModifiers(Modifier.PUBLIC);
 
             // add @Named to info, i.e.
             // >> @Named(value="{SEI}")
-            // >> public CXFClientInfo info;
+            // >> public CXFClientData info;
 
             info.addAnnotation(
                     AnnotationInstance.create(DotNames.NAMED, null, new AnnotationValue[] {
@@ -364,7 +361,7 @@ public class CxfClientProcessor {
             // add @Inject annotation to info, i.e.
             // >> @Inject
             // >> @Named(value="{SEI}")
-            // >> public CXFClientInfo info;
+            // >> public CXFClientData info;
             info.addAnnotation(
                     AnnotationInstance
                             .create(DotName.createSimple(Inject.class.getName()), null, new AnnotationValue[] {}));
@@ -374,9 +371,10 @@ public class CxfClientProcessor {
             // >> @CXFClient
             // >> {SEI} createService(InjectionPoint ip) { .. }
 
-            // String p0class = InjectionPoint.class.getName();
-            // String p1class = CXFClientInfo.class.getName();
-            try (MethodCreator createService = classCreator.getMethodCreator("createService", sei, InjectionPoint.class)) {
+            try (MethodCreator createService = classCreator.getMethodCreator(
+                    "createService",
+                    sei,
+                    InjectionPoint.class)) {
                 createService.addAnnotation(Produces.class);
                 createService.addAnnotation(CXFClient.class);
 
@@ -389,54 +387,20 @@ public class CxfClientProcessor {
                         "loadCxfClient",
                         "java.lang.Object",
                         InjectionPoint.class,
-                        CXFClientInfo.class);
+                        CXFClientData.class);
                 // >> .. {
                 // >> Object cxfClient = this.loadCxfClient(ip, this.info);
                 // >> return ({SEI})cxfClient;
                 // >> }
 
-                final ResultHandle cxfClient = createService.invokeVirtualMethod(loadCxfClient, thisHandle,
+                final ResultHandle cxfClient = createService.invokeVirtualMethod(
+                        loadCxfClient,
+                        thisHandle,
                         injectionPointHandle,
                         cxfClientInfoHandle);
                 createService.returnValue(createService.checkCast(cxfClient, sei));
 
-                // CatchBlockCreator print = overallCatch.addCatch(Throwable.class);
-                // print.invokeVirtualMethod(MethodDescriptor.ofMethod(Throwable.class, "printStackTrace", void.class),
-                // print.getCaughtException());
-
             }
-
-            // try (MethodCreator createInfo = classCreator.getMethodCreator(
-            // "createInfo",
-            // "io.quarkiverse.cxf.CXFClientInfo",
-            // p0class)) {
-            // createInfo.addAnnotation(Produces.class);
-            // createInfo.addAnnotation(CXFClient.class);
-            //
-            // // p0 (InjectionPoint);
-            // ResultHandle p0;
-            // ResultHandle p1;
-            // ResultHandle cxfClient;
-            //
-            // p0 = createInfo.getMethodParam(0);
-            //
-            // MethodDescriptor loadCxfInfo = MethodDescriptor.ofMethod(
-            // CxfClientProducer.class,
-            // "loadCxfClientInfo",
-            // "java.lang.Object",
-            // p0class,
-            // p1class);
-            // // >> .. {
-            // // >> Object cxfInfo = this().loadCxfInfo(ip, this.info);
-            // // >> return (CXFClientInfo)cxfInfo;
-            // // >> }
-            //
-            // p1 = createInfo.readInstanceField(info.getFieldDescriptor(), createInfo.getThis());
-            // cxfClient = createInfo.invokeVirtualMethod(loadCxfInfo, createInfo.getThis(), p0, p1);
-            // createInfo.returnValue(createInfo.checkCast(cxfClient, "io.quarkiverse.cxf
-            // .CXFClientInfo"));
-            // }
-
         }
 
         // Eventually let's produce
