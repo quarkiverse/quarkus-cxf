@@ -305,13 +305,13 @@ public abstract class CxfClientProducer {
         // about which configuration is to be used.
         //
         // Determine all matching configurations for given SEI
-        List<String> keylist = fixedConfig.clients
+        List<String> keylist = fixedConfig.clients()
                 .entrySet()
                 .stream()
                 .filter(kv -> kv.getValue() != null)
-                .filter(kv -> kv.getValue().serviceInterface.isPresent())
-                .filter(kv -> kv.getValue().serviceInterface.get().equals(meta.getSei()))
-                .filter(kv -> kv.getValue().alternative == false)
+                .filter(kv -> kv.getValue().serviceInterface().isPresent())
+                .filter(kv -> kv.getValue().serviceInterface().get().equals(meta.getSei()))
+                .filter(kv -> kv.getValue().alternative() == false)
                 .map(Map.Entry::getKey)
                 .collect(toList());
 
@@ -324,7 +324,7 @@ public abstract class CxfClientProducer {
                         meta.getSei(), meta);
                 return meta;
             case 1:
-                return info.withConfig(config.clients.get(keylist.get(0)), keylist.get(0));
+                return info.withConfig(config.clients().get(keylist.get(0)), keylist.get(0));
             default:
                 throw new IllegalStateException("quarkus.cxf.*.service-interface = " + meta.getSei()
                         + " with alternative = false expected once, but found " + keylist.size() + " times in "

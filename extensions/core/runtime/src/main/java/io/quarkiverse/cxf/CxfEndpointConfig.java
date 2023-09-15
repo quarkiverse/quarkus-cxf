@@ -4,22 +4,21 @@ import java.util.List;
 import java.util.Optional;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithName;
 
 @ConfigGroup
-public class CxfEndpointConfig {
+public interface CxfEndpointConfig {
 
     /**
      * The service endpoint implementation class
      */
-    @ConfigItem
-    public Optional<String> implementor;
+    public Optional<String> implementor();
 
     /**
      * The service endpoint WSDL path
      */
-    @ConfigItem(name = "wsdl")
-    public Optional<String> wsdlPath;
+    @WithName("wsdl")
+    public Optional<String> wsdlPath();
 
     /**
      * The URL of the SOAP Binding, should be one of four values:
@@ -31,14 +30,12 @@ public class CxfEndpointConfig {
      *
      * @asciidoclet
      */
-    @ConfigItem
-    public Optional<String> soapBinding;
+    public Optional<String> soapBinding();
 
     /**
      * The published service endpoint URL
      */
-    @ConfigItem
-    public Optional<String> publishedEndpointUrl;
+    public Optional<String> publishedEndpointUrl();
 
     /**
      * A comma-separated list of fully qualified CXF Feature class names or named CDI beans.
@@ -72,36 +69,30 @@ public class CxfEndpointConfig {
      * Note that the {@code LoggingFeature} is available through the <a href="../quarkus-cxf-rt-features-metrics.html">Logging
      * Feature</a> extension.
      */
-    @ConfigItem
-    public Optional<List<String>> features;
+    public Optional<List<String>> features();
 
     /**
      * The comma-separated list of Handler classes
      */
-    @ConfigItem
-    public Optional<List<String>> handlers;
+    public Optional<List<String>> handlers();
 
     /**
      * The comma-separated list of InInterceptor classes
      */
-    @ConfigItem
-    public Optional<List<String>> inInterceptors;
+    public Optional<List<String>> inInterceptors();
 
     /**
      * The comma-separated list of OutInterceptor classes
      */
-    @ConfigItem
-    public Optional<List<String>> outInterceptors;
+    public Optional<List<String>> outInterceptors();
 
     /**
      * The comma-separated list of OutFaultInterceptor classes
      */
-    @ConfigItem
-    public Optional<List<String>> outFaultInterceptors;
+    public Optional<List<String>> outFaultInterceptors();
 
     /**
      * The comma-separated list of InFaultInterceptor classes
      */
-    @ConfigItem
-    public Optional<List<String>> inFaultInterceptors;
+    public Optional<List<String>> inFaultInterceptors();
 }

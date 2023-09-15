@@ -105,11 +105,11 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
     static boolean wsdl2java(Path projectDir, Path inputDir, Wsdl2JavaParameterSet params, Path outDir, String prefix,
             Map<String, String> processedFiles) {
 
-        return scan(inputDir, params.includes, params.excludes, prefix, processedFiles, (Path wsdlFile) -> {
+        return scan(inputDir, params.includes(), params.excludes(), prefix, processedFiles, (Path wsdlFile) -> {
             final Wsdl2JavaParams wsdl2JavaParams = new Wsdl2JavaParams(
                     projectDir,
                     inputDir, outDir, wsdlFile,
-                    params.additionalParams.orElse(Collections.emptyList()));
+                    params.additionalParams().orElse(Collections.emptyList()));
             if (log.isInfoEnabled()) {
                 log.info(wsdl2JavaParams.appendLog(new StringBuilder("Running wsdl2java")).toString());
             }
@@ -199,7 +199,6 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
      * @return a new {@link Wsdl2JavaParameterSet}
      */
     static Wsdl2JavaParameterSet buildParameterSet(Function<String, Optional<List<String>>> config, String prefix) {
-        final Wsdl2JavaParameterSet result = new Wsdl2JavaParameterSet();
 
         final Optional<List<String>> maybeIncludes = config.apply(prefix + ".includes");
         final List<String> includes;
@@ -217,11 +216,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
                     + " any of " + prefix + ".excludes or " + prefix + ".additional-params");
         }
 
-        result.includes = Optional.ofNullable(includes);
-        result.excludes = excludes;
-        result.additionalParams = additionalParams;
-
-        return result;
+        return new Wsdl2JavaParameterSetImpl(Optional.ofNullable(includes), excludes, additionalParams);
     }
 
     static Path absModuleRoot(final Path inputDir) {
@@ -284,6 +279,37 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
             paramConsumer.accept(pathTransformer.apply(outDir));
             additionalParams.forEach(paramConsumer);
             paramConsumer.accept(pathTransformer.apply(wsdlFile));
+        }
+
+    }
+
+    static class Wsdl2JavaParameterSetImpl implements Wsdl2JavaParameterSet {
+
+        private final Optional<List<String>> includes;
+        private final Optional<List<String>> excludes;
+        private final Optional<List<String>> additionalParams;
+
+        public Wsdl2JavaParameterSetImpl(Optional<List<String>> includes, Optional<List<String>> excludes,
+                Optional<List<String>> additionalParams) {
+            super();
+            this.includes = includes;
+            this.excludes = excludes;
+            this.additionalParams = additionalParams;
+        }
+
+        @Override
+        public Optional<List<String>> includes() {
+            return includes;
+        }
+
+        @Override
+        public Optional<List<String>> excludes() {
+            return excludes;
+        }
+
+        @Override
+        public Optional<List<String>> additionalParams() {
+            return additionalParams;
         }
 
     }

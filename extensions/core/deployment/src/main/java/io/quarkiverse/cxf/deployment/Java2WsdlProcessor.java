@@ -59,7 +59,7 @@ class Java2WsdlProcessor {
         final String classesDir = outputTargetBuildItem.getOutputDirectory().resolve("classes").toString();
 
         final IndexView index = combinedIndex.getIndex();
-        if (!cxfBuildTimeConfig.java2ws.enabled) {
+        if (!cxfBuildTimeConfig.java2ws().enabled()) {
             log.info("Skipping " + this.getClass() + " invocation on user's request");
             return;
         }
@@ -80,14 +80,14 @@ class Java2WsdlProcessor {
             final Map<String, String> processedClasses = new LinkedHashMap<>();
             java2wsdl(
                     services,
-                    cxfBuildTimeConfig.java2ws.rootParameterSet,
+                    cxfBuildTimeConfig.java2ws().rootParameterSet(),
                     Java2WsParameterSet.JAVA2WS_CONFIG_KEY_PREFIX,
                     targetDir,
                     classesDir,
                     processedClasses);
 
             // named
-            for (Entry<String, Java2WsParameterSet> en : cxfBuildTimeConfig.java2ws.namedParameterSets.entrySet()) {
+            for (Entry<String, Java2WsParameterSet> en : cxfBuildTimeConfig.java2ws().namedParameterSets().entrySet()) {
                 java2wsdl(
                         services,
                         en.getValue(),
@@ -110,16 +110,16 @@ class Java2WsdlProcessor {
             String classesDir,
             Map<String, String> processedClasses) {
         params.validate(prefix);
-        if (params.includes.isEmpty()) {
+        if (params.includes().isEmpty()) {
             /* Nothing to do */
             return;
         }
-        final String selectors = "    " + prefix + ".includes = " + params.includes.get() +
-                (params.excludes.isPresent()
-                        ? "\n    " + prefix + ".excludes = " + params.excludes.get()
+        final String selectors = "    " + prefix + ".includes = " + params.includes().get() +
+                (params.excludes().isPresent()
+                        ? "\n    " + prefix + ".excludes = " + params.excludes().get()
                         : "");
 
-        final PathFilter pathFilter = new PathFilter(toSlashNames(params.includes), toSlashNames(params.excludes));
+        final PathFilter pathFilter = new PathFilter(toSlashNames(params.includes()), toSlashNames(params.excludes()));
 
         for (DotName serviceClass : serviceClasses) {
             if (pathFilter.isVisible(serviceClass.toString('/'))) {
@@ -134,8 +134,8 @@ class Java2WsdlProcessor {
                 processedClasses.put(serviceClass.toString(), selectors);
                 final Java2WsdlParams java2WsdlParams = new Java2WsdlParams(
                         serviceClass.toString(),
-                        params.additionalParams.orElse(Collections.emptyList()),
-                        generateWsdlName(params.wsdlNameTemplate, serviceClass, targetDir, classesDir));
+                        params.additionalParams().orElse(Collections.emptyList()),
+                        generateWsdlName(params.wsdlNameTemplate(), serviceClass, targetDir, classesDir));
                 if (log.isInfoEnabled()) {
                     log.info(java2WsdlParams.appendLog(new StringBuilder("Running java2ws")).toString());
                 }

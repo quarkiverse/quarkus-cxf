@@ -124,13 +124,14 @@ public class CxfEndpointImplementationProcessor {
             HttpConfiguration httpConfiguration,
             CxfBuildTimeConfig cxfBuildTimeConfig,
             CxfConfig cxfConfig) {
-        final RuntimeValue<CXFServletInfos> infos = recorder.createInfos(cxfBuildTimeConfig.path, httpBuildTimeConfig.rootPath);
+        final RuntimeValue<CXFServletInfos> infos = recorder.createInfos(cxfBuildTimeConfig.path(),
+                httpBuildTimeConfig.rootPath);
         final List<String> requestors = cxfRouteRegistrationRequestors.stream()
                 .map(CxfRouteRegistrationRequestorBuildItem::getRequestorName)
                 .collect(Collectors.toList());
         if (!cxfEndpoints.isEmpty()) {
             for (CxfEndpointImplementationBuildItem cxfWebService : cxfEndpoints) {
-                recorder.addCxfServletInfo(infos, cxfBuildTimeConfig.path, cxfWebService.getImplementor(),
+                recorder.addCxfServletInfo(infos, cxfBuildTimeConfig.path(), cxfWebService.getImplementor(),
                         cxfConfig, cxfWebService.getWsName(), cxfWebService.getWsNamespace(),
                         cxfWebService.getSoapBinding(),
                         cxfWebService.getImplementor(), cxfWebService.isProvider());
@@ -140,7 +141,7 @@ public class CxfEndpointImplementationProcessor {
         if (!requestors.isEmpty()) {
             final Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(),
                     httpConfiguration);
-            final String mappingPath = getMappingPath(cxfBuildTimeConfig.path);
+            final String mappingPath = getMappingPath(cxfBuildTimeConfig.path());
             LOGGER.infof("Mapping a Vert.x handler for CXF to %s as requested by %s", mappingPath, requestors);
             routes.produce(RouteBuildItem.builder()
                     .route(mappingPath)

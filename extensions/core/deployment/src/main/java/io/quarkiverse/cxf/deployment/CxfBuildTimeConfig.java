@@ -6,20 +6,24 @@ import java.util.Optional;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
+import io.smallrye.config.WithParentName;
 
-@ConfigRoot(name = "cxf", phase = ConfigPhase.BUILD_TIME)
-public class CxfBuildTimeConfig {
+@ConfigMapping(prefix = "quarkus.cxf")
+@ConfigRoot(phase = ConfigPhase.BUILD_TIME)
+public interface CxfBuildTimeConfig {
     /**
      * The default path for CXF resources.
      * <p>
      * ⚠️ Note that the default value before 3.0.0 was {@code /}.
      * </p>
      */
-    @ConfigItem(defaultValue = "/services")
-    String path;
+    @WithDefault("/services")
+    String path();
 
     /**
      * The comma-separated list of WSDL resource paths used by CXF.
@@ -29,20 +33,18 @@ public class CxfBuildTimeConfig {
      * automatically.
      */
     @Deprecated(forRemoval = true)
-    @ConfigItem
-    Optional<List<String>> wsdlPath;
+    Optional<List<String>> wsdlPath();
 
     /**
      * Build time configuration options for Quarkus code generation phase.
      */
-    @ConfigItem
-    public CodeGenConfig codegen;
+    public CodeGenConfig codegen();
 
     /**
      * Build time configuration options for {@code java2ws}
      */
-    @ConfigItem(name = "java2ws")
-    public Java2WsConfig java2ws;
+    @WithName("java2ws")
+    public Java2WsConfig java2ws();
 
     /**
      * Select the {@code HTTPConduitFactory} implementation for all clients except the ones that override this setting
@@ -61,47 +63,46 @@ public class CxfBuildTimeConfig {
      * {@code java.net.HttpURLConnection} as the underlying HTTP client.
      * </ul>
      */
-    @ConfigItem
-    public Optional<HTTPConduitImpl> httpConduitFactory;
+    public Optional<HTTPConduitImpl> httpConduitFactory();
 
     @ConfigGroup
-    public static class CodeGenConfig {
+    public interface CodeGenConfig {
 
         /**
          * Build time configuration options for {@code wsdl2java}
          */
-        @ConfigItem(name = "wsdl2java")
-        public Wsdl2JavaConfig wsdl2java;
+        @WithName("wsdl2java")
+        public Wsdl2JavaConfig wsdl2java();
     }
 
     @ConfigGroup
-    public static class Wsdl2JavaConfig {
+    public interface Wsdl2JavaConfig {
         /**
          * If {@code true} {@code wsdl2java} code generation is run whenever there are WSDL resources found on default
          * or custom defined locations; otherwise {@code wsdl2java} is not executed.
          */
-        @ConfigItem(defaultValue = "true")
-        public boolean enabled;
+        @WithDefault("true")
+        public boolean enabled();
 
         /**
          * Parameters for the CXF {@code wsdl2java} tool. Use this when you want to generate Java classes from all your
          * WSDL files using the same {@code wsdl2java} parameters. You should use {@link #namedParameterSets} instead
          * if you need to invoke {@code wsdl2java} with different parameters for some of your WSDL files.
          */
-        @ConfigItem(name = ConfigItem.PARENT)
-        public Wsdl2JavaParameterSet rootParameterSet;
+        @WithParentName
+        public Wsdl2JavaParameterSet rootParameterSet();
 
         /**
          * A collection of named parameter sets for the CXF {@code wsdl2java} tool. Each entry selects a set of WSDL
          * files and defines options to be used when invoking {@code wsdl2java} with the selected files.
          */
-        @ConfigItem(name = ConfigItem.PARENT)
-        public Map<String, Wsdl2JavaParameterSet> namedParameterSets;
+        @WithParentName
+        public Map<String, Wsdl2JavaParameterSet> namedParameterSets();
 
     }
 
     @ConfigGroup
-    public static class Wsdl2JavaParameterSet {
+    public interface Wsdl2JavaParameterSet {
 
         /**
          * A comma separated list of glob patterns for selecting WSDL files which should be processed with
@@ -150,8 +151,7 @@ public class CxfBuildTimeConfig {
          * native image and therefore you do not need to include them via {@code quarkus.cxf.wsdl-path} (deprecated) or
          * {@code quarkus.native.resources.includes/excludes}.
          */
-        @ConfigItem
-        public Optional<List<String>> includes;
+        public Optional<List<String>> includes();
 
         /**
          * A comma separated list of path patterns for selecting WSDL files which should <strong>not</strong> be
@@ -159,8 +159,7 @@ public class CxfBuildTimeConfig {
          * {@code src/test/resources} directories of the current Maven or Gradle module. Same syntax as
          * {@code includes}.
          */
-        @ConfigItem
-        public Optional<List<String>> excludes;
+        public Optional<List<String>> excludes();
 
         /**
          * A comma separated list of additional command line parameters that should passed to CXF {@code wsdl2java} tool
@@ -173,20 +172,19 @@ public class CxfBuildTimeConfig {
          * use {@code -xjc-Xbg}, {@code -xjc-Xdv}, {@code -xjc-Xjavadoc}, {@code -xjc-Xproperty-listener}, {@code -xjc-Xts} or
          * {@code -xjc-Xwsdlextension}.
          */
-        @ConfigItem
-        public Optional<List<String>> additionalParams;
+        public Optional<List<String>> additionalParams();
 
     }
 
     @ConfigGroup
-    public static class Java2WsConfig {
+    public interface Java2WsConfig {
 
         /**
          * If {@code true} {@code java2ws} WSDL generation is run whenever there are Java classes selected via
          * {@code includes} and {@code excludes} options; otherwise {@code java2ws} is not executed.
          */
-        @ConfigItem(defaultValue = "true")
-        public boolean enabled;
+        @WithDefault("true")
+        public boolean enabled();
 
         /**
          * Parameters for the CXF {@code java2ws} tool. Use this when you want to generate WSDL files from all your
@@ -194,8 +192,8 @@ public class CxfBuildTimeConfig {
          * instead
          * if you need to invoke {@code java2ws} with different parameters for some of your Java classes.
          */
-        @ConfigItem(name = ConfigItem.PARENT)
-        public Java2WsParameterSet rootParameterSet;
+        @WithParentName
+        public Java2WsParameterSet rootParameterSet();
 
         /**
          * A collection of named parameter sets for the CXF {@code java2ws} tool. Each entry selects a set of Java
@@ -203,13 +201,13 @@ public class CxfBuildTimeConfig {
          * annotated with {@link jakarta.jws.WebService} and defines options to be used when invoking {@code java2ws}
          * with the selected classes.
          */
-        @ConfigItem(name = ConfigItem.PARENT)
-        public Map<String, Java2WsParameterSet> namedParameterSets;
+        @WithParentName
+        public Map<String, Java2WsParameterSet> namedParameterSets();
 
     }
 
     @ConfigGroup
-    public static class Java2WsParameterSet {
+    public interface Java2WsParameterSet {
 
         public static final String JAVA2WS_CONFIG_KEY_PREFIX = "quarkus.cxf.java2ws";
 
@@ -259,15 +257,13 @@ public class CxfBuildTimeConfig {
          * If you would like to include the generated WSDL files in native image, you need to add them yourself using
          * {@code quarkus.native.resources.includes/excludes}.
          */
-        @ConfigItem
-        public Optional<List<String>> includes;
+        public Optional<List<String>> includes();
 
         /**
          * A comma separated list of glob patterns for selecting java class names which should <strong>not</strong> be
          * processed with {@code java2ws} tool. Same syntax as {@code includes}.
          */
-        @ConfigItem
-        public Optional<List<String>> excludes;
+        public Optional<List<String>> excludes();
 
         /**
          * A comma separated list of additional command line parameters that should be passed to CXF {@code java2ws}
@@ -279,8 +275,7 @@ public class CxfBuildTimeConfig {
          * <p>
          * Note that only options related to generation of WSDL from Java are supported currently.
          */
-        @ConfigItem
-        public Optional<List<String>> additionalParams;
+        public Optional<List<String>> additionalParams();
 
         /**
          * A template for the names of generated WSDL files.
@@ -297,8 +292,8 @@ public class CxfBuildTimeConfig {
          * typically {@code target/classes} for Maven and {@code build/classes} for Gradle.
          * </ul>
          */
-        @ConfigItem(defaultValue = "%CLASSES_DIR%/wsdl/%SIMPLE_CLASS_NAME%.wsdl")
-        public String wsdlNameTemplate;
+        @WithDefault("%CLASSES_DIR%/wsdl/%SIMPLE_CLASS_NAME%.wsdl")
+        public String wsdlNameTemplate();
 
         /**
          * Throws an {@link IllegalStateException} if this {@link Java2WsParameterSet} is invalid.
@@ -306,17 +301,17 @@ public class CxfBuildTimeConfig {
          * @param prefix the property prefix such as {@code quarkus.cxf.java2ws.foo} to use in the exception message if
          *        this {@link Java2WsParameterSet} is invalid
          */
-        public void validate(String prefix) {
-            if (includes.isPresent()) {
+        default void validate(String prefix) {
+            if (includes().isPresent()) {
                 /* valid */
                 return;
-            } else if (excludes.isPresent() && additionalParams.isPresent()) {
+            } else if (excludes().isPresent() && additionalParams().isPresent()) {
                 throw new IllegalStateException(prefix + ".excludes and " + prefix + ".additional-params are specified but "
                         + prefix + ".includes are not specified. Specify some includes");
-            } else if (excludes.isPresent()) {
+            } else if (excludes().isPresent()) {
                 throw new IllegalStateException(prefix + ".excludes are specified but " + prefix
                         + ".includes are not specified. Specify some includes");
-            } else if (additionalParams.isPresent()) {
+            } else if (additionalParams().isPresent()) {
                 throw new IllegalStateException(prefix + ".additional-params are specified but " + prefix
                         + ".includes are not specified. Specify some includes");
             }

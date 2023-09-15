@@ -43,9 +43,9 @@ public class Wsdl2JavaCodeGenTest {
                 new Config(Map.of()),
                 Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX);
 
-        Assertions.assertThat(params.includes).isEmpty();
-        Assertions.assertThat(params.excludes).isEmpty();
-        Assertions.assertThat(params.additionalParams).isEmpty();
+        Assertions.assertThat(params.includes()).isEmpty();
+        Assertions.assertThat(params.excludes()).isEmpty();
+        Assertions.assertThat(params.additionalParams()).isEmpty();
     }
 
     @Test
@@ -57,9 +57,9 @@ public class Wsdl2JavaCodeGenTest {
                         "quarkus.cxf.codegen.wsdl2java.additional-params", List.of("-foo", "bar"))),
                 Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX);
 
-        Assertions.assertThat(params.includes).isPresent().get().asList().containsExactly("**.wsdl");
-        Assertions.assertThat(params.excludes).isPresent().get().asList().containsExactly("foo.wsdl");
-        Assertions.assertThat(params.additionalParams).get().asList().containsExactly("-foo", "bar");
+        Assertions.assertThat(params.includes()).isPresent().get().asList().containsExactly("**.wsdl");
+        Assertions.assertThat(params.excludes()).isPresent().get().asList().containsExactly("foo.wsdl");
+        Assertions.assertThat(params.additionalParams()).get().asList().containsExactly("-foo", "bar");
     }
 
     @Test
@@ -84,10 +84,10 @@ public class Wsdl2JavaCodeGenTest {
                         "quarkus.cxf.codegen.wsdl2java.my-name.additional-params", List.of("-foo", "bar"))),
                 Wsdl2JavaCodeGen.WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + "my-name");
 
-        Assertions.assertThat(params.includes).isPresent().get().asList()
+        Assertions.assertThat(params.includes()).isPresent().get().asList()
                 .containsExactly("*.wsdl");
-        Assertions.assertThat(params.excludes).isPresent().get().asList().containsExactly("foo.wsdl");
-        Assertions.assertThat(params.additionalParams).get().asList().containsExactly("-foo", "bar");
+        Assertions.assertThat(params.excludes()).isPresent().get().asList().containsExactly("foo.wsdl");
+        Assertions.assertThat(params.additionalParams()).get().asList().containsExactly("-foo", "bar");
     }
 
     @Test

@@ -107,7 +107,7 @@ public class CxfClientProcessor {
                                 .orElse(SOAPBinding.SOAP11HTTP_BINDING);
 
                         final ProxyInfo proxyInfo = ProxyInfo.of(
-                                Optional.ofNullable(clientConfig.native_).map(native_ -> native_.runtimeInitialized)
+                                Optional.ofNullable(clientConfig.native_()).map(native_ -> native_.runtimeInitialized())
                                         .orElse(false),
                                 wsClassInfo,
                                 index);
@@ -223,7 +223,7 @@ public class CxfClientProcessor {
      */
     static ClientFixedConfig findClientConfig(CxfFixedConfig config, String key, String serviceInterfaceName) {
         if (key != null && !key.isEmpty()) {
-            ClientFixedConfig result = config.clients.get(key);
+            ClientFixedConfig result = config.clients().get(key);
             if (result == null) {
                 /*
                  * We cannot tell at build time, whether this is illegal, because there can be some runtime config
@@ -234,9 +234,9 @@ public class CxfClientProcessor {
             return result;
         }
 
-        final List<Map.Entry<String, ClientFixedConfig>> configsBySei = config.clients.entrySet().stream()
-                .filter(cl -> serviceInterfaceName.equals(cl.getValue().serviceInterface.orElse(null)))
-                .filter(cl -> !cl.getValue().alternative)
+        final List<Map.Entry<String, ClientFixedConfig>> configsBySei = config.clients().entrySet().stream()
+                .filter(cl -> serviceInterfaceName.equals(cl.getValue().serviceInterface().orElse(null)))
+                .filter(cl -> !cl.getValue().alternative())
                 .collect(Collectors.toList());
 
         switch (configsBySei.size()) {
@@ -458,7 +458,7 @@ public class CxfClientProcessor {
             CXFRecorder recorder,
             CxfBuildTimeConfig config,
             BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
-        final HTTPConduitImpl factory = HTTPConduitImpl.fromOptional(config.httpConduitFactory, hc5Present(),
+        final HTTPConduitImpl factory = HTTPConduitImpl.fromOptional(config.httpConduitFactory(), hc5Present(),
                 "quarkus.cxf.http-conduit-impl");
         switch (factory) {
             case CXFDefault:
@@ -474,7 +474,7 @@ public class CxfClientProcessor {
             }
             default:
                 throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
-                        + config.httpConduitFactory);
+                        + config.httpConduitFactory());
         }
     }
 
