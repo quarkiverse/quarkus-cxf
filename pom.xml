@@ -58,6 +58,7 @@
         <slf4j.version>1.7.36</slf4j.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.slf4j:slf4j-api -->
         <stax2.version>4.2.1</stax2.version><!-- @sync com.fasterxml.woodstox:woodstox-core:${woodstox-core.version} dep:org.codehaus.woodstox:stax2-api -->
         <woodstox-core.version>6.5.1</woodstox-core.version>
+        <wsdl4j.version>1.6.3</wsdl4j.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.wsdl4j.version -->
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
@@ -234,7 +235,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
