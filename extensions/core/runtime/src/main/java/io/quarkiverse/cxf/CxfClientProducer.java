@@ -101,7 +101,7 @@ public abstract class CxfClientProducer {
         QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean();
         QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(quarkusClientFactoryBean, interfaces);
         factory.setServiceClass(seiClass);
-        LOGGER.warnf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
+        LOGGER.debugf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
         factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
         if (cxfClientInfo.getEpName() != null) {
             factory.setEndpointName(new QName(cxfClientInfo.getEpNamespace(), cxfClientInfo.getEpName()));
