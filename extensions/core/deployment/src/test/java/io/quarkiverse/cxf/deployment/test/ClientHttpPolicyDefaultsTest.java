@@ -125,13 +125,7 @@ public class ClientHttpPolicyDefaultsTest {
 
         @Override
         public String hello(String person) {
-            try {
-                Thread.sleep(500);
-                return "Hello " + person;
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
+            return "Hello " + person;
         }
     }
 
