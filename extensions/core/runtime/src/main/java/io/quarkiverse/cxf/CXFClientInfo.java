@@ -174,7 +174,7 @@ public class CXFClientInfo {
 
     public CXFClientInfo(CXFClientData other, CxfClientConfig config, String configKey) {
         this.sei = other.getSei();
-        this.soapBinding = other.getSoapBinding();
+        this.soapBinding = config.soapBinding().orElse(other.getSoapBinding());
         this.wsName = other.getWsName();
         this.wsNamespace = other.getWsNamespace();
         this.proxyClassRuntimeInitialized = other.isProxyClassRuntimeInitialized();
