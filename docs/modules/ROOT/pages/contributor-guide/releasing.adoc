@@ -1,0 +1,54 @@
+[[releasing]]
+= Releasing
+
+== Release `quarkus-cxf`
+
+To release version `1.2.3` and set the next development version to `1.2.4-SNAPSHOT`, run the following:
+
+[source,shell]
+----
+$ cd quarkus-cxf
+$ ./release.sh 1.2.3 1.2.4-SNAPSHOT
+----
+
+What it does:
+
+* Sets the `current-version` and `release-version` keys in `.github/project.yml` file to values passed via CLI parameters
+* Commits the changes
+* Pushes a new branch called `trigger-release-1.2.3` to upstream
+
+After that, you need to do the following:
+
+* Create a pull request from the above branch
+* Merge it (without waiting for the CI jobs to pass)
+* Watch the associated https://github.com/quarkiverse/quarkus-cxf/actions/workflows/release.yml[Quarkiverse Release] job
+
+== Upgrade in Quarkus Platform
+
+Once all artifacts are available on Maven Central, upgrade the Quarkus CXF version in Quarkus Platform:
+
+[source,shell]
+----
+$ export NEW_VERSION=1.2.3
+$ cd projects
+$ git clone https://github.com/quarkusio/quarkus-platform.git -o upstream
+$ cd quarkus-platform
+# Upgrade the version in the root pom
+$ sed -i 's|<quarkus-cxf.version>[^<]*</quarkus-cxf.version>|<quarkus-cxf.version>'$NEW_VERSION'</quarkus-cxf.version>|' pom.xml
+# regenerate the BOMs (may take tens of minutes on a slow internet connection)
+$ ./mvnw -Dsync
+# Install quarkus-bom and quarkus-cxf-bom to local Maven repository
+$ cd generated-platform-project
+$ ../mvnw install -pl quarkus/bom,quarkus-cxf/bom,quarkus-universe/bom -am
+# Make sure the generated tests pass
+$ cd quarkus-cxf/integration-tests
+$ ../../../mvnw verify -Pnative
+# If all is green, commit changes and send a PR
+$ git checkout -b upgrade-qcxf-$NEW_VERSION
+$ git add -A
+$ git commit -m "Upgrade to Quarkus CXF $NEW_VERSION"
+$ git push your-fork upgrade-qcxf-$NEW_VERSION
+----
+
+* Now create a new pull request out of your `upgrade-qcxf-$NEW_VERSION` branch.
+* Watch whether the CI jobs pass against your new pull request.
