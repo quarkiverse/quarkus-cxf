@@ -3,11 +3,20 @@ package io.quarkiverse.cxf;
 import static java.util.stream.Collectors.toList;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.TrustManagerFactory;
 import javax.xml.namespace.QName;
 
 import jakarta.enterprise.inject.spi.InjectionPoint;
@@ -15,6 +24,7 @@ import jakarta.inject.Inject;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.Handler;
 
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.feature.Feature;
@@ -28,6 +38,7 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
 import io.quarkiverse.cxf.annotation.CXFClient;
 
 /**
@@ -249,6 +260,41 @@ public abstract class CxfClientProducer {
             proxyAuth.setUserName(proxyUsername);
             proxyAuth.setPassword(proxyPassword);
             httpConduit.setProxyAuthorization(proxyAuth);
+        }
+
+        final String trustStorePath = cxfClientInfo.getTrustStore();
+        if (trustStorePath != null) {
+            TLSClientParameters tlsCP = new TLSClientParameters();
+            final KeyStore trustStore;
+            final TrustManagerFactory tmf;
+            try (InputStream is = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream(trustStorePath)) {
+                trustStore = KeyStore.getInstance(cxfClientInfo.getTrustStoreType());
+                final String pwd = cxfClientInfo.getTrustStorePassword();
+                trustStore.load(is, pwd == null ? null : pwd.toCharArray());
+                tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                tmf.init(trustStore);
+            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
+                throw new RuntimeException("Could not load client-truststore.jks from class path", e);
+            }
+            tlsCP.setTrustManagers(tmf.getTrustManagers());
+
+            final String hostnameVerifierName = cxfClientInfo.getHostnameVerifier();
+            if (hostnameVerifierName != null) {
+                final Optional<WellKnownHostnameVerifier> wellKnownHostNameVerifierName = WellKnownHostnameVerifier
+                        .of(hostnameVerifierName);
+                if (wellKnownHostNameVerifierName.isPresent()) {
+                    wellKnownHostNameVerifierName.get().configure(tlsCP);
+                } else {
+                    final HostnameVerifier hostnameVerifier = CXFRuntimeUtils.getInstance(hostnameVerifierName, true);
+                    if (hostnameVerifier == null) {
+                        throw new RuntimeException("Could not find or instantiate " + hostnameVerifierName);
+                    }
+                    tlsCP.setHostnameVerifier(hostnameVerifier);
+                }
+            }
+
+            httpConduit.setTlsClientParameters(tlsCP);
         }
 
         return result;

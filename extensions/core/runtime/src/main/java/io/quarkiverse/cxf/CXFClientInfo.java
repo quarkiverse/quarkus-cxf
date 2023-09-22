@@ -170,6 +170,22 @@ public class CXFClientInfo {
      */
     private final String proxyPassword;
 
+    /**
+     * The trust store location. Can point to either a classpath resource or a file.
+     */
+    private final String trustStore;
+
+    /**
+     * The trust store password.
+     */
+    private final String trustStorePassword;
+
+    /**
+     * The type of the trust store. Defaults to "JKS".
+     */
+    private final String trustStoreType;
+    private final String hostnameVerifier;
+
     private final HTTPConduitImpl httpConduitImpl;
 
     public CXFClientInfo(CXFClientData other, CxfClientConfig config, String configKey) {
@@ -213,8 +229,17 @@ public class CXFClientInfo {
         this.proxyUsername = config.proxyUsername().orElse(null);
         this.proxyPassword = config.proxyPassword().orElse(null);
 
+        this.trustStore = config.trustStore().orElse(null);
+        this.trustStorePassword = config.trustStorePassword().orElse(null);
+        this.trustStoreType = Objects.requireNonNull(config.trustStoreType(), "trustStoreType cannot be null");
+        this.hostnameVerifier = config.hostnameVerifier().orElse(null);
+
         this.httpConduitImpl = HTTPConduitImpl.fromOptional(config.httpConduitFactory(), CXFRecorder.isHc5Present(),
                 "quarkus.cxf.client." + configKey + ".http-conduit-impl");
+    }
+
+    public String getHostnameVerifier() {
+        return hostnameVerifier;
     }
 
     public String getSei() {
@@ -413,6 +438,18 @@ public class CXFClientInfo {
 
     public HTTPConduitImpl getHttpConduitImpl() {
         return httpConduitImpl;
+    }
+
+    public String getTrustStore() {
+        return trustStore;
+    }
+
+    public String getTrustStorePassword() {
+        return trustStorePassword;
+    }
+
+    public String getTrustStoreType() {
+        return trustStoreType;
     }
 
 }

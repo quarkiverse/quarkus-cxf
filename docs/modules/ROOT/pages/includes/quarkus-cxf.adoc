@@ -1813,4 +1813,76 @@ endif::add-copy-button-to-env-var[]
 `CXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
 |
 
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.trust-store]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.trust-store[quarkus.cxf.client."clients".trust-store]`
+
+
+[.description]
+--
+The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.trust-store-password]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.trust-store-password[quarkus.cxf.client."clients".trust-store-password]`
+
+
+[.description]
+--
+The trust store password
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.trust-store-type]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.trust-store-type[quarkus.cxf.client."clients".trust-store-type]`
+
+
+[.description]
+--
+The type of the trust store.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_TYPE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_TYPE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`JKS`
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.hostname-verifier]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.hostname-verifier[quarkus.cxf.client."clients".hostname-verifier]`
+
+
+[.description]
+--
+Can be one of the following:
+
+ - One of the well known values: `AllowAllHostnameVerifier`, `HttpsURLConnectionDefaultHostnameVerifier`
+ - A fully qualified class name implementing `javax.net.ssl.HostnameVerifier`. The class must have a public no-argument constructor.
+ - A bean name prefixed with `++#++` that will be looked up in the CDI container; example: `++#++myHostnameVerifier`  If not specified, then the creation of the `HostnameVerifier` is delegated to CXF, which boils down to `org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier` with the default `org.apache.cxf.transport.https.httpclient.PublicSuffixMatcherLoader` as returned from `PublicSuffixMatcherLoader.getDefault()`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__HOSTNAME_VERIFIER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__HOSTNAME_VERIFIER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
 |===
