@@ -3,10 +3,10 @@ package io.quarkiverse.cxf;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkus.runtime.annotations.ConfigDocEnumValue;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.smallrye.config.WithConverter;
@@ -71,7 +71,8 @@ public interface CxfClientConfig {
      * quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeature
      * </pre>
      * <p>
-     * Note that the {@code LoggingFeature} is available through the <a href="../quarkus-cxf-rt-features-metrics.html">Logging
+     * Note that the {@code LoggingFeature} is available through the
+     * <a href="../quarkus-cxf-rt-features-metrics.html">Logging
      * Feature</a> extension.
      */
     public Optional<List<String>> features();
@@ -103,14 +104,16 @@ public interface CxfClientConfig {
 
     /* org.apache.cxf.transports.http.configuration.HTTPClientPolicy attributes */
     /**
-     * Specifies the amount of time, in milliseconds, that the consumer will attempt to establish a connection before it times
+     * Specifies the amount of time, in milliseconds, that the consumer will attempt to establish a connection before it
+     * times
      * out. 0 is infinite.
      */
     @WithDefault("30000")
     public long connectionTimeout();
 
     /**
-     * Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. 0 is
+     * Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. 0
+     * is
      * infinite.
      */
     @WithDefault("60000")
@@ -159,7 +162,8 @@ public interface CxfClientConfig {
 
     /**
      * Specifies the chunk length for a HttpURLConnection. This value is used in
-     * java.net.HttpURLConnection.setChunkedStreamingMode(int chunklen). chunklen indicates the number of bytes to write in each
+     * java.net.HttpURLConnection.setChunkedStreamingMode(int chunklen). chunklen indicates the number of bytes to write
+     * in each
      * chunk. If chunklen is less than or equal to zero, a default value will be used.
      */
     @WithDefault("-1")
@@ -228,7 +232,8 @@ public interface CxfClientConfig {
     public Optional<String> browserType();
 
     /**
-     * Specifies the URL of a decoupled endpoint for the receipt of responses over a separate provider->consumer connection.
+     * Specifies the URL of a decoupled endpoint for the receipt of responses over a separate provider->consumer
+     * connection.
      */
     public Optional<String> decoupledEndpoint();
 
@@ -285,6 +290,40 @@ public interface CxfClientConfig {
      */
     public Optional<HTTPConduitImpl> httpConduitFactory();
 
+    /**
+     * The trust store location for this client. The resource is first looked up in the classpath, then in the file
+     * system.
+     */
+    public Optional<String> trustStore();
+
+    /**
+     * The trust store password
+     */
+    public Optional<String> trustStorePassword();
+
+    /**
+     * The type of the trust store.
+     */
+    @WithDefault("JKS")
+    public String trustStoreType();
+
+    /**
+     * Can be one of the following:
+     * <ul>
+     * <li>One of the well known values: {@code AllowAllHostnameVerifier},
+     * {@code HttpsURLConnectionDefaultHostnameVerifier}
+     * <li>A fully qualified class name implementing {@code javax.net.ssl.HostnameVerifier}. The class must have a public
+     * no-argument constructor.
+     * <li>A bean name prefixed with {@code #} that will be looked up in the CDI container; example:
+     * {@code #myHostnameVerifier}
+     * </ul>
+     * If not specified, then the creation of the {@code HostnameVerifier} is delegated to CXF, which boils down to
+     * {@code org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier} with the default
+     * {@code org.apache.cxf.transport.https.httpclient.PublicSuffixMatcherLoader}
+     * as returned from {@code PublicSuffixMatcherLoader.getDefault()}.
+     */
+    public Optional<String> hostnameVerifier();
+
     public enum HTTPConduitImpl {
         @ConfigDocEnumValue("CXFDefault")
         QuarkusCXFDefault,
@@ -314,7 +353,37 @@ public interface CxfClientConfig {
                 return optional.orElse(HTTPConduitImpl.QuarkusCXFDefault);
             }
         }
+    }
 
+    public enum WellKnownHostnameVerifier {
+
+        AllowAllHostnameVerifier {
+            @Override
+            public void configure(TLSClientParameters params) {
+                params.setDisableCNCheck(true);
+            }
+
+        },
+        HttpsURLConnectionDefaultHostnameVerifier {
+            @Override
+            public void configure(TLSClientParameters params) {
+                params.setUseHttpsURLConnectionDefaultHostnameVerifier(true);
+            }
+        };
+
+        public abstract void configure(TLSClientParameters params);
+
+        public static Optional<WellKnownHostnameVerifier> of(String name) {
+            if (name == null) {
+                return Optional.empty();
+            }
+            for (WellKnownHostnameVerifier item : values()) {
+                if (item.name().equals(name)) {
+                    return Optional.of(item);
+                }
+            }
+            return Optional.empty();
+        }
     }
 
 }

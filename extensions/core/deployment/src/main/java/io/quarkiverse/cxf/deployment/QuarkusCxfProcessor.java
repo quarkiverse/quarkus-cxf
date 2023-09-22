@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,10 +44,13 @@ import jakarta.xml.ws.handler.Handler;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.binding.soap.interceptor.SoapInterceptor;
 import org.apache.cxf.bus.extension.ExtensionManagerImpl;
 import org.apache.cxf.common.spi.GeneratedClassClassLoaderCapture;
+import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.phase.PhaseInterceptor;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
@@ -437,10 +441,11 @@ class QuarkusCxfProcessor {
         IndexView index = combinedIndexBuildItem.getIndex();
 
         Stream.of(
-                "org.apache.cxf.databinding.DataBinding",
-                "org.apache.cxf.interceptor.Interceptor",
-                "org.apache.cxf.binding.soap.interceptor.SoapInterceptor",
-                "org.apache.cxf.phase.PhaseInterceptor")
+                DataBinding.class,
+                Interceptor.class,
+                SoapInterceptor.class,
+                PhaseInterceptor.class,
+                HostnameVerifier.class)
                 .map(DotName::createSimple)
                 .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
@@ -624,7 +629,8 @@ class QuarkusCxfProcessor {
         final Set<DotName> unremovableTypes = Set.of(
                 DotName.createSimple(Interceptor.class),
                 DotName.createSimple(Handler.class),
-                DotName.createSimple(Feature.class));
+                DotName.createSimple(Feature.class),
+                DotName.createSimple(HostnameVerifier.class));
 
         unremovables
                 .produce(new UnremovableBeanBuildItem(beanInfo -> {
