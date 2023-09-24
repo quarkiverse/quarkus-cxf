@@ -3,6 +3,7 @@ package io.quarkiverse.cxf.it.security.policy;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -20,19 +21,37 @@ public class SecurityPolicyResource {
     @CXFClient("helloIp")
     HelloService helloIpService;
 
-    @POST
-    @Path("/hello")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello(String body) {
-        return helloService.hello(body);
-    }
+    @Inject
+    @CXFClient("helloPolicyHttps")
+    HelloService helloPolicyHttpsService;
+
+    @Inject
+    @CXFClient("helloPolicyHttp")
+    HelloService helloPolicyHttpService;
 
     @POST
-    @Path("/helloIp")
+    @Path("/{client}")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response helloIp(String body) {
+    public Response hello(@PathParam("client") String client, String body) {
+        final HelloService service;
+        switch (client) {
+            case "hello":
+                service = helloService;
+                break;
+            case "helloIp":
+                service = helloIpService;
+                break;
+            case "helloPolicyHttps":
+                service = helloPolicyHttpsService;
+                break;
+            case "helloPolicyHttp":
+                service = helloPolicyHttpService;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected client " + client);
+        }
         try {
-            return Response.ok(helloIpService.hello(body)).build();
+            return Response.ok(service.hello(body)).build();
         } catch (Exception e) {
             Throwable cause = e;
             while (cause.getCause() != null) {
@@ -41,5 +60,4 @@ public class SecurityPolicyResource {
             return Response.status(500).entity(cause.getMessage()).build();
         }
     }
-
 }
