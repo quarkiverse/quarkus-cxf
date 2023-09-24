@@ -17,6 +17,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,6 +40,8 @@ import io.vertx.ext.web.RoutingContext;
 
 public class VertxHttpServletRequest implements HttpServletRequest {
     private static final Logger LOG = Logger.getLogger(VertxHttpServletRequest.class);
+    private static final String SSL_CIPHER_SUITE_ATTRIBUTE = "jakarta.servlet.request.cipher_suite";
+    private static final String SSL_PEER_CERT_CHAIN_ATTRIBUTE = "jakarta.servlet.request.X509Certificate";
     private final RoutingContext context;
     private final VertxInputStream in;
     private final HttpServerRequest request;
@@ -51,6 +56,17 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         this.attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         this.context = context;
         in = new VertxInputStream(context, 10000);
+
+        final SSLSession sslSession = this.request.connection().sslSession();
+        if (sslSession != null) {
+            this.attributes.put(SSL_CIPHER_SUITE_ATTRIBUTE, sslSession.getCipherSuite());
+            try {
+                this.attributes.put(SSL_PEER_CERT_CHAIN_ATTRIBUTE, sslSession.getPeerCertificates());
+            } catch (SSLPeerUnverifiedException e) {
+                // do nothing
+            }
+        }
+
     }
 
     @Override
