@@ -18,7 +18,7 @@ public class SecurityPolicyResource {
 
     @Inject
     @CXFClient("helloIp")
-    HelloIpService helloIpService;
+    HelloService helloIpService;
 
     @POST
     @Path("/hello")
