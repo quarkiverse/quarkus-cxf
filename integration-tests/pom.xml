@@ -20,6 +20,7 @@
         <module>logging</module>
         <module>ws-addressing</module>
         <module>ws-security-client</module>
+        <module>ws-security-policy</module>
         <module>ws-security-server</module>
         <module>ws-trust</module>
         <module>ws-rm</module>
