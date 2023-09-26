@@ -325,7 +325,7 @@ public interface CxfClientConfig {
     public Optional<String> hostnameVerifier();
 
     public enum HTTPConduitImpl {
-        @ConfigDocEnumValue("CXFDefault")
+        @ConfigDocEnumValue("QuarkusCXFDefault")
         QuarkusCXFDefault,
         @ConfigDocEnumValue("CXFDefault")
         CXFDefault,

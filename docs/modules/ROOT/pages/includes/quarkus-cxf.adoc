@@ -488,7 +488,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_HTTP_CONDUIT_FACTORY+++`
 endif::add-copy-button-to-env-var[]
 -- a|
-`CXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
+`QuarkusCXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
 |
 
 
@@ -1810,7 +1810,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__HTTP_CONDUIT_FACTORY+++`
 endif::add-copy-button-to-env-var[]
 -- a|
-`CXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
+`QuarkusCXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
 |
 
 
