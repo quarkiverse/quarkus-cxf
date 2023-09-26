@@ -289,7 +289,7 @@ public class CxfClientConfig {
     public Optional<HTTPConduitImpl> httpConduitFactory;
 
     public enum HTTPConduitImpl {
-        @ConfigDocEnumValue("CXFDefault")
+        @ConfigDocEnumValue("QuarkusCXFDefault")
         QuarkusCXFDefault,
         @ConfigDocEnumValue("CXFDefault")
         CXFDefault,
