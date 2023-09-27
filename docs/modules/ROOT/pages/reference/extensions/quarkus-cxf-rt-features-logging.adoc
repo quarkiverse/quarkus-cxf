@@ -40,14 +40,29 @@ endif::[]
 This extension wraps the CXF `org.apache.cxf:cxf-rt-features-logging` artifact
 thus providing the `org.apache.cxf.ext.logging.LoggingFeature` class.
 
-`LoggingFeature` instances can be configured per service or per client.
-You can either use a `LoggingFeature` instance with default settings
-or you can produce a custom `LoggingFeature` CDI bean.
+[id="extensions-quarkus-cxf-rt-features-logging-usage-configuring-through-configuration-properties"]
+=== Configuring through configuration properties
 
-[id="extensions-quarkus-cxf-rt-features-logging-usage-attaching-loggingfeature-to-a-client-or-service"]
-=== Attaching `LoggingFeature` to a client or service
+Since {quarkus-cxf-project-name} 2.5.0, the `LoggingFeature` can be configured and attached to a client or a service
+endpoint declaratively by setting the appropriate options in `application.properties`:
 
-You have two options to do that:
+.application.properties
+[source,properties,subs=attributes+]
+----
+# For a service:
+quarkus.cxf.endpoint."/hello".logging.enabled = true
+quarkus.cxf.endpoint."/hello".logging.pretty = true
+# For a client:
+quarkus.cxf.client.hello.logging.enabled = true
+quarkus.cxf.client.hello.logging.pretty = true
+----
+
+All logging configuration options are listed xref:#quarkus-cxf-rt-features-logging-configuration[below].
+
+[id="extensions-quarkus-cxf-rt-features-logging-usage-alternative-ways-of-adding-a-loggingfeature-to-a-client-or-service"]
+=== Alternative ways of adding a `LoggingFeature` to a client or service
+
+To attach an instance with default settings, you can do one of the following:
 
 1. In `application.properties`:
 +
@@ -77,43 +92,10 @@ public class SayHiImplementation implements SayHi {
 }
 ----
 
-[id="extensions-quarkus-cxf-rt-features-logging-usage-custom-loggingfeature"]
-=== Custom `LoggingFeature`
+[id="extensions-quarkus-cxf-rt-features-logging-usage-producing-a-custom-loggingfeature-bean"]
+==== Producing a custom `LoggingFeature` bean
 
-`LoggingFeature` offers some attributes that may be worth customizing in some situations.
-
-E.g. if your payloads are complex, you may want to set `prettyLogging` to `true` to render them with an indentation.
-Or if your messages are big and you need to see them complete in the log, you may want to increase the `limit`.
-
-TIP: Check the CXF https://cxf.apache.org/docs/message-logging.html[message logging] page for all possible `LoggingFeature` attributes.
-
-To achieve this, you can produce a custom `LoggingFeature` bean that is then picked by Quarkus CXF
-for clients and services where you specified `*.features = org.apache.cxf.ext.logging.LoggingFeature`:
-
-[source,java,subs="attributes"]
-----
-import org.apache.cxf.ext.logging.LoggingFeature;
-import {javaxOrJakartaPackagePrefix}.enterprise.context.ApplicationScoped;
-import {javaxOrJakartaPackagePrefix}.enterprise.inject.Produces;
-
-class Producers {
-
-    @Produces
-    @ApplicationScoped
-    LoggingFeature loggingFeature() {
-        LoggingFeature loggingFeature = new LoggingFeature();
-        loggingFeature.setPrettyLogging(true);
-        loggingFeature.setLimit(Integer.MAX_VALUE);
-        return loggingFeature;
-    }
-}
-----
-
-[id="extensions-quarkus-cxf-rt-features-logging-usage-multiple-custom-loggingfeature-s"]
-=== Multiple custom ``LoggingFeature``s
-
-In case you'd like to configure the ``LoggingFeature``s for your individual services or clients differently,
-you can so that by defining multiple `@Named` `LoggingFeature` beans:
+If you need some custom logic to setup the `LoggingFeature`, you can produce a named `LoggingFeature` bean:
 
 [source,java,subs="attributes"]
 ----
@@ -128,38 +110,25 @@ class Producers {
     @Named("limitedLoggingFeature") // "limitedLoggingFeature" is redundant if the name of the method is the same
     LoggingFeature limitedLoggingFeature() {
         LoggingFeature loggingFeature = new LoggingFeature();
-        loggingFeature.setLimit(Integer.MAX_VALUE);
-        return loggingFeature;
-    }
-
-    @Produces
-    @ApplicationScoped
-    @Named("prettyLoggingFeature")
-    LoggingFeature prettyLoggingFeature() {
-        LoggingFeature loggingFeature = new LoggingFeature();
         loggingFeature.setPrettyLogging(true);
+        loggingFeature.setLimit(1024);
         return loggingFeature;
     }
 }
 ----
 
-and then refer to them by their names prefixed with `#` in `application.properties`:
+Then you can refer to it by its name prefixed with `#` in `application.properties`:
 
 [source,properties,subs=attributes+]
 ----
 # For a service:
 quarkus.cxf.endpoint."/hello".features = #limitedLoggingFeature
 # For a client:
-quarkus.cxf.client."myClient".features = #prettyLoggingFeature
+quarkus.cxf.client.hello.features = #limitedLoggingFeature
 ----
 
 
 
 [id="quarkus-cxf-rt-features-logging-configuration"]
 == Configuration
-
-The logging feature can be associated with a SOAP client or service using the following configuration properties:
-
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.features[quarkus.cxf.endpoint."endpoints".features]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.features[quarkus.cxf.client."clients".features]`
-
+include::../../includes/quarkus-cxf-rt-features-logging.adoc[]

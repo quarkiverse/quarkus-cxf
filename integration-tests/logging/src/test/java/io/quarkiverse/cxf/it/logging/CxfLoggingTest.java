@@ -53,10 +53,18 @@ public class CxfLoggingTest {
         RestAssured.given()
                 .queryParam("a", 3)
                 .queryParam("b", 4)
-                .get("/cxf/logging/calculator/multiply")
+                .get("/cxf/logging/beanConfiguredCalculator/multiply")
                 .then()
                 .statusCode(200)
                 .body(is("12"));
+
+        RestAssured.given()
+                .queryParam("a", 3)
+                .queryParam("b", 4)
+                .get("/cxf/logging/propertiesConfiguredCalculator/add")
+                .then()
+                .statusCode(200)
+                .body(is("7"));
 
         /* ... and check that the stuff was really logged */
         Awaitility.waitAtMost(30, TimeUnit.SECONDS)
@@ -82,6 +90,23 @@ public class CxfLoggingTest {
                                                         + "      <return>12</return>\n"
                                                         + "    </ns2:multiplyResponse>\n"
                                                         + "  </soap:Body>\n"
+                                                        + "</soap:Envelope>")
+                                        && content.contains(
+                                                "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                                                        + "  <soap:Body>\n"
+                                                        + "    <ns2:add xmlns:ns2=\"http://www.jboss.org/eap/quickstarts/wscalculator/Calculator\">\n"
+                                                        + "      <arg0>3</arg0>\n"
+                                                        + "      <arg1>4</arg1>\n"
+                                                        + "    </ns2:add>\n"
+                                                        + "  </soap:Body>\n"
+                                                        + "</soap:Envelope>")
+                                        && content.contains(
+                                                "Payload: <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                                                        + "  <soap:Body>\n"
+                                                        + "    <ns2:addResponse xmlns:ns2=\"http://www.jboss.org/eap/quickstarts/wscalculator/Calculator\">\n"
+                                                        + "      <return>7</return>\n"
+                                                        + "    </ns2:addResponse>\n"
+                                                        + "  </soap:Body>\n"
                                                         + "</soap:Envelope>")) {
                                     return true;
                                 }
@@ -98,7 +123,7 @@ public class CxfLoggingTest {
     @Test
     void wsdlUpToDate() throws IOException {
         final String wsdlUrl = ConfigProvider.getConfig()
-                .getValue("quarkus.cxf.client.\"logging-client\".wsdl", String.class);
+                .getValue("quarkus.cxf.client.beanConfiguredCalculator.wsdl", String.class);
 
         Path staticCopyPath = Paths.get("src/main/resources/wsdl/CalculatorService.wsdl");
         if (!Files.isRegularFile(staticCopyPath)) {

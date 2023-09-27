@@ -71,6 +71,96 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>delete-config-options-docs-before-compilation</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <source>
+                                // Workaround for https://github.com/quarkusio/quarkus/issues/36189
+                                import java.nio.file.Path
+                                import java.nio.file.Paths
+                                import java.nio.file.Files
+                                import java.nio.file.StandardCopyOption
+
+                                // backup the root list dir
+                                final Path rootListDir = Paths.get('${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/extensions-configuration-roots-list/quarkus-cxf.adoc')
+                                final Path rootListBackUpDir = Paths.get(rootListDir.toString() + '.backup')
+                                if (Files.exists(rootListBackUpDir)) {
+                                    rootListBackUpDir.deleteDir()
+                                }
+                                if (Files.exists(rootListDir)) {
+                                    Files.move(rootListDir, rootListBackUpDir)
+                                }
+
+                                Files.deleteIfExists(java.nio.file.Paths.get('${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/quarkus-cxf.adoc'))
+                            </source>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>filter-and-move-config-options-docs</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <source>
+                                // Workaround for https://github.com/quarkusio/quarkus/issues/36189
+                                import java.nio.file.Path
+                                import java.nio.file.Paths
+                                import java.nio.file.Files
+                                import java.nio.file.StandardCopyOption
+
+                                final Path inputFile = Paths.get('${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/quarkus-cxf.adoc')
+                                final Path outputFile = Paths.get('${maven.multiModuleProjectDirectory}/docs/modules/ROOT/pages/includes/${project.artifactId}.adoc')
+                                Files.move(inputFile, outputFile, StandardCopyOption.REPLACE_EXISTING)
+
+                                // restore the root list dir
+                                final Path rootListDir = Paths.get('${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/extensions-configuration-roots-list/quarkus-cxf.adoc')
+                                final Path rootListBackUpDir = Paths.get(rootListDir.toString() + '.backup')
+                                if (Files.exists(rootListDir)) {
+                                    rootListDir.deleteDir()
+                                }
+                                if (Files.exists(rootListBackUpDir)) {
+                                    Files.move(rootListBackUpDir, rootListDir)
+                                }
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>virtualDependencies</id>
+            <activation>
+                <property>
+                    <name>!noVirtualDependencies</name>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- The following dependencies guarantee that this module is built after them. You can update them by running `mvn process-resources -Pformat -N` from the source tree root directory -->
+                <dependency><!-- Workaround for https://github.com/quarkusio/quarkus/issues/36189 -->
+                    <groupId>io.quarkiverse.cxf</groupId>
+                    <artifactId>quarkus-cxf-deployment</artifactId>
+                    <version>${project.version}</version>
+                    <type>pom</type>
+                    <scope>test</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>*</groupId>
+                            <artifactId>*</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

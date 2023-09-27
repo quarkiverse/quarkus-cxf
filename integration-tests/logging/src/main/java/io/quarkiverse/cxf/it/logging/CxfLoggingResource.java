@@ -16,15 +16,30 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 public class CxfLoggingResource {
 
     @Inject
-    @CXFClient("logging-client") // name used in application.properties
-    CalculatorService calculator;
+    @CXFClient("beanConfiguredCalculator") // name used in application.properties
+    CalculatorService beanConfiguredCalculator;
+
+    @Inject
+    @CXFClient("propertiesConfiguredCalculator") // name used in application.properties
+    CalculatorService propertiesConfiguredCalculator;
 
     @GET
-    @Path("/calculator/multiply")
+    @Path("/beanConfiguredCalculator/multiply")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response multiplyDefault(@QueryParam("a") int a, @QueryParam("b") int b) {
+    public Response multiply(@QueryParam("a") int a, @QueryParam("b") int b) {
         try {
-            return Response.ok(calculator.multiply(a, b)).build();
+            return Response.ok(beanConfiguredCalculator.multiply(a, b)).build();
+        } catch (Exception e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/propertiesConfiguredCalculator/add")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response add(@QueryParam("a") int a, @QueryParam("b") int b) {
+        try {
+            return Response.ok(propertiesConfiguredCalculator.add(a, b)).build();
         } catch (Exception e) {
             return Response.serverError().entity(e.getMessage()).build();
         }
