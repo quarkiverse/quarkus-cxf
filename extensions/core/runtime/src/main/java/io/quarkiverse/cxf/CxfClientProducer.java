@@ -19,19 +19,17 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.TrustManagerFactory;
 import javax.xml.namespace.QName;
 
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 import jakarta.xml.ws.BindingProvider;
-import jakarta.xml.ws.handler.Handler;
 
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.feature.Feature;
 import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.message.Message;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
@@ -63,6 +61,10 @@ public abstract class CxfClientProducer {
     @Inject
     CxfFixedConfig fixedConfig;
 
+    @Inject
+    @Any
+    Instance<ClientFactoryCustomizer> customizers;
+
     /**
      * Must be public, otherwise: java.lang.VerifyError: Bad access to protected data in invokevirtual
      */
@@ -84,11 +86,12 @@ public abstract class CxfClientProducer {
      * @return
      */
     private Object produceCxfClient(CXFClientInfo cxfClientInfo) {
+        final String sei = cxfClientInfo.getSei();
         Class<?> seiClass;
         try {
-            seiClass = Class.forName(cxfClientInfo.getSei(), false, Thread.currentThread().getContextClassLoader());
+            seiClass = Class.forName(sei, false, Thread.currentThread().getContextClassLoader());
         } catch (ClassNotFoundException e) {
-            LOGGER.errorf("WebService interface (client) class %s not found", cxfClientInfo.getSei());
+            LOGGER.errorf("WebService interface (client) class %s not found", sei);
             return null;
         }
         Class<?>[] interfaces;
@@ -130,24 +133,18 @@ public abstract class CxfClientProducer {
         if (cxfClientInfo.getPassword() != null) {
             factory.setPassword(cxfClientInfo.getPassword());
         }
-        for (String feature : cxfClientInfo.getFeatures()) {
-            addToCols(feature, factory.getFeatures(), Feature.class);
-        }
-        for (String handler : cxfClientInfo.getHandlers()) {
-            addToCols(handler, factory.getHandlers(), Handler.class);
-        }
-        for (String inInterceptor : cxfClientInfo.getInInterceptors()) {
-            addToCols(inInterceptor, factory.getInInterceptors());
-        }
-        for (String outInterceptor : cxfClientInfo.getOutInterceptors()) {
-            addToCols(outInterceptor, factory.getOutInterceptors());
-        }
-        for (String outFaultInterceptor : cxfClientInfo.getOutFaultInterceptors()) {
-            addToCols(outFaultInterceptor, factory.getOutFaultInterceptors());
-        }
-        for (String inFaultInterceptor : cxfClientInfo.getInFaultInterceptors()) {
-            addToCols(inFaultInterceptor, factory.getInFaultInterceptors());
-        }
+        final String clientString = "client"
+                + (cxfClientInfo.getConfigKey() != null ? (" " + cxfClientInfo.getConfigKey()) : "");
+        CXFRuntimeUtils.addBeans(cxfClientInfo.getFeatures(), "feature", clientString, sei, factory.getFeatures());
+        CXFRuntimeUtils.addBeans(cxfClientInfo.getHandlers(), "handler", clientString, sei, factory.getHandlers());
+        CXFRuntimeUtils.addBeans(cxfClientInfo.getInInterceptors(), "inInterceptor", clientString, sei,
+                factory.getInInterceptors());
+        CXFRuntimeUtils.addBeans(cxfClientInfo.getOutInterceptors(), "outInterceptor", clientString, sei,
+                factory.getOutInterceptors());
+        CXFRuntimeUtils.addBeans(cxfClientInfo.getOutFaultInterceptors(), "outFaultInterceptor", clientString, sei,
+                factory.getOutFaultInterceptors());
+        CXFRuntimeUtils.addBeans(cxfClientInfo.getInFaultInterceptors(), "inFaultInterceptor", clientString, sei,
+                factory.getInFaultInterceptors());
 
         switch (cxfClientInfo.getHttpConduitImpl()) {
             case CXFDefault:
@@ -171,7 +168,9 @@ public abstract class CxfClientProducer {
                         + cxfClientInfo.getHttpConduitImpl());
         }
 
-        LOGGER.debug("cxf client loaded for " + cxfClientInfo.getSei());
+        customizers.forEach(customizer -> customizer.customize(cxfClientInfo, factory));
+
+        LOGGER.debug("cxf client loaded for " + sei);
         Object result = factory.create();
         final HTTPConduit httpConduit = (HTTPConduit) ClientProxy.getClient(result).getConduit();
         final HTTPClientPolicy policy = httpConduit.getClient();
@@ -300,27 +299,6 @@ public abstract class CxfClientProducer {
         return result;
     }
 
-    private void addToCols(String className, List<Interceptor<? extends Message>> cols) {
-        /*
-         * We use CastUtils to simplify an unchecked cast from
-         * List<Interceptor<? extends Message>> to List<Interceptor>. For our
-         * purposes this is ok since the parameterization of Interceptor is lost
-         * at runtime anyway and we wouldn't be able enforce it without some
-         * very complicated and very Interceptor-specific reflection code.
-         */
-        addToCols(className, CastUtils.<Interceptor> cast(cols), Interceptor.class);
-    }
-
-    private <T> void addToCols(String className, List<T> cols, Class<T> clazz) {
-
-        T item = CXFRuntimeUtils.getInstance(className, true);
-        if (item == null) {
-            LOGGER.warnf("unable to create instance of class %s", className);
-        } else {
-            cols.add(item);
-        }
-    }
-
     /**
      * Calculates the client info to use for producing a JAXWS client proxy.
      *
@@ -386,4 +364,7 @@ public abstract class CxfClientProducer {
 
     }
 
+    public interface ClientFactoryCustomizer {
+        void customize(CXFClientInfo cxfClientInfo, JaxWsProxyFactoryBean factory);
+    }
 }

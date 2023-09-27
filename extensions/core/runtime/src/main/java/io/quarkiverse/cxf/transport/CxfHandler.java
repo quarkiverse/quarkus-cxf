@@ -1,7 +1,5 @@
 package io.quarkiverse.cxf.transport;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -15,12 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
-import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.feature.Feature;
-import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxws.JAXWSMethodInvoker;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
-import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.http.DestinationRegistry;
@@ -90,6 +84,8 @@ public class CxfHandler implements Handler<RoutingContext> {
         servletPath = cxfServletInfos.getPath();
         contextPath = cxfServletInfos.getContextPath();
 
+        final Instance<EndpointFactoryCustomizer> customizers = CDI.current().select(EndpointFactoryCustomizer.class);
+
         // suboptimal because done it in loop but not a real issue...
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
             QuarkusRuntimeJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusRuntimeJaxWsServiceFactoryBean();
@@ -113,51 +109,29 @@ public class CxfHandler implements Handler<RoutingContext> {
                 if (servletInfo.getWsdlPath() != null) {
                     jaxWsServerFactoryBean.setWsdlLocation(servletInfo.getWsdlPath());
                 }
-                if (!servletInfo.getFeatures().isEmpty()) {
-                    List<Feature> features = new ArrayList<>();
-                    for (String feature : servletInfo.getFeatures()) {
-                        Feature instanceFeature = CXFRuntimeUtils.getInstance(feature, "feature", endpointType);
-                        features.add(instanceFeature);
-                    }
-                    jaxWsServerFactoryBean.setFeatures(features);
-                }
-                if (!servletInfo.getHandlers().isEmpty()) {
-                    List<jakarta.xml.ws.handler.Handler> handlers = new ArrayList<>();
-                    for (String handler : servletInfo.getHandlers()) {
-                        jakarta.xml.ws.handler.Handler instanceHandler = CXFRuntimeUtils.getInstance(handler, "handler",
-                                endpointType);
-                        handlers.add(instanceHandler);
-                    }
-                    jaxWsServerFactoryBean.setHandlers(handlers);
-                }
+                final String endpointString = "endpoint " + servletInfo.getPath();
+                CXFRuntimeUtils.addBeans(servletInfo.getFeatures(), "feature", endpointString, endpointType,
+                        jaxWsServerFactoryBean.getFeatures());
+                CXFRuntimeUtils.addBeans(servletInfo.getHandlers(), "handler", endpointString, endpointType,
+                        jaxWsServerFactoryBean.getHandlers());
+                CXFRuntimeUtils.addBeans(servletInfo.getInInterceptors(), "inInterceptor", endpointString, endpointType,
+                        jaxWsServerFactoryBean.getInInterceptors());
+                CXFRuntimeUtils.addBeans(servletInfo.getOutInterceptors(), "outInterceptor", endpointString, endpointType,
+                        jaxWsServerFactoryBean.getOutInterceptors());
+                CXFRuntimeUtils.addBeans(servletInfo.getOutFaultInterceptors(), "outFaultInterceptor", endpointString,
+                        endpointType, jaxWsServerFactoryBean.getOutFaultInterceptors());
+                CXFRuntimeUtils.addBeans(servletInfo.getInFaultInterceptors(), "inFaultInterceptor", endpointString,
+                        endpointType, jaxWsServerFactoryBean.getInFaultInterceptors());
+
                 if (servletInfo.getSOAPBinding() != null) {
                     jaxWsServerFactoryBean.setBindingId(servletInfo.getSOAPBinding());
                 }
                 if (servletInfo.getEndpointUrl() != null) {
                     jaxWsServerFactoryBean.setPublishedEndpointUrl(servletInfo.getEndpointUrl());
                 }
+                customizers.forEach(customizer -> customizer.customize(servletInfo, jaxWsServerFactoryBean));
 
-                Server server = jaxWsServerFactoryBean.create();
-                for (String className : servletInfo.getInFaultInterceptors()) {
-                    Interceptor<? extends Message> interceptor = CXFRuntimeUtils.getInstance(className, "inFaultInterceptor",
-                            endpointType);
-                    server.getEndpoint().getInFaultInterceptors().add(interceptor);
-                }
-                for (String className : servletInfo.getInInterceptors()) {
-                    Interceptor<? extends Message> interceptor = CXFRuntimeUtils.getInstance(className, "inInterceptor",
-                            endpointType);
-                    server.getEndpoint().getInInterceptors().add(interceptor);
-                }
-                for (String className : servletInfo.getOutFaultInterceptors()) {
-                    Interceptor<? extends Message> interceptor = CXFRuntimeUtils.getInstance(className, "outFaultInterceptor",
-                            endpointType);
-                    server.getEndpoint().getOutFaultInterceptors().add(interceptor);
-                }
-                for (String className : servletInfo.getOutInterceptors()) {
-                    Interceptor<? extends Message> interceptor = CXFRuntimeUtils.getInstance(className, "outInterceptor",
-                            endpointType);
-                    server.getEndpoint().getOutInterceptors().add(interceptor);
-                }
+                jaxWsServerFactoryBean.create();
 
                 LOGGER.info(servletInfo.toString() + " available.");
             } else {
@@ -256,4 +230,9 @@ public class CxfHandler implements Handler<RoutingContext> {
             }
         }
     }
+
+    public interface EndpointFactoryCustomizer {
+        void customize(CXFServletInfo cxfServletInfo, JaxWsServerFactoryBean factory);
+    }
+
 }
