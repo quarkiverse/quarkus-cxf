@@ -312,8 +312,8 @@ public interface CxfClientConfig {
      * <ul>
      * <li>One of the well known values: {@code AllowAllHostnameVerifier},
      * {@code HttpsURLConnectionDefaultHostnameVerifier}
-     * <li>A fully qualified class name implementing {@code javax.net.ssl.HostnameVerifier}. The class must have a public
-     * no-argument constructor.
+     * <li>A fully qualified class name implementing {@code javax.net.ssl.HostnameVerifier} to look up in the CDI
+     * container.
      * <li>A bean name prefixed with {@code #} that will be looked up in the CDI container; example:
      * {@code #myHostnameVerifier}
      * </ul>

@@ -188,6 +188,8 @@ public class CXFClientInfo {
 
     private final HTTPConduitImpl httpConduitImpl;
 
+    private final String configKey;
+
     public CXFClientInfo(CXFClientData other, CxfClientConfig config, String configKey) {
         this.sei = other.getSei();
         this.soapBinding = config.soapBinding().orElse(other.getSoapBinding());
@@ -236,6 +238,7 @@ public class CXFClientInfo {
 
         this.httpConduitImpl = HTTPConduitImpl.fromOptional(config.httpConduitFactory(), CXFRecorder.isHc5Present(),
                 "quarkus.cxf.client." + configKey + ".http-conduit-impl");
+        this.configKey = configKey;
     }
 
     public String getHostnameVerifier() {
@@ -450,6 +453,10 @@ public class CXFClientInfo {
 
     public String getTrustStoreType() {
         return trustStoreType;
+    }
+
+    public String getConfigKey() {
+        return configKey;
     }
 
 }

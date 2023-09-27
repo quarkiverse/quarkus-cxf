@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf;
 
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.enterprise.inject.AmbiguousResolutionException;
@@ -41,21 +42,33 @@ public class CXFRuntimeUtils {
         }
     }
 
-    public static <T> T getInstance(String className, String kind, String targetType) {
+    public static <T> T getInstance(String beanRef, String beanKind, String sei, String clientOrEndpoint) {
         try {
-            return getInstance(className, true);
+            return getInstance(beanRef, true);
         } catch (AmbiguousResolutionException e) {
             /*
              * There are multiple beans of this type
              * and we do not know which one to use
              */
-            throw new IllegalStateException("Unable to add a " + kind + " to CXF endpoint " + targetType + ":"
-                    + " there are multiple instances of " + className + " available in the CDI container."
+            throw new IllegalStateException("Unable to add a " + beanKind + " to CXF " + clientOrEndpoint + " " + sei + ":"
+                    + " there are multiple instances of " + beanRef + " available in the CDI container."
                     + " Either make sure there is only one instance available in the container"
-                    + " or create a unique subtype of " + className + " and set that one on " + targetType
+                    + " or create a unique subtype of " + beanRef + " and set that one on " + sei
                     + " or add @jakarta.inject.Named(\"myName\") to some of the beans and refer to that bean by #myName on "
-                    + targetType,
+                    + sei,
                     e);
+        }
+    }
+
+    public static <T> void addBeans(List<String> beanRefs, String beanKind, String sei, String clientOrEndpoint,
+            List<T> destination) {
+        for (String beanRef : beanRefs) {
+            T item = getInstance(beanRef, beanKind, sei, clientOrEndpoint);
+            if (item == null) {
+                throw new IllegalStateException("Could not lookup bean " + beanRef);
+            } else {
+                destination.add(item);
+            }
         }
     }
 
