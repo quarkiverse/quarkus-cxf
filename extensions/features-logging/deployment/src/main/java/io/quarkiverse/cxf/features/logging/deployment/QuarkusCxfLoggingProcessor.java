@@ -4,6 +4,8 @@ import java.util.stream.Stream;
 
 import org.apache.cxf.ext.logging.LoggingFeature;
 
+import io.quarkiverse.cxf.features.logging.LoggingFactoryCustomizer;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -30,6 +32,11 @@ public class QuarkusCxfLoggingProcessor {
     @BuildStep
     void unremovableBean(BuildProducer<UnremovableBeanBuildItem> unremovable) {
         unremovable.produce(UnremovableBeanBuildItem.beanTypes(LoggingFeature.class));
+    }
+
+    @BuildStep
+    void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
+        additionalBeans.produce(new AdditionalBeanBuildItem(LoggingFactoryCustomizer.class));
     }
 
 }
