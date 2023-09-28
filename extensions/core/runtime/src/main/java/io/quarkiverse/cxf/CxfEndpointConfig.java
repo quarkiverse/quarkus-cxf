@@ -57,7 +57,7 @@ public interface CxfEndpointConfig {
      * class Producers {
      *
      *     &#64;Produces
-     *     @ApplicationScoped
+     *     &#64;ApplicationScoped
      *     LoggingFeature myCustomLoggingFeature() {
      *         LoggingFeature loggingFeature = new LoggingFeature();
      *         loggingFeature.setPrettyLogging(true);

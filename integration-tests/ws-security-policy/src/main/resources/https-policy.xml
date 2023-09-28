@@ -11,6 +11,7 @@
                             <sp:HttpsToken RequireClientCertificate="false" />
                         </wsp:Policy>
                     </sp:TransportToken>
+                    <sp:IncludeTimestamp />
                     <sp:AlgorithmSuite>
                         <wsp:Policy>
                             <sp:Basic128 />

@@ -101,6 +101,31 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filter-and-move-config-options-docs</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <source>
+                                import java.nio.file.Paths
+                                import java.nio.file.Files
+                                import java.nio.file.StandardCopyOption
+                                Files.copy(Paths.get(properties['inputFile']), Paths.get(properties['outputFile']), StandardCopyOption.REPLACE_EXISTING)
+                            </source>
+                            <properties>
+                                <inputFile>${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/quarkus.adoc</inputFile>
+                                <outputFile>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/pages/includes/${project.artifactId}.adoc</outputFile>
+                            </properties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

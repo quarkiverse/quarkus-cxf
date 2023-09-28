@@ -1,0 +1,67 @@
+= Configuration
+
+{quarkus-cxf-project-name} exposes a large number of configuration options.
+Each extension documents its options at the bottom of its xref:reference/index.adoc[reference page].
+
+The configuration options can be set in `application.properties` file or via environment variables - see
+https://quarkus.io/guides/config-reference[Quarkus configuration reference] for details.
+
+[[beanRefs]]
+== Bean references
+
+Several configuration options of {quarkus-cxf-project-name} allow referring to beans present in Quarkus CDI container.
+xref:user-guide/cxf-interceptors-and-features.adoc[Features and interceptors] are typical examples of those.
+
+There are two ways how to set a bean reference in the configuration: by type or by bean name.
+
+
+=== Bean reference by type
+
+Here is an example:
+
+.application.properties
+[source,properties,subs=attributes+]
+----
+# bean reference by type
+quarkus.cxf.endpoint."/hello".features = org.apache.cxf.ext.logging.LoggingFeature
+----
+
+When using a reference by type name, the resolution proceeds as follows:
+
+* Fist the bean is looked up in Quarkus CDI container by type.
+* If the bean is available, it is used.
+* If multiple beans assignable to the given type, then an exception is thrown.
+* If no matching bean is available, then the class is loaded and an attempt is performed to instantiate it using its default constructor.
+
+=== Bean reference by bean name
+
+Here is an example:
+
+.application.properties
+[source,properties,subs=attributes+]
+----
+# bean reference by bean name
+quarkus.cxf.endpoint."/fruit".features = #myCustomLoggingFeature
+----
+
+When using a reference by bean name, then unsurprisingly, the bean is looked up in Quarkus CDI container by name.
+A named bean called `myCustomLoggingFeature` can be defined as follows:
+
+[source,java,subs=attributes+]
+----
+import org.apache.cxf.ext.logging.LoggingFeature;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+
+class Producers {
+
+    @Produces
+    @ApplicationScoped
+    @Named("myCustomLoggingFeature")
+    LoggingFeature myCustomLoggingFeature() {
+        LoggingFeature loggingFeature = new LoggingFeature();
+        loggingFeature.setPrettyLogging(true);
+        return loggingFeature;
+    }
+}
+----
