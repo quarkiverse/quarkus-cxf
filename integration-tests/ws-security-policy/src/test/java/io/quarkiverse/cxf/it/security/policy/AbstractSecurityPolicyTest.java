@@ -22,22 +22,22 @@ public abstract class AbstractSecurityPolicyTest {
     }
 
     @Test
-    void helloPolicyHttps() {
+    void helloHttps() {
         RestAssured.given()
                 .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.jks", "password")))
                 .body("Frank")
-                .post("/cxf/security-policy/helloPolicyHttps")
+                .post("/cxf/security-policy/helloHttps")
                 .then()
                 .statusCode(200)
-                .body(is("Hello Frank!"));
+                .body(is("Hello Frank from HTTPS!"));
     }
 
     @Test
-    void helloPolicyHttp() {
+    void helloHttp() {
         RestAssured.given()
                 .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.jks", "password")))
                 .body("Frank")
-                .post("/cxf/security-policy/helloPolicyHttp")
+                .post("/cxf/security-policy/helloHttp")
                 .then()
                 .statusCode(500)
                 .body(containsString("TransportBinding: TLS is not enabled"));

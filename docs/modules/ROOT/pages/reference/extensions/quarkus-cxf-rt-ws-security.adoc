@@ -105,3 +105,4 @@ Please refer to https://cxf.apache.org/docs/ws-security.html[WS-Security] and ht
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.in-interceptors[quarkus.cxf.endpoint."endpoints".in-interceptors]`
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.out-interceptors[quarkus.cxf.client."clients".out-interceptors]`
 
+include::../../includes/quarkus-cxf-rt-ws-security.adoc[]

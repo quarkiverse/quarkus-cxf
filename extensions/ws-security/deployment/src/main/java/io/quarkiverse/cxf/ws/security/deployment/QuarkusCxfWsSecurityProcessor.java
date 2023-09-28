@@ -2,6 +2,8 @@ package io.quarkiverse.cxf.ws.security.deployment;
 
 import java.util.stream.Stream;
 
+import io.quarkiverse.cxf.ws.security.WssFactoryCustomizer;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -49,6 +51,11 @@ public class QuarkusCxfWsSecurityProcessor {
                 "org.apache.cxf.rt.security.saml.xacml2.RequestComponentBuilder")
                 .map(RuntimeInitializedClassBuildItem::new)
                 .forEach(runtimeInitializedClass::produce);
+    }
+
+    @BuildStep
+    void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
+        additionalBeans.produce(new AdditionalBeanBuildItem(WssFactoryCustomizer.class));
     }
 
 }

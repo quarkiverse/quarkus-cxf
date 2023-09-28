@@ -6,16 +6,16 @@ import jakarta.jws.WebService;
 import org.apache.cxf.annotations.Policy;
 
 /**
- * A service implementation with a trasport policy set
+ * A service implementation with a transport policy set
  */
 @WebService(serviceName = "HelloService")
-@Policy(placement = Policy.Placement.BINDING, uri = "transport-policy.xml")
-public class SecurityPolicyHelloServiceImpl implements HelloService {
+@Policy(placement = Policy.Placement.BINDING, uri = "https-policy.xml")
+public class HttpsPolicyHelloServiceImpl implements HelloService {
 
     @WebMethod
     @Override
     public String hello(String text) {
-        return "Hello " + text + "!";
+        return "Hello " + text + " from HTTPS!";
     }
 
 }
