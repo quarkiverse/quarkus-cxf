@@ -1,0 +1,2394 @@
+
+:summaryTableId: quarkus
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[[quarkus_configuration]]link:#quarkus_configuration[Configuration property]
+
+h|Type
+h|Default
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.username]]`link:#quarkus_quarkus.cxf.client.-clients-.security.username[quarkus.cxf.client."clients".security.username]`
+
+
+[.description]
+--
+The user's name. It is used as follows:
+
+ - As the name in the UsernameToken for WS-Security
+ - As the alias name in the keystore to get the user's cert and private key for signature if `signature.username` is not set
+ - As the alias name in the keystore to get the user's public key for encryption if `encryption.username` is not set
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.password]]`link:#quarkus_quarkus.cxf.client.-clients-.security.password[quarkus.cxf.client."clients".security.password]`
+
+
+[.description]
+--
+The user's password when a `callback-handler` is not defined. This is only used for the password in a WS-Security UsernameToken.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.signature.username]]`link:#quarkus_quarkus.cxf.client.-clients-.security.signature.username[quarkus.cxf.client."clients".security.signature.username]`
+
+
+[.description]
+--
+The user's name for signature. It is used as the alias name in the keystore to get the user's cert and private key for signature. If this is not defined, then `username` is used instead. If that is also not specified, it uses the the default alias set in the properties file referenced by `signature.properties`. If that's also not set, and the keystore only contains a single key, that key will be used.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.signature.password]]`link:#quarkus_quarkus.cxf.client.-clients-.security.signature.password[quarkus.cxf.client."clients".security.signature.password]`
+
+
+[.description]
+--
+The user's password for signature when a `callback-handler` is not defined.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.encryption.username]]`link:#quarkus_quarkus.cxf.client.-clients-.security.encryption.username[quarkus.cxf.client."clients".security.encryption.username]`
+
+
+[.description]
+--
+The user's name for encryption. It is used as the alias name in the keystore to get the user's public key for encryption. If this is not defined, then `username` is used instead. If that is also not specified, it uses the the default alias set in the properties file referenced by `encrypt.properties`. If that's also not set, and the keystore only contains a single key, that key will be used.
+
+For the WS-Security web service provider, the `useReqSigCert` value can be used to accept (encrypt to) any client whose public key is in the service's truststore (defined in `encrypt.properties`).
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.callback-handler]]`link:#quarkus_quarkus.cxf.client.-clients-.security.callback-handler[quarkus.cxf.client."clients".security.callback-handler]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` bean used to obtain passwords, for both outbound and inbound requests.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CALLBACK_HANDLER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CALLBACK_HANDLER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.saml-callback-handler]]`link:#quarkus_quarkus.cxf.client.-clients-.security.saml-callback-handler[quarkus.cxf.client."clients".security.saml-callback-handler]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` implementation used to construct SAML Assertions.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_CALLBACK_HANDLER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_CALLBACK_HANDLER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.signature.properties-signature-properties]]`link:#quarkus_quarkus.cxf.client.-clients-.security.signature.properties-signature-properties[quarkus.cxf.client."clients".security.signature.properties]`
+
+
+[.description]
+--
+The Crypto property configuration to use for signing, if `signature.crypto` is not set.
+
+Example
+
+```
+[prefix].signature.properties."org.apache.ws.security.crypto.provider" = org.apache.ws.security.components.crypto.Merlin
+[prefix].signature.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
+[prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
+```
+
+
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_PROPERTIES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_PROPERTIES+++`
+endif::add-copy-button-to-env-var[]
+--|`Map<String,String>` 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.encryption.properties]]`link:#quarkus_quarkus.cxf.client.-clients-.security.encryption.properties[quarkus.cxf.client."clients".security.encryption.properties]`
+
+
+[.description]
+--
+The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
+
+Example
+
+```
+[prefix].encryption.properties."org.apache.ws.security.crypto.provider" = org.apache.ws.security.components.crypto.Merlin
+[prefix].encryption.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
+[prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
+```
+
+
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_PROPERTIES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_PROPERTIES+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.signature.crypto]]`link:#quarkus_quarkus.cxf.client.-clients-.security.signature.crypto[quarkus.cxf.client."clients".security.signature.crypto]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used for signature. If not set, `signature.properties` will be used to configure a `Crypto` instance.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_CRYPTO+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_CRYPTO+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.encryption.crypto]]`link:#quarkus_quarkus.cxf.client.-clients-.security.encryption.crypto[quarkus.cxf.client."clients".security.encryption.crypto]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_CRYPTO+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_CRYPTO+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.encryption.certificate]]`link:#quarkus_quarkus.cxf.client.-clients-.security.encryption.certificate[quarkus.cxf.client."clients".security.encryption.certificate]`
+
+
+[.description]
+--
+A message property for prepared X509 certificate to be used for encryption. If this is not defined, then the certificate will be either loaded from the keystore `encryption.properties` or extracted from request (when WS-Security is used and if `encryption.username` has value `useReqSigCert`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_CERTIFICATE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_CERTIFICATE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.enable-revocation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable-revocation[quarkus.cxf.client."clients".security.enable-revocation]`
+
+
+[.description]
+--
+If `true`, Certificate Revocation List (CRL) checking is enabled when verifying trust in a certificate; otherwise it is not enabled.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_REVOCATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_REVOCATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.enable-unsigned-saml-assertion-principal]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable-unsigned-saml-assertion-principal[quarkus.cxf.client."clients".security.enable-unsigned-saml-assertion-principal]`
+
+
+[.description]
+--
+If `true`, unsigned SAML assertions will be allowed as SecurityContext Principals; otherwise they won't be allowed as SecurityContext Principals. Note that "unsigned" refers to an internal signature. Even if the token is signed by an external signature (as per the "sender-vouches" requirement), this boolean must still be configured if you want to use the token to set up the security context.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_UNSIGNED_SAML_ASSERTION_PRINCIPAL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_UNSIGNED_SAML_ASSERTION_PRINCIPAL+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.validate-saml-subject-confirmation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.validate-saml-subject-confirmation[quarkus.cxf.client."clients".security.validate-saml-subject-confirmation]`
+
+
+[.description]
+--
+If `true`, the `SubjectConfirmation` requirements of a received SAML Token (sender-vouches or holder-of-key) will be validated; otherwise they won't be validated.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_VALIDATE_SAML_SUBJECT_CONFIRMATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_VALIDATE_SAML_SUBJECT_CONFIRMATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.sc-from-jaas-subject]]`link:#quarkus_quarkus.cxf.client.-clients-.security.sc-from-jaas-subject[quarkus.cxf.client."clients".security.sc-from-jaas-subject]`
+
+
+[.description]
+--
+If `true`, security context can be created from JAAS Subject; otherwise it must not be created from JAAS Subject.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SC_FROM_JAAS_SUBJECT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SC_FROM_JAAS_SUBJECT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.audience-restriction-validation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.audience-restriction-validation[quarkus.cxf.client."clients".security.audience-restriction-validation]`
+
+
+[.description]
+--
+If ``, then if the SAML Token contains Audience Restriction URIs, one of them must match one of the values in `audience.restrictions`; otherwise the SAML AudienceRestriction validation is disabled.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_AUDIENCE_RESTRICTION_VALIDATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_AUDIENCE_RESTRICTION_VALIDATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.saml-role-attributename]]`link:#quarkus_quarkus.cxf.client.-clients-.security.saml-role-attributename[quarkus.cxf.client."clients".security.saml-role-attributename]`
+
+
+[.description]
+--
+The attribute URI of the SAML `AttributeStatement` where the role information is stored.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_ROLE_ATTRIBUTENAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_ROLE_ATTRIBUTENAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.subject-cert-constraints]]`link:#quarkus_quarkus.cxf.client.-clients-.security.subject-cert-constraints[quarkus.cxf.client."clients".security.subject-cert-constraints]`
+
+
+[.description]
+--
+A String of regular expressions (separated by the value specified in `security.cert.constraints.separator`) which will be applied to the subject DN of the certificate used for signature validation, after trust verification of the certificate chain associated with the certificate.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SUBJECT_CERT_CONSTRAINTS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SUBJECT_CERT_CONSTRAINTS+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.cert-constraints-separator]]`link:#quarkus_quarkus.cxf.client.-clients-.security.cert-constraints-separator[quarkus.cxf.client."clients".security.cert-constraints-separator]`
+
+
+[.description]
+--
+The separator that is used to parse certificate constraints configured in `security.subject.cert.constraints`
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CERT_CONSTRAINTS_SEPARATOR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CERT_CONSTRAINTS_SEPARATOR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`,`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.actor]]`link:#quarkus_quarkus.cxf.client.-clients-.security.actor[quarkus.cxf.client."clients".security.actor]`
+
+
+[.description]
+--
+The actor or role name of the `wsse:Security` header. If this parameter is omitted, the actor name is not set.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ACTOR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ACTOR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.validate.token]]`link:#quarkus_quarkus.cxf.client.-clients-.security.validate.token[quarkus.cxf.client."clients".security.validate.token]`
+
+
+[.description]
+--
+If `true`, the password of a received `UsernameToken` will be validated; otherwise it won't be validated.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_VALIDATE_TOKEN+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_VALIDATE_TOKEN+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.username-token.always.encrypted]]`link:#quarkus_quarkus.cxf.client.-clients-.security.username-token.always.encrypted[quarkus.cxf.client."clients".security.username-token.always.encrypted]`
+
+
+[.description]
+--
+Whether to always encrypt `UsernameTokens` that are defined as a `SupportingToken`. This should not be set to `false` in a production environment, as it exposes the password (or the digest of the password) on the wire.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAME_TOKEN_ALWAYS_ENCRYPTED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAME_TOKEN_ALWAYS_ENCRYPTED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.is-bsp-compliant]]`link:#quarkus_quarkus.cxf.client.-clients-.security.is-bsp-compliant[quarkus.cxf.client."clients".security.is-bsp-compliant]`
+
+
+[.description]
+--
+If `true`, the compliance with the Basic Security Profile (BSP) 1.1 will be ensured; otherwise it will not be ensured.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_IS_BSP_COMPLIANT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_IS_BSP_COMPLIANT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.enable.nonce.cache]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable.nonce.cache[quarkus.cxf.client."clients".security.enable.nonce.cache]`
+
+
+[.description]
+--
+If `true`, the `UsernameToken` nonces will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
+
+Note that caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effect, or the `UsernameToken` action has been configured for the non-security-policy case.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_NONCE_CACHE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_NONCE_CACHE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.enable.timestamp.cache]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable.timestamp.cache[quarkus.cxf.client."clients".security.enable.timestamp.cache]`
+
+
+[.description]
+--
+If `true`, the `Timestamp` `Created` Strings (these are only cached in conjunction with a message Signature) will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
+
+Note that caching only applies when either a `IncludeTimestamp` policy is in effect, or the `Timestamp` action has been configured for the non-security-policy case.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_TIMESTAMP_CACHE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_TIMESTAMP_CACHE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.enable.streaming]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable.streaming[quarkus.cxf.client."clients".security.enable.streaming]`
+
+
+[.description]
+--
+If `true`, the new streaming (StAX) implementation of WS-Security is used; otherwise the old DOM implementation is used.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_STREAMING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_STREAMING+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.return.security.error]]`link:#quarkus_quarkus.cxf.client.-clients-.security.return.security.error[quarkus.cxf.client."clients".security.return.security.error]`
+
+
+[.description]
+--
+If `true`, detailed security error messages are sent to clients; otherwise the details are omitted and only a generic error message is sent.
+
+The "real" security errors should not be returned to the client in production, as they may leak information about the deployment, or otherwise provide an "oracle" for attacks.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_RETURN_SECURITY_ERROR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_RETURN_SECURITY_ERROR+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.must-understand]]`link:#quarkus_quarkus.cxf.client.-clients-.security.must-understand[quarkus.cxf.client."clients".security.must-understand]`
+
+
+[.description]
+--
+If `true`, the SOAP `mustUnderstand` header is included in security headers based on a WS-SecurityPolicy; otherwise the header is always omitted.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_MUST_UNDERSTAND+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_MUST_UNDERSTAND+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.enable.saml.cache]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable.saml.cache[quarkus.cxf.client."clients".security.enable.saml.cache]`
+
+
+[.description]
+--
+If `true` and in case the token contains a `OneTimeUse` Condition, the SAML2 Token Identifiers will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
+
+Note that caching only applies when either a `SamlToken` policy is in effect, or a SAML action has been configured for the non-security-policy case.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_SAML_CACHE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_SAML_CACHE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.store.bytes.in.attachment]]`link:#quarkus_quarkus.cxf.client.-clients-.security.store.bytes.in.attachment[quarkus.cxf.client."clients".security.store.bytes.in.attachment]`
+
+
+[.description]
+--
+Whether to store bytes (CipherData or BinarySecurityToken) in an attachment. The default is true if MTOM is enabled. Set it to false to BASE-64 encode the bytes and "inlined" them in the message instead. Setting this to true is more efficient, as it means that the BASE-64 encoding step can be skipped. This only applies to the DOM WS-Security stack.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STORE_BYTES_IN_ATTACHMENT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STORE_BYTES_IN_ATTACHMENT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.swa.encryption.attachment.transform.content]]`link:#quarkus_quarkus.cxf.client.-clients-.security.swa.encryption.attachment.transform.content[quarkus.cxf.client."clients".security.swa.encryption.attachment.transform.content]`
+
+
+[.description]
+--
+If `true`, `Attachment-Content-Only` transform will be used when an Attachment is encrypted via a WS-SecurityPolicy expression; otherwise `Attachment-Complete` transform will be used when an Attachment is encrypted via a WS-SecurityPolicy expression.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SWA_ENCRYPTION_ATTACHMENT_TRANSFORM_CONTENT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SWA_ENCRYPTION_ATTACHMENT_TRANSFORM_CONTENT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.use.str.transform]]`link:#quarkus_quarkus.cxf.client.-clients-.security.use.str.transform[quarkus.cxf.client."clients".security.use.str.transform]`
+
+
+[.description]
+--
+If `true`, the STR (Security Token Reference) Transform will be used when (externally) signing a SAML Token; otherwise the STR (Security Token Reference) Transform will not be used.
+
+Some frameworks cannot process the `SecurityTokenReference`. You may set this `false` in such cases.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USE_STR_TRANSFORM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USE_STR_TRANSFORM+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.add.inclusive.prefixes]]`link:#quarkus_quarkus.cxf.client.-clients-.security.add.inclusive.prefixes[quarkus.cxf.client."clients".security.add.inclusive.prefixes]`
+
+
+[.description]
+--
+If `true`, an `InclusiveNamespaces` `PrefixList` will be added as a `CanonicalizationMethod` child when generating Signatures using `WSConstants.C14N_EXCL_OMIT_COMMENTS`; otherwise the `PrefixList` will not be added.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ADD_INCLUSIVE_PREFIXES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ADD_INCLUSIVE_PREFIXES+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.disable.require.client.cert.check]]`link:#quarkus_quarkus.cxf.client.-clients-.security.disable.require.client.cert.check[quarkus.cxf.client."clients".security.disable.require.client.cert.check]`
+
+
+[.description]
+--
+If `true`, the enforcement of the WS-SecurityPolicy `RequireClientCertificate` policy will be disabled; otherwise the enforcement of the WS-SecurityPolicy `RequireClientCertificate` policy is enabled.
+
+Some servers may not do client certificate verification at the start of the SSL handshake, and therefore the client certificates may not be available to the WS-Security layer for policy verification.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_DISABLE_REQUIRE_CLIENT_CERT_CHECK+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_DISABLE_REQUIRE_CLIENT_CERT_CHECK+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.expand.xop.include]]`link:#quarkus_quarkus.cxf.client.-clients-.security.expand.xop.include[quarkus.cxf.client."clients".security.expand.xop.include]`
+
+
+[.description]
+--
+If `true`, the `xop:Include` elements will be searched for encryption and signature (on the outbound side) or for signature verification (on the inbound side); otherwise the search won't happen. This ensures that the actual bytes are signed, and not just the reference. The default is `true` if MTOM is enabled, otherwise the default is `false`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_EXPAND_XOP_INCLUDE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_EXPAND_XOP_INCLUDE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.timestamp.timetolive]]`link:#quarkus_quarkus.cxf.client.-clients-.security.timestamp.timetolive[quarkus.cxf.client."clients".security.timestamp.timeToLive]`
+
+
+[.description]
+--
+The time in seconds to add to the Creation value of an incoming `Timestamp` to determine whether to accept it as valid or not.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TIMESTAMP_TIMETOLIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TIMESTAMP_TIMETOLIVE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`300`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.timestamp.futuretimetolive]]`link:#quarkus_quarkus.cxf.client.-clients-.security.timestamp.futuretimetolive[quarkus.cxf.client."clients".security.timestamp.futureTimeToLive]`
+
+
+[.description]
+--
+The time in seconds in the future within which the `Created` time of an incoming `Timestamp` is valid. The default is greater than zero to avoid problems where clocks are slightly askew. Set this to `0` to reject all future-created `Timestamp`s.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TIMESTAMP_FUTURETIMETOLIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TIMESTAMP_FUTURETIMETOLIVE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`60`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.usernametoken.timetolive]]`link:#quarkus_quarkus.cxf.client.-clients-.security.usernametoken.timetolive[quarkus.cxf.client."clients".security.usernametoken.timeToLive]`
+
+
+[.description]
+--
+The time in seconds to append to the Creation value of an incoming `UsernameToken` to determine whether to accept it as valid or not.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAMETOKEN_TIMETOLIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAMETOKEN_TIMETOLIVE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`300`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.usernametoken.futuretimetolive]]`link:#quarkus_quarkus.cxf.client.-clients-.security.usernametoken.futuretimetolive[quarkus.cxf.client."clients".security.usernametoken.futureTimeToLive]`
+
+
+[.description]
+--
+The time in seconds in the future within which the `Created` time of an incoming `UsernameToken` is valid. The default is greater than zero to avoid problems where clocks are slightly askew. Set this to `0` to reject all future-created `UsernameToken`s.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAMETOKEN_FUTURETIMETOLIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAMETOKEN_FUTURETIMETOLIVE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`60`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.spnego.client.action]]`link:#quarkus_quarkus.cxf.client.-clients-.security.spnego.client.action[quarkus.cxf.client."clients".security.spnego.client.action]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.spnego.SpnegoClientAction` bean to use for SPNEGO. This allows the user to plug in a different implementation to obtain a service ticket.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SPNEGO_CLIENT_ACTION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SPNEGO_CLIENT_ACTION+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.nonce.cache.instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.nonce.cache.instance[quarkus.cxf.client."clients".security.nonce.cache.instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used to cache `UsernameToken` nonces. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_NONCE_CACHE_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_NONCE_CACHE_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.timestamp.cache.instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.timestamp.cache.instance[quarkus.cxf.client."clients".security.timestamp.cache.instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used to cache `Timestamp` `Created` Strings. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TIMESTAMP_CACHE_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TIMESTAMP_CACHE_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.saml.cache.instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.saml.cache.instance[quarkus.cxf.client."clients".security.saml.cache.instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used to cache SAML2 Token Identifier Strings (if the token contains a `OneTimeUse` condition). A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_CACHE_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_CACHE_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.cache.config.file]]`link:#quarkus_quarkus.cxf.client.-clients-.security.cache.config.file[quarkus.cxf.client."clients".security.cache.config.file]`
+
+
+[.description]
+--
+Set this property to point to a configuration file for the underlying caching implementation for the `TokenStore`. The default configuration file that is used is `cxf-ehcache.xml` in `org.apache.cxf:cxf-rt-security` JAR.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CACHE_CONFIG_FILE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CACHE_CONFIG_FILE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.token-store-cache-instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.token-store-cache-instance[quarkus.cxf.client."clients".security.token-store-cache-instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.cxf.ws.security.tokenstore.TokenStore` bean to use for caching security tokens. By default this uses a  instance.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TOKEN_STORE_CACHE_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TOKEN_STORE_CACHE_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.cache.identifier]]`link:#quarkus_quarkus.cxf.client.-clients-.security.cache.identifier[quarkus.cxf.client."clients".security.cache.identifier]`
+
+
+[.description]
+--
+The Cache Identifier to use with the TokenStore. CXF uses the following key to retrieve a token store: `org.apache.cxf.ws.security.tokenstore.TokenStore-<identifier>`. This key can be used to configure service-specific cache configuration. If the identifier does not match, then it falls back to a cache configuration with key `org.apache.cxf.ws.security.tokenstore.TokenStore`.
+
+The default `<identifier>` is the QName of the service in question. However to pick up a custom cache configuration (for example, if you want to specify a TokenStore per-client proxy), it can be configured with this identifier instead.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CACHE_IDENTIFIER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CACHE_IDENTIFIER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.role.classifier]]`link:#quarkus_quarkus.cxf.client.-clients-.security.role.classifier[quarkus.cxf.client."clients".security.role.classifier]`
+
+
+[.description]
+--
+The Subject Role Classifier to use. If one of the WSS4J Validators returns a JAAS Subject from Validation, then the `WSS4JInInterceptor` will attempt to create a `SecurityContext` based on this Subject. If this value is not specified, then it tries to get roles using the `DefaultSecurityContext` in `org.apache.cxf:cxf-core`. Otherwise it uses this value in combination with the `role.classifier.type` to get the roles from the `Subject`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ROLE_CLASSIFIER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ROLE_CLASSIFIER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.role.classifier.type]]`link:#quarkus_quarkus.cxf.client.-clients-.security.role.classifier.type[quarkus.cxf.client."clients".security.role.classifier.type]`
+
+
+[.description]
+--
+The Subject Role Classifier Type to use. If one of the WSS4J Validators returns a JAAS Subject from Validation, then the `WSS4JInInterceptor` will attempt to create a `SecurityContext` based on this Subject. Currently accepted values are `prefix` or `classname`. Must be used in conjunction with the `role.classifier`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ROLE_CLASSIFIER_TYPE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ROLE_CLASSIFIER_TYPE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`prefix`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.asymmetric.signature.algorithm]]`link:#quarkus_quarkus.cxf.client.-clients-.security.asymmetric.signature.algorithm[quarkus.cxf.client."clients".security.asymmetric.signature.algorithm]`
+
+
+[.description]
+--
+This configuration tag allows the user to override the default Asymmetric Signature algorithm (RSA-SHA1) for use in WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use of other algorithms at present.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ASYMMETRIC_SIGNATURE_ALGORITHM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ASYMMETRIC_SIGNATURE_ALGORITHM+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.symmetric.signature.algorithm]]`link:#quarkus_quarkus.cxf.client.-clients-.security.symmetric.signature.algorithm[quarkus.cxf.client."clients".security.symmetric.signature.algorithm]`
+
+
+[.description]
+--
+This configuration tag allows the user to override the default Symmetric Signature algorithm (HMAC-SHA1) for use in WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use of other algorithms at present.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SYMMETRIC_SIGNATURE_ALGORITHM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SYMMETRIC_SIGNATURE_ALGORITHM+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.password.encryptor.instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.password.encryptor.instance[quarkus.cxf.client."clients".security.password.encryptor.instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.PasswordEncryptor` bean, which is used to encrypt or decrypt passwords in the Merlin Crypto implementation (or any custom Crypto implementations).
+
+By default, WSS4J uses the `org.apache.wss4j.common.crypto.JasyptPasswordEncryptor` which must be instantiated with a password to use to decrypt keystore passwords in the Merlin Crypto definition. This password is obtained via the CallbackHandler defined via `callback-handler`
+
+The encrypted passwords must be stored in the format "ENC(encoded encrypted password)".
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_PASSWORD_ENCRYPTOR_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_PASSWORD_ENCRYPTOR_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.delegated.credential]]`link:#quarkus_quarkus.cxf.client.-clients-.security.delegated.credential[quarkus.cxf.client."clients".security.delegated.credential]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a Kerberos `org.ietf.jgss.GSSCredential` bean to use for WS-Security. This is used to retrieve a service ticket instead of using the client credentials.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_DELEGATED_CREDENTIAL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_DELEGATED_CREDENTIAL+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.security.context.creator]]`link:#quarkus_quarkus.cxf.client.-clients-.security.security.context.creator[quarkus.cxf.client."clients".security.security.context.creator]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.cxf.ws.security.wss4j.WSS4JSecurityContextCreator` bean that is used to create a CXF SecurityContext from the set of WSS4J processing results. The default implementation is `org.apache.cxf.ws.security.wss4j.DefaultWSS4JSecurityContextCreator`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SECURITY_CONTEXT_CREATOR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SECURITY_CONTEXT_CREATOR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.security.token.lifetime]]`link:#quarkus_quarkus.cxf.client.-clients-.security.security.token.lifetime[quarkus.cxf.client."clients".security.security.token.lifetime]`
+
+
+[.description]
+--
+The security token lifetime value (in milliseconds).
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SECURITY_TOKEN_LIFETIME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SECURITY_TOKEN_LIFETIME+++`
+endif::add-copy-button-to-env-var[]
+--|long 
+|`300000`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.request.credential.delegation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.request.credential.delegation[quarkus.cxf.client."clients".security.kerberos.request.credential.delegation]`
+
+
+[.description]
+--
+If `true`, credential delegation is requested in the KerberosClient; otherwise the credential delegation is not in the KerberosClient.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_REQUEST_CREDENTIAL_DELEGATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_REQUEST_CREDENTIAL_DELEGATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.use.credential.delegation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.use.credential.delegation[quarkus.cxf.client."clients".security.kerberos.use.credential.delegation]`
+
+
+[.description]
+--
+If `true`, GSSCredential bean is retrieved from the Message Context using the `delegated.credential` property and then it is used to obtain a service ticket.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_USE_CREDENTIAL_DELEGATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_USE_CREDENTIAL_DELEGATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.is.username.in.servicename.form]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.is.username.in.servicename.form[quarkus.cxf.client."clients".security.kerberos.is.username.in.servicename.form]`
+
+
+[.description]
+--
+If `true`, the Kerberos username is in servicename form; otherwise the Kerberos username is not in servicename form.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_IS_USERNAME_IN_SERVICENAME_FORM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_IS_USERNAME_IN_SERVICENAME_FORM+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.jaas.context]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.jaas.context[quarkus.cxf.client."clients".security.kerberos.jaas.context]`
+
+
+[.description]
+--
+The JAAS Context name to use for Kerberos.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_JAAS_CONTEXT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_JAAS_CONTEXT+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.spn]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.spn[quarkus.cxf.client."clients".security.kerberos.spn]`
+
+
+[.description]
+--
+The Kerberos Service Provider Name (spn) to use.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_SPN+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_SPN+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.client]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.client[quarkus.cxf.client."clients".security.kerberos.client]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.cxf.ws.security.kerberos.KerberosClient` bean used to obtain a service ticket.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_CLIENT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_CLIENT+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.username]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.username[quarkus.cxf.endpoint."endpoints".security.username]`
+
+
+[.description]
+--
+The user's name. It is used as follows:
+
+ - As the name in the UsernameToken for WS-Security
+ - As the alias name in the keystore to get the user's cert and private key for signature if `signature.username` is not set
+ - As the alias name in the keystore to get the user's public key for encryption if `encryption.username` is not set
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.password]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.password[quarkus.cxf.endpoint."endpoints".security.password]`
+
+
+[.description]
+--
+The user's password when a `callback-handler` is not defined. This is only used for the password in a WS-Security UsernameToken.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.username]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.username[quarkus.cxf.endpoint."endpoints".security.signature.username]`
+
+
+[.description]
+--
+The user's name for signature. It is used as the alias name in the keystore to get the user's cert and private key for signature. If this is not defined, then `username` is used instead. If that is also not specified, it uses the the default alias set in the properties file referenced by `signature.properties`. If that's also not set, and the keystore only contains a single key, that key will be used.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.password]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.password[quarkus.cxf.endpoint."endpoints".security.signature.password]`
+
+
+[.description]
+--
+The user's password for signature when a `callback-handler` is not defined.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.username]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.username[quarkus.cxf.endpoint."endpoints".security.encryption.username]`
+
+
+[.description]
+--
+The user's name for encryption. It is used as the alias name in the keystore to get the user's public key for encryption. If this is not defined, then `username` is used instead. If that is also not specified, it uses the the default alias set in the properties file referenced by `encrypt.properties`. If that's also not set, and the keystore only contains a single key, that key will be used.
+
+For the WS-Security web service provider, the `useReqSigCert` value can be used to accept (encrypt to) any client whose public key is in the service's truststore (defined in `encrypt.properties`).
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.callback-handler]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.callback-handler[quarkus.cxf.endpoint."endpoints".security.callback-handler]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` bean used to obtain passwords, for both outbound and inbound requests.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CALLBACK_HANDLER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CALLBACK_HANDLER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml-callback-handler]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml-callback-handler[quarkus.cxf.endpoint."endpoints".security.saml-callback-handler]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` implementation used to construct SAML Assertions.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_CALLBACK_HANDLER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_CALLBACK_HANDLER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.properties-signature-properties]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.properties-signature-properties[quarkus.cxf.endpoint."endpoints".security.signature.properties]`
+
+
+[.description]
+--
+The Crypto property configuration to use for signing, if `signature.crypto` is not set.
+
+Example
+
+```
+[prefix].signature.properties."org.apache.ws.security.crypto.provider" = org.apache.ws.security.components.crypto.Merlin
+[prefix].signature.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
+[prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
+```
+
+
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_PROPERTIES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_PROPERTIES+++`
+endif::add-copy-button-to-env-var[]
+--|`Map<String,String>` 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties[quarkus.cxf.endpoint."endpoints".security.encryption.properties]`
+
+
+[.description]
+--
+The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
+
+Example
+
+```
+[prefix].encryption.properties."org.apache.ws.security.crypto.provider" = org.apache.ws.security.components.crypto.Merlin
+[prefix].encryption.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
+[prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
+```
+
+
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_PROPERTIES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_PROPERTIES+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.crypto]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.crypto[quarkus.cxf.endpoint."endpoints".security.signature.crypto]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used for signature. If not set, `signature.properties` will be used to configure a `Crypto` instance.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_CRYPTO+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_CRYPTO+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.crypto]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.crypto[quarkus.cxf.endpoint."endpoints".security.encryption.crypto]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_CRYPTO+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_CRYPTO+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.certificate]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.certificate[quarkus.cxf.endpoint."endpoints".security.encryption.certificate]`
+
+
+[.description]
+--
+A message property for prepared X509 certificate to be used for encryption. If this is not defined, then the certificate will be either loaded from the keystore `encryption.properties` or extracted from request (when WS-Security is used and if `encryption.username` has value `useReqSigCert`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_CERTIFICATE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_CERTIFICATE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable-revocation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable-revocation[quarkus.cxf.endpoint."endpoints".security.enable-revocation]`
+
+
+[.description]
+--
+If `true`, Certificate Revocation List (CRL) checking is enabled when verifying trust in a certificate; otherwise it is not enabled.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_REVOCATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_REVOCATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable-unsigned-saml-assertion-principal]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable-unsigned-saml-assertion-principal[quarkus.cxf.endpoint."endpoints".security.enable-unsigned-saml-assertion-principal]`
+
+
+[.description]
+--
+If `true`, unsigned SAML assertions will be allowed as SecurityContext Principals; otherwise they won't be allowed as SecurityContext Principals. Note that "unsigned" refers to an internal signature. Even if the token is signed by an external signature (as per the "sender-vouches" requirement), this boolean must still be configured if you want to use the token to set up the security context.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_UNSIGNED_SAML_ASSERTION_PRINCIPAL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_UNSIGNED_SAML_ASSERTION_PRINCIPAL+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.validate-saml-subject-confirmation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.validate-saml-subject-confirmation[quarkus.cxf.endpoint."endpoints".security.validate-saml-subject-confirmation]`
+
+
+[.description]
+--
+If `true`, the `SubjectConfirmation` requirements of a received SAML Token (sender-vouches or holder-of-key) will be validated; otherwise they won't be validated.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_VALIDATE_SAML_SUBJECT_CONFIRMATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_VALIDATE_SAML_SUBJECT_CONFIRMATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.sc-from-jaas-subject]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.sc-from-jaas-subject[quarkus.cxf.endpoint."endpoints".security.sc-from-jaas-subject]`
+
+
+[.description]
+--
+If `true`, security context can be created from JAAS Subject; otherwise it must not be created from JAAS Subject.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SC_FROM_JAAS_SUBJECT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SC_FROM_JAAS_SUBJECT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.audience-restriction-validation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.audience-restriction-validation[quarkus.cxf.endpoint."endpoints".security.audience-restriction-validation]`
+
+
+[.description]
+--
+If ``, then if the SAML Token contains Audience Restriction URIs, one of them must match one of the values in `audience.restrictions`; otherwise the SAML AudienceRestriction validation is disabled.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_AUDIENCE_RESTRICTION_VALIDATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_AUDIENCE_RESTRICTION_VALIDATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml-role-attributename]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml-role-attributename[quarkus.cxf.endpoint."endpoints".security.saml-role-attributename]`
+
+
+[.description]
+--
+The attribute URI of the SAML `AttributeStatement` where the role information is stored.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_ROLE_ATTRIBUTENAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_ROLE_ATTRIBUTENAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.subject-cert-constraints]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.subject-cert-constraints[quarkus.cxf.endpoint."endpoints".security.subject-cert-constraints]`
+
+
+[.description]
+--
+A String of regular expressions (separated by the value specified in `security.cert.constraints.separator`) which will be applied to the subject DN of the certificate used for signature validation, after trust verification of the certificate chain associated with the certificate.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SUBJECT_CERT_CONSTRAINTS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SUBJECT_CERT_CONSTRAINTS+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.cert-constraints-separator]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.cert-constraints-separator[quarkus.cxf.endpoint."endpoints".security.cert-constraints-separator]`
+
+
+[.description]
+--
+The separator that is used to parse certificate constraints configured in `security.subject.cert.constraints`
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CERT_CONSTRAINTS_SEPARATOR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CERT_CONSTRAINTS_SEPARATOR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`,`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.actor]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.actor[quarkus.cxf.endpoint."endpoints".security.actor]`
+
+
+[.description]
+--
+The actor or role name of the `wsse:Security` header. If this parameter is omitted, the actor name is not set.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ACTOR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ACTOR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.validate.token]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.validate.token[quarkus.cxf.endpoint."endpoints".security.validate.token]`
+
+
+[.description]
+--
+If `true`, the password of a received `UsernameToken` will be validated; otherwise it won't be validated.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_VALIDATE_TOKEN+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_VALIDATE_TOKEN+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.username-token.always.encrypted]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.username-token.always.encrypted[quarkus.cxf.endpoint."endpoints".security.username-token.always.encrypted]`
+
+
+[.description]
+--
+Whether to always encrypt `UsernameTokens` that are defined as a `SupportingToken`. This should not be set to `false` in a production environment, as it exposes the password (or the digest of the password) on the wire.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAME_TOKEN_ALWAYS_ENCRYPTED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAME_TOKEN_ALWAYS_ENCRYPTED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.is-bsp-compliant]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.is-bsp-compliant[quarkus.cxf.endpoint."endpoints".security.is-bsp-compliant]`
+
+
+[.description]
+--
+If `true`, the compliance with the Basic Security Profile (BSP) 1.1 will be ensured; otherwise it will not be ensured.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_IS_BSP_COMPLIANT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_IS_BSP_COMPLIANT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.nonce.cache]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.nonce.cache[quarkus.cxf.endpoint."endpoints".security.enable.nonce.cache]`
+
+
+[.description]
+--
+If `true`, the `UsernameToken` nonces will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
+
+Note that caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effect, or the `UsernameToken` action has been configured for the non-security-policy case.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_NONCE_CACHE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_NONCE_CACHE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.timestamp.cache]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.timestamp.cache[quarkus.cxf.endpoint."endpoints".security.enable.timestamp.cache]`
+
+
+[.description]
+--
+If `true`, the `Timestamp` `Created` Strings (these are only cached in conjunction with a message Signature) will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
+
+Note that caching only applies when either a `IncludeTimestamp` policy is in effect, or the `Timestamp` action has been configured for the non-security-policy case.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_TIMESTAMP_CACHE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_TIMESTAMP_CACHE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.streaming]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.streaming[quarkus.cxf.endpoint."endpoints".security.enable.streaming]`
+
+
+[.description]
+--
+If `true`, the new streaming (StAX) implementation of WS-Security is used; otherwise the old DOM implementation is used.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_STREAMING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_STREAMING+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.return.security.error]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.return.security.error[quarkus.cxf.endpoint."endpoints".security.return.security.error]`
+
+
+[.description]
+--
+If `true`, detailed security error messages are sent to clients; otherwise the details are omitted and only a generic error message is sent.
+
+The "real" security errors should not be returned to the client in production, as they may leak information about the deployment, or otherwise provide an "oracle" for attacks.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_RETURN_SECURITY_ERROR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_RETURN_SECURITY_ERROR+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.must-understand]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.must-understand[quarkus.cxf.endpoint."endpoints".security.must-understand]`
+
+
+[.description]
+--
+If `true`, the SOAP `mustUnderstand` header is included in security headers based on a WS-SecurityPolicy; otherwise the header is always omitted.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_MUST_UNDERSTAND+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_MUST_UNDERSTAND+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.saml.cache]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.saml.cache[quarkus.cxf.endpoint."endpoints".security.enable.saml.cache]`
+
+
+[.description]
+--
+If `true` and in case the token contains a `OneTimeUse` Condition, the SAML2 Token Identifiers will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
+
+Note that caching only applies when either a `SamlToken` policy is in effect, or a SAML action has been configured for the non-security-policy case.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_SAML_CACHE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_SAML_CACHE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.store.bytes.in.attachment]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.store.bytes.in.attachment[quarkus.cxf.endpoint."endpoints".security.store.bytes.in.attachment]`
+
+
+[.description]
+--
+Whether to store bytes (CipherData or BinarySecurityToken) in an attachment. The default is true if MTOM is enabled. Set it to false to BASE-64 encode the bytes and "inlined" them in the message instead. Setting this to true is more efficient, as it means that the BASE-64 encoding step can be skipped. This only applies to the DOM WS-Security stack.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_STORE_BYTES_IN_ATTACHMENT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_STORE_BYTES_IN_ATTACHMENT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.swa.encryption.attachment.transform.content]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.swa.encryption.attachment.transform.content[quarkus.cxf.endpoint."endpoints".security.swa.encryption.attachment.transform.content]`
+
+
+[.description]
+--
+If `true`, `Attachment-Content-Only` transform will be used when an Attachment is encrypted via a WS-SecurityPolicy expression; otherwise `Attachment-Complete` transform will be used when an Attachment is encrypted via a WS-SecurityPolicy expression.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SWA_ENCRYPTION_ATTACHMENT_TRANSFORM_CONTENT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SWA_ENCRYPTION_ATTACHMENT_TRANSFORM_CONTENT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.use.str.transform]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.use.str.transform[quarkus.cxf.endpoint."endpoints".security.use.str.transform]`
+
+
+[.description]
+--
+If `true`, the STR (Security Token Reference) Transform will be used when (externally) signing a SAML Token; otherwise the STR (Security Token Reference) Transform will not be used.
+
+Some frameworks cannot process the `SecurityTokenReference`. You may set this `false` in such cases.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USE_STR_TRANSFORM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USE_STR_TRANSFORM+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.add.inclusive.prefixes]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.add.inclusive.prefixes[quarkus.cxf.endpoint."endpoints".security.add.inclusive.prefixes]`
+
+
+[.description]
+--
+If `true`, an `InclusiveNamespaces` `PrefixList` will be added as a `CanonicalizationMethod` child when generating Signatures using `WSConstants.C14N_EXCL_OMIT_COMMENTS`; otherwise the `PrefixList` will not be added.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ADD_INCLUSIVE_PREFIXES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ADD_INCLUSIVE_PREFIXES+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.disable.require.client.cert.check]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.disable.require.client.cert.check[quarkus.cxf.endpoint."endpoints".security.disable.require.client.cert.check]`
+
+
+[.description]
+--
+If `true`, the enforcement of the WS-SecurityPolicy `RequireClientCertificate` policy will be disabled; otherwise the enforcement of the WS-SecurityPolicy `RequireClientCertificate` policy is enabled.
+
+Some servers may not do client certificate verification at the start of the SSL handshake, and therefore the client certificates may not be available to the WS-Security layer for policy verification.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_DISABLE_REQUIRE_CLIENT_CERT_CHECK+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_DISABLE_REQUIRE_CLIENT_CERT_CHECK+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.expand.xop.include]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.expand.xop.include[quarkus.cxf.endpoint."endpoints".security.expand.xop.include]`
+
+
+[.description]
+--
+If `true`, the `xop:Include` elements will be searched for encryption and signature (on the outbound side) or for signature verification (on the inbound side); otherwise the search won't happen. This ensures that the actual bytes are signed, and not just the reference. The default is `true` if MTOM is enabled, otherwise the default is `false`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_EXPAND_XOP_INCLUDE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_EXPAND_XOP_INCLUDE+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.timetolive]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.timetolive[quarkus.cxf.endpoint."endpoints".security.timestamp.timeToLive]`
+
+
+[.description]
+--
+The time in seconds to add to the Creation value of an incoming `Timestamp` to determine whether to accept it as valid or not.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TIMESTAMP_TIMETOLIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TIMESTAMP_TIMETOLIVE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`300`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.futuretimetolive]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.futuretimetolive[quarkus.cxf.endpoint."endpoints".security.timestamp.futureTimeToLive]`
+
+
+[.description]
+--
+The time in seconds in the future within which the `Created` time of an incoming `Timestamp` is valid. The default is greater than zero to avoid problems where clocks are slightly askew. Set this to `0` to reject all future-created `Timestamp`s.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TIMESTAMP_FUTURETIMETOLIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TIMESTAMP_FUTURETIMETOLIVE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`60`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.timetolive]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.timetolive[quarkus.cxf.endpoint."endpoints".security.usernametoken.timeToLive]`
+
+
+[.description]
+--
+The time in seconds to append to the Creation value of an incoming `UsernameToken` to determine whether to accept it as valid or not.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAMETOKEN_TIMETOLIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAMETOKEN_TIMETOLIVE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`300`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.futuretimetolive]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.futuretimetolive[quarkus.cxf.endpoint."endpoints".security.usernametoken.futureTimeToLive]`
+
+
+[.description]
+--
+The time in seconds in the future within which the `Created` time of an incoming `UsernameToken` is valid. The default is greater than zero to avoid problems where clocks are slightly askew. Set this to `0` to reject all future-created `UsernameToken`s.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAMETOKEN_FUTURETIMETOLIVE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAMETOKEN_FUTURETIMETOLIVE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`60`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.spnego.client.action]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.spnego.client.action[quarkus.cxf.endpoint."endpoints".security.spnego.client.action]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.spnego.SpnegoClientAction` bean to use for SPNEGO. This allows the user to plug in a different implementation to obtain a service ticket.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SPNEGO_CLIENT_ACTION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SPNEGO_CLIENT_ACTION+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.nonce.cache.instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.nonce.cache.instance[quarkus.cxf.endpoint."endpoints".security.nonce.cache.instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used to cache `UsernameToken` nonces. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_NONCE_CACHE_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_NONCE_CACHE_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.cache.instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.cache.instance[quarkus.cxf.endpoint."endpoints".security.timestamp.cache.instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used to cache `Timestamp` `Created` Strings. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TIMESTAMP_CACHE_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TIMESTAMP_CACHE_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml.cache.instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml.cache.instance[quarkus.cxf.endpoint."endpoints".security.saml.cache.instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used to cache SAML2 Token Identifier Strings (if the token contains a `OneTimeUse` condition). A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_CACHE_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_CACHE_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.cache.config.file]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.cache.config.file[quarkus.cxf.endpoint."endpoints".security.cache.config.file]`
+
+
+[.description]
+--
+Set this property to point to a configuration file for the underlying caching implementation for the `TokenStore`. The default configuration file that is used is `cxf-ehcache.xml` in `org.apache.cxf:cxf-rt-security` JAR.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CACHE_CONFIG_FILE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CACHE_CONFIG_FILE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.token-store-cache-instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.token-store-cache-instance[quarkus.cxf.endpoint."endpoints".security.token-store-cache-instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.cxf.ws.security.tokenstore.TokenStore` bean to use for caching security tokens. By default this uses a  instance.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TOKEN_STORE_CACHE_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TOKEN_STORE_CACHE_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.cache.identifier]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.cache.identifier[quarkus.cxf.endpoint."endpoints".security.cache.identifier]`
+
+
+[.description]
+--
+The Cache Identifier to use with the TokenStore. CXF uses the following key to retrieve a token store: `org.apache.cxf.ws.security.tokenstore.TokenStore-<identifier>`. This key can be used to configure service-specific cache configuration. If the identifier does not match, then it falls back to a cache configuration with key `org.apache.cxf.ws.security.tokenstore.TokenStore`.
+
+The default `<identifier>` is the QName of the service in question. However to pick up a custom cache configuration (for example, if you want to specify a TokenStore per-client proxy), it can be configured with this identifier instead.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CACHE_IDENTIFIER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CACHE_IDENTIFIER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.role.classifier]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.role.classifier[quarkus.cxf.endpoint."endpoints".security.role.classifier]`
+
+
+[.description]
+--
+The Subject Role Classifier to use. If one of the WSS4J Validators returns a JAAS Subject from Validation, then the `WSS4JInInterceptor` will attempt to create a `SecurityContext` based on this Subject. If this value is not specified, then it tries to get roles using the `DefaultSecurityContext` in `org.apache.cxf:cxf-core`. Otherwise it uses this value in combination with the `role.classifier.type` to get the roles from the `Subject`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ROLE_CLASSIFIER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ROLE_CLASSIFIER+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.role.classifier.type]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.role.classifier.type[quarkus.cxf.endpoint."endpoints".security.role.classifier.type]`
+
+
+[.description]
+--
+The Subject Role Classifier Type to use. If one of the WSS4J Validators returns a JAAS Subject from Validation, then the `WSS4JInInterceptor` will attempt to create a `SecurityContext` based on this Subject. Currently accepted values are `prefix` or `classname`. Must be used in conjunction with the `role.classifier`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ROLE_CLASSIFIER_TYPE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ROLE_CLASSIFIER_TYPE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`prefix`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.asymmetric.signature.algorithm]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.asymmetric.signature.algorithm[quarkus.cxf.endpoint."endpoints".security.asymmetric.signature.algorithm]`
+
+
+[.description]
+--
+This configuration tag allows the user to override the default Asymmetric Signature algorithm (RSA-SHA1) for use in WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use of other algorithms at present.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ASYMMETRIC_SIGNATURE_ALGORITHM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ASYMMETRIC_SIGNATURE_ALGORITHM+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.symmetric.signature.algorithm]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.symmetric.signature.algorithm[quarkus.cxf.endpoint."endpoints".security.symmetric.signature.algorithm]`
+
+
+[.description]
+--
+This configuration tag allows the user to override the default Symmetric Signature algorithm (HMAC-SHA1) for use in WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use of other algorithms at present.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SYMMETRIC_SIGNATURE_ALGORITHM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SYMMETRIC_SIGNATURE_ALGORITHM+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.password.encryptor.instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.password.encryptor.instance[quarkus.cxf.endpoint."endpoints".security.password.encryptor.instance]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.PasswordEncryptor` bean, which is used to encrypt or decrypt passwords in the Merlin Crypto implementation (or any custom Crypto implementations).
+
+By default, WSS4J uses the `org.apache.wss4j.common.crypto.JasyptPasswordEncryptor` which must be instantiated with a password to use to decrypt keystore passwords in the Merlin Crypto definition. This password is obtained via the CallbackHandler defined via `callback-handler`
+
+The encrypted passwords must be stored in the format "ENC(encoded encrypted password)".
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_PASSWORD_ENCRYPTOR_INSTANCE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_PASSWORD_ENCRYPTOR_INSTANCE+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.delegated.credential]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.delegated.credential[quarkus.cxf.endpoint."endpoints".security.delegated.credential]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a Kerberos `org.ietf.jgss.GSSCredential` bean to use for WS-Security. This is used to retrieve a service ticket instead of using the client credentials.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_DELEGATED_CREDENTIAL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_DELEGATED_CREDENTIAL+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.security.context.creator]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.security.context.creator[quarkus.cxf.endpoint."endpoints".security.security.context.creator]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.cxf.ws.security.wss4j.WSS4JSecurityContextCreator` bean that is used to create a CXF SecurityContext from the set of WSS4J processing results. The default implementation is `org.apache.cxf.ws.security.wss4j.DefaultWSS4JSecurityContextCreator`.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SECURITY_CONTEXT_CREATOR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SECURITY_CONTEXT_CREATOR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.security.token.lifetime]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.security.token.lifetime[quarkus.cxf.endpoint."endpoints".security.security.token.lifetime]`
+
+
+[.description]
+--
+The security token lifetime value (in milliseconds).
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SECURITY_TOKEN_LIFETIME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SECURITY_TOKEN_LIFETIME+++`
+endif::add-copy-button-to-env-var[]
+--|long 
+|`300000`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.request.credential.delegation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.request.credential.delegation[quarkus.cxf.endpoint."endpoints".security.kerberos.request.credential.delegation]`
+
+
+[.description]
+--
+If `true`, credential delegation is requested in the KerberosClient; otherwise the credential delegation is not in the KerberosClient.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_REQUEST_CREDENTIAL_DELEGATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_REQUEST_CREDENTIAL_DELEGATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.use.credential.delegation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.use.credential.delegation[quarkus.cxf.endpoint."endpoints".security.kerberos.use.credential.delegation]`
+
+
+[.description]
+--
+If `true`, GSSCredential bean is retrieved from the Message Context using the `delegated.credential` property and then it is used to obtain a service ticket.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_USE_CREDENTIAL_DELEGATION+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_USE_CREDENTIAL_DELEGATION+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.is.username.in.servicename.form]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.is.username.in.servicename.form[quarkus.cxf.endpoint."endpoints".security.kerberos.is.username.in.servicename.form]`
+
+
+[.description]
+--
+If `true`, the Kerberos username is in servicename form; otherwise the Kerberos username is not in servicename form.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_IS_USERNAME_IN_SERVICENAME_FORM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_IS_USERNAME_IN_SERVICENAME_FORM+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.jaas.context]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.jaas.context[quarkus.cxf.endpoint."endpoints".security.kerberos.jaas.context]`
+
+
+[.description]
+--
+The JAAS Context name to use for Kerberos.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_JAAS_CONTEXT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_JAAS_CONTEXT+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.spn]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.spn[quarkus.cxf.endpoint."endpoints".security.kerberos.spn]`
+
+
+[.description]
+--
+The Kerberos Service Provider Name (spn) to use.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_SPN+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_SPN+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.client]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.client[quarkus.cxf.endpoint."endpoints".security.kerberos.client]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.cxf.ws.security.kerberos.KerberosClient` bean used to obtain a service ticket.
+
+This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_CLIENT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_CLIENT+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+|===

@@ -1,10 +1,12 @@
 package io.quarkiverse.cxf.ws.security.deployment;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.wss4j.common.cache.EHCacheValue;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 
@@ -82,6 +84,14 @@ public class EhcacheProcessor {
                 .flatMap(dotName -> index.getAllKnownSubclasses(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> ReflectiveClassBuildItem.builder(className).methods().build())
+                .forEach(reflectiveClass::produce);
+
+        Stream.of(
+                EHCacheValue.class.getName(),
+                String.class.getName(),
+                Instant.class.getName(),
+                "java.time.Ser")
+                .map(className -> ReflectiveClassBuildItem.builder(className).serialization().build())
                 .forEach(reflectiveClass::produce);
 
     }
