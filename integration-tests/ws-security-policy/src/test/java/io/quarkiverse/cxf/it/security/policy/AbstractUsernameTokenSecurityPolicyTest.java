@@ -163,6 +163,24 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
 
     }
 
+    @Test
+    void helloUsernameTokenNoMustUnderstand() {
+        PolicyTestUtils.drainMessages("drainMessages", -1);
+        RestAssured.given()
+                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.jks", "password")))
+                .body("helloUsernameTokenNoMustUnderstand")
+                .post("/cxf/security-policy/helloUsernameTokenNoMustUnderstand")
+                .then()
+                .statusCode(200)
+                .body(is("Hello helloUsernameTokenNoMustUnderstand from UsernameToken!"));
+
+        final List<String> messages = PolicyTestUtils.drainMessages("drainMessages", 2);
+
+        final String req = messages.get(0);
+        Assertions.assertThat(req).doesNotContain("soap:mustUnderstand=\"1\"");
+
+    }
+
     protected abstract String usernameTokenNotSatisfied();
 
 }

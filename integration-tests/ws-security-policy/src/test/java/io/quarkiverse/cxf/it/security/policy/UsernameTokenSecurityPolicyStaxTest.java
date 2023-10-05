@@ -19,6 +19,7 @@ public class UsernameTokenSecurityPolicyStaxTest extends AbstractUsernameTokenSe
                     "quarkus.cxf.endpoint.\"/helloUsernameTokenUncachedNonce\".security.enable.streaming", "true",
                     "quarkus.cxf.client.helloUsernameToken.security.enable.streaming", "true",
                     "quarkus.cxf.client.helloUsernameTokenAlt.security.enable.streaming", "true",
+                    "quarkus.cxf.client.helloUsernameTokenNoMustUnderstand.security.enable.streaming", "true",
                     "quarkus.cxf.client.helloNoUsernameToken.security.enable.streaming", "true");
         }
 
