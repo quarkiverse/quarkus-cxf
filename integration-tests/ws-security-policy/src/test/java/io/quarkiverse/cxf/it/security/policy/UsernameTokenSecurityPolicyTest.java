@@ -1,5 +1,8 @@
 package io.quarkiverse.cxf.it.security.policy;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
@@ -26,6 +29,13 @@ public class UsernameTokenSecurityPolicyTest extends AbstractUsernameTokenSecuri
                 + "{http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}SupportingTokens\n"
                 + "{http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}UsernameToken\n"
                 + "{http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}WssUsernameToken11";
+    }
+
+    @Test
+    @Disabled("https://issues.apache.org/jira/browse/CXF-8940")
+    @Override
+    void helloUsernameTokenNoMustUnderstand() {
+        super.helloUsernameTokenNoMustUnderstand();
     }
 
 }

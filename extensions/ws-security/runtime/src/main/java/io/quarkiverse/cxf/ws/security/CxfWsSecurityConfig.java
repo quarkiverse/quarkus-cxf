@@ -416,6 +416,9 @@ public interface CxfWsSecurityConfig {
         /**
          * If {@code true}, the SOAP {@code mustUnderstand} header is included in security headers based on
          * a WS-SecurityPolicy; otherwise the header is always omitted.
+         * <p>
+         * Works only with {@code enable.streaming = true} - see
+         * <a href="https://issues.apache.org/jira/browse/CXF-8940">CXF-8940</a>
          */
         @WssConfigurationConstant(key = "ws-security.must-understand")
         @WithName("must-understand")
