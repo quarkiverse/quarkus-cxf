@@ -395,9 +395,6 @@ public interface CxfWsSecurityConfig {
         /**
          * If {@code true}, the new streaming (StAX) implementation of WS-Security is used; otherwise the old DOM
          * implementation is used.
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          */
         @WssConfigurationConstant(key = "ws-security.enable.streaming")
         @WithName("enable.streaming")
