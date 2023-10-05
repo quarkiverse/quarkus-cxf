@@ -531,8 +531,6 @@ a| [[quarkus_quarkus.cxf.client.-clients-.security.enable.streaming]]`link:#quar
 --
 If `true`, the new streaming (StAX) implementation of WS-Security is used; otherwise the old DOM implementation is used.
 
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_STREAMING+++[]
 endif::add-copy-button-to-env-var[]
@@ -1721,8 +1719,6 @@ a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.streaming]]`link:#
 [.description]
 --
 If `true`, the new streaming (StAX) implementation of WS-Security is used; otherwise the old DOM implementation is used.
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_STREAMING+++[]

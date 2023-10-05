@@ -3,7 +3,6 @@ package io.quarkiverse.cxf.ws.security.graal;
 import java.text.Normalizer;
 import java.util.ServiceLoader;
 
-import org.apache.wss4j.stax.setup.WSSec;
 import org.jasypt.exceptions.EncryptionInitializationException;
 
 import com.oracle.svm.core.annotate.Substitute;
@@ -42,15 +41,6 @@ final class Target_org_jasypt_normalization_Normalizer {
     public static char[] normalizeToNfc(final char[] message) {
         final String result = normalizeToNfc(new String(message));
         return result.toCharArray();
-    }
-
-}
-
-@TargetClass(className = "org.apache.xml.security.stax.ext.XMLSec")
-final class Target_org_apache_xml_security_stax_ext_XMLSec {
-
-    static {
-        WSSec.init();
     }
 
 }
