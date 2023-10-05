@@ -416,9 +416,6 @@ public interface CxfWsSecurityConfig {
         /**
          * If {@code true}, the SOAP {@code mustUnderstand} header is included in security headers based on
          * a WS-SecurityPolicy; otherwise the header is always omitted.
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          */
         @WssConfigurationConstant(key = "ws-security.must-understand")
         @WithName("must-understand")

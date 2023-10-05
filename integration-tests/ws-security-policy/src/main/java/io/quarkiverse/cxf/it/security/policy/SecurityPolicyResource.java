@@ -58,6 +58,10 @@ public class SecurityPolicyResource {
     UsernameTokenPolicyHelloService helloUsernameTokenAlt;
 
     @Inject
+    @CXFClient("helloUsernameTokenNoMustUnderstand")
+    UsernameTokenPolicyHelloService helloUsernameTokenNoMustUnderstand;
+
+    @Inject
     @CXFClient("helloNoUsernameToken")
     HelloService helloNoUsernameToken;
 
@@ -115,6 +119,9 @@ public class SecurityPolicyResource {
                 break;
             case "helloUsernameTokenAlt":
                 service = helloUsernameTokenAlt;
+                break;
+            case "helloUsernameTokenNoMustUnderstand":
+                service = helloUsernameTokenNoMustUnderstand;
                 break;
             case "helloNoUsernameToken":
                 service = helloNoUsernameToken;

@@ -567,8 +567,6 @@ a| [[quarkus_quarkus.cxf.client.-clients-.security.must-understand]]`link:#quark
 --
 If `true`, the SOAP `mustUnderstand` header is included in security headers based on a WS-SecurityPolicy; otherwise the header is always omitted.
 
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_MUST_UNDERSTAND+++[]
 endif::add-copy-button-to-env-var[]
@@ -1755,8 +1753,6 @@ a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.must-understand]]`link:#q
 [.description]
 --
 If `true`, the SOAP `mustUnderstand` header is included in security headers based on a WS-SecurityPolicy; otherwise the header is always omitted.
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_MUST_UNDERSTAND+++[]
