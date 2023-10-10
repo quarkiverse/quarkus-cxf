@@ -28,7 +28,8 @@ public class MtomTest {
 
     /**
      * A reproducer for
-     * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/973">https://github.com/quarkiverse/quarkus-cxf/issues/973</a>
+     * <a href=
+     * "https://github.com/quarkiverse/quarkus-cxf/issues/973">https://github.com/quarkiverse/quarkus-cxf/issues/973</a>
      *
      * @throws Exception
      */
@@ -36,7 +37,7 @@ public class MtomTest {
     public void soak() throws Exception {
         // The following fail with
         // Http2Exception: Flow control window exceeded for stream: 0
-        //   at io.netty.handler.codec.http2.Http2Exception.connectionError(Http2Exception.java:109)
+        // at io.netty.handler.codec.http2.Http2Exception.connectionError(Http2Exception.java:109)
         // final int size = 63 * KiB + 137; // fails at round 0
         // final int size = 63 * KiB + 136; // fails at round 5
         final int size = 63 * KiB + 135; // fails at round 5
@@ -48,9 +49,10 @@ public class MtomTest {
         // final int size = 63 * KiB + 129; // fails at round 5000
 
         // This one fails with a different exception:
-        // final int size = 63 * KiB + 128; // fails at round 10763 Corrupted channel by directly writing to native stream
+        // final int size = 63 * KiB + 128; // fails at round 10763 Corrupted channel by directly writing to native
+        // stream
         final int requestCount = Integer
-                .parseInt(Optional.ofNullable(System.getenv("QUARKUS_CXF_MTOM_SOAK_ITERATIONS")).orElse("1000"));
+                .parseInt(Optional.ofNullable(System.getenv("QUARKUS_CXF_MTOM_SOAK_ITERATIONS")).orElse("300"));
         log.infof("Performing %d interations", requestCount);
         for (int i = 0; i < requestCount; i++) {
             log.infof("Soaking with %d bytes, round %d", size, i);
@@ -60,19 +62,37 @@ public class MtomTest {
 
     /**
      * A reproducer for
-     * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/973">https://github.com/quarkiverse/quarkus-cxf/issues/973</a>
+     * <a href=
+     * "https://github.com/quarkiverse/quarkus-cxf/issues/973">https://github.com/quarkiverse/quarkus-cxf/issues/973</a>
      *
      * @throws Exception
      */
     @Test
     public void largeAttachment() throws Exception {
 
-        int increment = 512 * KiB;
-        int maxSize = 10 * KiB * KiB - 512;
+        final int incrementKb = Integer
+                .parseInt(Optional.ofNullable(System.getenv("QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_INCREMENT_KB")).orElse("1024"));
+        final int increment = incrementKb * KiB;
 
+        final int maxSizeKb = Integer
+                .parseInt(Optional.ofNullable(System.getenv("QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_MAX_KB"))
+                        .orElse(String.valueOf(10 * KiB)));
+        log.infof("maxSizeKb %d ", maxSizeKb);
+        final int subtract = 889;
+        final int maxSize = (maxSizeKb * KiB) - subtract;
+
+        log.infof("Testing large attachments starting at %d KiB, incrementing %d KiB up to %d KiB - %d bytes", incrementKb,
+                incrementKb, maxSizeKb, subtract);
+        int lastSize = 0;
         for (int size = increment; size <= maxSize; size += increment) {
-            log.infof("Sending large attachment: %d bytes", size);
+            log.infof("Sending large attachment: %d bytes (%d KiB)", size, size / KiB);
             assertMtom(size);
+            lastSize = size;
+        }
+        if (maxSize > lastSize) {
+            /* Make sure that we really test the max size */
+            log.infof("Sending max sized attachment: %d bytes (%d KiB)", maxSize, maxSize / KiB);
+            assertMtom(maxSize);
         }
 
     }

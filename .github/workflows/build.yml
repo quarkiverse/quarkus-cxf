@@ -12,6 +12,10 @@ on:
       - 'LICENSE'
       - 'README*'
   pull_request:
+
+env:
+  QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_INCREMENT_KB: 512
+
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
