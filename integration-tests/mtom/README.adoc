@@ -1,9 +1,37 @@
 = Quarkus CXF MTOM tests
 
-The number of iterations performed by `io.quarkiverse.cxf.it.ws.mtom.server.MtomTest.soak()` can be set by setting
+== `MtomTest.soak()`
+
+The number of iterations performed by `io.quarkiverse.cxf.it.ws.mtom.server.MtomTest.soak()` can be set via
 
 [source,shell]
 ----
 $ export QUARKUS_CXF_MTOM_SOAK_ITERATIONS=100000
 $ mvn clean test -Dtest=MtomTest#soak
 ----
+
+The hard-coded default of 300 is intentionally low to make the test pass on Quarkus Platform CI.
+Higher values are more likely to uncover resource leaks.
+
+== `MtomTest.largeAttachment()`
+
+`MtomTest.largeAttachment()` can be tuned via
+
+[source,shell]
+----
+$ export QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_INCREMENT_KB=512
+$ export QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_MAX_KB=10240
+$ mvn clean test -Dtest=MtomTest#largeAttachment
+----
+
+The `QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_INCREMENT_KB` is both the start size and increment at the same time (in KiB).
+The default of 1024 Kib (1 MiB) rather high for the test to pass quickly by default.
+Lower increments are more better for uncovering resource leaks or for pin-pointing protocol issues.
+
+`QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_MAX_KB` has a default of 10240 KiB (10 MiB).
+The real max value of the attachment sent by the test is `QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_MAX_KB` minus 889 bytes
+because Quarkus/Vert.x has a limit on the overall request size (configurable via `quarkus.http.limits.max-body-size`,
+default 10 MiB) and we need some space for the XML message and the multipart headers.
+
+Hence setting `QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_MAX_KB` higher than 10240 KiB makes little sense without adjusting also
+`quarkus.http.limits.max-body-size`.
