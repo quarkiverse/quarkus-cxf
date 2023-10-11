@@ -1,16 +1,16 @@
 
-:summaryTableId: quarkus-cxf
+:summaryTableId: quarkus-cxf-rt-features-logging
 [.configuration-legend]
 icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
 [.configuration-reference.searchable, cols="80,.^10,.^10"]
 |===
 
-h|[[quarkus-cxf_configuration]]link:#quarkus-cxf_configuration[Configuration property]
+h|[[quarkus-cxf-rt-features-logging_configuration]]link:#quarkus-cxf-rt-features-logging_configuration[Configuration property]
 
 h|Type
 h|Default
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.enabled]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.enabled[quarkus.cxf.client."clients".logging.enabled]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.enabled]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.enabled[quarkus.cxf.client."clients".logging.enabled]`
 
 
 [.description]
@@ -27,7 +27,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.limit]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.limit[quarkus.cxf.client."clients".logging.limit]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.limit]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.limit[quarkus.cxf.client."clients".logging.limit]`
 
 
 [.description]
@@ -44,7 +44,7 @@ endif::add-copy-button-to-env-var[]
 |`49152`
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-mem-threshold]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-mem-threshold[quarkus.cxf.client."clients".logging.in-mem-threshold]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.in-mem-threshold]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.in-mem-threshold[quarkus.cxf.client."clients".logging.in-mem-threshold]`
 
 
 [.description]
@@ -61,7 +61,7 @@ endif::add-copy-button-to-env-var[]
 |`-1`
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.pretty]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.pretty[quarkus.cxf.client."clients".logging.pretty]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.pretty]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.pretty[quarkus.cxf.client."clients".logging.pretty]`
 
 
 [.description]
@@ -78,7 +78,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-binary]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-binary[quarkus.cxf.client."clients".logging.log-binary]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.log-binary]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.log-binary[quarkus.cxf.client."clients".logging.log-binary]`
 
 
 [.description]
@@ -95,7 +95,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-multipart]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-multipart[quarkus.cxf.client."clients".logging.log-multipart]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.log-multipart]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.log-multipart[quarkus.cxf.client."clients".logging.log-multipart]`
 
 
 [.description]
@@ -112,7 +112,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.verbose]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.verbose[quarkus.cxf.client."clients".logging.verbose]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.verbose]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.verbose[quarkus.cxf.client."clients".logging.verbose]`
 
 
 [.description]
@@ -129,7 +129,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-binary-content-media-types]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-binary-content-media-types[quarkus.cxf.client."clients".logging.in-binary-content-media-types]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.in-binary-content-media-types]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.in-binary-content-media-types[quarkus.cxf.client."clients".logging.in-binary-content-media-types]`
 
 
 [.description]
@@ -146,7 +146,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.out-binary-content-media-types]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.out-binary-content-media-types[quarkus.cxf.client."clients".logging.out-binary-content-media-types]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.out-binary-content-media-types]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.out-binary-content-media-types[quarkus.cxf.client."clients".logging.out-binary-content-media-types]`
 
 
 [.description]
@@ -163,7 +163,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.binary-content-media-types]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.binary-content-media-types[quarkus.cxf.client."clients".logging.binary-content-media-types]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.binary-content-media-types]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.binary-content-media-types[quarkus.cxf.client."clients".logging.binary-content-media-types]`
 
 
 [.description]
@@ -180,7 +180,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.sensitive-element-names]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.sensitive-element-names[quarkus.cxf.client."clients".logging.sensitive-element-names]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.sensitive-element-names]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.sensitive-element-names[quarkus.cxf.client."clients".logging.sensitive-element-names]`
 
 
 [.description]
@@ -197,7 +197,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.sensitive-protocol-header-names]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.sensitive-protocol-header-names[quarkus.cxf.client."clients".logging.sensitive-protocol-header-names]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.sensitive-protocol-header-names]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.client.-clients-.logging.sensitive-protocol-header-names[quarkus.cxf.client."clients".logging.sensitive-protocol-header-names]`
 
 
 [.description]
@@ -214,7 +214,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.enabled]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.enabled[quarkus.cxf.endpoint."endpoints".logging.enabled]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.enabled]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.enabled[quarkus.cxf.endpoint."endpoints".logging.enabled]`
 
 
 [.description]
@@ -231,7 +231,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.limit]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.limit[quarkus.cxf.endpoint."endpoints".logging.limit]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.limit]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.limit[quarkus.cxf.endpoint."endpoints".logging.limit]`
 
 
 [.description]
@@ -248,7 +248,7 @@ endif::add-copy-button-to-env-var[]
 |`49152`
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-mem-threshold]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-mem-threshold[quarkus.cxf.endpoint."endpoints".logging.in-mem-threshold]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.in-mem-threshold]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.in-mem-threshold[quarkus.cxf.endpoint."endpoints".logging.in-mem-threshold]`
 
 
 [.description]
@@ -265,7 +265,7 @@ endif::add-copy-button-to-env-var[]
 |`-1`
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.pretty]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.pretty[quarkus.cxf.endpoint."endpoints".logging.pretty]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.pretty]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.pretty[quarkus.cxf.endpoint."endpoints".logging.pretty]`
 
 
 [.description]
@@ -282,7 +282,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-binary]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-binary[quarkus.cxf.endpoint."endpoints".logging.log-binary]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.log-binary]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.log-binary[quarkus.cxf.endpoint."endpoints".logging.log-binary]`
 
 
 [.description]
@@ -299,7 +299,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-multipart]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-multipart[quarkus.cxf.endpoint."endpoints".logging.log-multipart]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.log-multipart]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.log-multipart[quarkus.cxf.endpoint."endpoints".logging.log-multipart]`
 
 
 [.description]
@@ -316,7 +316,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.verbose]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.verbose[quarkus.cxf.endpoint."endpoints".logging.verbose]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.verbose]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.verbose[quarkus.cxf.endpoint."endpoints".logging.verbose]`
 
 
 [.description]
@@ -333,7 +333,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-binary-content-media-types]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.in-binary-content-media-types]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.in-binary-content-media-types]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.in-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.in-binary-content-media-types]`
 
 
 [.description]
@@ -350,7 +350,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.out-binary-content-media-types]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.out-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.out-binary-content-media-types]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.out-binary-content-media-types]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.out-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.out-binary-content-media-types]`
 
 
 [.description]
@@ -367,7 +367,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.binary-content-media-types]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.binary-content-media-types]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.binary-content-media-types]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.binary-content-media-types]`
 
 
 [.description]
@@ -384,7 +384,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-element-names]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-element-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-element-names]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-element-names]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-element-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-element-names]`
 
 
 [.description]
@@ -401,7 +401,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-protocol-header-names]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-protocol-header-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-protocol-header-names]`
+a| [[quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-protocol-header-names]]`link:#quarkus-cxf-rt-features-logging_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-protocol-header-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-protocol-header-names]`
 
 
 [.description]

@@ -102,26 +102,24 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>groovy-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>filter-and-move-config-options-docs</id>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
+                        <id>copy-configuration-documentation</id>
                         <phase>process-classes</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
                         <configuration>
-                            <source>
-                                import java.nio.file.Paths
-                                import java.nio.file.Files
-                                import java.nio.file.StandardCopyOption
-                                Files.copy(Paths.get(properties['inputFile']), Paths.get(properties['outputFile']), StandardCopyOption.REPLACE_EXISTING)
-                            </source>
-                            <properties>
-                                <inputFile>${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/quarkus.adoc</inputFile>
-                                <outputFile>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/pages/includes/${project.artifactId}.adoc</outputFile>
-                            </properties>
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/pages/includes/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/</directory>
+                                    <include>${project.artifactId}.adoc</include>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

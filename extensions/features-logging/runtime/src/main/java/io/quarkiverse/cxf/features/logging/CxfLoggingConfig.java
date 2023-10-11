@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import io.quarkus.runtime.annotations.ConfigDocFilename;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -12,9 +13,8 @@ import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 import io.smallrye.config.WithName;
 
-// The quarkus.cxf prefix is used also in quarkus-cxf and therefore we have to force building of the current module
-// after quarkus-cxf, so that <project-root>/target/asciidoc/generated/config/quarkus-cxf.adoc concurrently
 @ConfigMapping(prefix = "quarkus.cxf")
+@ConfigDocFilename("quarkus-cxf-rt-features-logging.adoc")
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
 public interface CxfLoggingConfig {
 

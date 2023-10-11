@@ -1,16 +1,16 @@
 
-:summaryTableId: quarkus
+:summaryTableId: quarkus-cxf-rt-ws-security
 [.configuration-legend]
 icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
 [.configuration-reference.searchable, cols="80,.^10,.^10"]
 |===
 
-h|[[quarkus_configuration]]link:#quarkus_configuration[Configuration property]
+h|[[quarkus-cxf-rt-ws-security_configuration]]link:#quarkus-cxf-rt-ws-security_configuration[Configuration property]
 
 h|Type
 h|Default
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.username]]`link:#quarkus_quarkus.cxf.client.-clients-.security.username[quarkus.cxf.client."clients".security.username]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.username]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.username[quarkus.cxf.client."clients".security.username]`
 
 
 [.description]
@@ -31,7 +31,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.password]]`link:#quarkus_quarkus.cxf.client.-clients-.security.password[quarkus.cxf.client."clients".security.password]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.password]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.password[quarkus.cxf.client."clients".security.password]`
 
 
 [.description]
@@ -48,7 +48,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.signature.username]]`link:#quarkus_quarkus.cxf.client.-clients-.security.signature.username[quarkus.cxf.client."clients".security.signature.username]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.username]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.username[quarkus.cxf.client."clients".security.signature.username]`
 
 
 [.description]
@@ -67,7 +67,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.signature.password]]`link:#quarkus_quarkus.cxf.client.-clients-.security.signature.password[quarkus.cxf.client."clients".security.signature.password]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.password]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.password[quarkus.cxf.client."clients".security.signature.password]`
 
 
 [.description]
@@ -86,7 +86,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.encryption.username]]`link:#quarkus_quarkus.cxf.client.-clients-.security.encryption.username[quarkus.cxf.client."clients".security.encryption.username]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.username]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.username[quarkus.cxf.client."clients".security.encryption.username]`
 
 
 [.description]
@@ -107,7 +107,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.callback-handler]]`link:#quarkus_quarkus.cxf.client.-clients-.security.callback-handler[quarkus.cxf.client."clients".security.callback-handler]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.callback-handler]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.callback-handler[quarkus.cxf.client."clients".security.callback-handler]`
 
 
 [.description]
@@ -124,7 +124,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.saml-callback-handler]]`link:#quarkus_quarkus.cxf.client.-clients-.security.saml-callback-handler[quarkus.cxf.client."clients".security.saml-callback-handler]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.saml-callback-handler]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.saml-callback-handler[quarkus.cxf.client."clients".security.saml-callback-handler]`
 
 
 [.description]
@@ -143,7 +143,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.signature.properties-signature-properties]]`link:#quarkus_quarkus.cxf.client.-clients-.security.signature.properties-signature-properties[quarkus.cxf.client."clients".security.signature.properties]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.properties-signature-properties]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.properties-signature-properties[quarkus.cxf.client."clients".security.signature.properties]`
 
 
 [.description]
@@ -172,7 +172,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.encryption.properties]]`link:#quarkus_quarkus.cxf.client.-clients-.security.encryption.properties[quarkus.cxf.client."clients".security.encryption.properties]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.properties]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.properties[quarkus.cxf.client."clients".security.encryption.properties]`
 
 
 [.description]
@@ -201,7 +201,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.signature.crypto]]`link:#quarkus_quarkus.cxf.client.-clients-.security.signature.crypto[quarkus.cxf.client."clients".security.signature.crypto]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.crypto]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.crypto[quarkus.cxf.client."clients".security.signature.crypto]`
 
 
 [.description]
@@ -220,7 +220,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.encryption.crypto]]`link:#quarkus_quarkus.cxf.client.-clients-.security.encryption.crypto[quarkus.cxf.client."clients".security.encryption.crypto]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.crypto]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.crypto[quarkus.cxf.client."clients".security.encryption.crypto]`
 
 
 [.description]
@@ -239,7 +239,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.encryption.certificate]]`link:#quarkus_quarkus.cxf.client.-clients-.security.encryption.certificate[quarkus.cxf.client."clients".security.encryption.certificate]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.certificate]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.certificate[quarkus.cxf.client."clients".security.encryption.certificate]`
 
 
 [.description]
@@ -258,7 +258,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.enable-revocation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable-revocation[quarkus.cxf.client."clients".security.enable-revocation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable-revocation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable-revocation[quarkus.cxf.client."clients".security.enable-revocation]`
 
 
 [.description]
@@ -277,7 +277,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.enable-unsigned-saml-assertion-principal]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable-unsigned-saml-assertion-principal[quarkus.cxf.client."clients".security.enable-unsigned-saml-assertion-principal]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable-unsigned-saml-assertion-principal]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable-unsigned-saml-assertion-principal[quarkus.cxf.client."clients".security.enable-unsigned-saml-assertion-principal]`
 
 
 [.description]
@@ -296,7 +296,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.validate-saml-subject-confirmation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.validate-saml-subject-confirmation[quarkus.cxf.client."clients".security.validate-saml-subject-confirmation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.validate-saml-subject-confirmation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.validate-saml-subject-confirmation[quarkus.cxf.client."clients".security.validate-saml-subject-confirmation]`
 
 
 [.description]
@@ -315,7 +315,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.sc-from-jaas-subject]]`link:#quarkus_quarkus.cxf.client.-clients-.security.sc-from-jaas-subject[quarkus.cxf.client."clients".security.sc-from-jaas-subject]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.sc-from-jaas-subject]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.sc-from-jaas-subject[quarkus.cxf.client."clients".security.sc-from-jaas-subject]`
 
 
 [.description]
@@ -334,7 +334,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.audience-restriction-validation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.audience-restriction-validation[quarkus.cxf.client."clients".security.audience-restriction-validation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.audience-restriction-validation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.audience-restriction-validation[quarkus.cxf.client."clients".security.audience-restriction-validation]`
 
 
 [.description]
@@ -353,7 +353,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.saml-role-attributename]]`link:#quarkus_quarkus.cxf.client.-clients-.security.saml-role-attributename[quarkus.cxf.client."clients".security.saml-role-attributename]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.saml-role-attributename]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.saml-role-attributename[quarkus.cxf.client."clients".security.saml-role-attributename]`
 
 
 [.description]
@@ -372,7 +372,7 @@ endif::add-copy-button-to-env-var[]
 |`http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.subject-cert-constraints]]`link:#quarkus_quarkus.cxf.client.-clients-.security.subject-cert-constraints[quarkus.cxf.client."clients".security.subject-cert-constraints]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.subject-cert-constraints]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.subject-cert-constraints[quarkus.cxf.client."clients".security.subject-cert-constraints]`
 
 
 [.description]
@@ -391,7 +391,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.cert-constraints-separator]]`link:#quarkus_quarkus.cxf.client.-clients-.security.cert-constraints-separator[quarkus.cxf.client."clients".security.cert-constraints-separator]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.cert-constraints-separator]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.cert-constraints-separator[quarkus.cxf.client."clients".security.cert-constraints-separator]`
 
 
 [.description]
@@ -410,7 +410,7 @@ endif::add-copy-button-to-env-var[]
 |`,`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.actor]]`link:#quarkus_quarkus.cxf.client.-clients-.security.actor[quarkus.cxf.client."clients".security.actor]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.actor]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.actor[quarkus.cxf.client."clients".security.actor]`
 
 
 [.description]
@@ -429,7 +429,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.validate.token]]`link:#quarkus_quarkus.cxf.client.-clients-.security.validate.token[quarkus.cxf.client."clients".security.validate.token]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.validate.token]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.validate.token[quarkus.cxf.client."clients".security.validate.token]`
 
 
 [.description]
@@ -446,7 +446,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.username-token.always.encrypted]]`link:#quarkus_quarkus.cxf.client.-clients-.security.username-token.always.encrypted[quarkus.cxf.client."clients".security.username-token.always.encrypted]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.username-token.always.encrypted]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.username-token.always.encrypted[quarkus.cxf.client."clients".security.username-token.always.encrypted]`
 
 
 [.description]
@@ -465,7 +465,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.is-bsp-compliant]]`link:#quarkus_quarkus.cxf.client.-clients-.security.is-bsp-compliant[quarkus.cxf.client."clients".security.is-bsp-compliant]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.is-bsp-compliant]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.is-bsp-compliant[quarkus.cxf.client."clients".security.is-bsp-compliant]`
 
 
 [.description]
@@ -484,7 +484,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.enable.nonce.cache]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable.nonce.cache[quarkus.cxf.client."clients".security.enable.nonce.cache]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable.nonce.cache]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable.nonce.cache[quarkus.cxf.client."clients".security.enable.nonce.cache]`
 
 
 [.description]
@@ -503,7 +503,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.enable.timestamp.cache]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable.timestamp.cache[quarkus.cxf.client."clients".security.enable.timestamp.cache]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable.timestamp.cache]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable.timestamp.cache[quarkus.cxf.client."clients".security.enable.timestamp.cache]`
 
 
 [.description]
@@ -524,7 +524,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.enable.streaming]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable.streaming[quarkus.cxf.client."clients".security.enable.streaming]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable.streaming]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable.streaming[quarkus.cxf.client."clients".security.enable.streaming]`
 
 
 [.description]
@@ -541,7 +541,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.return.security.error]]`link:#quarkus_quarkus.cxf.client.-clients-.security.return.security.error[quarkus.cxf.client."clients".security.return.security.error]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.return.security.error]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.return.security.error[quarkus.cxf.client."clients".security.return.security.error]`
 
 
 [.description]
@@ -560,7 +560,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.must-understand]]`link:#quarkus_quarkus.cxf.client.-clients-.security.must-understand[quarkus.cxf.client."clients".security.must-understand]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.must-understand]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.must-understand[quarkus.cxf.client."clients".security.must-understand]`
 
 
 [.description]
@@ -579,7 +579,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.enable.saml.cache]]`link:#quarkus_quarkus.cxf.client.-clients-.security.enable.saml.cache[quarkus.cxf.client."clients".security.enable.saml.cache]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable.saml.cache]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.enable.saml.cache[quarkus.cxf.client."clients".security.enable.saml.cache]`
 
 
 [.description]
@@ -600,7 +600,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.store.bytes.in.attachment]]`link:#quarkus_quarkus.cxf.client.-clients-.security.store.bytes.in.attachment[quarkus.cxf.client."clients".security.store.bytes.in.attachment]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.store.bytes.in.attachment]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.store.bytes.in.attachment[quarkus.cxf.client."clients".security.store.bytes.in.attachment]`
 
 
 [.description]
@@ -619,7 +619,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.swa.encryption.attachment.transform.content]]`link:#quarkus_quarkus.cxf.client.-clients-.security.swa.encryption.attachment.transform.content[quarkus.cxf.client."clients".security.swa.encryption.attachment.transform.content]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.swa.encryption.attachment.transform.content]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.swa.encryption.attachment.transform.content[quarkus.cxf.client."clients".security.swa.encryption.attachment.transform.content]`
 
 
 [.description]
@@ -638,7 +638,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.use.str.transform]]`link:#quarkus_quarkus.cxf.client.-clients-.security.use.str.transform[quarkus.cxf.client."clients".security.use.str.transform]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.use.str.transform]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.use.str.transform[quarkus.cxf.client."clients".security.use.str.transform]`
 
 
 [.description]
@@ -659,7 +659,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.add.inclusive.prefixes]]`link:#quarkus_quarkus.cxf.client.-clients-.security.add.inclusive.prefixes[quarkus.cxf.client."clients".security.add.inclusive.prefixes]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.add.inclusive.prefixes]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.add.inclusive.prefixes[quarkus.cxf.client."clients".security.add.inclusive.prefixes]`
 
 
 [.description]
@@ -678,7 +678,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.disable.require.client.cert.check]]`link:#quarkus_quarkus.cxf.client.-clients-.security.disable.require.client.cert.check[quarkus.cxf.client."clients".security.disable.require.client.cert.check]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.disable.require.client.cert.check]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.disable.require.client.cert.check[quarkus.cxf.client."clients".security.disable.require.client.cert.check]`
 
 
 [.description]
@@ -699,7 +699,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.expand.xop.include]]`link:#quarkus_quarkus.cxf.client.-clients-.security.expand.xop.include[quarkus.cxf.client."clients".security.expand.xop.include]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.expand.xop.include]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.expand.xop.include[quarkus.cxf.client."clients".security.expand.xop.include]`
 
 
 [.description]
@@ -718,7 +718,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.timestamp.timetolive]]`link:#quarkus_quarkus.cxf.client.-clients-.security.timestamp.timetolive[quarkus.cxf.client."clients".security.timestamp.timeToLive]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.timestamp.timetolive]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.timestamp.timetolive[quarkus.cxf.client."clients".security.timestamp.timeToLive]`
 
 
 [.description]
@@ -737,7 +737,7 @@ endif::add-copy-button-to-env-var[]
 |`300`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.timestamp.futuretimetolive]]`link:#quarkus_quarkus.cxf.client.-clients-.security.timestamp.futuretimetolive[quarkus.cxf.client."clients".security.timestamp.futureTimeToLive]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.timestamp.futuretimetolive]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.timestamp.futuretimetolive[quarkus.cxf.client."clients".security.timestamp.futureTimeToLive]`
 
 
 [.description]
@@ -756,7 +756,7 @@ endif::add-copy-button-to-env-var[]
 |`60`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.usernametoken.timetolive]]`link:#quarkus_quarkus.cxf.client.-clients-.security.usernametoken.timetolive[quarkus.cxf.client."clients".security.usernametoken.timeToLive]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.usernametoken.timetolive]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.usernametoken.timetolive[quarkus.cxf.client."clients".security.usernametoken.timeToLive]`
 
 
 [.description]
@@ -775,7 +775,7 @@ endif::add-copy-button-to-env-var[]
 |`300`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.usernametoken.futuretimetolive]]`link:#quarkus_quarkus.cxf.client.-clients-.security.usernametoken.futuretimetolive[quarkus.cxf.client."clients".security.usernametoken.futureTimeToLive]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.usernametoken.futuretimetolive]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.usernametoken.futuretimetolive[quarkus.cxf.client."clients".security.usernametoken.futureTimeToLive]`
 
 
 [.description]
@@ -794,7 +794,7 @@ endif::add-copy-button-to-env-var[]
 |`60`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.spnego.client.action]]`link:#quarkus_quarkus.cxf.client.-clients-.security.spnego.client.action[quarkus.cxf.client."clients".security.spnego.client.action]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.spnego.client.action]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.spnego.client.action[quarkus.cxf.client."clients".security.spnego.client.action]`
 
 
 [.description]
@@ -813,7 +813,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.nonce.cache.instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.nonce.cache.instance[quarkus.cxf.client."clients".security.nonce.cache.instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.nonce.cache.instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.nonce.cache.instance[quarkus.cxf.client."clients".security.nonce.cache.instance]`
 
 
 [.description]
@@ -832,7 +832,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.timestamp.cache.instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.timestamp.cache.instance[quarkus.cxf.client."clients".security.timestamp.cache.instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.timestamp.cache.instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.timestamp.cache.instance[quarkus.cxf.client."clients".security.timestamp.cache.instance]`
 
 
 [.description]
@@ -851,7 +851,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.saml.cache.instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.saml.cache.instance[quarkus.cxf.client."clients".security.saml.cache.instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.saml.cache.instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.saml.cache.instance[quarkus.cxf.client."clients".security.saml.cache.instance]`
 
 
 [.description]
@@ -870,7 +870,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.cache.config.file]]`link:#quarkus_quarkus.cxf.client.-clients-.security.cache.config.file[quarkus.cxf.client."clients".security.cache.config.file]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.cache.config.file]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.cache.config.file[quarkus.cxf.client."clients".security.cache.config.file]`
 
 
 [.description]
@@ -889,7 +889,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.token-store-cache-instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.token-store-cache-instance[quarkus.cxf.client."clients".security.token-store-cache-instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.token-store-cache-instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.token-store-cache-instance[quarkus.cxf.client."clients".security.token-store-cache-instance]`
 
 
 [.description]
@@ -908,7 +908,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.cache.identifier]]`link:#quarkus_quarkus.cxf.client.-clients-.security.cache.identifier[quarkus.cxf.client."clients".security.cache.identifier]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.cache.identifier]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.cache.identifier[quarkus.cxf.client."clients".security.cache.identifier]`
 
 
 [.description]
@@ -929,7 +929,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.role.classifier]]`link:#quarkus_quarkus.cxf.client.-clients-.security.role.classifier[quarkus.cxf.client."clients".security.role.classifier]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.role.classifier]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.role.classifier[quarkus.cxf.client."clients".security.role.classifier]`
 
 
 [.description]
@@ -948,7 +948,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.role.classifier.type]]`link:#quarkus_quarkus.cxf.client.-clients-.security.role.classifier.type[quarkus.cxf.client."clients".security.role.classifier.type]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.role.classifier.type]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.role.classifier.type[quarkus.cxf.client."clients".security.role.classifier.type]`
 
 
 [.description]
@@ -967,7 +967,7 @@ endif::add-copy-button-to-env-var[]
 |`prefix`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.asymmetric.signature.algorithm]]`link:#quarkus_quarkus.cxf.client.-clients-.security.asymmetric.signature.algorithm[quarkus.cxf.client."clients".security.asymmetric.signature.algorithm]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.asymmetric.signature.algorithm]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.asymmetric.signature.algorithm[quarkus.cxf.client."clients".security.asymmetric.signature.algorithm]`
 
 
 [.description]
@@ -986,7 +986,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.symmetric.signature.algorithm]]`link:#quarkus_quarkus.cxf.client.-clients-.security.symmetric.signature.algorithm[quarkus.cxf.client."clients".security.symmetric.signature.algorithm]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.symmetric.signature.algorithm]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.symmetric.signature.algorithm[quarkus.cxf.client."clients".security.symmetric.signature.algorithm]`
 
 
 [.description]
@@ -1005,7 +1005,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.password.encryptor.instance]]`link:#quarkus_quarkus.cxf.client.-clients-.security.password.encryptor.instance[quarkus.cxf.client."clients".security.password.encryptor.instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.password.encryptor.instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.password.encryptor.instance[quarkus.cxf.client."clients".security.password.encryptor.instance]`
 
 
 [.description]
@@ -1028,7 +1028,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.delegated.credential]]`link:#quarkus_quarkus.cxf.client.-clients-.security.delegated.credential[quarkus.cxf.client."clients".security.delegated.credential]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.delegated.credential]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.delegated.credential[quarkus.cxf.client."clients".security.delegated.credential]`
 
 
 [.description]
@@ -1047,7 +1047,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.security.context.creator]]`link:#quarkus_quarkus.cxf.client.-clients-.security.security.context.creator[quarkus.cxf.client."clients".security.security.context.creator]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.security.context.creator]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.security.context.creator[quarkus.cxf.client."clients".security.security.context.creator]`
 
 
 [.description]
@@ -1066,7 +1066,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.security.token.lifetime]]`link:#quarkus_quarkus.cxf.client.-clients-.security.security.token.lifetime[quarkus.cxf.client."clients".security.security.token.lifetime]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.security.token.lifetime]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.security.token.lifetime[quarkus.cxf.client."clients".security.security.token.lifetime]`
 
 
 [.description]
@@ -1085,7 +1085,7 @@ endif::add-copy-button-to-env-var[]
 |`300000`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.request.credential.delegation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.request.credential.delegation[quarkus.cxf.client."clients".security.kerberos.request.credential.delegation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.request.credential.delegation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.request.credential.delegation[quarkus.cxf.client."clients".security.kerberos.request.credential.delegation]`
 
 
 [.description]
@@ -1104,7 +1104,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.use.credential.delegation]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.use.credential.delegation[quarkus.cxf.client."clients".security.kerberos.use.credential.delegation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.use.credential.delegation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.use.credential.delegation[quarkus.cxf.client."clients".security.kerberos.use.credential.delegation]`
 
 
 [.description]
@@ -1123,7 +1123,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.is.username.in.servicename.form]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.is.username.in.servicename.form[quarkus.cxf.client."clients".security.kerberos.is.username.in.servicename.form]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.is.username.in.servicename.form]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.is.username.in.servicename.form[quarkus.cxf.client."clients".security.kerberos.is.username.in.servicename.form]`
 
 
 [.description]
@@ -1142,7 +1142,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.jaas.context]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.jaas.context[quarkus.cxf.client."clients".security.kerberos.jaas.context]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.jaas.context]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.jaas.context[quarkus.cxf.client."clients".security.kerberos.jaas.context]`
 
 
 [.description]
@@ -1161,7 +1161,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.spn]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.spn[quarkus.cxf.client."clients".security.kerberos.spn]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.spn]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.spn[quarkus.cxf.client."clients".security.kerberos.spn]`
 
 
 [.description]
@@ -1180,7 +1180,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.client.-clients-.security.kerberos.client]]`link:#quarkus_quarkus.cxf.client.-clients-.security.kerberos.client[quarkus.cxf.client."clients".security.kerberos.client]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.client]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.kerberos.client[quarkus.cxf.client."clients".security.kerberos.client]`
 
 
 [.description]
@@ -1199,7 +1199,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.username]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.username[quarkus.cxf.endpoint."endpoints".security.username]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.username]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.username[quarkus.cxf.endpoint."endpoints".security.username]`
 
 
 [.description]
@@ -1220,7 +1220,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.password]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.password[quarkus.cxf.endpoint."endpoints".security.password]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.password]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.password[quarkus.cxf.endpoint."endpoints".security.password]`
 
 
 [.description]
@@ -1237,7 +1237,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.username]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.username[quarkus.cxf.endpoint."endpoints".security.signature.username]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signature.username]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signature.username[quarkus.cxf.endpoint."endpoints".security.signature.username]`
 
 
 [.description]
@@ -1256,7 +1256,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.password]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.password[quarkus.cxf.endpoint."endpoints".security.signature.password]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signature.password]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signature.password[quarkus.cxf.endpoint."endpoints".security.signature.password]`
 
 
 [.description]
@@ -1275,7 +1275,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.username]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.username[quarkus.cxf.endpoint."endpoints".security.encryption.username]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.username]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.username[quarkus.cxf.endpoint."endpoints".security.encryption.username]`
 
 
 [.description]
@@ -1296,7 +1296,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.callback-handler]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.callback-handler[quarkus.cxf.endpoint."endpoints".security.callback-handler]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.callback-handler]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.callback-handler[quarkus.cxf.endpoint."endpoints".security.callback-handler]`
 
 
 [.description]
@@ -1313,7 +1313,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml-callback-handler]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml-callback-handler[quarkus.cxf.endpoint."endpoints".security.saml-callback-handler]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.saml-callback-handler]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.saml-callback-handler[quarkus.cxf.endpoint."endpoints".security.saml-callback-handler]`
 
 
 [.description]
@@ -1332,7 +1332,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.properties-signature-properties]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.properties-signature-properties[quarkus.cxf.endpoint."endpoints".security.signature.properties]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signature.properties-signature-properties]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signature.properties-signature-properties[quarkus.cxf.endpoint."endpoints".security.signature.properties]`
 
 
 [.description]
@@ -1361,7 +1361,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties[quarkus.cxf.endpoint."endpoints".security.encryption.properties]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties[quarkus.cxf.endpoint."endpoints".security.encryption.properties]`
 
 
 [.description]
@@ -1390,7 +1390,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.crypto]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.signature.crypto[quarkus.cxf.endpoint."endpoints".security.signature.crypto]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signature.crypto]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signature.crypto[quarkus.cxf.endpoint."endpoints".security.signature.crypto]`
 
 
 [.description]
@@ -1409,7 +1409,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.crypto]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.crypto[quarkus.cxf.endpoint."endpoints".security.encryption.crypto]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.crypto]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.crypto[quarkus.cxf.endpoint."endpoints".security.encryption.crypto]`
 
 
 [.description]
@@ -1428,7 +1428,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.certificate]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.encryption.certificate[quarkus.cxf.endpoint."endpoints".security.encryption.certificate]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.certificate]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.certificate[quarkus.cxf.endpoint."endpoints".security.encryption.certificate]`
 
 
 [.description]
@@ -1447,7 +1447,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable-revocation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable-revocation[quarkus.cxf.endpoint."endpoints".security.enable-revocation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable-revocation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable-revocation[quarkus.cxf.endpoint."endpoints".security.enable-revocation]`
 
 
 [.description]
@@ -1466,7 +1466,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable-unsigned-saml-assertion-principal]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable-unsigned-saml-assertion-principal[quarkus.cxf.endpoint."endpoints".security.enable-unsigned-saml-assertion-principal]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable-unsigned-saml-assertion-principal]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable-unsigned-saml-assertion-principal[quarkus.cxf.endpoint."endpoints".security.enable-unsigned-saml-assertion-principal]`
 
 
 [.description]
@@ -1485,7 +1485,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.validate-saml-subject-confirmation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.validate-saml-subject-confirmation[quarkus.cxf.endpoint."endpoints".security.validate-saml-subject-confirmation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.validate-saml-subject-confirmation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.validate-saml-subject-confirmation[quarkus.cxf.endpoint."endpoints".security.validate-saml-subject-confirmation]`
 
 
 [.description]
@@ -1504,7 +1504,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.sc-from-jaas-subject]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.sc-from-jaas-subject[quarkus.cxf.endpoint."endpoints".security.sc-from-jaas-subject]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.sc-from-jaas-subject]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.sc-from-jaas-subject[quarkus.cxf.endpoint."endpoints".security.sc-from-jaas-subject]`
 
 
 [.description]
@@ -1523,7 +1523,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.audience-restriction-validation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.audience-restriction-validation[quarkus.cxf.endpoint."endpoints".security.audience-restriction-validation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.audience-restriction-validation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.audience-restriction-validation[quarkus.cxf.endpoint."endpoints".security.audience-restriction-validation]`
 
 
 [.description]
@@ -1542,7 +1542,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml-role-attributename]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml-role-attributename[quarkus.cxf.endpoint."endpoints".security.saml-role-attributename]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.saml-role-attributename]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.saml-role-attributename[quarkus.cxf.endpoint."endpoints".security.saml-role-attributename]`
 
 
 [.description]
@@ -1561,7 +1561,7 @@ endif::add-copy-button-to-env-var[]
 |`http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.subject-cert-constraints]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.subject-cert-constraints[quarkus.cxf.endpoint."endpoints".security.subject-cert-constraints]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.subject-cert-constraints]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.subject-cert-constraints[quarkus.cxf.endpoint."endpoints".security.subject-cert-constraints]`
 
 
 [.description]
@@ -1580,7 +1580,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.cert-constraints-separator]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.cert-constraints-separator[quarkus.cxf.endpoint."endpoints".security.cert-constraints-separator]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.cert-constraints-separator]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.cert-constraints-separator[quarkus.cxf.endpoint."endpoints".security.cert-constraints-separator]`
 
 
 [.description]
@@ -1599,7 +1599,7 @@ endif::add-copy-button-to-env-var[]
 |`,`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.actor]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.actor[quarkus.cxf.endpoint."endpoints".security.actor]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.actor]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.actor[quarkus.cxf.endpoint."endpoints".security.actor]`
 
 
 [.description]
@@ -1618,7 +1618,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.validate.token]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.validate.token[quarkus.cxf.endpoint."endpoints".security.validate.token]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.validate.token]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.validate.token[quarkus.cxf.endpoint."endpoints".security.validate.token]`
 
 
 [.description]
@@ -1635,7 +1635,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.username-token.always.encrypted]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.username-token.always.encrypted[quarkus.cxf.endpoint."endpoints".security.username-token.always.encrypted]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.username-token.always.encrypted]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.username-token.always.encrypted[quarkus.cxf.endpoint."endpoints".security.username-token.always.encrypted]`
 
 
 [.description]
@@ -1654,7 +1654,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.is-bsp-compliant]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.is-bsp-compliant[quarkus.cxf.endpoint."endpoints".security.is-bsp-compliant]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.is-bsp-compliant]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.is-bsp-compliant[quarkus.cxf.endpoint."endpoints".security.is-bsp-compliant]`
 
 
 [.description]
@@ -1673,7 +1673,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.nonce.cache]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.nonce.cache[quarkus.cxf.endpoint."endpoints".security.enable.nonce.cache]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable.nonce.cache]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable.nonce.cache[quarkus.cxf.endpoint."endpoints".security.enable.nonce.cache]`
 
 
 [.description]
@@ -1692,7 +1692,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.timestamp.cache]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.timestamp.cache[quarkus.cxf.endpoint."endpoints".security.enable.timestamp.cache]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable.timestamp.cache]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable.timestamp.cache[quarkus.cxf.endpoint."endpoints".security.enable.timestamp.cache]`
 
 
 [.description]
@@ -1713,7 +1713,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.streaming]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.streaming[quarkus.cxf.endpoint."endpoints".security.enable.streaming]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable.streaming]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable.streaming[quarkus.cxf.endpoint."endpoints".security.enable.streaming]`
 
 
 [.description]
@@ -1730,7 +1730,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.return.security.error]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.return.security.error[quarkus.cxf.endpoint."endpoints".security.return.security.error]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.return.security.error]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.return.security.error[quarkus.cxf.endpoint."endpoints".security.return.security.error]`
 
 
 [.description]
@@ -1749,7 +1749,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.must-understand]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.must-understand[quarkus.cxf.endpoint."endpoints".security.must-understand]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.must-understand]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.must-understand[quarkus.cxf.endpoint."endpoints".security.must-understand]`
 
 
 [.description]
@@ -1768,7 +1768,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.saml.cache]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.enable.saml.cache[quarkus.cxf.endpoint."endpoints".security.enable.saml.cache]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable.saml.cache]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.enable.saml.cache[quarkus.cxf.endpoint."endpoints".security.enable.saml.cache]`
 
 
 [.description]
@@ -1789,7 +1789,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.store.bytes.in.attachment]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.store.bytes.in.attachment[quarkus.cxf.endpoint."endpoints".security.store.bytes.in.attachment]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.store.bytes.in.attachment]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.store.bytes.in.attachment[quarkus.cxf.endpoint."endpoints".security.store.bytes.in.attachment]`
 
 
 [.description]
@@ -1808,7 +1808,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.swa.encryption.attachment.transform.content]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.swa.encryption.attachment.transform.content[quarkus.cxf.endpoint."endpoints".security.swa.encryption.attachment.transform.content]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.swa.encryption.attachment.transform.content]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.swa.encryption.attachment.transform.content[quarkus.cxf.endpoint."endpoints".security.swa.encryption.attachment.transform.content]`
 
 
 [.description]
@@ -1827,7 +1827,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.use.str.transform]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.use.str.transform[quarkus.cxf.endpoint."endpoints".security.use.str.transform]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.use.str.transform]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.use.str.transform[quarkus.cxf.endpoint."endpoints".security.use.str.transform]`
 
 
 [.description]
@@ -1848,7 +1848,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.add.inclusive.prefixes]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.add.inclusive.prefixes[quarkus.cxf.endpoint."endpoints".security.add.inclusive.prefixes]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.add.inclusive.prefixes]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.add.inclusive.prefixes[quarkus.cxf.endpoint."endpoints".security.add.inclusive.prefixes]`
 
 
 [.description]
@@ -1867,7 +1867,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.disable.require.client.cert.check]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.disable.require.client.cert.check[quarkus.cxf.endpoint."endpoints".security.disable.require.client.cert.check]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.disable.require.client.cert.check]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.disable.require.client.cert.check[quarkus.cxf.endpoint."endpoints".security.disable.require.client.cert.check]`
 
 
 [.description]
@@ -1888,7 +1888,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.expand.xop.include]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.expand.xop.include[quarkus.cxf.endpoint."endpoints".security.expand.xop.include]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.expand.xop.include]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.expand.xop.include[quarkus.cxf.endpoint."endpoints".security.expand.xop.include]`
 
 
 [.description]
@@ -1907,7 +1907,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.timetolive]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.timetolive[quarkus.cxf.endpoint."endpoints".security.timestamp.timeToLive]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.timestamp.timetolive]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.timestamp.timetolive[quarkus.cxf.endpoint."endpoints".security.timestamp.timeToLive]`
 
 
 [.description]
@@ -1926,7 +1926,7 @@ endif::add-copy-button-to-env-var[]
 |`300`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.futuretimetolive]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.futuretimetolive[quarkus.cxf.endpoint."endpoints".security.timestamp.futureTimeToLive]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.timestamp.futuretimetolive]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.timestamp.futuretimetolive[quarkus.cxf.endpoint."endpoints".security.timestamp.futureTimeToLive]`
 
 
 [.description]
@@ -1945,7 +1945,7 @@ endif::add-copy-button-to-env-var[]
 |`60`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.timetolive]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.timetolive[quarkus.cxf.endpoint."endpoints".security.usernametoken.timeToLive]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.timetolive]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.timetolive[quarkus.cxf.endpoint."endpoints".security.usernametoken.timeToLive]`
 
 
 [.description]
@@ -1964,7 +1964,7 @@ endif::add-copy-button-to-env-var[]
 |`300`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.futuretimetolive]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.futuretimetolive[quarkus.cxf.endpoint."endpoints".security.usernametoken.futureTimeToLive]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.futuretimetolive]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.usernametoken.futuretimetolive[quarkus.cxf.endpoint."endpoints".security.usernametoken.futureTimeToLive]`
 
 
 [.description]
@@ -1983,7 +1983,7 @@ endif::add-copy-button-to-env-var[]
 |`60`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.spnego.client.action]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.spnego.client.action[quarkus.cxf.endpoint."endpoints".security.spnego.client.action]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.spnego.client.action]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.spnego.client.action[quarkus.cxf.endpoint."endpoints".security.spnego.client.action]`
 
 
 [.description]
@@ -2002,7 +2002,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.nonce.cache.instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.nonce.cache.instance[quarkus.cxf.endpoint."endpoints".security.nonce.cache.instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.nonce.cache.instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.nonce.cache.instance[quarkus.cxf.endpoint."endpoints".security.nonce.cache.instance]`
 
 
 [.description]
@@ -2021,7 +2021,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.cache.instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.timestamp.cache.instance[quarkus.cxf.endpoint."endpoints".security.timestamp.cache.instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.timestamp.cache.instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.timestamp.cache.instance[quarkus.cxf.endpoint."endpoints".security.timestamp.cache.instance]`
 
 
 [.description]
@@ -2040,7 +2040,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml.cache.instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.saml.cache.instance[quarkus.cxf.endpoint."endpoints".security.saml.cache.instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.saml.cache.instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.saml.cache.instance[quarkus.cxf.endpoint."endpoints".security.saml.cache.instance]`
 
 
 [.description]
@@ -2059,7 +2059,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.cache.config.file]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.cache.config.file[quarkus.cxf.endpoint."endpoints".security.cache.config.file]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.cache.config.file]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.cache.config.file[quarkus.cxf.endpoint."endpoints".security.cache.config.file]`
 
 
 [.description]
@@ -2078,7 +2078,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.token-store-cache-instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.token-store-cache-instance[quarkus.cxf.endpoint."endpoints".security.token-store-cache-instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.token-store-cache-instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.token-store-cache-instance[quarkus.cxf.endpoint."endpoints".security.token-store-cache-instance]`
 
 
 [.description]
@@ -2097,7 +2097,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.cache.identifier]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.cache.identifier[quarkus.cxf.endpoint."endpoints".security.cache.identifier]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.cache.identifier]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.cache.identifier[quarkus.cxf.endpoint."endpoints".security.cache.identifier]`
 
 
 [.description]
@@ -2118,7 +2118,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.role.classifier]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.role.classifier[quarkus.cxf.endpoint."endpoints".security.role.classifier]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.role.classifier]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.role.classifier[quarkus.cxf.endpoint."endpoints".security.role.classifier]`
 
 
 [.description]
@@ -2137,7 +2137,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.role.classifier.type]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.role.classifier.type[quarkus.cxf.endpoint."endpoints".security.role.classifier.type]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.role.classifier.type]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.role.classifier.type[quarkus.cxf.endpoint."endpoints".security.role.classifier.type]`
 
 
 [.description]
@@ -2156,7 +2156,7 @@ endif::add-copy-button-to-env-var[]
 |`prefix`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.asymmetric.signature.algorithm]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.asymmetric.signature.algorithm[quarkus.cxf.endpoint."endpoints".security.asymmetric.signature.algorithm]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.asymmetric.signature.algorithm]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.asymmetric.signature.algorithm[quarkus.cxf.endpoint."endpoints".security.asymmetric.signature.algorithm]`
 
 
 [.description]
@@ -2175,7 +2175,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.symmetric.signature.algorithm]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.symmetric.signature.algorithm[quarkus.cxf.endpoint."endpoints".security.symmetric.signature.algorithm]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.symmetric.signature.algorithm]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.symmetric.signature.algorithm[quarkus.cxf.endpoint."endpoints".security.symmetric.signature.algorithm]`
 
 
 [.description]
@@ -2194,7 +2194,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.password.encryptor.instance]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.password.encryptor.instance[quarkus.cxf.endpoint."endpoints".security.password.encryptor.instance]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.password.encryptor.instance]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.password.encryptor.instance[quarkus.cxf.endpoint."endpoints".security.password.encryptor.instance]`
 
 
 [.description]
@@ -2217,7 +2217,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.delegated.credential]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.delegated.credential[quarkus.cxf.endpoint."endpoints".security.delegated.credential]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.delegated.credential]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.delegated.credential[quarkus.cxf.endpoint."endpoints".security.delegated.credential]`
 
 
 [.description]
@@ -2236,7 +2236,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.security.context.creator]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.security.context.creator[quarkus.cxf.endpoint."endpoints".security.security.context.creator]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.security.context.creator]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.security.context.creator[quarkus.cxf.endpoint."endpoints".security.security.context.creator]`
 
 
 [.description]
@@ -2255,7 +2255,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.security.token.lifetime]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.security.token.lifetime[quarkus.cxf.endpoint."endpoints".security.security.token.lifetime]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.security.token.lifetime]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.security.token.lifetime[quarkus.cxf.endpoint."endpoints".security.security.token.lifetime]`
 
 
 [.description]
@@ -2274,7 +2274,7 @@ endif::add-copy-button-to-env-var[]
 |`300000`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.request.credential.delegation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.request.credential.delegation[quarkus.cxf.endpoint."endpoints".security.kerberos.request.credential.delegation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.request.credential.delegation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.request.credential.delegation[quarkus.cxf.endpoint."endpoints".security.kerberos.request.credential.delegation]`
 
 
 [.description]
@@ -2293,7 +2293,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.use.credential.delegation]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.use.credential.delegation[quarkus.cxf.endpoint."endpoints".security.kerberos.use.credential.delegation]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.use.credential.delegation]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.use.credential.delegation[quarkus.cxf.endpoint."endpoints".security.kerberos.use.credential.delegation]`
 
 
 [.description]
@@ -2312,7 +2312,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.is.username.in.servicename.form]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.is.username.in.servicename.form[quarkus.cxf.endpoint."endpoints".security.kerberos.is.username.in.servicename.form]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.is.username.in.servicename.form]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.is.username.in.servicename.form[quarkus.cxf.endpoint."endpoints".security.kerberos.is.username.in.servicename.form]`
 
 
 [.description]
@@ -2331,7 +2331,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.jaas.context]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.jaas.context[quarkus.cxf.endpoint."endpoints".security.kerberos.jaas.context]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.jaas.context]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.jaas.context[quarkus.cxf.endpoint."endpoints".security.kerberos.jaas.context]`
 
 
 [.description]
@@ -2350,7 +2350,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.spn]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.spn[quarkus.cxf.endpoint."endpoints".security.kerberos.spn]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.spn]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.spn[quarkus.cxf.endpoint."endpoints".security.kerberos.spn]`
 
 
 [.description]
@@ -2369,7 +2369,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.client]]`link:#quarkus_quarkus.cxf.endpoint.-endpoints-.security.kerberos.client[quarkus.cxf.endpoint."endpoints".security.kerberos.client]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.client]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.kerberos.client[quarkus.cxf.endpoint."endpoints".security.kerberos.client]`
 
 
 [.description]
