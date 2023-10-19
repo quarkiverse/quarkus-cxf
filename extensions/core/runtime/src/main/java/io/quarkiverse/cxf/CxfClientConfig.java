@@ -72,7 +72,7 @@ public interface CxfClientConfig {
      * </pre>
      * <p>
      * Note that the {@code LoggingFeature} is available through the
-     * <a href="../quarkus-cxf-rt-features-metrics.html">Logging
+     * <a href="../extensions/quarkus-cxf-rt-features-logging.html">Logging
      * Feature</a> extension.
      */
     public Optional<List<String>> features();
