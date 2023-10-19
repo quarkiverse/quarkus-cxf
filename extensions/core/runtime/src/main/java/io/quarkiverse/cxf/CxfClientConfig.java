@@ -76,7 +76,8 @@ public class CxfClientConfig {
      * quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeature
      * </pre>
      * <p>
-     * Note that the {@code LoggingFeature} is available through the <a href="../quarkus-cxf-rt-features-metrics.html">Logging
+     * Note that the {@code LoggingFeature} is available through the
+     * <a href="../extensions/quarkus-cxf-rt-features-logging.html">Logging
      * Feature</a> extension.
      */
     @ConfigItem

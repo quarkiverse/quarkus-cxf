@@ -60,7 +60,7 @@ public class CxfEndpointConfig {
      * class Producers {
      *
      *     &#64;Produces
-     *     @ApplicationScoped
+     *     &#64;ApplicationScoped
      *     LoggingFeature myCustomLoggingFeature() {
      *         LoggingFeature loggingFeature = new LoggingFeature();
      *         loggingFeature.setPrettyLogging(true);
@@ -69,7 +69,8 @@ public class CxfEndpointConfig {
      * }
      * </pre>
      * <p>
-     * Note that the {@code LoggingFeature} is available through the <a href="../quarkus-cxf-rt-features-metrics.html">Logging
+     * Note that the {@code LoggingFeature} is available through the
+     * <a href="../extensions/quarkus-cxf-rt-features-logging.html">Logging
      * Feature</a> extension.
      */
     @ConfigItem
