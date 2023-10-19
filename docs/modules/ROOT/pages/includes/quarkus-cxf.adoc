@@ -610,7 +610,18 @@ import javax.enterprise.inject.Produces;
 class Producers {
 
     @Produces
+    @ApplicationScoped
+    LoggingFeature myCustomLoggingFeature() {
+        LoggingFeature loggingFeature = new LoggingFeature();
+        loggingFeature.setPrettyLogging(true);
+        return loggingFeature;
+    }
+}
 ```
+
+
+
+Note that the `LoggingFeature` is available through the link:../extensions/quarkus-cxf-rt-features-logging.html[Logging Feature] extension.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__FEATURES+++[]
@@ -846,7 +857,7 @@ quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeatu
 
 
 
-Note that the `LoggingFeature` is available through the link:../quarkus-cxf-rt-features-metrics.html[Logging Feature] extension.
+Note that the `LoggingFeature` is available through the link:../extensions/quarkus-cxf-rt-features-logging.html[Logging Feature] extension.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__FEATURES+++[]
