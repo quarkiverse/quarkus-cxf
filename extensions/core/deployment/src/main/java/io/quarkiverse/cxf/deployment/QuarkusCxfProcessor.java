@@ -78,18 +78,19 @@ import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.GeneratedResourceBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.ShutdownContextBuildItem;
+import io.quarkus.deployment.builditem.SystemPropertyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
 import io.quarkus.deployment.pkg.PackageConfig.BuiltInType;
 import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarRequiredBuildItem;
+import io.quarkus.deployment.pkg.steps.NativeOrNativeSourcesBuild;
 import io.quarkus.gizmo.ClassOutput;
 
 class QuarkusCxfProcessor {
@@ -173,6 +174,13 @@ class QuarkusCxfProcessor {
         final Bus bus = BusFactory.getDefaultBus();
         // setup class capturing
         return new BuildTimeBusBuildItem(bus);
+    }
+
+    @BuildStep(onlyIf = NativeOrNativeSourcesBuild.class)
+    void systemProperty(BuildProducer<SystemPropertyBuildItem> systemProperty) {
+        /* Workaround for https://github.com/quarkiverse/quarkus-cxf/issues/1078 */
+        systemProperty
+                .produce(new SystemPropertyBuildItem(BusFactory.BUS_FACTORY_PROPERTY_NAME, QuarkusBusFactory.class.getName()));
     }
 
     @BuildStep
@@ -505,16 +513,6 @@ class QuarkusCxfProcessor {
 
     }
 
-    @BuildStep
-    void serviceProviders(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
-
-        serviceProvider.produce(
-                new ServiceProviderBuildItem(
-                        "org.apache.cxf.bus.factory",
-                        "org.apache.cxf.bus.CXFBusFactory"));
-
-    }
-
     void produceRecursiveProxies(IndexView index,
             DotName interfaceDN,
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies, Set<String> proxiesCreated) {
@@ -563,10 +561,11 @@ class QuarkusCxfProcessor {
     @BuildStep
     NativeImageResourceBuildItem nativeImageResourceBuildItem() {
         // TODO add @HandlerChain (file) and parse it to add class loading
-        return new NativeImageResourceBuildItem("com/sun/xml/fastinfoset/resources/ResourceBundle.properties",
+        return new NativeImageResourceBuildItem(
+                "META-INF/services/" + BusFactory.BUS_FACTORY_PROPERTY_NAME,
+                "com/sun/xml/fastinfoset/resources/ResourceBundle.properties",
                 "META-INF/cxf/bus-extensions.txt",
                 "META-INF/cxf/cxf.xml",
-                "META-INF/cxf/org.apache.cxf.bus.factory",
                 "META-INF/blueprint.handlers",
                 "META-INF/spring.handlers",
                 "META-INF/spring.schemas",
