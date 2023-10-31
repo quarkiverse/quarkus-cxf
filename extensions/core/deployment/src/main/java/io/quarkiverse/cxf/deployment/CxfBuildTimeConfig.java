@@ -22,7 +22,7 @@ public interface CxfBuildTimeConfig {
     /**
      * The default path for CXF resources.
      * <p>
-     * ⚠️ Note that the default value before 3.0.0 was {@code /}.
+     * ⚠️ Note that the default value before Quarkus CXF version 2.0.0 was {@code /}.
      * </p>
      */
     @WithDefault("/services")
