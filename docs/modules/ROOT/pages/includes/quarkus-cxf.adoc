@@ -17,7 +17,7 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.path]]`link:#qu
 --
 The default path for CXF resources.
 
-⚠️ Note that the default value before 3.0.0 was `/`.
+⚠️ Note that the default value before Quarkus CXF version 2.0.0 was `/`.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_PATH+++[]
