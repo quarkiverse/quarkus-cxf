@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<wsdl:definitions
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:tns="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:ns1="http://schemas.xmlsoap.org/soap/http"
+    name="CalculatorService"
+    targetNamespace="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator">
+
+    <wsdl:types>
+        <xsd:schema
+            targetNamespace="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator">
+            <xsd:include schemaLocation="calculator.xsd" />
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="addCheckParameters">
+        <wsdl:part element="tns:addCheckParameters" name="addCheckParameters">
+        </wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="addCheckParametersResponse">
+        <wsdl:part element="tns:addCheckParametersResponse" name="addCheckParametersResponse">
+        </wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="addCheckResult">
+        <wsdl:part name="parameters" element="tns:addCheckResult">
+        </wsdl:part>
+    </wsdl:message>
+
+    <wsdl:message name="addCheckResultResponse">
+        <wsdl:part name="parameters" element="tns:addCheckResultResponse">
+        </wsdl:part>
+    </wsdl:message>
+
+    <wsdl:portType name="CalculatorService">
+        <wsdl:operation name="addCheckParameters">
+            <wsdl:input message="tns:addCheckParameters" name="addCheckParameters">
+            </wsdl:input>
+            <wsdl:output message="tns:addCheckParametersResponse" name="addCheckParametersResponse">
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="addCheckResult">
+            <wsdl:input name="addCheckResult" message="tns:addCheckResult">
+            </wsdl:input>
+            <wsdl:output name="addCheckResultResponse"
+                message="tns:addCheckResultResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="CalculatorServiceSoapBinding"
+        type="tns:CalculatorService">
+        <soap:binding style="document"
+            transport="http://schemas.xmlsoap.org/soap/http"></soap:binding>
+        <wsdl:operation name="addCheckParameters">
+            <soap:operation soapAction="" style="document"></soap:operation>
+            <wsdl:input name="addCheckParameters">
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output name="addCheckParametersResponse">
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="addCheckResult">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input name="addCheckResult">
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="addCheckResultResponse">
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CalculatorService">
+        <wsdl:port binding="tns:CalculatorServiceSoapBinding" name="Calculator">
+            <soap:address location="http://foo:8080/calculator-ws"></soap:address>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>
