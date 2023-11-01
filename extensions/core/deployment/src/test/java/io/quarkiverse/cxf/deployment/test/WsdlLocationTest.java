@@ -19,7 +19,6 @@ import jakarta.xml.ws.WebServiceProvider;
 import org.hamcrest.CoreMatchers;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.w3c.dom.Document;
@@ -39,15 +38,17 @@ public class WsdlLocationTest {
             .overrideConfigKey("quarkus.cxf.path", "/soap")
             .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation\".implementor",
                     HelloServiceImpl.class.getName())
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation\".wsdl",
+                    "wsdllocation/HelloService.wsdl")
             .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation-provider\".implementor",
                     HelloProvider.class.getName());
 
     @Test
-    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/557")
     public void serviceServingStaticWsdl()
             throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
 
         RestAssured.given()
+                .header("Content-Type", "text/xml")
                 .body("<s11:Envelope xmlns:s11=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                         + "  <s11:Body>\n"
                         + "    <ns1:hello xmlns:ns1=\"http://test.deployment.cxf.quarkiverse.io/\">\n"
@@ -58,8 +59,7 @@ public class WsdlLocationTest {
                 .post("/soap/wsdllocation/HelloService")
                 .then()
                 .statusCode(200)
-                .body(CoreMatchers.containsString(
-                        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:helloResponse xmlns:ns2=\"http://test.deployment.cxf.quarkiverse.io/\"><return>Hello null</return></ns2:helloResponse></soap:Body></soap:Envelope>"));
+                .body(CoreMatchers.containsString("<return>Hello Joe</return>"));
 
         RestAssured.get("/soap/wsdllocation/HelloService/?wsdl")
                 .then()
