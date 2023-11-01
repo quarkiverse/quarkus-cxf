@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator"
+    targetNamespace="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator"
+    elementFormDefault="qualified">
+
+    <xs:element name="addCheckParameters" type="tns:addCheckParametersType"></xs:element>
+    <xs:element name="addCheckParametersResponse" type="tns:addCheckParametersResponseType"></xs:element>
+
+    <xs:element name="addCheckResult" type="tns:addCheckResult"></xs:element>
+    <xs:element name="addCheckResultResponse" type="tns:addCheckResultResponse"></xs:element>
+
+    <xs:simpleType name="smallIntType">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="1024" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="addCheckParametersType">
+        <xs:sequence>
+            <xs:element name="arg0" type="tns:smallIntType" />
+            <xs:element name="arg1" type="tns:smallIntType" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="addCheckParametersResponseType">
+        <xs:sequence>
+            <xs:element name="return" type="xs:int" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="addCheckResult">
+        <xs:sequence>
+            <xs:element name="arg0" type="xs:int" />
+            <xs:element name="arg1" type="xs:int" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="addCheckResultResponse">
+        <xs:sequence>
+            <xs:element name="return" type="tns:smallIntType" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+</xs:schema>
