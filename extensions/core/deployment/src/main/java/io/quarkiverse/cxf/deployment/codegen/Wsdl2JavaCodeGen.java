@@ -82,7 +82,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
 
             // TODO once https://github.com/quarkusio/quarkus/pull/35963 reaches us we can replace the above with
             // final Wsdl2JavaConfig config = context.config().getValue("quarkus.cxf", CxfBuildTimeConfig.class)
-            //      .codegen().wsdl2java();
+            // .codegen().wsdl2java();
 
             if (!config.enabled()) {
                 log.info("Skipping " + this.getClass() + " invocation on user's request");
@@ -122,14 +122,13 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         }
     }
 
-    static boolean wsdl2java(Path projectDir, Path inputDir, Wsdl2JavaParameterSet params, Path outDir, String prefix,
+    static boolean wsdl2java(Path projectDir, Path inputDir, Wsdl2JavaParameterSet params, Path defaultOutDir, String prefix,
             Map<String, String> processedFiles) {
 
         return scan(inputDir, params.includes(), params.excludes(), prefix, processedFiles, (Path wsdlFile) -> {
             final Wsdl2JavaParams wsdl2JavaParams = new Wsdl2JavaParams(
                     projectDir,
-                    inputDir, outDir, wsdlFile,
-                    params);
+                    defaultOutDir, wsdlFile, params);
             if (log.isInfoEnabled()) {
                 log.info(wsdl2JavaParams.appendLog(new StringBuilder("Running wsdl2java")).toString());
             }
@@ -199,16 +198,14 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
 
     static class Wsdl2JavaParams {
         private final Path projectDir;
-        private final Path inputDir;
-        private final Path outDir;
+        private final Path defaultOutDir;
         private final Path wsdlFile;
         private final Wsdl2JavaParameterSet params;
 
-        public Wsdl2JavaParams(Path projectDir, Path inputDir, Path outDir, Path wsdlFile, Wsdl2JavaParameterSet params) {
+        public Wsdl2JavaParams(Path projectDir, Path defaultOutDir, Path wsdlFile, Wsdl2JavaParameterSet params) {
             super();
             this.projectDir = projectDir;
-            this.inputDir = inputDir;
-            this.outDir = outDir;
+            this.defaultOutDir = defaultOutDir;
             this.wsdlFile = wsdlFile;
             this.params = params;
         }
@@ -237,8 +234,8 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
         }
 
         public StringBuilder appendLog(StringBuilder sb) {
-            //            final Path moduleRoot = absModuleRoot(inputDir);
-            //            render(path -> moduleRoot.relativize(path).toString(), value -> sb.append(' ').append(value));
+            // final Path moduleRoot = absModuleRoot(inputDir);
+            // render(path -> moduleRoot.relativize(path).toString(), value -> sb.append(' ').append(value));
             render(Path::toString, value -> sb.append(' ').append(value));
             return sb;
         }
@@ -251,7 +248,12 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
 
         void render(Function<Path, String> pathTransformer, Consumer<String> paramConsumer) {
             paramConsumer.accept("-d");
-            paramConsumer.accept(pathTransformer.apply(outDir));
+            final Optional<String> outputDirectory = params.outputDirectory();
+            paramConsumer.accept(
+                    pathTransformer.apply(
+                            outputDirectory.isEmpty()
+                                    ? defaultOutDir
+                                    : projectDir.resolve(outputDirectory.get())));
 
             Stream.of(Wsdl2JavaParameterSet.class.getDeclaredMethods())
                     .sorted(Comparator.comparing(Method::getName))

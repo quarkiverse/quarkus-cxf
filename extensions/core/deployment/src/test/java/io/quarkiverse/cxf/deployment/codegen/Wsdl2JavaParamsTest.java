@@ -22,6 +22,7 @@ public class Wsdl2JavaParamsTest {
     void wsdl2JavaParamsNone() {
         assertParams(
                 proxy(
+                        "outputDirectory", Optional.empty(),
                         "packageNames", Optional.empty(),
                         "serviceName", Optional.empty(),
                         "bindings", Optional.empty(),
@@ -43,6 +44,7 @@ public class Wsdl2JavaParamsTest {
     void wsdl2JavaParams() {
         assertParams(
                 proxy(
+                        "outputDirectory", Optional.of("foo/bar"),
                         "packageNames", Optional.of(Arrays.asList("com.foo", "com.bar")),
                         "serviceName", Optional.of("HelloService"),
                         "bindings", Optional.of(Arrays.asList("src/main/resources/b1.xml", "src/main/resources/b2.xml")),
@@ -55,7 +57,7 @@ public class Wsdl2JavaParamsTest {
                         "bareMethods", Optional.of(Arrays.asList("bare1", "bare2")),
                         "mimeMethods", Optional.of(Arrays.asList("mime1", "mime2")),
                         "additionalParams", Optional.of(Arrays.asList("-keep", "-dex", "true"))),
-                "-d", "/path/to/project/target/classes",
+                "-d", "/path/to/project/foo/bar",
                 "-asyncMethods", "hello,goodBye",
                 "-bareMethods", "bare1,bare2",
                 "-b", "/path/to/project/src/main/resources/b1.xml",
@@ -97,12 +99,10 @@ public class Wsdl2JavaParamsTest {
 
         Path projectDir = Paths.get("/path/to/project");
         Path wsdlFile = projectDir.resolve("src/main/resources/my.wsdl");
-        Path inputDir = projectDir.resolve("src/main/resources");
         Path outDir = projectDir.resolve("target/classes");
         final Wsdl2JavaParams wsdl2JavaParams = new Wsdl2JavaParams(
                 projectDir,
-                inputDir, outDir, wsdlFile,
-                params);
+                outDir, wsdlFile, params);
         Assertions.assertThat(wsdl2JavaParams.toParameterArray()).containsExactly(expectedParams);
 
     }
