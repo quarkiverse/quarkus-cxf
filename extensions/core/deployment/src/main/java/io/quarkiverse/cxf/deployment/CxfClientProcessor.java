@@ -458,8 +458,11 @@ public class CxfClientProcessor {
             CXFRecorder recorder,
             CxfBuildTimeConfig config,
             BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
-        final HTTPConduitImpl factory = HTTPConduitImpl.fromOptional(config.httpConduitFactory, hc5Present(),
-                "quarkus.cxf.http-conduit-impl");
+        final HTTPConduitImpl factory = HTTPConduitImpl.fromOptional(
+                config.httpConduitFactory,
+                hc5Present(),
+                "quarkus.cxf.http-conduit-impl",
+                HTTPConduitImpl.QuarkusCXFDefault);
         switch (factory) {
             case CXFDefault:
                 // nothing to do

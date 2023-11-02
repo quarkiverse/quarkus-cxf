@@ -298,7 +298,11 @@ public class CxfClientConfig {
         @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
         URLConnectionHTTPConduitFactory;
 
-        public static HTTPConduitImpl fromOptional(Optional<HTTPConduitImpl> optional, boolean hc5Present, String key) {
+        public static HTTPConduitImpl fromOptional(
+                Optional<HTTPConduitImpl> optional,
+                boolean hc5Present,
+                String key,
+                HTTPConduitImpl defaultValue) {
             if (optional.isPresent()
                     && optional.get() != HTTPConduitImpl.CXFDefault
                     && hc5Present) {
@@ -314,7 +318,7 @@ public class CxfClientConfig {
             } else if (!optional.isPresent() && hc5Present) {
                 return HTTPConduitImpl.CXFDefault;
             } else {
-                return optional.orElse(HTTPConduitImpl.QuarkusCXFDefault);
+                return optional.orElse(defaultValue);
             }
         }
 

@@ -269,8 +269,11 @@ public class CXFClientInfo {
         this.proxyUsername = config.proxyUsername.orElse(null);
         this.proxyPassword = config.proxyPassword.orElse(null);
 
-        this.httpConduitImpl = HTTPConduitImpl.fromOptional(config.httpConduitFactory, CXFRecorder.isHc5Present(),
-                "quarkus.cxf.client." + configKey + ".http-conduit-impl");
+        this.httpConduitImpl = HTTPConduitImpl.fromOptional(
+                config.httpConduitFactory,
+                CXFRecorder.isHc5Present(),
+                "quarkus.cxf.client." + configKey + ".http-conduit-impl",
+                null);
         return this;
     }
 

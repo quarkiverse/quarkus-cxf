@@ -131,26 +131,29 @@ public abstract class CxfClientProducer {
             addToCols(inFaultInterceptor, factory.getInFaultInterceptors());
         }
 
-        switch (cxfClientInfo.getHttpConduitImpl()) {
-            case CXFDefault:
-                // nothing to do
-                break;
-            case QuarkusCXFDefault:
-            case URLConnectionHTTPConduitFactory: {
-                final Map<String, Object> props = new HashMap<>();
-                props.put(HTTPConduitFactory.class.getName(), new URLConnectionHTTPConduitFactory());
-                factory.setProperties(props);
-                break;
+        final HTTPConduitImpl httpConduitImpl = cxfClientInfo.getHttpConduitImpl();
+        if (httpConduitImpl != null) {
+            switch (httpConduitImpl) {
+                case CXFDefault:
+                    // nothing to do
+                    break;
+                case QuarkusCXFDefault:
+                case URLConnectionHTTPConduitFactory: {
+                    final Map<String, Object> props = new HashMap<>();
+                    props.put(HTTPConduitFactory.class.getName(), new URLConnectionHTTPConduitFactory());
+                    factory.setProperties(props);
+                    break;
+                }
+                case HttpClientHTTPConduitFactory: {
+                    final Map<String, Object> props = new HashMap<>();
+                    props.put(HTTPConduitFactory.class.getName(), new HttpClientHTTPConduitFactory());
+                    factory.setProperties(props);
+                    break;
+                }
+                default:
+                    throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
+                            + httpConduitImpl);
             }
-            case HttpClientHTTPConduitFactory: {
-                final Map<String, Object> props = new HashMap<>();
-                props.put(HTTPConduitFactory.class.getName(), new HttpClientHTTPConduitFactory());
-                factory.setProperties(props);
-                break;
-            }
-            default:
-                throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
-                        + cxfClientInfo.getHttpConduitImpl());
         }
 
         LOGGER.debug("cxf client loaded for " + cxfClientInfo.getSei());
