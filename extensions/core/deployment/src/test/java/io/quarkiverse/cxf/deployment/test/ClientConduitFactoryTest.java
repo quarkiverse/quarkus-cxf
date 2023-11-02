@@ -22,14 +22,14 @@ import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.QuarkusUnitTest;
 
-public class HttpClientConduitFactoryTest {
+public class ClientConduitFactoryTest {
 
     @RegisterExtension
     public static final QuarkusUnitTest test = new QuarkusUnitTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
-                    .addClasses(HelloService.class, SlowHelloServiceImpl.class))
+                    .addClasses(HelloService.class, HelloServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
-                    SlowHelloServiceImpl.class.getName())
+                    HelloServiceImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
             .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName())
             .overrideConfigKey("quarkus.cxf.client.hello.http-conduit-factory",
@@ -63,18 +63,12 @@ public class HttpClientConduitFactoryTest {
 
     }
 
-    @WebService(endpointInterface = "io.quarkiverse.cxf.deployment.test.HttpClientConduitFactoryTest$HelloService", serviceName = "HelloService")
-    public static class SlowHelloServiceImpl implements HelloService {
+    @WebService(endpointInterface = "io.quarkiverse.cxf.deployment.test.ClientConduitFactoryTest$HelloService", serviceName = "HelloService")
+    public static class HelloServiceImpl implements HelloService {
 
         @Override
         public String hello(String person) {
-            try {
-                Thread.sleep(500);
-                return "Hello " + person;
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
+            return "Hello " + person;
         }
     }
 

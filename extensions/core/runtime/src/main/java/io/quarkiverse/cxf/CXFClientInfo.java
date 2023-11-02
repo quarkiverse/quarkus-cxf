@@ -236,8 +236,13 @@ public class CXFClientInfo {
         this.trustStoreType = Objects.requireNonNull(config.trustStoreType(), "trustStoreType cannot be null");
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
 
+        /*
+         * If the optional is empty, this.httpConduitImpl will be null.
+         * In that case, the HTTPConduitFactory set on the Bus based on quarkus.cxf.http-conduit-impl
+         * should kick in.
+         */
         this.httpConduitImpl = HTTPConduitImpl.fromOptional(config.httpConduitFactory(), CXFRecorder.isHc5Present(),
-                "quarkus.cxf.client." + configKey + ".http-conduit-impl");
+                "quarkus.cxf.client." + configKey + ".http-conduit-impl", null);
         this.configKey = configKey;
     }
 
