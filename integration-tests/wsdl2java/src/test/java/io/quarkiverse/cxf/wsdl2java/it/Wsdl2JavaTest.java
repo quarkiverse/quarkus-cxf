@@ -22,7 +22,7 @@ public class Wsdl2JavaTest {
 
         /* Make sure that the java files were generated */
         final Path calculatorService_Service = Paths.get(
-                "target/generated-test-sources/wsdl2java/org/jboss/eap/quickstarts/wscalculator/calculator/CalculatorService_Service.java");
+                "target/generated-test-sources/wsdl2java-custom/org/jboss/eap/quickstarts/wscalculator/calculator/CalculatorService_Service.java");
         Assertions.assertThat(calculatorService_Service)
                 .isRegularFile()
                 .content(StandardCharsets.UTF_8).contains("wsdlLocation = \"classpath:wsdl/CalculatorService.wsdl\"");
@@ -77,7 +77,7 @@ public class Wsdl2JavaTest {
     void javadocGenerated() {
         /* Make sure that the java files were generated */
         final Path calculatorService_Service = Paths.get(
-                "target/generated-test-sources/wsdl2java/org/jboss/eap/quickstarts/wscalculator/calculator/Result.java");
+                "target/generated-test-sources/wsdl2java-custom/org/jboss/eap/quickstarts/wscalculator/calculator/Result.java");
         Assertions.assertThat(calculatorService_Service)
                 .isRegularFile()
                 .content(StandardCharsets.UTF_8).contains("This text should appear in JavaDoc of result");
@@ -87,7 +87,7 @@ public class Wsdl2JavaTest {
     void getBooleanGenerated() {
         /* Make sure that the java files were generated */
         final Path calculatorService_Service = Paths.get(
-                "target/generated-test-sources/wsdl2java/org/jboss/eap/quickstarts/wscalculator/calculator/Result.java");
+                "target/generated-test-sources/wsdl2java-custom/org/jboss/eap/quickstarts/wscalculator/calculator/Result.java");
         Assertions.assertThat(calculatorService_Service)
                 .isRegularFile()
                 .content(StandardCharsets.UTF_8).contains("public boolean getEven() {");
@@ -97,7 +97,7 @@ public class Wsdl2JavaTest {
     void extensibilityElementGenerated() {
         /* Make sure that the java files were generated */
         final Path calculatorService_Service = Paths.get(
-                "target/generated-test-sources/wsdl2java/org/jboss/eap/quickstarts/wscalculator/calculator/Result.java");
+                "target/generated-test-sources/wsdl2java-custom/org/jboss/eap/quickstarts/wscalculator/calculator/Result.java");
         Assertions.assertThat(calculatorService_Service)
                 .isRegularFile()
                 .content(StandardCharsets.UTF_8).contains("implements ExtensibilityElement");
