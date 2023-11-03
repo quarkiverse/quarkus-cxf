@@ -3,6 +3,7 @@ package io.quarkiverse.cxf;
 import static java.util.stream.Collectors.toList;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,20 @@ public abstract class CxfClientProducer {
      */
     public Object loadCxfClient(InjectionPoint ip, CXFClientInfo meta) {
         return produceCxfClient(selectorCXFClientInfo(config, fixedConfig, ip, meta));
+    }
+
+    /**
+     * Called from the <code>{SEI}CxfClientProducer.closeClient(@Disposes @CXFClient {SEI} client)</code> generated in
+     * {@code io.quarkiverse.cxf.deployment.CxfClientProcessor.generateCxfClientProducer()}.
+     *
+     * @param client the CXF client to close
+     */
+    public void closeCxfClient(Object client) {
+        try {
+            ((Closeable) client).close();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not close CXF client " + client.getClass().getName(), e);
+        }
     }
 
     /**

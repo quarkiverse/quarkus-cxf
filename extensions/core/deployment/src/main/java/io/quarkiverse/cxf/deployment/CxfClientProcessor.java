@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
@@ -55,6 +56,7 @@ import io.quarkus.deployment.builditem.NativeImageFeatureBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.util.IoUtil;
+import io.quarkus.gizmo.AnnotatedElement;
 import io.quarkus.gizmo.ClassCreator;
 import io.quarkus.gizmo.ClassOutput;
 import io.quarkus.gizmo.FieldCreator;
@@ -406,37 +408,42 @@ public class CxfClientProcessor {
 
             }
 
-            // try (MethodCreator createInfo = classCreator.getMethodCreator(
-            // "createInfo",
-            // "io.quarkiverse.cxf.CXFClientInfo",
-            // p0class)) {
-            // createInfo.addAnnotation(Produces.class);
-            // createInfo.addAnnotation(CXFClient.class);
-            //
-            // // p0 (InjectionPoint);
-            // ResultHandle p0;
-            // ResultHandle p1;
-            // ResultHandle cxfClient;
-            //
-            // p0 = createInfo.getMethodParam(0);
-            //
-            // MethodDescriptor loadCxfInfo = MethodDescriptor.ofMethod(
-            // CxfClientProducer.class,
-            // "loadCxfClientInfo",
-            // "java.lang.Object",
-            // p0class,
-            // p1class);
-            // // >> .. {
-            // // >> Object cxfInfo = this().loadCxfInfo(ip, this.info);
-            // // >> return (CXFClientInfo)cxfInfo;
-            // // >> }
-            //
-            // p1 = createInfo.readInstanceField(info.getFieldDescriptor(), createInfo.getThis());
-            // cxfClient = createInfo.invokeVirtualMethod(loadCxfInfo, createInfo.getThis(), p0, p1);
-            // createInfo.returnValue(createInfo.checkCast(cxfClient, "io.quarkiverse.cxf
-            // .CXFClientInfo"));
-            // }
+            /*
+             * The client proxy implements Closeable so we need to generate a disposer method
+             * that calls proxy.close(). This is important because e.g. java.net.http.HttpClient based CXF clients
+             * have some associated threads that is better to stop immediately.
+             */
+            // create method
+            // >> @Produces
+            // >> @CXFClient
+            // >> void closeClient(@Disposes @CXFClient {SEI} client) { .. }
+            try (MethodCreator createService = classCreator.getMethodCreator(
+                    "closeClient",
+                    void.class,
+                    sei)) {
+                AnnotatedElement clientParamAnnotations = createService.getParameterAnnotations(0);
+                clientParamAnnotations.addAnnotation(Disposes.class);
+                clientParamAnnotations.addAnnotation(CXFClient.class);
 
+                final ResultHandle thisHandle = createService.getThis();
+                final ResultHandle clientHandle = createService.getMethodParam(0);
+
+                MethodDescriptor closeClient = MethodDescriptor.ofMethod(
+                        CxfClientProducer.class,
+                        "closeCxfClient",
+                        void.class,
+                        Object.class);
+                // >> .. {
+                // >> this.closeCxfClient(client);
+                // >> }
+
+                createService.invokeVirtualMethod(
+                        closeClient,
+                        thisHandle,
+                        clientHandle);
+                createService.returnVoid();
+
+            }
         }
 
         // Eventually let's produce

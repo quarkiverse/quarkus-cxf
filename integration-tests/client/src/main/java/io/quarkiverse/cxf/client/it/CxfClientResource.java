@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.ws.rs.GET;
@@ -59,6 +60,20 @@ public class CxfClientResource {
 
     @CXFClient("proxiedCalculator")
     CalculatorService proxiedCalculator;
+
+    @Inject
+    RequestScopedClients requestScopedClients;
+
+    @GET
+    @Path("/calculator/{client}/add")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response add(@PathParam("client") String client, @QueryParam("a") int a, @QueryParam("b") int b) {
+        try {
+            return Response.ok(getClient(client).add(a, b)).build();
+        } catch (Exception e) {
+            return Response.serverError().entity(e.getMessage()).build();
+        }
+    }
 
     @GET
     @Path("/calculator/{client}/multiply")
@@ -136,7 +151,7 @@ public class CxfClientResource {
             case "proxiedCalculator":
                 return proxiedCalculator;
             default:
-                throw new IllegalStateException("Unexpected client key " + client);
+                return requestScopedClients.getClient(client);
         }
     }
 
@@ -194,4 +209,27 @@ public class CxfClientResource {
         return out.toString();
     }
 
+    @RequestScoped
+    public static class RequestScopedClients {
+
+        @Inject
+        @CXFClient("requestScopedHttpClient")
+        CalculatorService requestScopedHttpClient;
+
+        @Inject
+        @CXFClient("requestScopedUrlConnectionClient")
+        CalculatorService requestScopedUrlConnectionClient;
+
+        public CalculatorService getClient(String client) {
+            switch (client) {
+                case "requestScopedHttpClient":
+                    return requestScopedHttpClient;
+                case "requestScopedUrlConnectionClient":
+                    return requestScopedUrlConnectionClient;
+                default:
+                    throw new IllegalStateException("Unexpected client key " + client);
+            }
+        }
+
+    }
 }
