@@ -73,6 +73,20 @@ public abstract class CxfClientProducer {
     }
 
     /**
+     * Called from the <code>{SEI}CxfClientProducer.closeClient(@Disposes @CXFClient {SEI} client)</code> generated in
+     * {@code io.quarkiverse.cxf.deployment.CxfClientProcessor.generateCxfClientProducer()}.
+     *
+     * @param client the CXF client to close
+     */
+    public void closeCxfClient(Object client) {
+        try {
+            ((Closeable) client).close();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not close CXF client " + client.getClass().getName(), e);
+        }
+    }
+
+    /**
      * Must be public, otherwise: java.lang.VerifyError: Bad access to protected data in invokevirtual
      */
     public CXFClientInfo loadCxfClientInfo(InjectionPoint ip, CXFClientData meta) {
