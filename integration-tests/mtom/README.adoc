@@ -13,6 +13,8 @@ $ mvn clean test -Dtest=MtomTest#soak
 The hard-coded default of 300 is intentionally low to make the test pass on Quarkus Platform CI.
 Higher values are more likely to uncover resource leaks.
 
+Note that there are two more soak tests in CxfClientTest - see link:../client/README.adoc#soak[../client/README.adoc].
+
 == `MtomTest.largeAttachment()`
 
 `MtomTest.largeAttachment()` can be tuned via
