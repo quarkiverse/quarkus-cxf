@@ -115,3 +115,34 @@ Use the property below to prevent launching the HTTP server at startup:
 ----
 quarkus.http.host-enabled = false
 ----
+
+[[resource-leaks]]
+== Prevent resource leaks
+
+CXF client proxies implement `java.io.Closeable`.
+Therefore, it is important to call `((Closeable) proxy).close()` once the client is not needed anymore
+to free all associated system resources, such as threads.
+
+{quarkus-cxf-project-name} takes care for closing the clients injected via `@io.quarkiverse.cxf.annotation.CXFClient` automatically
+as soon as they are disposed by the CDI container.
+
+For client proxies created manually, it is up to you to call `((Closeable) proxy).close()`:
+
+[source,java]
+----
+import java.net.URL;
+import javax.xml.namespace.QName;
+import jakarta.xml.ws.Service;
+import java.io.Closeable;
+
+final URL serviceUrl = new URL("http://localhost/myService?wsdl");
+final QName qName = new QName("http://acme.org/myNamespace", "MyService");
+final Service service = jakarta.xml.ws.Service.create(serviceUrl, qName);
+final MyService proxy = service.getPort(MyService.class);
+
+try {
+    proxy.doSomething();
+} finally {
+    ((Closeable) proxy).close();
+}
+----

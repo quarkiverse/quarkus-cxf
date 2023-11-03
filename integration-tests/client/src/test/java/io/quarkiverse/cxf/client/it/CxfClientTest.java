@@ -5,14 +5,19 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,6 +31,8 @@ import io.restassured.RestAssured;
 @QuarkusTest
 @QuarkusTestResource(CxfClientTestResource.class)
 public class CxfClientTest {
+
+    private static final Logger log = Logger.getLogger(CxfClientTest.class);
 
     @Test
     void add() {
@@ -360,6 +367,49 @@ public class CxfClientTest {
                 .then()
                 .statusCode(200)
                 .body(is("Tom & Jerry"));
+    }
+
+    /**
+     * Make sure that a request scoped client backed by {@link HttpClient} does not leak threads
+     * - see <a href=
+     * "https://github.com/quarkiverse/quarkus-cxf/issues/992">https://github.com/quarkiverse/quarkus-cxf/issues/992</a>.
+     */
+    @Test
+    void soakRequestScopedHttpClient() {
+        soak("requestScopedHttpClient");
+
+    }
+
+    /**
+     * Make sure that a request scoped client backed by {@link HttpURLConnection} does not leak threads.
+     */
+    @Test
+    void soakRequestScopedUrlConnectionClient() {
+        soak("requestScopedUrlConnectionClient");
+
+    }
+
+    private void soak(String client) {
+
+        final Random rnd = new Random();
+        // we divide by 2 to avoid overflow
+        int a = rnd.nextInt() / 2;
+        int b = rnd.nextInt() / 2;
+        int expected = a + b;
+
+        final int requestCount = Integer
+                .parseInt(Optional.ofNullable(System.getenv("QUARKUS_CXF_CLIENT_SOAK_ITERATIONS")).orElse("300"));
+        log.infof("Performing %d interations", requestCount);
+        for (int i = 0; i < requestCount; i++) {
+            log.infof("Soaking round %d", i);
+            RestAssured.given()
+                    .queryParam("a", a)
+                    .queryParam("b", b)
+                    .get("/cxf/client/calculator/" + client + "/add")
+                    .then()
+                    .statusCode(200)
+                    .body(is(String.valueOf(expected)));
+        }
     }
 
 }

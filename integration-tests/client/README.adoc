@@ -27,3 +27,18 @@ And then overwrite the existing file with the new content from the container:
 ----
 curl http://localhost:8080/calculator-ws/CalculatorService?wsdl --output src/main/cxf-codegen-resources/wsdl/CalculatorService.wsdl
 ----
+
+[[soak]]
+== `CxfClientTest.soakRequestScopedHttpClient()` and `CxfClientTest.soakRequestScopedUrlConnectionClient()`
+
+The number of iterations performed by these tests can be set via
+
+[source,shell]
+----
+$ export QUARKUS_CXF_CLIENT_SOAK_ITERATIONS=100000
+$ mvn clean test -Dtest=CxfClientTest#soakRequestScopedHttpClient
+$ mvn clean test -Dtest=CxfClientTest#soakRequestScopedUrlConnectionClient
+----
+
+The hard-coded default of 300 is intentionally low to make the test pass on Quarkus Platform CI.
+Higher values are more likely to uncover resource leaks.
