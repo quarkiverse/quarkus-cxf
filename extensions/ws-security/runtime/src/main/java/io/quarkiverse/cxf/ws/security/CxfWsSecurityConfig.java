@@ -59,6 +59,8 @@ public interface CxfWsSecurityConfig {
          * <li>As the alias name in the keystore to get the user's public key for encryption if
          * {@code encryption.username} is not set
          * </ul>
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.username")
         Optional<String> username();
@@ -66,6 +68,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The user's password when a {@code callback-handler} is not defined. This is only used for the password
          * in a WS-Security UsernameToken.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.password")
         Optional<String> password();
@@ -76,6 +80,8 @@ public interface CxfWsSecurityConfig {
          * that is also not specified, it uses the the default alias set in the properties file referenced by
          * {@code signature.properties}. If that's also not set, and the keystore only contains a single key,
          * that key will be used.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.signature.username")
         @WithName("signature.username")
@@ -83,6 +89,8 @@ public interface CxfWsSecurityConfig {
 
         /**
          * The user's password for signature when a {@code callback-handler} is not defined.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.signature.password")
         @WithName("signature.password")
@@ -97,6 +105,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * For the WS-Security web service provider, the {@code useReqSigCert} value can be used to accept (encrypt to)
          * any client whose public key is in the service's truststore (defined in {@code encrypt.properties}).
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.encryption.username")
         @WithName("encryption.username")
@@ -110,6 +120,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code javax.security.auth.callback.CallbackHandler} bean used to obtain passwords, for both outbound and
          * inbound requests.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.callback-handler", transformer = beanRef)
         Optional<String> callbackHandler();
@@ -120,6 +132,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.saml-callback-handler", transformer = beanRef)
         Optional<String> samlCallbackHandler();
@@ -134,6 +148,8 @@ public interface CxfWsSecurityConfig {
          * [prefix].signature.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
          * [prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
          * </pre>
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.signature.properties", transformer = properties)
         @WithName("signature.properties")
@@ -149,6 +165,8 @@ public interface CxfWsSecurityConfig {
          * [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
          * [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
          * </pre>
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.encryption.properties", transformer = properties)
         @WithName("encryption.properties")
@@ -158,6 +176,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.common.crypto.Crypto} bean to be used for signature. If not set,
          * {@code signature.properties} will be used to configure a {@code Crypto} instance.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.signature.crypto", transformer = beanRef)
         @WithName("signature.crypto")
@@ -167,6 +187,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.common.crypto.Crypto} to be used for encryption. If not set,
          * {@code encryption.properties} will be used to configure a {@code Crypto} instance.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.encryption.crypto", transformer = beanRef)
         @WithName("encryption.crypto")
@@ -179,6 +201,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.encryption.certificate")
         @WithName("encryption.certificate")
@@ -193,6 +217,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.enableRevocation")
         @WithDefault("false")
@@ -206,6 +232,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.enable.unsigned-saml-assertion.principal")
         @WithDefault("false")
@@ -226,6 +254,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.validate.saml.subject.conf")
         @WithDefault("true")
@@ -237,6 +267,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sc.jaas-subject")
         @WithDefault("true")
@@ -248,6 +280,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.validate.audience-restriction")
         @WithDefault("true")
@@ -262,6 +296,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.saml-role-attributename")
         @WithDefault("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role")
@@ -274,6 +310,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.subject.cert.constraints")
         Optional<String> subjectCertConstraints();
@@ -284,6 +322,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.cert.constraints.separator")
         @WithDefault(",")
@@ -299,6 +339,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.actor")
         @WithName("actor")
@@ -309,6 +351,8 @@ public interface CxfWsSecurityConfig {
         //
         /**
          * If {@code true}, the password of a received {@code UsernameToken} will be validated; otherwise it won't be validated.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.validate.token")
         @WithName("validate.token")
@@ -326,6 +370,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.username-token.always.encrypted")
         @WithName("username-token.always.encrypted")
@@ -338,6 +384,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.is-bsp-compliant")
         @WithName("is-bsp-compliant")
@@ -351,6 +399,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * Note that caching only applies when either a {@code UsernameToken} WS-SecurityPolicy is in effect, or the
          * {@code UsernameToken} action has been configured for the non-security-policy case.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.enable.nonce.cache")
         @WithName("enable.nonce.cache")
@@ -367,6 +417,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.enable.timestamp.cache")
         @WithName("enable.timestamp.cache")
@@ -375,6 +427,8 @@ public interface CxfWsSecurityConfig {
         /**
          * If {@code true}, the new streaming (StAX) implementation of WS-Security is used; otherwise the old DOM
          * implementation is used.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.enable.streaming")
         @WithName("enable.streaming")
@@ -387,6 +441,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * The "real" security errors should not be returned to the client in production, as they may leak information
          * about the deployment, or otherwise provide an "oracle" for attacks.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.return.security.error")
         @WithName("return.security.error")
@@ -399,6 +455,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * Works only with {@code enable.streaming = true} - see
          * <a href="https://issues.apache.org/jira/browse/CXF-8940">CXF-8940</a>
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.must-understand")
         @WithName("must-understand")
@@ -416,6 +474,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.enable.saml.cache")
         @WithName("enable.saml.cache")
@@ -429,6 +489,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.store.bytes.in.attachment")
         @WithName("store.bytes.in.attachment")
@@ -441,6 +503,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.swa.encryption.attachment.transform.content")
         @WithName("swa.encryption.attachment.transform.content")
@@ -456,6 +520,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.use.str.transform")
         @WithName("use.str.transform")
@@ -469,6 +535,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.add.inclusive.prefixes")
         @WithName("add.inclusive.prefixes")
@@ -485,6 +553,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.disable.require.client.cert.check")
         @WithName("disable.require.client.cert.check")
@@ -499,6 +569,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.expand.xop.include")
         @WithName("expand.xop.include")
@@ -514,6 +586,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.timestamp.timeToLive")
         @WithName("timestamp.timeToLive")
@@ -527,6 +601,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.timestamp.futureTimeToLive")
         @WithName("timestamp.futureTimeToLive")
@@ -539,6 +615,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.usernametoken.timeToLive")
         @WithName("usernametoken.timeToLive")
@@ -552,6 +630,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.usernametoken.futureTimeToLive")
         @WithName("usernametoken.futureTimeToLive")
@@ -565,6 +645,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.spnego.client.action", transformer = beanRef)
         @WithName("spnego.client.action")
@@ -577,6 +659,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.nonce.cache.instance", transformer = beanRef)
         @WithName("nonce.cache.instance")
@@ -589,6 +673,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.timestamp.cache.instance", transformer = beanRef)
         @WithName("timestamp.cache.instance")
@@ -602,6 +688,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.saml.cache.instance", transformer = beanRef)
         @WithName("saml.cache.instance")
@@ -614,6 +702,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.cache.config.file")
         @WithName("cache.config.file")
@@ -626,6 +716,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "org.apache.cxf.ws.security.tokenstore.TokenStore", transformer = beanRef)
         Optional<String> tokenStoreCacheInstance();
@@ -642,6 +734,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.cache.identifier")
         @WithName("cache.identifier")
@@ -656,6 +750,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.role.classifier")
         @WithName("role.classifier")
@@ -669,6 +765,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.role.classifier.type")
         @WithName("role.classifier.type")
@@ -682,6 +780,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.asymmetric.signature.algorithm")
         @WithName("asymmetric.signature.algorithm")
@@ -694,6 +794,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.symmetric.signature.algorithm")
         @WithName("symmetric.signature.algorithm")
@@ -712,6 +814,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.password.encryptor.instance", transformer = beanRef)
         @WithName("password.encryptor.instance")
@@ -724,6 +828,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.delegated.credential", transformer = beanRef)
         @WithName("delegated.credential")
@@ -737,6 +843,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.security.context.creator", transformer = beanRef)
         @WithName("security.context.creator")
@@ -747,6 +855,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.security.token.lifetime")
         @WithName("security.token.lifetime")
@@ -763,6 +873,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.kerberos.request.credential.delegation")
         @WithName("kerberos.request.credential.delegation")
@@ -775,6 +887,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.kerberos.use.credential.delegation")
         @WithName("kerberos.use.credential.delegation")
@@ -787,6 +901,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.kerberos.is.username.in.servicename.form")
         @WithName("kerberos.is.username.in.servicename.form")
@@ -798,6 +914,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.kerberos.jaas.context")
         @WithName("kerberos.jaas.context")
@@ -808,6 +926,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.kerberos.spn")
         @WithName("kerberos.spn")
@@ -819,6 +939,8 @@ public interface CxfWsSecurityConfig {
          * <p>
          * This option is experimental, because it is
          * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.kerberos.client")
         @WithName("kerberos.client")
@@ -839,6 +961,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.stax.validate.Validator} bean to use to validate UsernameTokens.
          * The Default is the UsernameTokenValidator.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.ut.validator", transformer = beanRef)
         @WithName("ut.validator")
@@ -848,6 +972,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.stax.validate.Validator} bean to use to validate SAML 1.1 Tokens. The default value is the
          * SamlAssertionValidator.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.saml1.validator", transformer = beanRef)
         @WithName("saml1.validator")
@@ -857,6 +983,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.stax.validate.Validator} bean to use to validate SAML 2.0 Tokens. The default value is the
          * SamlAssertionValidator.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.saml2.validator", transformer = beanRef)
         @WithName("saml2.validator")
@@ -866,6 +994,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.stax.validate.Validator} bean to use to validate Timestamps. The default value is the
          * TimestampValidator.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.timestamp.validator", transformer = beanRef)
         @WithName("timestamp.validator")
@@ -875,6 +1005,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.stax.validate.Validator} bean to use to validate trust in credentials used in
          * Signature verification. The default value is the SignatureTrustValidator.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.signature.validator", transformer = beanRef)
         @WithName("signature.validator")
@@ -884,6 +1016,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.stax.validate.Validator} bean to use to validate BinarySecurityTokens. The default value
          * is the NoOpValidator.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.bst.validator", transformer = beanRef)
         @WithName("bst.validator")
@@ -893,6 +1027,8 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.stax.validate.Validator} bean to use to validate SecurityContextTokens. The default value is
          * the NoOpValidator.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.sct.validator", transformer = beanRef)
         @WithName("sct.validator")
@@ -903,6 +1039,8 @@ public interface CxfWsSecurityConfig {
          * implementation to validate a particular security policy, based on the QName of the policy. Any
          * SecurityPolicyValidator implementation defined in this map will override the default value
          * used internally for the corresponding QName.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "ws-security.policy.validator.map", transformer = beanRef)
         @WithName("policy.validator.map")
@@ -919,6 +1057,8 @@ public interface CxfWsSecurityConfig {
 
         /**
          * A reference to the STSClient class used to communicate with the STS.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.client")
         Optional<String> stsClient();
@@ -926,6 +1066,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The "AppliesTo" address to send to the STS. The default is the endpoint address of the
          * service provider.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.applies-to")
         Optional<String> stsAppliesTo();
@@ -933,6 +1075,8 @@ public interface CxfWsSecurityConfig {
         /**
          * Whether to write out an X509Certificate structure in UseKey/KeyInfo, or whether to write
          * out a KeyValue structure. The default value is "false".
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.token.usecert")
         Optional<String> stsTokenUseCertForKeyinfo();
@@ -940,6 +1084,8 @@ public interface CxfWsSecurityConfig {
         /**
          * Whether to cancel a token when using SecureConversation after successful invocation. The
          * default is "false".
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.token.do.cancel")
         Optional<String> stsTokenDoCancel();
@@ -948,6 +1094,8 @@ public interface CxfWsSecurityConfig {
          * Whether to fall back to calling "issue" after failing to renew an expired token. Some
          * STSs do not support the renew binding, and so we should just issue a new token after expiry.
          * The default is true.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.issue.after.failed.renew")
         Optional<String> stsIssueAfterFailedRenew();
@@ -956,6 +1104,8 @@ public interface CxfWsSecurityConfig {
          * Set this to "false" to not cache a SecurityToken per proxy object in the
          * IssuedTokenInterceptorProvider. This should be done if a token is being retrieved
          * from an STS in an intermediary. The default value is "true".
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.cache.issued.token.in.endpoint")
         Optional<String> cacheIssuedTokenInEndpoint();
@@ -964,6 +1114,8 @@ public interface CxfWsSecurityConfig {
          * Whether to avoid STS client trying send WS-MetadataExchange call using
          * STS EPR WSA address when the endpoint contract contains no WS-MetadataExchange info.
          * The default value is "false".
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.disable-wsmex-call-using-epr-address")
         Optional<String> disableStsClientWsmexCallUsingEprAddress();
@@ -974,12 +1126,16 @@ public interface CxfWsSecurityConfig {
          * of making a WS-MEX call to an initial STS, and using the returned token to make another
          * call to an STS (which is configured using the STSClient configuration). Default is
          * "false".
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.prefer-wsmex")
         Optional<String> preferWsmexOverStsClientConfig();
 
         /**
          * Switch STS client to send Soap 1.2 messages
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.client-soap12-binding")
         Optional<String> stsClientSoap12Binding();
@@ -995,6 +1151,8 @@ public interface CxfWsSecurityConfig {
          *
          * These are also used by the STSClient to send/process any RSA/DSAKeyValue tokens
          * used if the KeyType is "PublicKey"
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.token.crypto")
         Optional<String> stsTokenCrypto();
@@ -1006,6 +1164,8 @@ public interface CxfWsSecurityConfig {
          * a) A Java Properties object that contains the Crypto configuration.
          * b) The path of the Crypto property file that contains the Crypto configuration.
          * c) A URL that points to the Crypto property file that contains the Crypto configuration.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.token.properties")
         Optional<String> stsTokenProperties();
@@ -1013,6 +1173,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The alias name in the keystore to get the user's public key to send to the STS for the
          * PublicKey KeyType case.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.token.username")
         Optional<String> stsTokenUsername();
@@ -1031,6 +1193,8 @@ public interface CxfWsSecurityConfig {
          * Some examples that can be reused are:
          * org.apache.cxf.ws.security.trust.delegation.ReceivedTokenCallbackHandler
          * org.apache.cxf.ws.security.trust.delegation.WSSUsernameCallbackHandler
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.token.act-as")
         Optional<String> stsTokenActAs();
@@ -1049,6 +1213,8 @@ public interface CxfWsSecurityConfig {
          * Some examples that can be reused are:
          * org.apache.cxf.ws.security.trust.delegation.ReceivedTokenCallbackHandler
          * org.apache.cxf.ws.security.trust.delegation.WSSUsernameCallbackHandler
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.token.on-behalf-of")
         Optional<String> stsTokenOnBehalfOf();
@@ -1061,6 +1227,8 @@ public interface CxfWsSecurityConfig {
          * service. When the token is found to be expired then it will be renewed via the STS.
          *
          * The default value is 10 (seconds). Specify 0 to avoid this check.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.token.imminent-expiry-value")
         Optional<String> stsTokenImminentExpiryValue();
@@ -1068,6 +1236,8 @@ public interface CxfWsSecurityConfig {
         /**
          * An implementation of the STSTokenCacher interface, if you want to plug in custom caching behaviour for
          * STS clients. The default value is the DefaultSTSTokenCacher.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.token.cacher.impl")
         Optional<String> stsTokenCacherImpl();
@@ -1077,6 +1247,8 @@ public interface CxfWsSecurityConfig {
          * will end up with a recursive loop. This check might be a problem in the unlikely scenario that the
          * remote endpoint has the same service / port QName as the STS, so this configuration flag allows to
          * disable this check for that scenario. The default is "true".
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.sts.check.for.recursive.call")
         Optional<String> stsCheckForRecursiveCall();
@@ -1086,6 +1258,8 @@ public interface CxfWsSecurityConfig {
          * The default value for this property contains the request URL and the Service QName. If the
          * AUDIENCE_RESTRICTION_VALIDATION property is "true", and if a received SAML Token contains audience
          * restriction URIs, then one of them must match one of the values specified in this property.
+         *
+         * @since 2.5.0
          */
         @WssConfigurationConstant(key = "security.audience-restrictions")
         Optional<String> audienceRestrictions();
