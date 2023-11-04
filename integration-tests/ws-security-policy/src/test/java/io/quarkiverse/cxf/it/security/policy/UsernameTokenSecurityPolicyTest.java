@@ -1,5 +1,9 @@
 package io.quarkiverse.cxf.it.security.policy;
 
+import static org.hamcrest.Matchers.containsString;
+
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +40,13 @@ public class UsernameTokenSecurityPolicyTest extends AbstractUsernameTokenSecuri
     @Override
     void helloUsernameTokenNoMustUnderstand() {
         super.helloUsernameTokenNoMustUnderstand();
+    }
+
+    @Override
+    Matcher<String> unsignedUnencryptedErrorMessage() {
+        return Matchers.allOf(
+                containsString("Soap Body is not ENCRYPTED"),
+                containsString("Soap Body is not SIGNED"));
     }
 
 }

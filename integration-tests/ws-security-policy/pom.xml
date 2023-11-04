@@ -237,6 +237,187 @@
                             <file>${project.build.outputDirectory}/cxfca.pem</file>
                         </configuration>
                     </execution>
+
+                    <!-- Encrypt/Sign -->
+                    <!-- Alice - the client side. She signs using her private key and encrypts using Bob's public key -->
+                    <execution>
+                        <id>generate-alice-keypair</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>clean</goal>
+                            <goal>generateKeyPair</goal>
+                        </goals>
+                        <configuration>
+                            <alias>alice</alias>
+                            <dname>CN=alice, OU=eng, O=apache.org</dname>
+                            <exts>
+                                <ext>IssuerAlternativeName=DNS:NOT-FOR-PRODUCTION-USE</ext>
+                                <ext>SubjectAlternativeName=DNS:localhost,IP:127.0.0.1</ext>
+                            </exts>
+                            <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-alice-certificate-request</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generateCertificateRequest</goal>
+                        </goals>
+                        <configuration>
+                            <alias>alice</alias>
+                            <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                            <file>${project.build.outputDirectory}/alice.csr</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-alice-certificate</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generateCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <alias>cxfca</alias>
+                            <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
+                            <rfc>true</rfc>
+                            <infile>${project.build.outputDirectory}/alice.csr</infile>
+                            <outfile>${project.build.outputDirectory}/alice.pem</outfile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>import-cxfca-certificate-to-alice</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>importCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <alias>cxfca</alias>
+                            <trustcacerts>true</trustcacerts>
+                            <noprompt>true</noprompt>
+                            <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                            <file>${project.build.outputDirectory}/cxfca.pem</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>import-alice-certificate</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>importCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <alias>alice</alias>
+                            <trustcacerts>true</trustcacerts>
+                            <noprompt>true</noprompt>
+                            <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                            <file>${project.build.outputDirectory}/alice.pem</file>
+                        </configuration>
+                    </execution>
+
+                    <!-- Bob - the server side. He checks Alice's signature using her public key and deencrypts using his own private key -->
+                    <execution>
+                        <id>generate-bob-keypair</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>clean</goal>
+                            <goal>generateKeyPair</goal>
+                        </goals>
+                        <configuration>
+                            <alias>bob</alias>
+                            <dname>CN=bob, OU=eng, O=apache.org</dname>
+                            <exts>
+                                <ext>IssuerAlternativeName=DNS:NOT-FOR-PRODUCTION-USE</ext>
+                                <ext>SubjectAlternativeName=DNS:localhost,IP:127.0.0.1</ext>
+                            </exts>
+                            <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-bob-certificate-request</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generateCertificateRequest</goal>
+                        </goals>
+                        <configuration>
+                            <alias>bob</alias>
+                            <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                            <file>${project.build.outputDirectory}/bob.csr</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-bob-certificate</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generateCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <alias>cxfca</alias>
+                            <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
+                            <rfc>true</rfc>
+                            <infile>${project.build.outputDirectory}/bob.csr</infile>
+                            <outfile>${project.build.outputDirectory}/bob.pem</outfile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>import-cxfca-certificate-to-bob</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>importCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <alias>cxfca</alias>
+                            <trustcacerts>true</trustcacerts>
+                            <noprompt>true</noprompt>
+                            <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                            <file>${project.build.outputDirectory}/cxfca.pem</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>import-bob-certificate</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>importCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <alias>bob</alias>
+                            <trustcacerts>true</trustcacerts>
+                            <noprompt>true</noprompt>
+                            <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                            <file>${project.build.outputDirectory}/bob.pem</file>
+                        </configuration>
+                    </execution>
+
+                    <!-- Exchange the certs between Alice and Bob -->
+                    <!-- Alice needs Bob's public key to be able to encrypt the messages for him -->
+                    <!-- and to be able to validate Bob's signatureon the messages he sends back -->
+                    <execution>
+                        <id>import-bob-certificate-to-alice</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>importCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <alias>bob</alias>
+                            <trustcacerts>true</trustcacerts>
+                            <noprompt>true</noprompt>
+                            <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                            <file>${project.build.outputDirectory}/bob.pem</file>
+                        </configuration>
+                    </execution>
+                    <!-- Bob needs Alice's public key to be able to validate her signature on the message she sends -->
+                    <!-- and to be able to encrypt the messages for her -->
+                    <execution>
+                        <id>import-alice-certificate-to-bob</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>importCertificate</goal>
+                        </goals>
+                        <configuration>
+                            <alias>alice</alias>
+                            <trustcacerts>true</trustcacerts>
+                            <noprompt>true</noprompt>
+                            <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                            <file>${project.build.outputDirectory}/alice.pem</file>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

@@ -10,6 +10,7 @@ import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
@@ -95,4 +96,19 @@ public class Wss4jProcessor {
                 .forEach(nativeImageResources::produce);
     }
 
+    @BuildStep
+    void proxies(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies) {
+        /*
+         * These are actually needed only for Stax security implementation
+         * If the enable.streaming config were build time we could make this conditional
+         */
+        proxies.produce(new NativeImageProxyDefinitionBuildItem(
+                org.apache.wss4j.stax.securityToken.X509SecurityToken.class.getName(),
+                org.apache.wss4j.stax.securityToken.SubjectAndPrincipalSecurityToken.class.getName(),
+                org.apache.xml.security.stax.securityToken.SecurityToken.class.getName(),
+                org.apache.xml.security.stax.securityToken.InboundSecurityToken.class.getName()));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem(
+                org.apache.xml.security.stax.securityToken.InboundSecurityToken.class.getName(),
+                org.apache.xml.security.stax.securityToken.SecurityToken.class.getName()));
+    }
 }

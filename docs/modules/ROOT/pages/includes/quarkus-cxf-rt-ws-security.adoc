@@ -55,8 +55,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.
 --
 The user's name for signature. It is used as the alias name in the keystore to get the user's cert and private key for signature. If this is not defined, then `username` is used instead. If that is also not specified, it uses the the default alias set in the properties file referenced by `signature.properties`. If that's also not set, and the keystore only contains a single key, that key will be used.
 
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_USERNAME+++[]
 endif::add-copy-button-to-env-var[]
@@ -73,8 +71,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.
 [.description]
 --
 The user's password for signature when a `callback-handler` is not defined.
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_PASSWORD+++[]
@@ -94,8 +90,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption
 The user's name for encryption. It is used as the alias name in the keystore to get the user's public key for encryption. If this is not defined, then `username` is used instead. If that is also not specified, it uses the the default alias set in the properties file referenced by `encrypt.properties`. If that's also not set, and the keystore only contains a single key, that key will be used.
 
 For the WS-Security web service provider, the `useReqSigCert` value can be used to accept (encrypt to) any client whose public key is in the service's truststore (defined in `encrypt.properties`).
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_USERNAME+++[]
@@ -158,10 +152,6 @@ Example
 [prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ```
 
-
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_PROPERTIES+++[]
 endif::add-copy-button-to-env-var[]
@@ -172,7 +162,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.properties]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.properties[quarkus.cxf.client."clients".security.encryption.properties]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.properties-encryption-properties]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption.properties-encryption-properties[quarkus.cxf.client."clients".security.encryption.properties]`
 
 
 [.description]
@@ -187,17 +177,13 @@ Example
 [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ```
 
-
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_PROPERTIES+++[]
 endif::add-copy-button-to-env-var[]
 ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_PROPERTIES+++`
 endif::add-copy-button-to-env-var[]
---|string 
+--|`Map<String,String>` 
 |
 
 
@@ -207,8 +193,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.signature.
 [.description]
 --
 A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used for signature. If not set, `signature.properties` will be used to configure a `Crypto` instance.
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_CRYPTO+++[]
@@ -226,8 +210,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.encryption
 [.description]
 --
 A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_CRYPTO+++[]
@@ -1244,8 +1226,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signat
 --
 The user's name for signature. It is used as the alias name in the keystore to get the user's cert and private key for signature. If this is not defined, then `username` is used instead. If that is also not specified, it uses the the default alias set in the properties file referenced by `signature.properties`. If that's also not set, and the keystore only contains a single key, that key will be used.
 
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_USERNAME+++[]
 endif::add-copy-button-to-env-var[]
@@ -1262,8 +1242,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signat
 [.description]
 --
 The user's password for signature when a `callback-handler` is not defined.
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_PASSWORD+++[]
@@ -1283,8 +1261,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryp
 The user's name for encryption. It is used as the alias name in the keystore to get the user's public key for encryption. If this is not defined, then `username` is used instead. If that is also not specified, it uses the the default alias set in the properties file referenced by `encrypt.properties`. If that's also not set, and the keystore only contains a single key, that key will be used.
 
 For the WS-Security web service provider, the `useReqSigCert` value can be used to accept (encrypt to) any client whose public key is in the service's truststore (defined in `encrypt.properties`).
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_USERNAME+++[]
@@ -1347,10 +1323,6 @@ Example
 [prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ```
 
-
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_PROPERTIES+++[]
 endif::add-copy-button-to-env-var[]
@@ -1361,7 +1333,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties[quarkus.cxf.endpoint."endpoints".security.encryption.properties]`
+a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties-encryption-properties]]`link:#quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryption.properties-encryption-properties[quarkus.cxf.endpoint."endpoints".security.encryption.properties]`
 
 
 [.description]
@@ -1376,17 +1348,13 @@ Example
 [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ```
 
-
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_PROPERTIES+++[]
 endif::add-copy-button-to-env-var[]
 ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_PROPERTIES+++`
 endif::add-copy-button-to-env-var[]
---|string 
+--|`Map<String,String>` 
 |
 
 
@@ -1396,8 +1364,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.signat
 [.description]
 --
 A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used for signature. If not set, `signature.properties` will be used to configure a `Crypto` instance.
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_CRYPTO+++[]
@@ -1415,8 +1381,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.encryp
 [.description]
 --
 A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
-
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_CRYPTO+++[]

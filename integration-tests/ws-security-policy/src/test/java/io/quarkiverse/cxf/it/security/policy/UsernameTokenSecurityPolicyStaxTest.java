@@ -1,6 +1,11 @@
 package io.quarkiverse.cxf.it.security.policy;
 
+import static org.hamcrest.Matchers.containsString;
+
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.hamcrest.Matcher;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -13,14 +18,19 @@ public class UsernameTokenSecurityPolicyStaxTest extends AbstractUsernameTokenSe
 
         @Override
         public Map<String, String> getConfigOverrides() {
-            return Map.of(
-                    "quarkus.cxf.endpoint.\"/helloUsernameToken\".security.enable.streaming", "true",
-                    "quarkus.cxf.endpoint.\"/helloUsernameTokenAlt\".security.enable.streaming", "true",
-                    "quarkus.cxf.endpoint.\"/helloUsernameTokenUncachedNonce\".security.enable.streaming", "true",
-                    "quarkus.cxf.client.helloUsernameToken.security.enable.streaming", "true",
-                    "quarkus.cxf.client.helloUsernameTokenAlt.security.enable.streaming", "true",
-                    "quarkus.cxf.client.helloUsernameTokenNoMustUnderstand.security.enable.streaming", "true",
-                    "quarkus.cxf.client.helloNoUsernameToken.security.enable.streaming", "true");
+            final Map<String, String> map = new LinkedHashMap<>();
+            map.put("quarkus.cxf.endpoint.\"/helloUsernameToken\".security.enable.streaming", "true");
+            map.put("quarkus.cxf.endpoint.\"/helloUsernameTokenAlt\".security.enable.streaming", "true");
+            map.put("quarkus.cxf.endpoint.\"/helloUsernameTokenUncachedNonce\".security.enable.streaming", "true");
+            map.put("quarkus.cxf.endpoint.\"/helloEncryptSign\".security.enable.streaming", "true");
+            map.put("quarkus.cxf.endpoint.\"/helloEncryptSignCrypto\".security.enable.streaming", "true");
+            map.put("quarkus.cxf.client.helloUsernameToken.security.enable.streaming", "true");
+            map.put("quarkus.cxf.client.helloUsernameTokenAlt.security.enable.streaming", "true");
+            map.put("quarkus.cxf.client.helloUsernameTokenNoMustUnderstand.security.enable.streaming", "true");
+            map.put("quarkus.cxf.client.helloNoUsernameToken.security.enable.streaming", "true");
+            map.put("quarkus.cxf.client.helloEncryptSign.security.enable.streaming", "true");
+            map.put("quarkus.cxf.client.helloEncryptSignCrypto.security.enable.streaming", "true");
+            return map;
         }
 
     }
@@ -58,4 +68,9 @@ public class UsernameTokenSecurityPolicyStaxTest extends AbstractUsernameTokenSe
         return "Assertion {http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}UsernameToken not satisfied";
     }
 
+    @Override
+    Matcher<String> unsignedUnencryptedErrorMessage() {
+        /* The Stax implmentation does not honor security.return.security.error = true */
+        return containsString("<faultstring>XML_STREAM_EXC</faultstring>");
+    }
 }
