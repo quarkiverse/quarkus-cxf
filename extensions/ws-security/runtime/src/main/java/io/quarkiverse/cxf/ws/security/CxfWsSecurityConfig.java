@@ -76,9 +76,6 @@ public interface CxfWsSecurityConfig {
          * that is also not specified, it uses the the default alias set in the properties file referenced by
          * {@code signature.properties}. If that's also not set, and the keystore only contains a single key,
          * that key will be used.
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          */
         @WssConfigurationConstant(key = "security.signature.username")
         @WithName("signature.username")
@@ -86,9 +83,6 @@ public interface CxfWsSecurityConfig {
 
         /**
          * The user's password for signature when a {@code callback-handler} is not defined.
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          */
         @WssConfigurationConstant(key = "security.signature.password")
         @WithName("signature.password")
@@ -103,9 +97,6 @@ public interface CxfWsSecurityConfig {
          * <p>
          * For the WS-Security web service provider, the {@code useReqSigCert} value can be used to accept (encrypt to)
          * any client whose public key is in the service's truststore (defined in {@code encrypt.properties}).
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          */
         @WssConfigurationConstant(key = "security.encryption.username")
         @WithName("encryption.username")
@@ -143,9 +134,6 @@ public interface CxfWsSecurityConfig {
          * [prefix].signature.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
          * [prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
          * </pre>
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          */
         @WssConfigurationConstant(key = "security.signature.properties", transformer = properties)
         @WithName("signature.properties")
@@ -161,21 +149,15 @@ public interface CxfWsSecurityConfig {
          * [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
          * [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
          * </pre>
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          */
         @WssConfigurationConstant(key = "security.encryption.properties", transformer = properties)
         @WithName("encryption.properties")
-        Optional<String> encryptionProperties();
+        Map<String, String> encryptionProperties();
 
         /**
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.common.crypto.Crypto} bean to be used for signature. If not set,
          * {@code signature.properties} will be used to configure a {@code Crypto} instance.
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          */
         @WssConfigurationConstant(key = "security.signature.crypto", transformer = beanRef)
         @WithName("signature.crypto")
@@ -185,9 +167,6 @@ public interface CxfWsSecurityConfig {
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code org.apache.wss4j.common.crypto.Crypto} to be used for encryption. If not set,
          * {@code encryption.properties} will be used to configure a {@code Crypto} instance.
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          */
         @WssConfigurationConstant(key = "security.encryption.crypto", transformer = beanRef)
         @WithName("encryption.crypto")

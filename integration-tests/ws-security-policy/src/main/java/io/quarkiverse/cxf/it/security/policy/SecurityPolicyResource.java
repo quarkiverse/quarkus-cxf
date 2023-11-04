@@ -66,6 +66,14 @@ public class SecurityPolicyResource {
     HelloService helloNoUsernameToken;
 
     @Inject
+    @CXFClient("helloEncryptSign")
+    EncryptSignPolicyHelloService helloEncryptSign;
+
+    @Inject
+    @CXFClient("helloEncryptSignCrypto")
+    EncryptSignPolicyHelloService helloEncryptSignCrypto;
+
+    @Inject
     @Named("messageCollector")
     MessageCollector messageCollector;
 
@@ -125,6 +133,12 @@ public class SecurityPolicyResource {
                 break;
             case "helloNoUsernameToken":
                 service = helloNoUsernameToken;
+                break;
+            case "helloEncryptSign":
+                service = helloEncryptSign;
+                break;
+            case "helloEncryptSignCrypto":
+                service = helloEncryptSignCrypto;
                 break;
             default:
                 throw new IllegalStateException("Unexpected client " + client);

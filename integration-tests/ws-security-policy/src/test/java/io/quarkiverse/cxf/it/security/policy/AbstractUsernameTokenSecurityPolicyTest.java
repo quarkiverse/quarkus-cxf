@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
 import io.restassured.RestAssured;
@@ -134,6 +135,10 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
         Assertions.assertThat(req).contains("<wsse:Nonce");
         Assertions.assertThat(req).contains("</wsu:Created>\n      </wsse:UsernameToken>");
 
+        return extractPayload(req);
+    }
+
+    static String extractPayload(final String req) {
         final String marker = "Payload: ";
         int start = req.indexOf(marker);
         Assertions.assertThat(start).isGreaterThan(0);
@@ -182,5 +187,66 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
     }
 
     protected abstract String usernameTokenNotSatisfied();
+
+    @Test
+    void helloEncryptSign() {
+        encryptSign("helloEncryptSign");
+
+    }
+
+    @Test
+    void helloEncryptSignCrypto() {
+        encryptSign("helloEncryptSignCrypto");
+    }
+
+    void encryptSign(String endpoint) {
+        PolicyTestUtils.drainMessages("drainMessages", -1);
+
+        final String requestPayload = "random person";
+        final String responsePayload = "Hello random person from EncryptSign!";
+        RestAssured.given()
+                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.jks", "password")))
+                .body(requestPayload)
+                .post("/cxf/security-policy/" + endpoint)
+                .then()
+                .statusCode(200)
+                .body(is(responsePayload));
+
+        final List<String> messages = PolicyTestUtils.drainMessages("drainMessages", 2);
+
+        final String req = messages.get(0);
+        Assertions.assertThat(req).doesNotContain(requestPayload);
+        Assertions.assertThat(req).contains("<xenc:EncryptedKey ");
+        Assertions.assertThat(req).contains(":Signature ");
+        Assertions.assertThat(req).contains(":SignatureValue>");
+        Assertions.assertThat(req).contains("<xenc:EncryptedData ");
+
+        final String resp = messages.get(1);
+        Assertions.assertThat(resp).doesNotContain(responsePayload);
+        Assertions.assertThat(resp).contains("<xenc:EncryptedKey ");
+        Assertions.assertThat(resp).contains(":Signature ");
+        Assertions.assertThat(resp).contains(":SignatureValue>");
+        Assertions.assertThat(resp).contains("<xenc:EncryptedData ");
+
+        /* Unsigned and unencrypted message must fail */
+        final String unsignedUnencrypted = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                + "  <soap:Body>\n"
+                + "    <ns2:hello xmlns:ns2=\"http://policy.security.it.cxf.quarkiverse.io/\">\n"
+                + "      <arg0>helloEncryptSign</arg0>\n"
+                + "    </ns2:hello>\n"
+                + "  </soap:Body>\n"
+                + "</soap:Envelope>";
+        RestAssured.given()
+                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.jks", "password")))
+                .contentType("text/xml")
+                .body(unsignedUnencrypted)
+                .post("/services/" + endpoint)
+                .then()
+                .statusCode(500)
+                .body(unsignedUnencryptedErrorMessage());
+
+    }
+
+    abstract Matcher<String> unsignedUnencryptedErrorMessage();
 
 }
