@@ -50,6 +50,41 @@ public class OpenSamlProcessor {
     @BuildStep
     NativeImageResourceBuildItem nativeImageResource() {
         return new NativeImageResourceBuildItem(
+                "opensaml-config.properties",
+
+                // from org.apache.wss4j.common.saml.OpenSAMLBootstrap
+                "default-config.xml",
+                "schema-config.xml",
+                "saml1-assertion-config.xml",
+                "saml1-metadata-config.xml",
+                "saml1-protocol-config.xml",
+                "saml2-assertion-config.xml",
+                "saml2-assertion-delegation-restriction-config.xml",
+                "saml2-ecp-config.xml",
+                "saml2-metadata-algorithm-config.xml",
+                "saml2-metadata-attr-config.xml",
+                "saml2-metadata-config.xml",
+                "saml2-metadata-idp-discovery-config.xml",
+                "saml2-metadata-query-config.xml",
+                "saml2-metadata-reqinit-config.xml",
+                "saml2-metadata-ui-config.xml",
+                "saml2-metadata-rpi-config.xml",
+                "saml2-protocol-config.xml",
+                "saml2-protocol-thirdparty-config.xml",
+                "saml2-protocol-aslo-config.xml",
+                "saml2-channel-binding-config.xml",
+                "saml-ec-gss-config.xml",
+                "signature-config.xml",
+                "wss4j-signature-config.xml",
+                "encryption-config.xml",
+                "xacml20-context-config.xml",
+                "xacml20-policy-config.xml",
+                "xacml10-saml2-profile-config.xml",
+                "xacml11-saml2-profile-config.xml",
+                "xacml2-saml2-profile-config.xml",
+                "xacml3-saml2-profile-config.xml",
+                "saml2-xacml2-profile.xml",
+
                 "schema/xmltooling-config.xsd",
                 "schema/datatypes.dtd",
                 "schema/xml.xsd",
@@ -79,6 +114,8 @@ public class OpenSamlProcessor {
     @BuildStep
     void registerServices(BuildProducer<ServiceProviderBuildItem> serviceProvider) {
         Stream.of(
+                "org.opensaml.core.config.Configuration",
+                "org.opensaml.core.config.ConfigurationPropertiesSource",
                 "org.opensaml.core.config.Initializer",
                 "org.opensaml.xmlsec.signature.support.SignerProvider",
                 "org.opensaml.xmlsec.algorithm.AlgorithmDescriptor",

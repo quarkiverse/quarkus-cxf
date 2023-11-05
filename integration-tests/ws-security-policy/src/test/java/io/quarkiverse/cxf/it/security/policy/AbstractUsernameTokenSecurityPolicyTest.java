@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.is;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
@@ -191,7 +193,6 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
     @Test
     void helloEncryptSign() {
         encryptSign("helloEncryptSign");
-
     }
 
     @Test
@@ -248,5 +249,73 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
     }
 
     abstract Matcher<String> unsignedUnencryptedErrorMessage();
+
+    @Test
+    void helloSaml1() {
+        saml("helloSaml1");
+    }
+
+    @Test
+    void helloSaml2() {
+        saml("helloSaml2");
+    }
+
+    void saml(String endpoint) {
+        PolicyTestUtils.drainMessages("drainMessages", -1);
+
+        final String requestPayload = "random saml person";
+        final String responsePayload = "Hello random saml person from " + endpoint + "!";
+        RestAssured.given()
+                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.jks", "password")))
+                .body(requestPayload)
+                .post("/cxf/security-policy/" + endpoint)
+                .then()
+                .statusCode(200)
+                .body(is(responsePayload));
+
+        final List<String> messages = PolicyTestUtils.drainMessages("drainMessages", 2);
+
+        final String req = messages.get(0);
+        if ("helloSaml1".equals(endpoint)) {
+            Assertions.assertThat(req).contains("\"urn:oasis:names:tc:SAML:1.0:assertion\"");
+            Assertions.assertThat(req).contains("NameIdentifier Format=\"urn:oasis:names:tc:SAML:1.1");
+        } else if ("helloSaml2".equals(endpoint)) {
+            Assertions.assertThat(req).contains("\"urn:oasis:names:tc:SAML:2.0:assertion\"");
+            Assertions.assertThat(req).contains("NameFormat=\"urn:oasis:names:tc:SAML:2.0");
+        } else {
+            throw new IllegalStateException("Unexpected endpoint " + endpoint);
+        }
+        Assertions.assertThat(req).contains(":Signature ");
+        Assertions.assertThat(req).contains(":SignatureValue>");
+
+        final String resp = messages.get(1);
+        Assertions.assertThat(resp).contains(":Signature ");
+        Assertions.assertThat(resp).contains(":SignatureValue>");
+
+        /* Unsigned and unencrypted message must fail */
+        final String unsignedUnencrypted = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                + "  <soap:Body>\n"
+                + "    <ns2:hello xmlns:ns2=\"http://policy.security.it.cxf.quarkiverse.io/\">\n"
+                + "      <arg0>" + requestPayload + "</arg0>\n"
+                + "    </ns2:hello>\n"
+                + "  </soap:Body>\n"
+                + "</soap:Envelope>";
+        RestAssured.given()
+                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.jks", "password")))
+                .contentType("text/xml")
+                .body(unsignedUnencrypted)
+                .post("https://localhost:" + getPort() + "/services/" + endpoint)
+                .then()
+                .statusCode(500)
+                .body(missingSamlErrorMessage(endpoint));
+
+    }
+
+    abstract Matcher<String> missingSamlErrorMessage(String endpoint);
+
+    protected int getPort() {
+        final Config config = ConfigProvider.getConfig();
+        return config.getValue("quarkus.http.test-ssl-port", Integer.class);
+    }
 
 }
