@@ -74,6 +74,14 @@ public class SecurityPolicyResource {
     EncryptSignPolicyHelloService helloEncryptSignCrypto;
 
     @Inject
+    @CXFClient("helloSaml1")
+    Saml1PolicyHelloService helloSaml1;
+
+    @Inject
+    @CXFClient("helloSaml2")
+    Saml2PolicyHelloService helloSaml2;
+
+    @Inject
     @Named("messageCollector")
     MessageCollector messageCollector;
 
@@ -139,6 +147,12 @@ public class SecurityPolicyResource {
                 break;
             case "helloEncryptSignCrypto":
                 service = helloEncryptSignCrypto;
+                break;
+            case "helloSaml1":
+                service = helloSaml1;
+                break;
+            case "helloSaml2":
+                service = helloSaml2;
                 break;
             default:
                 throw new IllegalStateException("Unexpected client " + client);

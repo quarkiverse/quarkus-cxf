@@ -49,4 +49,32 @@ public class UsernameTokenSecurityPolicyTest extends AbstractUsernameTokenSecuri
                 containsString("Soap Body is not SIGNED"));
     }
 
+    @Override
+    Matcher<String> missingSamlErrorMessage(final String endpoint) {
+        final String samlMajor;
+        final String samlMinor;
+        if ("helloSaml1".equals(endpoint)) {
+            samlMajor = "1";
+            samlMinor = "1";
+        } else if ("helloSaml2".equals(endpoint)) {
+            samlMajor = "2";
+            samlMinor = "0";
+        } else {
+            throw new IllegalStateException("Unexpected endpoint " + endpoint);
+        }
+
+        return Matchers.allOf(
+                containsString("These policy alternatives can not be satisfied"),
+                /*
+                 * https://github.com/rest-assured/rest-assured/issues/1744
+                 * The searched substring cannot contain XPath because otherwise RestAssured thinks the matcher is
+                 * an XPath matcher and will pass a DOM body instead of String
+                 */
+                containsString("No SIGNED element found matching one of the XPat"),
+                containsString("aths [//saml" + samlMajor + ":Assertion]"),
+                containsString("SamlToken: The received token does not match the token inclusion requirement"),
+                containsString("{http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}WssSamlV" + samlMajor + samlMinor
+                        + "Token11"));
+    }
+
 }

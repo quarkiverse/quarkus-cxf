@@ -125,8 +125,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.saml-callb
 --
 A link:../../user-guide/configuration.html#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` implementation used to construct SAML Assertions.
 
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_CALLBACK_HANDLER+++[]
 endif::add-copy-button-to-env-var[]
@@ -321,7 +319,7 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.client.-clients-.security.audience-r
 
 [.description]
 --
-If ``, then if the SAML Token contains Audience Restriction URIs, one of them must match one of the values in `audience.restrictions`; otherwise the SAML AudienceRestriction validation is disabled.
+If `true`, then if the SAML Token contains Audience Restriction URIs, one of them must match one of the values in `audience.restrictions`; otherwise the SAML AudienceRestriction validation is disabled.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
@@ -1296,8 +1294,6 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.saml-c
 --
 A link:../../user-guide/configuration.html#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` implementation used to construct SAML Assertions.
 
-This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
-
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_CALLBACK_HANDLER+++[]
 endif::add-copy-button-to-env-var[]
@@ -1492,7 +1488,7 @@ a| [[quarkus-cxf-rt-ws-security_quarkus.cxf.endpoint.-endpoints-.security.audien
 
 [.description]
 --
-If ``, then if the SAML Token contains Audience Restriction URIs, one of them must match one of the values in `audience.restrictions`; otherwise the SAML AudienceRestriction validation is disabled.
+If `true`, then if the SAML Token contains Audience Restriction URIs, one of them must match one of the values in `audience.restrictions`; otherwise the SAML AudienceRestriction validation is disabled.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 

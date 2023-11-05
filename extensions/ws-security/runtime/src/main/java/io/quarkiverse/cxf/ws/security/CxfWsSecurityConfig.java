@@ -129,9 +129,6 @@ public interface CxfWsSecurityConfig {
         /**
          * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
          * {@code javax.security.auth.callback.CallbackHandler} implementation used to construct SAML Assertions.
-         * <p>
-         * This option is experimental, because it is
-         * <a href="https://github.com/quarkiverse/quarkus-cxf/issues/1052">not covered by tests</a> yet.
          *
          * @since 2.5.0
          */
@@ -275,7 +272,7 @@ public interface CxfWsSecurityConfig {
         boolean scFromJaasSubject();
 
         /**
-         * If {@code}, then if the SAML Token contains Audience Restriction URIs, one of them must match one of the
+         * If {@code true}, then if the SAML Token contains Audience Restriction URIs, one of them must match one of the
          * values in {@code audience.restrictions}; otherwise the SAML AudienceRestriction validation is disabled.
          * <p>
          * This option is experimental, because it is

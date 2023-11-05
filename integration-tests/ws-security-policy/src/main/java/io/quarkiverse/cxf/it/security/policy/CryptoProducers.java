@@ -13,7 +13,7 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 
 public class CryptoProducers {
 
-    private final PasswordEncryptor dummyPasswordEncryptor = new PasswordEncryptor() {
+    private static final PasswordEncryptor dummyPasswordEncryptor = new PasswordEncryptor() {
 
         @Override
         public String encrypt(String password) {
@@ -30,29 +30,23 @@ public class CryptoProducers {
     @ApplicationScoped
     @Named
     public Crypto bobCrypto() {
-        Properties props = new Properties();
-        props.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-        props.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
-        props.put("org.apache.ws.security.crypto.merlin.keystore.password", "password");
-        props.put("org.apache.ws.security.crypto.merlin.keystore.alias", "bob");
-        props.put("org.apache.ws.security.crypto.merlin.file", "bob.jks");
-        try {
-            return CryptoFactory.getInstance(props, CryptoFactory.class.getClassLoader(), dummyPasswordEncryptor);
-        } catch (WSSecurityException e) {
-            throw new RuntimeException(e);
-        }
+        return createCrypto("jks", "bob", "password", "bob.jks");
     }
 
     @Produces
     @ApplicationScoped
     @Named
     public Crypto aliceCrypto() {
+        return createCrypto("jks", "alice", "password", "alice.jks");
+    }
+
+    public static Crypto createCrypto(String type, String alias, String password, String keyStoreFile) {
         Properties props = new Properties();
         props.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
-        props.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
-        props.put("org.apache.ws.security.crypto.merlin.keystore.password", "password");
-        props.put("org.apache.ws.security.crypto.merlin.keystore.alias", "alice");
-        props.put("org.apache.ws.security.crypto.merlin.file", "alice.jks");
+        props.put("org.apache.ws.security.crypto.merlin.keystore.type", type);
+        props.put("org.apache.ws.security.crypto.merlin.keystore.password", password);
+        props.put("org.apache.ws.security.crypto.merlin.keystore.alias", alias);
+        props.put("org.apache.ws.security.crypto.merlin.file", keyStoreFile);
         try {
             return CryptoFactory.getInstance(props, CryptoFactory.class.getClassLoader(), dummyPasswordEncryptor);
         } catch (WSSecurityException e) {
