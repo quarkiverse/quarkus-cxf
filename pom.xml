@@ -108,9 +108,8 @@
         <module>extensions</module>
         <module>docs</module>
         <module>bom-test</module>
-        <module>test-util</module>
+        <module>test-util-parent</module>
         <module>integration-tests</module>
-        <module>test-list</module>
     </modules>
 
     <build>

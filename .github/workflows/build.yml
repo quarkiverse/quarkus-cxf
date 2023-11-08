@@ -79,7 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        testModule: ['client', 'hc5', 'metrics', 'mtom', 'mtom-awt', 'server', 'ws-addressing', 'ws-rm', 'ws-security-client', 'ws-security-policy', 'ws-security-policy -Djks', 'ws-security-server', 'ws-security-server -Djks', 'ws-trust', 'wsdl2java', 'wsdl2java-no-config']
+        testModule: ['client', 'hc5', 'metrics', 'mtom', 'mtom-awt', 'server', 'ws-addressing', 'ws-rm-client', 'ws-security-client', 'ws-security-policy', 'ws-security-policy -Djks', 'ws-security-server', 'ws-security-server -Djks', 'ws-trust', 'wsdl2java', 'wsdl2java-no-config']
     name: ${{matrix.testModule}} native tests
     needs: build-and-run-jvm-tests
     runs-on: ubuntu-latest
@@ -107,6 +107,11 @@ jobs:
       if: "${{ env.SKIP_NATIVE_TESTS != 'true' }}"
       run: |
         array=(${{matrix.testModule}})
+        if [ "${array[0]}" == "ws-rm-client" ]; then
+          # ws-rm-client requires test-ws-rm-server native executable
+          cd test-util-parent/test-ws-rm-server && ../../mvnw -B clean install -Pnative -Dquarkus.native.container-build=true
+          cd ../..
+        fi
         if [ "${#array[@]}" -gt "1" ]; then
           additionalArgs=("${array[@]:1}")
           cd integration-tests/${array[0]} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true "${additionalArgs[@]}"

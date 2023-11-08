@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.quarkiverse.cxf</groupId>
+        <artifactId>quarkus-cxf-test-util-parent</artifactId>
+        <version>2.6.2-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>quarkus-cxf-test-list</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Quarkus CXF - Test list</name>
+    <description>Publishes a list of integration tests in XML format that should be run by the Quarkus Platform</description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.l2x6.rpkgtests</groupId>
+                <artifactId>rpkgtests-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create-test-jars-file</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <testJarsPath>${project.build.directory}/${project.artifactId}.xml</testJarsPath>
+                    <fileSets>
+                        <fileSet>
+                            <directory>${basedir}/../integration-tests</directory>
+                            <includes>
+                                <include>*/pom.xml</include>
+                            </includes>
+                            <excludes>
+                                <exclude>wsdl2java/pom.xml</exclude><!-- the setup in pom.xml would be hard to reproduce on the Platform -->
+                                <exclude>wsdl2java-no-config/pom.xml</exclude><!-- the setup in pom.xml would be hard to reproduce on the Platform -->
+                            </excludes>
+                        </fileSet>
+                    </fileSets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-test-list</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.artifactId}.xml</file>
+                                    <type>xml</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

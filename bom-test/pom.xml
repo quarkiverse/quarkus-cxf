@@ -24,6 +24,17 @@
                 <version>${quarkus-cxf.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-test-ws-rm-server</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-test-ws-rm-server</artifactId>
+                <type>pom</type>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-netty-server</artifactId>
                 <version>${cxf.version}</version>
