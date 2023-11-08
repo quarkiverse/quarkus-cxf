@@ -488,24 +488,6 @@ public interface CxfClientConfig {
         HttpClientHTTPConduitFactory,
         @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
         URLConnectionHTTPConduitFactory;
-
-        public static HTTPConduitImpl fromOptional(Optional<HTTPConduitImpl> optional, boolean hc5Present, String key,
-                HTTPConduitImpl defaultValue) {
-            if (optional.isPresent() && optional.get() != HTTPConduitImpl.CXFDefault && hc5Present) {
-                /*
-                 * This is bad: the user has to choose whether he wants URLConnectionHTTPConduitFactory or
-                 * QuarkusAsyncHTTPConduitFactory
-                 */
-                throw new RuntimeException("You cannot use " + key + "=" + optional.get().name()
-                        + " and io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5 simultaneously." + " Either remove " + key
-                        + "=" + optional.get().name() + " from application.properties"
-                        + " or remove the io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5 dependency");
-            } else if (!optional.isPresent() && hc5Present) {
-                return HTTPConduitImpl.CXFDefault;
-            } else {
-                return optional.orElse(defaultValue);
-            }
-        }
     }
 
     public enum WellKnownHostnameVerifier {
