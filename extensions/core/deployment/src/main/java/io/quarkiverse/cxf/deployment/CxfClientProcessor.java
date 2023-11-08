@@ -461,11 +461,8 @@ public class CxfClientProcessor {
             CXFRecorder recorder,
             CxfBuildTimeConfig config,
             BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
-        final HTTPConduitImpl factory = HTTPConduitImpl.fromOptional(
-                config.httpConduitFactory(),
-                hc5Present(),
-                "quarkus.cxf.http-conduit-impl",
-                HTTPConduitImpl.QuarkusCXFDefault);
+        final HTTPConduitImpl factory = config.httpConduitFactory()
+                .orElse(hc5Present() ? HTTPConduitImpl.CXFDefault : HTTPConduitImpl.QuarkusCXFDefault);
         switch (factory) {
             case CXFDefault:
                 // nothing to do
@@ -486,7 +483,7 @@ public class CxfClientProcessor {
 
     static boolean hc5Present() {
         try {
-            Class.forName("io.quarkiverse.cxf.transport.http.hc5.QuarkusAsyncHTTPConduitFactory");
+            Class.forName("io.quarkiverse.cxf.transport.http.hc5.QuarkusWorkQueueImpl");
             return true;
         } catch (ClassNotFoundException e) {
             /* Fine, we can set the chosen ConduitFactory */

@@ -241,8 +241,7 @@ public class CXFClientInfo {
          * In that case, the HTTPConduitFactory set on the Bus based on quarkus.cxf.http-conduit-impl
          * should kick in.
          */
-        this.httpConduitImpl = HTTPConduitImpl.fromOptional(config.httpConduitFactory(), CXFRecorder.isHc5Present(),
-                "quarkus.cxf.client." + configKey + ".http-conduit-impl", null);
+        this.httpConduitImpl = config.httpConduitFactory().orElse(null);
         this.configKey = configKey;
     }
 
