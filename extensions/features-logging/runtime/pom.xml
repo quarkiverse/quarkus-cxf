@@ -21,10 +21,6 @@
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-features-logging</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

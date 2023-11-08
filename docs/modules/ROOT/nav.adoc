@@ -4,6 +4,7 @@
 ** xref:user-guide/first-soap-client.adoc[Your first SOAP Client]
 ** xref:user-guide/configuration.adoc[Configuration]
 ** xref:user-guide/package-for-jvm-and-native.adoc[Package for JVM and native]
+** xref:user-guide/payload-logging.adoc[Payload logging]
 ** xref:user-guide/soap-payloads-with-jaxb.adoc[Complex SOAP payloads with JAXB]
 ** xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
 ** xref:user-guide/advanced-soap-server-topics.adoc[Advanced SOAP server topics]
