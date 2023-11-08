@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.quarkiverse.cxf</groupId>
+        <artifactId>quarkus-cxf-parent</artifactId>
+        <version>2.6.2-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>quarkus-cxf-test-util-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Quarkus CXF - Test Utilities - Parent</name>
+
+    <modules>
+        <module>test-util</module>
+        <module>test-ws-rm-server</module>
+        <module>test-list</module>
+    </modules>
+
+</project>
