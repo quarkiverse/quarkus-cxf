@@ -1,7 +1,44 @@
-This extension wraps the CXF `org.apache.cxf:cxf-rt-features-logging` artifact
-thus providing the `org.apache.cxf.ext.logging.LoggingFeature` class.
+= Payload logging
 
-=== Configuring through configuration properties
+[NOTE]
+.Historical Note
+====
+Since {quarkus-cxf-project-name} 2.6.0, the payload logging functionality is available via
+`io.quarkiverse.cxf:quarkus-cxf` extension.
+Before 2.6.0, it was available through a separate extension `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging`.
+
+As of {quarkus-cxf-project-name} 2.6.0, the `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` extension is deprecated
+and will be removed in the next major version of {quarkus-cxf-project-name}.
+====
+
+The payload logging functionality comes from the `org.apache.cxf:cxf-rt-features-logging` artifact,
+especially the `org.apache.cxf.ext.logging.LoggingFeature` class.
+
+== Configuring through configuration properties
+
+=== Global settings
+
+The global options exist since {quarkus-cxf-project-name} 2.6.0:
+
+.application.properties
+[source,properties,subs=attributes+]
+----
+# For a service:
+quarkus.cxf.logging.enabled = true
+quarkus.cxf.logging.pretty = true
+----
+
+All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf-configuration[quarkus-cxf]` reference page.
+
+[TIP]
+====
+All logging properties mentioned on this page are *runtime* configuration options.
+Hence you can pass them when starting the application without having to rebuild it.
+It can be done either by passing a system property on the command line (e.g. `-Dquarkus.cxf.logging.enabled=true`)
+or by setting an environment variable (e.g. `export QUARKUS_CXF_LOGGING_ENABLED=true`).
+====
+
+=== Per client and per service endpoint settings
 
 Since {quarkus-cxf-project-name} 2.5.0, the `LoggingFeature` can be configured and attached to a client or a service
 endpoint declaratively by setting the appropriate options in `application.properties`:
@@ -17,9 +54,9 @@ quarkus.cxf.client.hello.logging.enabled = true
 quarkus.cxf.client.hello.logging.pretty = true
 ----
 
-All logging configuration options are listed xref:#quarkus-cxf-rt-features-logging-configuration[below].
+All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf-configuration[quarkus-cxf]` reference page.
 
-=== Alternative ways of adding a `LoggingFeature` to a client or service
+== Alternative ways of adding a `LoggingFeature` to a client or service
 
 To attach an instance with default settings, you can do one of the following:
 
@@ -51,7 +88,7 @@ public class SayHiImplementation implements SayHi {
 }
 ----
 
-==== Producing a custom `LoggingFeature` bean
+=== Producing a custom `LoggingFeature` bean
 
 If you need some custom logic to setup the `LoggingFeature`, you can produce a named `LoggingFeature` bean:
 
@@ -84,4 +121,3 @@ quarkus.cxf.endpoint."/hello".features = #limitedLoggingFeature
 # For a client:
 quarkus.cxf.client.hello.features = #limitedLoggingFeature
 ----
-

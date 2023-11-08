@@ -13,7 +13,14 @@ ifeval::[{doc-show-badges} == true]
 Stable • Since 0.14.0
 endif::[]
 
-Allows logging HTTP headers and bodies of SOAP requests and responses for both CXF clients and services.
+[WARNING]
+====
+This extension deprecated since {quarkus-cxf-project-name} 2.6.0
+and will be removed in the next major version of {quarkus-cxf-project-name}.
+
+All functionality was moved to `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]` extension.
+====
+
 
 [id="quarkus-cxf-rt-features-logging-maven-coordinates"]
 == Maven coordinates
@@ -33,101 +40,6 @@ TIP: Check the xref:user-guide/index.adoc[User guide] and especially its
       xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
       for more information about writing applications with {quarkus-cxf-project-name}.
 endif::[]
-
-[id="quarkus-cxf-rt-features-logging-usage"]
-== Usage
-
-This extension wraps the CXF `org.apache.cxf:cxf-rt-features-logging` artifact
-thus providing the `org.apache.cxf.ext.logging.LoggingFeature` class.
-
-[id="extensions-quarkus-cxf-rt-features-logging-usage-configuring-through-configuration-properties"]
-=== Configuring through configuration properties
-
-Since {quarkus-cxf-project-name} 2.5.0, the `LoggingFeature` can be configured and attached to a client or a service
-endpoint declaratively by setting the appropriate options in `application.properties`:
-
-.application.properties
-[source,properties,subs=attributes+]
-----
-# For a service:
-quarkus.cxf.endpoint."/hello".logging.enabled = true
-quarkus.cxf.endpoint."/hello".logging.pretty = true
-# For a client:
-quarkus.cxf.client.hello.logging.enabled = true
-quarkus.cxf.client.hello.logging.pretty = true
-----
-
-All logging configuration options are listed xref:#quarkus-cxf-rt-features-logging-configuration[below].
-
-[id="extensions-quarkus-cxf-rt-features-logging-usage-alternative-ways-of-adding-a-loggingfeature-to-a-client-or-service"]
-=== Alternative ways of adding a `LoggingFeature` to a client or service
-
-To attach an instance with default settings, you can do one of the following:
-
-1. In `application.properties`:
-+
-[source,properties,subs=attributes+]
-----
-# For a service:
-quarkus.cxf.endpoint."/hello".features=org.apache.cxf.ext.logging.LoggingFeature
-# For a client:
-quarkus.cxf.client."myClient".features=org.apache.cxf.ext.logging.LoggingFeature
-----
-+
-TIP: There is an example in xref:user-guide/first-soap-web-service.adoc#logging-feature[Your first SOAP Web service] chapter of the User guide.
-+
-or alternatively
-+
-2. Use the `@Features` annotation of CXF:
-+
-[source,java]
-----
-@org.apache.cxf.feature.Features (features = {"org.apache.cxf.ext.logging.LoggingFeature"})
-@WebService(endpointInterface = "org.acme.SayHi", targetNamespace = "uri:org.acme")
-public class SayHiImplementation implements SayHi {
-   public long sayHi(long arg) {
-       return arg;
-   }
-   //...
-}
-----
-
-[id="extensions-quarkus-cxf-rt-features-logging-usage-producing-a-custom-loggingfeature-bean"]
-==== Producing a custom `LoggingFeature` bean
-
-If you need some custom logic to setup the `LoggingFeature`, you can produce a named `LoggingFeature` bean:
-
-[source,java,subs="attributes"]
-----
-import org.apache.cxf.ext.logging.LoggingFeature;
-import {javaxOrJakartaPackagePrefix}.enterprise.context.ApplicationScoped;
-import {javaxOrJakartaPackagePrefix}.enterprise.inject.Produces;
-
-class Producers {
-
-    @Produces
-    @ApplicationScoped
-    @Named("limitedLoggingFeature") // "limitedLoggingFeature" is redundant if the name of the method is the same
-    LoggingFeature limitedLoggingFeature() {
-        LoggingFeature loggingFeature = new LoggingFeature();
-        loggingFeature.setPrettyLogging(true);
-        loggingFeature.setLimit(1024);
-        return loggingFeature;
-    }
-}
-----
-
-Then you can refer to it by its name prefixed with `#` in `application.properties`:
-
-[source,properties,subs=attributes+]
-----
-# For a service:
-quarkus.cxf.endpoint."/hello".features = #limitedLoggingFeature
-# For a client:
-quarkus.cxf.client.hello.features = #limitedLoggingFeature
-----
-
-
 
 [id="quarkus-cxf-rt-features-logging-configuration"]
 == Configuration
