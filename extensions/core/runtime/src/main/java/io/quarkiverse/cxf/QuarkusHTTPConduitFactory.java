@@ -62,7 +62,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         if (httpConduitImpl == null) {
             httpConduitImpl = cxFixedConfig.httpConduitFactory().orElse(null);
         }
-        if (httpConduitImpl == HTTPConduitImpl.CXFDefault && hc5Present && busHTTPConduitFactory != null) {
+        if (httpConduitImpl == null && hc5Present && busHTTPConduitFactory != null) {
             return configure(
                     busHTTPConduitFactory.createConduit(f, b, localInfo, target),
                     cxfClientInfo);
