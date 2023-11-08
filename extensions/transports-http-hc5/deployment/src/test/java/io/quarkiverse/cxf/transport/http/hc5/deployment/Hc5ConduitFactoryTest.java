@@ -9,6 +9,8 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
+import org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduit;
+import org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduitFactory;
 import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -17,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkiverse.cxf.transport.http.hc5.QuarkusAsyncHTTPConduit;
-import io.quarkiverse.cxf.transport.http.hc5.QuarkusAsyncHTTPConduitFactory;
 import io.quarkus.test.QuarkusUnitTest;
 
 public class Hc5ConduitFactoryTest {
@@ -42,10 +42,10 @@ public class Hc5ConduitFactoryTest {
     void conduitFactory() {
         final Bus bus = BusFactory.getDefaultBus();
         final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
-        Assertions.assertThat(factory).isInstanceOf(QuarkusAsyncHTTPConduitFactory.class);
+        Assertions.assertThat(factory).isInstanceOf(AsyncHTTPConduitFactory.class);
 
         final Client client = ClientProxy.getClient(helloService);
-        Assertions.assertThat(client.getConduit()).isInstanceOf(QuarkusAsyncHTTPConduit.class);
+        Assertions.assertThat(client.getConduit()).isInstanceOf(AsyncHTTPConduit.class);
 
         /* ... and make sure that the alternative conduit works */
         Assertions.assertThat(helloService.hello("Joe")).isEqualTo("Hello Joe");
