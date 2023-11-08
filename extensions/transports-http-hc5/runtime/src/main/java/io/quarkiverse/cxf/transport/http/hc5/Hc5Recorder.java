@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
+import org.apache.cxf.transport.http.asyncclient.hc5.AsyncHttpResponseWrapperFactory;
 import org.apache.cxf.workqueue.WorkQueueManager;
 import org.eclipse.microprofile.context.ManagedExecutor;
 
@@ -31,7 +32,7 @@ public class Hc5Recorder {
             } else {
                 throw new IllegalStateException(ManagedExecutor.class.getName() + " not available in Arc");
             }
-            bus.setExtension(new QuarkusAsyncHTTPConduitFactory(bus), HTTPConduitFactory.class);
+            bus.setExtension(new QuarkusAsyncHttpResponseWrapperFactory(), AsyncHttpResponseWrapperFactory.class);
         });
     }
 }
