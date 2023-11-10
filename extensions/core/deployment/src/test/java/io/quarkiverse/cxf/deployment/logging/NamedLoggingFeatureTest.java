@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.features.logging.deployment;
+package io.quarkiverse.cxf.deployment.logging;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,17 +12,17 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.test.QuarkusUnitTest;
 
 /**
- * {@code LoggingFeature} set in {@code application.properties} and an unnamed bean is produced via
+ * {@code LoggingFeature} set in {@code application.properties} and a named bean is produced via
  * {@link NamedLoggingFeatureProducer}
  */
-public class UnnamedLoggingFeatureTest {
+public class NamedLoggingFeatureTest {
 
     @RegisterExtension
     static final QuarkusUnitTest TEST = new QuarkusUnitTest()
             .withApplicationRoot(
                     root -> root.addClasses(HelloService.class, HelloServiceImpl.class, NamedLoggingFeatureProducer.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor", HelloServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".features", "org.apache.cxf.ext.logging.LoggingFeature")
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".features", "#namedLoggingFeature")
             .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName())
             .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
             .setLogRecordPredicate(logRecord -> logRecord.getLoggerName().contains("org.apache.cxf.services.HelloService.RE")) // REQ_IN or RESP_OUT

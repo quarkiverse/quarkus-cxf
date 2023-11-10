@@ -2,6 +2,8 @@ package io.quarkiverse.cxf.test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -73,5 +75,11 @@ public class QuarkusCxfClientTestUtil {
     public static String anyNs(String... elementNames) {
         return Stream.of(elementNames)
                 .collect(Collectors.joining("']/*[local-name() = '", "/*[local-name() = '", "']"));
+    }
+
+    public static Predicate<String> messageExists(String messageKind, String payload) {
+        return msg -> Pattern.compile(
+                "^" + messageKind + ".*\\QPayload: " + payload + "\n\\E$",
+                Pattern.DOTALL).matcher(msg).matches();
     }
 }

@@ -25,7 +25,9 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.CXFRuntimeUtils;
 import io.quarkiverse.cxf.CXFServletInfo;
 import io.quarkiverse.cxf.CXFServletInfos;
+import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.QuarkusRuntimeJaxWsServiceFactoryBean;
+import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
 import io.quarkus.arc.ManagedContext;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.security.identity.CurrentIdentityAssociation;
@@ -84,6 +86,8 @@ public class CxfHandler implements Handler<RoutingContext> {
         servletPath = cxfServletInfos.getPath();
         contextPath = cxfServletInfos.getContextPath();
 
+        final LoggingFactoryCustomizer loggingFactoryCustomizer = new LoggingFactoryCustomizer(
+                CDI.current().select(CxfConfig.class).get());
         final Instance<EndpointFactoryCustomizer> customizers = CDI.current().select(EndpointFactoryCustomizer.class);
 
         // suboptimal because done it in loop but not a real issue...
@@ -129,6 +133,7 @@ public class CxfHandler implements Handler<RoutingContext> {
                 if (servletInfo.getEndpointUrl() != null) {
                     jaxWsServerFactoryBean.setPublishedEndpointUrl(servletInfo.getEndpointUrl());
                 }
+                loggingFactoryCustomizer.customize(servletInfo, jaxWsServerFactoryBean);
                 customizers.forEach(customizer -> customizer.customize(servletInfo, jaxWsServerFactoryBean));
 
                 jaxWsServerFactoryBean.create();

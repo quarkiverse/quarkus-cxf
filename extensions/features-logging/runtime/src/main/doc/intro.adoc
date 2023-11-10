@@ -1,6 +1,6 @@
 [WARNING]
 ====
-This extension deprecated since {quarkus-cxf-project-name} 2.6.0
+This extension is deprecated since {quarkus-cxf-project-name} 2.6.0
 and will be removed in the next major version of {quarkus-cxf-project-name}.
 
 All functionality was moved to `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]` extension.

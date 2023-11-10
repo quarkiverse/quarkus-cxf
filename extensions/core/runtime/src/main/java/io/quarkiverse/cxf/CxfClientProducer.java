@@ -19,6 +19,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.TrustManagerFactory;
 import javax.xml.namespace.QName;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.InjectionPoint;
@@ -38,6 +39,7 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
 
 /**
  * Base producer class for setting up CXF client proxies and {@link CXFClientInfo}s.
@@ -64,6 +66,13 @@ public abstract class CxfClientProducer {
     @Inject
     @Any
     Instance<ClientFactoryCustomizer> customizers;
+
+    private LoggingFactoryCustomizer loggingFactoryCustomizer;
+
+    @PostConstruct
+    void init() {
+        this.loggingFactoryCustomizer = new LoggingFactoryCustomizer(config);
+    }
 
     /**
      * Must be public, otherwise: java.lang.VerifyError: Bad access to protected data in invokevirtual
@@ -184,7 +193,7 @@ public abstract class CxfClientProducer {
                             + httpConduitImpl);
             }
         }
-
+        loggingFactoryCustomizer.customize(cxfClientInfo, factory);
         customizers.forEach(customizer -> customizer.customize(cxfClientInfo, factory));
 
         LOGGER.debug("cxf client loaded for " + sei);
