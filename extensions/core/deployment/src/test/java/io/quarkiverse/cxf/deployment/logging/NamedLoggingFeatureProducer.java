@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.features.logging.deployment;
+package io.quarkiverse.cxf.deployment.logging;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;

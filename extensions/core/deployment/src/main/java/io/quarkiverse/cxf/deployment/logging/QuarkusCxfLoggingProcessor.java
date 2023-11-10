@@ -1,23 +1,15 @@
-package io.quarkiverse.cxf.features.logging.deployment;
+package io.quarkiverse.cxf.deployment.logging;
 
 import java.util.stream.Stream;
 
 import org.apache.cxf.ext.logging.LoggingFeature;
 
-import io.quarkiverse.cxf.features.logging.LoggingFactoryCustomizer;
-import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 
 public class QuarkusCxfLoggingProcessor {
-
-    @BuildStep
-    FeatureBuildItem feature() {
-        return new FeatureBuildItem("cxf-rt-features-logging");
-    }
 
     @BuildStep
     void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
@@ -32,11 +24,6 @@ public class QuarkusCxfLoggingProcessor {
     @BuildStep
     void unremovableBean(BuildProducer<UnremovableBeanBuildItem> unremovable) {
         unremovable.produce(UnremovableBeanBuildItem.beanTypes(LoggingFeature.class));
-    }
-
-    @BuildStep
-    void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
-        additionalBeans.produce(new AdditionalBeanBuildItem(LoggingFactoryCustomizer.class));
     }
 
 }

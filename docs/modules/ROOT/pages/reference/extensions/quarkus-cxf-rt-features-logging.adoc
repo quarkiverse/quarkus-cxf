@@ -15,7 +15,7 @@ endif::[]
 
 [WARNING]
 ====
-This extension deprecated since {quarkus-cxf-project-name} 2.6.0
+This extension is deprecated since {quarkus-cxf-project-name} 2.6.0
 and will be removed in the next major version of {quarkus-cxf-project-name}.
 
 All functionality was moved to `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]` extension.
@@ -40,7 +40,3 @@ TIP: Check the xref:user-guide/index.adoc[User guide] and especially its
       xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
       for more information about writing applications with {quarkus-cxf-project-name}.
 endif::[]
-
-[id="quarkus-cxf-rt-features-logging-configuration"]
-== Configuration
-include::../../includes/quarkus-cxf-rt-features-logging.adoc[]

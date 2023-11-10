@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.features.logging.deployment;
+package io.quarkiverse.cxf.deployment.logging;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

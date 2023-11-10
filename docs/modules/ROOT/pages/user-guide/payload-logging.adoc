@@ -8,17 +8,21 @@ Since {quarkus-cxf-project-name} 2.6.0, the payload logging functionality is ava
 Before 2.6.0, it was available through a separate extension `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging`.
 
 As of {quarkus-cxf-project-name} 2.6.0, the `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` extension is deprecated
-and will be removed in the next major version of {quarkus-cxf-project-name}.
+and will be removed in the future.
 ====
 
-The payload logging functionality comes from the `org.apache.cxf:cxf-rt-features-logging` artifact,
-especially the `org.apache.cxf.ext.logging.LoggingFeature` class.
+The payload logging functionality is implemented primarily through the `org.apache.cxf.ext.logging.LoggingFeature` class.
+
+There are several ways how you can set the feature on a client or service endpoint.
 
 == Configuring through configuration properties
 
 === Global settings
 
-The global options exist since {quarkus-cxf-project-name} 2.6.0:
+The global logging options exist since {quarkus-cxf-project-name} 2.6.0.
+If enabled via `quarkus.cxf.logging.enabled = true`, {quarkus-cxf-project-name} creates a global `LoggingFeature` instance
+and sets it on every client and service endpoint in the application.
+The global settings can be xref:#per-client-or-service-endpoind-payload-logging[overriden] on the client or service endpoint level.
 
 .application.properties
 [source,properties,subs=attributes+]
@@ -28,7 +32,7 @@ quarkus.cxf.logging.enabled = true
 quarkus.cxf.logging.pretty = true
 ----
 
-All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf-configuration[quarkus-cxf]` reference page.
+All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.logging.enabled[quarkus-cxf]` reference page.
 
 [TIP]
 ====
@@ -38,6 +42,7 @@ It can be done either by passing a system property on the command line (e.g. `-D
 or by setting an environment variable (e.g. `export QUARKUS_CXF_LOGGING_ENABLED=true`).
 ====
 
+[[per-client-or-service-endpoind-payload-logging]]
 === Per client and per service endpoint settings
 
 Since {quarkus-cxf-project-name} 2.5.0, the `LoggingFeature` can be configured and attached to a client or a service
@@ -54,7 +59,10 @@ quarkus.cxf.client.hello.logging.enabled = true
 quarkus.cxf.client.hello.logging.pretty = true
 ----
 
-All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf-configuration[quarkus-cxf]` reference page.
+All logging configuration options are documented on `quarkus-cxf` reference page:
+
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.logging.enabled[For clients]
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.enabled[For service endpoints]
 
 == Alternative ways of adding a `LoggingFeature` to a client or service
 

@@ -7,6 +7,7 @@ import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
+import io.quarkiverse.cxf.LoggingConfig.PerClientOrServiceLoggingConfig;
 import io.quarkus.runtime.annotations.ConfigDocEnumValue;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.smallrye.config.WithConverter;
@@ -61,6 +62,11 @@ public interface CxfClientConfig {
      * The password for HTTP Basic auth
      */
     public Optional<String> password();
+
+    /**
+     * Logging related configuration
+     */
+    PerClientOrServiceLoggingConfig logging();
 
     /**
      * A comma-separated list of fully qualified CXF Feature class names.

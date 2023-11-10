@@ -3,6 +3,7 @@ package io.quarkiverse.cxf;
 import java.util.List;
 import java.util.Optional;
 
+import io.quarkiverse.cxf.LoggingConfig.PerClientOrServiceLoggingConfig;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.smallrye.config.WithName;
 
@@ -36,6 +37,11 @@ public interface CxfEndpointConfig {
      * The published service endpoint URL
      */
     public Optional<String> publishedEndpointUrl();
+
+    /**
+     * Logging related configuration
+     */
+    PerClientOrServiceLoggingConfig logging();
 
     /**
      * A comma-separated list of fully qualified CXF Feature class names or named CDI beans.
@@ -96,4 +102,5 @@ public interface CxfEndpointConfig {
      * The comma-separated list of InFaultInterceptor classes
      */
     public Optional<List<String>> inFaultInterceptors();
+
 }
