@@ -98,7 +98,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
         ByteBuf buffer = pooledBuffer;
         try {
             if (buffer == null) {
-                pooledBuffer = buffer = PooledByteBufAllocator.DEFAULT.directBuffer();
+                pooledBuffer = buffer = PooledByteBufAllocator.DEFAULT.directBuffer(8 * 1024 * 1024);
             }
             while (rem > 0) {
                 int toWrite = Math.min(rem, buffer.writableBytes());
@@ -107,7 +107,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
                 idx += toWrite;
                 if (!buffer.isWritable()) {
                     ByteBuf tmpBuf = buffer;
-                    this.pooledBuffer = buffer = PooledByteBufAllocator.DEFAULT.directBuffer();
+                    this.pooledBuffer = buffer = PooledByteBufAllocator.DEFAULT.directBuffer(8 * 1024 * 1024);
                     writeBlocking(tmpBuf, false);
                 }
             }
@@ -147,7 +147,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
         //do all this in the same lock
         synchronized (LOCK) {
             try {
-                boolean bufferRequired = awaitWriteable() || (overflow != null && overflow.size() > 0);
+                boolean bufferRequired = (overflow != null && overflow.size() > 0) || awaitWriteable();
                 if (bufferRequired) {
                     //just buffer everything
                     registerDrainHandler();
