@@ -17,14 +17,18 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     protected final RoutingContext context;
     private final HttpServerRequest request;
     protected final HttpServerResponse response;
+    private final int outputBufferSize;
+    private final int minChunkSize;
     private VertxServletOutputStream os;
     private PrintWriter printWriter;
 
-    public VertxHttpServletResponse(RoutingContext context) {
+    public VertxHttpServletResponse(RoutingContext context, int outputBufferSize, int minChunkSize) {
         this.request = context.request();
         this.response = context.response();
         this.context = context;
-        this.os = new VertxServletOutputStream(request, response);
+        this.outputBufferSize = outputBufferSize;
+        this.minChunkSize = minChunkSize;
+        this.os = new VertxServletOutputStream(request, response, context, outputBufferSize, minChunkSize);
     }
 
     @Override
@@ -187,7 +191,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
             } catch (IOException e) {
             }
         }
-        os = new VertxServletOutputStream(request, response);
+        os = new VertxServletOutputStream(request, response, context, outputBufferSize, minChunkSize);
     }
 
     @Override

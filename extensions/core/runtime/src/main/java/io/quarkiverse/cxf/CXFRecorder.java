@@ -128,12 +128,15 @@ public class CXFRecorder {
         return new RuntimeValue<>(infos);
     }
 
-    public Handler<RoutingContext> initServer(RuntimeValue<CXFServletInfos> infos, BeanContainer beanContainer,
-            HttpConfiguration httpConfiguration) {
+    public Handler<RoutingContext> initServer(
+            RuntimeValue<CXFServletInfos> infos,
+            BeanContainer beanContainer,
+            HttpConfiguration httpConfiguration,
+            CxfFixedConfig fixedConfig) {
         LOGGER.trace("init server");
         // There may be a better way to handle this
         CxfJsonRPCService.setServletInfos(infos.getValue());
-        return new CxfHandler(infos.getValue(), beanContainer, httpConfiguration);
+        return new CxfHandler(infos.getValue(), beanContainer, httpConfiguration, fixedConfig);
     }
 
     public void resetDestinationRegistry(ShutdownContext context) {
