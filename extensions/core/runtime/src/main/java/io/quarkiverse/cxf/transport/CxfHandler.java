@@ -26,6 +26,7 @@ import io.quarkiverse.cxf.CXFRuntimeUtils;
 import io.quarkiverse.cxf.CXFServletInfo;
 import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfConfig;
+import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkiverse.cxf.QuarkusRuntimeJaxWsServiceFactoryBean;
 import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
 import io.quarkus.arc.ManagedContext;
@@ -51,12 +52,15 @@ public class CxfHandler implements Handler<RoutingContext> {
     private final IdentityProviderManager identityProviderManager;
     private final CurrentVertxRequest currentVertxRequest;
     private final HttpConfiguration httpConfiguration;
+    private final int outputBufferSize;
+    private final int minChunkSize;
 
     private static final String X_FORWARDED_PROTO_HEADER = "X-Forwarded-Proto";
     private static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
     private static final String X_FORWARDED_PORT_HEADER = "X-Forwarded-Port";
 
-    public CxfHandler(CXFServletInfos cxfServletInfos, BeanContainer beanContainer, HttpConfiguration httpConfiguration) {
+    public CxfHandler(CXFServletInfos cxfServletInfos, BeanContainer beanContainer, HttpConfiguration httpConfiguration,
+            CxfFixedConfig fixedConfig) {
         LOGGER.trace("CxfHandler created");
         this.beanContainer = beanContainer;
         this.httpConfiguration = httpConfiguration;
@@ -70,6 +74,8 @@ public class CxfHandler implements Handler<RoutingContext> {
         this.bus = BusFactory.getDefaultBus();
 
         this.loader = this.bus.getExtension(ClassLoader.class);
+        this.outputBufferSize = fixedConfig.outputBufferSize();
+        this.minChunkSize = fixedConfig.minChunkSize();
 
         LOGGER.trace("load destination");
         DestinationFactoryManager dfm = this.bus.getExtension(DestinationFactoryManager.class);
@@ -219,7 +225,7 @@ public class CxfHandler implements Handler<RoutingContext> {
         currentVertxRequest.setCurrent(event);
         try {
             HttpServletRequest req = new VertxHttpServletRequest(event, contextPath, servletPath);
-            VertxHttpServletResponse resp = new VertxHttpServletResponse(event);
+            VertxHttpServletResponse resp = new VertxHttpServletResponse(event, outputBufferSize, minChunkSize);
             req = checkXForwardedHeaders(req);
             controller.invoke(req, resp);
             resp.end();

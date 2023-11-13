@@ -18,6 +18,7 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfConfig;
+import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -123,6 +124,7 @@ public class CxfEndpointImplementationProcessor {
             HttpBuildTimeConfig httpBuildTimeConfig,
             HttpConfiguration httpConfiguration,
             CxfBuildTimeConfig cxfBuildTimeConfig,
+            CxfFixedConfig fixedConfig,
             CxfConfig cxfConfig) {
         final RuntimeValue<CXFServletInfos> infos = recorder.createInfos(cxfBuildTimeConfig.path(),
                 httpBuildTimeConfig.rootPath);
@@ -140,7 +142,7 @@ public class CxfEndpointImplementationProcessor {
         }
         if (!requestors.isEmpty()) {
             final Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(),
-                    httpConfiguration);
+                    httpConfiguration, fixedConfig);
             final String mappingPath = getMappingPath(cxfBuildTimeConfig.path());
             LOGGER.infof("Mapping a Vert.x handler for CXF to %s as requested by %s", mappingPath, requestors);
             routes.produce(RouteBuildItem.builder()

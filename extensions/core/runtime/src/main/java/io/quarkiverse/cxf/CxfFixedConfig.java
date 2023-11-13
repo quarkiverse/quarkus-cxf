@@ -18,6 +18,24 @@ import io.smallrye.config.WithName;
 public interface CxfFixedConfig {
 
     /**
+     * The size in bytes of the chunks of memory allocated when writing data.
+     * <p>
+     * This is a very advanced setting that should only be set if you understand exactly how it affects the output IO operations
+     * of the application.
+     */
+    @WithDefault("128")
+    int minChunkSize();
+
+    /**
+     * The size of the output stream response buffer in bytes. If a response is larger than this and no content-length
+     * is provided then the response will be chunked.
+     * <p>
+     * Larger values may give slight performance increases for large responses, at the expense of more memory usage.
+     */
+    @WithDefault("8191")
+    int outputBufferSize();
+
+    /**
      * The build time part of the client configuration.
      */
     @WithName("client")
