@@ -13,56 +13,180 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.quarkus.vertx.core.runtime.VertxBufferImpl;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.ext.web.RoutingContext;
 
+/**
+ * Adapted from
+ * <a href=
+ * "https://github.com/quarkusio/quarkus/blob/b9766f547d2c5c02715b5e35fda1c5f2f15904d8/independent-projects/resteasy-reactive/server/vertx/src/main/java/org/jboss/resteasy/reactive/server/vertx/ResteasyReactiveOutputStream.java"><code>ResteasyReactiveOutputStream</code></a>
+ * from Quarkus.
+ */
 public class VertxServletOutputStream extends ServletOutputStream {
 
     private static final Logger log = Logger.getLogger(VertxServletOutputStream.class);
 
     private final HttpServerRequest request;
-    protected HttpServerResponse response;
-    private ByteBuf pooledBuffer;
+    private final HttpServerResponse response;
+
+    private final AppendBuffer appendBuffer;
     private boolean committed;
+
+    private boolean closed;
     protected boolean waitingForDrain;
     protected boolean drainHandlerRegistered;
-    private boolean closed;
     protected boolean first = true;
     protected Throwable throwable;
     private ByteArrayOutputStream overflow;
 
-    private Object LOCK = new Object();
-
-    /**
-     * Construct a new instance.No write timeout is configured.
-     *
-     * @param request
-     * @param response
-     */
-    public VertxServletOutputStream(HttpServerRequest request, HttpServerResponse response) {
-        this.response = response;
+    public VertxServletOutputStream(
+            HttpServerRequest request,
+            HttpServerResponse response,
+            RoutingContext context,
+            int outputBufferSize,
+            int minChunkSize) {
         this.request = request;
-        request.response().exceptionHandler(event -> {
-            throwable = event;
-            log.debugf(event, "IO Exception ");
-            request.connection().close();
-            synchronized (LOCK) {
-                if (waitingForDrain) {
-                    LOCK.notifyAll();
+        this.response = response;
+        this.appendBuffer = AppendBuffer.withMinChunks(PooledByteBufAllocator.DEFAULT,
+                minChunkSize,
+                outputBufferSize);
+        request.response().exceptionHandler(new Handler<Throwable>() {
+            @Override
+            public void handle(Throwable event) {
+                throwable = event;
+                log.debugf(event, "IO Exception ");
+                //TODO: do we need this?
+                terminateResponse();
+                request.connection().close();
+                synchronized (request.connection()) {
+                    if (waitingForDrain) {
+                        request.connection().notifyAll();
+                    }
                 }
             }
         });
 
-        request.response().endHandler(unused -> {
-            synchronized (LOCK) {
-                if (waitingForDrain) {
-                    LOCK.notifyAll();
+        context.addEndHandler(new Handler<AsyncResult<Void>>() {
+            @Override
+            public void handle(AsyncResult<Void> event) {
+                synchronized (request.connection()) {
+                    if (waitingForDrain) {
+                        request.connection().notifyAll();
+                    }
                 }
+                terminateResponse();
             }
         });
+    }
+
+    public void terminateResponse() {
+
+    }
+
+    Buffer createBuffer(ByteBuf data) {
+        return new VertxBufferImpl(data);
+    }
+
+    public void write(ByteBuf data, boolean last) throws IOException {
+        if (last && data == null) {
+            request.response().end((Handler<AsyncResult<Void>>) null);
+            return;
+        }
+        //do all this in the same lock
+        synchronized (request.connection()) {
+            try {
+                boolean bufferRequired = awaitWriteable() || (overflow != null && overflow.size() > 0);
+                if (bufferRequired) {
+                    //just buffer everything
+                    registerDrainHandler();
+                    if (overflow == null) {
+                        overflow = new ByteArrayOutputStream();
+                    }
+                    if (data.hasArray()) {
+                        overflow.write(data.array(), data.arrayOffset() + data.readerIndex(), data.readableBytes());
+                    } else {
+                        data.getBytes(data.readerIndex(), overflow, data.readableBytes());
+                    }
+                    if (last) {
+                        closed = true;
+                    }
+                    data.release();
+                } else {
+                    if (last) {
+                        request.response().end(createBuffer(data), null);
+                    } else {
+                        request.response().write(createBuffer(data), null);
+                    }
+                }
+            } catch (Exception e) {
+                if (data != null && data.refCnt() > 0) {
+                    data.release();
+                }
+                throw new IOException("Failed to write", e);
+            }
+        }
+    }
+
+    private boolean awaitWriteable() throws IOException {
+        if (Context.isOnEventLoopThread()) {
+            return request.response().writeQueueFull();
+        }
+        if (first) {
+            first = false;
+            return false;
+        }
+        assert Thread.holdsLock(request.connection());
+        while (request.response().writeQueueFull()) {
+            if (throwable != null) {
+                throw new IOException(throwable);
+            }
+            if (request.response().closed()) {
+                throw new IOException("Connection has been closed");
+            }
+            registerDrainHandler();
+            try {
+                waitingForDrain = true;
+                request.connection().wait();
+            } catch (InterruptedException e) {
+                throw new InterruptedIOException(e.getMessage());
+            } finally {
+                waitingForDrain = false;
+            }
+        }
+        return false;
+    }
+
+    private void registerDrainHandler() {
+        if (!drainHandlerRegistered) {
+            drainHandlerRegistered = true;
+            Handler<Void> handler = new Handler<Void>() {
+                @Override
+                public void handle(Void event) {
+                    synchronized (request.connection()) {
+                        if (waitingForDrain) {
+                            request.connection().notifyAll();
+                        }
+                        if (overflow != null) {
+                            if (overflow.size() > 0) {
+                                if (closed) {
+                                    request.response().end(Buffer.buffer(overflow.toByteArray()), null);
+                                } else {
+                                    request.response().write(Buffer.buffer(overflow.toByteArray()), null);
+                                }
+                                overflow.reset();
+                            }
+                        }
+                    }
+                }
+            };
+            request.response().drainHandler(handler);
+            request.response().closeHandler(handler);
+        }
     }
 
     /**
@@ -95,26 +219,16 @@ public class VertxServletOutputStream extends ServletOutputStream {
 
         int rem = len;
         int idx = off;
-        ByteBuf buffer = pooledBuffer;
         try {
-            if (buffer == null) {
-                pooledBuffer = buffer = PooledByteBufAllocator.DEFAULT.directBuffer();
-            }
             while (rem > 0) {
-                int toWrite = Math.min(rem, buffer.writableBytes());
-                buffer.writeBytes(b, idx, toWrite);
-                rem -= toWrite;
-                idx += toWrite;
-                if (!buffer.isWritable()) {
-                    ByteBuf tmpBuf = buffer;
-                    this.pooledBuffer = buffer = PooledByteBufAllocator.DEFAULT.directBuffer();
-                    writeBlocking(tmpBuf, false);
+                final int written = appendBuffer.append(b, idx, rem);
+                if (written < rem) {
+                    writeBlocking(appendBuffer.clear(), false);
                 }
+                rem -= written;
+                idx += written;
             }
-        } catch (IOException | RuntimeException e) {
-            if (buffer != null && buffer.refCnt() > 0) {
-                buffer.release();
-            }
+        } catch (Exception e) {
             throw new IOException(e);
         }
     }
@@ -124,117 +238,21 @@ public class VertxServletOutputStream extends ServletOutputStream {
         write(buffer, finished);
     }
 
-    private void prepareWrite(ByteBuf buffer, boolean finished) {
+    private void prepareWrite(ByteBuf buffer, boolean finished) throws IOException {
         if (!committed) {
             committed = true;
             if (finished) {
-                if (buffer == null) {
-                    response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "0");
-                } else {
-                    response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "" + buffer.readableBytes());
+                if (!response.headWritten()) {
+                    if (buffer == null) {
+                        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "0");
+                    } else {
+                        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "" + buffer.readableBytes());
+                    }
                 }
-            } else if (!request.response().headers().contains(HttpHeaderNames.CONTENT_LENGTH)) {
+            } else {
                 request.response().setChunked(true);
             }
         }
-    }
-
-    public void write(ByteBuf data, boolean last) throws IOException {
-        if (last && data == null) {
-            request.response().end();
-            return;
-        }
-        //do all this in the same lock
-        synchronized (LOCK) {
-            try {
-                boolean bufferRequired = awaitWriteable() || (overflow != null && overflow.size() > 0);
-                if (bufferRequired) {
-                    //just buffer everything
-                    registerDrainHandler();
-                    if (overflow == null) {
-                        overflow = new ByteArrayOutputStream();
-                    }
-                    if (data != null && data.hasArray()) {
-                        overflow.write(data.array(), data.arrayOffset() + data.readerIndex(), data.readableBytes());
-                    } else if (data != null) {
-                        data.getBytes(data.readerIndex(), overflow, data.readableBytes());
-                    }
-                    if (last) {
-                        closed = true;
-                    }
-                    if (data != null) {
-                        data.release();
-                    }
-                } else {
-                    if (last) {
-                        request.response().end(createBuffer(data));
-                    } else {
-                        request.response().write(createBuffer(data));
-                    }
-                }
-            } catch (IOException | RuntimeException e) {
-                if (data != null && data.refCnt() > 0) {
-                    data.release();
-                }
-                throw new IOException("Failed to write", e);
-            }
-        }
-    }
-
-    private boolean awaitWriteable() throws IOException {
-        if (Context.isOnEventLoopThread()) {
-            return request.response().writeQueueFull();
-        }
-        if (first) {
-            first = false;
-            return false;
-        }
-        assert Thread.holdsLock(LOCK);
-        while (request.response().writeQueueFull()) {
-            if (throwable != null) {
-                throw new IOException(throwable);
-            }
-            if (request.response().closed()) {
-                throw new IOException("Connection has been closed");
-            }
-            registerDrainHandler();
-            try {
-                waitingForDrain = true;
-                LOCK.wait();
-            } catch (InterruptedException e) {
-                throw new InterruptedIOException(e.getMessage());
-            } finally {
-                waitingForDrain = false;
-            }
-        }
-        return false;
-    }
-
-    private void registerDrainHandler() {
-        if (!drainHandlerRegistered) {
-            drainHandlerRegistered = true;
-            Handler<Void> handler = event -> {
-                synchronized (LOCK) {
-                    if (waitingForDrain) {
-                        LOCK.notifyAll();
-                    }
-                    if (overflow != null && overflow.size() > 0) {
-                        if (closed) {
-                            request.response().end(Buffer.buffer(overflow.toByteArray()));
-                        } else {
-                            request.response().write(Buffer.buffer(overflow.toByteArray()));
-                        }
-                        overflow.reset();
-                    }
-                }
-            };
-            request.response().drainHandler(handler);
-            request.response().closeHandler(handler);
-        }
-    }
-
-    Buffer createBuffer(ByteBuf data) {
-        return new VertxBufferImpl(data);
     }
 
     /**
@@ -245,15 +263,13 @@ public class VertxServletOutputStream extends ServletOutputStream {
         if (closed) {
             throw new IOException("Stream is closed");
         }
-        if (pooledBuffer != null) {
-            try {
-                writeBlocking(pooledBuffer, false);
-                pooledBuffer = null;
-            } catch (IOException | RuntimeException e) {
-                pooledBuffer.release();
-                pooledBuffer = null;
-                throw new IOException(e);
+        try {
+            var toFlush = appendBuffer.clear();
+            if (toFlush != null) {
+                writeBlocking(toFlush, false);
             }
+        } catch (Exception e) {
+            throw new IOException(e);
         }
     }
 
@@ -265,12 +281,11 @@ public class VertxServletOutputStream extends ServletOutputStream {
         if (closed)
             return;
         try {
-            writeBlocking(pooledBuffer, true);
-        } catch (IOException | RuntimeException e) {
+            writeBlocking(appendBuffer.clear(), true);
+        } catch (Exception e) {
             throw new IOException(e);
         } finally {
             closed = true;
-            pooledBuffer = null;
         }
     }
 
@@ -283,4 +298,5 @@ public class VertxServletOutputStream extends ServletOutputStream {
     public void setWriteListener(WriteListener writeListener) {
         throw new UnsupportedOperationException();
     }
+
 }
