@@ -1,28 +1,34 @@
-package io.quarkiverse.cxf.transport;
+package io.quarkiverse.cxf.transport.generated;
 
 import java.util.ArrayDeque;
 import java.util.Objects;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.CompositeByteBuf;
 
 /**
- * Adapted from
+ * Adapted by sync-quarkus-classes.groovy from
  * <a href=
- * "independent-projects/resteasy-reactive/server/vertx/src/main/java/org/jboss/resteasy/reactive/server/vertx/AppendBuffer.java"><code>AppendBuffer</code></a>
+ * 'https://github.com/quarkusio/quarkus/blob/main/independent-projects/resteasy-reactive/server/vertx/src/main/java/org/jboss/resteasy/reactive/server/vertx/ResteasyReactiveOutputStream.java'><code>ResteasyReactiveOutputStream</code></a>
  * from Quarkus.
  *
- * It is a bounded (direct) buffer container that can keep on accepting data till {@link #capacity} is exhausted.<br>
- * In order to keep appending on it, it can {@link #clear} and consolidate its content as a {@link ByteBuf}.
+ * <p>
+ *
+ *  It is a bounded (direct) buffer container that can keep on accepting data till {@link #capacity} is exhausted.<br>
+ *  In order to keep appending on it, it can {@link #clear} and consolidate its content as a {@link ByteBuf}.
  */
 final class AppendBuffer {
+
     private final ByteBufAllocator allocator;
 
     private final int minChunkSize;
+
     private final int capacity;
+
     private ByteBuf buffer;
+
     private ArrayDeque<ByteBuf> otherBuffers;
+
     private int size;
 
     private AppendBuffer(ByteBufAllocator allocator, int minChunkSize, int capacity) {
@@ -193,5 +199,4 @@ final class AppendBuffer {
     public int availableCapacity() {
         return capacity - size;
     }
-
 }
