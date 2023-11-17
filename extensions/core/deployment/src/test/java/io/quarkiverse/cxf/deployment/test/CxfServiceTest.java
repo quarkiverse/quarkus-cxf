@@ -92,21 +92,23 @@ public class CxfServiceTest {
     @Test
     public void whenUsingAddMethod_thenCorrect()
             throws XPathExpressionException, IOException, SAXException, ParserConfigurationException {
-        String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tem=\"http://test.deployment.cxf.quarkiverse.io/\">\n"
-                +
-                "   <soapenv:Header/>\n" +
-                "   <soapenv:Body>\n" +
-                "      <tem:add>\n" +
-                "      <tem:fruit>\n" +
-                "      <tem:name>Pineapple</tem:name>\n" +
-                "      <tem:description>Tropical fruit</tem:description>\n" +
-                "      </tem:fruit>\n" +
-                "      </tem:add>\n" +
-                "   </soapenv:Body>\n" +
-                "</soapenv:Envelope>";
+        String xml = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                + "  <soap:Body>\n"
+                + "    <ns2:add xmlns:ns2=\"http://test.deployment.cxf.quarkiverse.io/\">\n"
+                + "      <fruit>\n"
+                + "        <name>Pineapple</name>\n"
+                + "        <description>Tropical fruit</description>\n"
+                + "      </fruit>\n"
+                + "    </ns2:add>\n"
+                + "  </soap:Body>\n"
+                + "</soap:Envelope>";
 
-        Response response = RestAssured.given().header("Content-Type", "text/xml").and().body(xml).when()
-                .post("/services/fruit");
-        response.then().statusCode(200);
+        RestAssured.given()
+                .header("Content-Type", "text/xml")
+                .body(xml)
+                .post("/services/fruit")
+                .then()
+                .statusCode(200);
+
     }
 }
