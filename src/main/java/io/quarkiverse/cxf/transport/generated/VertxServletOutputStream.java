@@ -1,17 +1,15 @@
-package io.quarkiverse.cxf.transport;
+package io.quarkiverse.cxf.transport.generated;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
-
 import org.jboss.logging.Logger;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.quarkiverse.cxf.transport.VertxReactiveRequestContext;
 import io.quarkus.vertx.core.runtime.VertxBufferImpl;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
@@ -19,43 +17,43 @@ import io.vertx.core.Handler;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.ext.web.RoutingContext;
 
 /**
- * Adapted from
+ * Adapted by sync-quarkus-classes.groovy from
  * <a href=
- * "https://github.com/quarkusio/quarkus/blob/b9766f547d2c5c02715b5e35fda1c5f2f15904d8/independent-projects/resteasy-reactive/server/vertx/src/main/java/org/jboss/resteasy/reactive/server/vertx/ResteasyReactiveOutputStream.java"><code>ResteasyReactiveOutputStream</code></a>
+ * 'https://github.com/quarkusio/quarkus/blob/main/independent-projects/resteasy-reactive/server/vertx/src/main/java/org/jboss/resteasy/reactive/server/vertx/ResteasyReactiveOutputStream.java'><code>ResteasyReactiveOutputStream</code></a>
  * from Quarkus.
  */
 public class VertxServletOutputStream extends ServletOutputStream {
 
-    private static final Logger log = Logger.getLogger(VertxServletOutputStream.class);
+    private static final Logger log = Logger.getLogger("org.jboss.resteasy.reactive.server.vertx.ResteasyReactiveOutputStream");
 
-    private final HttpServerRequest request;
-    private final HttpServerResponse response;
+    private final VertxReactiveRequestContext context;
+
+    protected final HttpServerRequest request;
 
     private final AppendBuffer appendBuffer;
+
     private boolean committed;
 
     private boolean closed;
+
     protected boolean waitingForDrain;
+
     protected boolean drainHandlerRegistered;
+
     protected boolean first = true;
+
     protected Throwable throwable;
+
     private ByteArrayOutputStream overflow;
 
-    public VertxServletOutputStream(
-            HttpServerRequest request,
-            HttpServerResponse response,
-            RoutingContext context,
-            int outputBufferSize,
-            int minChunkSize) {
-        this.request = request;
-        this.response = response;
-        this.appendBuffer = AppendBuffer.withMinChunks(PooledByteBufAllocator.DEFAULT,
-                minChunkSize,
-                outputBufferSize);
+    public VertxServletOutputStream(VertxReactiveRequestContext context) {
+        this.context = context;
+        this.request = context.getContext().request();
+        this.appendBuffer = AppendBuffer.withMinChunks(PooledByteBufAllocator.DEFAULT, context.getDeployment().getResteasyReactiveConfig().getMinChunkSize(), context.getDeployment().getResteasyReactiveConfig().getOutputBufferSize());
         request.response().exceptionHandler(new Handler<Throwable>() {
+
             @Override
             public void handle(Throwable event) {
                 throwable = event;
@@ -70,8 +68,8 @@ public class VertxServletOutputStream extends ServletOutputStream {
                 }
             }
         });
+        context.getContext().addEndHandler(new Handler<AsyncResult<Void>>() {
 
-        context.addEndHandler(new Handler<AsyncResult<Void>>() {
             @Override
             public void handle(AsyncResult<Void> event) {
                 synchronized (request.connection()) {
@@ -85,7 +83,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
     }
 
     public void terminateResponse() {
-
     }
 
     Buffer createBuffer(ByteBuf data) {
@@ -165,6 +162,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
         if (!drainHandlerRegistered) {
             drainHandlerRegistered = true;
             Handler<Void> handler = new Handler<Void>() {
+
                 @Override
                 public void handle(Void event) {
                     synchronized (request.connection()) {
@@ -192,7 +190,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void write(final int b) throws IOException {
         write(new byte[] { (byte) b }, 0, 1);
     }
@@ -200,7 +197,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void write(final byte[] b) throws IOException {
         write(b, 0, b.length);
     }
@@ -208,7 +204,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void write(final byte[] b, final int off, final int len) throws IOException {
         if (len < 1) {
             return;
@@ -216,7 +211,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
         if (closed) {
             throw new IOException("Stream is closed");
         }
-
         int rem = len;
         int idx = off;
         try {
@@ -242,11 +236,12 @@ public class VertxServletOutputStream extends ServletOutputStream {
         if (!committed) {
             committed = true;
             if (finished) {
+                final HttpServerResponse response = request.response();
                 if (!response.headWritten()) {
                     if (buffer == null) {
                         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "0");
                     } else {
-                        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, "" + buffer.readableBytes());
+                        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(buffer.readableBytes()));
                     }
                 }
             } else {
@@ -258,7 +253,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void flush() throws IOException {
         if (closed) {
             throw new IOException("Stream is closed");
@@ -276,7 +270,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void close() throws IOException {
         if (closed)
             return;
@@ -298,5 +291,4 @@ public class VertxServletOutputStream extends ServletOutputStream {
     public void setWriteListener(WriteListener writeListener) {
         throw new UnsupportedOperationException();
     }
-
 }
