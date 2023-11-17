@@ -9,13 +9,12 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import io.vertx.core.http.HttpServerRequest;
+import io.quarkiverse.cxf.transport.generated.VertxServletOutputStream;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 
 public class VertxHttpServletResponse implements HttpServletResponse {
     protected final RoutingContext context;
-    private final HttpServerRequest request;
     protected final HttpServerResponse response;
     private final int outputBufferSize;
     private final int minChunkSize;
@@ -23,12 +22,11 @@ public class VertxHttpServletResponse implements HttpServletResponse {
     private PrintWriter printWriter;
 
     public VertxHttpServletResponse(RoutingContext context, int outputBufferSize, int minChunkSize) {
-        this.request = context.request();
         this.response = context.response();
         this.context = context;
         this.outputBufferSize = outputBufferSize;
         this.minChunkSize = minChunkSize;
-        this.os = new VertxServletOutputStream(request, response, context, outputBufferSize, minChunkSize);
+        this.os = new VertxServletOutputStream(new VertxReactiveRequestContext(context, minChunkSize, outputBufferSize));
     }
 
     @Override
@@ -191,7 +189,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
             } catch (IOException e) {
             }
         }
-        os = new VertxServletOutputStream(request, response, context, outputBufferSize, minChunkSize);
+        os = new VertxServletOutputStream(new VertxReactiveRequestContext(context, minChunkSize, outputBufferSize));
     }
 
     @Override
