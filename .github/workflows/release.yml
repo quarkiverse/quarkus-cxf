@@ -53,7 +53,7 @@ jobs:
 
       - name: Update latest release version in docs
         run: |
-          ./mvnw -B -ntp -pl docs -am generate-resources -Denforcer.skip -Dformatter.skip -Dimpsort.skip -Dkeytool.skip -Denforce-non-deployment.skip
+          ./mvnw -B -ntp -pl docs -am install -Denforcer.skip -Dformatter.skip -Dimpsort.skip -Dkeytool.skip -Denforce-non-deployment.skip
           if ! git diff --quiet docs/antora.yml; then
             git add docs/antora.yml
             git commit -m "Update the latest release version ${{steps.metadata.outputs.current-version}} in documentation"
