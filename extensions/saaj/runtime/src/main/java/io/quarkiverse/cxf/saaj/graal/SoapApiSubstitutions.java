@@ -4,7 +4,7 @@ import com.oracle.svm.core.annotate.Substitute;
 import com.oracle.svm.core.annotate.TargetClass;
 
 @TargetClass(className = "jakarta.xml.soap.FactoryFinder")
-final class Traget_javax_xml_soap_FactoryFinder {
+final class Target_jakarta_xml_soap_FactoryFinder {
 
     /**
      * The target method wants to read a properties file under {@code java.home} which does not work on GraalVM (there
