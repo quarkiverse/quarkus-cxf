@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.Random;
 
@@ -298,7 +299,7 @@ public class CxfClientTest {
             staticCopyPath = Paths.get("target/classes/wsdl/" + serviceName + ".wsdl");
             Files.createDirectories(staticCopyPath.getParent());
             try (InputStream in = CxfClientTest.class.getClassLoader().getResourceAsStream("wsdl/" + serviceName + ".wsdl")) {
-                Files.copy(in, staticCopyPath);
+                Files.copy(in, staticCopyPath, StandardCopyOption.REPLACE_EXISTING);
             }
         }
         /* The changing Docker IP address in the WSDL should not matter */
