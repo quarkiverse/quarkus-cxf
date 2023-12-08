@@ -56,7 +56,7 @@ public class SamlBeanProducers {
         private ConditionsBean conditions;
         private String cryptoAlias = "alice";
         private String cryptoPassword = "password";
-        private String cryptoKeystoreFile = "alice.jks";
+        private String cryptoKeystoreFile = "alice.p12";
         private String signatureAlgorithm = WSConstants.RSA_SHA1;
         private String digestAlgorithm = WSConstants.SHA1;
 
@@ -122,7 +122,7 @@ public class SamlBeanProducers {
                     callback.setSignatureAlgorithm(signatureAlgorithm);
                     callback.setSignatureDigestAlgorithm(digestAlgorithm);
 
-                    Crypto crypto = io.quarkiverse.cxf.it.security.policy.CryptoProducers.createCrypto("jks", cryptoAlias,
+                    Crypto crypto = io.quarkiverse.cxf.it.security.policy.CryptoProducers.createCrypto("pkcs12", cryptoAlias,
                             cryptoPassword, cryptoKeystoreFile);
                     callback.setIssuerCrypto(crypto);
                     callback.setIssuerKeyName(cryptoAlias);
