@@ -1,0 +1,10 @@
+
+= Regenerate certificates and keystores
+
+Run the script `generate_certs.sh` and copy all generated files (not the content of tme `tmp` folder) `src/main/resources` or `src/test/resources`.
+
+Content of the script file:
+
+[source,bash]
+----
+include::./generate_certs.sh[]

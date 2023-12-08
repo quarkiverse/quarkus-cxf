@@ -35,7 +35,7 @@ public class ClientCallbackHandler implements CallbackHandler {
             if (callbacks[i] instanceof WSPasswordCallback) {
                 WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
                 if ("myclientkey".equals(pc.getIdentifier())) {
-                    pc.setPassword("ckpass");
+                    pc.setPassword("cspass");
                     break;
                 } else if ("alice".equals(pc.getIdentifier())) {
                     pc.setPassword("clarinet");

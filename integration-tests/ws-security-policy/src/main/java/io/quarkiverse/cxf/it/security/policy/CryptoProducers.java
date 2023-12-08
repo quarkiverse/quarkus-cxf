@@ -30,14 +30,14 @@ public class CryptoProducers {
     @ApplicationScoped
     @Named
     public Crypto bobCrypto() {
-        return createCrypto("jks", "bob", "password", "bob.jks");
+        return createCrypto("pkcs12", "bob", "password", "bob.p12");
     }
 
     @Produces
     @ApplicationScoped
     @Named
     public Crypto aliceCrypto() {
-        return createCrypto("jks", "alice", "password", "alice.jks");
+        return createCrypto("pkcs12", "alice", "password", "alice.p12");
     }
 
     public static Crypto createCrypto(String type, String alias, String password, String keyStoreFile) {

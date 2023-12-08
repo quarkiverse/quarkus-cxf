@@ -18,7 +18,7 @@ public class PolicyTestUtils {
         if (count < 0) {
             final String body = RestAssured.given()
                     .config(RestAssured.config()
-                            .sslConfig(new SSLConfig().with().trustStore("client-truststore.jks", "password")))
+                            .sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
                     .get("/cxf/security-policy/" + endpoint)
                     .then()
                     .statusCode(200)
@@ -31,7 +31,7 @@ public class PolicyTestUtils {
                                 final String body = RestAssured.given()
                                         .config(RestAssured.config()
                                                 .sslConfig(
-                                                        new SSLConfig().with().trustStore("client-truststore.jks", "password")))
+                                                        new SSLConfig().with().trustStore("client-truststore.p12", "password")))
                                         .get("/cxf/security-policy/" + endpoint)
                                         .then()
                                         .statusCode(200)
