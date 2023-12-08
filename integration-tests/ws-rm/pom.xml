@@ -17,24 +17,7 @@
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-rt-ws-rm</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-derby</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-agroal</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-rt-features-logging</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-test-derby</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
