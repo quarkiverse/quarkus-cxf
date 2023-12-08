@@ -33,9 +33,6 @@ public class WsReliableMessagingTest {
     private static final String GREETME_ACTION = "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/ws-rm/WsrmHelloService/sayHelloRequest";
     private static final String GREETME_RESPONSE_ACTION = "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/ws-rm/WsrmHelloService/sayHelloResponse";
 
-    private OutMessageRecorder outRecorder;
-    private InMessageRecorder inRecorder;
-
     @Test
     public void testTwowayMessageLoss() throws Exception {
 
@@ -81,10 +78,10 @@ public class WsReliableMessagingTest {
         LoggingInInterceptor loggingIn = new LoggingInInterceptor();
         loggingIn.setPrettyLogging(true);
 
-        outRecorder = new OutMessageRecorder();
+        final OutMessageRecorder outRecorder = new OutMessageRecorder();
         bus.getOutInterceptors().add(outRecorder);
         bus.getOutInterceptors().add(loggingOut);
-        inRecorder = new InMessageRecorder();
+        final InMessageRecorder inRecorder = new InMessageRecorder();
         client.getInInterceptors().add(inRecorder);
         bus.getInInterceptors().add(loggingIn);
         client.getOutInterceptors().add(new MessageLossSimulator());
@@ -108,10 +105,10 @@ public class WsReliableMessagingTest {
         proxy.sayHello("Max");
         LOG.info("Received Max");
 
-        awaitMessages(7, 5, 10000);
+        new MessageRecorder(outRecorder, inRecorder).awaitMessages(7, 5, 10000);
 
-        MessageFlow mf = new MessageFlow(outRecorder.getOutboundMessages(),
-                inRecorder.getInboundMessages(), Names.WSA_NAMESPACE_NAME, RM11Constants.NAMESPACE_URI);
+        final MessageFlowAssertions mf = new MessageFlowAssertions(outRecorder.getOutboundMessages(), Names.WSA_NAMESPACE_NAME,
+                RM11Constants.NAMESPACE_URI, "Outbound");
 
         // Expected outbound:
         // CreateSequence
@@ -123,30 +120,28 @@ public class WsReliableMessagingTest {
         for (int i = 1; i < expectedActions.length; i++) {
             expectedActions[i] = GREETME_ACTION;
         }
-        mf.verifyActions(expectedActions, true);
-        mf.verifyMessageNumbers(new String[] { null, "1", "2", "2", "3", "4", "4" }, true);
-        mf.verifyLastMessage(new boolean[7], true);
+        mf.verifyActions(expectedActions);
+        mf.verifyMessageNumbers(null, "1", "2", "2", "3", "4", "4");
+        mf.verifyLastMessage(new boolean[7]);
         boolean[] expectedAcks = new boolean[7];
         for (int i = 2; i < expectedAcks.length; i++) {
             expectedAcks[i] = true;
         }
-        mf.verifyAcknowledgements(expectedAcks, true);
+        mf.verifyAcknowledgements(expectedAcks);
 
         // Expected inbound:
         // createSequenceResponse
         // + 4 greetMeResponse actions (to original or resent)
 
-        expectedActions = new String[] { RM11Constants.CREATE_SEQUENCE_RESPONSE_ACTION,
+        final MessageFlowAssertions outAssertions = new MessageFlowAssertions(inRecorder.getInboundMessages(),
+                Names.WSA_NAMESPACE_NAME, RM11Constants.NAMESPACE_URI, "Inbound");
+
+        outAssertions.verifyActions(RM11Constants.CREATE_SEQUENCE_RESPONSE_ACTION,
                 GREETME_RESPONSE_ACTION, GREETME_RESPONSE_ACTION,
-                GREETME_RESPONSE_ACTION, GREETME_RESPONSE_ACTION };
-        mf.verifyActions(expectedActions, false);
-        mf.verifyMessageNumbers(new String[] { null, "1", "2", "3", "4" }, false);
-        mf.verifyAcknowledgements(new boolean[] { false, true, true, true, true }, false);
+                GREETME_RESPONSE_ACTION, GREETME_RESPONSE_ACTION);
+        outAssertions.verifyMessageNumbers(new String[] { null, "1", "2", "3", "4" });
+        outAssertions.verifyAcknowledgements(new boolean[] { false, true, true, true, true });
 
     }
 
-    private void awaitMessages(int nExpectedOut, int nExpectedIn, int timeout) {
-        MessageRecorder mr = new MessageRecorder(outRecorder, inRecorder);
-        mr.awaitMessages(nExpectedOut, nExpectedIn, timeout);
-    }
 }

@@ -6,8 +6,8 @@ import java.util.List;
 
 public class MessageRecorder {
 
-    private OutMessageRecorder outRecorder;
-    private InMessageRecorder inRecorder;
+    private final OutMessageRecorder outRecorder;
+    private final InMessageRecorder inRecorder;
 
     public MessageRecorder(OutMessageRecorder or, InMessageRecorder ir) {
         inRecorder = ir;
