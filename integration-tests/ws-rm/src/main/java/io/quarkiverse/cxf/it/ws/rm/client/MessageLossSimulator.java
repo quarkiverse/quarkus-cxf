@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.quarkiverse.cxf.it.ws.rm.server;
+package io.quarkiverse.cxf.it.ws.rm.client;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,35 +36,18 @@ import org.apache.cxf.phase.PhaseInterceptor;
 import org.apache.cxf.ws.addressing.AddressingProperties;
 import org.apache.cxf.ws.rm.RMContextUtils;
 import org.apache.cxf.ws.rm.RMMessageConstants;
+import org.jboss.logging.Logger;
 
 /**
  * Makes every second message get lost.
  */
 public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
-    //private static final Logger LOG = LogUtils.getLogger(MessageLossSimulator.class);
+    private static final Logger LOG = Logger.getLogger(MessageLossSimulator.class);
     private int appMessageCount;
-    private boolean throwsException;
-    private int mode;
 
     public MessageLossSimulator() {
         super(Phase.PREPARE_SEND);
         addBefore(MessageSenderInterceptor.class.getName());
-    }
-
-    public boolean isThrowsException() {
-        return throwsException;
-    }
-
-    public void setThrowsException(boolean throwsException) {
-        this.throwsException = throwsException;
-    }
-
-    public int getMode() {
-        return mode;
-    }
-
-    public void setMode(int mode) {
-        this.mode = mode;
     }
 
     public void handleMessage(Message message) throws Fault {
@@ -74,44 +57,42 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
             action = maps.getAction().getValue();
         }
         if (RMContextUtils.isRMProtocolMessage(action)) {
+            LOG.info("MessageLossSimulator ignores a RM protocol message");
             return;
         }
         if (MessageUtils.isPartialResponse(message)) {
+            LOG.info("MessageLossSimulator ignores a partial response");
             return;
         }
         if (Boolean.TRUE.equals(message.get(RMMessageConstants.RM_RETRANSMISSION))) {
+            LOG.info("MessageLossSimulator ignores a RM retransmission");
             return;
         }
 
-        if (mode == 1) {
-            // never lose
-            return;
-        } else if (mode == -1) {
-            // always lose
-        } else {
-            // alternatively lose
-            synchronized (this) {
-                appMessageCount++;
-                if (0 != (appMessageCount % 2)) {
-                    return;
-                }
+        // alternatively lose
+        synchronized (this) {
+            appMessageCount++;
+            if (0 != (appMessageCount % 2)) {
+                LOG.info("MessageLossSimulator ignores an odd message");
+                return;
             }
         }
 
+        LOG.info("MessageLossSimulator makes an even message " + appMessageCount + " to get lost");
         InterceptorChain chain = message.getInterceptorChain();
         ListIterator<Interceptor<? extends Message>> it = chain.getIterator();
         while (it.hasNext()) {
             PhaseInterceptor<?> pi = (PhaseInterceptor<? extends Message>) it.next();
             if (MessageSenderInterceptor.class.getName().equals(pi.getId())) {
                 chain.remove(pi);
-                //LOG.fine("Removed MessageSenderInterceptor from interceptor chain.");
+                LOG.debug("Removed MessageSenderInterceptor from interceptor chain.");
                 break;
             }
         }
 
         message.setContent(OutputStream.class, new WrappedOutputStream(message));
 
-        message.getInterceptorChain().add(new MessageLossEndingInterceptor(throwsException));
+        message.getInterceptorChain().add(new MessageLossEndingInterceptor(false));
     }
 
     /**
@@ -139,7 +120,7 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
         }
     }
 
-    private class WrappedOutputStream extends AbstractWrappedOutputStream {
+    private static class WrappedOutputStream extends AbstractWrappedOutputStream {
 
         private Message outMessage;
 
@@ -149,18 +130,14 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
 
         @Override
         protected void onFirstWrite() throws IOException {
-            /*
-             * if (LOG.isLoggable(Level.FINE)) {
-             * Long nr = RMContextUtils.retrieveRMProperties(outMessage, true)
-             * .getSequence().getMessageNumber();
-             * LOG.fine("Losing message " + nr);
-             * }
-             */
+            Long nr = RMContextUtils.retrieveRMProperties(outMessage, true)
+                    .getSequence().getMessageNumber();
+            LOG.info("Losing message " + nr);
             wrappedStream = new DummyOutputStream();
         }
     }
 
-    private final class DummyOutputStream extends OutputStream {
+    private static final class DummyOutputStream extends OutputStream {
 
         @Override
         public void write(int b) throws IOException {

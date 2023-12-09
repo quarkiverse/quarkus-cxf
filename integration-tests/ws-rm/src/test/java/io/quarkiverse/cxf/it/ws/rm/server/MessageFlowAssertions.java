@@ -5,12 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.cxf.ws.rm.RMConstants;
+import org.assertj.core.api.Assertions;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,30 +23,22 @@ public class MessageFlowAssertions {
     private final List<Document> outboundMessages = new ArrayList<>();
     private final String direction;
 
-    public MessageFlowAssertions(List<byte[]> out, String addrns, String rmns, String direction) throws Exception {
+    public MessageFlowAssertions(List<String> out, String addrns, String rmns, String direction) throws Exception {
         addressingNamespace = addrns;
         rmNamespace = rmns;
         this.direction = direction;
-        for (byte[] bytes : out) {
-            outboundMessages.add(StaxUtils.read(new ByteArrayInputStream(bytes)));
+        for (String msg : out) {
+            outboundMessages.add(StaxUtils.read(new StringReader(msg)));
         }
     }
 
     public void verifyActions(String... expectedActions) throws Exception {
 
-        assertEquals(expectedActions.length, outboundMessages.size());
+        String[] actual = outboundMessages.stream()
+                .map(this::getAction)
+                .toArray(String[]::new);
+        Assertions.assertThat(actual).isEqualTo(expectedActions);
 
-        for (int i = 0; i < expectedActions.length; i++) {
-            Document doc = outboundMessages.get(i);
-            String action = getAction(doc);
-            if (null == expectedActions[i]) {
-                assertNull(action, direction + " message " + i + " has unexpected action: " + action);
-            } else {
-                assertEquals(expectedActions[i], action,
-                        direction + " message " + i
-                                + " does not contain expected action header");
-            }
-        }
     }
 
     public void verifyMessageNumbers(String... expectedMessageNumbers) throws Exception {
@@ -114,7 +107,7 @@ public class MessageFlowAssertions {
         assertEquals(expectedAcks, ackCount, "unexpected number of acks");
     }
 
-    private String getAction(Document document) throws Exception {
+    private String getAction(Document document) {
         Element e = getHeaderElement(document, addressingNamespace, "Action");
         if (null != e) {
             return getText(e);
@@ -152,8 +145,7 @@ public class MessageFlowAssertions {
         return getHeaderElement(document, rmNamespace, name);
     }
 
-    private static Element getHeaderElement(Document document, String namespace, String localName)
-            throws Exception {
+    private static Element getHeaderElement(Document document, String namespace, String localName) {
         Element envelopeElement = document.getDocumentElement();
         Element headerElement = null;
         for (Node nd = envelopeElement.getFirstChild(); nd != null; nd = nd.getNextSibling()) {

@@ -12,10 +12,10 @@ public class BeanProducers {
     @Produces
     @Named
     RMFeature rmFeature() {
-        org.apache.cxf.ws.rm.feature.RMFeature rmFeature = new org.apache.cxf.ws.rm.feature.RMFeature();
+        RMFeature rmFeature = new RMFeature();
         rmFeature.setRMNamespace(RM11Constants.NAMESPACE_URI);
         RMAssertion.BaseRetransmissionInterval baseRetransmissionInterval = new RMAssertion.BaseRetransmissionInterval();
-        baseRetransmissionInterval.setMilliseconds(Long.valueOf(60000));
+        baseRetransmissionInterval.setMilliseconds(Long.valueOf(4000));
         RMAssertion.AcknowledgementInterval acknowledgementInterval = new RMAssertion.AcknowledgementInterval();
         acknowledgementInterval.setMilliseconds(Long.valueOf(2000));
 

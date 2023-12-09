@@ -1,10 +1,12 @@
-package io.quarkiverse.cxf.it.ws.rm.server;
+package io.quarkiverse.cxf.it.ws.rm.client;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.helpers.IOUtils;
@@ -15,15 +17,18 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.ws.addressing.ContextUtils;
 
+@ApplicationScoped
 public class InMessageRecorder extends AbstractPhaseInterceptor<Message> {
 
     private static final Logger LOG = LogUtils.getLogger(InMessageRecorder.class);
-    private final List<byte[]> inbound = new CopyOnWriteArrayList<>();
+    private List<byte[]> messages = new ArrayList<>();
+    private final Object lock = new Object();
 
     public InMessageRecorder() {
         super(Phase.RECEIVE);
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         if (!ContextUtils.isRequestor(message)) {
             return;
@@ -38,7 +43,9 @@ public class InMessageRecorder extends AbstractPhaseInterceptor<Message> {
                 IOUtils.copy(is, bout);
                 is.close();
 
-                inbound.add(bout.toByteArray());
+                synchronized (lock) {
+                    messages.add(bout.toByteArray());
+                }
                 if (LOG.isLoggable(Level.FINE)) {
                     LOG.fine("inbound: " + new String(bout.toByteArray()));
                 }
@@ -49,7 +56,12 @@ public class InMessageRecorder extends AbstractPhaseInterceptor<Message> {
         }
     }
 
-    public List<byte[]> getInboundMessages() {
-        return inbound;
+    public List<byte[]> drainMessages() {
+        List<byte[]> result;
+        synchronized (lock) {
+            result = messages;
+            messages = new ArrayList<>();
+        }
+        return result;
     }
 }

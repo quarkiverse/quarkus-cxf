@@ -1,8 +1,8 @@
-package io.quarkiverse.cxf.it.ws.rm.server;
+package io.quarkiverse.cxf.it.ws.rm.client;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import org.apache.cxf.common.logging.LogUtils;
@@ -19,13 +19,15 @@ import org.apache.cxf.ws.addressing.ContextUtils;
 public class OutMessageRecorder extends AbstractPhaseInterceptor<Message> {
 
     private static final Logger LOG = LogUtils.getLogger(OutMessageRecorder.class);
-    private final List<byte[]> outbound = new CopyOnWriteArrayList<>();
+    private List<byte[]> messages = new ArrayList<>();
+    private final Object lock = new Object();
 
     public OutMessageRecorder() {
         super(Phase.PREPARE_SEND);
         addAfter(MessageSenderInterceptor.class.getName());
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         if (!ContextUtils.isRequestor(message)) {
             return;
@@ -50,20 +52,29 @@ public class OutMessageRecorder extends AbstractPhaseInterceptor<Message> {
         return (WriteOnCloseOutputStream) os;
     }
 
-    public List<byte[]> getOutboundMessages() {
-        return outbound;
+    public List<byte[]> drainMessages() {
+        List<byte[]> result;
+        synchronized (lock) {
+            result = messages;
+            messages = new ArrayList<>();
+        }
+        return result;
     }
 
     class RecorderCallback implements CachedOutputStreamCallback {
 
+        @Override
         public void onFlush(CachedOutputStream cos) {
 
         }
 
+        @Override
         public void onClose(CachedOutputStream cos) {
             // bytes were already copied after flush
             try {
-                outbound.add(cos.getBytes());
+                synchronized (lock) {
+                    messages.add(cos.getBytes());
+                }
             } catch (Exception e) {
                 LOG.fine("Can't record message from output stream class: "
                         + cos.getOut().getClass().getName());
