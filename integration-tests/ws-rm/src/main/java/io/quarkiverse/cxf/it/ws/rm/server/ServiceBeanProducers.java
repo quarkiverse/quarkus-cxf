@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.it.ws.rm.server;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Named;
 
@@ -7,17 +8,22 @@ import org.apache.cxf.ws.rm.RM11Constants;
 import org.apache.cxf.ws.rm.feature.RMFeature;
 import org.apache.cxf.ws.rmp.v200502.RMAssertion;
 
-public class BeanProducers {
+public class ServiceBeanProducers {
 
     @Produces
+    @ApplicationScoped
     @Named
-    RMFeature rmFeature() {
+    RMFeature rmFeatureService() {
+        return rmFeature(60000, 2000);
+    }
+
+    public static RMFeature rmFeature(long baseRetransmissionIntervalMs, long acknowledgementIntervalMs) {
         RMFeature rmFeature = new RMFeature();
         rmFeature.setRMNamespace(RM11Constants.NAMESPACE_URI);
         RMAssertion.BaseRetransmissionInterval baseRetransmissionInterval = new RMAssertion.BaseRetransmissionInterval();
-        baseRetransmissionInterval.setMilliseconds(Long.valueOf(4000));
+        baseRetransmissionInterval.setMilliseconds(Long.valueOf(baseRetransmissionIntervalMs));
         RMAssertion.AcknowledgementInterval acknowledgementInterval = new RMAssertion.AcknowledgementInterval();
-        acknowledgementInterval.setMilliseconds(Long.valueOf(2000));
+        acknowledgementInterval.setMilliseconds(Long.valueOf(acknowledgementIntervalMs));
 
         RMAssertion rmAssertion = new RMAssertion();
         rmAssertion.setAcknowledgementInterval(acknowledgementInterval);

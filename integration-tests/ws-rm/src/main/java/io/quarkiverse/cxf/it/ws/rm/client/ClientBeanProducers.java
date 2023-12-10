@@ -4,6 +4,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Named;
 
+import org.apache.cxf.ws.rm.feature.RMFeature;
+
+import io.quarkiverse.cxf.it.ws.rm.server.ServiceBeanProducers;
+
 public class ClientBeanProducers {
 
     @Produces
@@ -25,5 +29,12 @@ public class ClientBeanProducers {
     @Named
     OutMessageRecorder outMessageRecorder() {
         return new OutMessageRecorder();
+    }
+
+    @Produces
+    @ApplicationScoped
+    @Named
+    RMFeature rmFeatureClient() {
+        return ServiceBeanProducers.rmFeature(4000, 2000);
     }
 }
