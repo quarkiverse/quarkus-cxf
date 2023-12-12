@@ -42,7 +42,7 @@
     </developers>
     <properties>
         <!-- Primary dependencies -->
-        <quarkus.version>3.6.2</quarkus.version>
+        <quarkus.version>3.6.3</quarkus.version>
         <quarkus-xmlsec.version>2.3.0</quarkus-xmlsec.version>
         <cxf.version>4.0.3</cxf.version>
 
