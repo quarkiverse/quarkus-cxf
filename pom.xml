@@ -71,6 +71,7 @@
         <javaparser.version>3.25.7</javaparser.version>
 
         <cq-maven-plugin.version>4.4.7</cq-maven-plugin.version>
+        <exec-maven-plugin.version>3.1.1</exec-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <groovy.version>3.0.19</groovy.version>
         <maven-build-cache-extension.version>1.1.0</maven-build-cache-extension.version>
@@ -170,6 +171,11 @@
                             </exclusions>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -304,6 +310,8 @@
                                 import java.nio.file.Files
                                 import java.nio.file.Path
                                 import java.nio.file.Paths
+                                import java.util.stream.Collectors
+                                import java.util.stream.Stream
 
                                 def buildYaml = '.github/workflows/build.yml'
                                 def buildXmlPath = project.basedir.toPath().resolve(buildYaml)
@@ -318,12 +326,26 @@
                                 def expectedTestModules;
                                 def iTestsDir = project.basedir.toPath().resolve('integration-tests')
                                 try (java.util.stream.Stream files = Files.list(iTestsDir)) {
-                                    expectedTestModules = files
-                                        .filter(path -&gt; Files.isRegularFile(iTestsDir.resolve(path).resolve('pom.xml')))
+                                    def pomFiles = files
+                                        .map(path -&gt; iTestsDir.resolve(path).resolve('pom.xml'))
+                                        .filter(path -&gt; Files.isRegularFile(path))
+                                        .collect(Collectors.toList())
+                                    def allTestModules = pomFiles.stream()
+                                        .map(Path::getParent)
                                         .map(Path::getFileName)
                                         .map(Path::toString)
+
+                                    def jksTestModules = pomFiles.stream()
+                                        .filter(path -&gt; path.getText('UTF-8').contains('&lt;id&gt;jks&lt;/id&gt;'))
+                                        .map(Path::getParent)
+                                        .map(Path::getFileName)
+                                        .map(Path::toString)
+                                        .map(path -&gt; path + ' -Djks')
+
+                                    expectedTestModules = Stream.concat(allTestModules, jksTestModules)
                                         .sorted()
-                                        .collect(java.util.stream.Collectors.joining(', '))
+                                        .map(path -&gt; "'" + path + "'")
+                                        .collect(Collectors.joining(', '))
                                 }
                                 if (!foundTestModules.equals(expectedTestModules)) {
                                     println('Updating testModule attribute in ' + buildYaml + ':\n  old: ' + foundTestModules + '\n  new: '+expectedTestModules)

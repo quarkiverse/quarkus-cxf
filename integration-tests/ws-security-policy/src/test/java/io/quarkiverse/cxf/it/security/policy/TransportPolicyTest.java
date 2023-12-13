@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.config.SSLConfig;
 
 @QuarkusTest
 public class TransportPolicyTest {
@@ -23,7 +22,7 @@ public class TransportPolicyTest {
     void hello() {
         /* client calling a service having no policy via HTTPS */
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
                 .post("/cxf/security-policy/hello")
                 .then()
@@ -38,7 +37,7 @@ public class TransportPolicyTest {
          * Should pass thanks to hostname-verifier = AllowAllHostnameVerifier
          */
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
                 .post("/cxf/security-policy/helloAllowAll")
                 .then()
@@ -53,7 +52,7 @@ public class TransportPolicyTest {
          * Should pass thanks to hostname-verifier = io.quarkiverse.cxf.it.security.policy.NoopHostnameVerifier
          */
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
                 .post("/cxf/security-policy/helloCustomHostnameVerifier")
                 .then()
@@ -66,7 +65,7 @@ public class TransportPolicyTest {
         /* client calling a service enforcing HTTPS via HTTPS */
         PolicyTestUtils.drainMessages("drainMessages", -1);
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
                 .post("/cxf/security-policy/helloHttps")
                 .then()
@@ -90,7 +89,7 @@ public class TransportPolicyTest {
          * but we do not sign in this scenario
          */
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(body)
                 .post("https://localhost:" + getPort() + "/services/helloHttps")
@@ -102,7 +101,7 @@ public class TransportPolicyTest {
         body = body.replaceFirst("<wsu:Created>[^<]*</wsu:Created>", "<wsu:Created>2020-10-01T19:51:36.768Z</wsu:Created>");
         body = body.replaceFirst("<wsu:Expires>[^<]*</wsu:Expires>", "<wsu:Expires>2020-10-01T19:56:36.768Z</wsu:Expires>");
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(body)
                 .post("https://localhost:" + getPort()
@@ -118,7 +117,7 @@ public class TransportPolicyTest {
         body = body.replaceFirst("<wsu:Expires>[^<]*</wsu:Expires>",
                 "<wsu:Expires>" + y + "-10-01T19:56:36.768Z</wsu:Expires>");
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(body)
                 .post("https://localhost:" + getPort()
@@ -138,7 +137,7 @@ public class TransportPolicyTest {
     void helloHttpsPkcs12() {
         /* client calling a service enforcing HTTPS via HTTPS */
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
                 .post("/cxf/security-policy/helloHttpsPkcs12")
                 .then()
@@ -150,7 +149,7 @@ public class TransportPolicyTest {
     void helloHttp() {
         /* client calling a service enforcing HTTPS via HTTP */
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
                 .post("/cxf/security-policy/helloHttp")
                 .then()
@@ -161,7 +160,7 @@ public class TransportPolicyTest {
     @Test
     void helloIp() {
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
                 .post("/cxf/security-policy/helloIp")
                 .then()

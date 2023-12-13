@@ -10,7 +10,9 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.crypto.PasswordEncryptor;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+@ApplicationScoped
 public class CryptoProducers {
 
     private static final PasswordEncryptor dummyPasswordEncryptor = new PasswordEncryptor() {
@@ -26,18 +28,21 @@ public class CryptoProducers {
         }
     };
 
+    @ConfigProperty(name = "keystore.type")
+    String keystoreType;
+
     @Produces
     @ApplicationScoped
     @Named
     public Crypto bobCrypto() {
-        return createCrypto("pkcs12", "bob", "password", "bob.p12");
+        return createCrypto(keystoreType, "bob", "password", "bob." + keystoreType);
     }
 
     @Produces
     @ApplicationScoped
     @Named
     public Crypto aliceCrypto() {
-        return createCrypto("pkcs12", "alice", "password", "alice.p12");
+        return createCrypto(keystoreType, "alice", "password", "alice." + keystoreType);
     }
 
     public static Crypto createCrypto(String type, String alias, String password, String keyStoreFile) {

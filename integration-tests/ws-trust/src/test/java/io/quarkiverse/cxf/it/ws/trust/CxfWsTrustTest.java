@@ -120,8 +120,8 @@ public class CxfWsTrustTest {
                 Thread.currentThread().getContextClassLoader().getResource("clientKeystore.properties"));
         ctx.put(SecurityConstants.ENCRYPT_PROPERTIES,
                 Thread.currentThread().getContextClassLoader().getResource("clientKeystore.properties"));
-        ctx.put(SecurityConstants.SIGNATURE_USERNAME, "myclientkey");
-        ctx.put(SecurityConstants.ENCRYPT_USERNAME, "myservicekey");
+        ctx.put(SecurityConstants.SIGNATURE_USERNAME, "client");
+        ctx.put(SecurityConstants.ENCRYPT_USERNAME, "service");
     }
 
     /**
@@ -149,8 +149,8 @@ public class CxfWsTrustTest {
         props.put(SecurityConstants.CALLBACK_HANDLER, new ClientCallbackHandler());
         props.put(SecurityConstants.ENCRYPT_PROPERTIES,
                 Thread.currentThread().getContextClassLoader().getResource("clientKeystore.properties"));
-        props.put(SecurityConstants.ENCRYPT_USERNAME, "mystskey");
-        props.put(SecurityConstants.STS_TOKEN_USERNAME, "myclientkey");
+        props.put(SecurityConstants.ENCRYPT_USERNAME, "sts");
+        props.put(SecurityConstants.STS_TOKEN_USERNAME, "client");
         props.put(SecurityConstants.STS_TOKEN_PROPERTIES,
                 Thread.currentThread().getContextClassLoader().getResource("clientKeystore.properties"));
         props.put(SecurityConstants.STS_TOKEN_USE_CERT_FOR_KEYINFO, "true");
