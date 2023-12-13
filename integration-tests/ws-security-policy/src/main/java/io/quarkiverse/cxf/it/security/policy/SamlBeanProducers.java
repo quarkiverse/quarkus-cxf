@@ -25,21 +25,26 @@ import org.apache.wss4j.common.saml.bean.Version;
 import org.apache.wss4j.common.saml.builder.SAML1Constants;
 import org.apache.wss4j.common.saml.builder.SAML2Constants;
 import org.apache.wss4j.dom.WSConstants;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+@ApplicationScoped
 public class SamlBeanProducers {
+
+    @ConfigProperty(name = "keystore.type")
+    String keystoreType;
 
     @Produces
     @ApplicationScoped
     @Named
     public CallbackHandler saml2CallbackHandler() {
-        return new SamlCallbackHandler(Version.SAML_20);
+        return new SamlCallbackHandler(Version.SAML_20, keystoreType);
     }
 
     @Produces
     @ApplicationScoped
     @Named
     public CallbackHandler saml1CallbackHandler() {
-        return new SamlCallbackHandler(Version.SAML_11);
+        return new SamlCallbackHandler(Version.SAML_11, keystoreType);
     }
 
     /**
@@ -56,12 +61,15 @@ public class SamlBeanProducers {
         private ConditionsBean conditions;
         private String cryptoAlias = "alice";
         private String cryptoPassword = "password";
-        private String cryptoKeystoreFile = "alice.p12";
+        private final String cryptoKeystoreFile;
         private String signatureAlgorithm = WSConstants.RSA_SHA1;
         private String digestAlgorithm = WSConstants.SHA1;
+        private final String keystoreType;
 
-        public SamlCallbackHandler(Version samlVersion) {
+        public SamlCallbackHandler(Version samlVersion, String keystoreType) {
             this.samlVersion = samlVersion;
+            this.keystoreType = keystoreType;
+            this.cryptoKeystoreFile = "alice." + keystoreType;
             switch (samlVersion) {
                 case SAML_20:
                     this.confirmationMethod = SAML2Constants.CONF_SENDER_VOUCHES;
@@ -122,7 +130,8 @@ public class SamlBeanProducers {
                     callback.setSignatureAlgorithm(signatureAlgorithm);
                     callback.setSignatureDigestAlgorithm(digestAlgorithm);
 
-                    Crypto crypto = io.quarkiverse.cxf.it.security.policy.CryptoProducers.createCrypto("pkcs12", cryptoAlias,
+                    Crypto crypto = io.quarkiverse.cxf.it.security.policy.CryptoProducers.createCrypto(keystoreType,
+                            cryptoAlias,
                             cryptoPassword, cryptoKeystoreFile);
                     callback.setIssuerCrypto(crypto);
                     callback.setIssuerKeyName(cryptoAlias);
@@ -133,7 +142,7 @@ public class SamlBeanProducers {
         }
 
         protected KeyInfoBean createKeyInfo() throws Exception {
-            Crypto crypto = io.quarkiverse.cxf.it.security.policy.CryptoProducers.createCrypto("jks", cryptoAlias,
+            Crypto crypto = io.quarkiverse.cxf.it.security.policy.CryptoProducers.createCrypto(keystoreType, cryptoAlias,
                     cryptoPassword, cryptoKeystoreFile);
             CryptoType cryptoType = new CryptoType(CryptoType.TYPE.ALIAS);
             cryptoType.setAlias(cryptoAlias);

@@ -27,6 +27,6 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 public class ServerCallbackHandler extends PasswordCallbackHandler {
 
     public ServerCallbackHandler() {
-        super(Map.of("myservicekey", "skpass"));
+        super(Map.of("service", "password"));
     }
 }

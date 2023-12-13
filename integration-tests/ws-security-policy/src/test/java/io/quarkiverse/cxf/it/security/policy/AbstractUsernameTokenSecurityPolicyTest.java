@@ -12,7 +12,6 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
 import io.restassured.RestAssured;
-import io.restassured.config.SSLConfig;
 
 public abstract class AbstractUsernameTokenSecurityPolicyTest {
 
@@ -22,7 +21,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
 
         // replay should fail because nonces are cached by default
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(body)
                 .post("/services/helloUsernameToken")
@@ -33,7 +32,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
         // when we remove <wsse:Nonce> the service policy should not allow it
         body = body.replaceFirst("<wsse:Nonce[^<]*</wsse:Nonce>", "");
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(body)
                 .post("/services/helloUsernameToken")
@@ -53,7 +52,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
 
         // replay should succeed because our nonce cache accepts everything
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(body)
                 .post("/services/helloUsernameTokenAlt")
@@ -64,8 +63,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
         // same with helloUsernameTokenUncachedNonce
         for (int i = 0; i < 2; i++) {
             RestAssured.given()
-                    .config(RestAssured.config()
-                            .sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                    .config(PolicyTestUtils.restAssuredConfig())
                     .contentType("text/xml")
                     .body(body)
                     .post("/services/helloUsernameTokenUncachedNonce")
@@ -77,7 +75,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
         // when we remove <wsse:Nonce> the service policy should not allow it
         final String noNoncebody = body.replaceFirst("<wsse:Nonce[^<]*</wsse:Nonce>", "");
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(noNoncebody)
                 .post("/services/helloUsernameTokenAlt")
@@ -90,7 +88,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
                 "<wsse:Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText\">[^<]*</wsse:Password>",
                 "<wsse:Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText\">fake</wsse:Password>");
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(body)
                 .post("/services/helloUsernameTokenAlt")
@@ -99,8 +97,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
                 .body(containsString(validateTokenFalseBody()));
         // ... but the same should fail on /helloUsernameTokenUncachedNonce where we require correct passwords
         RestAssured.given()
-                .config(RestAssured.config()
-                        .sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(body)
                 .post("/services/helloUsernameTokenUncachedNonce")
@@ -117,7 +114,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
     static String helloUsernameTokenCommon(String client) {
         PolicyTestUtils.drainMessages("drainMessages", -1);
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
                 .post("/cxf/security-policy/" + client)
                 .then()
@@ -157,7 +154,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
          * endpoint. Hence the requests should go out without UsernameToken and it should fail
          */
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
                 .post("/cxf/security-policy/helloNoUsernameToken")
                 .then()
@@ -174,7 +171,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
     void helloUsernameTokenNoMustUnderstand() {
         PolicyTestUtils.drainMessages("drainMessages", -1);
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body("helloUsernameTokenNoMustUnderstand")
                 .post("/cxf/security-policy/helloUsernameTokenNoMustUnderstand")
                 .then()
@@ -206,7 +203,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
         final String requestPayload = "random person";
         final String responsePayload = "Hello random person from EncryptSign!";
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body(requestPayload)
                 .post("/cxf/security-policy/" + endpoint)
                 .then()
@@ -238,7 +235,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
                 + "  </soap:Body>\n"
                 + "</soap:Envelope>";
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(unsignedUnencrypted)
                 .post("/services/" + endpoint)
@@ -266,7 +263,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
         final String requestPayload = "random saml person";
         final String responsePayload = "Hello random saml person from " + endpoint + "!";
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .body(requestPayload)
                 .post("/cxf/security-policy/" + endpoint)
                 .then()
@@ -301,7 +298,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
                 + "  </soap:Body>\n"
                 + "</soap:Envelope>";
         RestAssured.given()
-                .config(RestAssured.config().sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                .config(PolicyTestUtils.restAssuredConfig())
                 .contentType("text/xml")
                 .body(unsignedUnencrypted)
                 .post("https://localhost:" + getPort() + "/services/" + endpoint)

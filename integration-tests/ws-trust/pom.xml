@@ -61,6 +61,32 @@
 
     <profiles>
         <profile>
+            <id>generate-certs.sh</id><!-- Activated manually -->
+            <properties>
+                <keystore.type>pkcs12</keystore.type>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-certs.sh</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${basedir}/generate-certs.sh</executable>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>native</id>
             <activation>
                 <activeByDefault>false</activeByDefault>

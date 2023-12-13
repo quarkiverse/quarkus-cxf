@@ -25,7 +25,7 @@ import io.quarkus.runtime.LaunchMode;
 
 @WebServiceProvider(serviceName = "SecurityTokenService", portName = "UT_Port", targetNamespace = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/", wsdlLocation = "ws-trust-1.4-service.wsdl")
 @EndpointProperties(value = {
-        @EndpointProperty(key = "ws-security.signature.username", value = "mystskey"),
+        @EndpointProperty(key = "ws-security.signature.username", value = "sts"),
         @EndpointProperty(key = "ws-security.signature.properties", value = "stsKeystore.properties"),
         @EndpointProperty(key = "ws-security.callback-handler", value = "io.quarkiverse.cxf.it.ws.trust.sts.StsCallbackHandler"),
         @EndpointProperty(key = "ws-security.validate.token", value = "false")
@@ -37,7 +37,7 @@ public class SampleSTS extends SecurityTokenServiceProvider {
 
         StaticSTSProperties props = new StaticSTSProperties();
         props.setSignatureCryptoProperties("stsKeystore.properties");
-        props.setSignatureUsername("mystskey");
+        props.setSignatureUsername("sts");
         props.setCallbackHandlerClass(StsCallbackHandler.class.getName());
         props.setIssuer("DoubleItSTSIssuer");
 

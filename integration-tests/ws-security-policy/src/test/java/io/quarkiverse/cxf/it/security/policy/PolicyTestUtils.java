@@ -6,8 +6,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.awaitility.Awaitility;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 import io.restassured.RestAssured;
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.config.SSLConfig;
 
 public class PolicyTestUtils {
@@ -17,8 +19,7 @@ public class PolicyTestUtils {
 
         if (count < 0) {
             final String body = RestAssured.given()
-                    .config(RestAssured.config()
-                            .sslConfig(new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                    .config(restAssuredConfig())
                     .get("/cxf/security-policy/" + endpoint)
                     .then()
                     .statusCode(200)
@@ -29,9 +30,7 @@ public class PolicyTestUtils {
                     .until(
                             () -> {
                                 final String body = RestAssured.given()
-                                        .config(RestAssured.config()
-                                                .sslConfig(
-                                                        new SSLConfig().with().trustStore("client-truststore.p12", "password")))
+                                        .config(restAssuredConfig())
                                         .get("/cxf/security-policy/" + endpoint)
                                         .then()
                                         .statusCode(200)
@@ -42,6 +41,11 @@ public class PolicyTestUtils {
         }
         return messages;
 
+    }
+
+    public static RestAssuredConfig restAssuredConfig() {
+        return RestAssured.config().sslConfig(new SSLConfig().with().trustStore(
+                "client-truststore." + ConfigProvider.getConfig().getValue("keystore.type", String.class), "password"));
     }
 
 }
