@@ -59,10 +59,7 @@ public class WsrmServer implements Closeable {
                 try {
                     Files.setPosixFilePermissions(
                             binPath,
-                            EnumSet.of(
-                                    PosixFilePermission.OWNER_EXECUTE,
-                                    PosixFilePermission.GROUP_EXECUTE,
-                                    PosixFilePermission.OTHERS_EXECUTE));
+                            EnumSet.allOf(PosixFilePermission.class));
                 } catch (IOException e) {
                     throw new RuntimeException("Could not set executable permissions for " + binPath);
                 }
