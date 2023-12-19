@@ -2,7 +2,6 @@ package io.quarkiverse.cxf.ws.security;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -34,12 +33,7 @@ public class WssFactoryCustomizer implements ClientFactoryCustomizer, EndpointFa
         if (key != null && Optional.ofNullable(config.clients()).map(m -> m.containsKey(key)).orElse(false)) {
             final SecurityConfig wssConfig = Optional.ofNullable(config.clients()).map(m1 -> m1.get(key)).orElse(null)
                     .security();
-            Map<String, Object> props = factory.getProperties();
-            if (props == null) {
-                props = new LinkedHashMap<>();
-                factory.setProperties(props);
-            }
-            customize(Kind.client, key, wssConfig, props::put);
+            customize(Kind.client, key, wssConfig, factory.getProperties()::put);
         }
     }
 
@@ -49,12 +43,7 @@ public class WssFactoryCustomizer implements ClientFactoryCustomizer, EndpointFa
         if (key != null && Optional.ofNullable(config.endpoints()).map(m -> m.containsKey(key)).orElse(false)) {
             final SecurityConfig wssConfig = Optional.ofNullable(config.endpoints()).map(m1 -> m1.get(key)).orElse(null)
                     .security();
-            Map<String, Object> props = factory.getProperties();
-            if (props == null) {
-                props = new LinkedHashMap<>();
-                factory.setProperties(props);
-            }
-            customize(Kind.endpoint, key, wssConfig, props::put);
+            customize(Kind.endpoint, key, wssConfig, factory.getProperties()::put);
         }
     }
 

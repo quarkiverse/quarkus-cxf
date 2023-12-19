@@ -13,7 +13,7 @@ ifeval::[{doc-show-badges} == true]
 🧪Experimental • Since 1.5.3
 endif::[]
 
-IMPORTANT: This extension is https://github.com/quarkiverse/quarkus-cxf/issues/627[known not to work]. Contributions are welcome!
+Provides CXF framework's https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging] implementation.
 
 
 [id="quarkus-cxf-rt-ws-rm-maven-coordinates"]
@@ -40,3 +40,13 @@ endif::[]
 
 * https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging]
 
+
+[id="quarkus-cxf-rt-ws-rm-usage"]
+== Usage
+
+tbd
+
+
+[id="quarkus-cxf-rt-ws-rm-configuration"]
+== Configuration
+include::../../includes/quarkus-cxf-rt-ws-rm.adoc[]

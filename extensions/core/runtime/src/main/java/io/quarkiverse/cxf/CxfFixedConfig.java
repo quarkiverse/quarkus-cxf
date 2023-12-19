@@ -18,6 +18,15 @@ import io.smallrye.config.WithName;
 public interface CxfFixedConfig {
 
     /**
+     * The default path for CXF resources.
+     * <p>
+     * ⚠️ Note that the default value before Quarkus CXF version 2.0.0 was {@code /}.
+     * </p>
+     */
+    @WithDefault("/services")
+    String path();
+
+    /**
      * The size in bytes of the chunks of memory allocated when writing data.
      * <p>
      * This is a very advanced setting that should only be set if you understand exactly how it affects the output IO operations

@@ -2,6 +2,11 @@ package io.quarkiverse.cxf.ws.rm.deployment;
 
 import java.util.stream.Stream;
 
+import org.apache.cxf.ws.rm.feature.RMFeature;
+
+import io.quarkiverse.cxf.ws.rm.DefaultRmFeatureProducer;
+import io.quarkiverse.cxf.ws.rm.WsRmFactoryCustomizer;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -32,6 +37,12 @@ public class WsReliableMessagingProcessor {
                 "org.apache.cxf.ws.rm.ManagedRMEndpoint")
                 .map(RuntimeInitializedClassBuildItem::new)
                 .forEach(runtimeInitializedClass::produce);
+    }
+
+    @BuildStep
+    void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
+        additionalBeans.produce(
+                new AdditionalBeanBuildItem(WsRmFactoryCustomizer.class, DefaultRmFeatureProducer.class, RMFeature.class));
     }
 
 }

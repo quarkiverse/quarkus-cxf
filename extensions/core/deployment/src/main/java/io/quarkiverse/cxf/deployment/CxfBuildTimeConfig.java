@@ -19,14 +19,6 @@ import io.smallrye.config.WithParentName;
 @ConfigMapping(prefix = "quarkus.cxf")
 @ConfigRoot(phase = ConfigPhase.BUILD_TIME)
 public interface CxfBuildTimeConfig {
-    /**
-     * The default path for CXF resources.
-     * <p>
-     * ⚠️ Note that the default value before Quarkus CXF version 2.0.0 was {@code /}.
-     * </p>
-     */
-    @WithDefault("/services")
-    String path();
 
     /**
      * The comma-separated list of WSDL resource paths used by CXF.

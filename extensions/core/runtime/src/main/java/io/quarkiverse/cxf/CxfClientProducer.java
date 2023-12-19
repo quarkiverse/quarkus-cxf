@@ -9,7 +9,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +34,7 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import org.apache.cxf.ws.addressing.WSAContextUtils;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
@@ -168,6 +169,8 @@ public abstract class CxfClientProducer {
                 factory.getOutFaultInterceptors());
         CXFRuntimeUtils.addBeans(cxfClientInfo.getInFaultInterceptors(), "inFaultInterceptor", clientString, sei,
                 factory.getInFaultInterceptors());
+        final Map<String, Object> props = new LinkedHashMap<>();
+        factory.setProperties(props);
 
         final HTTPConduitImpl httpConduitImpl = cxfClientInfo.getHttpConduitImpl();
         if (httpConduitImpl != null) {
@@ -177,15 +180,11 @@ public abstract class CxfClientProducer {
                     break;
                 case QuarkusCXFDefault:
                 case URLConnectionHTTPConduitFactory: {
-                    final Map<String, Object> props = new HashMap<>();
                     props.put(HTTPConduitFactory.class.getName(), new URLConnectionHTTPConduitFactory());
-                    factory.setProperties(props);
                     break;
                 }
                 case HttpClientHTTPConduitFactory: {
-                    final Map<String, Object> props = new HashMap<>();
                     props.put(HTTPConduitFactory.class.getName(), new HttpClientHTTPConduitFactory());
-                    factory.setProperties(props);
                     break;
                 }
                 default:
@@ -193,6 +192,14 @@ public abstract class CxfClientProducer {
                             + httpConduitImpl);
             }
         }
+
+        {
+            final String value = cxfClientInfo.getDecoupledEndpointBase();
+            if (value != null) {
+                props.put(WSAContextUtils.DECOUPLED_ENDPOINT_BASE_PROPERTY, value);
+            }
+        }
+
         loggingFactoryCustomizer.customize(cxfClientInfo, factory);
         customizers.forEach(customizer -> customizer.customize(cxfClientInfo, factory));
 
@@ -321,7 +328,6 @@ public abstract class CxfClientProducer {
 
             httpConduit.setTlsClientParameters(tlsCP);
         }
-
         return result;
     }
 

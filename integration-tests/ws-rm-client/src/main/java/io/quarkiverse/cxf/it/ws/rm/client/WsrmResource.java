@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.ws.rs.GET;
@@ -13,11 +12,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.it.ws.rm.server.WsrmHelloService;
@@ -36,14 +30,6 @@ public class WsrmResource {
     @Inject
     @Named
     OutMessageRecorder outMessageRecorder;
-
-    @PostConstruct
-    void init() {
-        Client client = ClientProxy.getClient(wsrmHelloService);
-        HTTPConduit hc = (HTTPConduit) (client.getConduit());
-        HTTPClientPolicy cp = hc.getClient();
-        cp.setDecoupledEndpoint("/wsrm/decoupled_endpoint");
-    }
 
     @POST
     @Path("/hello")

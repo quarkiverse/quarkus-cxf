@@ -8,7 +8,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.ws.addressing.WSAContextUtils;
 
 import io.quarkus.runtime.StartupEvent;
 
@@ -29,7 +28,6 @@ public class Init {
         bus.getInInterceptors().add(loggingIn);
 
         bus.getOutInterceptors().add(outMessageRecorder);
-        bus.setProperty(WSAContextUtils.DECOUPLED_ENDPOINT_BASE_PROPERTY, "http://localhost:8081/services");
 
     }
 }
