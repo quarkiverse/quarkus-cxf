@@ -111,16 +111,18 @@ public interface CxfClientConfig {
     /* org.apache.cxf.transports.http.configuration.HTTPClientPolicy attributes */
     /**
      * Specifies the amount of time, in milliseconds, that the consumer will attempt to establish a connection before it
-     * times
-     * out. 0 is infinite.
+     * times out. 0 is infinite.
+     *
+     * @since 2.2.3
      */
     @WithDefault("30000")
     public long connectionTimeout();
 
     /**
      * Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. 0
-     * is
-     * infinite.
+     * is infinite.
+     *
+     * @since 2.2.3
      */
     @WithDefault("60000")
     public long receiveTimeout();
@@ -128,6 +130,8 @@ public interface CxfClientConfig {
     /**
      * Specifies the amount of time, in milliseconds, used when requesting a connection from the connection manager(if
      * appliable). 0 is infinite.
+     *
+     * @since 2.2.3
      */
     @WithDefault("60000")
     public long connectionRequestTimeout();
@@ -135,6 +139,8 @@ public interface CxfClientConfig {
     /**
      * Specifies if the consumer will automatically follow a server issued redirection.
      * (name is not part of standard)
+     *
+     * @since 2.2.3
      */
     @WithDefault("false")
     public boolean autoRedirect();
@@ -147,6 +153,8 @@ public interface CxfClientConfig {
      * although, loop protection is provided.
      * The default is unlimited.
      * (name is not part of standard)
+     *
+     * @since 2.2.3
      */
     @WithDefault("-1")
     public int maxRetransmits();
@@ -155,6 +163,8 @@ public interface CxfClientConfig {
      * If true, the client is free to use chunking streams if it wants, but it is not
      * required to use chunking streams. If false, the client
      * must use regular, non-chunked requests in all cases.
+     *
+     * @since 2.2.3
      */
     @WithDefault("true")
     public boolean allowChunking();
@@ -162,6 +172,8 @@ public interface CxfClientConfig {
     /**
      * If AllowChunking is true, this sets the threshold at which messages start
      * getting chunked. Messages under this limit do not get chunked.
+     *
+     * @since 2.2.3
      */
     @WithDefault("4096")
     public int chunkingThreshold();
@@ -171,12 +183,16 @@ public interface CxfClientConfig {
      * java.net.HttpURLConnection.setChunkedStreamingMode(int chunklen). chunklen indicates the number of bytes to write
      * in each
      * chunk. If chunklen is less than or equal to zero, a default value will be used.
+     *
+     * @since 2.2.3
      */
     @WithDefault("-1")
     public int chunkLength();
 
     /**
      * Specifies the MIME types the client is prepared to handle (e.g., HTML, JPEG, GIF, etc.)
+     *
+     * @since 2.2.3
      */
     public Optional<String> accept();
 
@@ -187,6 +203,8 @@ public interface CxfClientConfig {
 
     /**
      * Specifies the encoding the client is prepared to handle (e.g., gzip)
+     *
+     * @since 2.2.3
      */
     public Optional<String> acceptEncoding();
 
@@ -194,6 +212,8 @@ public interface CxfClientConfig {
      * Specifies the content type of the stream being sent in a post request.
      * (this should be text/xml for web services, or can be set to
      * application/x-www-form-urlencoded if the client is sending form data).
+     *
+     * @since 2.2.3
      */
     public Optional<String> contentType();
 
@@ -202,6 +222,8 @@ public interface CxfClientConfig {
      * This is sent by default based upon the URL. Certain DNS scenarios or
      * application designs may request you to set this, but typically it is
      * not required.
+     *
+     * @since 2.2.3
      */
     public Optional<String> host();
 
@@ -211,6 +233,7 @@ public interface CxfClientConfig {
      * to keep the connection open, and if the server honors the keep alive request,
      * the connection is reused. Many servers and proxies do not honor keep-alive requests.
      *
+     * @since 2.2.3
      */
     @WithDefault("Keep-Alive")
     @WithConverter(ConnectionTypeConverter.class)
@@ -219,12 +242,16 @@ public interface CxfClientConfig {
     /**
      * Most commonly used to specify no-cache, however the standard supports a
      * dozen or so caching related directives for requests
+     *
+     * @since 2.2.3
      */
     public Optional<String> cacheControl();
 
     /**
      * HTTP Version used for the connection. The "auto" default will use whatever the default is
      * for the HTTPConduit implementation.
+     *
+     * @since 2.2.3
      */
     @WithDefault("auto")
     public String version();
@@ -234,22 +261,90 @@ public interface CxfClientConfig {
      * Specifies the type of browser is sending the request. This is usually only
      * needed when sites have HTML customized to Netscape vs IE, etc, but can
      * also be used to optimize for different SOAP stacks.
+     *
+     * @since 2.2.3
      */
     public Optional<String> browserType();
 
     /**
-     * Specifies the URL of a decoupled endpoint for the receipt of responses over a separate provider->consumer
-     * connection.
+     * An URI path (starting with {@code /}) or a full URI for the receipt of responses over a separate provider ->
+     * consumer connection. If the value starts with {@code /}, then it is prefixed with the base URI configured via
+     * {@code quarkus.cxf.client.myClient.decoupled-endpoint-base} before being used as a value for the
+     * WS-Addressing {@code ReplyTo} message header.
+     *
+     * @since 2.2.3
      */
-    public Optional<String> decoupledEndpoint();
+    Optional<String> decoupledEndpoint();
+
+    /**
+     * An URI base to use as a prefix of {@code quarkus.cxf.client.myClient.decoupled-endpoint}. You will typically
+     * want to set this to something like the following:
+     *
+     * <pre>
+     * quarkus.cxf.client.myClient.decoupled-endpoint-base = https://api.example.com:${quarkus.http.ssl-port}${quarkus.cxf.path}
+     * # or for plain HTTP
+     * quarkus.cxf.client.myClient.decoupled-endpoint-base = http://api.example.com:${quarkus.http.port}${quarkus.cxf.path}
+     * </pre>
+     *
+     * If you invoke your WS client from within a HTTP handler, you can leave this option unspecified and rather
+     * set it dynamically on the request context of your WS client using the
+     * {@code org.apache.cxf.ws.addressing.decoupled.endpoint.base} key. Here is an example how to do that from a
+     * RESTeasy handler method:
+     *
+     * <pre>
+     * import java.util.Map;
+     * import jakarta.inject.Inject;
+     * import jakarta.ws.rs.POST;
+     * import jakarta.ws.rs.Path;
+     * import jakarta.ws.rs.Produces;
+     * import jakarta.ws.rs.core.Context;
+     * import jakarta.ws.rs.core.MediaType;
+     * import jakarta.ws.rs.core.UriInfo;
+     * import jakarta.xml.ws.BindingProvider;
+     * import io.quarkiverse.cxf.annotation.CXFClient;
+     * import org.eclipse.microprofile.config.inject.ConfigProperty;
+     *
+     * &#64;Path("/my-rest")
+     * public class MyRestEasyResource {
+     *
+     *     &#64;Inject
+     *     &#64;CXFClient("hello")
+     *     HelloService helloService;
+     *
+     *     &#64;ConfigProperty(name = "quarkus.cxf.path")
+     *     String quarkusCxfPath;
+     *
+     *     &#64;POST
+     *     &#64;Path("/hello")
+     *     &#64;Produces(MediaType.TEXT_PLAIN)
+     *     public String hello(String body, &#64;Context UriInfo uriInfo) throws IOException {
+     *
+     *         // You may consider doing this only once if you are sure that your service is accessed
+     *         // through a single hostname
+     *         String decoupledEndpointBase = uriInfo.getBaseUriBuilder().path(quarkusCxfPath);
+     *         Map&gt;String, Object&lt; requestContext = ((BindingProvider) helloService).getRequestContext();
+     *         requestContext.put("org.apache.cxf.ws.addressing.decoupled.endpoint.base", decoupledEndpointBase);
+     *
+     *         return wsrmHelloService.hello(body);
+     *     }
+     * }
+     * </pre>
+     *
+     * @since 2.7.0
+     */
+    public Optional<String> decoupledEndpointBase();
 
     /**
      * Specifies the address of proxy server if one is used.
+     *
+     * @since 2.2.3
      */
     public Optional<String> proxyServer();
 
     /**
      * Specifies the port number used by the proxy server.
+     *
+     * @since 2.2.3
      */
     public Optional<Integer> proxyServerPort();
 
@@ -259,22 +354,30 @@ public interface CxfClientConfig {
      * * "localhost" -> A single hostname
      * * "localhost|www.google.com" -> 2 hostnames that will not use the proxy configuration
      * * "localhost|www.google.*|*.apache.org" -> It's also possible to use a pattern-like value
+     *
+     * @since 2.2.3
      */
     public Optional<String> nonProxyHosts();
 
     /**
      * Specifies the type of the proxy server. Can be either HTTP or SOCKS.
+     *
+     * @since 2.2.3
      */
     @WithDefault("HTTP")
     public ProxyServerType proxyServerType();
 
     /**
      * Username for the proxy authentication
+     *
+     * @since 2.2.3
      */
     public Optional<String> proxyUsername();
 
     /**
      * Password for the proxy authentication
+     *
+     * @since 2.2.3
      */
     public Optional<String> proxyPassword();
 

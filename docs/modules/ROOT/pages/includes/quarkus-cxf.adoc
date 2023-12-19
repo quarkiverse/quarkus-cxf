@@ -10,25 +10,6 @@ h|[[quarkus-cxf_configuration]]link:#quarkus-cxf_configuration[Configuration pro
 h|Type
 h|Default
 
-a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.path]]`link:#quarkus-cxf_quarkus.cxf.path[quarkus.cxf.path]`
-
-
-[.description]
---
-The default path for CXF resources.
-
-⚠️ Note that the default value before Quarkus CXF version 2.0.0 was `/`.
-
-ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_PATH+++[]
-endif::add-copy-button-to-env-var[]
-ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_CXF_PATH+++`
-endif::add-copy-button-to-env-var[]
---|string 
-|`/services`
-
-
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.codegen.wsdl2java.enabled]]`link:#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.enabled[quarkus.cxf.codegen.wsdl2java.enabled]`
 
 
@@ -515,6 +496,25 @@ endif::add-copy-button-to-env-var[]
 -- a|
 `QuarkusCXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory` 
 |
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.path]]`link:#quarkus-cxf_quarkus.cxf.path[quarkus.cxf.path]`
+
+
+[.description]
+--
+The default path for CXF resources.
+
+⚠️ Note that the default value before Quarkus CXF version 2.0.0 was `/`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_PATH+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`/services`
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus.cxf.min-chunk-size]]`link:#quarkus-cxf_quarkus.cxf.min-chunk-size[quarkus.cxf.min-chunk-size]`
@@ -2388,13 +2388,77 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.decoupled-endpoint]]`link:#quarkus
 
 [.description]
 --
-Specifies the URL of a decoupled endpoint for the receipt of responses over a separate provider->consumer connection.
+An URI path (starting with `/`) or a full URI for the receipt of responses over a separate provider -> consumer connection. If the value starts with `/`, then it is prefixed with the base URI configured via `quarkus.cxf.client.myClient.decoupled-endpoint-base` before being used as a value for the WS-Addressing `ReplyTo` message header.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__DECOUPLED_ENDPOINT+++[]
 endif::add-copy-button-to-env-var[]
 ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__DECOUPLED_ENDPOINT+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.decoupled-endpoint-base]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.decoupled-endpoint-base[quarkus.cxf.client."clients".decoupled-endpoint-base]`
+
+
+[.description]
+--
+An URI base to use as a prefix of `quarkus.cxf.client.myClient.decoupled-endpoint`. You will typically want to set this to something like the following:
+
+```
+quarkus.cxf.client.myClient.decoupled-endpoint-base = https://api.example.com:${quarkus.http.ssl-port}${quarkus.cxf.path}
+# or for plain HTTP
+quarkus.cxf.client.myClient.decoupled-endpoint-base = http://api.example.com:${quarkus.http.port}${quarkus.cxf.path}
+```
+
+If you invoke your WS client from within a HTTP handler, you can leave this option unspecified and rather set it dynamically on the request context of your WS client using the `org.apache.cxf.ws.addressing.decoupled.endpoint.base` key. Here is an example how to do that from a RESTeasy handler method:
+
+```
+import java.util.Map;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.xml.ws.BindingProvider;
+import io.quarkiverse.cxf.annotation.CXFClient;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+@Path("/my-rest")
+public class MyRestEasyResource {
+
+    @Inject
+    @CXFClient("hello")
+    HelloService helloService;
+
+    @ConfigProperty(name = "quarkus.cxf.path")
+    String quarkusCxfPath;
+
+    @POST
+    @Path("/hello")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String hello(String body, @Context UriInfo uriInfo) throws IOException {
+
+        // You may consider doing this only once if you are sure that your service is accessed
+        // through a single hostname
+        String decoupledEndpointBase = uriInfo.getBaseUriBuilder().path(quarkusCxfPath);
+        Map>String, Object< requestContext = ((BindingProvider) helloService).getRequestContext();
+        requestContext.put("org.apache.cxf.ws.addressing.decoupled.endpoint.base", decoupledEndpointBase);
+
+        return wsrmHelloService.hello(body);
+    }
+}
+```
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__DECOUPLED_ENDPOINT_BASE+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__DECOUPLED_ENDPOINT_BASE+++`
 endif::add-copy-button-to-env-var[]
 --|string 
 |

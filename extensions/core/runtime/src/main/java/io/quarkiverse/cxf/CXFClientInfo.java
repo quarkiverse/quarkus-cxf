@@ -141,6 +141,7 @@ public class CXFClientInfo {
      * connection.
      */
     private final String decoupledEndpoint;
+    private final String decoupledEndpointBase;
     /**
      * Specifies the address of proxy server if one is used.
      */
@@ -191,12 +192,12 @@ public class CXFClientInfo {
     private final String configKey;
 
     public CXFClientInfo(CXFClientData other, CxfClientConfig config, String configKey) {
+        Objects.requireNonNull(config);
         this.sei = other.getSei();
         this.soapBinding = config.soapBinding().orElse(other.getSoapBinding());
         this.wsName = other.getWsName();
         this.wsNamespace = other.getWsNamespace();
         this.proxyClassRuntimeInitialized = other.isProxyClassRuntimeInitialized();
-        Objects.requireNonNull(config);
         this.epNamespace = config.endpointNamespace().orElse(null);
         this.epName = config.endpointName().orElse(null);
         this.username = config.username().orElse(null);
@@ -224,6 +225,7 @@ public class CXFClientInfo {
         this.version = config.version();
         this.browserType = config.browserType().orElse(null);
         this.decoupledEndpoint = config.decoupledEndpoint().orElse(null);
+        this.decoupledEndpointBase = config.decoupledEndpointBase().orElse(null);
         this.proxyServer = config.proxyServer().orElse(null);
         this.proxyServerPort = config.proxyServerPort().orElse(null);
         this.nonProxyHosts = config.nonProxyHosts().orElse(null);
@@ -418,6 +420,10 @@ public class CXFClientInfo {
 
     public String getDecoupledEndpoint() {
         return decoupledEndpoint;
+    }
+
+    public String getDecoupledEndpointBase() {
+        return decoupledEndpointBase;
     }
 
     public String getProxyServer() {

@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.transport;
 
+import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -102,6 +103,7 @@ public class CxfHandler implements Handler<RoutingContext> {
             JaxWsServerFactoryBean jaxWsServerFactoryBean = new JaxWsServerFactoryBean(jaxWsServiceFactoryBean);
             jaxWsServerFactoryBean.setDestinationFactory(destinationFactory);
             jaxWsServerFactoryBean.setBus(bus);
+            jaxWsServerFactoryBean.setProperties(new LinkedHashMap<>());
             final String endpointType = servletInfo.getClassName();
             Object instanceService = CXFRuntimeUtils.getInstance(endpointType, false);
 
