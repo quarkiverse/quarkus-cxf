@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.doc.it;
 
+import java.awt.Desktop;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -94,9 +95,21 @@ public class AntoraTest {
         final String antoraVersion = m.group(1);
         Assertions.assertNotNull(antoraVersion);
 
-        Path siteIndexHtml = Paths.get("target/site/quarkus-cxf/" + antoraVersion + "/index.html");
+        final Path siteIndexHtml = Paths.get("target/site/quarkus-cxf/" + antoraVersion + "/index.html");
         Assertions.assertTrue(Files.isRegularFile(siteIndexHtml), siteIndexHtml + " not found");
-        System.out.println("\nYou may want to open\n\n    " + siteIndexHtml + "\n\nin browser");
+
+        final Path baseDir = Paths.get(".").toAbsolutePath().normalize();
+        final Path absIndexHtml = baseDir.resolve(siteIndexHtml);
+
+        System.out.println("\nYou may want to pass -Dbrow=se to open \n\n    " + absIndexHtml.toUri() + "\n\nin browser");
+
+        if ("se".equals(System.getProperty("brow")) && Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            if (desktop.isSupported(Desktop.Action.OPEN)) {
+                // Open the default web browser with the specified URL
+                desktop.open(absIndexHtml.toFile());
+            }
+        }
 
     }
 
