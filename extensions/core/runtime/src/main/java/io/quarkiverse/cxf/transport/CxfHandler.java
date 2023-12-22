@@ -80,7 +80,7 @@ public class CxfHandler implements Handler<RoutingContext> {
         LOGGER.trace("load destination");
         DestinationFactoryManager dfm = this.bus.getExtension(DestinationFactoryManager.class);
         final VertxDestinationFactory destinationFactory = new VertxDestinationFactory();
-        final DestinationRegistry destinationRegistry = destinationFactory.getDestinationRegistry();
+        final DestinationRegistry destinationRegistry = destinationFactory.getRegistry();
         dfm.registerDestinationFactory("http://cxf.apache.org/transports/quarkus", destinationFactory);
         ConduitInitiatorManager extension = bus.getExtension(ConduitInitiatorManager.class);
         extension.registerConduitInitiator("http://cxf.apache.org/transports/quarkus", destinationFactory);
