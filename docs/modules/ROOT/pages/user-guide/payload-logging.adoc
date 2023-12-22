@@ -1,21 +1,29 @@
-= Payload logging
+= Logging
+
+Refer to Quarkus https://quarkus.io/guides/logging[Logging guide] for basic information about logging on Quarkus, such as
+
+* https://quarkus.io/guides/logging#get-an-application-logger[Getting a logger] in your application code
+* https://quarkus.io/guides/logging#use-log-levels[Log levels]
+* https://quarkus.io/guides/logging#configure-the-log-level-category-and-format[Categories]
+* https://quarkus.io/guides/logging#logging-format[Format]
+* https://quarkus.io/guides/logging#json-logging[JSON format]
+
+== Payload logging
 
 [NOTE]
 .Historical Note
 ====
 Since {quarkus-cxf-project-name} 2.6.0, the payload logging functionality is available via
 `io.quarkiverse.cxf:quarkus-cxf` extension.
-Before 2.6.0, it was available through a separate extension `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging`.
-
-As of {quarkus-cxf-project-name} 2.6.0, the `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` extension is deprecated
-and will be removed in the future.
+Before 2.6.0, it was available through a separate extension `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging`
+which is now deprecated and will be removed in the future.
 ====
 
 The payload logging functionality is implemented primarily through the `org.apache.cxf.ext.logging.LoggingFeature` class.
 
 There are several ways how you can set the feature on a client or service endpoint.
 
-== Configuring through configuration properties
+== Configuring payload logging through configuration properties
 
 === Global settings
 
