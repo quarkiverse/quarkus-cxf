@@ -39,7 +39,7 @@ public class VertxDestinationFactory extends HTTPTransportFactory implements WSD
     }
 
     public VertxDestinationFactory() {
-        super();
+        super(registry);
         this.soapTransportFactory = new SoapTransportFactory();
     }
 
@@ -61,10 +61,6 @@ public class VertxDestinationFactory extends HTTPTransportFactory implements WSD
             LOGGER.debug(format("Destination for address %s is %s", endpointAddress, d));
             return d;
         }
-    }
-
-    public DestinationRegistry getDestinationRegistry() {
-        return registry;
     }
 
     @Override
