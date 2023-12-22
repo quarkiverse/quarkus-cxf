@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import org.apache.cxf.ws.rm.feature.RMFeature;
 
+import io.quarkiverse.cxf.deployment.CxfRouteRegistrationRequestorBuildItem;
 import io.quarkiverse.cxf.ws.rm.DefaultRmFeatureProducer;
 import io.quarkiverse.cxf.ws.rm.WsRmFactoryCustomizer;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
@@ -14,10 +15,11 @@ import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 
 public class WsReliableMessagingProcessor {
+    private static final String FEATURE = "cxf-rt-ws-rm";
 
     @BuildStep
     FeatureBuildItem feature() {
-        return new FeatureBuildItem("cxf-rt-ws-rm");
+        return new FeatureBuildItem(FEATURE);
     }
 
     @BuildStep
@@ -43,6 +45,11 @@ public class WsReliableMessagingProcessor {
     void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
         additionalBeans.produce(
                 new AdditionalBeanBuildItem(WsRmFactoryCustomizer.class, DefaultRmFeatureProducer.class, RMFeature.class));
+    }
+
+    @BuildStep
+    CxfRouteRegistrationRequestorBuildItem requestCxfRouteRegistration() {
+        return new CxfRouteRegistrationRequestorBuildItem(FEATURE);
     }
 
 }
