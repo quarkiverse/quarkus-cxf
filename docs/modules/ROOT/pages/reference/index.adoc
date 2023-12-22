@@ -38,7 +38,7 @@ Please follow the links under the extension names to learn about how to use them
 
 | xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc[Quarkus CXF WS-ReliableMessaging] +
 `quarkus-cxf-rt-ws-rm`
-|Experimental
+|Stable
 |1.5.3
 |https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging]
 

@@ -1,1 +1,39 @@
-tbd
+Once your application depends on `quarkus-cxf-rt-ws-rm`, WS-RM is enabled for all clients and service endpoints defined in `application.properties`.
+This is due to the fact that the `quarkus.cxf.client.myClient.rm.enabled` and `quarkus.cxf.endpoint."/my-endpoint".rm.enabled`
+properties are `true` by default.
+
+Enabling WS-RM for a client or service endpoints means that https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-RM interceptors] will be added to the given client or endpoint.
+
+In addition to that you may want to set some of the options documented xref:#quarkus-cxf-rt-ws-rm-configuration[below] and/or the following WS-Addressing options:
+
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.decoupled-endpoint[quarkus.cxf.client.myClient.decoupled-endpoint]
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.decoupled-endpoint-base[quarkus.cxf.client.myClient.decoupled-endpoint-base]
+
+=== Runnable example
+
+There is an integration test covering WS-RM with a decoupled endpoint in the {quarkus-cxf-project-name} source tree.
+
+It is split into two separate applications that communicate with each other:
+
+* https://github.com/quarkiverse/quarkus-cxf/tree/main/test-util-parent/test-ws-rm-server[Server]
+* https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-rm-client[Client]
+
+To run it, you need to install the server into your local Maven repository first
+
+[source,java]
+----
+$ cd test-util-parent/test-ws-rm-server
+$ mvn clean install
+----
+
+And then you can run the
+https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-rm-client/src/test/java/io/quarkiverse/cxf/it/ws/rm/client/WsReliableMessagingTest.java#L28[test scenario]
+implemented in the client module:
+
+[source,java]
+----
+$ cd ../../integration-tests/ws-rm-client
+$ mvn clean test
+----
+
+You should see the exchange of SOAP messages between the client, the server and the decoupled endpoint in the console.

@@ -1,1 +1,4 @@
-Provides CXF framework's https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging] implementation.
+WS-ReliableMessaging (WS-RM) is a protocol ensuring a reliable delivery of messages in a distributed environment even in presence of software, system, or network failures.
+
+This extension provides CXF framework's https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging] implementation.
+
