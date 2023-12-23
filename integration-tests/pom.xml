@@ -15,9 +15,9 @@
 
     <modules>
         <module>client</module>
+        <module>client-server</module>
         <module>hc5</module>
         <module>server</module>
-        <module>ws-addressing</module>
         <module>ws-security-client</module>
         <module>ws-security-policy</module>
         <module>ws-security-server</module>
