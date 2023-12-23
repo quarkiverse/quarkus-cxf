@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.it.server;
+package io.quarkiverse.cxf.it.validation;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 

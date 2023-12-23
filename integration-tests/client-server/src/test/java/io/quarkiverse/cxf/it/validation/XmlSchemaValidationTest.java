@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.it.server;
+package io.quarkiverse.cxf.it.validation;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
