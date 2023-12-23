@@ -81,28 +81,9 @@ void onStart(@Observes StartupEvent ev) {
          }
      };
 
-     final Bus bus = BusFactory.getThreadDefaultBus();
+     final Bus bus = BusFactory.getDefaultBus();
      bus.setExtension(httpConduitConfigurer, HTTPConduitConfigurer.class);
 }
-----
-
-To configure the `HttpConduit` for a single client in your application, use the example snippet below:
-
-[source,java]
-----
-    @Inject
-    @CXFClient
-    SomePortType portType;
-
-    @PostConstruct
-    void configurePortType() throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
-        final var httpConduit = (HTTPConduit) ClientProxy.getClient(portType).getConduit();
-        final var tlsClientParameters = Optional.ofNullable(httpConduit.getTlsClientParameters()).orElseGet(TLSClientParameters::new);
-        tlsClientParameters.setCertAlias(config.clientCert().keyAlias());
-        tlsClientParameters.setKeyManagers(clientKeyManagers);
-        tlsClientParameters.setTrustManagers(clientTrustManagers);
-        httpConduit.setTlsClientParameters(tlsClientParameters);
-    }
 ----
 
 [[pure-client]]

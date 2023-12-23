@@ -1,0 +1,87 @@
+= SSL
+
+This chapter documents various use cases related to SSL, TLS and HTTPS.
+
+NOTE: The sample code snippets used in this section come from the
+     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
+     in the source tree of {quarkus-cxf-project-name}
+
+
+== Client SSL configuration
+
+If your client is going to communicate with a server whose SSL certificate is not trusted by the client's operating system,
+then you need to set up a custom trust store for your client.
+Tools like `openssl` or Java `keytool` are commonly used for doing that.
+You may want to check
+https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/pom.xml#L127-L440[some]
+https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/generate-certs.sh[examples]
+in {quarkus-cxf-project-name} source tree.
+
+Once you have prepared the trust store, you need to configure your client to use it.
+
+=== Set the client trust store in `application.properties`
+
+This is the easiest way to set the client trust store.
+The key role is played by the following properties:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.trust-store[quarkus.cxf.client."clients".trust-store]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.trust-store-type[quarkus.cxf.client."clients".trust-store-type]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.trust-store-password[quarkus.cxf.client."clients".trust-store-password]`
+
+Here is an example:
+
+.application.properties
+[source,properties]
+----
+keystore.type = jks <1>
+include::example$ws-security-policy/application.properties[tag=client-trust-store]
+----
+
+<1> `pkcs12` trust store type is a common alternative to `jks`.
+<2> The referenced `client-truststore.jks` file has to be available in `src/main/resources` directory.
+
+== Server SSL configuration
+
+The server SSL configuration is driven by Quarkus HTTP layer a.k.a. Vert.x.
+https://quarkus.io/guides/http-reference#ssl[Quarkus HTTP guide] provides the information about the configuration options.
+
+Here is a basic example:
+
+.application.properties
+[source,properties]
+----
+include::example$ws-security-policy/application.properties[tag=server-key-store]
+----
+
+<1> The referenced `localhost.jks` file has to be available in `src/main/resources` directory.
+
+== Enforce SSL through WS-SecurityPolicy
+
+The requirement for the clients to connect through HTTPS can be defined in a policy.
+
+The functionality is provided by `xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[quarkus-cxf-rt-ws-security]` extension.
+
+Here is an example of a policy file:
+
+.https-policy.xml
+[source,properties]
+----
+include::example$ws-security-policy/https-policy.xml[]
+----
+
+The policy has to be referenced from a service endpoint interface (SEI):
+
+.HttpsPolicyHelloService.java
+[source,java]
+----
+include::example$ws-security-policy/HttpsPolicyHelloService.java[]
+----
+
+With this setup in place, any request delivered over HTTP will be rejected by the `PolicyVerificationInInterceptor`:
+
+[source,shell]
+----
+ERROR [org.apa.cxf.ws.pol.PolicyVerificationInInterceptor] Inbound policy verification failed: These policy alternatives can not be satisfied:
+ {http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}TransportBinding: TLS is not enabled
+ ...
+----
