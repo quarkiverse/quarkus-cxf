@@ -3,6 +3,7 @@ package io.quarkiverse.cxf;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
@@ -431,6 +432,18 @@ public interface CxfClientConfig {
      * as returned from {@code PublicSuffixMatcherLoader.getDefault()}.
      */
     public Optional<String> hostnameVerifier();
+
+    /**
+     * Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation
+     * will be enforced unless it is enabled by other means, such as
+     * {@code &#64;org.apache.cxf.annotations.SchemaValidation} or
+     * {@code &#64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")}
+     * annotations.
+     *
+     * @since 2.7.0
+     */
+    @WithName("schema-validation.enabled-for")
+    public Optional<SchemaValidationType> schemaValidationEnabledFor();
 
     public enum HTTPConduitImpl {
         @ConfigDocEnumValue("QuarkusCXFDefault")

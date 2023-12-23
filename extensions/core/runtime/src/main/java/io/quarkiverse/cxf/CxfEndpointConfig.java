@@ -3,6 +3,8 @@ package io.quarkiverse.cxf;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
+
 import io.quarkiverse.cxf.LoggingConfig.PerClientOrServiceLoggingConfig;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.smallrye.config.WithName;
@@ -102,5 +104,17 @@ public interface CxfEndpointConfig {
      * The comma-separated list of InFaultInterceptor classes
      */
     public Optional<List<String>> inFaultInterceptors();
+
+    /**
+     * Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation
+     * will be enforced unless it is enabled by other means, such as
+     * {@code &#64;org.apache.cxf.annotations.SchemaValidation} or
+     * {@code &#64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")}
+     * annotations.
+     *
+     * @since 2.7.0
+     */
+    @WithName("schema-validation.enabled-for")
+    public Optional<SchemaValidationType> schemaValidationEnabledFor();
 
 }

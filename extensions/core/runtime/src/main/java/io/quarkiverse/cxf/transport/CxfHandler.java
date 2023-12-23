@@ -13,9 +13,12 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxws.JAXWSMethodInvoker;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
 import org.apache.cxf.transport.http.DestinationRegistry;
@@ -144,7 +147,13 @@ public class CxfHandler implements Handler<RoutingContext> {
                 loggingFactoryCustomizer.customize(servletInfo, jaxWsServerFactoryBean);
                 customizers.forEach(customizer -> customizer.customize(servletInfo, jaxWsServerFactoryBean));
 
-                jaxWsServerFactoryBean.create();
+                Server service = jaxWsServerFactoryBean.create();
+                {
+                    final SchemaValidationType value = servletInfo.getSchemaValidationEnabledFor();
+                    if (value != null) {
+                        service.getEndpoint().getEndpointInfo().setProperty(Message.SCHEMA_VALIDATION_TYPE, value);
+                    }
+                }
 
                 LOGGER.info(servletInfo.toString() + " available.");
             } else {
