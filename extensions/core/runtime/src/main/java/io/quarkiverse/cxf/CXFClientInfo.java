@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
@@ -191,6 +192,8 @@ public class CXFClientInfo {
 
     private final String configKey;
 
+    private final SchemaValidationType schemaValidationEnabledFor;
+
     public CXFClientInfo(CXFClientData other, CxfClientConfig config, String configKey) {
         Objects.requireNonNull(config);
         this.sei = other.getSei();
@@ -237,6 +240,7 @@ public class CXFClientInfo {
         this.trustStorePassword = config.trustStorePassword().orElse(null);
         this.trustStoreType = Objects.requireNonNull(config.trustStoreType(), "trustStoreType cannot be null");
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
+        this.schemaValidationEnabledFor = config.schemaValidationEnabledFor().orElse(null);
 
         /*
          * If the optional is empty, this.httpConduitImpl will be null.
@@ -468,6 +472,10 @@ public class CXFClientInfo {
 
     public String getConfigKey() {
         return configKey;
+    }
+
+    public SchemaValidationType getSchemaValidationEnabledFor() {
+        return schemaValidationEnabledFor;
     }
 
 }

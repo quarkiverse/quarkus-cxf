@@ -100,7 +100,8 @@ public class CXFRecorder {
                 serviceTargetNamespace,
                 cxfEndPointConfig != null ? cxfEndPointConfig.soapBinding().orElse(soapBinding) : soapBinding,
                 isProvider,
-                cxfEndPointConfig != null ? cxfEndPointConfig.publishedEndpointUrl().orElse(null) : null);
+                cxfEndPointConfig != null ? cxfEndPointConfig.publishedEndpointUrl().orElse(null) : null,
+                cxfEndPointConfig != null ? cxfEndPointConfig.schemaValidationEnabledFor().orElse(null) : null);
         if (cxfEndPointConfig != null && cxfEndPointConfig.inInterceptors().isPresent()) {
             cfg.addInInterceptors(cxfEndPointConfig.inInterceptors().get());
         }

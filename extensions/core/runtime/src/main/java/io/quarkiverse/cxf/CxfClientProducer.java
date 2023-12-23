@@ -26,11 +26,13 @@ import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 import jakarta.xml.ws.BindingProvider;
 
+import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
@@ -205,7 +207,8 @@ public abstract class CxfClientProducer {
 
         LOGGER.debug("cxf client loaded for " + sei);
         Object result = factory.create();
-        final HTTPConduit httpConduit = (HTTPConduit) ClientProxy.getClient(result).getConduit();
+        final Client client = ClientProxy.getClient(result);
+        final HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
         final HTTPClientPolicy policy = httpConduit.getClient();
         policy.setConnectionTimeout(cxfClientInfo.getConnectionTimeout());
         policy.setReceiveTimeout(cxfClientInfo.getReceiveTimeout());
@@ -328,6 +331,13 @@ public abstract class CxfClientProducer {
 
             httpConduit.setTlsClientParameters(tlsCP);
         }
+        {
+            final SchemaValidationType value = cxfClientInfo.getSchemaValidationEnabledFor();
+            if (value != null) {
+                client.getEndpoint().getEndpointInfo().setProperty(Message.SCHEMA_VALIDATION_TYPE, value);
+            }
+        }
+
         return result;
     }
 

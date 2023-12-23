@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.jboss.logging.Logger;
 
 public class CXFServletInfo {
@@ -23,12 +24,14 @@ public class CXFServletInfo {
     private final String soapBinding;
     private final Boolean isProvider;
     private final String endpointUrl;
+    private final SchemaValidationType schemaValidationEnabledFor;
 
     private static final Logger LOGGER = Logger.getLogger(CXFServletInfo.class);
 
     public CXFServletInfo(String path, String relativePath, String className, String sei, String wsdlPath,
             String serviceName, String serviceTargetNamespace, String soapBinding,
-            Boolean provider, String endpointUrl) {
+            Boolean provider, String endpointUrl,
+            SchemaValidationType schemaValidationEnabledFor) {
         LOGGER.trace("new CXFServletInfo");
         this.path = path;
         this.relativePath = relativePath;
@@ -46,6 +49,7 @@ public class CXFServletInfo {
         this.soapBinding = soapBinding;
         this.isProvider = provider;
         this.endpointUrl = endpointUrl;
+        this.schemaValidationEnabledFor = schemaValidationEnabledFor;
     }
 
     public String getClassName() {
@@ -110,6 +114,10 @@ public class CXFServletInfo {
 
     public String getEndpointUrl() {
         return endpointUrl;
+    }
+
+    public SchemaValidationType getSchemaValidationEnabledFor() {
+        return schemaValidationEnabledFor;
     }
 
     public void addFeatures(List<String> features) {
