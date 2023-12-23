@@ -2354,7 +2354,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.version]]`link:#quarkus-cxf_quarku
 
 [.description]
 --
-HTTP Version used for the connection. The "auto" default will use whatever the default is for the HTTPConduit implementation.
+HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit` implementation defined via `quarkus.cxf.client.myClient.http-conduit-factory`. Other possible values: `1.1`, `2`. Note that some of these values might be unsupported by some `HTTPConduit` implementations.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__VERSION+++[]
@@ -2371,7 +2371,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.browser-type]]`link:#quarkus-cxf_q
 
 [.description]
 --
-aka User-Agent Specifies the type of browser is sending the request. This is usually only needed when sites have HTML customized to Netscape vs IE, etc, but can also be used to optimize for different SOAP stacks.
+The value of the `User-Agent` HTTP header.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__BROWSER_TYPE+++[]

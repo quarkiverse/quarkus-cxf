@@ -248,8 +248,10 @@ public interface CxfClientConfig {
     public Optional<String> cacheControl();
 
     /**
-     * HTTP Version used for the connection. The "auto" default will use whatever the default is
-     * for the HTTPConduit implementation.
+     * HTTP Version used for the connection. The default value {@code auto} will use whatever the default is
+     * for the {@code HTTPConduit} implementation defined via {@code quarkus.cxf.client.myClient.http-conduit-factory}.
+     * Other possible values: {@code 1.1}, {@code 2}. Note that some of these values might be unsupported by some
+     * {@code HTTPConduit} implementations.
      *
      * @since 2.2.3
      */
@@ -257,10 +259,7 @@ public interface CxfClientConfig {
     public String version();
 
     /**
-     * aka User-Agent
-     * Specifies the type of browser is sending the request. This is usually only
-     * needed when sites have HTML customized to Netscape vs IE, etc, but can
-     * also be used to optimize for different SOAP stacks.
+     * The value of the {@code User-Agent} HTTP header.
      *
      * @since 2.2.3
      */
