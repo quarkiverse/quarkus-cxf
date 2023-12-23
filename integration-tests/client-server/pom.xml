@@ -8,9 +8,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-integration-test-ws-addressing</artifactId>
+    <artifactId>quarkus-cxf-integration-test-client-server</artifactId>
 
-    <name>Quarkus CXF - Integration Test - WS-Addressing</name>
+    <name>Quarkus CXF - Integration Test - Client and server</name>
+    <description>CXF client and server in the same application</description>
 
     <dependencies>
         <dependency>
