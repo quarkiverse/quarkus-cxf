@@ -43,7 +43,6 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>generate-code</goal>
                             <goal>build</goal>
                         </goals>
                     </execution>
