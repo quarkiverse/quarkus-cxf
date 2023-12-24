@@ -40,8 +40,10 @@ import io.quarkiverse.cxf.CxfClientProducer;
 import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkiverse.cxf.CxfFixedConfig.ClientFixedConfig;
 import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
+import io.quarkiverse.cxf.QuarkusHttpConduitConfigurer;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.graal.QuarkusCxfFeature;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
 import io.quarkus.arc.deployment.GeneratedBeanGizmoAdaptor;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
@@ -521,6 +523,12 @@ public class CxfClientProcessor {
         private final List<String> interfaces;
         private final boolean isRuntimeInitialized;
 
+    }
+
+    @BuildStep
+    void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
+        additionalBeans.produce(
+                new AdditionalBeanBuildItem(QuarkusHttpConduitConfigurer.class));
     }
 
 }

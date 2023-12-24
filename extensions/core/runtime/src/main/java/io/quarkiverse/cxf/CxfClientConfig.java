@@ -55,14 +55,23 @@ public interface CxfClientConfig {
     public Optional<String> endpointName();
 
     /**
-     * The username for HTTP Basic auth
+     * The username for HTTP Basic authentication
      */
     public Optional<String> username();
 
     /**
-     * The password for HTTP Basic auth
+     * The password for HTTP Basic authentication
      */
     public Optional<String> password();
+
+    /**
+     * If {@code true}, then the {@code Authentication} header will be sent preemptively when requesting the WSDL, as
+     * long as the {@code username} is set; otherwise the WSDL will be requested anonymously.
+     *
+     * @since 2.7.0
+     */
+    @WithDefault("false")
+    public boolean secureWsdlAccess();
 
     /**
      * Logging related configuration

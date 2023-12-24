@@ -1766,7 +1766,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.username]]`link:#quarkus-cxf_quark
 
 [.description]
 --
-The username for HTTP Basic auth
+The username for HTTP Basic authentication
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__USERNAME+++[]
@@ -1783,7 +1783,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.password]]`link:#quarkus-cxf_quark
 
 [.description]
 --
-The password for HTTP Basic auth
+The password for HTTP Basic authentication
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__PASSWORD+++[]
@@ -1793,6 +1793,23 @@ Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__PASSWORD+++`
 endif::add-copy-button-to-env-var[]
 --|string 
 |
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.secure-wsdl-access]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.secure-wsdl-access[quarkus.cxf.client."clients".secure-wsdl-access]`
+
+
+[.description]
+--
+If `true`, then the `Authentication` header will be sent preemptively when requesting the WSDL, as long as the `username` is set; otherwise the WSDL will be requested anonymously.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURE_WSDL_ACCESS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURE_WSDL_ACCESS+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.enabled]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.enabled[quarkus.cxf.client."clients".logging.enabled]`
