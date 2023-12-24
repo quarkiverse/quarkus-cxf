@@ -11,7 +11,7 @@
   documentation.
 * If your are on Linux, `docker` is sufficient for the native mode too. Use `-Pnative,docker` instead of `-Pnative`
   if you choose this option.
-* Java 11
+* Java 17
 * Maven (`mvn`), Maven Daemon (`mvnd` for fast builds), or Maven Wrapper (`mvnw`)
 
 [[how-to-build]]
