@@ -194,6 +194,8 @@ public class CXFClientInfo {
 
     private final SchemaValidationType schemaValidationEnabledFor;
 
+    private final boolean secureWsdlAccess;
+
     public CXFClientInfo(CXFClientData other, CxfClientConfig config, String configKey) {
         Objects.requireNonNull(config);
         this.sei = other.getSei();
@@ -205,6 +207,7 @@ public class CXFClientInfo {
         this.epName = config.endpointName().orElse(null);
         this.username = config.username().orElse(null);
         this.password = config.password().orElse(null);
+        this.secureWsdlAccess = config.secureWsdlAccess();
         this.endpointAddress = config.clientEndpointUrl().orElse(DEFAULT_EP_ADDR + "/" + this.sei.toLowerCase());
         this.wsdlUrl = config.wsdlPath().orElse(null);
         addFeatures(config);
@@ -476,6 +479,10 @@ public class CXFClientInfo {
 
     public SchemaValidationType getSchemaValidationEnabledFor() {
         return schemaValidationEnabledFor;
+    }
+
+    public boolean isSecureWsdlAccess() {
+        return secureWsdlAccess;
     }
 
 }

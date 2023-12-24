@@ -28,6 +28,7 @@ import jakarta.xml.ws.BindingProvider;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -65,6 +66,9 @@ public abstract class CxfClientProducer {
 
     @Inject
     CxfFixedConfig fixedConfig;
+
+    @Inject
+    QuarkusHttpConduitConfigurer httpConduitConfigurer;
 
     @Inject
     @Any
@@ -140,6 +144,8 @@ public abstract class CxfClientProducer {
         }
         QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean();
         QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(quarkusClientFactoryBean, interfaces);
+        final Map<String, Object> props = new LinkedHashMap<>();
+        factory.setProperties(props);
         factory.setServiceClass(seiClass);
         LOGGER.debugf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
         factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
@@ -153,11 +159,25 @@ public abstract class CxfClientProducer {
         if (cxfClientInfo.getWsdlUrl() != null && !cxfClientInfo.getWsdlUrl().isEmpty()) {
             factory.setWsdlURL(cxfClientInfo.getWsdlUrl());
         }
-        if (cxfClientInfo.getUsername() != null) {
-            factory.setUsername(cxfClientInfo.getUsername());
-        }
-        if (cxfClientInfo.getPassword() != null) {
-            factory.setPassword(cxfClientInfo.getPassword());
+        final String username = cxfClientInfo.getUsername();
+        if (username != null) {
+            final String password = cxfClientInfo.getPassword();
+            final AuthorizationPolicy authPolicy = new AuthorizationPolicy();
+            authPolicy.setUserName(username);
+            if (password != null) {
+                authPolicy.setPassword(password);
+            }
+            if (cxfClientInfo.isSecureWsdlAccess()) {
+                /*
+                 * This is the only way how the AuthorizationPolicy can be set early enough to be effective for the WSDL
+                 * GET request. We do not do it by default because of backwards compatibility and for the user to think
+                 * twice whether his WSDL URL uses HTTPS and only then enable secureWsdlAccess
+                 */
+                httpConduitConfigurer.addConfigurer(cxfClientInfo.getEndpointAddress(),
+                        conduit -> conduit.setAuthorization(authPolicy));
+            } else {
+                props.put(AuthorizationPolicy.class.getName(), authPolicy);
+            }
         }
         final String clientString = "client"
                 + (cxfClientInfo.getConfigKey() != null ? (" " + cxfClientInfo.getConfigKey()) : "");
@@ -171,8 +191,6 @@ public abstract class CxfClientProducer {
                 factory.getOutFaultInterceptors());
         CXFRuntimeUtils.addBeans(cxfClientInfo.getInFaultInterceptors(), "inFaultInterceptor", clientString, sei,
                 factory.getInFaultInterceptors());
-        final Map<String, Object> props = new LinkedHashMap<>();
-        factory.setProperties(props);
 
         final HTTPConduitImpl httpConduitImpl = cxfClientInfo.getHttpConduitImpl();
         if (httpConduitImpl != null) {
