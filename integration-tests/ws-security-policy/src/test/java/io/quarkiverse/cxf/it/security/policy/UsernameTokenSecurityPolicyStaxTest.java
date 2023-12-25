@@ -97,7 +97,7 @@ public class UsernameTokenSecurityPolicyStaxTest extends AbstractUsernameTokenSe
     @Override
     @Test
     void helloSaml2() {
-        super.helloSaml1();
+        super.helloSaml2();
     }
 
 }
