@@ -7,6 +7,7 @@
 ** xref:user-guide/payload-logging.adoc[Logging]
 ** xref:user-guide/soap-payloads-with-jaxb.adoc[Complex SOAP payloads with JAXB]
 ** xref:user-guide/ssl.adoc[SSL]
+** xref:user-guide/auth.adoc[Authentication and authorization]
 ** xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
 ** xref:user-guide/advanced-soap-server-topics.adoc[Advanced SOAP server topics]
 ** xref:user-guide/generate-java-from-wsdl.adoc[Generate Java from WSDL]

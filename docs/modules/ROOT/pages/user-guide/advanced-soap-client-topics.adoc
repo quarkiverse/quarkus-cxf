@@ -32,18 +32,6 @@ quarkus.cxf.client.anotherCalculator.client-endpoint-url = https://acme.com/ws/W
 quarkus.cxf.client.anotherCalculator.service-interface = org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService
 ----
 
-[[basic-auth]]
-== Basic Authentication
-
-Basic authentication for clients is supported by default.
-Just add the following properties to your `application.properties`:
-
-[source,properties]
-----
-quarkus.cxf.client.myCalculator.username = user
-quarkus.cxf.client.myCalculator.password = password
-----
-
 [[timeouts]]
 == Timeouts
 
