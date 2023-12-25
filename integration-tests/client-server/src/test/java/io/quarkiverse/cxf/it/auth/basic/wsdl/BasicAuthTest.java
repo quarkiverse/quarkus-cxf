@@ -65,4 +65,29 @@ public class BasicAuthTest {
 
     }
 
+    @Test
+    public void basicAuthBadUser() {
+        /* WSDL not secured by basic auth */
+        RestAssured
+                .given()
+                .body("Mary")
+                .post("/client-server/basic-auth/basicAuthBadUser/hello")
+                .then()
+                .statusCode(500)
+                .body(Matchers.containsString("HTTP response '403: Forbidden'"));
+
+    }
+
+    @Test
+    public void basicAuthAnonymous() {
+        RestAssured
+                .given()
+                .body("Mary")
+                .post("/client-server/basic-auth/basicAuthAnonymous/hello")
+                .then()
+                .statusCode(500)
+                .body(Matchers.containsString("HTTP response '401: Unauthorized'"));
+
+    }
+
 }

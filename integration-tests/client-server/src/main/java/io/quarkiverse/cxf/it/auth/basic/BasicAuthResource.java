@@ -16,6 +16,12 @@ public class BasicAuthResource {
     @CXFClient("basicAuth")
     HelloService basicAuth;
 
+    @CXFClient("basicAuthAnonymous")
+    HelloService basicAuthAnonymous;
+
+    @CXFClient("basicAuthBadUser")
+    HelloService basicAuthBadUser;
+
     @CXFClient("basicAuthSecureWsdl")
     HelloService basicAuthSecureWsdl;
 
@@ -27,6 +33,12 @@ public class BasicAuthResource {
             case "basicAuth": {
                 yield basicAuth;
             }
+            case "basicAuthBadUser": {
+                yield basicAuthBadUser;
+            }
+            case "basicAuthAnonymous": {
+                yield basicAuthAnonymous;
+            }
             case "basicAuthSecureWsdl": {
                 yield basicAuthSecureWsdl;
             }
@@ -37,8 +49,18 @@ public class BasicAuthResource {
         try {
             return Response.ok(helloService.hello(body)).build();
         } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
+            Throwable rootCause = rootCause(e);
+            return Response.serverError().entity(rootCause.getMessage()).build();
         }
+    }
+
+    private static Throwable rootCause(Exception e) {
+        e.printStackTrace();
+        Throwable result = e;
+        while (result.getCause() != null) {
+            result = result.getCause();
+        }
+        return result;
     }
 
 }

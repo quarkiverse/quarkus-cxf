@@ -32,6 +32,7 @@ import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkiverse.cxf.QuarkusRuntimeJaxWsServiceFactoryBean;
+import io.quarkiverse.cxf.auth.AuthFaultOutInterceptor;
 import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
 import io.quarkus.arc.ManagedContext;
 import io.quarkus.arc.runtime.BeanContainer;
@@ -135,6 +136,7 @@ public class CxfHandler implements Handler<RoutingContext> {
                         jaxWsServerFactoryBean.getOutInterceptors());
                 CXFRuntimeUtils.addBeans(servletInfo.getOutFaultInterceptors(), "outFaultInterceptor", endpointString,
                         endpointType, jaxWsServerFactoryBean.getOutFaultInterceptors());
+                jaxWsServerFactoryBean.getOutFaultInterceptors().add(new AuthFaultOutInterceptor());
                 CXFRuntimeUtils.addBeans(servletInfo.getInFaultInterceptors(), "inFaultInterceptor", endpointString,
                         endpointType, jaxWsServerFactoryBean.getInFaultInterceptors());
 
