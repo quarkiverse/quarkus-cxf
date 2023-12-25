@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebResult;
@@ -24,6 +26,9 @@ public interface DateService {
 
     @WebMethod
     Calendar calendarAdd(Calendar base, int days);
+
+    @WebMethod
+    XMLGregorianCalendar xmlGregorianCalendarAdd(XMLGregorianCalendar base, int days);
 
     @WebMethod
     @RequestWrapper(className = "io.quarkiverse.cxf.it.server.DateService$DateTimeRequest")
