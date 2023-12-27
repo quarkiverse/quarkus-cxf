@@ -1,0 +1,12 @@
+---
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+name: "Quarkus CXF OpenTelemetry"
+metadata:
+  keywords:
+    - "soap"
+    - "cxf"
+    - "services"
+  categories:
+    - "integration"
+  guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/reference/extensions/quarkus-cxf-integration-tracing-opentelemetry.html"
+  status: "experimental"

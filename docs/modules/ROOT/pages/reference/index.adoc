@@ -30,6 +30,12 @@ Please follow the links under the extension names to learn about how to use them
 |0.14.0
 |
 
+| xref:reference/extensions/quarkus-cxf-integration-tracing-opentelemetry.adoc[Quarkus CXF OpenTelemetry] +
+`quarkus-cxf-integration-tracing-opentelemetry`
+|Stable
+|2.7.0
+|
+
 | xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[Quarkus CXF WS-Security] +
 `quarkus-cxf-rt-ws-security`
 |Stable

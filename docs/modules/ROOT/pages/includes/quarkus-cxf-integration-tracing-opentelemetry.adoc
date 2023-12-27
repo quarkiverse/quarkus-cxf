@@ -1,0 +1,64 @@
+
+:summaryTableId: quarkus-cxf-integration-tracing-opentelemetry
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[[quarkus-cxf-integration-tracing-opentelemetry_configuration]]link:#quarkus-cxf-integration-tracing-opentelemetry_configuration[Configuration property]
+
+h|Type
+h|Default
+
+a| [[quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.otel.enabled-for]]`link:#quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.otel.enabled-for[quarkus.cxf.otel.enabled-for]`
+
+
+[.description]
+--
+Specifies whether the OpenTelemetry tracing will be enabled for clients, services, both or none. This global setting can be overridden per client or service endpoint using the `quarkus.cxf.client."clients".otel.enabled` or `quarkus.cxf.endpoint."endpoints".otel.enabled` option respectively.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_OTEL_ENABLED_FOR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_OTEL_ENABLED_FOR+++`
+endif::add-copy-button-to-env-var[]
+-- a|
+`clients`, `services`, `both`, `none` 
+|`both`
+
+
+a| [[quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.client.-clients-.otel.enabled]]`link:#quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.client.-clients-.otel.enabled[quarkus.cxf.client."clients".otel.enabled]`
+
+
+[.description]
+--
+If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `clients` then the `OpenTelemetryClientFeature` will be added to this client; otherwise the feature will not be added to this client.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__OTEL_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__OTEL_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a| [[quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.endpoint.-endpoints-.otel.enabled]]`link:#quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.endpoint.-endpoints-.otel.enabled[quarkus.cxf.endpoint."endpoints".otel.enabled]`
+
+
+[.description]
+--
+If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `services` then the `OpenTelemetryFeature` will be added to this service endpoint; otherwise the feature will not be added to this service endpoint.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OTEL_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OTEL_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+|===

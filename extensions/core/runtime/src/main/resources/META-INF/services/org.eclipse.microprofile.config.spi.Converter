@@ -1,1 +1,2 @@
 io.quarkiverse.cxf.ConnectionTypeConverter
+io.quarkiverse.cxf.EnabledFor$EnabledForConverter
