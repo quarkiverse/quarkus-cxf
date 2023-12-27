@@ -26,6 +26,7 @@
         <module>mtom</module>
         <module>mtom-awt</module>
         <module>metrics</module>
+        <module>opentelemetry</module>
         <module>wsdl2java</module>
         <module>wsdl2java-no-config</module>
     </modules>

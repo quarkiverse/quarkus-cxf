@@ -1,0 +1,17 @@
+This extension builds on top of `org.apache.cxf.tracing.opentelemetry.OpenTelemetryFeature` (for service endpoints)
+and `org.apache.cxf.tracing.opentelemetry.OpenTelemetryClientFeature` (for clients).
+Instances of these are created and configured internally using the instance of `io.opentelemetry.api.OpenTelemetry`
+provided by https://quarkus.io/guides/opentelemetry[Quarkus OpenTelemetry].
+
+The tracing is enabled by default for all clients and service endpoints created by {quarkus-cxf-project-name},
+unless you disable it explicitly via `quarkus.cxf.otel.enabled-for`, `quarkus.cxf.client."clients".otel.enabled`
+or `quarkus.cxf.endpoint."endpoints".otel.enabled`.
+
+=== Runnable example
+
+There is an https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/opentelemetry[integration test]
+covering OpenTelemetry in the {quarkus-cxf-project-name} source tree.
+It is using `InMemorySpanExporter` from `io.opentelemetry:opentelemetry-sdk-testing`,
+so that the spans can be inspected from tests easily.
+Refer to Quarkus https://quarkus.io/guides/opentelemetry#exporters[OpenTelemetry guide] for information
+about other supported span exporters and collectors.

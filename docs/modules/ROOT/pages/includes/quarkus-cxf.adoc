@@ -569,7 +569,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_LOGGING_ENABLED_FOR+++`
 endif::add-copy-button-to-env-var[]
 -- a|
-`clients`, `services`, `clients-and-services`, `none` 
+`clients`, `services`, `both`, `none` 
 |`none`
 
 

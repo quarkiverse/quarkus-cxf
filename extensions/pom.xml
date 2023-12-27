@@ -18,6 +18,7 @@
         <module>core</module>
         <module>features-logging</module>
         <module>features-metrics</module>
+        <module>integration-tracing-opentelemetry</module>
         <module>ws-security</module>
         <module>ws-rm</module>
         <module>services-sts</module>

@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import io.quarkiverse.cxf.EnabledFor.EnabledForConverter;
 import io.quarkus.runtime.annotations.ConfigGroup;
+import io.smallrye.config.WithConverter;
 import io.smallrye.config.WithDefault;
 
 /**
@@ -101,6 +103,7 @@ public interface LoggingConfig {
          * Specifies whether the message logging will be enabled for clients, services, both or none.
          */
         @WithDefault("none")
+        @WithConverter(EnabledForConverter.class)
         EnabledFor enabledFor();
     }
 
