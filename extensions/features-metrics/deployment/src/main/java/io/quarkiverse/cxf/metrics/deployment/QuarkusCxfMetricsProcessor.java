@@ -8,10 +8,17 @@ import org.apache.cxf.metrics.codahale.CodahaleMetricsProvider;
 import io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 
 public class QuarkusCxfMetricsProcessor {
+    private static final String FEATURE = "cxf-rt-features-metrics";
+
+    @BuildStep
+    FeatureBuildItem feature() {
+        return new FeatureBuildItem(FEATURE);
+    }
 
     @BuildStep
     void registerMetricsReflectionItems(BuildProducer<ReflectiveClassBuildItem> reflectiveItems) {
