@@ -1,29 +1,28 @@
-The integration of CXF into https://quarkus.io/guides/micrometer[Quarkus Micrometer] ecosystem is implemented using
-https://github.com/apache/cxf/blob/master/rt/features/metrics/src/main/java/org/apache/cxf/metrics/micrometer/MicrometerMetricsProvider.java[CXF MicrometerMetricsProvider]
-and `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature`.
+The integration of CXF into the https://quarkus.io/guides/micrometer[Quarkus Micrometer] ecosystem is implemented using
+`io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature`.
+As long as your application depends on `quarkus-cxf-rt-features-metrics`,
+an instance of `QuarkusCxfMetricsFeature` is created internally
+and enabled by default for all clients and service endpoints created by {quarkus-cxf-project-name}.
+You can disable it via `quarkus.cxf.metrics.enabled-for`, `quarkus.cxf.client."clients".metrics.enabled`
+and `quarkus.cxf.endpoint."endpoints".metrics.enabled` properties documented below.
 
-NOTE: The sample code snippets used in this section come from the
-     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/metrics[metrics integration test]
-     in the source tree of {quarkus-cxf-project-name}
+=== Runnable example
 
-To enable metrics collection for services, just add `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature`
-to your service's features:
+There is an https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/metrics[integration test]
+covering Micrometer Metrics in the {quarkus-cxf-project-name} source tree.
 
-.application.properties
-[source,properties]
+Unsurprisingly, it depends on `quarkus-cxf-rt-features-metrics`
+
+.pom.xml
+[source,xml]
 ----
-include::example$metrics/application.properties[tag=metrics-server]
+<dependency>
+    <groupId>io.quarkiverse.cxf</groupId>
+    <artifactId>quarkus-cxf-rt-features-metrics</artifactId>
+</dependency>
 ----
 
-The same can be done for a client:
-
-.application.properties
-[source,properties]
-----
-include::example$metrics/application.properties[tag=metrics-client]
-----
-
-Finally, to export the metrics in json format and for Prometheus, add the following dependency to your project
+It is using `quarkus-micrometer-registry-prometheus` extension to export the metrics in JSON format and for Prometheus:
 
 .pom.xml
 [source,xml]
@@ -34,7 +33,7 @@ Finally, to export the metrics in json format and for Prometheus, add the follow
 </dependency>
 ----
 
-and set the following properties
+The following configuration is needed to be able to inspect the collected metrics over a REST endpoint:
 
 .application.properties
 [source,properties]
@@ -42,8 +41,25 @@ and set the following properties
 include::example$metrics/application.properties[tag=micrometer-export]
 ----
 
-After that, you should be able to see some metrics under `cxf.server.requests` and/or `cxf.client.requests` in the output of
-the endpoints you configured above:
+Having all the above in place, you can start the application in Dev mode:
+
+[source,shell]
+----
+$ mvn quarkus:dev
+----
+
+Now send a request to the `HelloService`:
+
+[source,shell]
+----
+$ curl \
+  -d '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns2:helloResponse xmlns:ns2="http://it.server.metrics.cxf.quarkiverse.io/"><return>Hello Joe!</return></ns2:helloResponse></soap:Body></soap:Envelope>' \
+  -H 'Content-Type: text/xml' \
+  -X POST \
+  http://localhost:8080/metrics/client/hello
+----
+
+After that, you should see some metrics under `cxf.server.requests` in the output of the endpoint you configured above:
 
 [source,shell]
 ----
@@ -53,11 +69,6 @@ metrics: {
     "cxf.server.requests": {
         "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello": 2,
         "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello": 64.0
-    },
-    ...
-    "cxf.client.requests": {
-        "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:808 /soap/hello": 1,
-        "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:8081/soap/hello": 34.0
     },
     ...
 }
