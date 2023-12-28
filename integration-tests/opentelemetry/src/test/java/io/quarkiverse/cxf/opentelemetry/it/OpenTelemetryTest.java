@@ -2,6 +2,7 @@ package io.quarkiverse.cxf.opentelemetry.it;
 
 import static io.restassured.RestAssured.given;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -43,10 +44,14 @@ public class OpenTelemetryTest {
 
         final List<Map<String, Object>> spans = getSpans();
 
-        int i = 0;
+        /* The ordering of the spans is not fully deterministic, so let's just check that all 4 are there */
+        final Map<String, Map<String, Object>> spansByName = new LinkedHashMap<>();
+        spans.forEach(span -> spansByName.put(span.get("name").toString(), span));
+        Assertions.assertThat(spansByName.size()).isEqualTo(4);
+
         {
             /* Quarkus CXF service span */
-            final Map<String, Object> span = spans.get(i++);
+            final Map<String, Object> span = spansByName.get("POST /soap/hello");
             Assertions.assertThat(span.get("kind")).isEqualTo(SpanKind.SERVER.toString());
             Assertions.assertThat(span.get("name")).isEqualTo("POST /soap/hello");
 
@@ -57,7 +62,7 @@ public class OpenTelemetryTest {
 
         {
             /* quarkus-vertx-web span serving the Quarkus CXF service */
-            final Map<String, Object> span = spans.get(i++);
+            final Map<String, Object> span = spansByName.get("POST /soap/");
             Assertions.assertThat(span.get("kind")).isEqualTo(SpanKind.SERVER.toString());
             Assertions.assertThat(span.get("name")).isEqualTo("POST /soap/");
 
@@ -68,7 +73,7 @@ public class OpenTelemetryTest {
 
         {
             /* Quarkus CXF client span */
-            final Map<String, Object> span = spans.get(i++);
+            final Map<String, Object> span = spansByName.get("POST http://localhost:8081/soap/hello");
             Assertions.assertThat(span.get("kind")).isEqualTo(SpanKind.CLIENT.toString());
             Assertions.assertThat(span.get("name")).isEqualTo("POST http://localhost:8081/soap/hello");
 
@@ -79,7 +84,7 @@ public class OpenTelemetryTest {
 
         {
             /* quarkus-vertx-web span invoking the CXF client */
-            final Map<String, Object> span = spans.get(i++);
+            final Map<String, Object> span = spansByName.get("POST /opentelemetry/client/hello");
             Assertions.assertThat(span.get("kind")).isEqualTo(SpanKind.SERVER.toString());
             Assertions.assertThat(span.get("name")).isEqualTo("POST /opentelemetry/client/hello");
 
