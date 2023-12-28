@@ -5,7 +5,9 @@ import org.apache.cxf.feature.DelegatingFeature;
 import org.apache.cxf.metrics.MetricsFeature;
 import org.apache.cxf.metrics.codahale.CodahaleMetricsProvider;
 
+import io.quarkiverse.cxf.metrics.MetricsCustomizer;
 import io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -39,5 +41,11 @@ public class QuarkusCxfMetricsProcessor {
                  * but that's currently not possible - see https://github.com/oracle/graal/issues/3225
                  */
                 CodahaleMetricsProvider.class.getName()));
+    }
+
+    @BuildStep
+    void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
+        additionalBeans.produce(
+                new AdditionalBeanBuildItem(MetricsCustomizer.class));
     }
 }
