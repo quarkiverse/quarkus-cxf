@@ -1,5 +1,7 @@
 package io.quarkiverse.cxf.opentelemetry;
 
+import java.util.Map;
+
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -8,12 +10,13 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.tracing.opentelemetry.OpenTelemetryClientFeature;
 import org.apache.cxf.tracing.opentelemetry.OpenTelemetryFeature;
-import org.eclipse.microprofile.config.ConfigProvider;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFServletInfo;
 import io.quarkiverse.cxf.CxfClientProducer.ClientFactoryCustomizer;
+import io.quarkiverse.cxf.opentelemetry.CxfOpenTelemetryConfig.ClientsConfig;
+import io.quarkiverse.cxf.opentelemetry.CxfOpenTelemetryConfig.EndpointsConfig;
 import io.quarkiverse.cxf.transport.CxfHandler.EndpointFactoryCustomizer;
 
 @ApplicationScoped
@@ -39,9 +42,11 @@ public class OpenTelemetryCustomizer implements ClientFactoryCustomizer, Endpoin
     public void customize(CXFClientInfo cxfClientInfo, JaxWsProxyFactoryBean factory) {
         if (config.otel().enabledFor().enabledForClients()) {
             final String key = cxfClientInfo.getConfigKey();
-            if (key != null
-                    && ConfigProvider.getConfig().getValue("quarkus.cxf.client.\"" + key + "\".otel.enabled", Boolean.class)
-                            .booleanValue()) {
+            final Map<String, ClientsConfig> clients = config.clients();
+            if (key == null
+                    || clients == null
+                    || !clients.containsKey(key)
+                    || clients.get(key).otel().enabled()) {
                 factory.getFeatures().add(clientFeature);
             }
         }
@@ -51,9 +56,11 @@ public class OpenTelemetryCustomizer implements ClientFactoryCustomizer, Endpoin
     public void customize(CXFServletInfo servletInfo, JaxWsServerFactoryBean factory) {
         if (config.otel().enabledFor().enabledForServices()) {
             final String key = servletInfo.getRelativePath();
-            if (key != null
-                    && ConfigProvider.getConfig().getValue("quarkus.cxf.endpoint.\"" + key + "\".otel.enabled", Boolean.class)
-                            .booleanValue()) {
+            final Map<String, EndpointsConfig> endpoints = config.endpoints();
+            if (key == null
+                    || endpoints == null
+                    || !endpoints.containsKey(key)
+                    || endpoints.get(key).otel().enabled()) {
                 factory.getFeatures().add(serviceFeature);
             }
         }

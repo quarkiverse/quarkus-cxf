@@ -12,7 +12,6 @@ import jakarta.inject.Inject;
 
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
-import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFRuntimeUtils;
@@ -23,7 +22,7 @@ import io.quarkiverse.cxf.ws.security.CxfWsSecurityConfig.SecurityConfig;
 
 @ApplicationScoped
 public class WssFactoryCustomizer implements ClientFactoryCustomizer, EndpointFactoryCustomizer {
-    private static final Logger log = Logger.getLogger(WssFactoryCustomizer.class);
+
     @Inject
     CxfWsSecurityConfig config;
 

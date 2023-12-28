@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.ws.rm;
 
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import jakarta.annotation.PostConstruct;
@@ -13,13 +14,13 @@ import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.ws.rm.RM10Constants;
 import org.apache.cxf.ws.rm.RMManager;
 import org.apache.cxf.ws.rm.feature.RMFeature;
-import org.eclipse.microprofile.config.ConfigProvider;
 
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFRuntimeUtils;
 import io.quarkiverse.cxf.CXFServletInfo;
 import io.quarkiverse.cxf.CxfClientProducer.ClientFactoryCustomizer;
 import io.quarkiverse.cxf.transport.CxfHandler.EndpointFactoryCustomizer;
+import io.quarkiverse.cxf.ws.rm.CxfWsRmConfig.ClientsOrEndpointsConfig;
 import io.quarkiverse.cxf.ws.rm.CxfWsRmConfig.GlobalRmConfig;
 
 @ApplicationScoped
@@ -37,23 +38,28 @@ public class WsRmFactoryCustomizer implements ClientFactoryCustomizer, EndpointF
     @Override
     public void customize(CXFClientInfo cxfClientInfo, JaxWsProxyFactoryBean factory) {
         final String key = cxfClientInfo.getConfigKey();
-        if (key != null && ConfigProvider.getConfig().getValue("quarkus.cxf.client.\"" + key + "\".rm.enabled", Boolean.class)
-                .booleanValue()) {
-            customize(key, factory, factory.getProperties()::put);
+        final Map<String, ClientsOrEndpointsConfig> clients = config.clients();
+        if (key == null
+                || clients == null
+                || !clients.containsKey(key)
+                || clients.get(key).rm().enabled()) {
+            customize(factory, factory.getProperties()::put);
         }
     }
 
     @Override
     public void customize(CXFServletInfo servletInfo, JaxWsServerFactoryBean factory) {
         final String key = servletInfo.getRelativePath();
-        if (key != null && ConfigProvider.getConfig().getValue("quarkus.cxf.endpoint.\"" + key + "\".rm.enabled", Boolean.class)
-                .booleanValue()) {
-            customize(key, factory, factory.getProperties()::put);
+        final Map<String, ClientsOrEndpointsConfig> endpoints = config.endpoints();
+        if (key == null
+                || endpoints == null
+                || !endpoints.containsKey(key)
+                || endpoints.get(key).rm().enabled()) {
+            customize(factory, factory.getProperties()::put);
         }
     }
 
     private void customize(
-            final String key,
             InterceptorProvider interceptorProvider,
             BiConsumer<String, Object> props) {
         final GlobalRmConfig globalRmConfig = config.rm();
