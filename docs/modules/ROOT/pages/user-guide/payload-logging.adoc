@@ -35,7 +35,7 @@ The global settings can be xref:#per-client-or-service-endpoind-payload-logging[
 .application.properties
 [source,properties,subs=attributes+]
 ----
-# For a service:
+# Global settings
 quarkus.cxf.logging.enabled = true
 quarkus.cxf.logging.pretty = true
 ----

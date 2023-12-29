@@ -8,6 +8,7 @@ import io.quarkus.runtime.annotations.ConfigDocIgnore;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefaults;
 import io.smallrye.config.WithName;
 
 @ConfigMapping(prefix = "quarkus.cxf")
@@ -18,12 +19,14 @@ public interface CxfConfig {
      * Choose the path of each web services.
      */
     @WithName("endpoint")
+    @WithDefaults
     public Map<String, CxfEndpointConfig> endpoints();
 
     /**
      * Configure client proxies.
      */
     @WithName("client")
+    @WithDefaults
     public Map<String, CxfClientConfig> clients();
 
     /**
