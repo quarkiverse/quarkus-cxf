@@ -560,7 +560,7 @@ a| [[quarkus-cxf_quarkus.cxf.logging.enabled-for]]`link:#quarkus-cxf_quarkus.cxf
 
 [.description]
 --
-Specifies whether the message logging will be enabled for clients, services, both or none.
+Specifies whether the message logging will be enabled for clients, services, both or none. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.enabled[quarkus.cxf.endpoint."endpoints".logging.enabled]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.enabled[quarkus.cxf.client."clients".logging.enabled]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_ENABLED_FOR+++[]
@@ -573,12 +573,29 @@ endif::add-copy-button-to-env-var[]
 |`none`
 
 
+a| [[quarkus-cxf_quarkus.cxf.logging.pretty]]`link:#quarkus-cxf_quarkus.cxf.logging.pretty[quarkus.cxf.logging.pretty]`
+
+
+[.description]
+--
+If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.pretty[quarkus.cxf.endpoint."endpoints".logging.pretty]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.pretty[quarkus.cxf.client."clients".logging.pretty]` respectively.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_PRETTY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_LOGGING_PRETTY+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
 a| [[quarkus-cxf_quarkus.cxf.logging.limit]]`link:#quarkus-cxf_quarkus.cxf.logging.limit[quarkus.cxf.logging.limit]`
 
 
 [.description]
 --
-A message length in bytes at which it is truncated in the log. Default is 48 kB.
+A message length in bytes at which it is truncated in the log. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.limit[quarkus.cxf.endpoint."endpoints".logging.limit]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.limit[quarkus.cxf.client."clients".logging.limit]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_LIMIT+++[]
@@ -595,7 +612,7 @@ a| [[quarkus-cxf_quarkus.cxf.logging.in-mem-threshold]]`link:#quarkus-cxf_quarku
 
 [.description]
 --
-A message length in bytes at which it will be written to disk. `-1` is unlimited.
+A message length in bytes at which it will be written to disk. `-1` is unlimited. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-mem-threshold[quarkus.cxf.endpoint."endpoints".logging.in-mem-threshold]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-mem-threshold[quarkus.cxf.client."clients".logging.in-mem-threshold]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_IN_MEM_THRESHOLD+++[]
@@ -607,29 +624,12 @@ endif::add-copy-button-to-env-var[]
 |`-1`
 
 
-a| [[quarkus-cxf_quarkus.cxf.logging.pretty]]`link:#quarkus-cxf_quarkus.cxf.logging.pretty[quarkus.cxf.logging.pretty]`
-
-
-[.description]
---
-If `true`, the XML elements will be indented in the log; otherwise they will appear unindented.
-
-ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_PRETTY+++[]
-endif::add-copy-button-to-env-var[]
-ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_CXF_LOGGING_PRETTY+++`
-endif::add-copy-button-to-env-var[]
---|boolean 
-|`false`
-
-
 a| [[quarkus-cxf_quarkus.cxf.logging.log-binary]]`link:#quarkus-cxf_quarkus.cxf.logging.log-binary[quarkus.cxf.logging.log-binary]`
 
 
 [.description]
 --
-If `true`, binary payloads will be logged; otherwise they won't be logged.
+If `true`, binary payloads will be logged; otherwise they won't be logged. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-binary[quarkus.cxf.endpoint."endpoints".logging.log-binary]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-binary[quarkus.cxf.client."clients".logging.log-binary]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_LOG_BINARY+++[]
@@ -646,7 +646,7 @@ a| [[quarkus-cxf_quarkus.cxf.logging.log-multipart]]`link:#quarkus-cxf_quarkus.c
 
 [.description]
 --
-If `true`, multipart payloads will be logged; otherwise they won't be logged.
+If `true`, multipart payloads will be logged; otherwise they won't be logged. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-multipart[quarkus.cxf.endpoint."endpoints".logging.log-multipart]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-multipart[quarkus.cxf.client."clients".logging.log-multipart]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_LOG_MULTIPART+++[]
@@ -663,7 +663,7 @@ a| [[quarkus-cxf_quarkus.cxf.logging.verbose]]`link:#quarkus-cxf_quarkus.cxf.log
 
 [.description]
 --
-If `true`, verbose logging will be enabled; otherwise it won't be enabled.
+If `true`, verbose logging will be enabled; otherwise it won't be enabled. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.verbose[quarkus.cxf.endpoint."endpoints".logging.verbose]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.verbose[quarkus.cxf.client."clients".logging.verbose]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_VERBOSE+++[]
@@ -680,7 +680,7 @@ a| [[quarkus-cxf_quarkus.cxf.logging.in-binary-content-media-types]]`link:#quark
 
 [.description]
 --
-A comma separated list of additional binary media types to the default values in the `LoggingInInterceptor` whose content should not be logged.
+A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.in-binary-content-media-types]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-binary-content-media-types[quarkus.cxf.client."clients".logging.in-binary-content-media-types]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_IN_BINARY_CONTENT_MEDIA_TYPES+++[]
@@ -697,7 +697,7 @@ a| [[quarkus-cxf_quarkus.cxf.logging.out-binary-content-media-types]]`link:#quar
 
 [.description]
 --
-A comma separated list of additional binary media types to the default values in the `LoggingOutInterceptor` whose content should not be logged.
+A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.out-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.out-binary-content-media-types]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.out-binary-content-media-types[quarkus.cxf.client."clients".logging.out-binary-content-media-types]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_OUT_BINARY_CONTENT_MEDIA_TYPES+++[]
@@ -714,7 +714,7 @@ a| [[quarkus-cxf_quarkus.cxf.logging.binary-content-media-types]]`link:#quarkus-
 
 [.description]
 --
-A comma separated list of additional binary media types to the default values in both the `LoggingOutInterceptor` and `LoggingInInterceptor` whose content should not be logged.
+A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.binary-content-media-types]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.binary-content-media-types[quarkus.cxf.client."clients".logging.binary-content-media-types]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_BINARY_CONTENT_MEDIA_TYPES+++[]
@@ -731,7 +731,7 @@ a| [[quarkus-cxf_quarkus.cxf.logging.sensitive-element-names]]`link:#quarkus-cxf
 
 [.description]
 --
-A comma separated list of XML elements containing sensitive information to be masked in the log.
+A comma separated list of XML elements containing sensitive information to be masked in the log. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-element-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-element-names]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.sensitive-element-names[quarkus.cxf.client."clients".logging.sensitive-element-names]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_SENSITIVE_ELEMENT_NAMES+++[]
@@ -748,7 +748,7 @@ a| [[quarkus-cxf_quarkus.cxf.logging.sensitive-protocol-header-names]]`link:#qua
 
 [.description]
 --
-A comma separated list of protocol headers containing sensitive information to be masked in the log.
+A comma separated list of protocol headers containing sensitive information to be masked in the log. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-protocol-header-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-protocol-header-names]` or `link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.sensitive-protocol-header-names[quarkus.cxf.client."clients".logging.sensitive-protocol-header-names]` respectively.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_LOGGING_SENSITIVE_PROTOCOL_HEADER_NAMES+++[]
@@ -1322,13 +1322,31 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.enabled]]`link:#quarku
 
 [.description]
 --
-If `true`, the message logging will be enabled; otherwise it will not be enabled. Default is `false`.
+If `true` or `pretty`, the message logging will be enabled; otherwise it will not be enabled. If the value is `pretty` (since 2.7.0), the `pretty` attribute will effectively be set to `true`. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.enabled-for[quarkus.cxf.logging.enabled-for]`.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_ENABLED+++[]
 endif::add-copy-button-to-env-var[]
 ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+-- a|
+`true`, `false`, `pretty` 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.pretty]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.pretty[quarkus.cxf.endpoint."endpoints".logging.pretty]`
+
+
+[.description]
+--
+If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.pretty[quarkus.cxf.logging.pretty]`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_PRETTY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_PRETTY+++`
 endif::add-copy-button-to-env-var[]
 --|boolean 
 |
@@ -1339,7 +1357,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.limit]]`link:#quarkus-
 
 [.description]
 --
-A message length in bytes at which it is truncated in the log. Default is 48 kB.
+A message length in bytes at which it is truncated in the log. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.limit[quarkus.cxf.logging.limit]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_LIMIT+++[]
@@ -1348,7 +1366,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_LIMIT+++`
 endif::add-copy-button-to-env-var[]
 --|int 
-|`49152`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-mem-threshold]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-mem-threshold[quarkus.cxf.endpoint."endpoints".logging.in-mem-threshold]`
@@ -1356,7 +1374,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-mem-threshold]]`lin
 
 [.description]
 --
-A message length in bytes at which it will be written to disk. `-1` is unlimited.
+A message length in bytes at which it will be written to disk. `-1` is unlimited. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.in-mem-threshold[quarkus.cxf.logging.in-mem-threshold]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_IN_MEM_THRESHOLD+++[]
@@ -1365,24 +1383,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_IN_MEM_THRESHOLD+++`
 endif::add-copy-button-to-env-var[]
 --|long 
-|`-1`
-
-
-a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.pretty]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.pretty[quarkus.cxf.endpoint."endpoints".logging.pretty]`
-
-
-[.description]
---
-If `true`, the XML elements will be indented in the log; otherwise they will appear unindented.
-
-ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_PRETTY+++[]
-endif::add-copy-button-to-env-var[]
-ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_PRETTY+++`
-endif::add-copy-button-to-env-var[]
---|boolean 
-|`false`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-binary]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-binary[quarkus.cxf.endpoint."endpoints".logging.log-binary]`
@@ -1390,7 +1391,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-binary]]`link:#qua
 
 [.description]
 --
-If `true`, binary payloads will be logged; otherwise they won't be logged.
+If `true`, binary payloads will be logged; otherwise they won't be logged. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.log-binary[quarkus.cxf.logging.log-binary]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_LOG_BINARY+++[]
@@ -1399,7 +1400,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_LOG_BINARY+++`
 endif::add-copy-button-to-env-var[]
 --|boolean 
-|`false`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-multipart]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-multipart[quarkus.cxf.endpoint."endpoints".logging.log-multipart]`
@@ -1407,7 +1408,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.log-multipart]]`link:#
 
 [.description]
 --
-If `true`, multipart payloads will be logged; otherwise they won't be logged.
+If `true`, multipart payloads will be logged; otherwise they won't be logged. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.log-multipart[quarkus.cxf.logging.log-multipart]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_LOG_MULTIPART+++[]
@@ -1416,7 +1417,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_LOG_MULTIPART+++`
 endif::add-copy-button-to-env-var[]
 --|boolean 
-|`true`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.verbose]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.verbose[quarkus.cxf.endpoint."endpoints".logging.verbose]`
@@ -1424,7 +1425,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.verbose]]`link:#quarku
 
 [.description]
 --
-If `true`, verbose logging will be enabled; otherwise it won't be enabled.
+If `true`, verbose logging will be enabled; otherwise it won't be enabled. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.verbose[quarkus.cxf.logging.verbose]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_VERBOSE+++[]
@@ -1433,7 +1434,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_VERBOSE+++`
 endif::add-copy-button-to-env-var[]
 --|boolean 
-|`true`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-binary-content-media-types]]`link:#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.in-binary-content-media-types]`
@@ -1441,7 +1442,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.in-binary-content-medi
 
 [.description]
 --
-A comma separated list of additional binary media types to the default values in the `LoggingInInterceptor` whose content should not be logged.
+A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.in-binary-content-media-types[quarkus.cxf.logging.in-binary-content-media-types]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_IN_BINARY_CONTENT_MEDIA_TYPES+++[]
@@ -1458,7 +1459,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.out-binary-content-med
 
 [.description]
 --
-A comma separated list of additional binary media types to the default values in the `LoggingOutInterceptor` whose content should not be logged.
+A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.out-binary-content-media-types[quarkus.cxf.logging.out-binary-content-media-types]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_OUT_BINARY_CONTENT_MEDIA_TYPES+++[]
@@ -1475,7 +1476,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.binary-content-media-t
 
 [.description]
 --
-A comma separated list of additional binary media types to the default values in both the `LoggingOutInterceptor` and `LoggingInInterceptor` whose content should not be logged.
+A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.binary-content-media-types[quarkus.cxf.logging.binary-content-media-types]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_BINARY_CONTENT_MEDIA_TYPES+++[]
@@ -1492,7 +1493,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-element-name
 
 [.description]
 --
-A comma separated list of XML elements containing sensitive information to be masked in the log.
+A comma separated list of XML elements containing sensitive information to be masked in the log. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_SENSITIVE_ELEMENT_NAMES+++[]
@@ -1509,7 +1510,7 @@ a| [[quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.sensitive-protocol-hea
 
 [.description]
 --
-A comma separated list of protocol headers containing sensitive information to be masked in the log.
+A comma separated list of protocol headers containing sensitive information to be masked in the log. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.sensitive-protocol-header-names[quarkus.cxf.logging.sensitive-protocol-header-names]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_SENSITIVE_PROTOCOL_HEADER_NAMES+++[]
@@ -1817,13 +1818,31 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.enabled]]`link:#quarkus-cx
 
 [.description]
 --
-If `true`, the message logging will be enabled; otherwise it will not be enabled. Default is `false`.
+If `true` or `pretty`, the message logging will be enabled; otherwise it will not be enabled. If the value is `pretty` (since 2.7.0), the `pretty` attribute will effectively be set to `true`. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.enabled-for[quarkus.cxf.logging.enabled-for]`.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_ENABLED+++[]
 endif::add-copy-button-to-env-var[]
 ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+-- a|
+`true`, `false`, `pretty` 
+|
+
+
+a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.pretty]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.pretty[quarkus.cxf.client."clients".logging.pretty]`
+
+
+[.description]
+--
+If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.pretty[quarkus.cxf.logging.pretty]`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_PRETTY+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_PRETTY+++`
 endif::add-copy-button-to-env-var[]
 --|boolean 
 |
@@ -1834,7 +1853,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.limit]]`link:#quarkus-cxf_
 
 [.description]
 --
-A message length in bytes at which it is truncated in the log. Default is 48 kB.
+A message length in bytes at which it is truncated in the log. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.limit[quarkus.cxf.logging.limit]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_LIMIT+++[]
@@ -1843,7 +1862,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_LIMIT+++`
 endif::add-copy-button-to-env-var[]
 --|int 
-|`49152`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-mem-threshold]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-mem-threshold[quarkus.cxf.client."clients".logging.in-mem-threshold]`
@@ -1851,7 +1870,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-mem-threshold]]`link:#q
 
 [.description]
 --
-A message length in bytes at which it will be written to disk. `-1` is unlimited.
+A message length in bytes at which it will be written to disk. `-1` is unlimited. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.in-mem-threshold[quarkus.cxf.logging.in-mem-threshold]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_IN_MEM_THRESHOLD+++[]
@@ -1860,24 +1879,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_IN_MEM_THRESHOLD+++`
 endif::add-copy-button-to-env-var[]
 --|long 
-|`-1`
-
-
-a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.pretty]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.pretty[quarkus.cxf.client."clients".logging.pretty]`
-
-
-[.description]
---
-If `true`, the XML elements will be indented in the log; otherwise they will appear unindented.
-
-ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_PRETTY+++[]
-endif::add-copy-button-to-env-var[]
-ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_PRETTY+++`
-endif::add-copy-button-to-env-var[]
---|boolean 
-|`false`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-binary]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-binary[quarkus.cxf.client."clients".logging.log-binary]`
@@ -1885,7 +1887,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-binary]]`link:#quarkus
 
 [.description]
 --
-If `true`, binary payloads will be logged; otherwise they won't be logged.
+If `true`, binary payloads will be logged; otherwise they won't be logged. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.log-binary[quarkus.cxf.logging.log-binary]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_LOG_BINARY+++[]
@@ -1894,7 +1896,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_LOG_BINARY+++`
 endif::add-copy-button-to-env-var[]
 --|boolean 
-|`false`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-multipart]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-multipart[quarkus.cxf.client."clients".logging.log-multipart]`
@@ -1902,7 +1904,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.log-multipart]]`link:#quar
 
 [.description]
 --
-If `true`, multipart payloads will be logged; otherwise they won't be logged.
+If `true`, multipart payloads will be logged; otherwise they won't be logged. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.log-multipart[quarkus.cxf.logging.log-multipart]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_LOG_MULTIPART+++[]
@@ -1911,7 +1913,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_LOG_MULTIPART+++`
 endif::add-copy-button-to-env-var[]
 --|boolean 
-|`true`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.verbose]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.verbose[quarkus.cxf.client."clients".logging.verbose]`
@@ -1919,7 +1921,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.verbose]]`link:#quarkus-cx
 
 [.description]
 --
-If `true`, verbose logging will be enabled; otherwise it won't be enabled.
+If `true`, verbose logging will be enabled; otherwise it won't be enabled. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.verbose[quarkus.cxf.logging.verbose]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_VERBOSE+++[]
@@ -1928,7 +1930,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_VERBOSE+++`
 endif::add-copy-button-to-env-var[]
 --|boolean 
-|`true`
+|
 
 
 a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-binary-content-media-types]]`link:#quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-binary-content-media-types[quarkus.cxf.client."clients".logging.in-binary-content-media-types]`
@@ -1936,7 +1938,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.in-binary-content-media-ty
 
 [.description]
 --
-A comma separated list of additional binary media types to the default values in the `LoggingInInterceptor` whose content should not be logged.
+A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.in-binary-content-media-types[quarkus.cxf.logging.in-binary-content-media-types]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_IN_BINARY_CONTENT_MEDIA_TYPES+++[]
@@ -1953,7 +1955,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.out-binary-content-media-t
 
 [.description]
 --
-A comma separated list of additional binary media types to the default values in the `LoggingOutInterceptor` whose content should not be logged.
+A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.out-binary-content-media-types[quarkus.cxf.logging.out-binary-content-media-types]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_OUT_BINARY_CONTENT_MEDIA_TYPES+++[]
@@ -1970,7 +1972,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.binary-content-media-types
 
 [.description]
 --
-A comma separated list of additional binary media types to the default values in both the `LoggingOutInterceptor` and `LoggingInInterceptor` whose content should not be logged.
+A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.binary-content-media-types[quarkus.cxf.logging.binary-content-media-types]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_BINARY_CONTENT_MEDIA_TYPES+++[]
@@ -1987,7 +1989,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.sensitive-element-names]]`
 
 [.description]
 --
-A comma separated list of XML elements containing sensitive information to be masked in the log.
+A comma separated list of XML elements containing sensitive information to be masked in the log. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_SENSITIVE_ELEMENT_NAMES+++[]
@@ -2004,7 +2006,7 @@ a| [[quarkus-cxf_quarkus.cxf.client.-clients-.logging.sensitive-protocol-header-
 
 [.description]
 --
-A comma separated list of protocol headers containing sensitive information to be masked in the log.
+A comma separated list of protocol headers containing sensitive information to be masked in the log. The default is given by `link:#quarkus-cxf_quarkus.cxf.logging.sensitive-protocol-header-names[quarkus.cxf.logging.sensitive-protocol-header-names]`
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_SENSITIVE_PROTOCOL_HEADER_NAMES+++[]
