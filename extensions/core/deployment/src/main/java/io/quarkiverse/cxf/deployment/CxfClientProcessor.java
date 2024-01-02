@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Disposes;
@@ -35,6 +36,7 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.CXFClientData;
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFRecorder;
+import io.quarkiverse.cxf.ClientInjectionPoint;
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.CxfClientProducer;
 import io.quarkiverse.cxf.CxfFixedConfig;
@@ -178,34 +180,53 @@ public class CxfClientProcessor {
         return null;
     }
 
+    public static Stream<ClientInjectionPoint> findClientInjectionPoints(IndexView index) {
+        return index.getAnnotations(CxfDotNames.CXFCLIENT_ANNOTATION).stream()
+                .map(annotationInstance -> {
+                    final AnnotationTarget target = annotationInstance.target();
+                    Type type;
+                    switch (target.kind()) {
+                        case FIELD:
+                            type = target.asField().type();
+                            break;
+                        case METHOD_PARAMETER:
+                            MethodParameterInfo paramInfo = target.asMethodParameter();
+                            MethodInfo method = paramInfo.method();
+                            type = method.parameterTypes().get(paramInfo.position());
+                            break;
+                        default:
+                            type = null;
+                            break;
+                    }
+                    if (type != null) {
+                        type = type.name().equals(CxfDotNames.INJECT_INSTANCE) ? type.asParameterizedType().arguments().get(0)
+                                : type;
+                        final String typeName = type.name().toString();
+                        try {
+                            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                            final Class<?> sei = Class.forName(typeName, true, cl);
+                            final AnnotationValue value = annotationInstance.value();
+                            return new ClientInjectionPoint(value != null ? value.asString() : "", sei);
+                        } catch (ClassNotFoundException e) {
+                            throw new RuntimeException("Could not load Service Endpoint Interface " + typeName);
+                        }
+                    } else {
+                        return null;
+                    }
+                })
+                .filter(ip -> ip != null)
+                .distinct();
+    }
+
     private static Map<String, ClientFixedConfig> findClientSEIsInUse(IndexView index, CxfFixedConfig config) {
         final Map<String, ClientFixedConfig> seiToClientConfig = new TreeMap<>();
-        index.getAnnotations(CxfDotNames.CXFCLIENT_ANNOTATION).forEach(annotationInstance -> {
-            final AnnotationTarget target = annotationInstance.target();
-            Type type;
-            switch (target.kind()) {
-                case FIELD:
-                    type = target.asField().type();
-                    break;
-                case METHOD_PARAMETER:
-                    MethodParameterInfo paramInfo = target.asMethodParameter();
-                    MethodInfo method = paramInfo.method();
-                    type = method.parameterTypes().get(paramInfo.position());
-                    break;
-                default:
-                    type = null;
-                    break;
-            }
-            if (type != null) {
-                type = type.name().equals(CxfDotNames.INJECT_INSTANCE) ? type.asParameterizedType().arguments().get(0)
-                        : type;
-                final String typeName = type.name().toString();
-                final ClientFixedConfig clientConfig = findClientConfig(
-                        config,
-                        Optional.ofNullable(annotationInstance.value()).map(AnnotationValue::asString).orElse(null),
-                        typeName);
-                seiToClientConfig.put(typeName, clientConfig);
-            }
+        findClientInjectionPoints(index).forEach(clientInjectionPoint -> {
+            String sei = clientInjectionPoint.getSei().getName();
+            final ClientFixedConfig clientConfig = findClientConfig(
+                    config,
+                    clientInjectionPoint.getConfigKey(),
+                    sei);
+            seiToClientConfig.put(sei, clientConfig);
         });
         return seiToClientConfig;
     }

@@ -10,7 +10,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.jboss.logging.Logger;
 
-import io.quarkiverse.cxf.devui.CxfJsonRPCService;
 import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkiverse.cxf.transport.VertxDestinationFactory;
 import io.quarkus.arc.runtime.BeanContainer;
@@ -135,8 +134,6 @@ public class CXFRecorder {
             HttpConfiguration httpConfiguration,
             CxfFixedConfig fixedConfig) {
         LOGGER.trace("init server");
-        // There may be a better way to handle this
-        CxfJsonRPCService.setServletInfos(infos.getValue());
         return new CxfHandler(infos.getValue(), beanContainer, httpConfiguration, fixedConfig);
     }
 
