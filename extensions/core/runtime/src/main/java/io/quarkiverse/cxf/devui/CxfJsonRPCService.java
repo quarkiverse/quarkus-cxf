@@ -1,41 +1,83 @@
 package io.quarkiverse.cxf.devui;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
+import io.quarkiverse.cxf.CXFClientData;
 import io.quarkiverse.cxf.CXFClientInfo;
-import io.quarkiverse.cxf.CXFServletInfo;
 import io.quarkiverse.cxf.CXFServletInfos;
+import io.quarkiverse.cxf.ClientInjectionPoint;
+import io.quarkiverse.cxf.CxfClientProducer;
+import io.quarkiverse.cxf.CxfConfig;
+import io.quarkiverse.cxf.CxfFixedConfig;
+import io.quarkus.arc.Arc;
 
 public class CxfJsonRPCService {
 
-    private static CXFServletInfos cxfServletInfos;
+    private static List<DevUiServiceInfo> servletInfos = Collections.emptyList();
 
-    public List<CXFServletInfo> getServices() {
-        List<CXFServletInfo> servletInfos = cxfServletInfos != null ? new ArrayList<>(cxfServletInfos.getInfos())
-                : new ArrayList<>();
-        servletInfos.sort(Comparator.comparing(CXFServletInfo::getSei));
+    @Inject
+    @Named("clientInjectionPoints")
+    List<ClientInjectionPoint> clientInjectionPoints;
+
+    @Inject
+    CxfConfig config;
+
+    @Inject
+    CxfFixedConfig fixedConfig;
+
+    public List<DevUiServiceInfo> getServices() {
         return servletInfos;
     }
 
-    public List<CXFClientInfo> getClients() {
-        List<CXFClientInfo> clientInfos = new ArrayList<>(allClientInfos());
-        clientInfos.sort(Comparator.comparing(CXFClientInfo::getSei));
-        return clientInfos;
+    public int getServiceCount() {
+        return servletInfos.size();
     }
 
-    private static Collection<CXFClientInfo> allClientInfos() {
-        return CDI.current().select(CXFClientInfo.class).stream().collect(Collectors.toCollection(ArrayList::new));
+    public int getClientCount() {
+        return clientInjectionPoints.size();
+    }
+
+    public List<DevUiClientInfo> getClients() {
+        List<DevUiClientInfo> result = new ArrayList<>(clientInjectionPoints.size());
+        for (ClientInjectionPoint ip : clientInjectionPoints) {
+            final CXFClientData cxfClientData = (CXFClientData) Arc.container().instance(ip.getSei().getName()).get();
+
+            final CXFClientInfo clientInfo = CxfClientProducer.selectorCXFClientInfo(
+                    config,
+                    fixedConfig,
+                    cxfClientData,
+                    ip.getConfigKey(),
+                    () -> new IllegalStateException("Cannot find quarkus.cxf.client.\"" + ip.getConfigKey() + "\""));
+
+            final DevUiClientInfo devUiIInfo = new DevUiClientInfo(
+                    ip.getConfigKey(),
+                    ip.getSei().getName(),
+                    clientInfo.getEndpointAddress(),
+                    clientInfo.getWsdlUrl());
+
+            result.add(devUiIInfo);
+        }
+        result.sort(Comparator.comparing(DevUiClientInfo::getSei));
+        return result;
     }
 
     public static void setServletInfos(CXFServletInfos infos) {
-        if (cxfServletInfos == null) {
-            cxfServletInfos = infos;
-        }
+        servletInfos = Collections.unmodifiableList(
+                infos.getInfos().stream()
+                        .map(DevUiServiceInfo::of)
+                        .sorted(Comparator.comparing(DevUiServiceInfo::getImplementor))
+                        .collect(Collectors.toList()));
     }
+
+    public static void shutdown() {
+        servletInfos = Collections.emptyList();
+    }
+
 }

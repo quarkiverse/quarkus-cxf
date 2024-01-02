@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.net.ssl.HostnameVerifier;
@@ -146,6 +147,7 @@ public abstract class CxfClientProducer {
         QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(quarkusClientFactoryBean, interfaces);
         final Map<String, Object> props = new LinkedHashMap<>();
         factory.setProperties(props);
+        props.put(CXFClientInfo.class.getName(), cxfClientInfo);
         factory.setServiceClass(seiClass);
         LOGGER.debugf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
         factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
@@ -376,21 +378,41 @@ public abstract class CxfClientProducer {
         // If injection point is annotated with @CXFClient then determine a
         // configuration by looking up annotated config value:
 
+        final String configKey;
         if (ip.getAnnotated().isAnnotationPresent(CXFClient.class)) {
-            CXFClient anno = ip.getAnnotated().getAnnotation(CXFClient.class);
-            String configKey = anno.value();
+            final CXFClient anno = ip.getAnnotated().getAnnotation(CXFClient.class);
+            configKey = anno.value();
+        } else {
+            configKey = "";
+        }
+        return selectorCXFClientInfo(
+                config,
+                fixedConfig,
+                meta,
+                configKey,
+                () -> new IllegalStateException(
+                        "quarkus.cxf.client.\"" + configKey + "\" is referenced in " + ip.getMember()
+                                + " but no such build time configuration entry exists"));
+    }
 
+    public static CXFClientInfo selectorCXFClientInfo(
+            CxfConfig config,
+            CxfFixedConfig fixedConfig,
+            CXFClientData meta,
+            String configKey,
+            Supplier<IllegalStateException> exceptionSupplier) {
+
+        // If injection point is annotated with @CXFClient then determine a
+        // configuration by looking up annotated config value:
+
+        if (configKey != null && !configKey.isEmpty()) {
             if (config.isClientPresent(configKey)) {
                 return new CXFClientInfo(meta, config.getClient(configKey), configKey);
             }
-
             // If config-key is present and not default: This is an error:
-            if (configKey != null && !configKey.isEmpty()) {
-                throw new IllegalStateException(
-                        "quarkus.cxf.\"" + configKey + "\" is referenced in " + ip.getMember()
-                                + " but no such build time configuration entry exists");
-            }
+            throw exceptionSupplier.get();
         }
+
         // User did not specify any client config value. Thus we make a smart guess
         // about which configuration is to be used.
         //

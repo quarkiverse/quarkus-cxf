@@ -116,7 +116,7 @@ public class CxfEndpointImplementationProcessor {
 
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
-    void startRoute(CXFRecorder recorder,
+    CXFServletInfosBuildItem startRoute(CXFRecorder recorder,
             BuildProducer<RouteBuildItem> routes,
             BeanContainerBuildItem beanContainer,
             List<CxfEndpointImplementationBuildItem> cxfEndpoints,
@@ -154,6 +154,8 @@ public class CxfEndpointImplementationProcessor {
             LOGGER.debug(
                     "Not registering a Vert.x handler for CXF as no WS endpoints were found at build time and no other extension requested it");
         }
+
+        return new CXFServletInfosBuildItem(infos);
     }
 
     private static String getMappingPath(String path) {
