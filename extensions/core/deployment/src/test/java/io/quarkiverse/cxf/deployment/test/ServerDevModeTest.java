@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
+import org.awaitility.Awaitility;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -66,14 +68,14 @@ public class ServerDevModeTest {
     private void assertWsdl(RestAssuredConfig config, String path) {
         given()
                 .config(config)
-                .when().get(path + "?wsdl")
+                .when().get("/soap" + path + "?wsdl")
                 .then()
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
                                 anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
-                                        "http://localhost:8080" + path)));
+                                        "http://localhost:8080/soap" + path)));
     }
 
     private void assertCount(RestAssuredConfig config, String path, int expectedStatus, String expectedCount) {
@@ -86,13 +88,21 @@ public class ServerDevModeTest {
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
 
-        final ValidatableResponse response = given()
-                .config(config)
-                .body(requestBody)
-                .when()
-                .post(path)
-                .then()
-                .statusCode(expectedStatus);
+        final ValidatableResponse response = Awaitility.await().atMost(10, TimeUnit.SECONDS).until(
+                () -> {
+                    try {
+                        return given()
+                                .config(config)
+                                .body(requestBody)
+                                .when()
+                                .post("/soap" + path)
+                                .then();
+                    } catch (Exception e) {
+                        /* The reload of the service takes some time */
+                        return null;
+                    }
+                },
+                resp -> resp != null);
 
         if (expectedStatus >= 200 && expectedStatus < 300) {
             response.body(
@@ -105,7 +115,7 @@ public class ServerDevModeTest {
     public static Asset applicationProperties() {
         Writer writer = new StringWriter();
         Properties props = new Properties();
-        props.setProperty("quarkus.cxf.path", "/");
+        props.setProperty("quarkus.cxf.path", "/soap");
         props.setProperty("quarkus.cxf.endpoint.\"/fruit\".implementor",
                 io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl.class.getName());
         try {
