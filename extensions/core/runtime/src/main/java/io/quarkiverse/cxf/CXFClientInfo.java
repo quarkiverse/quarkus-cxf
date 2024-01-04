@@ -196,7 +196,7 @@ public class CXFClientInfo {
 
     private final boolean secureWsdlAccess;
 
-    public CXFClientInfo(CXFClientData other, CxfClientConfig config, String configKey) {
+    public CXFClientInfo(CXFClientData other, CxfConfig cxfConfig, CxfClientConfig config, String configKey) {
         Objects.requireNonNull(config);
         this.sei = other.getSei();
         this.soapBinding = config.soapBinding().orElse(other.getSoapBinding());
@@ -231,7 +231,7 @@ public class CXFClientInfo {
         this.version = config.version();
         this.browserType = config.browserType().orElse(null);
         this.decoupledEndpoint = config.decoupledEndpoint().orElse(null);
-        this.decoupledEndpointBase = config.decoupledEndpointBase().orElse(null);
+        this.decoupledEndpointBase = cxfConfig.decoupledEndpointBase().orElse(null);
         this.proxyServer = config.proxyServer().orElse(null);
         this.proxyServerPort = config.proxyServerPort().orElse(null);
         this.nonProxyHosts = config.nonProxyHosts().orElse(null);

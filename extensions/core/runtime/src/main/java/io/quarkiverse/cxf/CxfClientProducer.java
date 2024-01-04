@@ -407,7 +407,7 @@ public abstract class CxfClientProducer {
 
         if (configKey != null && !configKey.isEmpty()) {
             if (config.isClientPresent(configKey)) {
-                return new CXFClientInfo(meta, config.getClient(configKey), configKey);
+                return new CXFClientInfo(meta, config, config.getClient(configKey), configKey);
             }
             // If config-key is present and not default: This is an error:
             throw exceptionSupplier.get();
@@ -434,9 +434,9 @@ public abstract class CxfClientProducer {
                 LOGGER.warnf(
                         "No configuration found for quarkus.cxf.*.service-interface = %s and alternative = false. Using the values from the service instead: %s.",
                         meta.getSei(), meta);
-                return new CXFClientInfo(meta, config.internal().client(), null);
+                return new CXFClientInfo(meta, config, config.internal().client(), null);
             case 1:
-                return new CXFClientInfo(meta, config.clients().get(keylist.get(0)), keylist.get(0));
+                return new CXFClientInfo(meta, config, config.clients().get(keylist.get(0)), keylist.get(0));
             default:
                 throw new IllegalStateException("quarkus.cxf.*.service-interface = " + meta.getSei()
                         + " with alternative = false expected once, but found " + keylist.size() + " times in "
