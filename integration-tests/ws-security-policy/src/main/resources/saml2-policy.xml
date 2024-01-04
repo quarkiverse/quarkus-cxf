@@ -5,33 +5,11 @@
         xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
     <wsp:ExactlyOne>
         <wsp:All>
-            <sp:TransportBinding>
-                <wsp:Policy>
-                    <sp:TransportToken>
-                        <wsp:Policy>
-                            <sp:HttpsToken>
-                                <wsp:Policy/>
-                            </sp:HttpsToken>
-                        </wsp:Policy>
-                    </sp:TransportToken>
-                    <sp:Layout>
-                        <wsp:Policy>
-                            <sp:Lax/>
-                        </wsp:Policy>
-                    </sp:Layout>
-                    <sp:IncludeTimestamp/>
-                    <sp:AlgorithmSuite>
-                        <wsp:Policy>
-                            <sp:Basic128/>
-                        </wsp:Policy>
-                    </sp:AlgorithmSuite>
-                </wsp:Policy>
-            </sp:TransportBinding>
             <sp:AsymmetricBinding>
                 <wsp:Policy>
                     <sp:InitiatorToken>
                         <wsp:Policy>
-                            <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/Always">
+                            <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
                                 <wsp:Policy>
                                     <sp:WssX509V3Token10/>
                                     <sp:RequireEmbeddedTokenReference/>
@@ -41,7 +19,7 @@
                     </sp:InitiatorToken>
                     <sp:RecipientToken>
                         <wsp:Policy>
-                            <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/Always">
+                            <sp:X509Token sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToInitiator">
                                 <wsp:Policy>
                                     <sp:WssX509V3Token10/>
                                     <sp:RequireEmbeddedTokenReference/>
@@ -72,7 +50,7 @@
             </sp:SignedParts>
             <sp:SupportingTokens xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
                 <wsp:Policy>
-                    <sp:SamlToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+                    <sp:SamlToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/Always">
                         <wsp:Policy>
                             <sp:WssSamlV20Token11/>
                         </wsp:Policy>
