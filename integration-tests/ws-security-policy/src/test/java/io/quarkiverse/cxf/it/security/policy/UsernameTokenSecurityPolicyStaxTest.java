@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -76,24 +75,22 @@ public class UsernameTokenSecurityPolicyStaxTest extends AbstractUsernameTokenSe
 
     @Override
     Matcher<String> unsignedUnencryptedErrorMessage() {
-        /* The Stax implmentation does not honor security.return.security.error = true */
+        /* The Stax implementation does not honor security.return.security.error = true */
         return containsString("<faultstring>XML_STREAM_EXC</faultstring>");
     }
 
     @Override
     Matcher<String> missingSamlErrorMessage(final String endpoint) {
-        /* The Stax implmentation does not honor security.return.security.error = true */
-        return containsString("An error was discovered processing the &lt;wsse:Security> header");
+        /* The Stax implementation does not honor security.return.security.error = true */
+        return containsString("<faultstring>XML_STREAM_EXC</faultstring>");
     }
 
-    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/1095")
     @Override
     @Test
     void helloSaml1() {
         super.helloSaml1();
     }
 
-    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/1095")
     @Override
     @Test
     void helloSaml2() {
