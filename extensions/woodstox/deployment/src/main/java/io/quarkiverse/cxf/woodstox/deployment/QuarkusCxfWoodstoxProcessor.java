@@ -11,6 +11,8 @@ import javax.xml.stream.XMLOutputFactory;
 
 import org.codehaus.stax2.validation.XMLValidationSchemaFactory;
 
+import com.ctc.wstx.shaded.msv.relaxng_datatype.DatatypeLibraryFactory;
+
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
@@ -24,12 +26,14 @@ public class QuarkusCxfWoodstoxProcessor {
                 Stream.of(
                         XMLEventFactory.class,
                         XMLInputFactory.class,
-                        XMLOutputFactory.class)
+                        XMLOutputFactory.class,
+                        DatatypeLibraryFactory.class)
                         .map(Class::getName),
                 Stream.of(
                         XMLValidationSchemaFactory.INTERNAL_ID_SCHEMA_DTD,
                         XMLValidationSchemaFactory.INTERNAL_ID_SCHEMA_RELAXNG,
-                        XMLValidationSchemaFactory.INTERNAL_ID_SCHEMA_W3C)
+                        XMLValidationSchemaFactory.INTERNAL_ID_SCHEMA_W3C,
+                        XMLValidationSchemaFactory.INTERNAL_ID_SCHEMA_TREX)
                         .map(schemaId -> XMLValidationSchemaFactory.class.getName() + "." + schemaId))
                 .forEach(serviceName -> {
                     try {
