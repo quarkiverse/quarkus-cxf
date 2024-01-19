@@ -75,6 +75,37 @@ jobs:
         path: ${{ runner.temp }}/maven-repo.tgz
         retention-days: 1
 
+  aarch64-tests:
+    name: linux@aarch64 tests
+    needs: build-and-run-jvm-tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download Maven Repo
+      uses: actions/download-artifact@v4
+      with:
+        name: maven-repo
+        path: ..
+    - name: Extract Maven Repo
+      shell: bash
+      run: |
+        tar -xzf ../maven-repo.tgz -C ~
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: cd integration-tests && mvn test
+      run: |
+        docker run --rm \
+          -v "$(pwd)":/root/project \
+          -v ~/.m2/repository:/root/.m2/repository \
+          -v /var/run/docker/docker.sock:/var/run/docker/docker.sock \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -w /root/project \
+          arm64v8/amazoncorretto:17-al2023 \
+          ./mvnw clean test -pl 'integration-tests,!docs' -amd -ntp -Dformat.skip -Denforcer.skip -Dbuildnumber.phase=none
+  # arm64v8/eclipse-temurin:17-jdk
   native-tests:
     strategy:
       fail-fast: false
