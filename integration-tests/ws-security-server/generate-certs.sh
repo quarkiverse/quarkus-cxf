@@ -11,6 +11,11 @@ encryptionAlgo="aes-256-cbc"
 workDir="target/openssl-work"
 destinationDir="target/classes"
 
+if [[ -f "$destinationDir/alice.pkcs12" && -f "$destinationDir/bob.pkcs12" ]] ; then
+    echo "Nothing to do. Run mvn clean to force the regeneration of the certs and keys."
+    exit 0
+fi
+
 if [[ -n "${JAVA_HOME}" ]] ; then
   keytool="$JAVA_HOME/bin/keytool"
 elif ! [[ -x "$(command -v keytool)" ]] ; then
