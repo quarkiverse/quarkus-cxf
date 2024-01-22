@@ -94,6 +94,9 @@
         <!-- keytool-maven-plugin -->
         <keytool.skip>false</keytool.skip>
 
+        <!-- buildnumber-maven-plugin can be skipped by passing -Dbuildnumber.phase=none -->
+        <buildnumber.phase>initialize</buildnumber.phase>
+
     </properties>
 
     <scm>
@@ -291,6 +294,16 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>get-scm-revision</id>
+                        <phase>${buildnumber.phase}</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>groovy-maven-plugin</artifactId>
                 <executions>
@@ -417,8 +430,7 @@
             <id>release</id>
             <properties>
                 <enforcer.skip>true</enforcer.skip>
-                <formatter.skip>true</formatter.skip>
-                <impsort.skip>true</impsort.skip>
+                <format.skip>true</format.skip>
                 <skipTests>true</skipTests>
                 <quarkus.build.skip>true</quarkus.build.skip>
             </properties>
