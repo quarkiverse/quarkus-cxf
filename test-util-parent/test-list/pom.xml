@@ -31,7 +31,7 @@
                     <testJarsPath>${project.build.directory}/${project.artifactId}.xml</testJarsPath>
                     <fileSets>
                         <fileSet>
-                            <directory>${basedir}/../integration-tests</directory>
+                            <directory>${basedir}/../../integration-tests</directory>
                             <includes>
                                 <include>*/pom.xml</include>
                             </includes>
