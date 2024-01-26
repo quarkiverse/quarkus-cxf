@@ -25,13 +25,30 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-test-ws-rm-server</artifactId>
+                <artifactId>quarkus-cxf-test-ws-rm-server-jvm</artifactId>
+                <classifier>runner</classifier>
                 <version>${quarkus-cxf.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-test-ws-rm-server</artifactId>
+                <artifactId>quarkus-cxf-test-ws-rm-server-jvm</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-test-ws-rm-server-jvm</artifactId>
                 <type>pom</type>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-test-ws-rm-server-native</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-test-ws-rm-server-native</artifactId>
+                <type>exe</type>
                 <version>${quarkus-cxf.version}</version>
             </dependency>
             <dependency>

@@ -3,6 +3,8 @@ package io.quarkiverse.cxf.it.ws.rm.client;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,6 +12,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
@@ -20,11 +23,24 @@ public class WsrmServer implements Closeable {
 
     public WsrmServer(boolean isNative) {
 
-        final String mavenLocalRepo = System.getProperty("maven.repo.local");
+        String mavenLocalRepo = System.getProperty("maven.repo.local");
         if (mavenLocalRepo == null) {
-            throw new IllegalStateException("maven.repo.local property not set");
+            mavenLocalRepo = System.getProperty("user.home") + "/.m2/repository";
         }
-        final String quarkusCxfVersion = System.getProperty("quarkus-cxf.version");
+        String quarkusCxfVersion = System.getProperty("quarkus-cxf.version");
+        if (quarkusCxfVersion == null) {
+            URL pomPropsUrl = this.getClass().getClassLoader()
+                    .getResource("META-INF/maven/io.quarkiverse.cxf/quarkus-cxf-integration-test-ws-rm-client/pom.properties");
+            if (pomPropsUrl != null) {
+                try (InputStream in = pomPropsUrl.openStream()) {
+                    Properties props = new Properties();
+                    props.load(in);
+                    quarkusCxfVersion = props.getProperty("version");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
         if (quarkusCxfVersion == null) {
             throw new IllegalStateException("quarkus-cxf.version property not set");
         }
@@ -48,8 +64,8 @@ public class WsrmServer implements Closeable {
     private List<String> cmd(boolean isNative, final String quarkusCxfVersion, final Path localRepo, final Path serverLog) {
         if (isNative) {
             final Path binPath = localRepo
-                    .resolve("io/quarkiverse/cxf/quarkus-cxf-test-ws-rm-server/" + quarkusCxfVersion
-                            + "/quarkus-cxf-test-ws-rm-server-" + quarkusCxfVersion + ".exe");
+                    .resolve("io/quarkiverse/cxf/quarkus-cxf-test-ws-rm-server-native/" + quarkusCxfVersion
+                            + "/quarkus-cxf-test-ws-rm-server-native-" + quarkusCxfVersion + ".exe");
 
             if (!Files.isRegularFile(binPath)) {
                 throw new RuntimeException(binPath.toString()
@@ -72,8 +88,8 @@ public class WsrmServer implements Closeable {
             return cmd;
         } else {
             final Path jarPath = localRepo
-                    .resolve("io/quarkiverse/cxf/quarkus-cxf-test-ws-rm-server/" + quarkusCxfVersion
-                            + "/quarkus-cxf-test-ws-rm-server-" + quarkusCxfVersion + "-runner.jar");
+                    .resolve("io/quarkiverse/cxf/quarkus-cxf-test-ws-rm-server-jvm/" + quarkusCxfVersion
+                            + "/quarkus-cxf-test-ws-rm-server-jvm-" + quarkusCxfVersion + "-runner.jar");
 
             if (!Files.isRegularFile(jarPath)) {
                 throw new RuntimeException(jarPath.toString()

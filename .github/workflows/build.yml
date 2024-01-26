@@ -108,8 +108,8 @@ jobs:
       run: |
         array=(${{matrix.testModule}})
         if [ "${array[0]}" == "ws-rm-client" ]; then
-          # ws-rm-client requires test-ws-rm-server native executable
-          cd test-util-parent/test-ws-rm-server && ../../mvnw -B clean install -Pnative -Dquarkus.native.container-build=true
+          # ws-rm-client requires test-ws-rm-server-native executable
+          cd test-util-parent/test-ws-rm-server-native && ../../mvnw -B clean install -Prelease
           cd ../..
         fi
         if [ "${#array[@]}" -gt "1" ]; then
