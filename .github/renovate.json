@@ -1,0 +1,51 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "baseBranches": ["main", "/^[0-9]+\\.[0-9]+/"],
+  "useBaseBranchConfig": "merge",
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":rebaseStalePrs",
+    ":enableVulnerabilityAlertsWithLabel('security')"
+  ],
+  "ignorePresets": [
+    ":prHourlyLimit2"
+  ],
+  "packageRules": [
+    {
+      "description": "Ignore any updates for matched packages because we take the version from Quarkus or some other external project",
+      "matchPackagePatterns": [
+        "^com.sun.xml.messaging.saaj:",
+        "^jakarta.jws:",
+        "^jakarta.xml.soap:",
+        "^jakarta.xml.ws:",
+        "^org.codehaus.woodstox:",
+        "^org.apache.cxf.xjcplugins:",
+        "^org.apache.cxf.xjc-utils:",
+        "^org.apache.neethi:",
+        "^org.slf4j:"
+      ],
+      "matchUpdateTypes": [
+        "major", "minor", "patch"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Allow only patch updates on this maintenance branch",
+      "matchPackagePatterns": [
+        "^.*"
+      ],
+      "matchUpdateTypes": [
+        "major", "minor"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "Ignore all updates for matched packages",
+      "matchPackagePatterns": [
+        "^io.quarkiverse.cxf:"
+      ],
+      "enabled": false
+    }
+  ]
+}
