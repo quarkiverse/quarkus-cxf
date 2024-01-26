@@ -68,7 +68,7 @@
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
         <!-- Build time dependencies -->
-        <javaparser.version>3.25.6</javaparser.version>
+        <javaparser.version>3.25.8</javaparser.version>
 
         <cq-maven-plugin.version>4.4.7</cq-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
