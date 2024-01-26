@@ -15,7 +15,8 @@
 
     <modules>
         <module>test-util</module>
-        <module>test-ws-rm-server</module>
+        <module>test-ws-rm-server-jvm</module>
+        <module>test-ws-rm-server-native</module>
         <module>test-list</module>
     </modules>
 

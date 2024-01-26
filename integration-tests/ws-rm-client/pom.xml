@@ -38,12 +38,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <!-- quarkus-cxf-test-ws-rm-server uber-jar and native executable are run by a test in this module. -->
+            <!-- quarkus-cxf-test-ws-rm-server-jvm uber-jar and quarkus-cxf-test-ws-rm-server-native are run by a test in this module. -->
             <!-- They both need to be installed in local Maven repository before running this test -->
             <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-test-ws-rm-server</artifactId>
-            <scope>test</scope>
+            <artifactId>quarkus-cxf-test-ws-rm-server-jvm</artifactId>
             <type>pom</type>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -90,6 +90,17 @@
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
             </properties>
+            
+            <dependencies>
+                <dependency>
+                    <!-- quarkus-cxf-test-ws-rm-server-jvm uber-jar and quarkus-cxf-test-ws-rm-server-native are run by a test in this module. -->
+                    <!-- They both need to be installed in local Maven repository before running this test -->
+                    <groupId>io.quarkiverse.cxf</groupId>
+                    <artifactId>quarkus-cxf-test-ws-rm-server-native</artifactId>
+                    <type>exe</type>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>

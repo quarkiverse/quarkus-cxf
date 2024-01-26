@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
@@ -75,7 +76,7 @@ class Hc5Test {
             staticCopyPath = Paths.get("target/classes/wsdl/CalculatorService.wsdl");
             Files.createDirectories(staticCopyPath.getParent());
             try (InputStream in = Hc5Test.class.getClassLoader().getResourceAsStream("wsdl/CalculatorService.wsdl")) {
-                Files.copy(in, staticCopyPath);
+                Files.copy(in, staticCopyPath, StandardCopyOption.REPLACE_EXISTING);
             }
         }
         /* The changing Docker IP address in the WSDL should not matter */

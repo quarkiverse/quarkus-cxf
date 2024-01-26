@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -59,7 +60,7 @@ public class CxfWssClientTest {
             staticCopyPath = Paths.get("target/classes/wsdl/dir/WssCalculatorService.wsdl");
             Files.createDirectories(staticCopyPath.getParent());
             try (InputStream in = getClass().getClassLoader().getResourceAsStream("wsdl/dir/WssCalculatorService.wsdl")) {
-                Files.copy(in, staticCopyPath);
+                Files.copy(in, staticCopyPath, StandardCopyOption.REPLACE_EXISTING);
             }
         }
 
