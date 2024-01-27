@@ -60,7 +60,8 @@
       "description": "Ignore Maven plugin ugrades in maintenance branches",
       "matchPackagePatterns": [
         "^org.apache.maven:",
-        "^[^:]+:[^:]-maven-plugin"
+        "^[^:]+:[^:]-maven-plugin",
+        "^org.codehaus.groovy:groovy-all"
       ],
       "enabled": false
     }
