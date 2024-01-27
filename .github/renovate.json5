@@ -1,7 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "baseBranches": ["main", "/^[0-9]+\\.[0-9]+/"],
+  "baseBranches": ["main", "/^[0-9]+\\.[0-9]+$/"],
   "useBaseBranchConfig": "merge",
+  "commitMessageExtra": "{{fromVersion}} -> {{toVersion}}",
   "github-actions": { /* Disable GitHub actions upgrades in maintenance branches */
     "enabled": false
   },
