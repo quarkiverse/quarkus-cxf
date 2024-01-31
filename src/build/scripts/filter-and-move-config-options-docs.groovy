@@ -28,7 +28,7 @@ final Path outputDirectory = Paths.get(properties['outputDirectory'])
 
 final String content = inputFile.getText('UTF-8')
 
-final String propPrefix = 'a| [[quarkus-cxf_quarkus.cxf.internal'
+final String propPrefix = 'a| [[quarkus-cxf_quarkus-cxf-internal'
 final int start = content.indexOf(propPrefix)
 if (start < 0) {
     throw new IllegalStateException('Could not find ' + propPrefix + ' in '+ inputFile);

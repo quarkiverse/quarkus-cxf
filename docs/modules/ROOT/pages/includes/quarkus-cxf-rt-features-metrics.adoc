@@ -10,7 +10,7 @@ h|[[quarkus-cxf-rt-features-metrics_configuration]]link:#quarkus-cxf-rt-features
 h|Type
 h|Default
 
-a| [[quarkus-cxf-rt-features-metrics_quarkus.cxf.metrics.enabled-for]]`link:#quarkus-cxf-rt-features-metrics_quarkus.cxf.metrics.enabled-for[quarkus.cxf.metrics.enabled-for]`
+a| [[quarkus-cxf-rt-features-metrics_quarkus-cxf-metrics-enabled-for]]`link:#quarkus-cxf-rt-features-metrics_quarkus-cxf-metrics-enabled-for[quarkus.cxf.metrics.enabled-for]`
 
 
 [.description]
@@ -28,7 +28,7 @@ endif::add-copy-button-to-env-var[]
 |`both`
 
 
-a| [[quarkus-cxf-rt-features-metrics_quarkus.cxf.client.-clients-.metrics.enabled]]`link:#quarkus-cxf-rt-features-metrics_quarkus.cxf.client.-clients-.metrics.enabled[quarkus.cxf.client."clients".metrics.enabled]`
+a| [[quarkus-cxf-rt-features-metrics_quarkus-cxf-client-clients-metrics-enabled]]`link:#quarkus-cxf-rt-features-metrics_quarkus-cxf-client-clients-metrics-enabled[quarkus.cxf.client."clients".metrics.enabled]`
 
 
 [.description]
@@ -45,7 +45,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus-cxf-rt-features-metrics_quarkus.cxf.endpoint.-endpoints-.metrics.enabled]]`link:#quarkus-cxf-rt-features-metrics_quarkus.cxf.endpoint.-endpoints-.metrics.enabled[quarkus.cxf.endpoint."endpoints".metrics.enabled]`
+a| [[quarkus-cxf-rt-features-metrics_quarkus-cxf-endpoint-endpoints-metrics-enabled]]`link:#quarkus-cxf-rt-features-metrics_quarkus-cxf-endpoint-endpoints-metrics-enabled[quarkus.cxf.endpoint."endpoints".metrics.enabled]`
 
 
 [.description]
