@@ -10,7 +10,7 @@ h|[[quarkus-cxf-integration-tracing-opentelemetry_configuration]]link:#quarkus-c
 h|Type
 h|Default
 
-a| [[quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.otel.enabled-for]]`link:#quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.otel.enabled-for[quarkus.cxf.otel.enabled-for]`
+a| [[quarkus-cxf-integration-tracing-opentelemetry_quarkus-cxf-otel-enabled-for]]`link:#quarkus-cxf-integration-tracing-opentelemetry_quarkus-cxf-otel-enabled-for[quarkus.cxf.otel.enabled-for]`
 
 
 [.description]
@@ -28,7 +28,7 @@ endif::add-copy-button-to-env-var[]
 |`both`
 
 
-a| [[quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.client.-clients-.otel.enabled]]`link:#quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.client.-clients-.otel.enabled[quarkus.cxf.client."clients".otel.enabled]`
+a| [[quarkus-cxf-integration-tracing-opentelemetry_quarkus-cxf-client-clients-otel-enabled]]`link:#quarkus-cxf-integration-tracing-opentelemetry_quarkus-cxf-client-clients-otel-enabled[quarkus.cxf.client."clients".otel.enabled]`
 
 
 [.description]
@@ -45,7 +45,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.endpoint.-endpoints-.otel.enabled]]`link:#quarkus-cxf-integration-tracing-opentelemetry_quarkus.cxf.endpoint.-endpoints-.otel.enabled[quarkus.cxf.endpoint."endpoints".otel.enabled]`
+a| [[quarkus-cxf-integration-tracing-opentelemetry_quarkus-cxf-endpoint-endpoints-otel-enabled]]`link:#quarkus-cxf-integration-tracing-opentelemetry_quarkus-cxf-endpoint-endpoints-otel-enabled[quarkus.cxf.endpoint."endpoints".otel.enabled]`
 
 
 [.description]

@@ -10,7 +10,7 @@ h|[[quarkus-cxf-rt-ws-rm_configuration]]link:#quarkus-cxf-rt-ws-rm_configuration
 h|Type
 h|Default
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.namespace]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.namespace[quarkus.cxf.rm.namespace]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-namespace]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-namespace[quarkus.cxf.rm.namespace]`
 
 
 [.description]
@@ -27,7 +27,7 @@ endif::add-copy-button-to-env-var[]
 |`http://schemas.xmlsoap.org/ws/2005/02/rm`
 
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.wsa-namespace]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.wsa-namespace[quarkus.cxf.rm.wsa-namespace]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-wsa-namespace]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-wsa-namespace[quarkus.cxf.rm.wsa-namespace]`
 
 
 [.description]
@@ -44,7 +44,7 @@ endif::add-copy-button-to-env-var[]
 |`http://schemas.xmlsoap.org/ws/2004/08/addressing`
 
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.inactivity-timeout]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.inactivity-timeout[quarkus.cxf.rm.inactivity-timeout]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-inactivity-timeout]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-inactivity-timeout[quarkus.cxf.rm.inactivity-timeout]`
 
 
 [.description]
@@ -61,7 +61,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.retransmission-interval]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.retransmission-interval[quarkus.cxf.rm.retransmission-interval]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-retransmission-interval]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-retransmission-interval[quarkus.cxf.rm.retransmission-interval]`
 
 
 [.description]
@@ -78,7 +78,7 @@ endif::add-copy-button-to-env-var[]
 |`3000`
 
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.exponential-backoff]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.exponential-backoff[quarkus.cxf.rm.exponential-backoff]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-exponential-backoff]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-exponential-backoff[quarkus.cxf.rm.exponential-backoff]`
 
 
 [.description]
@@ -95,7 +95,7 @@ endif::add-copy-button-to-env-var[]
 |`false`
 
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.acknowledgement-interval]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.acknowledgement-interval[quarkus.cxf.rm.acknowledgement-interval]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-acknowledgement-interval]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-acknowledgement-interval[quarkus.cxf.rm.acknowledgement-interval]`
 
 
 [.description]
@@ -112,7 +112,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.store]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.store[quarkus.cxf.rm.store]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-store]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-store[quarkus.cxf.rm.store]`
 
 
 [.description]
@@ -129,7 +129,7 @@ endif::add-copy-button-to-env-var[]
 |
 
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.feature-ref]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.rm.feature-ref[quarkus.cxf.rm.feature-ref]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-feature-ref]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-feature-ref[quarkus.cxf.rm.feature-ref]`
 
 
 [.description]
@@ -144,7 +144,7 @@ endif::add-copy-button-to-env-var[]
 |`#defaultRmFeature`
 
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.client.-clients-.rm.enabled]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.client.-clients-.rm.enabled[quarkus.cxf.client."clients".rm.enabled]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-client-clients-rm-enabled]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-client-clients-rm-enabled[quarkus.cxf.client."clients".rm.enabled]`
 
 
 [.description]
@@ -161,7 +161,7 @@ endif::add-copy-button-to-env-var[]
 |`true`
 
 
-a| [[quarkus-cxf-rt-ws-rm_quarkus.cxf.endpoint.-endpoints-.rm.enabled]]`link:#quarkus-cxf-rt-ws-rm_quarkus.cxf.endpoint.-endpoints-.rm.enabled[quarkus.cxf.endpoint."endpoints".rm.enabled]`
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-endpoint-endpoints-rm-enabled]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-endpoint-endpoints-rm-enabled[quarkus.cxf.endpoint."endpoints".rm.enabled]`
 
 
 [.description]
