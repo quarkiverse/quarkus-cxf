@@ -3,33 +3,43 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
-        <artifactId>quarkus-cxf-rt-ws-security-parent</artifactId>
+        <artifactId>quarkus-cxf-santuario-xmlsec-parent</artifactId>
         <version>2.7.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-rt-ws-security-deployment</artifactId>
-    <name>Quarkus CXF - WS-Security - Deployment</name>
+    <artifactId>quarkus-cxf-santuario-xmlsec-deployment</artifactId>
+    <name>Quarkus - Santuario XML Security - Deployment</name>
 
     <dependencies>
         <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-deployment</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-core-deployment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jaxb-deployment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jaxp-deployment</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-woodstox-deployment</artifactId>
+            <artifactId>quarkus-cxf-santuario-xmlsec</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-santuario-xmlsec-deployment</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc-deployment</artifactId>
+            <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-rt-ws-security</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5-internal</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -47,5 +57,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

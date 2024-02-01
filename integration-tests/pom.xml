@@ -29,6 +29,7 @@
         <module>opentelemetry</module>
         <module>wsdl2java</module>
         <module>wsdl2java-no-config</module>
+        <module>santuario-xmlsec</module>
     </modules>
 
     <properties>
