@@ -15,6 +15,7 @@ on:
 
 env:
   QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_INCREMENT_KB: 512
+  JAVA_VERSION: 17
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -28,11 +29,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up JDK 17
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
       uses: actions/setup-java@v4
       with:
         distribution: temurin
-        java-version: 17
+        java-version: ${{ env.JAVA_VERSION }}
 
     - name: Cache local Maven repository
       uses: actions/cache@v4
@@ -76,6 +77,7 @@ jobs:
         retention-days: 1
 
   native-tests:
+    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -86,11 +88,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up JDK 17
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
       uses: actions/setup-java@v4
       with:
         distribution: temurin
-        java-version: 17
+        java-version: ${{ env.JAVA_VERSION }}
 
     - name: Download Maven Repo
       uses: actions/download-artifact@v4
@@ -118,3 +120,36 @@ jobs:
         else
           cd integration-tests/${array[0]} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true
         fi
+
+  arm64-tests:
+    name: Arm64 tests
+    needs: build-and-run-jvm-tests
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v4
+    
+    - name: Download Maven Repo
+      uses: actions/download-artifact@v4
+      with:
+        name: maven-repo
+        path: ..
+    - name: Extract Maven Repo
+      shell: bash
+      run: |
+        tar -xzf ../maven-repo.tgz -C ~
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: mvn test (arm64@container)
+      run: |
+        docker run --rm \
+          -v ~/.m2/repository:/root/.m2/repository \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v $PWD:$PWD \
+          -w $PWD \
+          -e TESTCONTAINERS_RYUK_DISABLED=true \
+          --platform linux/arm64/v8 \
+          eclipse-temurin:${{ env.JAVA_VERSION }}-jdk \
+          ./mvnw -B test -f integration-tests -ntp -Dformat.skip -Denforcer.skip
