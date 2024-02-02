@@ -152,4 +152,4 @@ jobs:
           -e TESTCONTAINERS_RYUK_DISABLED=true \
           --platform linux/arm64/v8 \
           eclipse-temurin:${{ env.JAVA_VERSION }}-jdk \
-          ./mvnw -B test -f integration-tests -ntp -Dformat.skip -Denforcer.skip
+          ./mvnw -B test -f integration-tests -fae -ntp -Dformat.skip -Denforcer.skip
