@@ -58,7 +58,7 @@ public class WsrmServer implements Closeable {
             throw new RuntimeException(cmd.stream().collect(Collectors.joining(" ")), e);
         }
 
-        awaitStarted(serverLog, "Installed features: [", 10_000L);
+        awaitStarted(serverLog, "Installed features: [", 30_000L);
     }
 
     private List<String> cmd(boolean isNative, final String quarkusCxfVersion, final Path localRepo, final Path serverLog) {
