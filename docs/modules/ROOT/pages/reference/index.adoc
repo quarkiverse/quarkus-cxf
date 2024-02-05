@@ -199,3 +199,64 @@ Karaf
 | Use load balancer
 
 |===
+
+== Supported CXF annotations
+
+Here is the status of https://cxf.apache.org/docs/annotations.html[CXF annotations] on Quarkus.
+Unless stated otherwise, the support is available via `io.quarkiverse.cxf:quarkus-cxf`.
+
+|===
+| Annotation | Status
+
+| `@org.apache.cxf.feature.Features`
+| Supported
+
+| `@org.apache.cxf.interceptor.InInterceptors`
+| Supported
+
+| `@org.apache.cxf.interceptor.OutInterceptors`
+| Supported
+
+| `@org.apache.cxf.interceptor.OutFaultInterceptors`
+| Supported
+
+| `@org.apache.cxf.interceptor.InFaultInterceptors`
+| Supported
+
+| `@org.apache.cxf.annotations.WSDLDocumentation`
+| Supported
+
+| `@org.apache.cxf.annotations.WSDLDocumentationCollection`
+| Supported
+
+| `@org.apache.cxf.annotations.SchemaValidation`
+| Supported
+
+| `@org.apache.cxf.annotations.DataBinding`
+| Only the default value `org.apache.cxf.jaxb.JAXBDataBinding` is supported
+
+| `@org.apache.cxf.ext.logging.Logging`
+| Supported
+
+| `@org.apache.cxf.annotations.GZIP`
+| Supported
+
+| `@org.apache.cxf.annotations.FastInfoset`
+| Supported via `com.sun.xml.fastinfoset:FastInfoset` dependency
+
+| `@org.apache.cxf.annotations.EndpointProperty`
+| Supported
+
+| `@org.apache.cxf.annotations.EndpointProperties`
+| Supported
+
+| `@org.apache.cxf.annotations.Policy`
+| Supported
+
+| `@org.apache.cxf.annotations.Policies`
+| Supported
+
+| `@org.apache.cxf.annotations.UseAsyncMethod`
+| Supported
+
+|===
