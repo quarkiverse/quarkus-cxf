@@ -44,7 +44,7 @@
   </binding>
   <service name="TrustHelloService">
     <port name="TrustHelloServicePort" binding="tns:TrustHelloServicePortBinding">
-      <soap:address location="http://@jboss.bind.address@:@add_int(port-offset.cxf-tests.jboss,8080)@/jaxws-samples-wsse-policy-trust/TrustHelloService"/>
+      <soap:address location="http://localhost:8081/services/hello-ws-trust"/>
     </port>
   </service>
 
@@ -68,9 +68,9 @@
                                         <sp:RequireInternalReference />
                                     </wsp:Policy>
                                     <sp:Issuer>
-                                        <wsaws:Address>http://localhost:8081/jaxws-samples-wsse-policy-trust-sts/SecurityTokenService</wsaws:Address>
+                                        <wsaws:Address>http://localhost:8081/services/sts</wsaws:Address>
                                         <wsaws:Metadata xmlns:wsdli="http://www.w3.org/2006/01/wsdl-instance"
-                                                        wsdli:wsdlLocation="http://localhost:8081/jaxws-samples-wsse-policy-trust-sts/SecurityTokenService?wsdl">
+                                                        wsdli:wsdlLocation="http://localhost:8081/services/sts?wsdl">
                                             <wsaw:ServiceName xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl"
                                                             xmlns:stsns="http://docs.oasis-open.org/ws-sx/ws-trust/200512/"
                                                             EndpointName="UT_Port">stsns:SecurityTokenService</wsaw:ServiceName>
