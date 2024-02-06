@@ -114,12 +114,12 @@ public class CxfWsTrustTest {
     }
 
     private static void setServiceContextAttributes(Map<String, Object> ctx) {
-        ctx.put(SecurityConstants.CALLBACK_HANDLER, new ClientCallbackHandler());
         ctx.put(SecurityConstants.SIGNATURE_PROPERTIES,
                 Thread.currentThread().getContextClassLoader().getResource("clientKeystore.properties"));
         ctx.put(SecurityConstants.ENCRYPT_PROPERTIES,
                 Thread.currentThread().getContextClassLoader().getResource("clientKeystore.properties"));
         ctx.put(SecurityConstants.SIGNATURE_USERNAME, "client");
+        ctx.put(SecurityConstants.SIGNATURE_PASSWORD, "password");
         ctx.put(SecurityConstants.ENCRYPT_USERNAME, "service");
     }
 
@@ -145,7 +145,7 @@ public class CxfWsTrustTest {
         }
         Map<String, Object> props = stsClient.getProperties();
         props.put(SecurityConstants.USERNAME, "alice");
-        props.put(SecurityConstants.CALLBACK_HANDLER, new ClientCallbackHandler());
+        props.put(SecurityConstants.PASSWORD, "clarinet");
         props.put(SecurityConstants.ENCRYPT_PROPERTIES,
                 Thread.currentThread().getContextClassLoader().getResource("clientKeystore.properties"));
         props.put(SecurityConstants.ENCRYPT_USERNAME, "sts");
