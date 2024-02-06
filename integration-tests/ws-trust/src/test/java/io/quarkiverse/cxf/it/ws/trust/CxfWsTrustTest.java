@@ -90,8 +90,7 @@ public class CxfWsTrustTest {
             final QName stsServiceName = new QName("http://docs.oasis-open.org/ws-sx/ws-trust/200512/", "SecurityTokenService");
             final QName stsPortName = new QName("http://docs.oasis-open.org/ws-sx/ws-trust/200512/", "UT_Port");
 
-            String stsURL = QuarkusCxfClientTestUtil.getServerUrl()
-                    + "/services/sts?wsdl";
+            String stsURL = QuarkusCxfClientTestUtil.getServerUrl() + "/services/sts?wsdl";
             setupWsseAndSTSClient(proxy, bus, stsURL, stsServiceName, stsPortName);
 
             Assertions.assertThat(proxy.sayHello()).isEqualTo("WS-Trust Hello World!");
