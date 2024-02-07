@@ -44,7 +44,25 @@ endif::[]
 [id="quarkus-cxf-services-sts-usage"]
 == Usage
 
-Please find an example in the
-https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-client[WS-Trust integration test] in the source tree of {quarkus-cxf-project-name}
-while we are working hard on providing a more https://github.com/quarkiverse/quarkus-cxf/issues/837[user friendly text] for this page.
+Here are the key parts of a basic WS-Trust scenario:
+
+* *WS-SecurityPolicy* - except for defining security requirements, such as transport protocols, encryption standards and authentication mechanisms,
+  it can also set the address of Security Token Service from which clients and services have to obtain their tokens.
+* *Security Token Service (STS)* - issues, validates, and renews security tokens upon request.
+  It acts as a trusted authority that authenticates clients and issues tokens that assert the client's identity and permissions.
+* *Client* - requests a token from the STS to access a web service.
+  It must authenticate itself to the STS and provide details about the kind of token required.
+* *Service* - relies on the STS to authenticate clients and validate their tokens.
+
+[id="extensions-quarkus-cxf-services-sts-usage-runnable-example"]
+=== Runnable example
+
+There is an https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust[integration test]
+covering WS-Trust in the {quarkus-cxf-project-name} source tree.
+Let's walk through it and see how the individual parts are set to work together.
+
+[id="extensions-quarkus-cxf-services-sts-usage-ws-securitypolicy"]
+==== WS-SecurityPolicy
+
+
 

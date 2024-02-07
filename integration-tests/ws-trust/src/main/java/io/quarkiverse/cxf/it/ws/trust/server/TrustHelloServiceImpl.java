@@ -7,7 +7,7 @@ import jakarta.jws.WebService;
 public class TrustHelloServiceImpl implements TrustHelloService {
     @WebMethod
     @Override
-    public String sayHello() {
-        return "WS-Trust Hello World!";
+    public String hello(String person) {
+        return "Hello " + person + "!";
     }
 }
