@@ -14,5 +14,5 @@ public interface TrustHelloService {
             @Policy(placement = Policy.Placement.BINDING_OPERATION_INPUT, uri = "classpath:/Input_Policy.xml"),
             @Policy(placement = Policy.Placement.BINDING_OPERATION_OUTPUT, uri = "classpath:/Output_Policy.xml")
     })
-    String sayHello();
+    String hello(String person);
 }
