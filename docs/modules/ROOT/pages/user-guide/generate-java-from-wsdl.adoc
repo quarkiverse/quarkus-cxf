@@ -22,7 +22,7 @@ include::example$calculator-client/pom.xml[tag=first-soap-client.adoc-quarkus-ma
 * Put your WSDL files under `src/main/resources` or `src/test/resources` or any subdirectory thereof.
 * Your WSDL file names must end with `.wsdl`
 * Set `quarkus.cxf.codegen.wsdl2java.includes`
-  xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.includes[configuration property]
+  xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-includes[configuration property]
   to a pattern matching the WSDL files you wish to process.
   If you want to process all WSDL files under `src/main/resources/wsdl` or `src/test/resources/wsdl`, set it as follows:
 +
@@ -41,7 +41,7 @@ Note that `quarkus-cxf` code generation uses the https://cxf.apache.org/docs/wsd
 from CXF under the hood. `wsdl2Java` is called separately for each WSDL file selected by `includes` and `excludes`.
 
 Passing custom parameters to `wsdl2java` is possible through
-xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[`quarkus.cxf.codegen.wsdl2java.additional-params`]
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[`quarkus.cxf.codegen.wsdl2java.additional-params`]
 configuration parameter.
 
 If you need different `additional-params` for each WSDL file, you may want to define a separate named parameter set for

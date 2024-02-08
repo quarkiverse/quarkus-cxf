@@ -10,8 +10,8 @@ Use the following client configuration options provided by
 `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]` extension
 to pass the username and password for HTTP basic authentication:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.username[quarkus.cxf.client."clients".username]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.password[quarkus.cxf.client."clients".password]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-username[quarkus.cxf.client."clients".username]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-password[quarkus.cxf.client."clients".password]`
 
 Here is an example:
 
@@ -24,7 +24,7 @@ include::example$client-server/application.properties[tag=client-basic-auth]
 === Accessing WSDL protected by basic authentication
 
 By default, the clients created by {quarkus-cxf-project-name} do not send the `Authorization` header,
-unless you set the `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.secure-wsdl-access[quarkus.cxf.client."clients".secure-wsdl-access]` to `true`:
+unless you set the `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-secure-wsdl-access[quarkus.cxf.client."clients".secure-wsdl-access]` to `true`:
 
 .application.properties
 [source,properties]

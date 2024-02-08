@@ -21,7 +21,7 @@ include::example$hc5/async-binding.xml[]
 ----
 
 This file should then be passed to xref:user-guide/generate-java-from-wsdl.adoc[wsdl2java]
-through its xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[additional-params] property:
+through its xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[additional-params] property:
 
 .application.properties
 [source,properties]
