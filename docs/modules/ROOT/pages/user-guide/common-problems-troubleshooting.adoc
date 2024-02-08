@@ -43,7 +43,7 @@ public class WeatherWebServiceImpl implements WeatherWebService {
 ----
 
 After that, you would need to specify the root context for your CXF web services, as indicated
-in the link:../reference/extensions/quarkus-cxf.html#quarkus-cxf_quarkus.cxf.path[configuration documentation] to split the REST (with RESTEasy for example)
+in the link:../reference/extensions/quarkus-cxf.html#quarkus-cxf_quarkus-cxf-path[configuration documentation] to split the REST (with RESTEasy for example)
 and SOAP routes based on their root context paths.
 
 CXF's SOAP properties:

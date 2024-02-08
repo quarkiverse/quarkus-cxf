@@ -40,7 +40,7 @@ quarkus.cxf.logging.enabled = true
 quarkus.cxf.logging.pretty = true
 ----
 
-All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.logging.enabled[quarkus-cxf]` reference page.
+All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-enabled[quarkus-cxf]` reference page.
 
 [TIP]
 ====
@@ -69,8 +69,8 @@ quarkus.cxf.client.hello.logging.pretty = true
 
 All logging configuration options are documented on `quarkus-cxf` reference page:
 
-* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.logging.enabled[For clients]
-* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.endpoint.-endpoints-.logging.enabled[For service endpoints]
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-logging-enabled[For clients]
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-enabled[For service endpoints]
 
 == Alternative ways of adding a `LoggingFeature` to a client or service
 

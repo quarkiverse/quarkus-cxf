@@ -26,8 +26,8 @@ $ ls -lh target/quarkus-app
 drwxr-xr-x. 2 ppalaga ppalaga 4.0K Jan 12 22:29 app
 drwxr-xr-x. 4 ppalaga ppalaga 4.0K Jan 12 22:29 lib
 drwxr-xr-x. 2 ppalaga ppalaga 4.0K Jan 12 22:29 quarkus
--rw-r--r--. 1 ppalaga ppalaga 6.1K Jan 12 22:29 quarkus-app-dependencies.txt
--rw-r--r--. 1 ppalaga ppalaga  678 Jan 12 22:29 quarkus-run.jar
+-rw-r-r--. 1 ppalaga ppalaga 6.1K Jan 12 22:29 quarkus-app-dependencies.txt
+-rw-r-r--. 1 ppalaga ppalaga  678 Jan 12 22:29 quarkus-run.jar
 ----
 
 We can start the application as follows:

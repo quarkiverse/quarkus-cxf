@@ -55,8 +55,8 @@ Enabling WS-RM for a client or service endpoints means that https://cxf.apache.o
 
 In addition to that you may want to set some of the options documented xref:#quarkus-cxf-rt-ws-rm-configuration[below] and/or the following WS-Addressing options:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.client.-clients-.decoupled-endpoint[quarkus.cxf.client.myClient.decoupled-endpoint]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.decoupled-endpoint-base[quarkus.cxf.decoupled-endpoint-base]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-decoupled-endpoint[quarkus.cxf.client.myClient.decoupled-endpoint]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-decoupled-endpoint-base[quarkus.cxf.decoupled-endpoint-base]`
 
 [id="extensions-quarkus-cxf-rt-ws-rm-usage-runnable-example"]
 === Runnable example

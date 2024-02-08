@@ -38,4 +38,4 @@ NOTE: Unlike `wsdl2java` which is executed within Quarkus source generation phas
 
 == See also
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.java2ws.enabled[quarkus.cxf.java2ws.*]` configuration properties of `quarkus-cxf`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-java2ws-enabled[quarkus.cxf.java2ws.*]` configuration properties of `quarkus-cxf`

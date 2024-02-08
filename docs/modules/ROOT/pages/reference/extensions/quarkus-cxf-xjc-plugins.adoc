@@ -15,7 +15,7 @@ endif::[]
 
 XJC plugins for xref:user-guide/generate-java-from-wsdl.adoc[wsdl2java] code generation.
 You'll need to add this extension if you want to use any of the following in
-xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]:
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]:
 
 * `https://cxf.apache.org/cxf-xjc-boolean.html[-xjc-Xbg]` - generate `getFoo()` instead of `isFoo()` accessor methods for boolean fields.
 * `https://cxf.apache.org/cxf-xjc-dv.html[-xjc-Xdv]` - let the generated getter methods return the default value defined in the schema unless the field is set explicitly.
