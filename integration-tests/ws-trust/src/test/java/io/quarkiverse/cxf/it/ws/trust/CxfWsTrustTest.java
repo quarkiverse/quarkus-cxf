@@ -51,21 +51,27 @@ public class CxfWsTrustTest {
                         Matchers.hasXPath(
                                 anyNs("definitions", "Policy")
                                         + "[2]/@*[local-name() = 'Id']",
-                                CoreMatchers.is("Input_Policy")),
-                        Matchers.hasXPath(
-                                anyNs("definitions", "Policy")
-                                        + "[3]/@*[local-name() = 'Id']",
-                                CoreMatchers.is("Output_Policy"))
-
-                );
+                                CoreMatchers.is("io-policy")));
     }
 
     @Test
-    public void sts() throws Exception {
+    public void stsClient() throws Exception {
 
         RestAssured.given()
                 .body("Frank")
-                .post("/ws-trust/hello")
+                .post("/ws-trust/hello/hello-ws-trust")
+                .then()
+                .statusCode(200)
+                .body(is("Hello Frank!"));
+
+    }
+
+    @Test
+    public void stsClientBean() throws Exception {
+
+        RestAssured.given()
+                .body("Frank")
+                .post("/ws-trust/hello/hello-ws-trust-bean")
                 .then()
                 .statusCode(200)
                 .body(is("Hello Frank!"));

@@ -9,10 +9,10 @@ import java.util.Properties;
 
 import org.apache.wss4j.common.ConfigurationConstants;
 
-import io.quarkiverse.cxf.ws.security.CxfWsSecurityConfig.SecurityConfig;
+import io.quarkiverse.cxf.ws.security.CxfWsSecurityConfig.ClientOrEndpointSecurityConfig;
 
 /**
- * Because {@link SecurityConfig} has so many options that all map to some {@code WSS4J[In|Out]Interceptor}
+ * Because {@link ClientOrEndpointSecurityConfig} has so many options that all map to some {@code WSS4J[In|Out]Interceptor}
  * property value, we use this annotation to make the mapping a bit more declarative and less error prone.
  */
 @Target({ METHOD })

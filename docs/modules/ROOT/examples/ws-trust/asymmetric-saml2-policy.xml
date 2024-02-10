@@ -19,6 +19,7 @@
                 <wsp:Policy>
                     <sp:InitiatorToken>
                         <wsp:Policy>
+                            <!-- tag::ws-trust-usage.adoc-policy[] -->
                             <sp:IssuedToken
                                 sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
                                 <sp:RequestSecurityTokenTemplate>
@@ -38,6 +39,7 @@
                                     </wsaws:Metadata>
                                 </sp:Issuer>
                             </sp:IssuedToken>
+                            <!-- end::ws-trust-usage.adoc-policy[] -->
                         </wsp:Policy>
                     </sp:InitiatorToken>
                     <sp:RecipientToken>
