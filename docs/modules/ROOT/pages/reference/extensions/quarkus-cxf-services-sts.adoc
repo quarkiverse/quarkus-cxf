@@ -46,8 +46,9 @@ endif::[]
 
 Here are the key parts of a basic WS-Trust scenario:
 
-* *WS-SecurityPolicy* - except for defining security requirements, such as transport protocols, encryption standards and authentication mechanisms,
-  it can also set the address of Security Token Service from which clients and services have to obtain their tokens.
+* *WS-SecurityPolicy* - except for defining security requirements, such as transport protocols, encryption and signing,
+  it can also contain an `<IssuedToken>` assertion.
+  It specifies the requirements and constraints for these security tokens that the client must adhere to when accessing the service.
 * *Security Token Service (STS)* - issues, validates, and renews security tokens upon request.
   It acts as a trusted authority that authenticates clients and issues tokens that assert the client's identity and permissions.
 * *Client* - requests a token from the STS to access a web service.
@@ -64,5 +65,90 @@ Let's walk through it and see how the individual parts are set to work together.
 [id="extensions-quarkus-cxf-services-sts-usage-ws-securitypolicy"]
 ==== WS-SecurityPolicy
 
+The policy is located in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/resources/asymmetric-saml2-policy.xml[asymmetric-saml2-policy.xml]` file.
+Its key part is the `<IssuedToken>` assertion requiring a SAML 2.0 token:
 
+.asymmetric-saml2-policy.xml
+[source,xml]
+----
+include::example$ws-trust/asymmetric-saml2-policy.xml[tag=ws-trust-usage.adoc-policy]
+----
+
+[id="extensions-quarkus-cxf-services-sts-usage-security-token-service-sts"]
+==== Security Token Service (STS)
+
+The STS is implemented in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/java/io/quarkiverse/cxf/it/ws/trust/sts/Sts.java[Sts.java]`:
+
+.Sts.java
+[source,java]
+----
+include::example$ws-trust/Sts.java[tag=ws-trust-usage.adoc-sts]
+----
+
+and configured in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/resources/application.properties[application.properties]`:
+
+.application.properties
+[source,properties]
+----
+include::example$ws-trust/application.properties[tag=ws-trust-usage.adoc-sts-properties]
+----
+
+[id="extensions-quarkus-cxf-services-sts-usage-service"]
+==== Service
+
+The service is implemented in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/java/io/quarkiverse/cxf/it/ws/trust/server/TrustHelloServiceImpl.java[TrustHelloServiceImpl.java]`:
+
+.TrustHelloServiceImpl.java
+[source,java]
+----
+include::example$ws-trust/TrustHelloServiceImpl.java[tag=ws-trust-usage.adoc-service]
+----
+
+The `asymmetric-saml2-policy.xml` mentioned above is set in the Service Endpoint Interface `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/java/io/quarkiverse/cxf/it/ws/trust/server/TrustHelloService.java[TrustHelloService.java]`:
+
+.TrustHelloServiceImpl.java
+[source,java]
+----
+include::example$ws-trust/TrustHelloService.java[tag=ws-trust-usage.adoc-service]
+----
+
+The service endpoint is configured in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/resources/application.properties[application.properties]`:
+
+.application.properties
+[source,properties]
+----
+include::example$ws-trust/application.properties[tag=ws-trust-usage.adoc-service-properties]
+----
+
+[id="extensions-quarkus-cxf-services-sts-usage-client"]
+==== Client
+
+Finally, for the SOAP client to be able to communicate with the service, its `STSClient` needs to be configured.
+It can be done in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/resources/application.properties[application.properties]`:
+
+.application.properties
+[source,properties]
+----
+include::example$ws-trust/application.properties[tag=ws-trust-usage.adoc-client-properties]
+----
+
+TIP: The properties for configuring the STS client are provided by the `io.quarkiverse.cxf:quarkus-cxf-rt-ws-security`
+     extension and and documented on its
+     xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client[reference page].
+
+Alternatively, the client can be set as a bean reference:
+
+.application.properties
+[source,properties]
+----
+include::example$ws-trust/application.properties[tag=ws-trust-usage.adoc-client-bean]
+----
+
+In that case, the `@Named` bean needs to be produced programmatically, e.g. using `@jakarta.enterprise.inject.Produces`:
+
+.BeanProducers.java
+[source,java]
+----
+include::example$ws-trust/BeanProducers.java[tag=ws-trust-usage.adoc-sts-client]
+----
 

@@ -52,6 +52,51 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- Copy the sample code to docs module where Antora can see it -->
+                        <id>copy-resources-for-antora</id>
+                        <phase>compile</phase><!-- after source formatting -->
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/ws-trust</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <includes>
+                                        <include>application.properties</include>
+                                        <include>asymmetric-saml2-policy.xml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/java/io/quarkiverse/cxf/it/ws/trust/sts</directory>
+                                    <includes>
+                                        <include>Sts.java</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/java/io/quarkiverse/cxf/it/ws/trust/server</directory>
+                                    <includes>
+                                        <include>TrustHelloServiceImpl.java</include>
+                                        <include>TrustHelloService.java</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/java/io/quarkiverse/cxf/it/ws/trust/client</directory>
+                                    <includes>
+                                        <include>BeanProducers.java</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

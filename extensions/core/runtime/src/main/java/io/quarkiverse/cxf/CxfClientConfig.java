@@ -22,7 +22,8 @@ import io.smallrye.config.WithName;
 public interface CxfClientConfig {
 
     /**
-     * The client WSDL path
+     * A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service
+     * proxy of this client.
      */
     @WithName("wsdl")
     public Optional<String> wsdlPath();

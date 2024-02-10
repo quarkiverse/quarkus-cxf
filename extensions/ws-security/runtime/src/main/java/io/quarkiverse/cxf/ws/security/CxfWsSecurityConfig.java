@@ -13,6 +13,7 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 import io.smallrye.config.WithName;
+import io.smallrye.config.WithParentName;
 
 @ConfigMapping(prefix = "quarkus.cxf")
 @ConfigDocFilename("quarkus-cxf-rt-ws-security.adoc")
@@ -23,30 +24,41 @@ public interface CxfWsSecurityConfig {
      * Client configurations.
      */
     @WithName("client")
-    Map<String, ClientOrEndpointConfig> clients();
+    Map<String, ClientConfig> clients();
 
     /**
      * Endpoint configurations.
      */
     @WithName("endpoint")
-    Map<String, ClientOrEndpointConfig> endpoints();
+    Map<String, EndpointConfig> endpoints();
 
     /**
      * A class that provides configurable options of a CXF client.
      */
     @ConfigGroup
-    interface ClientOrEndpointConfig {
+    interface ClientConfig {
         /**
          * WS-Security related client configuration
          */
-        SecurityConfig security();
+        ClientSecurityConfig security();
     }
 
     /**
      * A class that provides configurable options of a CXF client.
      */
     @ConfigGroup
-    public interface SecurityConfig {
+    interface EndpointConfig {
+        /**
+         * WS-Security related client configuration
+         */
+        ClientOrEndpointSecurityConfig security();
+    }
+
+    /**
+     * A class that provides configurable options of a CXF client.
+     */
+    @ConfigGroup
+    public interface ClientOrEndpointSecurityConfig {
 
         // org.apache.cxf.rt.security.SecurityConstants
 
@@ -946,6 +958,20 @@ public interface CxfWsSecurityConfig {
     }
 
     /**
+     * A class that provides configurable options of a CXF client.
+     */
+    @ConfigGroup
+    public interface ClientSecurityConfig extends ClientOrEndpointSecurityConfig {
+        /**
+         * STS configuration.
+         *
+         * @since 2.8.0
+         */
+        @WithName("sts.client")
+        StsClientConfig sts();
+    }
+
+    /**
      * Ready for future use
      */
     interface ValidatorConfig {
@@ -1042,23 +1068,203 @@ public interface CxfWsSecurityConfig {
         @WssConfigurationConstant(key = "ws-security.policy.validator.map", transformer = beanRef)
         @WithName("policy.validator.map")
         Optional<String> policyValidatorMap();
+
+    }
+
+    interface StsClientConfig {
+        /**
+         * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a fully configured
+         * {@code org.apache.cxf.ws.security.trust.STSClient} bean to communicate with the STS. If not set, the STS
+         * client will be created and configured based on other {@code [prefix].security.sts.client.*} properties
+         * as long as they are available.
+         * <p>
+         * To workaround the fact that {@code org.apache.cxf.ws.security.trust.STSClient} does not have a no-args
+         * constructor and cannot thus be used as a CDI bean type, you can use the wrapper class
+         * {@code io.quarkiverse.cxf.ws.security.sts.client.STSClientBean} instead.
+         * <p>
+         * Tip: Check the <a href="quarkus-cxf-services-sts.html">Security Token Service (STS)</a> extension page
+         * for more information about WS-Trust.
+         *
+         * @since 2.8.0
+         */
+        @WithParentName
+        @WssConfigurationConstant(key = "security.sts.client", transformer = beanRef)
+        Optional<String> client();
+
+        /**
+         * A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service
+         * proxy of the STS client.
+         *
+         * @since 2.8.0
+         */
+        Optional<String> wsdl();
+
+        /**
+         * A fully qualified name of the STS service. Common values include:
+         * <ul>
+         * <li>WS-Trust 1.0: <code>{http://schemas.xmlsoap.org/ws/2005/02/trust/}SecurityTokenService</code>
+         * <li>WS-Trust 1.3: <code>{http://docs.oasis-open.org/ws-sx/ws-trust/200512/}SecurityTokenService</code>
+         * <li>WS-Trust 1.4: <code>{http://docs.oasis-open.org/ws-sx/ws-trust/200802/}SecurityTokenService</code>
+         * </ul>
+         *
+         * @since 2.8.0
+         */
+        Optional<String> serviceName();
+
+        /**
+         * A fully qualified name of the STS endpoint name. Common values include:
+         * <ul>
+         * <li><code>{http://docs.oasis-open.org/ws-sx/ws-trust/200512/}X509_Port</code>
+         * <li><code>{http://docs.oasis-open.org/ws-sx/ws-trust/200512/}Transport_Port</code>
+         * <li><code>{http://docs.oasis-open.org/ws-sx/ws-trust/200512/}UT_Port</code>
+         * </ul>
+         *
+         * @since 2.8.0
+         */
+        Optional<String> endpointName();
+
+        /**
+         * The user name to use when authenticating against the STS. It is used as follows:
+         * <ul>
+         * <li>As the name in the UsernameToken for WS-Security
+         * <li>As the alias name in the keystore to get the user's cert and private key for signature if
+         * {@code signature.username} is not set
+         * <li>As the alias name in the keystore to get the user's public key for encryption if
+         * {@code encryption.username} is not set
+         * </ul>
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.username")
+        Optional<String> username();
+
+        /**
+         * The password associated with the {@code username}.
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.password")
+        Optional<String> password();
+
+        /**
+         * The user's name for encryption. It is used as the alias name in the keystore to get the user's public
+         * key for encryption. If this is not defined, then {@code username} is used instead. If
+         * that is also not specified, it uses the the default alias set in the properties file referenced by
+         * {@code encrypt.properties}. If that's also not set, and the keystore only contains a single key,
+         * that key will be used.
+         * <p>
+         * For the WS-Security web service provider, the {@code useReqSigCert} value can be used to accept (encrypt to)
+         * any client whose public key is in the service's truststore (defined in {@code encrypt.properties}).
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.encryption.username")
+        @WithName("encryption.username")
+        Optional<String> encryptionUsername();
+
+        /**
+         * The Crypto property configuration to use for encryption, if {@code encryption.crypto} is not set.
+         * <p>
+         * Example
+         *
+         * <pre>
+         * [prefix].encryption.properties."org.apache.ws.security.crypto.provider" = org.apache.ws.security.components.crypto.Merlin
+         * [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
+         * [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
+         * </pre>
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.encryption.properties", transformer = properties)
+        @WithName("encryption.properties")
+        Map<String, String> encryptionProperties();
+
+        /**
+         * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
+         * {@code org.apache.wss4j.common.crypto.Crypto} to be used for encryption. If not set,
+         * {@code encryption.properties} will be used to configure a {@code Crypto} instance.
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.encryption.crypto", transformer = beanRef)
+        @WithName("encryption.crypto")
+        Optional<String> encryptionCrypto();
+
+        /**
+         * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
+         * {@code org.apache.wss4j.common.crypto.Crypto} to be used for the STS. If not set,
+         * {@code token.properties} will be used to configure a {@code Crypto} instance.
+         * <p>
+         * WCF's trust server sometimes will encrypt the token in the response IN ADDITION TO
+         * the full security on the message. These properties control the way the STS client
+         * will decrypt the EncryptedData elements in the response.
+         * <p>
+         * These are also used by the {@code token.properties} to send/process any RSA/DSAKeyValue tokens
+         * used if the KeyType is {@code PublicKey}
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.sts.token.crypto", transformer = beanRef)
+        @WithName("token.crypto")
+        Optional<String> tokenCrypto();
+
+        /**
+         * The Crypto property configuration to use for encryption, if {@code encryption.crypto} is not set.
+         * <p>
+         * Example
+         *
+         * <pre>
+         * [prefix].token.properties."org.apache.ws.security.crypto.provider" = org.apache.ws.security.components.crypto.Merlin
+         * [prefix].token.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
+         * [prefix].token.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
+         * </pre>
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.sts.token.properties", transformer = properties)
+        @WithName("token.properties")
+        Map<String, String> tokenProperties();
+
+        /**
+         * The alias name in the keystore to get the user's public key to send to the STS for the
+         * PublicKey KeyType case.
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.sts.token.username")
+        @WithName("token.username")
+        Optional<String> tokenUsername();
+
+        /**
+         * Whether to write out an X509Certificate structure in UseKey/KeyInfo, or whether to write
+         * out a KeyValue structure.
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.sts.token.usecert")
+        @WithName("token.usecert")
+        @WithDefault("false")
+        boolean tokenUsecert();
+
+        /**
+         * If {@code true} the STS client will be set to send Soap 1.2 messages; otherwise it will send SOAP 1.1 messages.
+         *
+         * @since 2.8.0
+         */
+        @WssConfigurationConstant(key = "security.sts.client-soap12-binding")
+        @WithName("soap12-binding")
+        @WithDefault("false")
+        boolean soap12Binding();
+
     }
 
     /**
      * Ready for future use
      */
-    interface StsConfig {
+    interface FutureStsConfig {
         //
         // STS Client Configuration tags
         //
-
-        /**
-         * A reference to the STSClient class used to communicate with the STS.
-         *
-         * @since 2.5.0
-         */
-        @WssConfigurationConstant(key = "security.sts.client")
-        Optional<String> stsClient();
 
         /**
          * The "AppliesTo" address to send to the STS. The default is the endpoint address of the
@@ -1068,15 +1274,6 @@ public interface CxfWsSecurityConfig {
          */
         @WssConfigurationConstant(key = "security.sts.applies-to")
         Optional<String> stsAppliesTo();
-
-        /**
-         * Whether to write out an X509Certificate structure in UseKey/KeyInfo, or whether to write
-         * out a KeyValue structure. The default value is "false".
-         *
-         * @since 2.5.0
-         */
-        @WssConfigurationConstant(key = "security.sts.token.usecert")
-        Optional<String> stsTokenUseCertForKeyinfo();
 
         /**
          * Whether to cancel a token when using SecureConversation after successful invocation. The
@@ -1128,53 +1325,6 @@ public interface CxfWsSecurityConfig {
          */
         @WssConfigurationConstant(key = "security.sts.prefer-wsmex")
         Optional<String> preferWsmexOverStsClientConfig();
-
-        /**
-         * Switch STS client to send Soap 1.2 messages
-         *
-         * @since 2.5.0
-         */
-        @WssConfigurationConstant(key = "security.sts.client-soap12-binding")
-        Optional<String> stsClientSoap12Binding();
-
-        /**
-         *
-         * A Crypto object to be used for the STS. If this is not defined then the
-         * {@link STS_TOKEN_PROPERTIES} is used instead.
-         *
-         * WCF's trust server sometimes will encrypt the token in the response IN ADDITION TO
-         * the full security on the message. These properties control the way the STS client
-         * will decrypt the EncryptedData elements in the response.
-         *
-         * These are also used by the STSClient to send/process any RSA/DSAKeyValue tokens
-         * used if the KeyType is "PublicKey"
-         *
-         * @since 2.5.0
-         */
-        @WssConfigurationConstant(key = "security.sts.token.crypto")
-        Optional<String> stsTokenCrypto();
-
-        /**
-         * The Crypto property configuration to use for the STS, if {@link STS_TOKEN_CRYPTO} is not
-         * set instead.
-         * The value of this tag must be either:
-         * a) A Java Properties object that contains the Crypto configuration.
-         * b) The path of the Crypto property file that contains the Crypto configuration.
-         * c) A URL that points to the Crypto property file that contains the Crypto configuration.
-         *
-         * @since 2.5.0
-         */
-        @WssConfigurationConstant(key = "security.sts.token.properties")
-        Optional<String> stsTokenProperties();
-
-        /**
-         * The alias name in the keystore to get the user's public key to send to the STS for the
-         * PublicKey KeyType case.
-         *
-         * @since 2.5.0
-         */
-        @WssConfigurationConstant(key = "security.sts.token.username")
-        Optional<String> stsTokenUsername();
 
         /**
          * The token to be sent to the STS in an "ActAs" field. It can be either:

@@ -1741,7 +1741,7 @@ a| [[quarkus-cxf_quarkus-cxf-client-clients-wsdl]]`link:#quarkus-cxf_quarkus-cxf
 
 [.description]
 --
-The client WSDL path
+A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service proxy of this client.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__WSDL+++[]

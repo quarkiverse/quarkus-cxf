@@ -21,17 +21,18 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 import io.quarkus.runtime.LaunchMode;
 
+//tag::ws-trust-usage.adoc-sts[]
 @WebServiceProvider(serviceName = "SecurityTokenService", portName = "UT_Port", targetNamespace = "http://docs.oasis-open.org/ws-sx/ws-trust/200512/", wsdlLocation = "ws-trust-1.4-service.wsdl")
-public class SampleSTS extends SecurityTokenServiceProvider {
+public class Sts extends SecurityTokenServiceProvider {
 
-    public SampleSTS() throws Exception {
+    public Sts() throws Exception {
         super();
 
         StaticSTSProperties props = new StaticSTSProperties();
         props.setSignatureCryptoProperties("stsKeystore.properties");
         props.setSignatureUsername("sts");
         props.setCallbackHandlerClass(StsCallbackHandler.class.getName());
-        props.setIssuer("DoubleItSTSIssuer");
+        props.setIssuer("SampleSTSIssuer");
 
         List<ServiceMBean> services = new LinkedList<ServiceMBean>();
         StaticService service = new StaticService();
@@ -61,3 +62,4 @@ public class SampleSTS extends SecurityTokenServiceProvider {
         this.setValidateOperation(validateOperation);
     }
 }
+//end::ws-trust-usage.adoc-sts[]

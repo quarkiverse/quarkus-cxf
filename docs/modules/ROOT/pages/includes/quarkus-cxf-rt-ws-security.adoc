@@ -1179,6 +1179,282 @@ endif::add-copy-button-to-env-var[]
 |
 
 
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client[quarkus.cxf.client."clients".security.sts.client]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a fully configured `org.apache.cxf.ws.security.trust.STSClient` bean to communicate with the STS. If not set, the STS client will be created and configured based on other `++[++prefix++]++.security.sts.client.++*++` properties as long as they are available.
+
+To workaround the fact that `org.apache.cxf.ws.security.trust.STSClient` does not have a no-args constructor and cannot thus be used as a CDI bean type, you can use the wrapper class `io.quarkiverse.cxf.ws.security.sts.client.STSClientBean` instead.
+
+Tip: Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] extension page for more information about WS-Trust.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-wsdl]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-wsdl[quarkus.cxf.client."clients".security.sts.client.wsdl]`
+
+
+[.description]
+--
+A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service proxy of the STS client.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_WSDL+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_WSDL+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-service-name]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-service-name[quarkus.cxf.client."clients".security.sts.client.service-name]`
+
+
+[.description]
+--
+A fully qualified name of the STS service. Common values include:
+
+ - WS-Trust 1.0: `++{++http://schemas.xmlsoap.org/ws/2005/02/trust/++}++SecurityTokenService`
+ - WS-Trust 1.3: `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200512/++}++SecurityTokenService`
+ - WS-Trust 1.4: `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200802/++}++SecurityTokenService`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_SERVICE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_SERVICE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-endpoint-name]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-endpoint-name[quarkus.cxf.client."clients".security.sts.client.endpoint-name]`
+
+
+[.description]
+--
+A fully qualified name of the STS endpoint name. Common values include:
+
+ - `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200512/++}++X509_Port`
+ - `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200512/++}++Transport_Port`
+ - `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200512/++}++UT_Port`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENDPOINT_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENDPOINT_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-username]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-username[quarkus.cxf.client."clients".security.sts.client.username]`
+
+
+[.description]
+--
+The user name to use when authenticating against the STS. It is used as follows:
+
+ - As the name in the UsernameToken for WS-Security
+ - As the alias name in the keystore to get the user's cert and private key for signature if `signature.username` is not set
+ - As the alias name in the keystore to get the user's public key for encryption if `encryption.username` is not set
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-password]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-password[quarkus.cxf.client."clients".security.sts.client.password]`
+
+
+[.description]
+--
+The password associated with the `username`.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-encryption-username]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-encryption-username[quarkus.cxf.client."clients".security.sts.client.encryption.username]`
+
+
+[.description]
+--
+The user's name for encryption. It is used as the alias name in the keystore to get the user's public key for encryption. If this is not defined, then `username` is used instead. If that is also not specified, it uses the the default alias set in the properties file referenced by `encrypt.properties`. If that's also not set, and the keystore only contains a single key, that key will be used.
+
+For the WS-Security web service provider, the `useReqSigCert` value can be used to accept (encrypt to) any client whose public key is in the service's truststore (defined in `encrypt.properties`).
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-encryption-properties-encryption-properties]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-encryption-properties-encryption-properties[quarkus.cxf.client."clients".security.sts.client.encryption.properties]`
+
+
+[.description]
+--
+The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
+
+Example
+
+```
+[prefix].encryption.properties."org.apache.ws.security.crypto.provider" = org.apache.ws.security.components.crypto.Merlin
+[prefix].encryption.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
+[prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
+```
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_PROPERTIES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_PROPERTIES+++`
+endif::add-copy-button-to-env-var[]
+--|`Map<String,String>` 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-encryption-crypto]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-encryption-crypto[quarkus.cxf.client."clients".security.sts.client.encryption.crypto]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_CRYPTO+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_CRYPTO+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-token-crypto]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-token-crypto[quarkus.cxf.client."clients".security.sts.client.token.crypto]`
+
+
+[.description]
+--
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for the STS. If not set, `token.properties` will be used to configure a `Crypto` instance.
+
+WCF's trust server sometimes will encrypt the token in the response IN ADDITION TO the full security on the message. These properties control the way the STS client will decrypt the EncryptedData elements in the response.
+
+These are also used by the `token.properties` to send/process any RSA/DSAKeyValue tokens used if the KeyType is `PublicKey`
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_CRYPTO+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_CRYPTO+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-token-properties-token-properties]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-token-properties-token-properties[quarkus.cxf.client."clients".security.sts.client.token.properties]`
+
+
+[.description]
+--
+The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
+
+Example
+
+```
+[prefix].token.properties."org.apache.ws.security.crypto.provider" = org.apache.ws.security.components.crypto.Merlin
+[prefix].token.properties."org.apache.ws.security.crypto.merlin.keystore.password" = password
+[prefix].token.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
+```
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_PROPERTIES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_PROPERTIES+++`
+endif::add-copy-button-to-env-var[]
+--|`Map<String,String>` 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-token-username]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-token-username[quarkus.cxf.client."clients".security.sts.client.token.username]`
+
+
+[.description]
+--
+The alias name in the keystore to get the user's public key to send to the STS for the PublicKey KeyType case.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_USERNAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_USERNAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-token-usecert]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-token-usecert[quarkus.cxf.client."clients".security.sts.client.token.usecert]`
+
+
+[.description]
+--
+Whether to write out an X509Certificate structure in UseKey/KeyInfo, or whether to write out a KeyValue structure.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_USECERT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_USECERT+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-soap12-binding]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client-soap12-binding[quarkus.cxf.client."clients".security.sts.client.soap12-binding]`
+
+
+[.description]
+--
+If `true` the STS client will be set to send Soap 1.2 messages; otherwise it will send SOAP 1.1 messages.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_SOAP12_BINDING+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_SOAP12_BINDING+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
 a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-endpoint-endpoints-security-username]]`link:#quarkus-cxf-rt-ws-security_quarkus-cxf-endpoint-endpoints-security-username[quarkus.cxf.endpoint."endpoints".security.username]`
 
 
