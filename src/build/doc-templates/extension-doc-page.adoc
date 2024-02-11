@@ -68,7 +68,29 @@ endif::[]
 
 [=configuration]
 [/#if]
-[#if configurationPropertiesInclude?? ]
-include::[=configurationPropertiesInclude][]
+[#if configOptions?size != 0 ]
+
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time. All other configuration properties are overridable at runtime.
+
+[.configuration-reference.searchable, cols="80,.^10,.^10", stripes=odd]
+|===
+| Configuration property | Type | Default
+
+[#list configOptions as configDocItem][#assign anchor = toAnchor(configDocItem.key)]
+
+|[=configDocItem.illustration] [[quarkus-cxf_[=anchor]]]`link:#quarkus-cxf_[=anchor][[=configDocItem.key]]`
+| [=configDocItem.type]
+| [#if configDocItem.defaultValue?has_content]`[=configDocItem.defaultValue]`[#elseif ! configDocItem.optional]required icon:exclamation-circle[title=Configuration property is required][/#if]
+
+3+a|[=configDocItem.configDoc]
+[#if configDocItem.environmentVariable?? ]
+
+*Environment variable*: `+++[=configDocItem.environmentVariable]+++`[/#if][#if configDocItem.since?? ] +
+*Since Quarkus CXF*: [=configDocItem.since]
+[/#if]
+[/#list]
+|===
+
 [/#if]
 [/#if]
