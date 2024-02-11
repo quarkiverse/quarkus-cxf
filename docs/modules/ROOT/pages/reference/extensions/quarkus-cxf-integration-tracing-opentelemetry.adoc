@@ -60,7 +60,3 @@ so that the spans can be inspected from tests easily.
 Refer to Quarkus https://quarkus.io/guides/opentelemetry#exporters[OpenTelemetry guide] for information
 about other supported span exporters and collectors.
 
-
-[id="quarkus-cxf-integration-tracing-opentelemetry-configuration"]
-== Configuration
-include::../../includes/quarkus-cxf-integration-tracing-opentelemetry.adoc[]

@@ -22,7 +22,7 @@ import io.vertx.core.http.impl.HttpServerRequestInternal;
 /**
  * Adapted by sync-quarkus-classes.groovy from
  * <a href=
- * 'https://github.com/quarkusio/quarkus/blob/main/independent-projects/resteasy-reactive/server/vertx/src/main/java/org/jboss/resteasy/reactive/server/vertx/ResteasyReactiveOutputStream.java'><code>ResteasyReactiveOutputStream</code></a>
+ * "https://github.com/quarkusio/quarkus/blob/main/independent-projects/resteasy-reactive/server/vertx/src/main/java/org/jboss/resteasy/reactive/server/vertx/ResteasyReactiveOutputStream.java"><code>ResteasyReactiveOutputStream</code></a>
  * from Quarkus.
  */
 public class VertxServletOutputStream extends ServletOutputStream {
@@ -268,9 +268,9 @@ public class VertxServletOutputStream extends ServletOutputStream {
 
     private static class DrainHandler implements Handler<Void> {
 
-        private final ResteasyReactiveOutputStream out;
+        private final VertxServletOutputStream out;
 
-        public DrainHandler(ResteasyReactiveOutputStream out) {
+        public DrainHandler(VertxServletOutputStream out) {
             this.out = out;
         }
 

@@ -302,10 +302,12 @@ public interface CxfClientConfig {
 
     /**
      * Specifies the list of hostnames that will not use the proxy configuration.
-     * Examples of value:
-     * * "localhost" -> A single hostname
-     * * "localhost|www.google.com" -> 2 hostnames that will not use the proxy configuration
-     * * "localhost|www.google.*|*.apache.org" -> It's also possible to use a pattern-like value
+     * Examples:
+     * <ul>
+     * <li>{@code localhost} - a single hostname
+     * <li>{@code localhost|www.google.com} - two hostnames that will not use the proxy configuration
+     * <li>{@code localhost|www.google.*|*.apache.org} - hostname patterns
+     * </ul>
      *
      * @since 2.2.3
      */

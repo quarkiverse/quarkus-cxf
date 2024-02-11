@@ -118,7 +118,3 @@ metrics: {
 }
 ----
 
-
-[id="quarkus-cxf-rt-features-metrics-configuration"]
-== Configuration
-include::../../includes/quarkus-cxf-rt-features-metrics.adoc[]

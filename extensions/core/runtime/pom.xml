@@ -154,20 +154,6 @@
                             </properties>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>filter-and-move-config-options-docs</id>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <phase>process-classes</phase>
-                        <configuration>
-                            <source>file:${maven.multiModuleProjectDirectory}/src/build/scripts/filter-and-move-config-options-docs.groovy</source>
-                            <properties>
-                                <inputFile>${maven.multiModuleProjectDirectory}/target/asciidoc/generated/config/quarkus-cxf.adoc</inputFile>
-                                <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/pages/includes</outputDirectory>
-                            </properties>
-                        </configuration>
-                    </execution>
                 </executions>
                 <dependencies>
                     <dependency>

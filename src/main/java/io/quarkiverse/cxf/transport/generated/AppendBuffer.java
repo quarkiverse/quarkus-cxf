@@ -9,7 +9,7 @@ import io.netty.buffer.CompositeByteBuf;
 /**
  * Adapted by sync-quarkus-classes.groovy from
  * <a href=
- * 'https://github.com/quarkusio/quarkus/blob/main/independent-projects/resteasy-reactive/server/vertx/src/main/java/org/jboss/resteasy/reactive/server/vertx/ResteasyReactiveOutputStream.java'><code>ResteasyReactiveOutputStream</code></a>
+ * "https://github.com/quarkusio/quarkus/blob/main/independent-projects/resteasy-reactive/server/vertx/src/main/java/org/jboss/resteasy/reactive/server/vertx/ResteasyReactiveOutputStream.java"><code>ResteasyReactiveOutputStream</code></a>
  * from Quarkus.
  *
  * <p>

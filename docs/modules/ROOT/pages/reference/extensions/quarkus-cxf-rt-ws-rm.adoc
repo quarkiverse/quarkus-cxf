@@ -88,7 +88,3 @@ $ mvn clean test
 
 You should see the exchange of SOAP messages between the client, the server and the decoupled endpoint in the console.
 
-
-[id="quarkus-cxf-rt-ws-rm-configuration"]
-== Configuration
-include::../../includes/quarkus-cxf-rt-ws-rm.adoc[]

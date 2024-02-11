@@ -67,7 +67,3 @@ There are several chapters in the xref:user-guide/index.adoc[User guide] coverin
 * xref:user-guide/examples.adoc[Examples]
 * xref:user-guide/common-problems-troubleshooting.adoc[Common problems and troubleshooting]
 
-
-[id="quarkus-cxf-configuration"]
-== Configuration
-include::../../includes/quarkus-cxf.adoc[]

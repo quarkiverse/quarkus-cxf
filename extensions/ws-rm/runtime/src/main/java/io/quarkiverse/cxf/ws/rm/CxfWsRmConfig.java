@@ -110,7 +110,11 @@ public interface CxfWsRmConfig {
         Optional<String> store();
 
         /**
-         *
+         * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
+         * {@code org.apache.cxf.ws.rm.feature.RMFeature} bean to set on clients and service endpoint which have
+         * {@code quarkus.cxf.[client|service]."name".rm.enabled = true}.
+         * <p>
+         * If the value is {@code #defaultRmFeature} then Quarkus CXF creates and configures the bean for you.
          *
          * @since 2.7.0
          */

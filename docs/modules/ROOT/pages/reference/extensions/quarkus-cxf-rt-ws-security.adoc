@@ -138,7 +138,3 @@ $ mvn clean test -Dtest=EncryptSignPolicyTest
 
 You should see some messages containing `Signature` elements and encrypted bodies in the console output.
 
-
-[id="quarkus-cxf-rt-ws-security-configuration"]
-== Configuration
-include::../../includes/quarkus-cxf-rt-ws-security.adoc[]
