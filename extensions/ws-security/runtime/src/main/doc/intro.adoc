@@ -1,1 +1,6 @@
-Provides CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation.
+Provides CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation allowing you to:
+
+* Pass authentication tokens between services
+* Encrypt messages or parts of messages
+* Sign messages
+* Timestamp messages

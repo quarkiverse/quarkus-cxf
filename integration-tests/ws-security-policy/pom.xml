@@ -93,12 +93,14 @@
                                     <includes>
                                         <include>application.properties</include>
                                         <include>https-policy.xml</include>
+                                        <include>encrypt-sign-policy.xml</include>
                                     </includes>
                                 </resource>
                                 <resource>
                                     <directory>src/main/java/io/quarkiverse/cxf/it/security/policy</directory>
                                     <includes>
                                         <include>HttpsPolicyHelloService.java</include>
+                                        <include>EncryptSignPolicyHelloService.java</include>
                                     </includes>
                                 </resource>
                             </resources>

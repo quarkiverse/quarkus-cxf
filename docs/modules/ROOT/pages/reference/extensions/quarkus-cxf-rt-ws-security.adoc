@@ -13,7 +13,12 @@ ifeval::[{doc-show-badges} == true]
 Stable • Since 0.14.0
 endif::[]
 
-Provides CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation.
+Provides CXF framework's https://cxf.apache.org/docs/ws-security.html[WS-Security] implementation allowing you to:
+
+* Pass authentication tokens between services
+* Encrypt messages or parts of messages
+* Sign messages
+* Timestamp messages
 
 
 [id="quarkus-cxf-rt-ws-security-maven-coordinates"]
@@ -45,64 +50,95 @@ endif::[]
 [id="quarkus-cxf-rt-ws-security-usage"]
 == Usage
 
-The CXF framework's WS-Security implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J]. The example below shows how to integrate with WSS4J using interceptors.
+The CXF framework's WS-Security (WSS) implementation is based on https://ws.apache.org/wss4j/user_guide.html[WSS4J].
+It can be activated in two ways:
 
-NOTE: Currently, only the programmatic WSS4JInterceptors are supported. Actions like `Timestamp`, `UsernameToken`, `Signature`, `Encryption`, etc., can be applied to the interceptors by passing the appropriate configuration properties.
+* By using WS-SecurityPolicy
+* By adding WSS4J interceptors to your clients and service endpoints.
 
-[[ws-security-service]]
-[id="extensions-quarkus-cxf-rt-ws-security-usage-a-soap-service-with-ws-security"]
-=== A SOAP Service with WS-Security
+WS-SecurityPolicy is preferable because in that way, the security requirements become a part of the WSDL contract.
+That in turn greatly simplifies not only the implementation of clients and service endpoints
+but also the interoperability between vendors.
 
-Add the `WSS4JInInterceptor` to `in-interceptors` of your web service in `application.properties`:
+Nevertheless, if you leverage WS-SecurityPolicy, CXF sets up the WSS4J interceptors under the hood for you.
 
-[source,properties]
-----
-include::example$ws-security-server/application.properties[tag=quarkus-cxf-rt-ws-security.adoc]
-----
+We won't explain the manual approach with WSS4J interceptors in detail here,
+but you can still refer to our https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security[WS-Security integration test] as an example.
 
-NOTE: The sample code snippets used in this section come from the
-     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-server[WS-Security server integration test]
+[id="extensions-quarkus-cxf-rt-ws-security-usage-ws-security-via-ws-securitypolicy"]
+=== WS-Security via WS-SecurityPolicy
+
+TIP: The sample code snippets used in this section come from the
+     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
      in the source tree of {quarkus-cxf-project-name}
 
-Then you can configure your `WSS4JInInterceptor` using CDI like the following:
+Let's say our aim is to ensure that the communication between the client and service is confidential (through encryption)
+and that the message has not been tampered with (through digital signatures).
+We also want to assure that the clients are who they claim to be by authenticating themselves by X.509 certificates.
 
+We can express all these requirements in a single https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/src/main/resources/encrypt-sign-policy.xml[WS-SecurityPolicy document]:
+
+.encrypt-sign-policy.xml
+[source,xml]
+----
+include::example$ws-security-policy/encrypt-sign-policy.xml[]
+----
+
+<1> `AsymmetricBinding` specifies the use of asymmetric (public/private key) cryptography for securing the communication between two parties
+<2> `InitiatorToken` indicates that the initiator (sender) of the message will use an X.509 certificate token that must always be provided to the recipient.
+<3> `SignedParts` specifies which parts of the SOAP message must be signed to ensure their integrity.
+<4> `EncryptedParts` specifies the parts of the SOAP message that must be encrypted to ensure their confidentiality.
+
+We set this policy on the Service Endpoint Interface (SEI)
+`https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/src/main/java/io/quarkiverse/cxf/it/security/policy/EncryptSignPolicyHelloService.java#L11[EncryptSignPolicyHelloService]`
+using `@org.apache.cxf.annotations.Policy` annotation:
+
+.EncryptSignPolicyHelloService.java
 [source,java]
 ----
-include::example$ws-security-server/WSS4JInInterceptorProducer.java[tag=quarkus-cxf-rt-ws-security.adoc]
+include::example$ws-security-policy/EncryptSignPolicyHelloService.java[tag=quarkus-cxf-rt-ws-security.adoc]
+...
+}
 ----
 
-[[ws-security-client]]
-[id="extensions-quarkus-cxf-rt-ws-security-usage-a-soap-client-using-ws-security"]
-== A SOAP client using WS-Security
+On the first sight, setting the policy on the SEI should suffice to enforce it on both the service
+and all clients generated from the SEI or from the WSDL served by the service.
+However, that's not all.
+Security keys, usernames, passwords and other kinds of confidental information cannot be exposed in a public policy.
 
-The corresponding client implementation would be slightly different:
-we will use `WSS4JOutInterceptor` and `out-interceptors` in `application.properties`:
+Those have to be set in the configuration. Let's do it for the service first:
 
+.application.properties
 [source,properties]
 ----
-include::example$ws-security-client/application.properties[tag=quarkus-cxf-rt-ws-security.adoc]
+include::example$ws-security-policy/application.properties[tag=quarkus-cxf-rt-ws-security.adoc-service]
 ----
 
-NOTE: The sample code snippets used in this section come from the
-     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-client[WS-Security client integration test]
-     in the source tree of {quarkus-cxf-project-name}
+Similar setup is necessary on the client side:
 
-Then producing the `WSS4JOutInterceptor` could look like the following.
-
-[source,java]
+.application.properties
+[source,properties]
 ----
-include::example$ws-security-client/WSS4JOutInterceptorProducer.java[tag=quarkus-cxf-rt-ws-security.adoc]
+include::example$ws-security-policy/application.properties[tag=quarkus-cxf-rt-ws-security.adoc-client]
 ----
 
-Please refer to https://cxf.apache.org/docs/ws-security.html[WS-Security] and https://ws.apache.org/wss4j/user_guide.html[WSS4J] documentation for details.
+To inspect the flow of the messages, you can execute the `EncryptSignPolicyTest` as follows:
+
+[source,shell]
+----
+# Clone the repository
+$ git clone https://github.com/quarkiverse/quarkus-cxf.git -o upstream
+$ cd quarkus-cxf
+# Build the whole source tree
+$ mvn clean install -DskipTests -Dquarkus.build.skip
+# Run the test
+$ cd integration-tests/ws-security-policy
+$ mvn clean test -Dtest=EncryptSignPolicyTest
+----
+
+You should see some messages containing `Signature` elements and encrypted bodies in the console output.
 
 
 [id="quarkus-cxf-rt-ws-security-configuration"]
 == Configuration
-
-`WSS4JInInterceptor` and `WSS4JOutInterceptor` can be associated with a SOAP services or clients using the following configuration properties:
-
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-endpoints-in-interceptors[quarkus.cxf.endpoint."endpoints".in-interceptors]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-out-interceptors[quarkus.cxf.client."clients".out-interceptors]`
-
 include::../../includes/quarkus-cxf-rt-ws-security.adoc[]
