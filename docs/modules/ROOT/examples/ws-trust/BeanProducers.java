@@ -43,4 +43,4 @@ public class BeanProducers {
         return stsClient;
     }
 }
-//tag::ws-trust-usage.adoc-sts-client[]
+//end::ws-trust-usage.adoc-sts-client[]
