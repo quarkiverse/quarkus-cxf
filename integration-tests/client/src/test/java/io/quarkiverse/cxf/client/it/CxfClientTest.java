@@ -18,6 +18,7 @@ import java.util.Random;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.hamcrest.Matchers;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -70,6 +71,16 @@ public class CxfClientTest {
      */
     @Test
     void multiplyProxy() {
+
+        String proxyPort = ConfigProvider.getConfig().getValue("cxf.it.calculator.proxy.port", String.class);
+        String uri = ConfigProvider.getConfig().getValue("cxf.it.calculator.hostNameUri", String.class);
+        /* Make sure nothing was proxied before this test */
+        RestAssured.given()
+                .get("http://localhost:" + proxyPort)
+                .then()
+                .statusCode(200)
+                .body("$", Matchers.hasSize(0));
+
         RestAssured.given()
                 .queryParam("a", 4)
                 .queryParam("b", 5)
@@ -77,6 +88,16 @@ public class CxfClientTest {
                 .then()
                 .statusCode(200)
                 .body(is(String.valueOf(20)));
+
+        /* Make sure the SOAP request passed the proxy server */
+        RestAssured.given()
+                .get("http://localhost:" + proxyPort)
+                .then()
+                .statusCode(200)
+                .body(
+                        "$", Matchers.hasSize(1),
+                        "[0]", Matchers.equalTo("POST " + uri
+                                + "/calculator-ws/CalculatorService <soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:multiply xmlns:ns2=\"http://www.jboss.org/eap/quickstarts/wscalculator/Calculator\"><arg0>4</arg0><arg1>5</arg1></ns2:multiply></soap:Body></soap:Envelope>"));
     }
 
     /**
