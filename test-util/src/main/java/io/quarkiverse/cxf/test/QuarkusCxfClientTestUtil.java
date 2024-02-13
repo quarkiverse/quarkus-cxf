@@ -1,6 +1,10 @@
 package io.quarkiverse.cxf.test;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
 import java.net.URL;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,4 +78,22 @@ public class QuarkusCxfClientTestUtil {
         return Stream.of(elementNames)
                 .collect(Collectors.joining("']/*[local-name() = '", "/*[local-name() = '", "']"));
     }
+
+    public static int randomFreePort() {
+        while (true) {
+            try (ServerSocket ss = new ServerSocket()) {
+                ss.setReuseAddress(true);
+                ss.bind(new InetSocketAddress((InetAddress) null, 0), 1);
+
+                int port = ss.getLocalPort();
+                if (port < 8080 || port > 8500) {
+                    /* Avoid some well known testing ports */
+                    return port;
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException("Cannot find free port", e);
+            }
+        }
+    }
+
 }
