@@ -134,6 +134,10 @@ a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-feature-ref]]`link:#quarkus-cxf-rt-ws-r
 
 [.description]
 --
+A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.cxf.ws.rm.feature.RMFeature` bean to set on clients and service endpoint which have `quarkus.cxf.++[++client++\|++service++]++."name".rm.enabled = true`.
+
+If the value is `++#++defaultRmFeature` then Quarkus CXF creates and configures the bean for you.
+
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_RM_FEATURE_REF+++[]
 endif::add-copy-button-to-env-var[]
@@ -142,6 +146,46 @@ Environment variable: `+++QUARKUS_CXF_RM_FEATURE_REF+++`
 endif::add-copy-button-to-env-var[]
 --|string 
 |`#defaultRmFeature`
+
+
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-intra-message-threshold]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-intra-message-threshold[quarkus.cxf.rm.intra-message-threshold]`
+
+
+[.description]
+--
+Number of messages to receive within a single sequence, after which the acknowledgment message is to be sent back to the sender. For example, if intraMessageThreshold is set to 10, an acknowledgment will be sent every time 10 messages have been received.
+
+Note that this option is ignored when `quarkus.cxf.rm.feature-ref` is set to a non-default value.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_RM_INTRA_MESSAGE_THRESHOLD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_RM_INTRA_MESSAGE_THRESHOLD+++`
+endif::add-copy-button-to-env-var[]
+--|int 
+|`10`
+
+
+a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-immedia-acks-timeout]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-rm-immedia-acks-timeout[quarkus.cxf.rm.immedia-acks-timeout]`
+
+
+[.description]
+--
+Duration in milliseconds for the receiver to wait before sending back an acknowledgment for messages that do not yet require a response based on `quarkus.cxf.rm.intra-message-threshold`.
+
+For instance, if the value is set to 5000 ms and there are received messages that haven't been acknowledged yet because the `intra-message-threshold` haven't been met yet, the system will automatically send an acknowledgment for those messages, if no new messages are received within 5000 ms.
+
+Note that this option is ignored when `quarkus.cxf.rm.feature-ref` is set to a non-default value.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_RM_IMMEDIA_ACKS_TIMEOUT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_CXF_RM_IMMEDIA_ACKS_TIMEOUT+++`
+endif::add-copy-button-to-env-var[]
+--|long 
+|`1000`
 
 
 a| [[quarkus-cxf-rt-ws-rm_quarkus-cxf-client-clients-rm-enabled]]`link:#quarkus-cxf-rt-ws-rm_quarkus-cxf-client-clients-rm-enabled[quarkus.cxf.client."clients".rm.enabled]`

@@ -110,12 +110,44 @@ public interface CxfWsRmConfig {
         Optional<String> store();
 
         /**
-         *
+         * A <a href="../../user-guide/configuration.html#beanRefs">reference</a> to a
+         * {@code org.apache.cxf.ws.rm.feature.RMFeature} bean to set on clients and service endpoint which have
+         * {@code quarkus.cxf.[client|service]."name".rm.enabled = true}.
+         * <p>
+         * If the value is {@code #defaultRmFeature} then Quarkus CXF creates and configures the bean for you.
          *
          * @since 2.7.0
          */
         @WithDefault(DefaultRmFeatureProducer.DEFAULT_RM_FEATURE_REF)
         String featureRef();
+
+        /**
+         * Number of messages to receive within a single sequence, after which the acknowledgment message is to be
+         * sent back to the sender. For example, if intraMessageThreshold is set to 10, an acknowledgment will be sent
+         * every time 10 messages have been received.
+         * <p>
+         * Note that this option is ignored when {@code quarkus.cxf.rm.feature-ref} is set to a non-default value.
+         *
+         * @since 2.8.0
+         */
+        @WithDefault("10")
+        int intraMessageThreshold();
+
+        /**
+         * Duration in milliseconds for the receiver to wait before sending back an acknowledgment for messages
+         * that do not yet require a response based on {@code quarkus.cxf.rm.intra-message-threshold}.
+         * <p>
+         * For instance, if the value is set to 5000 ms and there are received
+         * messages that haven't been acknowledged yet because the {@code intra-message-threshold} haven't
+         * been met yet, the system will automatically send an acknowledgment for those messages, if no new messages are
+         * received within 5000 ms.
+         * <p>
+         * Note that this option is ignored when {@code quarkus.cxf.rm.feature-ref} is set to a non-default value.
+         *
+         * @since 2.8.0
+         */
+        @WithDefault("1000")
+        long immediaAcksTimeout();
     }
 
     /**
