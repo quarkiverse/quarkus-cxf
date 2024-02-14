@@ -19,6 +19,8 @@ asciidoc:
 
     # External URLs
     link-quarkus-code-generator: code.quarkus.io
+    link-camel-quarkus-docs-index: https://camel.apache.org/camel-quarkus/latest/index.html
+    link-camel-quarkus-docs-cxf-soap: https://camel.apache.org/camel-quarkus/latest/reference/extensions/cxf-soap.html
     quarkus-cxf-project-name: CXF Extensions for Quarkus
 
     # Misc
