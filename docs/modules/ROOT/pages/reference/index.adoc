@@ -110,14 +110,18 @@ Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the foll
 ] section of User guide
 * `java2ws` - see the xref:user-guide/generate-wsdl-from-java.adoc[Generate WSDL from Java] section of User guide
 
-=== WSDL Bindings
+=== Supported SOAP Bindings
 
-All https://cxf.apache.org/docs/wsdl-bindings.html[CXF WSDL Bindings] are supported:
+All https://cxf.apache.org/docs/wsdl-bindings.html[CXF WSDL Bindings] are supported.
+In order to switch to SOAP 1.2 or to add MTOM, set `quarkus.cxf.[client|endpoint]."name".soap-binding` to one of the following values:
 
-* https://cxf.apache.org/docs/mtom.html[MTOM]
-* https://cxf.apache.org/docs/pure-xml.html[Pure XML]
-* https://cxf.apache.org/docs/soap-11.html[SOAP 1.1] (default)
-* https://cxf.apache.org/docs/soap-12.html[SOAP 1.2]
+|===
+| Binding | Property Value
+| SOAP 1.1 (default) | `http://schemas.xmlsoap.org/wsdl/soap/http`
+| SOAP 1.2 | `http://www.w3.org/2003/05/soap/bindings/HTTP/`
+| SOAP 1.1 with MTOM | `http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true`
+| SOAP 1.2 with MTOM | `http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true`
+|===
 
 [[unsupported]]
 == Unsupported CXF modules

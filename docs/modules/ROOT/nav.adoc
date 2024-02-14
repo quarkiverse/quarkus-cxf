@@ -16,7 +16,6 @@
 ** xref:user-guide/cxf-interceptors-and-features.adoc[CXF Interceptors and Features]
 ** xref:user-guide/jax-ws-handlers.adoc[JAX-WS Handlers]
 ** xref:user-guide/jax-ws-providers.adoc[JAX-WS Providers]
-** xref:user-guide/supported-soap-binding.adoc[Supported SOAP Bindings]
 ** xref:user-guide/examples.adoc[Examples]
 ** xref:user-guide/common-problems-troubleshooting.adoc[Common problems and troubleshooting]
 ** xref:user-guide/camel-integration.adoc[Camel Integration]
