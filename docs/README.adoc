@@ -1,4 +1,4 @@
-= CXF Extensions for Quarkus
+= Quarkus CXF (CXF Extensions for Quarkus)
 
 The generated site is available at https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/
 
