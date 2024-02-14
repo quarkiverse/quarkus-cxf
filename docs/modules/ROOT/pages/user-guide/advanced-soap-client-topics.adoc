@@ -32,21 +32,6 @@ quarkus.cxf.client.anotherCalculator.client-endpoint-url = https://acme.com/ws/W
 quarkus.cxf.client.anotherCalculator.service-interface = org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService
 ----
 
-[[timeouts]]
-== Timeouts
-
-See the description of the following properties:
-
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-connection-timeout[quarkus.cxf.client.myClient.connection-timeout]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-receive-timeout[quarkus.cxf.client.myClient.receive-timeout]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-connection-request-timeout[quarkus.cxf.client.myClient.connection-request-timeout]`
-
-[[proxy]]
-== Proxy
-
-See the description of
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-proxy-server[quarkus.cxf.client.myClient.proxy-*]` properties.
-
 [[code-config]]
 == Advanced Client Configurations
 
