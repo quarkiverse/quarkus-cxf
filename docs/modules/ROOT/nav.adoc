@@ -9,7 +9,7 @@
 ** xref:user-guide/ssl.adoc[SSL]
 ** xref:user-guide/auth.adoc[Authentication and authorization]
 ** xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
-** xref:user-guide/advanced-soap-server-topics.adoc[Advanced SOAP server topics]
+** xref:user-guide/running-behind-a-reverse-proxy.adoc[Running behind a reverse proxy]
 ** xref:user-guide/generate-java-from-wsdl.adoc[Generate Java from WSDL]
 ** xref:user-guide/generate-wsdl-from-java.adoc[Generate WSDL from Java]
 ** xref:user-guide/contract-first-code-first.adoc[Contract first and code first]
