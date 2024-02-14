@@ -6,6 +6,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import org.apache.cxf.ws.rm.feature.RMFeature;
+import org.apache.cxf.ws.rm.manager.AcksPolicyType;
+import org.apache.cxf.ws.rm.manager.DestinationPolicyType;
 import org.apache.cxf.ws.rm.persistence.RMStore;
 
 import io.quarkiverse.cxf.CXFRuntimeUtils;
@@ -30,6 +32,14 @@ public class DefaultRmFeatureProducer {
             final RMStore store = CXFRuntimeUtils.getInstance((String) storeRef, true);
             rmFeature.setStore(store);
         });
+
+        final AcksPolicyType acksPolicy = new AcksPolicyType();
+        acksPolicy.setImmediaAcksTimeout(config.rm().immediaAcksTimeout());
+        acksPolicy.setIntraMessageThreshold(config.rm().intraMessageThreshold());
+        final DestinationPolicyType destinationPolicy = new DestinationPolicyType();
+        destinationPolicy.setAcksPolicy(acksPolicy);
+        rmFeature.setDestinationPolicy(destinationPolicy);
+
         return rmFeature;
     }
 

@@ -21,10 +21,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy</artifactId>
         </dependency>
-        <dependency><!-- Reproduce https://github.com/quarkiverse/quarkus-cxf/issues/860 -->
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-reactive-pg-client</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>io.rest-assured</groupId>

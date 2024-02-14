@@ -76,7 +76,6 @@ public class WsRmFactoryCustomizer implements ClientFactoryCustomizer, EndpointF
             props.accept(RMManager.WSRM_EXPONENTIAL_BACKOFF_PROPERTY, globalRmConfig.exponentialBackoff());
             globalRmConfig.acknowledgementInterval()
                     .ifPresent(val -> props.accept(RMManager.WSRM_ACKNOWLEDGEMENT_INTERVAL_PROPERTY, val));
-
         }
 
         /* Install WS-RM interceptors on this client */
