@@ -1,6 +1,4 @@
-= Advanced SOAP server topics
-
-== Running behind a reverse proxy
+= Running behind a reverse proxy
 
 SOAP requests aimed towards services running on Quarkus can be routed through proxies that generate additional headers
 (e.g. `X-Forwarded-Host`) to keep information from the client-facing side of the proxy servers that is altered or lost when they are involved.
