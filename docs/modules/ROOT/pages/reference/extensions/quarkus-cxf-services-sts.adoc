@@ -30,9 +30,12 @@ or add these coordinates to your existing project:
 </dependency>
 ----
 ifeval::[{doc-show-user-guide-link} == true]
-TIP: Check the xref:user-guide/index.adoc[User guide] and especially its
-      xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
-      for more information about writing applications with {quarkus-cxf-project-name}.
+[TIP]
+====
+Check the xref:user-guide/index.adoc[User guide] and especially its
+xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
+for more information about writing applications with {quarkus-cxf-project-name}.
+====
 endif::[]
 
 [id="quarkus-cxf-services-sts-standards"]
@@ -132,9 +135,12 @@ It can be done in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integrat
 include::example$ws-trust/application.properties[tag=ws-trust-usage.adoc-client-properties]
 ----
 
-TIP: The properties for configuring the STS client are provided by the `io.quarkiverse.cxf:quarkus-cxf-rt-ws-security`
-     extension and and documented on its
-     xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client[reference page].
+[TIP]
+====
+The properties for configuring the STS client are provided by the `io.quarkiverse.cxf:quarkus-cxf-rt-ws-security`
+extension and and documented on its
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client[reference page].
+====
 
 Alternatively, the client can be set as a bean reference:
 

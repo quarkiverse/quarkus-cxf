@@ -5,7 +5,7 @@
 == {quarkus-cxf-project-name}
 
 Here is the list of extensions produced by this project.
-Please follow the links under the extension names to learn about how to use them, about their configuration and about any known limitations.
+Follow the links under the extension names to learn about how to use them, about their configuration and about any known limitations.
 
 [cols="4,1,1,4"]
 |===

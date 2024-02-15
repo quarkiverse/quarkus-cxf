@@ -269,7 +269,7 @@ if [ -n "$wrapperSha256Sum" ]; then
     fi
   else
     echo "Checksum validation was requested but neither 'sha256sum' or 'shasum' are available."
-    echo "Please install either command, or disable validation by removing 'wrapperSha256Sum' from your maven-wrapper.properties."
+    echo "Install either command, or disable validation by removing 'wrapperSha256Sum' from your maven-wrapper.properties."
     exit 1
   fi
   if [ $wrapperSha256Result = false ]; then

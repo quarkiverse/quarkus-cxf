@@ -1203,7 +1203,10 @@ A link:../../user-guide/configuration.html#beanRefs[reference] to a fully config
 
 To workaround the fact that `org.apache.cxf.ws.security.trust.STSClient` does not have a no-args constructor and cannot thus be used as a CDI bean type, you can use the wrapper class `io.quarkiverse.cxf.ws.security.sts.client.STSClientBean` instead.
 
-Tip: Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] extension page for more information about WS-Trust.
+[TIP]
+====
+Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] extension page for more information about WS-Trust.
+====
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT+++[]

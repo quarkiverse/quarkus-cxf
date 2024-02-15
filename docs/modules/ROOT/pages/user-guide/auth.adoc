@@ -1,8 +1,11 @@
 = Authentication and authorization
 
-TIP: The sample code snippets shown in this section come from the
-     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client-server[Client and server integration test]
-     in the source tree of {quarkus-cxf-project-name}. You may want to use it as a runnable example.
+[NOTE]
+====
+The sample code snippets shown in this section come from the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client-server[Client and server integration test]
+in the source tree of {quarkus-cxf-project-name}. You may want to use it as a runnable example.
+====
 
 == Client HTTP basic authentication
 

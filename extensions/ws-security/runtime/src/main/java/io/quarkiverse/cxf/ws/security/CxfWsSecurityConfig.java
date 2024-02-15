@@ -1082,7 +1082,7 @@ public interface CxfWsSecurityConfig {
          * constructor and cannot thus be used as a CDI bean type, you can use the wrapper class
          * {@code io.quarkiverse.cxf.ws.security.sts.client.STSClientBean} instead.
          * <p>
-         * Tip: Check the <a href="quarkus-cxf-services-sts.html">Security Token Service (STS)</a> extension page
+         * Check the <a href="quarkus-cxf-services-sts.html">Security Token Service (STS)</a> extension page
          * for more information about WS-Trust.
          *
          * @since 2.8.0
