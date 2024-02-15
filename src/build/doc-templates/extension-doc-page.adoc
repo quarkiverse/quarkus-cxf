@@ -60,7 +60,7 @@ endif::[]
 
 [=limitations]
 [/#if]
-[#if configuration?? || configurationPropertiesInclude?? ]
+[#if configuration?? || configOptions?size != 0 ]
 
 [id="[=artifactId]-configuration"]
 == Configuration
@@ -79,9 +79,9 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 
 [#list configOptions as configDocItem][#assign anchor = toAnchor(configDocItem.key)]
 
-|[=configDocItem.illustration] [[quarkus-cxf_[=anchor]]]`link:#quarkus-cxf_[=anchor][[=configDocItem.key]]`
-| [=configDocItem.type]
-| [#if configDocItem.defaultValue?has_content]`[=configDocItem.defaultValue]`[#elseif ! configDocItem.optional]required icon:exclamation-circle[title=Configuration property is required][/#if]
+.<|[=configDocItem.illustration] [[quarkus-cxf_[=anchor]]]`link:#quarkus-cxf_[=anchor][[=configDocItem.key]]`
+.<| [=configDocItem.type]
+.<| [#if configDocItem.defaultValue?has_content]`[=configDocItem.defaultValue]`[#elseif ! configDocItem.optional]required icon:exclamation-circle[title=Configuration property is required][/#if]
 
 3+a|[=configDocItem.configDoc]
 [#if configDocItem.environmentVariable?? ]

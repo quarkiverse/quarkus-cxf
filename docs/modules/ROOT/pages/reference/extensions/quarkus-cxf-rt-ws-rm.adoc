@@ -88,3 +88,104 @@ $ mvn clean test
 
 You should see the exchange of SOAP messages between the client, the server and the decoupled endpoint in the console.
 
+
+[id="quarkus-cxf-rt-ws-rm-configuration"]
+== Configuration
+
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time. All other configuration properties are overridable at runtime.
+
+[.configuration-reference.searchable, cols="80,.^10,.^10", stripes=odd]
+|===
+| Configuration property | Type | Default
+
+
+.<| [[quarkus-cxf_quarkus-cxf-rm-namespace]]`link:#quarkus-cxf_quarkus-cxf-rm-namespace[quarkus.cxf.rm.namespace]`
+.<| `string`
+.<| `http://schemas.xmlsoap.org/ws/2005/02/rm`
+
+3+a|WS-RM version namespace: `http://schemas.xmlsoap.org/ws/2005/02/rm/` or `http://docs.oasis-open.org/ws-rx/wsrm/200702`
+
+*Environment variable*: `+++QUARKUS_CXF_RM_NAMESPACE+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-rm-wsa-namespace]]`link:#quarkus-cxf_quarkus-cxf-rm-wsa-namespace[quarkus.cxf.rm.wsa-namespace]`
+.<| `string`
+.<| `http://schemas.xmlsoap.org/ws/2004/08/addressing`
+
+3+a|WS-Addressing version namespace: `http://schemas.xmlsoap.org/ws/2004/08/addressing` or `http://www.w3.org/2005/08/addressing`. Note that this property is ignored unless you are using the `http://schemas.xmlsoap.org/ws/2005/02/rm/` RM namespace.
+
+*Environment variable*: `+++QUARKUS_CXF_RM_WSA_NAMESPACE+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-rm-inactivity-timeout]]`link:#quarkus-cxf_quarkus-cxf-rm-inactivity-timeout[quarkus.cxf.rm.inactivity-timeout]`
+.<| `long`
+.<| 
+
+3+a|A time duration in milliseconds after which the associated sequence will be closed if no messages (including acknowledgments and other control messages) were exchanged between the sender and receiver during that period of time. If not set, the associated sequence will never be closed due to inactivity.
+
+*Environment variable*: `+++QUARKUS_CXF_RM_INACTIVITY_TIMEOUT+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-rm-retransmission-interval]]`link:#quarkus-cxf_quarkus-cxf-rm-retransmission-interval[quarkus.cxf.rm.retransmission-interval]`
+.<| `long`
+.<| `3000`
+
+3+a|A time duration in milliseconds between successive attempts to resend a message that has not been acknowledged by the receiver.
+
+*Environment variable*: `+++QUARKUS_CXF_RM_RETRANSMISSION_INTERVAL+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-rm-exponential-backoff]]`link:#quarkus-cxf_quarkus-cxf-rm-exponential-backoff[quarkus.cxf.rm.exponential-backoff]`
+.<| `boolean`
+.<| `false`
+
+3+a|If `true` the retransmission interval will be doubled on every transmission attempt; otherwise the retransmission interval stays equal to `quarkus.cxf.rm.retransmission-interval` for every retransmission attempt.
+
+*Environment variable*: `+++QUARKUS_CXF_RM_EXPONENTIAL_BACKOFF+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-rm-acknowledgement-interval]]`link:#quarkus-cxf_quarkus-cxf-rm-acknowledgement-interval[quarkus.cxf.rm.acknowledgement-interval]`
+.<| `long`
+.<| 
+
+3+a|A time duration in milliseconds within which an acknowledgement for a received message is expected to be sent by a RM destination. If not specified, the acknowledgements will be sent immediately.
+
+*Environment variable*: `+++QUARKUS_CXF_RM_ACKNOWLEDGEMENT_INTERVAL+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-rm-store]]`link:#quarkus-cxf_quarkus-cxf-rm-store[quarkus.cxf.rm.store]`
+.<| `string`
+.<| 
+
+3+a|A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.cxf.ws.rm.persistence.RMStore` bean used to store source and destination sequences and message references.
+
+*Environment variable*: `+++QUARKUS_CXF_RM_STORE+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-rm-feature-ref]]`link:#quarkus-cxf_quarkus-cxf-rm-feature-ref[quarkus.cxf.rm.feature-ref]`
+.<| `string`
+.<| `#defaultRmFeature`
+
+3+a|A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.cxf.ws.rm.feature.RMFeature` bean to set on clients and service endpoint which have `quarkus.cxf.++[++client++\|++service++]++."name".rm.enabled = true`.
+
+If the value is `++#++defaultRmFeature` then Quarkus CXF creates and configures the bean for you.
+
+*Environment variable*: `+++QUARKUS_CXF_RM_FEATURE_REF+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-rm-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-clients-rm-enabled[quarkus.cxf.client."clients".rm.enabled]`
+.<| `boolean`
+.<| `true`
+
+3+a|If `true` then the WS-ReliableMessaging link:https://cxf.apache.org/docs/ws-reliablemessaging.html[interceptors] will be added to this client or service endpoint.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__RM_ENABLED+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-rm-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-rm-enabled[quarkus.cxf.endpoint."endpoints".rm.enabled]`
+.<| `boolean`
+.<| `true`
+
+3+a|If `true` then the WS-ReliableMessaging link:https://cxf.apache.org/docs/ws-reliablemessaging.html[interceptors] will be added to this client or service endpoint.
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__RM_ENABLED+++`|===
+
