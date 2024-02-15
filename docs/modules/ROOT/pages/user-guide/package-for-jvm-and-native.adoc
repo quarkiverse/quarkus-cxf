@@ -87,10 +87,13 @@ $ echo $GRAALVM_HOME
 mvn package -Pnative
 ----
 
-TIP: Quarkus is quite picky about the GraalVM version.
-    When using the local installation, always make sure that you use the version preferred by Quarkus.
-    You can do that by opening `quarkus-bom` imported in your `pom.xml` and searching for `graalvm` there.
-    If you use Docker, Quarkus takes care for pulling the right version for you.
+[TIP]
+====
+Quarkus is quite picky about the GraalVM version.
+When using the local installation, always make sure that you use the version preferred by Quarkus.
+You can do that by opening `quarkus-bom` imported in your `pom.xml` and searching for `graalvm` there.
+If you use Docker, Quarkus takes care for pulling the right version for you.
+====
 
 .With `docker`
 [source,shell]
@@ -143,5 +146,5 @@ You may also refer to the links below which contain tips on how to work with nat
 
 == Create container image
 
-Please refer to Quarkus https://quarkus.io/guides/container-image[Container image] guide.
+Refer to Quarkus https://quarkus.io/guides/container-image[Container image] guide.
 

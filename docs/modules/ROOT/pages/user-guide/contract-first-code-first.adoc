@@ -11,7 +11,7 @@ CXF provides the `wsdl2java` utility for that.
 
 {quarkus-cxf-project-name} wraps `wsdl2java` in the `quarkus-cxf` extension so you do not need to use it directly.
 
-Please follow the xref:user-guide/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL] section of the user guide
+Follow the xref:user-guide/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL] section of the user guide
 for more details about how to use it.
 
 You may also want to check the CXF https://cxf.apache.org/docs/developing-a-consumer.html[Developing a Consumer] as a general introduction.
@@ -36,4 +36,7 @@ Then you have two options how to obtain the WSDL contract:
 2. xref:user-guide/contract-first-code-first.adoc[Generate the WSDL document from Java] classes at build time
 
 
-TIP: Check the https://cxf.apache.org/docs/developing-a-service.html#DevelopingaService-JavaFirstDevelopment[Code first development] section of CXF documentation for further information.
+[TIP]
+====
+Check the https://cxf.apache.org/docs/developing-a-service.html#DevelopingaService-JavaFirstDevelopment[Code first development] section of CXF documentation for further information.
+====

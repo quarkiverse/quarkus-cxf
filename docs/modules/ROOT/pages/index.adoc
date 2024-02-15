@@ -9,7 +9,7 @@ While http://cxf.apache.org/[Apache CXF] implements wide range of standards and 
 {quarkus-cxf-project-name} is currently focusing *only* on supporting the ones related to
 *Simple Object Access Protocol* (https://en.wikipedia.org/wiki/SOAP[SOAP])
 and *Java API for XML Web Services* (https://en.wikipedia.org/wiki/JAX-WS[JAX-WS]).
-Please refer to xref:reference/index.adoc[Reference] to learn which parts of CXF are supported.
+Refer to xref:reference/index.adoc[Reference] to learn which parts of CXF are supported.
 
 The documentation is divided in two major parts:
 
@@ -19,7 +19,7 @@ The documentation is divided in two major parts:
 [[issues-and-support]]
 == Issues and Support
 
-Please feel free to https://github.com/quarkiverse/quarkus-cxf/discussions[start a  discussion]
+Feel free to https://github.com/quarkiverse/quarkus-cxf/discussions[start a  discussion]
 or https://github.com/quarkiverse/quarkus-cxf/issues/new[open an issue] in the GitHub repository in case you need support.
 The following general guidelines can be used to determine whether to start a discussion or open an issue.
 

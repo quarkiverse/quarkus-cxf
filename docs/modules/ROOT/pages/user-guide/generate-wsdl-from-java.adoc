@@ -12,9 +12,12 @@ as any other aspect of your application.
 
 Here is an example:
 
-TIP: The sample code snippets used in this section come from the
-     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
-     in the source tree of {quarkus-cxf-project-name}
+[NOTE]
+====
+The sample code snippets used in this section come from the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
+in the source tree of {quarkus-cxf-project-name}
+====
 
 .application.properties
 [source,properties]

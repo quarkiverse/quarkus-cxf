@@ -4,7 +4,10 @@ SOAP requests aimed towards services running on Quarkus can be routed through pr
 (e.g. `X-Forwarded-Host`) to keep information from the client-facing side of the proxy servers that is altered or lost when they are involved.
 In those scenarios, Quarkus can be configured to automatically update information like protocol, host, port and URI reflecting the values in these headers.
 
-TIP: Refer to https://quarkus.io/guides/http-reference#reverse-proxy[Quarkus HTTP reference] for more details.
+[TIP]
+====
+Refer to https://quarkus.io/guides/http-reference#reverse-proxy[Quarkus HTTP reference] for more details.
+====
 
 {quarkus-cxf-project-name} support for various `X-Forwarded` headers works in line with Quarkus configuration.
 
