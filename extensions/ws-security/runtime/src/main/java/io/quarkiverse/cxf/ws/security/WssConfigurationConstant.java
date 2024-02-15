@@ -40,7 +40,9 @@ public @interface WssConfigurationConstant {
         /** Looks up the given bean reference in the CDI container */
         beanRef,
         /** Makes {@link Properties} out of a Map<String, String> */
-        properties;
+        properties,
+        /** Calls {@code Integer.parseInt()} on the given type's {@code toString()} */
+        toInteger;
     }
 
 }

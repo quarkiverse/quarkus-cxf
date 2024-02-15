@@ -2,9 +2,12 @@ package io.quarkiverse.cxf.ws.security;
 
 import static io.quarkiverse.cxf.ws.security.WssConfigurationConstant.Transformer.beanRef;
 import static io.quarkiverse.cxf.ws.security.WssConfigurationConstant.Transformer.properties;
+import static io.quarkiverse.cxf.ws.security.WssConfigurationConstant.Transformer.toInteger;
 
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.cxf.ws.security.SecurityConstants;
 
 import io.quarkus.runtime.annotations.ConfigDocFilename;
 import io.quarkus.runtime.annotations.ConfigGroup;
@@ -1006,6 +1009,369 @@ public interface CxfWsSecurityConfig {
         @WssConfigurationConstant(key = "ws-security.kerberos.client")
         @WithName("kerberos.client")
         Optional<String> kerberosClient();
+
+        //
+        // Custom Algorithm Suite
+        //
+
+        /**
+         * If algorithm suite with the identifier <i>CustomizedAlgorithmSuite</i> is used, it can be fully customized.
+         * Suggested usage is for scenarios for the non-standard security requirements (like FIPS).
+         *
+         * <p>
+         * Default values are derived from the algorithm suite <i>Basic256Sha256Rsa15</i> and are FIPS compliant.
+         * <p>
+         * </p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         *
+         * <p>
+         * Default values:
+         * </p>
+         * <ul>
+         * <li>Asymmetric Signature: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</li>
+         * <li>Symmetric Signature: http://www.w3.org/2000/09/xmldsig#hmac-sha1</li>
+         * <li>Digest Algorithm: http://www.w3.org/2001/04/xmlenc#sha256</li>
+         * <li>Encryption Algorithm: http://www.w3.org/2009/xmlenc11#aes256-gcm (differs from <i>Basic256Sha256Rsa15</i>)</li>
+         * <li>Symmetric Key Encryption Algorithm: http://www.w3.org/2001/04/xmlenc#kw-aes256</li>
+         * <li>Asymmetric Key Encryption Algorithm: http://www.w3.org/2001/04/xmlenc#rsa-1_5</li>
+         * <li>Encryption Key Derivation: http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1</li>
+         * <li>Signature Key Derivation: http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1</li>
+         * <li>Encryption Derived Key Length: 256</li>
+         * <li>Signature Derived Key Length: 192</li>
+         * <li>Minimum Symmetric Key Length: 256</li>
+         * <li>Maximum Symmetric Key Length: 1024</li>
+         * <li>Minimum Asymmetric Key Length: 256</li>
+         * <li>Maximum Asymmetric Key Length: 4096</li>
+         * </ul>
+         * </p>
+         */
+        public static final String CUSTOM_ALGORITHM_SUITE_NAME = "CustomAlgorithmSuite";
+
+        // The formatter breaks the XML snippet
+        // @formatter:off
+        /**
+         * The Digest Algorithm to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set `CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`, for instance
+         *
+         * [[custom-algorithm-suite-example]]
+         * [source,xml]
+         * ----
+         * <wsp:Policy wsu:Id="SecurityServiceEncryptThenSignPolicy"
+         *   xmlns:wsp="http://www.w3.org/ns/ws-policy"
+         *   xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+         *   xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+         *   <wsp:ExactlyOne>
+         *     <wsp:All>
+         *       <sp:AsymmetricBinding xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+         *         <wsp:Policy>
+         *           ...
+         *           <sp:AlgorithmSuite>
+         *             <wsp:Policy>
+         *               <sp:CustomAlgorithmSuite/>
+         *             </wsp:Policy>
+         *           </sp:AlgorithmSuite>
+         *           ...
+         *         </wsp:Policy>
+         *       </sp:AsymmetricBinding>
+         *       ...
+         *     </wsp:All>
+         *   </wsp:ExactlyOne>
+         * </wsp:Policy>
+         * ----
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        // @formatter:on
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_DIGEST_ALGORITHM)
+        @WithName("custom.digest.algorithm")
+        @WithDefault("http://www.w3.org/2001/04/xmlenc#sha256")
+        public String digestAlgorithm();
+
+        /**
+         * The Encryption Algorithm to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_ENCRYPTION_ALGORITHM)
+        @WithName("custom.encryption.algorithm")
+        @WithDefault("http://www.w3.org/2009/xmlenc11#aes256-gcm")
+        public String encryptionAlgorithm();
+
+        /**
+         * The Symmetric Key Encryption Algorithm to set on the
+         * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_SYMMETRIC_KEY_ENCRYPTION_ALGORITHM)
+        @WithName("custom.symmetric.key.encryption.algorithm")
+        @WithDefault("http://www.w3.org/2001/04/xmlenc#kw-aes256")
+        public String symmetricKeyEncryptionAlgorithm();
+
+        /**
+         * The Asymmetric Key Encryption Algorithm to set on the
+         * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_ASYMMETRIC_KEY_ENCRYPTION_ALGORITHM)
+        @WithName("custom.asymmetric.key.encryption.algorithm")
+        @WithDefault("http://www.w3.org/2001/04/xmlenc#rsa-1_5")
+        public String asymmetricKeyEncryptionAlgorithm();
+
+        /**
+         * The Encryption Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_ENCRYPTION_KEY_DERIVATION)
+        @WithName("custom.encryption.key.derivation")
+        @WithDefault("http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1")
+        public String encryptionKeyDerivation();
+
+        /**
+         * The Signature Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_SIGNATURE_KEY_DERIVATION)
+        @WithName("custom.signature.key.derivation")
+        @WithDefault("http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1")
+        public String signatureKeyDerivation();
+
+        /**
+         * The Encryption Derived Key Length (number of bits) to set on the
+         * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_ENCRYPTION_DERIVED_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.encryption.derived.key.length")
+        @WithDefault("256")
+        public Integer encryptionDerivedKeyLength();
+
+        /**
+         * The Signature Derived Key Length (number of bits) to set on the
+         * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_SIGNATURE_DERIVED_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.signature.derived.key.length")
+        @WithDefault("192")
+        public Integer signatureDerivedKeyLength();
+
+        /**
+         * The Minimum Symmetric Key Length (number of bits) to set on the
+         * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_MINIMUM_SYMMETRIC_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.minimum.symmetric.key.length")
+        @WithDefault("256")
+        public Integer minimumSymmetricKeyLength();
+
+        /**
+         * The Maximum Symmetric Key Length to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_MAXIMUM_SYMMETRIC_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.maximum.symmetric.key.length")
+        @WithDefault("256")
+        public Integer maximumSymmetricKeyLength();
+
+        /**
+         * The Minimum Symmetric Key Length (number of bits) to set on the
+         * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_MINIMUM_ASYMMETRIC_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.minimum.asymmetric.key.length")
+        @WithDefault("1024")
+        public Integer minimumAsymmetricKeyLength();
+
+        /**
+         * The Maximum Symmetric Key Length (number of bits) to set on the
+         * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
+         * This value is only taken into account if the current security policy has set
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * `AlgorithmSuite`]
+         *
+         * For more information about algorithms, see
+         * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy
+         * 1.2 specification]
+         * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
+         * Processing Specification.
+         *
+         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
+         * enabled.
+         *
+         * @since 3.8.1
+         * @asciidoclet
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_MAXIMUM_ASYMMETRIC_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.maximum.asymmetric.key.length")
+        @WithDefault("4096")
+        public Integer maximumAsymmetricKeyLength();
     }
 
     /**
