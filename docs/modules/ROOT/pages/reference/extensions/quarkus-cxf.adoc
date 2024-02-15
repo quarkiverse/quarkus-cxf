@@ -67,3 +67,946 @@ There are several chapters in the xref:user-guide/index.adoc[User guide] coverin
 * xref:user-guide/examples.adoc[Examples]
 * xref:user-guide/common-problems-troubleshooting.adoc[Common problems and troubleshooting]
 
+
+[id="quarkus-cxf-configuration"]
+== Configuration
+
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time. All other configuration properties are overridable at runtime.
+
+[.configuration-reference.searchable, cols="80,.^10,.^10", stripes=odd]
+|===
+| Configuration property | Type | Default
+
+
+.<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-path]]`link:#quarkus-cxf_quarkus-cxf-path[quarkus.cxf.path]`
+.<| `string`
+.<| `/services`
+
+3+a|The default path for CXF resources.
+
+⚠️ Note that the default value before Quarkus CXF version 2.0.0 was `/`.
+
+*Environment variable*: `+++QUARKUS_CXF_PATH+++`
+.<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-min-chunk-size]]`link:#quarkus-cxf_quarkus-cxf-min-chunk-size[quarkus.cxf.min-chunk-size]`
+.<| `int`
+.<| `128`
+
+3+a|The size in bytes of the chunks of memory allocated when writing data.
+
+This is a very advanced setting that should only be set if you understand exactly how it affects the output IO operations of the application.
+
+*Environment variable*: `+++QUARKUS_CXF_MIN_CHUNK_SIZE+++`
+.<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-output-buffer-size]]`link:#quarkus-cxf_quarkus-cxf-output-buffer-size[quarkus.cxf.output-buffer-size]`
+.<| `int`
+.<| `8191`
+
+3+a|The size of the output stream response buffer in bytes. If a response is larger than this and no content-length is provided then the response will be chunked.
+
+Larger values may give slight performance increases for large responses, at the expense of more memory usage.
+
+*Environment variable*: `+++QUARKUS_CXF_OUTPUT_BUFFER_SIZE+++`
+.<| [[quarkus-cxf_quarkus-cxf-decoupled-endpoint-base]]`link:#quarkus-cxf_quarkus-cxf-decoupled-endpoint-base[quarkus.cxf.decoupled-endpoint-base]`
+.<| `string`
+.<| 
+
+3+a|An URI base to use as a prefix of `quarkus.cxf.client.myClient.decoupled-endpoint`. You will typically want to set this to something like the following:
+
+```
+quarkus.cxf.decoupled-endpoint-base = https://api.example.com:${quarkus.http.ssl-port}${quarkus.cxf.path}
+# or for plain HTTP
+quarkus.cxf.decoupled-endpoint-base = http://api.example.com:${quarkus.http.port}${quarkus.cxf.path}
+```
+
+If you invoke your WS client from within a HTTP handler, you can leave this option unspecified and rather set it dynamically on the request context of your WS client using the `org.apache.cxf.ws.addressing.decoupled.endpoint.base` key. Here is an example how to do that from a RESTeasy handler method:
+
+```
+import java.util.Map;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.xml.ws.BindingProvider;
+import io.quarkiverse.cxf.annotation.CXFClient;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+@Path("/my-rest")
+public class MyRestEasyResource {
+
+    @Inject
+    @CXFClient("hello")
+    HelloService helloService;
+
+    @ConfigProperty(name = "quarkus.cxf.path")
+    String quarkusCxfPath;
+
+    @POST
+    @Path("/hello")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String hello(String body, @Context UriInfo uriInfo) throws IOException {
+
+        // You may consider doing this only once if you are sure that your service is accessed
+        // through a single hostname
+        String decoupledEndpointBase = uriInfo.getBaseUriBuilder().path(quarkusCxfPath);
+        Map>String, Object< requestContext = ((BindingProvider) helloService).getRequestContext();
+        requestContext.put("org.apache.cxf.ws.addressing.decoupled.endpoint.base", decoupledEndpointBase);
+
+        return wsrmHelloService.hello(body);
+    }
+}
+```
+
+*Environment variable*: `+++QUARKUS_CXF_DECOUPLED_ENDPOINT_BASE+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus.cxf.logging.enabled-for]`
+.<| `clients`, `services`, `both`, `none`
+.<| `none`
+
+3+a|Specifies whether the message logging will be enabled for clients, services, both or none. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-enabled[quarkus.cxf.endpoint."endpoints".logging.enabled]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-enabled[quarkus.cxf.client."clients".logging.enabled]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_ENABLED_FOR+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-pretty]]`link:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
+.<| `boolean`
+.<| `false`
+
+3+a|If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-pretty[quarkus.cxf.endpoint."endpoints".logging.pretty]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-pretty[quarkus.cxf.client."clients".logging.pretty]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_PRETTY+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-limit]]`link:#quarkus-cxf_quarkus-cxf-logging-limit[quarkus.cxf.logging.limit]`
+.<| `int`
+.<| `49152`
+
+3+a|A message length in bytes at which it is truncated in the log. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-limit[quarkus.cxf.endpoint."endpoints".logging.limit]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-limit[quarkus.cxf.client."clients".logging.limit]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_LIMIT+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-in-mem-threshold]]`link:#quarkus-cxf_quarkus-cxf-logging-in-mem-threshold[quarkus.cxf.logging.in-mem-threshold]`
+.<| `long`
+.<| `-1`
+
+3+a|A message length in bytes at which it will be written to disk. `-1` is unlimited. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-in-mem-threshold[quarkus.cxf.endpoint."endpoints".logging.in-mem-threshold]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-in-mem-threshold[quarkus.cxf.client."clients".logging.in-mem-threshold]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_IN_MEM_THRESHOLD+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-log-binary]]`link:#quarkus-cxf_quarkus-cxf-logging-log-binary[quarkus.cxf.logging.log-binary]`
+.<| `boolean`
+.<| `false`
+
+3+a|If `true`, binary payloads will be logged; otherwise they won't be logged. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-log-binary[quarkus.cxf.endpoint."endpoints".logging.log-binary]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-log-binary[quarkus.cxf.client."clients".logging.log-binary]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_LOG_BINARY+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-log-multipart]]`link:#quarkus-cxf_quarkus-cxf-logging-log-multipart[quarkus.cxf.logging.log-multipart]`
+.<| `boolean`
+.<| `true`
+
+3+a|If `true`, multipart payloads will be logged; otherwise they won't be logged. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-log-multipart[quarkus.cxf.endpoint."endpoints".logging.log-multipart]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-log-multipart[quarkus.cxf.client."clients".logging.log-multipart]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_LOG_MULTIPART+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-verbose]]`link:#quarkus-cxf_quarkus-cxf-logging-verbose[quarkus.cxf.logging.verbose]`
+.<| `boolean`
+.<| `true`
+
+3+a|If `true`, verbose logging will be enabled; otherwise it won't be enabled. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-verbose[quarkus.cxf.endpoint."endpoints".logging.verbose]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-verbose[quarkus.cxf.client."clients".logging.verbose]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_VERBOSE+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-in-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-logging-in-binary-content-media-types[quarkus.cxf.logging.in-binary-content-media-types]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-in-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.in-binary-content-media-types]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-in-binary-content-media-types[quarkus.cxf.client."clients".logging.in-binary-content-media-types]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_IN_BINARY_CONTENT_MEDIA_TYPES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-out-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-logging-out-binary-content-media-types[quarkus.cxf.logging.out-binary-content-media-types]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-out-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.out-binary-content-media-types]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-out-binary-content-media-types[quarkus.cxf.client."clients".logging.out-binary-content-media-types]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_OUT_BINARY_CONTENT_MEDIA_TYPES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-logging-binary-content-media-types[quarkus.cxf.logging.binary-content-media-types]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.binary-content-media-types]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-binary-content-media-types[quarkus.cxf.client."clients".logging.binary-content-media-types]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_BINARY_CONTENT_MEDIA_TYPES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-sensitive-element-names]]`link:#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of XML elements containing sensitive information to be masked in the log. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-sensitive-element-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-element-names]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-sensitive-element-names[quarkus.cxf.client."clients".logging.sensitive-element-names]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_SENSITIVE_ELEMENT_NAMES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-logging-sensitive-protocol-header-names]]`link:#quarkus-cxf_quarkus-cxf-logging-sensitive-protocol-header-names[quarkus.cxf.logging.sensitive-protocol-header-names]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of protocol headers containing sensitive information to be masked in the log. This setting can be overridden per client or service endpoint using `link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-sensitive-protocol-header-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-protocol-header-names]` or `link:#quarkus-cxf_quarkus-cxf-client-clients-logging-sensitive-protocol-header-names[quarkus.cxf.client."clients".logging.sensitive-protocol-header-names]` respectively.
+
+*Environment variable*: `+++QUARKUS_CXF_LOGGING_SENSITIVE_PROTOCOL_HEADER_NAMES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-clients-service-interface]]`link:#quarkus-cxf_quarkus-cxf-client-clients-service-interface[quarkus.cxf.client."clients".service-interface]`
+.<| `string`
+.<| 
+
+3+a|The client service interface class name
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++`
+.<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-clients-alternative]]`link:#quarkus-cxf_quarkus-cxf-client-clients-alternative[quarkus.cxf.client."clients".alternative]`
+.<| `boolean`
+.<| `false`
+
+3+a|Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when configuring a client without annotation `@CXFClient`.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++`
+.<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-clients-native-runtime-initialized]]`link:#quarkus-cxf_quarkus-cxf-client-clients-native-runtime-initialized[quarkus.cxf.client."clients".native.runtime-initialized]`
+.<| `boolean`
+.<| `false`
+
+3+a|If `true`, the client dynamic proxy class generated by native compiler will be initialized at runtime; otherwise the proxy class will be initialized at build time.
+
+Setting this to `true` makes sense if your service endpoint interface references some class initialized at runtime in its method signatures. E.g. Say, your service interface has method `int add(Operands o)` and the `Operands` class was requested to be initialized at runtime. Then, without setting this configuration parameter to `true`, the native compiler will throw an exception saying something like `Classes that should be initialized at run time got initialized during image building: org.acme.Operands ... jdk.proxy<some-number>.$Proxy<some-number> caused initialization of this class`. `jdk.proxy<some-number>.$Proxy<some-number>` is the proxy class generated by the native compiler.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__NATIVE_RUNTIME_INITIALIZED+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-implementor]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-implementor[quarkus.cxf.endpoint."endpoints".implementor]`
+.<| `string`
+.<| 
+
+3+a|The service endpoint implementation class
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IMPLEMENTOR+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-wsdl]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-wsdl[quarkus.cxf.endpoint."endpoints".wsdl]`
+.<| `string`
+.<| 
+
+3+a|The service endpoint WSDL path
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__WSDL+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-soap-binding]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-soap-binding[quarkus.cxf.endpoint."endpoints".soap-binding]`
+.<| `string`
+.<| 
+
+3+a|The URL of the SOAP Binding, should be one of four values:
+
+* `+http://schemas.xmlsoap.org/wsdl/soap/http+` for SOAP11HTTP_BINDING
+* `+http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true+` for SOAP11HTTP_MTOM_BINDING
+* `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
+* `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SOAP_BINDING+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-published-endpoint-url]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-published-endpoint-url[quarkus.cxf.endpoint."endpoints".published-endpoint-url]`
+.<| `string`
+.<| 
+
+3+a|The published service endpoint URL
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__PUBLISHED_ENDPOINT_URL+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-enabled[quarkus.cxf.endpoint."endpoints".logging.enabled]`
+.<| `true`, `false`, `pretty`
+.<| 
+
+3+a|If `true` or `pretty`, the message logging will be enabled; otherwise it will not be enabled. If the value is `pretty` (since 2.7.0), the `pretty` attribute will effectively be set to `true`. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus.cxf.logging.enabled-for]`.
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_ENABLED+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-pretty]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-pretty[quarkus.cxf.endpoint."endpoints".logging.pretty]`
+.<| `boolean`
+.<| 
+
+3+a|If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_PRETTY+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-limit]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-limit[quarkus.cxf.endpoint."endpoints".logging.limit]`
+.<| `int`
+.<| 
+
+3+a|A message length in bytes at which it is truncated in the log. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-limit[quarkus.cxf.logging.limit]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_LIMIT+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-in-mem-threshold]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-in-mem-threshold[quarkus.cxf.endpoint."endpoints".logging.in-mem-threshold]`
+.<| `long`
+.<| 
+
+3+a|A message length in bytes at which it will be written to disk. `-1` is unlimited. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-in-mem-threshold[quarkus.cxf.logging.in-mem-threshold]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_IN_MEM_THRESHOLD+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-log-binary]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-log-binary[quarkus.cxf.endpoint."endpoints".logging.log-binary]`
+.<| `boolean`
+.<| 
+
+3+a|If `true`, binary payloads will be logged; otherwise they won't be logged. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-log-binary[quarkus.cxf.logging.log-binary]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_LOG_BINARY+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-log-multipart]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-log-multipart[quarkus.cxf.endpoint."endpoints".logging.log-multipart]`
+.<| `boolean`
+.<| 
+
+3+a|If `true`, multipart payloads will be logged; otherwise they won't be logged. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-log-multipart[quarkus.cxf.logging.log-multipart]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_LOG_MULTIPART+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-verbose]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-verbose[quarkus.cxf.endpoint."endpoints".logging.verbose]`
+.<| `boolean`
+.<| 
+
+3+a|If `true`, verbose logging will be enabled; otherwise it won't be enabled. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-verbose[quarkus.cxf.logging.verbose]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_VERBOSE+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-in-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-in-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.in-binary-content-media-types]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-in-binary-content-media-types[quarkus.cxf.logging.in-binary-content-media-types]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_IN_BINARY_CONTENT_MEDIA_TYPES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-out-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-out-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.out-binary-content-media-types]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-out-binary-content-media-types[quarkus.cxf.logging.out-binary-content-media-types]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_OUT_BINARY_CONTENT_MEDIA_TYPES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.binary-content-media-types]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-binary-content-media-types[quarkus.cxf.logging.binary-content-media-types]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_BINARY_CONTENT_MEDIA_TYPES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-sensitive-element-names]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-sensitive-element-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-element-names]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of XML elements containing sensitive information to be masked in the log. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_SENSITIVE_ELEMENT_NAMES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-sensitive-protocol-header-names]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-sensitive-protocol-header-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-protocol-header-names]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of protocol headers containing sensitive information to be masked in the log. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-sensitive-protocol-header-names[quarkus.cxf.logging.sensitive-protocol-header-names]`
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__LOGGING_SENSITIVE_PROTOCOL_HEADER_NAMES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-features]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-features[quarkus.cxf.endpoint."endpoints".features]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma-separated list of fully qualified CXF Feature class names or named CDI beans.
+
+Examples:
+
+```
+quarkus.cxf.endpoint."/hello".features = org.apache.cxf.ext.logging.LoggingFeature
+quarkus.cxf.endpoint."/fruit".features = #myCustomLoggingFeature
+```
+
+In the second case, the `++#++myCustomLoggingFeature` bean can be produced as follows:
+
+```
+import org.apache.cxf.ext.logging.LoggingFeature;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+
+class Producers {
+
+    @Produces
+    @ApplicationScoped
+    LoggingFeature myCustomLoggingFeature() {
+        LoggingFeature loggingFeature = new LoggingFeature();
+        loggingFeature.setPrettyLogging(true);
+        return loggingFeature;
+    }
+}
+```
+
+
+
+Note that the `LoggingFeature` is available through the link:../extensions/quarkus-cxf-rt-features-logging.html[Logging Feature] extension.
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__FEATURES+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-handlers]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-handlers[quarkus.cxf.endpoint."endpoints".handlers]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of Handler classes
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__HANDLERS+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-in-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-in-interceptors[quarkus.cxf.endpoint."endpoints".in-interceptors]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of InInterceptor classes
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_INTERCEPTORS+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-out-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-out-interceptors[quarkus.cxf.endpoint."endpoints".out-interceptors]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of OutInterceptor classes
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_INTERCEPTORS+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-out-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-out-fault-interceptors[quarkus.cxf.endpoint."endpoints".out-fault-interceptors]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of OutFaultInterceptor classes
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_FAULT_INTERCEPTORS+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-in-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-in-fault-interceptors[quarkus.cxf.endpoint."endpoints".in-fault-interceptors]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of InFaultInterceptor classes
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_FAULT_INTERCEPTORS+++`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-schema-validation-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-schema-validation-enabled-for[quarkus.cxf.endpoint."endpoints".schema-validation.enabled-for]`
+.<| `in`, `request`, `out`, `response`, `both`, `none`
+.<| 
+
+3+a|Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation will be enforced unless it is enabled by other means, such as `&++#++64;org.apache.cxf.annotations.SchemaValidation` or `&++#++64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")` annotations.
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SCHEMA_VALIDATION_ENABLED_FOR+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-wsdl]]`link:#quarkus-cxf_quarkus-cxf-client-clients-wsdl[quarkus.cxf.client."clients".wsdl]`
+.<| `string`
+.<| 
+
+3+a|A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service proxy of this client.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__WSDL+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-soap-binding]]`link:#quarkus-cxf_quarkus-cxf-client-clients-soap-binding[quarkus.cxf.client."clients".soap-binding]`
+.<| `string`
+.<| 
+
+3+a|The URL of the SOAP Binding, should be one of four values:
+
+* `+http://schemas.xmlsoap.org/wsdl/soap/http+` for SOAP11HTTP_BINDING
+* `+http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true+` for SOAP11HTTP_MTOM_BINDING
+* `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
+* `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SOAP_BINDING+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-client-endpoint-url]]`link:#quarkus-cxf_quarkus-cxf-client-clients-client-endpoint-url[quarkus.cxf.client."clients".client-endpoint-url]`
+.<| `string`
+.<| 
+
+3+a|The client endpoint URL
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__CLIENT_ENDPOINT_URL+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-endpoint-namespace]]`link:#quarkus-cxf_quarkus-cxf-client-clients-endpoint-namespace[quarkus.cxf.client."clients".endpoint-namespace]`
+.<| `string`
+.<| 
+
+3+a|The client endpoint namespace
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAMESPACE+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-endpoint-name]]`link:#quarkus-cxf_quarkus-cxf-client-clients-endpoint-name[quarkus.cxf.client."clients".endpoint-name]`
+.<| `string`
+.<| 
+
+3+a|The client endpoint name
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAME+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-username[quarkus.cxf.client."clients".username]`
+.<| `string`
+.<| 
+
+3+a|The username for HTTP Basic authentication
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__USERNAME+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-password[quarkus.cxf.client."clients".password]`
+.<| `string`
+.<| 
+
+3+a|The password for HTTP Basic authentication
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__PASSWORD+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-secure-wsdl-access]]`link:#quarkus-cxf_quarkus-cxf-client-clients-secure-wsdl-access[quarkus.cxf.client."clients".secure-wsdl-access]`
+.<| `boolean`
+.<| `false`
+
+3+a|If `true`, then the `Authentication` header will be sent preemptively when requesting the WSDL, as long as the `username` is set; otherwise the WSDL will be requested anonymously.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURE_WSDL_ACCESS+++` +
+*Since Quarkus CXF*: 2.7.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-enabled[quarkus.cxf.client."clients".logging.enabled]`
+.<| `true`, `false`, `pretty`
+.<| 
+
+3+a|If `true` or `pretty`, the message logging will be enabled; otherwise it will not be enabled. If the value is `pretty` (since 2.7.0), the `pretty` attribute will effectively be set to `true`. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus.cxf.logging.enabled-for]`.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_ENABLED+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-pretty]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-pretty[quarkus.cxf.client."clients".logging.pretty]`
+.<| `boolean`
+.<| 
+
+3+a|If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_PRETTY+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-limit]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-limit[quarkus.cxf.client."clients".logging.limit]`
+.<| `int`
+.<| 
+
+3+a|A message length in bytes at which it is truncated in the log. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-limit[quarkus.cxf.logging.limit]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_LIMIT+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-in-mem-threshold]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-in-mem-threshold[quarkus.cxf.client."clients".logging.in-mem-threshold]`
+.<| `long`
+.<| 
+
+3+a|A message length in bytes at which it will be written to disk. `-1` is unlimited. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-in-mem-threshold[quarkus.cxf.logging.in-mem-threshold]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_IN_MEM_THRESHOLD+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-log-binary]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-log-binary[quarkus.cxf.client."clients".logging.log-binary]`
+.<| `boolean`
+.<| 
+
+3+a|If `true`, binary payloads will be logged; otherwise they won't be logged. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-log-binary[quarkus.cxf.logging.log-binary]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_LOG_BINARY+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-log-multipart]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-log-multipart[quarkus.cxf.client."clients".logging.log-multipart]`
+.<| `boolean`
+.<| 
+
+3+a|If `true`, multipart payloads will be logged; otherwise they won't be logged. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-log-multipart[quarkus.cxf.logging.log-multipart]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_LOG_MULTIPART+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-verbose]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-verbose[quarkus.cxf.client."clients".logging.verbose]`
+.<| `boolean`
+.<| 
+
+3+a|If `true`, verbose logging will be enabled; otherwise it won't be enabled. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-verbose[quarkus.cxf.logging.verbose]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_VERBOSE+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-in-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-in-binary-content-media-types[quarkus.cxf.client."clients".logging.in-binary-content-media-types]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-in-binary-content-media-types[quarkus.cxf.logging.in-binary-content-media-types]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_IN_BINARY_CONTENT_MEDIA_TYPES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-out-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-out-binary-content-media-types[quarkus.cxf.client."clients".logging.out-binary-content-media-types]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-out-binary-content-media-types[quarkus.cxf.logging.out-binary-content-media-types]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_OUT_BINARY_CONTENT_MEDIA_TYPES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-binary-content-media-types[quarkus.cxf.client."clients".logging.binary-content-media-types]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor` and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-binary-content-media-types[quarkus.cxf.logging.binary-content-media-types]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_BINARY_CONTENT_MEDIA_TYPES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-sensitive-element-names]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-sensitive-element-names[quarkus.cxf.client."clients".logging.sensitive-element-names]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of XML elements containing sensitive information to be masked in the log. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_SENSITIVE_ELEMENT_NAMES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-logging-sensitive-protocol-header-names]]`link:#quarkus-cxf_quarkus-cxf-client-clients-logging-sensitive-protocol-header-names[quarkus.cxf.client."clients".logging.sensitive-protocol-header-names]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma separated list of protocol headers containing sensitive information to be masked in the log. The default is given by `link:#quarkus-cxf_quarkus-cxf-logging-sensitive-protocol-header-names[quarkus.cxf.logging.sensitive-protocol-header-names]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__LOGGING_SENSITIVE_PROTOCOL_HEADER_NAMES+++` +
+*Since Quarkus CXF*: 2.6.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-features]]`link:#quarkus-cxf_quarkus-cxf-client-clients-features[quarkus.cxf.client."clients".features]`
+.<| List of ``string``
+.<| 
+
+3+a|A comma-separated list of fully qualified CXF Feature class names.
+
+Example:
+
+```
+quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeature
+```
+
+
+
+Note that the `LoggingFeature` is available through the link:../extensions/quarkus-cxf-rt-features-logging.html[Logging Feature] extension.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__FEATURES+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-handlers]]`link:#quarkus-cxf_quarkus-cxf-client-clients-handlers[quarkus.cxf.client."clients".handlers]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of Handler classes
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HANDLERS+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-in-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-clients-in-interceptors[quarkus.cxf.client."clients".in-interceptors]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of InInterceptor classes
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_INTERCEPTORS+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-out-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-clients-out-interceptors[quarkus.cxf.client."clients".out-interceptors]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of OutInterceptor classes
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_INTERCEPTORS+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-out-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-clients-out-fault-interceptors[quarkus.cxf.client."clients".out-fault-interceptors]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of OutFaultInterceptor classes
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_FAULT_INTERCEPTORS+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-in-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-clients-in-fault-interceptors[quarkus.cxf.client."clients".in-fault-interceptors]`
+.<| List of ``string``
+.<| 
+
+3+a|The comma-separated list of InFaultInterceptor classes
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_FAULT_INTERCEPTORS+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-connection-timeout]]`link:#quarkus-cxf_quarkus-cxf-client-clients-connection-timeout[quarkus.cxf.client."clients".connection-timeout]`
+.<| `long`
+.<| `30000`
+
+3+a|Specifies the amount of time, in milliseconds, that the consumer will attempt to establish a connection before it times out. 0 is infinite.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION_TIMEOUT+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-receive-timeout]]`link:#quarkus-cxf_quarkus-cxf-client-clients-receive-timeout[quarkus.cxf.client."clients".receive-timeout]`
+.<| `long`
+.<| `60000`
+
+3+a|Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. 0 is infinite.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__RECEIVE_TIMEOUT+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-connection-request-timeout]]`link:#quarkus-cxf_quarkus-cxf-client-clients-connection-request-timeout[quarkus.cxf.client."clients".connection-request-timeout]`
+.<| `long`
+.<| `60000`
+
+3+a|Specifies the amount of time, in milliseconds, used when requesting a connection from the connection manager(if appliable). 0 is infinite.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION_REQUEST_TIMEOUT+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-auto-redirect]]`link:#quarkus-cxf_quarkus-cxf-client-clients-auto-redirect[quarkus.cxf.client."clients".auto-redirect]`
+.<| `boolean`
+.<| `false`
+
+3+a|Specifies if the consumer will automatically follow a server issued redirection. (name is not part of standard)
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__AUTO_REDIRECT+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-max-retransmits]]`link:#quarkus-cxf_quarkus-cxf-client-clients-max-retransmits[quarkus.cxf.client."clients".max-retransmits]`
+.<| `int`
+.<| `-1`
+
+3+a|Specifies the maximum amount of retransmits that are allowed for redirects. Retransmits for authorization is included in the retransmit count. Each redirect may cause another retransmit for a UNAUTHORIZED response code, ie. 401. Any negative number indicates unlimited retransmits, although, loop protection is provided. The default is unlimited. (name is not part of standard)
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__MAX_RETRANSMITS+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-allow-chunking]]`link:#quarkus-cxf_quarkus-cxf-client-clients-allow-chunking[quarkus.cxf.client."clients".allow-chunking]`
+.<| `boolean`
+.<| `true`
+
+3+a|If true, the client is free to use chunking streams if it wants, but it is not required to use chunking streams. If false, the client must use regular, non-chunked requests in all cases.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ALLOW_CHUNKING+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-chunking-threshold]]`link:#quarkus-cxf_quarkus-cxf-client-clients-chunking-threshold[quarkus.cxf.client."clients".chunking-threshold]`
+.<| `int`
+.<| `4096`
+
+3+a|If AllowChunking is true, this sets the threshold at which messages start getting chunked. Messages under this limit do not get chunked.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__CHUNKING_THRESHOLD+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-chunk-length]]`link:#quarkus-cxf_quarkus-cxf-client-clients-chunk-length[quarkus.cxf.client."clients".chunk-length]`
+.<| `int`
+.<| `-1`
+
+3+a|Specifies the chunk length for a HttpURLConnection. This value is used in java.net.HttpURLConnection.setChunkedStreamingMode(int chunklen). chunklen indicates the number of bytes to write in each chunk. If chunklen is less than or equal to zero, a default value will be used.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__CHUNK_LENGTH+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-accept]]`link:#quarkus-cxf_quarkus-cxf-client-clients-accept[quarkus.cxf.client."clients".accept]`
+.<| `string`
+.<| 
+
+3+a|Specifies the MIME types the client is prepared to handle (e.g., HTML, JPEG, GIF, etc.)
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-accept-language]]`link:#quarkus-cxf_quarkus-cxf-client-clients-accept-language[quarkus.cxf.client."clients".accept-language]`
+.<| `string`
+.<| 
+
+3+a|Specifies the language the client desires (e.g., English, French, etc.)
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT_LANGUAGE+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-accept-encoding]]`link:#quarkus-cxf_quarkus-cxf-client-clients-accept-encoding[quarkus.cxf.client."clients".accept-encoding]`
+.<| `string`
+.<| 
+
+3+a|Specifies the encoding the client is prepared to handle (e.g., gzip)
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT_ENCODING+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-content-type]]`link:#quarkus-cxf_quarkus-cxf-client-clients-content-type[quarkus.cxf.client."clients".content-type]`
+.<| `string`
+.<| 
+
+3+a|Specifies the content type of the stream being sent in a post request. (this should be text/xml for web services, or can be set to application/x-www-form-urlencoded if the client is sending form data).
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__CONTENT_TYPE+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-host]]`link:#quarkus-cxf_quarkus-cxf-client-clients-host[quarkus.cxf.client."clients".host]`
+.<| `string`
+.<| 
+
+3+a|Specifies the Internet host and port number of the resource on which the request is being invoked. This is sent by default based upon the URL. Certain DNS scenarios or application designs may request you to set this, but typically it is not required.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HOST+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-connection]]`link:#quarkus-cxf_quarkus-cxf-client-clients-connection[quarkus.cxf.client."clients".connection]`
+.<| `close`, `keep-alive`
+.<| `keep-alive`
+
+3+a|The connection disposition. If close the connection to the server is closed after each request/response dialog. If Keep-Alive the client requests the server to keep the connection open, and if the server honors the keep alive request, the connection is reused. Many servers and proxies do not honor keep-alive requests.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__CONNECTION+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-cache-control]]`link:#quarkus-cxf_quarkus-cxf-client-clients-cache-control[quarkus.cxf.client."clients".cache-control]`
+.<| `string`
+.<| 
+
+3+a|Most commonly used to specify no-cache, however the standard supports a dozen or so caching related directives for requests
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__CACHE_CONTROL+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-version]]`link:#quarkus-cxf_quarkus-cxf-client-clients-version[quarkus.cxf.client."clients".version]`
+.<| `string`
+.<| `auto`
+
+3+a|HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit` implementation defined via `quarkus.cxf.client.myClient.http-conduit-factory`. Other possible values: `1.1`, `2`. Note that some of these values might be unsupported by some `HTTPConduit` implementations.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__VERSION+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-browser-type]]`link:#quarkus-cxf_quarkus-cxf-client-clients-browser-type[quarkus.cxf.client."clients".browser-type]`
+.<| `string`
+.<| 
+
+3+a|The value of the `User-Agent` HTTP header.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__BROWSER_TYPE+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-decoupled-endpoint]]`link:#quarkus-cxf_quarkus-cxf-client-clients-decoupled-endpoint[quarkus.cxf.client."clients".decoupled-endpoint]`
+.<| `string`
+.<| 
+
+3+a|An URI path (starting with `/`) or a full URI for the receipt of responses over a separate provider -> consumer connection. If the value starts with `/`, then it is prefixed with the base URI configured via `quarkus.cxf.client.myClient.decoupled-endpoint-base` before being used as a value for the WS-Addressing `ReplyTo` message header.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__DECOUPLED_ENDPOINT+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-proxy-server]]`link:#quarkus-cxf_quarkus-cxf-client-clients-proxy-server[quarkus.cxf.client."clients".proxy-server]`
+.<| `string`
+.<| 
+
+3+a|Specifies the address of proxy server if one is used.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_SERVER+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-proxy-server-port]]`link:#quarkus-cxf_quarkus-cxf-client-clients-proxy-server-port[quarkus.cxf.client."clients".proxy-server-port]`
+.<| `int`
+.<| 
+
+3+a|Specifies the port number used by the proxy server.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_SERVER_PORT+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-non-proxy-hosts]]`link:#quarkus-cxf_quarkus-cxf-client-clients-non-proxy-hosts[quarkus.cxf.client."clients".non-proxy-hosts]`
+.<| `string`
+.<| 
+
+3+a|Specifies the list of hostnames that will not use the proxy configuration. Examples:
+
+ - `localhost` - a single hostname
+ - `localhost++\|++www.google.com` - two hostnames that will not use the proxy configuration
+ - `localhost++\|++www.google.++*\|*++.apache.org` - hostname patterns
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__NON_PROXY_HOSTS+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-proxy-server-type]]`link:#quarkus-cxf_quarkus-cxf-client-clients-proxy-server-type[quarkus.cxf.client."clients".proxy-server-type]`
+.<| `http`, `socks`
+.<| `http`
+
+3+a|Specifies the type of the proxy server. Can be either HTTP or SOCKS.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_SERVER_TYPE+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-proxy-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-proxy-username[quarkus.cxf.client."clients".proxy-username]`
+.<| `string`
+.<| 
+
+3+a|Username for the proxy authentication
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_USERNAME+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-proxy-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-proxy-password[quarkus.cxf.client."clients".proxy-password]`
+.<| `string`
+.<| 
+
+3+a|Password for the proxy authentication
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__PROXY_PASSWORD+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-http-conduit-factory]]`link:#quarkus-cxf_quarkus-cxf-client-clients-http-conduit-factory[quarkus.cxf.client."clients".http-conduit-factory]`
+.<| `QuarkusCXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
+.<| 
+
+3+a|Select the `HTTPConduitFactory` implementation for this client.
+
+ - `QuarkusCXFDefault` (default): if `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` is present in class path, then its `HTTPConduitFactory` implementation will be used; otherwise this value is equivalent with `URLConnectionHTTPConduitFactory` (this may change, once issue link:https://github.com/quarkiverse/quarkus-cxf/issues/992[++#++992] gets resolved in CXF)
+ - `CXFDefault`: the selection of `HTTPConduitFactory` implementation is left to CXF
+ - `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always returning `org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the underlying HTTP client.
+ - `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always returning `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the underlying HTTP client.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HTTP_CONDUIT_FACTORY+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store[quarkus.cxf.client."clients".trust-store]`
+.<| `string`
+.<| 
+
+3+a|The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store-password[quarkus.cxf.client."clients".trust-store-password]`
+.<| `string`
+.<| 
+
+3+a|The trust store password
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_PASSWORD+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store-type]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store-type[quarkus.cxf.client."clients".trust-store-type]`
+.<| `string`
+.<| `JKS`
+
+3+a|The type of the trust store.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_TYPE+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-hostname-verifier]]`link:#quarkus-cxf_quarkus-cxf-client-clients-hostname-verifier[quarkus.cxf.client."clients".hostname-verifier]`
+.<| `string`
+.<| 
+
+3+a|Can be one of the following:
+
+ - One of the well known values: `AllowAllHostnameVerifier`, `HttpsURLConnectionDefaultHostnameVerifier`
+ - A fully qualified class name implementing `javax.net.ssl.HostnameVerifier` to look up in the CDI container.
+ - A bean name prefixed with `++#++` that will be looked up in the CDI container; example: `++#++myHostnameVerifier`  If not specified, then the creation of the `HostnameVerifier` is delegated to CXF, which boils down to `org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier` with the default `org.apache.cxf.transport.https.httpclient.PublicSuffixMatcherLoader` as returned from `PublicSuffixMatcherLoader.getDefault()`.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HOSTNAME_VERIFIER+++`
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-schema-validation-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-client-clients-schema-validation-enabled-for[quarkus.cxf.client."clients".schema-validation.enabled-for]`
+.<| `in`, `request`, `out`, `response`, `both`, `none`
+.<| 
+
+3+a|Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation will be enforced unless it is enabled by other means, such as `&++#++64;org.apache.cxf.annotations.SchemaValidation` or `&++#++64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")` annotations.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SCHEMA_VALIDATION_ENABLED_FOR+++` +
+*Since Quarkus CXF*: 2.7.0
+|===
+
