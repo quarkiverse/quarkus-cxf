@@ -17,7 +17,7 @@ import org.apache.cxf.ws.security.trust.STSClient;
  * requirements for normal scoped/intercepted/decorated beans.
  * </pre>
  *
- * @since 2.8.0
+ * @since 3.8.0
  */
 public class STSClientBean extends STSClient {
 

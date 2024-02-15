@@ -18,12 +18,6 @@ Please follow the links under the extension names to learn about how to use them
 |0.1.0
 |https://cxf.apache.org/docs/jax-ws.html[JAX-WS], https://cxf.apache.org/docs/jaxb.html[JAXB], https://cxf.apache.org/docs/ws-addressing.html[WS-Addressing], https://cxf.apache.org/docs/ws-policy.html[WS-Policy], https://cxf.apache.org/docs/mtom.html[MTOM]
 
-| xref:reference/extensions/quarkus-cxf-rt-features-logging.adoc[Quarkus CXF Logging Feature] +
-`quarkus-cxf-rt-features-logging`
-|Stable
-|0.14.0
-|
-
 | xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Quarkus CXF Metrics Feature] +
 `quarkus-cxf-rt-features-metrics`
 |Stable

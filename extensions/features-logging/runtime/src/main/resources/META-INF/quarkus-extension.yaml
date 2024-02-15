@@ -3,6 +3,7 @@ artifact: ${project.groupId}:${project.artifactId}:${project.version}
 name: "Quarkus CXF Logging (deprecated)"
 description: "Deprecated, use io.quarkiverse.cxf:quarkus-cxf instead"
 metadata:
+  unlisted: true
   keywords:
     - "cxf"
     - "jaxws"

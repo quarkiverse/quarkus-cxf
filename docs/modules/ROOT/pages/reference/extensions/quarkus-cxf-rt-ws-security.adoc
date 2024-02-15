@@ -842,7 +842,7 @@ To workaround the fact that `org.apache.cxf.ws.security.trust.STSClient` does no
 Tip: Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] extension page for more information about WS-Trust.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-wsdl]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-wsdl[quarkus.cxf.client."clients".security.sts.client.wsdl]`
 .<| `string`
@@ -851,7 +851,7 @@ Tip: Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] 
 3+a|A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service proxy of the STS client.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_WSDL+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-service-name]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-service-name[quarkus.cxf.client."clients".security.sts.client.service-name]`
 .<| `string`
@@ -864,7 +864,7 @@ Tip: Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] 
  - WS-Trust 1.4: `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200802/++}++SecurityTokenService`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_SERVICE_NAME+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-endpoint-name]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-endpoint-name[quarkus.cxf.client."clients".security.sts.client.endpoint-name]`
 .<| `string`
@@ -877,7 +877,7 @@ Tip: Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] 
  - `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200512/++}++UT_Port`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENDPOINT_NAME+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-username[quarkus.cxf.client."clients".security.sts.client.username]`
 .<| `string`
@@ -890,7 +890,7 @@ Tip: Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] 
  - As the alias name in the keystore to get the user's public key for encryption if `encryption.username` is not set
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_USERNAME+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-password[quarkus.cxf.client."clients".security.sts.client.password]`
 .<| `string`
@@ -899,7 +899,7 @@ Tip: Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] 
 3+a|The password associated with the `username`.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_PASSWORD+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-username[quarkus.cxf.client."clients".security.sts.client.encryption.username]`
 .<| `string`
@@ -910,7 +910,7 @@ Tip: Check the link:quarkus-cxf-services-sts.html[Security Token Service (STS)] 
 For the WS-Security web service provider, the `useReqSigCert` value can be used to accept (encrypt to) any client whose public key is in the service's truststore (defined in `encrypt.properties`).
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_USERNAME+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-properties[quarkus.cxf.client."clients".security.sts.client.encryption.properties]`
 .<| ``Map<String,String>``
@@ -927,7 +927,7 @@ Example
 ```
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_PROPERTIES+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-crypto[quarkus.cxf.client."clients".security.sts.client.encryption.crypto]`
 .<| `string`
@@ -936,7 +936,7 @@ Example
 3+a|A link:../../user-guide/configuration.html#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_CRYPTO+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-crypto[quarkus.cxf.client."clients".security.sts.client.token.crypto]`
 .<| `string`
@@ -949,7 +949,7 @@ WCF's trust server sometimes will encrypt the token in the response IN ADDITION 
 These are also used by the `token.properties` to send/process any RSA/DSAKeyValue tokens used if the KeyType is `PublicKey`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_CRYPTO+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-properties]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-properties[quarkus.cxf.client."clients".security.sts.client.token.properties]`
 .<| ``Map<String,String>``
@@ -966,7 +966,7 @@ Example
 ```
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_PROPERTIES+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-username[quarkus.cxf.client."clients".security.sts.client.token.username]`
 .<| `string`
@@ -975,7 +975,7 @@ Example
 3+a|The alias name in the keystore to get the user's public key to send to the STS for the PublicKey KeyType case.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_USERNAME+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-usecert]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-usecert[quarkus.cxf.client."clients".security.sts.client.token.usecert]`
 .<| `boolean`
@@ -984,7 +984,7 @@ Example
 3+a|Whether to write out an X509Certificate structure in UseKey/KeyInfo, or whether to write out a KeyValue structure.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_USECERT+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-soap12-binding]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-soap12-binding[quarkus.cxf.client."clients".security.sts.client.soap12-binding]`
 .<| `boolean`
@@ -993,7 +993,7 @@ Example
 3+a|If `true` the STS client will be set to send Soap 1.2 messages; otherwise it will send SOAP 1.1 messages.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_SOAP12_BINDING+++` +
-*Since Quarkus CXF*: 2.8.0
+*Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-username]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-username[quarkus.cxf.endpoint."endpoints".security.username]`
 .<| `string`
