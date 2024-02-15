@@ -262,7 +262,13 @@ a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-enable-unsig
 
 [.description]
 --
-If `true`, unsigned SAML assertions will be allowed as SecurityContext Principals; otherwise they won't be allowed as SecurityContext Principals. Note that "unsigned" refers to an internal signature. Even if the token is signed by an external signature (as per the "sender-vouches" requirement), this boolean must still be configured if you want to use the token to set up the security context.
+If `true`, unsigned SAML assertions will be allowed as SecurityContext Principals; otherwise they won't be allowed as SecurityContext Principals. 
+
+[NOTE]
+.Signature
+====
+The label "unsigned" refers to an internal signature. Even if the token is signed by an external signature (as per the "sender-vouches" requirement), this boolean must still be configured if you want to use the token to set up the security context.
+====
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
@@ -471,7 +477,11 @@ a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-enable-nonce
 --
 If `true`, the `UsernameToken` nonces will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
 
-Note that caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effect, or the `UsernameToken` action has been configured for the non-security-policy case.
+[NOTE]
+.Caching
+====
+Caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effect, or the `UsernameToken` action has been configured for the non-security-policy case.
+====
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_NONCE_CACHE+++[]
@@ -490,7 +500,12 @@ a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-enable-times
 --
 If `true`, the `Timestamp` `Created` Strings (these are only cached in conjunction with a message Signature) will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
 
-Note that caching only applies when either a `IncludeTimestamp` policy is in effect, or the `Timestamp` action has been configured for the non-security-policy case.
+[NOTE]
+.Caching
+====
+Caching only applies when either a `IncludeTimestamp` policy is in effect, or the `Timestamp` action has been configured for the non-security-policy case.
+====
+
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
@@ -566,7 +581,7 @@ a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-enable-saml-
 --
 If `true` and in case the token contains a `OneTimeUse` Condition, the SAML2 Token Identifiers will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
 
-Note that caching only applies when either a `SamlToken` policy is in effect, or a SAML action has been configured for the non-security-policy case.
+Caching only applies when either a `SamlToken` policy is in effect, or a SAML action has been configured for the non-security-policy case.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
@@ -1707,7 +1722,14 @@ a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-endpoint-endpoints-security-enable-u
 
 [.description]
 --
-If `true`, unsigned SAML assertions will be allowed as SecurityContext Principals; otherwise they won't be allowed as SecurityContext Principals. Note that "unsigned" refers to an internal signature. Even if the token is signed by an external signature (as per the "sender-vouches" requirement), this boolean must still be configured if you want to use the token to set up the security context.
+If `true`, unsigned SAML assertions will be allowed as SecurityContext Principals; otherwise they won't be allowed as SecurityContext Principals.
+
+
+[NOTE]
+.Signature
+====
+The label "unsigned" refers to an internal signature. Even if the token is signed by an external signature (as per the "sender-vouches" requirement), this boolean must still be configured if you want to use the token to set up the security context.
+====
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
@@ -1916,7 +1938,11 @@ a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-endpoint-endpoints-security-enable-n
 --
 If `true`, the `UsernameToken` nonces will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
 
-Note that caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effect, or the `UsernameToken` action has been configured for the non-security-policy case.
+[NOTE]
+.Caching
+====
+Caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effect, or the `UsernameToken` action has been configured for the non-security-policy case.
+====
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_NONCE_CACHE+++[]
@@ -1935,7 +1961,11 @@ a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-endpoint-endpoints-security-enable-t
 --
 If `true`, the `Timestamp` `Created` Strings (these are only cached in conjunction with a message Signature) will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
 
-Note that caching only applies when either a `IncludeTimestamp` policy is in effect, or the `Timestamp` action has been configured for the non-security-policy case.
+[NOTE]
+.Caching
+====
+Caching only applies when either a `IncludeTimestamp` policy is in effect, or the `Timestamp` action has been configured for the non-security-policy case.
+====
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 
@@ -2011,7 +2041,11 @@ a| [[quarkus-cxf-rt-ws-security_quarkus-cxf-endpoint-endpoints-security-enable-s
 --
 If `true` and in case the token contains a `OneTimeUse` Condition, the SAML2 Token Identifiers will be cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false` for message initiators.
 
-Note that caching only applies when either a `SamlToken` policy is in effect, or a SAML action has been configured for the non-security-policy case.
+[NOTE]
+.Caching
+====
+Caching only applies when either a `SamlToken` policy is in effect, or a SAML action has been configured for the non-security-policy case.
+====
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by tests] yet.
 

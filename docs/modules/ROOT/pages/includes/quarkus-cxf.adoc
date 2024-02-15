@@ -50,9 +50,11 @@ quarkus.cxf.codegen.wsdl2java.bar-params.wsdl-location = wsdl/bar.wsdl
 quarkus.cxf.codegen.wsdl2java.bar-params.xjc = ts
 ```
 
-
-
-Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended.
+[NOTE]
+.File extensions
+====
+File extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. We recommend that you always use the `.wsdl` extension.
+====
 
 There is no default value for this option, so `wsdl2java` code generation is disabled by default.
 
@@ -439,7 +441,11 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-additio
 --
 A comma separated list of additional command line parameters that should be passed to CXF `java2ws` tool along with the files selected by `includes` and `excludes`. Example: `-portname,12345`. Check link:https://cxf.apache.org/docs/java-to-ws.html[`java2ws` documentation] for all supported options.
 
-Note that only options related to generation of WSDL from Java are supported currently.
+[NOTE]
+.Supported options
+====
+Currently, only options related to generation of WSDL from Java are supported.
+====
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS_ADDITIONAL_PARAMS+++[]
@@ -505,7 +511,11 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-path]]`link:#qu
 --
 The default path for CXF resources.
 
-⚠️ Note that the default value before Quarkus CXF version 2.0.0 was `/`.
+[NOTE]
+.Earlier versions
+====
+The default value before Quarkus CXF version 2.0.0 was `/`.
+====
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_PATH+++[]
@@ -848,8 +858,11 @@ quarkus.cxf.codegen.wsdl2java.bar-params.xjc = ts
 ```
 
 
-
-Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended.
+[NOTE]
+.File extensions
+====
+File extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen in Quarkus dev mode. We recommend that you always use the `.wsdl` extension.
+====
 
 There is no default value for this option, so `wsdl2java` code generation is disabled by default.
 
@@ -1219,7 +1232,11 @@ a|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-named-p
 --
 A comma separated list of additional command line parameters that should be passed to CXF `java2ws` tool along with the files selected by `includes` and `excludes`. Example: `-portname,12345`. Check link:https://cxf.apache.org/docs/java-to-ws.html[`java2ws` documentation] for all supported options.
 
-Note that only options related to generation of WSDL from Java are supported currently.
+[NOTE]
+.Generation
+====
+Only options related to generation of WSDL from Java are supported currently.
+====
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++[]
@@ -1620,8 +1637,11 @@ class Producers {
 ```
 
 
-
-Note that the `LoggingFeature` is available through the link:../extensions/quarkus-cxf-rt-features-logging.html[Logging Feature] extension.
+[NOTE]
+.Logging
+====
+The `LoggingFeature` is available through the link:../extensions/quarkus-cxf-rt-features-logging.html[Logging Feature] extension.
+====
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__FEATURES+++[]
@@ -2096,8 +2116,12 @@ quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeatu
 ```
 
 
+[NOTE]
+.Logging
+====
+The `LoggingFeature` is available through the link:../extensions/quarkus-cxf-rt-features-logging.html[Logging Feature] extension.
+====
 
-Note that the `LoggingFeature` is available through the link:../extensions/quarkus-cxf-rt-features-logging.html[Logging Feature] extension.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__FEATURES+++[]
@@ -2449,13 +2473,14 @@ endif::add-copy-button-to-env-var[]
 --|string 
 |
 
-
 a| [[quarkus-cxf_quarkus-cxf-client-clients-version]]`link:#quarkus-cxf_quarkus-cxf-client-clients-version[quarkus.cxf.client."clients".version]`
 
 
 [.description]
 --
-HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit` implementation defined via `quarkus.cxf.client.myClient.http-conduit-factory`. Other possible values: `1.1`, `2`. Note that some of these values might be unsupported by some `HTTPConduit` implementations.
+HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit` implementation defined via `quarkus.cxf.client.myClient.http-conduit-factory`. Other possible values: `1.1`, `2`.
+
+Some of these values might be unsupported by some `HTTPConduit` implementations.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_CXF_CLIENT__CLIENTS__VERSION+++[]

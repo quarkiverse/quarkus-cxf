@@ -11,7 +11,7 @@ Refer to Quarkus https://quarkus.io/guides/logging[Logging guide] for basic info
 == Payload logging
 
 [NOTE]
-.Historical Note
+.History
 ====
 Since {quarkus-cxf-project-name} 2.6.0, the payload logging functionality is available via
 `io.quarkiverse.cxf:quarkus-cxf` extension.

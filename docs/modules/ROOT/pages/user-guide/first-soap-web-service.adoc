@@ -3,15 +3,24 @@
 
 In this guide we explain how to create a Quarkus application exposing a simple SOAP Web service.
 
-NOTE: Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
+[NOTE]
+.Create project first
+====
+Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
+====
 
 == Hello world! Web service
 
 Having the `pom.xml` in place, you can add a simple Hello world! Web service in `src/main/java`.
 
-NOTE: The sample code snippets used in this section come from the
-     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
-     in the source tree of {quarkus-cxf-project-name}
+
+[NOTE]
+.Code examples
+====
+The sample code snippets used in this section come from the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
+in the source tree of {quarkus-cxf-project-name}
+====
 
 First add the service interface:
 
@@ -130,7 +139,7 @@ $ curl -v -X POST -H "Content-Type: text/xml;charset=UTF-8" \
 </soap:Envelope>
 ----
 
-Note the expected `<return>Hello World!</return>` in the SOAP response.
+You can see the expected `<return>Hello World!</return>` in the SOAP response.
 
 [[logging-feature]]
 == Add the logging feature while dev mode is running
