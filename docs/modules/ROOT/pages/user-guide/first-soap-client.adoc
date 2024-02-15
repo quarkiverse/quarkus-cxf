@@ -105,7 +105,11 @@ There are several ways to get them:
 The last option tends to be the easiest and most flexible for client applications.
 
 [[wsdl2java]]
-TIP: If you want to use this approach, please first follow the xref:user-guide/generate-java-from-wsdl.adoc[Generate Java from WSDL] section and then continue with the next steps.
+
+[TIP]
+====
+If you want to use this approach, first follow the xref:user-guide/generate-java-from-wsdl.adoc[Generate Java from WSDL] section and then continue with the next steps.
+====
 
 == Using SEI as a client
 
@@ -134,7 +138,10 @@ cxf.it.calculator.baseUri=http://localhost:8082
 include::example$calculator-client/application.properties[tag=first-soap-client.adoc]
 ----
 
-TIP: All client configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#_configuration[Configuration properties] reference.
+[TIP]
+====
+All client configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#_configuration[Configuration properties] reference.
+====
 
 With all the above files in place, we should be able to start the application in Quarkus https://quarkus.io/guides/maven-tooling#dev-mode[`dev` mode]
 

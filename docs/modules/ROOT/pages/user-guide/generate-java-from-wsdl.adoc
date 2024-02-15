@@ -63,6 +63,9 @@ quarkus.cxf.codegen.wsdl2java.bar-params.wsdl-location = wsdl/bar.wsdl
 quarkus.cxf.codegen.wsdl2java.bar-params.xjc = ts
 ----
 
-TIP: Add `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]` dependency to your project to be able to use
-    `-xjc-Xbg`, `-xjc-Xdv`, `-xjc-Xjavadoc`, `-xjc-Xproperty-listener`, `-xjc-Xts` and `-xjc-Xwsdlextension`
-    wsdl2java parameters.
+[TIP]
+====
+Add `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]` dependency to your project to be able to use
+`-xjc-Xbg`, `-xjc-Xdv`, `-xjc-Xjavadoc`, `-xjc-Xproperty-listener`, `-xjc-Xts` and `-xjc-Xwsdlextension`
+wsdl2java parameters.
+====

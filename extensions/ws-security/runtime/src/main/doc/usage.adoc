@@ -15,9 +15,12 @@ but you can still refer to our https://github.com/quarkiverse/quarkus-cxf/tree/m
 
 === WS-Security via WS-SecurityPolicy
 
-TIP: The sample code snippets used in this section come from the
-     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
-     in the source tree of {quarkus-cxf-project-name}
+[TIP]
+====
+The sample code snippets used in this section come from the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
+in the source tree of {quarkus-cxf-project-name}
+====
 
 Let's say our aim is to ensure that the communication between the client and service is confidential (through encryption)
 and that the message has not been tampered with (through digital signatures).

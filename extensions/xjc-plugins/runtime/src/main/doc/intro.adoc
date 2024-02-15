@@ -9,4 +9,7 @@ xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2
 * `https://cxf.apache.org/cxf-xjc-ts.html[-xjc-Xts]` - generate `toString()` methods in model classes.
 * `https://cxf.apache.org/cxf-xjc-wsdlextension.html[-xjc-Xwsdlextension]` - generate beans that can be used directly with WSDL4J as extensors in the WSDL.
 
-TIP: Check the xref:user-guide/generate-java-from-wsdl.adoc[wsdl2java] section of User guide for more details about `wsdl2java`.
+[TIP]
+====
+Check the xref:user-guide/generate-java-from-wsdl.adoc[wsdl2java] section of User guide for more details about `wsdl2java`.
+====

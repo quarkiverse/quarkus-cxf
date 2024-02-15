@@ -57,7 +57,7 @@ Documentation for this extension is available through Quarkiverse Docs located a
 
 <https://docs.quarkiverse.io/quarkus-cxf/dev/index.html>
 
-Please note that you can switch to the appropriate version of the release documentation by clicking on *dev* in the top right corner.
+You can switch to the appropriate version of the release documentation by clicking on *dev* in the top right corner.
 
 ![](https://user-images.githubusercontent.com/13334073/119669482-19640a80-be06-11eb-8184-9f063166276a.jpg)
 
@@ -67,7 +67,7 @@ The `integration-tests` module in the codebase provides various examples that de
 
 ## Issues and Support
 
-Please feel free to [start a discussion](https://github.com/quarkiverse/quarkus-cxf/discussions) or [open an issue](https://github.com/quarkiverse/quarkus-cxf/issues/new) in the GitHub repository in case you need support. The following general guidelines can be used to determine whether to start a discussion or open an issue.
+Feel free to [start a discussion](https://github.com/quarkiverse/quarkus-cxf/discussions) or [open an issue](https://github.com/quarkiverse/quarkus-cxf/issues/new) in the GitHub repository in case you need support. The following general guidelines can be used to determine whether to start a discussion or open an issue.
 
 ### GitHub Issues
 -   Bug reports

@@ -24,7 +24,10 @@ xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2
 * `https://cxf.apache.org/cxf-xjc-ts.html[-xjc-Xts]` - generate `toString()` methods in model classes.
 * `https://cxf.apache.org/cxf-xjc-wsdlextension.html[-xjc-Xwsdlextension]` - generate beans that can be used directly with WSDL4J as extensors in the WSDL.
 
-TIP: Check the xref:user-guide/generate-java-from-wsdl.adoc[wsdl2java] section of User guide for more details about `wsdl2java`.
+[TIP]
+====
+Check the xref:user-guide/generate-java-from-wsdl.adoc[wsdl2java] section of User guide for more details about `wsdl2java`.
+====
 
 
 [id="quarkus-cxf-xjc-plugins-maven-coordinates"]
@@ -41,7 +44,10 @@ or add these coordinates to your existing project:
 </dependency>
 ----
 ifeval::[{doc-show-user-guide-link} == true]
-TIP: Check the xref:user-guide/index.adoc[User guide] and especially its
-      xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
-      for more information about writing applications with {quarkus-cxf-project-name}.
+[TIP]
+====
+Check the xref:user-guide/index.adoc[User guide] and especially its
+xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
+for more information about writing applications with {quarkus-cxf-project-name}.
+====
 endif::[]

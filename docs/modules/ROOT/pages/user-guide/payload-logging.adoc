@@ -86,7 +86,10 @@ quarkus.cxf.endpoint."/hello".features=org.apache.cxf.ext.logging.LoggingFeature
 quarkus.cxf.client."myClient".features=org.apache.cxf.ext.logging.LoggingFeature
 ----
 +
-TIP: There is an example in xref:user-guide/first-soap-web-service.adoc#logging-feature[Your first SOAP Web service] chapter of the User guide.
+[TIP]
+====
+There is an example in xref:user-guide/first-soap-web-service.adoc#logging-feature[Your first SOAP Web service] chapter of the User guide.
+====
 +
 or alternatively
 +

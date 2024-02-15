@@ -5,7 +5,7 @@ This guide explains how to set up a new project for a Quarkus application hostin
 [[prerequisites]]
 == Prerequisites
 
-Please read the https://quarkus.io/guides/getting-started#prerequisites[Prerequisites section] of Quarkus getting started guide.
+Read the https://quarkus.io/guides/getting-started#prerequisites[Prerequisites section] of Quarkus getting started guide.
 
 In addition to that, you may need
 
