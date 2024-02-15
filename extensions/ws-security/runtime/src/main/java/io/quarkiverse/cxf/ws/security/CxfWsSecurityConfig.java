@@ -965,7 +965,7 @@ public interface CxfWsSecurityConfig {
         /**
          * STS configuration.
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WithName("sts.client")
         StsClientConfig sts();
@@ -1085,7 +1085,7 @@ public interface CxfWsSecurityConfig {
          * Tip: Check the <a href="quarkus-cxf-services-sts.html">Security Token Service (STS)</a> extension page
          * for more information about WS-Trust.
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WithParentName
         @WssConfigurationConstant(key = "security.sts.client", transformer = beanRef)
@@ -1095,7 +1095,7 @@ public interface CxfWsSecurityConfig {
          * A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service
          * proxy of the STS client.
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         Optional<String> wsdl();
 
@@ -1107,7 +1107,7 @@ public interface CxfWsSecurityConfig {
          * <li>WS-Trust 1.4: <code>{http://docs.oasis-open.org/ws-sx/ws-trust/200802/}SecurityTokenService</code>
          * </ul>
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         Optional<String> serviceName();
 
@@ -1119,7 +1119,7 @@ public interface CxfWsSecurityConfig {
          * <li><code>{http://docs.oasis-open.org/ws-sx/ws-trust/200512/}UT_Port</code>
          * </ul>
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         Optional<String> endpointName();
 
@@ -1133,7 +1133,7 @@ public interface CxfWsSecurityConfig {
          * {@code encryption.username} is not set
          * </ul>
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.username")
         Optional<String> username();
@@ -1141,7 +1141,7 @@ public interface CxfWsSecurityConfig {
         /**
          * The password associated with the {@code username}.
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.password")
         Optional<String> password();
@@ -1156,7 +1156,7 @@ public interface CxfWsSecurityConfig {
          * For the WS-Security web service provider, the {@code useReqSigCert} value can be used to accept (encrypt to)
          * any client whose public key is in the service's truststore (defined in {@code encrypt.properties}).
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.encryption.username")
         @WithName("encryption.username")
@@ -1173,7 +1173,7 @@ public interface CxfWsSecurityConfig {
          * [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
          * </pre>
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.encryption.properties", transformer = properties)
         @WithName("encryption.properties")
@@ -1184,7 +1184,7 @@ public interface CxfWsSecurityConfig {
          * {@code org.apache.wss4j.common.crypto.Crypto} to be used for encryption. If not set,
          * {@code encryption.properties} will be used to configure a {@code Crypto} instance.
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.encryption.crypto", transformer = beanRef)
         @WithName("encryption.crypto")
@@ -1202,7 +1202,7 @@ public interface CxfWsSecurityConfig {
          * These are also used by the {@code token.properties} to send/process any RSA/DSAKeyValue tokens
          * used if the KeyType is {@code PublicKey}
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.sts.token.crypto", transformer = beanRef)
         @WithName("token.crypto")
@@ -1219,7 +1219,7 @@ public interface CxfWsSecurityConfig {
          * [prefix].token.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
          * </pre>
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.sts.token.properties", transformer = properties)
         @WithName("token.properties")
@@ -1229,7 +1229,7 @@ public interface CxfWsSecurityConfig {
          * The alias name in the keystore to get the user's public key to send to the STS for the
          * PublicKey KeyType case.
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.sts.token.username")
         @WithName("token.username")
@@ -1239,7 +1239,7 @@ public interface CxfWsSecurityConfig {
          * Whether to write out an X509Certificate structure in UseKey/KeyInfo, or whether to write
          * out a KeyValue structure.
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.sts.token.usecert")
         @WithName("token.usecert")
@@ -1249,7 +1249,7 @@ public interface CxfWsSecurityConfig {
         /**
          * If {@code true} the STS client will be set to send Soap 1.2 messages; otherwise it will send SOAP 1.1 messages.
          *
-         * @since 2.8.0
+         * @since 3.8.0
          */
         @WssConfigurationConstant(key = "security.sts.client-soap12-binding")
         @WithName("soap12-binding")
