@@ -2,9 +2,12 @@ package io.quarkiverse.cxf.ws.security;
 
 import static io.quarkiverse.cxf.ws.security.WssConfigurationConstant.Transformer.beanRef;
 import static io.quarkiverse.cxf.ws.security.WssConfigurationConstant.Transformer.properties;
+import static io.quarkiverse.cxf.ws.security.WssConfigurationConstant.Transformer.toInteger;
 
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.cxf.ws.security.SecurityConstants;
 
 import io.quarkus.runtime.annotations.ConfigDocFilename;
 import io.quarkus.runtime.annotations.ConfigGroup;
@@ -1006,6 +1009,228 @@ public interface CxfWsSecurityConfig {
         @WssConfigurationConstant(key = "ws-security.kerberos.client")
         @WithName("kerberos.client")
         Optional<String> kerberosClient();
+
+        //
+        // Custom Algorithm Suite
+        //
+
+        /**
+         * If algorithm suite with the identifier <i>CustomizedAlgorithmSuite</i> is used, it can be fully customized.
+         * Suggested usage is for scenarios for the non-standard security requirements (like FIPS).
+         *
+         * <p>
+         * Default values are derived from the algorithm suite <i>Basic256Sha256Rsa15</i> and are FIPS compliant.
+         * <p>
+         * </p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         *
+         * <p>
+         * Default values:
+         * </p>
+         * <ul>
+         * <li>Asymmetric Signature: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</li>
+         * <li>Symmetric Signature: http://www.w3.org/2000/09/xmldsig#hmac-sha1</li>
+         * <li>Digest Algorithm: http://www.w3.org/2001/04/xmlenc#sha256</li>
+         * <li>Encryption Algorithm: http://www.w3.org/2009/xmlenc11#aes256-gcm (differs from <i>Basic256Sha256Rsa15</i>)</li>
+         * <li>Symmetric Key Encryption Algorithm: http://www.w3.org/2001/04/xmlenc#kw-aes256</li>
+         * <li>Asymmetric Key Encryption Algorithm: http://www.w3.org/2001/04/xmlenc#rsa-1_5</li>
+         * <li>Encryption Key Derivation: http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1</li>
+         * <li>Signature Key Derivation: http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1</li>
+         * <li>Encryption Derived Key Length: 256</li>
+         * <li>Signature Derived Key Length: 192</li>
+         * <li>Minimum Symmetric Key Length: 256</li>
+         * <li>Maximum Symmetric Key Length: 1024</li>
+         * <li>Minimum Asymmetric Key Length: 256</li>
+         * <li>Maximum Asymmetric Key Length: 4096</li>
+         * </ul>
+         * </p>
+         */
+        public static final String CUSTOM_ALGORITHM_SUITE_NAME = "CustomAlgorithmSuite";
+
+        /**
+         * Digest Algorithm.
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_DIGEST_ALGORITHM)
+        @WithName("custom.digest.algorithm")
+        @WithDefault("http://www.w3.org/2001/04/xmlenc#sha256")
+        public String digestAlgorithm();
+
+        /**
+         * Encryption Algorithm.
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_ENCRYPTION_ALGORITHM)
+        @WithName("custom.encryption.algorithm")
+        @WithDefault("http://www.w3.org/2009/xmlenc11#aes256-gcm")
+        public String encryptionAlgorithm();
+
+        /**
+         * Symmetric Key Encryption Algorithm.
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_SYMMETRIC_KEY_ENCRYPTION_ALGORITHM)
+        @WithName("custom.symmetric.key.encryption.algorithm")
+        @WithDefault("http://www.w3.org/2001/04/xmlenc#kw-aes256")
+        public String symmetricKeyEncryptionAlgorithm();
+
+        /**
+         * Asymmetric Key Encryption Algorithm.
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_ASYMMETRIC_KEY_ENCRYPTION_ALGORITHM)
+        @WithName("custom.asymmetric.key.encryption.algorithm")
+        @WithDefault("http://www.w3.org/2001/04/xmlenc#rsa-1_5")
+        public String asymmetricKeyEncryptionAlgorithm();
+
+        /**
+         * Encryption Key Derivation. For more information about algorithms, see WS-SecurityPolicy 1.2 and security algorithms
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_ENCRYPTION_KEY_DERIVATION)
+        @WithName("custom.encryption.key.derivation")
+        @WithDefault("http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1")
+        public String encryptionKeyDerivation();
+
+        /**
+         * Signature Key Derivation.
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_SIGNATURE_KEY_DERIVATION)
+        @WithName("custom.signature.key.derivation")
+        @WithDefault("http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1")
+        public String signatureKeyDerivation();
+
+        /**
+         * Encryption Derived Key Length (number of bits).
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_ENCRYPTION_DERIVED_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.encryption.derived.key.length")
+        @WithDefault("256")
+        public Integer encryptionDerivedKeyLength();
+
+        /**
+         * Signature Derived Key Length (number of bits).
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_SIGNATURE_DERIVED_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.signature.derived.key.length")
+        @WithDefault("192")
+        public Integer signatureDerivedKeyLength();
+
+        /**
+         * Minimum Symmetric Key Length (number of bits).
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_MINIMUM_SYMMETRIC_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.minimum.symmetric.key.length")
+        @WithDefault("256")
+        public Integer minimumSymmetricKeyLength();
+
+        /**
+         * Maximum Symmetric Key Length (number of bits).
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_MAXIMUM_SYMMETRIC_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.maximum.symmetric.key.length")
+        @WithDefault("256")
+        public Integer maximumSymmetricKeyLength();
+
+        /**
+         * Minimum Symmetric Key Length (number of bits).
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_MINIMUM_ASYMMETRIC_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.minimum.asymmetric.key.length")
+        @WithDefault("1024")
+        public Integer minimumAsymmetricKeyLength();
+
+        /**
+         * Maximum Symmetric Key Length (number of bits).
+         * <p>
+         * For more information about algorithms, see
+         * <a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">WS-SecurityPolicy
+         * 1.2</a:href="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744">
+         * and <a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">security
+         * algorithms</a></a:href="https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms">
+         * </p>
+         */
+        @WssConfigurationConstant(key = SecurityConstants.CUSTOM_ALG_SUITE_MAXIMUM_ASYMMETRIC_KEY_LENGTH, transformer = toInteger)
+        @WithName("custom.maximum.asymmetric.key.length")
+        @WithDefault("4096")
+        public Integer maximumAsymmetricKeyLength();
     }
 
     /**

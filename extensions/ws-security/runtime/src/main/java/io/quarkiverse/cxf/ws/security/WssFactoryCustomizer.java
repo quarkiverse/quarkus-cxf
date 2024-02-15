@@ -133,6 +133,9 @@ public class WssFactoryCustomizer implements ClientFactoryCustomizer, EndpointFa
                             consumer.accept(propKey, cryptoProps);
                         }
                         break;
+                    case toInteger:
+                        consumer.accept(propKey, Integer.parseInt(value.toString()));
+                        break;
                     default:
                         throw new IllegalStateException("Unexpected "
                                 + io.quarkiverse.cxf.ws.security.WssConfigurationConstant.Transformer.class.getName() + ": "
