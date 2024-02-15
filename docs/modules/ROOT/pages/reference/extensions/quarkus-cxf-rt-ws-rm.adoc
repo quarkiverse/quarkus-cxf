@@ -65,14 +65,14 @@ There is an integration test covering WS-RM with a decoupled endpoint in the {qu
 
 It is split into two separate applications that communicate with each other:
 
-* https://github.com/quarkiverse/quarkus-cxf/tree/main/test-util-parent/test-ws-rm-server[Server]
+* https://github.com/quarkiverse/quarkus-cxf/tree/main/test-util-parent/test-ws-rm-server-jvm[Server]
 * https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-rm-client[Client]
 
 To run it, you need to install the server into your local Maven repository first
 
 [source,java]
 ----
-$ cd test-util-parent/test-ws-rm-server
+$ cd test-util-parent/test-ws-rm-server-jvm
 $ mvn clean install
 ----
 
