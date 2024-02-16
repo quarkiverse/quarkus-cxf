@@ -15,22 +15,25 @@ import io.smallrye.config.WithName;
 @ConfigRoot(phase = ConfigPhase.RUN_TIME)
 public interface CxfConfig {
 
+    // The formatter breaks the java snippet
+    // @formatter:off
     /**
-     * An URI base to use as a prefix of {@code quarkus.cxf.client.myClient.decoupled-endpoint}. You will typically
-     * want to set this to something like the following:
+     * An URI base to use as a prefix of `quarkus.cxf.client.myClient.decoupled-endpoint`. You will typically want to set this
+     * to something like the following:
      *
-     * <pre>
+     * [source,properties]
+     * ----
      * quarkus.cxf.decoupled-endpoint-base = https://api.example.com:${quarkus.http.ssl-port}${quarkus.cxf.path}
      * # or for plain HTTP
      * quarkus.cxf.decoupled-endpoint-base = http://api.example.com:${quarkus.http.port}${quarkus.cxf.path}
-     * </pre>
+     * ----
      *
-     * If you invoke your WS client from within a HTTP handler, you can leave this option unspecified and rather
-     * set it dynamically on the request context of your WS client using the
-     * {@code org.apache.cxf.ws.addressing.decoupled.endpoint.base} key. Here is an example how to do that from a
-     * RESTeasy handler method:
+     * If you invoke your WS client from within a HTTP handler, you can leave this option unspecified and rather set it
+     * dynamically on the request context of your WS client using the `org.apache.cxf.ws.addressing.decoupled.endpoint.base`
+     * key. Here is an example how to do that from a RESTeasy handler method:
      *
-     * <pre>
+     * [source,java]
+     * ----
      * import java.util.Map;
      * import jakarta.inject.Inject;
      * import jakarta.ws.rs.POST;
@@ -51,30 +54,36 @@ public interface CxfConfig {
      *     HelloService helloService;
      *
      *     &#64;ConfigProperty(name = "quarkus.cxf.path")
-     *     String quarkusCxfPath;
+     *                      String quarkusCxfPath;
      *
      *     &#64;POST
      *     &#64;Path("/hello")
      *     &#64;Produces(MediaType.TEXT_PLAIN)
-     *     public String hello(String body, &#64;Context UriInfo uriInfo) throws IOException {
+     *         public String hello(String body, &#64;Context UriInfo uriInfo) throws IOException {
      *
      *         // You may consider doing this only once if you are sure that your service is accessed
      *         // through a single hostname
      *         String decoupledEndpointBase = uriInfo.getBaseUriBuilder().path(quarkusCxfPath);
-     *         Map&gt;String, Object&lt; requestContext = ((BindingProvider) helloService).getRequestContext();
-     *         requestContext.put("org.apache.cxf.ws.addressing.decoupled.endpoint.base", decoupledEndpointBase);
+     *         Map>String, Object< requestContext = ((BindingProvider)
+     *         helloService).getRequestContext();
+     *         requestContext.put("org.apache.cxf.ws.addressing.decoupled.endpoint.base",
+     *         decoupledEndpointBase);
      *
      *         return wsrmHelloService.hello(body);
      *     }
      * }
-     * </pre>
+     * ----
      *
      * @since 2.7.0
+     * @asciidoclet
      */
+    // @formatter:on
     public Optional<String> decoupledEndpointBase();
 
     /**
      * Choose the path of each web services.
+     *
+     * @asciidoclet
      */
     @WithName("endpoint")
     @WithDefaults
@@ -82,19 +91,25 @@ public interface CxfConfig {
 
     /**
      * Configure client proxies.
+     *
+     * @asciidoclet
      */
     @WithName("client")
     @WithDefaults
     public Map<String, CxfClientConfig> clients();
 
     /**
-     * This exists just as a convenient way to get a {@link CxfClientConfig} with all defaults set.
-     * It is not intended to be used by end users.
+     * This exists just as a convenient way to get a `CxfClientConfig` with all defaults set. It is not intended to be used by
+     * end users.
+     *
+     * @asciidoclet
      */
     public InternalConfig internal();
 
     /**
      * Global logging related configuration
+     *
+     * @asciidoclet
      */
     GlobalLoggingConfig logging();
 
@@ -107,6 +122,7 @@ public interface CxfConfig {
     }
 
     public interface InternalConfig {
+
         @ConfigDocIgnore
         public CxfClientConfig client();
     }
