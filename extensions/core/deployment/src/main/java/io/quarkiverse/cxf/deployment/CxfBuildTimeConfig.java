@@ -139,8 +139,12 @@ public interface CxfBuildTimeConfig {
          * quarkus.cxf.codegen.wsdl2java.bar-params.xjc = ts
          * ----
          *
-         * Note that file extensions other than `.wsdl` will work during normal builds, but changes in the matching files may
-         * get overseen in Quarkus dev mode. Always using the `.wsdl` extension is thus recommended.
+         * [NOTE]
+         * .File extensions
+         * ====
+         * File extensions other than `.wsdl` will work during normal builds, but changes in the matching files may get overseen
+         * in Quarkus dev mode. We recommend that you always use the `.wsdl` extension.
+         * ====
          *
          * There is no default value for this option, so `wsdl2java` code generation is disabled by default.
          *
@@ -426,7 +430,11 @@ public interface CxfBuildTimeConfig {
          * the files selected by `includes` and `excludes`. Example: `-portname,12345`. Check
          * link:https://cxf.apache.org/docs/java-to-ws.html[`java2ws` documentation] for all supported options.
          *
-         * Note that only options related to generation of WSDL from Java are supported currently.
+         * [NOTE]
+         * .Supported options
+         * ====
+         * Currently, only options related to generation of WSDL from Java are supported.
+         * ====
          *
          * @asciidoclet
          */

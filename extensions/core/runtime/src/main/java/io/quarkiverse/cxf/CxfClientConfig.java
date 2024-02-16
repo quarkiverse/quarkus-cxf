@@ -291,8 +291,9 @@ public interface CxfClientConfig {
 
     /**
      * HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit`
-     * implementation defined via `quarkus.cxf.client.myClient.http-conduit-factory`. Other possible values: `1.1`, `2`. Note
-     * that some of these values might be unsupported by some `HTTPConduit` implementations.
+     * implementation defined via `quarkus.cxf.client.myClient.http-conduit-factory`. Other possible values: `1.1`, `2`.
+     *
+     * Some of these values might be unsupported by some `HTTPConduit` implementations.
      *
      * @since 2.2.3
      * @asciidoclet

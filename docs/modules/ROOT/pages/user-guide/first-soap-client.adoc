@@ -2,7 +2,11 @@
 
 In this guide we explain how to create a simple Quarkus application acting as a client of a remote Web service.
 
-NOTE: Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
+[NOTE]
+.Create project first
+====
+Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
+====
 
 == Remote Web service for testing
 
