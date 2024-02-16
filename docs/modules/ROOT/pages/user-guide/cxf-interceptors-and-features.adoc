@@ -34,4 +34,12 @@ quarkus.cxf.endpoint."/greeting-service".in-fault-interceptors=org.acme.Test2Int
 quarkus.cxf.endpoint."/greeting-service".out-fault-interceptors=org.acme.Test1Intercetpor
 ----
 
-NOTE: Both feature and interceptor classes will be attempted to be loaded via CDI first, and if no CDI beans are available, then the constructor with no parameters will be invoked to instantiate each class.
+
+[NOTE]
+.Class loading
+====
+Both feature and interceptor classes are loaded via CDI first..
+
+If no CDI beans are available, the constructor without parameters will be invoked to instantiate each class.
+====
+

@@ -253,9 +253,15 @@ public interface CxfWsSecurityConfig {
 
         /**
          * If `true`, unsigned SAML assertions will be allowed as SecurityContext Principals; otherwise they won't be allowed as
-         * SecurityContext Principals. Note that "unsigned" refers to an internal signature. Even if the token is signed by an
-         * external signature (as per the "sender-vouches" requirement), this boolean must still be configured if you want to
-         * use the token to set up the security context.
+         * SecurityContext Principals.
+         *
+         * [NOTE]
+         * .Signature
+         * ====
+         * The label "unsigned" refers to an internal signature. Even if the token is signed by an external signature (as per
+         * the "sender-vouches" requirement), this boolean must still be configured if you want to use the token to set up
+         * the security context.
+         * ====
          *
          * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
          * tests] yet.
@@ -428,8 +434,12 @@ public interface CxfWsSecurityConfig {
          * be cached for neither message initiators nor recipients. The default is `true` for message recipients, and `false`
          * for message initiators.
          *
-         * Note that caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effect, or the `UsernameToken`
-         * action has been configured for the non-security-policy case.
+         * [NOTE]
+         * .Caching
+         * ====
+         * Caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effect, or the `UsernameToken` action has
+         * been configured for the non-security-policy case.
+         * ====
          *
          * @since 2.5.0
          * @asciidoclet
@@ -443,8 +453,12 @@ public interface CxfWsSecurityConfig {
          * cached for both message initiators and recipients; otherwise they won't be cached for neither message initiators nor
          * recipients. The default is `true` for message recipients, and `false` for message initiators.
          *
-         * Note that caching only applies when either a `IncludeTimestamp` policy is in effect, or the `Timestamp` action has
-         * been configured for the non-security-policy case.
+         * [NOTE]
+         * .Caching
+         * ====
+         * Caching only applies when either a `IncludeTimestamp` policy is in effect, or the `Timestamp` action has been
+         * configured for the non-security-policy case.
+         * ====
          *
          * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
          * tests] yet.
@@ -502,8 +516,8 @@ public interface CxfWsSecurityConfig {
          * both message initiators and recipients; otherwise they won't be cached for neither message initiators nor recipients.
          * The default is `true` for message recipients, and `false` for message initiators.
          *
-         * Note that caching only applies when either a `SamlToken` policy is in effect, or a SAML action has been configured
-         * for the non-security-policy case.
+         * Caching only applies when either a `SamlToken` policy is in effect, or a SAML action has been configured for the
+         * non-security-policy case.
          *
          * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
          * tests] yet.

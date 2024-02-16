@@ -25,7 +25,11 @@ include::example$soap-service/application.properties[tag=generate-wsdl-from-java
 Here we have instructed `java2ws` to generate WSDLs for two interfaces,
 namely `HelloService` and `FaultyHelloService`.
 
+[NOTE]
+.Annotations
+====
 Note that the Service interfaces must be annotated with `{javaxOrJakartaPackagePrefix}.xml.ws.WebService` to be selected for `java2ws` processing.
+====
 
 The two generated WSDL documents will be stored as `target/Java2wsTest/FaultyHelloService-from-java2ws.wsdl`
 and `target/Java2wsTest/HelloService-from-java2ws.wsdl` respectively.

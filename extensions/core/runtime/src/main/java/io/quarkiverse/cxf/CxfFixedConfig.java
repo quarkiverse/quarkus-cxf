@@ -20,7 +20,11 @@ public interface CxfFixedConfig {
     /**
      * The default path for CXF resources.
      *
-     * ⚠️ Note that the default value before Quarkus CXF version 2.0.0 was `/`.
+     * [NOTE]
+     * .Earlier versions
+     * ====
+     * The default value before Quarkus CXF version 2.0.0 was `/`.
+     * ====
      *
      * @asciidoclet
      */

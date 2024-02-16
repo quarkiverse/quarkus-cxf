@@ -2,10 +2,14 @@
 
 `quarkus-cxf` extension supports generating Java classes from WSDL during Quarkus code generation phase.
 
-NOTE: The code snippets shown in this section come from the
-     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client[client integration test]
-     in the source tree of {quarkus-cxf-project-name}.
-     You may want to check it as an executable example.
+[NOTE]
+.Code examples
+====
+The code snippets shown in this section come from the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client[client integration test]
+in the source tree of {quarkus-cxf-project-name}.
+You may want to check it as an executable example.
+====
 
 You need to set up a couple of things for CXF code generation to work:
 

@@ -85,7 +85,11 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 
 3+a|The default path for CXF resources.
 
-⚠️ Note that the default value before Quarkus CXF version 2.0.0 was `/`.
+[NOTE]
+.Earlier versions
+====
+The default value before Quarkus CXF version 2.0.0 was `/`.
+====
 
 *Environment variable*: `+++QUARKUS_CXF_PATH+++`
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-min-chunk-size]]`link:#quarkus-cxf_quarkus-cxf-min-chunk-size[quarkus.cxf.min-chunk-size]`
@@ -1000,8 +1004,9 @@ requests
 .<| `auto`
 
 3+a|HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit`
-implementation defined via `quarkus.cxf.client.myClient.http-conduit-factory`. Other possible values: `1.1`, `2`. Note
-that some of these values might be unsupported by some `HTTPConduit` implementations.
+implementation defined via `quarkus.cxf.client.myClient.http-conduit-factory`. Other possible values: `1.1`, `2`.
+
+Some of these values might be unsupported by some `HTTPConduit` implementations.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__VERSION+++` +
 *Since Quarkus CXF*: 2.2.3
