@@ -128,8 +128,8 @@ public interface CxfEndpointConfig {
 
     /**
      * Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation will be
-     * enforced unless it is enabled by other means, such as `&++#++64;org.apache.cxf.annotations.SchemaValidation` or
-     * `&++#++64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")` annotations.
+     * enforced unless it is enabled by other means, such as `&#64;org.apache.cxf.annotations.SchemaValidation` or
+     * `&#64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")` annotations.
      *
      * @since 2.7.0
      * @asciidoclet

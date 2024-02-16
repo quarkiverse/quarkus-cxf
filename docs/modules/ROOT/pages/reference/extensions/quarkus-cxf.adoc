@@ -608,8 +608,8 @@ class Producers {
 .<| 
 
 3+a|Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation will be
-enforced unless it is enabled by other means, such as `&++#++64;org.apache.cxf.annotations.SchemaValidation` or
-`&++#++64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")` annotations.
+enforced unless it is enabled by other means, such as `@org.apache.cxf.annotations.SchemaValidation` or
+`@org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")` annotations.
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SCHEMA_VALIDATION_ENABLED_FOR+++` +
 *Since Quarkus CXF*: 2.7.0
@@ -1153,8 +1153,8 @@ not specified, then the creation of the `HostnameVerifier` is delegated to CXF, 
 .<| 
 
 3+a|Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation will be
-enforced unless it is enabled by other means, such as `&++#++64;org.apache.cxf.annotations.SchemaValidation` or
-`&++#++64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")` annotations.
+enforced unless it is enabled by other means, such as `@org.apache.cxf.annotations.SchemaValidation` or
+`@org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")` annotations.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SCHEMA_VALIDATION_ENABLED_FOR+++` +
 *Since Quarkus CXF*: 2.7.0
