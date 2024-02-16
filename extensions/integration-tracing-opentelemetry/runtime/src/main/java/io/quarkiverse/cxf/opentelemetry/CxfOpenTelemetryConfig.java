@@ -23,17 +23,23 @@ public interface CxfOpenTelemetryConfig {
 
     /**
      * Global OpenTelemetry configuration.
+     *
+     * @asciidoclet
      */
     GlobalOtelConfig otel();
 
     /**
      * Client configurations.
+     *
+     * @asciidoclet
      */
     @WithName("client")
     Map<String, ClientsConfig> clients();
 
     /**
      * Endpoint configurations.
+     *
+     * @asciidoclet
      */
     @WithName("endpoint")
     Map<String, EndpointsConfig> endpoints();
@@ -43,8 +49,11 @@ public interface CxfOpenTelemetryConfig {
      */
     @ConfigGroup
     interface ClientsConfig {
+
         /**
          * OpenTelemetry related client configuration
+         *
+         * @asciidoclet
          */
         ClientConfig otel();
 
@@ -53,12 +62,14 @@ public interface CxfOpenTelemetryConfig {
          */
         @ConfigGroup
         public interface ClientConfig {
+
             /**
-             * If {@code true} and if {@code quarkus.cxf.otel.enabled-for} is set to {@code both} or {@code clients}
-             * then the {@code OpenTelemetryClientFeature} will be added to this client; otherwise the feature will
-             * not be added to this client.
+             * If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `clients` then the
+             * `OpenTelemetryClientFeature` will be added to this client; otherwise the feature will not be added to this
+             * client.
              *
              * @since 2.7.0
+             * @asciidoclet
              */
             @WithDefault("true")
             boolean enabled();
@@ -70,8 +81,11 @@ public interface CxfOpenTelemetryConfig {
      */
     @ConfigGroup
     interface EndpointsConfig {
+
         /**
          * OpenTelemetry related service endpoint configuration.
+         *
+         * @asciidoclet
          */
         EndpointConfig otel();
 
@@ -80,12 +94,13 @@ public interface CxfOpenTelemetryConfig {
          */
         @ConfigGroup
         public interface EndpointConfig {
+
             /**
-             * If {@code true} and if {@code quarkus.cxf.otel.enabled-for} is set to {@code both} or {@code services}
-             * then the {@code OpenTelemetryFeature} will be added to this service endpoint; otherwise the feature will
-             * not be added to this service endpoint.
+             * If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `services` then the `OpenTelemetryFeature`
+             * will be added to this service endpoint; otherwise the feature will not be added to this service endpoint.
              *
              * @since 2.7.0
+             * @asciidoclet
              */
             @WithDefault("true")
             boolean enabled();
@@ -94,18 +109,17 @@ public interface CxfOpenTelemetryConfig {
 
     @ConfigGroup
     public interface GlobalOtelConfig {
+
         /**
-         * Specifies whether the OpenTelemetry tracing will be enabled for clients, services, both or none. This global
-         * setting can be overridden per client or service endpoint using the
-         * {@code quarkus.cxf.client."clients".otel.enabled} or {@code quarkus.cxf.endpoint."endpoints".otel.enabled}
-         * option respectively.
+         * Specifies whether the OpenTelemetry tracing will be enabled for clients, services, both or none. This global setting
+         * can be overridden per client or service endpoint using the `quarkus.cxf.client."clients".otel.enabled` or
+         * `quarkus.cxf.endpoint."endpoints".otel.enabled` option respectively.
          *
          * @since 2.7.0
+         * @asciidoclet
          */
         @WithDefault("both")
         @WithConverter(EnabledForConverter.class)
         EnabledFor enabledFor();
-
     }
-
 }

@@ -76,7 +76,9 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 .<| `clients`, `services`, `both`, `none`
 .<| `both`
 
-3+a|Specifies whether the OpenTelemetry tracing will be enabled for clients, services, both or none. This global setting can be overridden per client or service endpoint using the `quarkus.cxf.client."clients".otel.enabled` or `quarkus.cxf.endpoint."endpoints".otel.enabled` option respectively.
+3+a|Specifies whether the OpenTelemetry tracing will be enabled for clients, services, both or none. This global setting
+can be overridden per client or service endpoint using the `quarkus.cxf.client."clients".otel.enabled` or
+`quarkus.cxf.endpoint."endpoints".otel.enabled` option respectively.
 
 *Environment variable*: `+++QUARKUS_CXF_OTEL_ENABLED_FOR+++` +
 *Since Quarkus CXF*: 2.7.0
@@ -85,7 +87,9 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 .<| `boolean`
 .<| `true`
 
-3+a|If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `clients` then the `OpenTelemetryClientFeature` will be added to this client; otherwise the feature will not be added to this client.
+3+a|If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `clients` then the
+`OpenTelemetryClientFeature` will be added to this client; otherwise the feature will not be added to this
+client.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__OTEL_ENABLED+++` +
 *Since Quarkus CXF*: 2.7.0
@@ -94,7 +98,8 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 .<| `boolean`
 .<| `true`
 
-3+a|If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `services` then the `OpenTelemetryFeature` will be added to this service endpoint; otherwise the feature will not be added to this service endpoint.
+3+a|If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `services` then the `OpenTelemetryFeature`
+will be added to this service endpoint; otherwise the feature will not be added to this service endpoint.
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OTEL_ENABLED+++` +
 *Since Quarkus CXF*: 2.7.0

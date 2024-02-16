@@ -23,17 +23,23 @@ public interface CxfMetricsConfig {
 
     /**
      * Global Metrics configuration.
+     *
+     * @asciidoclet
      */
     GlobalMetricsConfig metrics();
 
     /**
      * Client configurations.
+     *
+     * @asciidoclet
      */
     @WithName("client")
     Map<String, ClientsConfig> clients();
 
     /**
      * Endpoint configurations.
+     *
+     * @asciidoclet
      */
     @WithName("endpoint")
     Map<String, EndpointsConfig> endpoints();
@@ -43,8 +49,11 @@ public interface CxfMetricsConfig {
      */
     @ConfigGroup
     interface ClientsConfig {
+
         /**
          * Metrics related client configuration
+         *
+         * @asciidoclet
          */
         ClientConfig metrics();
 
@@ -53,12 +62,13 @@ public interface CxfMetricsConfig {
          */
         @ConfigGroup
         public interface ClientConfig {
+
             /**
-             * If {@code true} and if {@code quarkus.cxf.metrics.enabled-for} is set to {@code both} or {@code clients}
-             * then the {@code MetricsFeature} will be added to this client; otherwise the feature will
-             * not be added to this client.
+             * If `true` and if `quarkus.cxf.metrics.enabled-for` is set to `both` or `clients` then the `MetricsFeature` will
+             * be added to this client; otherwise the feature will not be added to this client.
              *
              * @since 2.7.0
+             * @asciidoclet
              */
             @WithDefault("true")
             boolean enabled();
@@ -70,8 +80,11 @@ public interface CxfMetricsConfig {
      */
     @ConfigGroup
     interface EndpointsConfig {
+
         /**
          * Metrics related service endpoint configuration.
+         *
+         * @asciidoclet
          */
         EndpointConfig metrics();
 
@@ -80,12 +93,13 @@ public interface CxfMetricsConfig {
          */
         @ConfigGroup
         public interface EndpointConfig {
+
             /**
-             * If {@code true} and if {@code quarkus.cxf.metrics.enabled-for} is set to {@code both} or {@code services}
-             * then the {@code MetricsFeature} will be added to this service endpoint; otherwise the feature will
-             * not be added to this service endpoint.
+             * If `true` and if `quarkus.cxf.metrics.enabled-for` is set to `both` or `services` then the `MetricsFeature` will
+             * be added to this service endpoint; otherwise the feature will not be added to this service endpoint.
              *
              * @since 2.7.0
+             * @asciidoclet
              */
             @WithDefault("true")
             boolean enabled();
@@ -94,18 +108,17 @@ public interface CxfMetricsConfig {
 
     @ConfigGroup
     public interface GlobalMetricsConfig {
+
         /**
-         * Specifies whether the metrics collection will be enabled for clients, services, both or none. This global
-         * setting can be overridden per client or service endpoint using the
-         * {@code quarkus.cxf.client."clients".metrics.enabled}
-         * or {@code quarkus.cxf.endpoint."endpoints".metrics.enabled} option respectively.
+         * Specifies whether the metrics collection will be enabled for clients, services, both or none. This global setting can
+         * be overridden per client or service endpoint using the `quarkus.cxf.client."clients".metrics.enabled` or
+         * `quarkus.cxf.endpoint."endpoints".metrics.enabled` option respectively.
          *
          * @since 2.7.0
+         * @asciidoclet
          */
         @WithDefault("both")
         @WithConverter(EnabledForConverter.class)
         EnabledFor enabledFor();
-
     }
-
 }

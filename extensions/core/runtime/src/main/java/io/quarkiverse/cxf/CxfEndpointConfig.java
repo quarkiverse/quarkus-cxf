@@ -14,11 +14,15 @@ public interface CxfEndpointConfig {
 
     /**
      * The service endpoint implementation class
+     *
+     * @asciidoclet
      */
     public Optional<String> implementor();
 
     /**
      * The service endpoint WSDL path
+     *
+     * @asciidoclet
      */
     @WithName("wsdl")
     public Optional<String> wsdlPath();
@@ -37,27 +41,35 @@ public interface CxfEndpointConfig {
 
     /**
      * The published service endpoint URL
+     *
+     * @asciidoclet
      */
     public Optional<String> publishedEndpointUrl();
 
     /**
      * Logging related configuration
+     *
+     * @asciidoclet
      */
     PerClientOrServiceLoggingConfig logging();
 
+    // The formatter breaks the java snippet
+    // @formatter:off
     /**
      * A comma-separated list of fully qualified CXF Feature class names or named CDI beans.
-     * <p>
+     *
      * Examples:
      *
-     * <pre>
+     * [source,properties]
+     * ----
      * quarkus.cxf.endpoint."/hello".features = org.apache.cxf.ext.logging.LoggingFeature
      * quarkus.cxf.endpoint."/fruit".features = #myCustomLoggingFeature
-     * </pre>
+     * ----
      *
-     * In the second case, the {@code #myCustomLoggingFeature} bean can be produced as follows:
+     * In the second case, the `++#++myCustomLoggingFeature` bean can be produced as follows:
      *
-     * <pre>
+     * [source,java]
+     * ----
      * import org.apache.cxf.ext.logging.LoggingFeature;
      * import javax.enterprise.context.ApplicationScoped;
      * import javax.enterprise.inject.Produces;
@@ -72,49 +84,56 @@ public interface CxfEndpointConfig {
      *         return loggingFeature;
      *     }
      * }
-     * </pre>
-     * <p>
-     * Note that the {@code LoggingFeature} is available through the
-     * <a href="../extensions/quarkus-cxf-rt-features-logging.html">Logging
-     * Feature</a> extension.
+     * ----
+     *
+     * @asciidoclet
      */
+    // @formatter:on
     public Optional<List<String>> features();
 
     /**
      * The comma-separated list of Handler classes
+     *
+     * @asciidoclet
      */
     public Optional<List<String>> handlers();
 
     /**
      * The comma-separated list of InInterceptor classes
+     *
+     * @asciidoclet
      */
     public Optional<List<String>> inInterceptors();
 
     /**
      * The comma-separated list of OutInterceptor classes
+     *
+     * @asciidoclet
      */
     public Optional<List<String>> outInterceptors();
 
     /**
      * The comma-separated list of OutFaultInterceptor classes
+     *
+     * @asciidoclet
      */
     public Optional<List<String>> outFaultInterceptors();
 
     /**
      * The comma-separated list of InFaultInterceptor classes
+     *
+     * @asciidoclet
      */
     public Optional<List<String>> inFaultInterceptors();
 
     /**
-     * Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation
-     * will be enforced unless it is enabled by other means, such as
-     * {@code &#64;org.apache.cxf.annotations.SchemaValidation} or
-     * {@code &#64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")}
-     * annotations.
+     * Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation will be
+     * enforced unless it is enabled by other means, such as `&++#++64;org.apache.cxf.annotations.SchemaValidation` or
+     * `&++#++64;org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")` annotations.
      *
      * @since 2.7.0
+     * @asciidoclet
      */
     @WithName("schema-validation.enabled-for")
     public Optional<SchemaValidationType> schemaValidationEnabledFor();
-
 }
