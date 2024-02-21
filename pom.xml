@@ -10,7 +10,7 @@
 
     <groupId>io.quarkiverse.cxf</groupId>
     <artifactId>quarkus-cxf-parent</artifactId>
-    <version>2.7.2-SNAPSHOT</version>
+    <version>3.8.0</version>
     <name>Quarkus CXF - Parent</name>
 
     <packaging>pom</packaging>
@@ -102,7 +102,7 @@
         <url>https://github.com/quarkiverse/quarkiverse-cxf</url>
         <connection>scm:git:https://github.com/quarkiverse/quarkiverse-cxf.git</connection>
         <developerConnection>scm:git:https://github.com/quarkiverse/quarkiverse-cxf.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>3.8.0</tag>
     </scm>
 
     <modules>
@@ -285,7 +285,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence/>
+                                <dependencyConvergence />
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
