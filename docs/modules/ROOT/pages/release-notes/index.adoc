@@ -1,6 +1,3 @@
-= Migration guides
+= Release notes
 
-We strive to maintain backward compatibility but we may on occasion include a breaking change in the interest of the long-term evolution of the project.
-
-Listed here are guides on how to migrate between major versions and anything of significance to watch for when upgrading from minor versions.
-
+Release notes documents for major and minor releases are listed in this section.
