@@ -5,7 +5,7 @@ https://cxf.apache.org/docs/provider-services.html[JAX-WS Providers] are fully s
 
 Given the following sample `Provider` implementation:
 
-[source,java,subs="attributes"]
+[source,java,subs="attributes,specialchars"]
 ----
 import {javaxOrJakartaPackagePrefix}.xml.transform.stream.StreamSource;
 import {javaxOrJakartaPackagePrefix}.xml.ws.BindingType;

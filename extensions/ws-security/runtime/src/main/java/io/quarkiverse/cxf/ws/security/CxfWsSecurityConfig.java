@@ -1130,7 +1130,7 @@ public interface CxfWsSecurityConfig {
          * created and configured based on other `++[++prefix++]++.security.sts.client.++*++` properties as long as they are
          * available.
          *
-         * To workaround the fact that `org.apache.cxf.ws.security.trust.STSClient` does not have a no-args constructor and
+         * To work around the fact that `org.apache.cxf.ws.security.trust.STSClient` does not have a no-args constructor and
          * cannot thus be used as a CDI bean type, you can use the wrapper class
          * `io.quarkiverse.cxf.ws.security.sts.client.STSClientBean` instead.
          *

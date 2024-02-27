@@ -71,7 +71,8 @@ contains the `native` profile needed for building the native image:
 </profile>
 ----
 
-Further, as mentioned xref:#_prerequisites[above], you need the GraalVM `native-image` tool.
+Further, as mentioned in the xref:user-guide/create-project.adoc[] section, you need the GraalVM `native-image` tool.
+
 
 You should either have it installed locally and have `GRAALVM_HOME` environment variable set properly,
 or -- if you only need to produce a Linux native executable -- you can use `docker`.

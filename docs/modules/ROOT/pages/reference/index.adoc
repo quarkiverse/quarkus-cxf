@@ -93,7 +93,7 @@ Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the foll
 
 * `quarkus-cxf` implements its own custom transport based on Quarkus and Vert.x for serving SOAP endpoints
 * HTTP client via `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]`, including
-** xref:user-guide/auth.adoc##_client_http_basic_authentication[Basic Authentication]
+** xref:user-guide/auth.adoc#_client_http_basic_authentication[Basic Authentication]
 * https://cxf.apache.org/docs/asynchronous-client-http-transport.html[Asynchronous Client HTTP Transport]
   via `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]`
 
@@ -111,6 +111,7 @@ In order to switch to SOAP 1.2 or to add MTOM, set `quarkus.cxf.[client|endpoint
 
 |===
 | Binding | Property Value
+
 | SOAP 1.1 (default) | `http://schemas.xmlsoap.org/wsdl/soap/http`
 | SOAP 1.2 | `http://www.w3.org/2003/05/soap/bindings/HTTP/`
 | SOAP 1.1 with MTOM | `http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true`
