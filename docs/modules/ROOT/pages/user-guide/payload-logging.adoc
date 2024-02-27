@@ -111,7 +111,7 @@ public class SayHiImplementation implements SayHi {
 
 If you need some custom logic to setup the `LoggingFeature`, you can produce a named `LoggingFeature` bean:
 
-[source,java,subs="attributes"]
+[source,java,subs="attributes,specialchars"]
 ----
 import org.apache.cxf.ext.logging.LoggingFeature;
 import {javaxOrJakartaPackagePrefix}.enterprise.context.ApplicationScoped;
