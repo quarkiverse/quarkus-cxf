@@ -2,7 +2,7 @@
 
 This guide explains how to set up a new project for a Quarkus application hosting a CXF client or server or both.
 
-[[prerequisites]]
+[[prerequisites-project]]
 == Prerequisites
 
 Read the https://quarkus.io/guides/getting-started#prerequisites[Prerequisites section] of Quarkus getting started guide.
