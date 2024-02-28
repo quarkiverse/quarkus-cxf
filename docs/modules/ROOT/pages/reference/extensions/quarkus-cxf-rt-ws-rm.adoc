@@ -195,6 +195,7 @@ If the value is `++#++defaultRmFeature` then Quarkus CXF creates and configures 
 will be added to this client or service endpoint.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__RM_ENABLED+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-rm-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-rm-enabled[quarkus.cxf.endpoint."endpoints".rm.enabled]`
 .<| `boolean`
 .<| `true`
@@ -202,5 +203,6 @@ will be added to this client or service endpoint.
 3+a|If `true` then the WS-ReliableMessaging link:https://cxf.apache.org/docs/ws-reliablemessaging.html[interceptors]
 will be added to this client or service endpoint.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__RM_ENABLED+++`|===
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__RM_ENABLED+++`
+|===
 

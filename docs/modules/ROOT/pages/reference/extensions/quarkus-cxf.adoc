@@ -95,6 +95,7 @@ The default value before Quarkus CXF version 2.0.0 was `/`.
 ====
 
 *Environment variable*: `+++QUARKUS_CXF_PATH+++`
+
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-min-chunk-size]]`link:#quarkus-cxf_quarkus-cxf-min-chunk-size[quarkus.cxf.min-chunk-size]`
 .<| `int`
 .<| `128`
@@ -105,6 +106,7 @@ This is a very advanced setting that should only be set if you understand exactl
 of the application.
 
 *Environment variable*: `+++QUARKUS_CXF_MIN_CHUNK_SIZE+++`
+
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-output-buffer-size]]`link:#quarkus-cxf_quarkus-cxf-output-buffer-size[quarkus.cxf.output-buffer-size]`
 .<| `int`
 .<| `8191`
@@ -115,6 +117,7 @@ provided then the response will be chunked.
 Larger values may give slight performance increases for large responses, at the expense of more memory usage.
 
 *Environment variable*: `+++QUARKUS_CXF_OUTPUT_BUFFER_SIZE+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-decoupled-endpoint-base]]`link:#quarkus-cxf_quarkus-cxf-decoupled-endpoint-base[quarkus.cxf.decoupled-endpoint-base]`
 .<| `string`
 .<| 
@@ -351,6 +354,7 @@ respectively.
 3+a|The client service interface class name
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SERVICE_INTERFACE+++`
+
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-clients-alternative]]`link:#quarkus-cxf_quarkus-cxf-client-clients-alternative[quarkus.cxf.client."clients".alternative]`
 .<| `boolean`
 .<| `false`
@@ -359,6 +363,7 @@ respectively.
 configuring a client without annotation `@CXFClient`.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ALTERNATIVE+++`
+
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-clients-native-runtime-initialized]]`link:#quarkus-cxf_quarkus-cxf-client-clients-native-runtime-initialized[quarkus.cxf.client."clients".native.runtime-initialized]`
 .<| `boolean`
 .<| `false`
@@ -375,6 +380,7 @@ initialization of this class`. `jdk.proxy<some-number>.$Proxy<some-number>` is t
 native compiler.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__NATIVE_RUNTIME_INITIALIZED+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-implementor]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-implementor[quarkus.cxf.endpoint."endpoints".implementor]`
 .<| `string`
 .<| 
@@ -382,6 +388,7 @@ native compiler.
 3+a|The service endpoint implementation class
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IMPLEMENTOR+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-wsdl]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-wsdl[quarkus.cxf.endpoint."endpoints".wsdl]`
 .<| `string`
 .<| 
@@ -389,6 +396,7 @@ native compiler.
 3+a|The service endpoint WSDL path
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__WSDL+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-soap-binding]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-soap-binding[quarkus.cxf.endpoint."endpoints".soap-binding]`
 .<| `string`
 .<| 
@@ -401,6 +409,7 @@ native compiler.
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SOAP_BINDING+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-published-endpoint-url]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-published-endpoint-url[quarkus.cxf.endpoint."endpoints".published-endpoint-url]`
 .<| `string`
 .<| 
@@ -408,6 +417,7 @@ native compiler.
 3+a|The published service endpoint URL
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__PUBLISHED_ENDPOINT_URL+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-enabled[quarkus.cxf.endpoint."endpoints".logging.enabled]`
 .<| `true`, `false`, `pretty`
 .<| 
@@ -568,6 +578,7 @@ class Producers {
 ----
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__FEATURES+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-handlers]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-handlers[quarkus.cxf.endpoint."endpoints".handlers]`
 .<| List of ``string``
 .<| 
@@ -575,6 +586,7 @@ class Producers {
 3+a|The comma-separated list of Handler classes
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__HANDLERS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-in-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-in-interceptors[quarkus.cxf.endpoint."endpoints".in-interceptors]`
 .<| List of ``string``
 .<| 
@@ -582,6 +594,7 @@ class Producers {
 3+a|The comma-separated list of InInterceptor classes
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_INTERCEPTORS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-out-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-out-interceptors[quarkus.cxf.endpoint."endpoints".out-interceptors]`
 .<| List of ``string``
 .<| 
@@ -589,6 +602,7 @@ class Producers {
 3+a|The comma-separated list of OutInterceptor classes
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_INTERCEPTORS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-out-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-out-fault-interceptors[quarkus.cxf.endpoint."endpoints".out-fault-interceptors]`
 .<| List of ``string``
 .<| 
@@ -596,6 +610,7 @@ class Producers {
 3+a|The comma-separated list of OutFaultInterceptor classes
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OUT_FAULT_INTERCEPTORS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-in-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-in-fault-interceptors[quarkus.cxf.endpoint."endpoints".in-fault-interceptors]`
 .<| List of ``string``
 .<| 
@@ -603,6 +618,7 @@ class Producers {
 3+a|The comma-separated list of InFaultInterceptor classes
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__IN_FAULT_INTERCEPTORS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-schema-validation-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-schema-validation-enabled-for[quarkus.cxf.endpoint."endpoints".schema-validation.enabled-for]`
 .<| `in`, `request`, `out`, `response`, `both`, `none`
 .<| 
@@ -622,6 +638,7 @@ enforced unless it is enabled by other means, such as `@org.apache.cxf.annotatio
 this client.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__WSDL+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-soap-binding]]`link:#quarkus-cxf_quarkus-cxf-client-clients-soap-binding[quarkus.cxf.client."clients".soap-binding]`
 .<| `string`
 .<| 
@@ -634,6 +651,7 @@ this client.
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SOAP_BINDING+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-client-endpoint-url]]`link:#quarkus-cxf_quarkus-cxf-client-clients-client-endpoint-url[quarkus.cxf.client."clients".client-endpoint-url]`
 .<| `string`
 .<| 
@@ -641,6 +659,7 @@ this client.
 3+a|The client endpoint URL
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__CLIENT_ENDPOINT_URL+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-endpoint-namespace]]`link:#quarkus-cxf_quarkus-cxf-client-clients-endpoint-namespace[quarkus.cxf.client."clients".endpoint-namespace]`
 .<| `string`
 .<| 
@@ -648,6 +667,7 @@ this client.
 3+a|The client endpoint namespace
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAMESPACE+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-endpoint-name]]`link:#quarkus-cxf_quarkus-cxf-client-clients-endpoint-name[quarkus.cxf.client."clients".endpoint-name]`
 .<| `string`
 .<| 
@@ -655,6 +675,7 @@ this client.
 3+a|The client endpoint name
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ENDPOINT_NAME+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-username[quarkus.cxf.client."clients".username]`
 .<| `string`
 .<| 
@@ -662,6 +683,7 @@ this client.
 3+a|The username for HTTP Basic authentication
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__USERNAME+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-password[quarkus.cxf.client."clients".password]`
 .<| `string`
 .<| 
@@ -669,6 +691,7 @@ this client.
 3+a|The password for HTTP Basic authentication
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__PASSWORD+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-secure-wsdl-access]]`link:#quarkus-cxf_quarkus-cxf-client-clients-secure-wsdl-access[quarkus.cxf.client."clients".secure-wsdl-access]`
 .<| `boolean`
 .<| `false`
@@ -818,6 +841,7 @@ quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeatu
 ----
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__FEATURES+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-handlers]]`link:#quarkus-cxf_quarkus-cxf-client-clients-handlers[quarkus.cxf.client."clients".handlers]`
 .<| List of ``string``
 .<| 
@@ -825,6 +849,7 @@ quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeatu
 3+a|The comma-separated list of Handler classes
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HANDLERS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-in-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-clients-in-interceptors[quarkus.cxf.client."clients".in-interceptors]`
 .<| List of ``string``
 .<| 
@@ -832,6 +857,7 @@ quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeatu
 3+a|The comma-separated list of InInterceptor classes
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_INTERCEPTORS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-out-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-clients-out-interceptors[quarkus.cxf.client."clients".out-interceptors]`
 .<| List of ``string``
 .<| 
@@ -839,6 +865,7 @@ quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeatu
 3+a|The comma-separated list of OutInterceptor classes
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_INTERCEPTORS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-out-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-clients-out-fault-interceptors[quarkus.cxf.client."clients".out-fault-interceptors]`
 .<| List of ``string``
 .<| 
@@ -846,6 +873,7 @@ quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeatu
 3+a|The comma-separated list of OutFaultInterceptor classes
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__OUT_FAULT_INTERCEPTORS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-in-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-clients-in-fault-interceptors[quarkus.cxf.client."clients".in-fault-interceptors]`
 .<| List of ``string``
 .<| 
@@ -853,6 +881,7 @@ quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeatu
 3+a|The comma-separated list of InFaultInterceptor classes
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__IN_FAULT_INTERCEPTORS+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-connection-timeout]]`link:#quarkus-cxf_quarkus-cxf-client-clients-connection-timeout[quarkus.cxf.client."clients".connection-timeout]`
 .<| `long`
 .<| `30000`
@@ -951,6 +980,7 @@ chunk. If chunklen is less than or equal to zero, a default value will be used.
 3+a|Specifies the language the client desires (e.g., English, French, etc.)
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__ACCEPT_LANGUAGE+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-accept-encoding]]`link:#quarkus-cxf_quarkus-cxf-client-clients-accept-encoding[quarkus.cxf.client."clients".accept-encoding]`
 .<| `string`
 .<| 
@@ -1112,6 +1142,7 @@ returning `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will us
 underlying HTTP client.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HTTP_CONDUIT_FACTORY+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store[quarkus.cxf.client."clients".trust-store]`
 .<| `string`
 .<| 
@@ -1119,6 +1150,7 @@ underlying HTTP client.
 3+a|The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store-password[quarkus.cxf.client."clients".trust-store-password]`
 .<| `string`
 .<| 
@@ -1126,6 +1158,7 @@ underlying HTTP client.
 3+a|The trust store password
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_PASSWORD+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store-type]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store-type[quarkus.cxf.client."clients".trust-store-type]`
 .<| `string`
 .<| `JKS`
@@ -1133,6 +1166,7 @@ underlying HTTP client.
 3+a|The type of the trust store.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_TYPE+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-hostname-verifier]]`link:#quarkus-cxf_quarkus-cxf-client-clients-hostname-verifier[quarkus.cxf.client."clients".hostname-verifier]`
 .<| `string`
 .<| 
@@ -1148,6 +1182,7 @@ not specified, then the creation of the `HostnameVerifier` is delegated to CXF, 
 `PublicSuffixMatcherLoader.getDefault()`.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HOSTNAME_VERIFIER+++`
+
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-schema-validation-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-client-clients-schema-validation-enabled-for[quarkus.cxf.client."clients".schema-validation.enabled-for]`
 .<| `in`, `request`, `out`, `response`, `both`, `none`
 .<| 
