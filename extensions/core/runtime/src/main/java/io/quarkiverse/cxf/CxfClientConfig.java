@@ -389,20 +389,56 @@ public interface CxfClientConfig {
      * underlying HTTP client.
      *
      * @asciidoclet
+     * @since 2.3.0
      */
     public Optional<HTTPConduitImpl> httpConduitFactory();
+
+    /**
+     * The key store location for this client. The resource is first looked up in the classpath, then in the file system.
+     *
+     * @asciidoclet
+     * @since 3.9.0
+     */
+    public Optional<String> keyStore();
+
+    /**
+     * The key store password
+     *
+     * @asciidoclet
+     * @since 3.9.0
+     */
+    public Optional<String> keyStorePassword();
+
+    /**
+     * The type of the key store.
+     *
+     * @asciidoclet
+     * @since 3.9.0
+     */
+    @WithDefault("JKS")
+    public String keyStoreType();
+
+    /**
+     * The key password.
+     *
+     * @asciidoclet
+     * @since 3.9.0
+     */
+    public Optional<String> keyPassword();
 
     /**
      * The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
      *
      * @asciidoclet
+     * @since 2.5.0
      */
     public Optional<String> trustStore();
 
     /**
-     * The trust store password
+     * The trust store password.
      *
      * @asciidoclet
+     * @since 2.5.0
      */
     public Optional<String> trustStorePassword();
 
@@ -410,6 +446,7 @@ public interface CxfClientConfig {
      * The type of the trust store.
      *
      * @asciidoclet
+     * @since 2.5.0
      */
     @WithDefault("JKS")
     public String trustStoreType();
@@ -426,6 +463,7 @@ public interface CxfClientConfig {
      * `PublicSuffixMatcherLoader.getDefault()`.
      *
      * @asciidoclet
+     * @since 2.5.0
      */
     public Optional<String> hostnameVerifier();
 

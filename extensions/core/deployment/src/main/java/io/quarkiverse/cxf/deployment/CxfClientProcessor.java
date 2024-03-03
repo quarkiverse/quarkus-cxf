@@ -482,7 +482,7 @@ public class CxfClientProcessor {
     @Record(ExecutionTime.STATIC_INIT)
     void customizers(
             CXFRecorder recorder,
-            CxfBuildTimeConfig config,
+            CxfFixedConfig config,
             BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
         final HTTPConduitImpl factory = HTTPConduitImpl.fromOptional(
                 config.httpConduitFactory(),

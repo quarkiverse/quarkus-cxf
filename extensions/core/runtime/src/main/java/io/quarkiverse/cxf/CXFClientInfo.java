@@ -173,6 +173,26 @@ public class CXFClientInfo {
     private final String proxyPassword;
 
     /**
+     * The key store location. Can point to either a classpath resource or a file.
+     */
+    private final String keyStore;
+
+    /**
+     * The key store password.
+     */
+    private final String keyStorePassword;
+
+    /**
+     * The type of the trust store. Defaults to "JKS".
+     */
+    private final String keyStoreType;
+
+    /**
+     * The key password.
+     */
+    private final String keyPassword;
+
+    /**
      * The trust store location. Can point to either a classpath resource or a file.
      */
     private final String trustStore;
@@ -239,6 +259,10 @@ public class CXFClientInfo {
         this.proxyUsername = config.proxyUsername().orElse(null);
         this.proxyPassword = config.proxyPassword().orElse(null);
 
+        this.keyStore = config.keyStore().orElse(null);
+        this.keyStorePassword = config.keyStorePassword().orElse(null);
+        this.keyStoreType = Objects.requireNonNull(config.keyStoreType(), "keyStoreType cannot be null");
+        this.keyPassword = config.keyPassword().orElse(null);
         this.trustStore = config.trustStore().orElse(null);
         this.trustStorePassword = config.trustStorePassword().orElse(null);
         this.trustStoreType = Objects.requireNonNull(config.trustStoreType(), "trustStoreType cannot be null");
@@ -459,6 +483,22 @@ public class CXFClientInfo {
 
     public HTTPConduitImpl getHttpConduitImpl() {
         return httpConduitImpl;
+    }
+
+    public String getKeyStore() {
+        return keyStore;
+    }
+
+    public String getKeyStorePassword() {
+        return keyStorePassword;
+    }
+
+    public String getKeyStoreType() {
+        return keyStoreType;
+    }
+
+    public String getKeyPassword() {
+        return keyPassword;
     }
 
     public String getTrustStore() {
