@@ -2,6 +2,9 @@ package io.quarkiverse.cxf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -123,8 +126,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
             if (keyStorePath != null) {
                 final KeyStore keyStore;
                 final KeyManagerFactory kmf;
-                try (InputStream is = Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream(keyStorePath)) {
+                try (InputStream is = openStream(keyStorePath)) {
                     keyStore = KeyStore.getInstance(cxfClientInfo.getKeyStoreType());
                     final String pwd = cxfClientInfo.getKeyStorePassword();
                     keyStore.load(is, pwd == null ? null : pwd.toCharArray());
@@ -141,8 +143,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
             if (trustStorePath != null) {
                 final KeyStore trustStore;
                 final TrustManagerFactory tmf;
-                try (InputStream is = Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream(trustStorePath)) {
+                try (InputStream is = openStream(trustStorePath)) {
                     trustStore = KeyStore.getInstance(cxfClientInfo.getTrustStoreType());
                     final String pwd = cxfClientInfo.getTrustStorePassword();
                     trustStore.load(is, pwd == null ? null : pwd.toCharArray());
@@ -247,6 +248,26 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         }
 
         return httpConduit;
+    }
+
+    private InputStream openStream(final String keystorePath) {
+        final URL url = Thread.currentThread().getContextClassLoader().getResource(keystorePath);
+        if (url != null) {
+            try {
+                return url.openStream();
+            } catch (IOException e) {
+                throw new RuntimeException("Could not open " + keystorePath + " from the class path", e);
+            }
+        }
+        final Path path = Path.of(keystorePath);
+        if (Files.exists(path)) {
+            try {
+                return Files.newInputStream(path);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not open " + keystorePath + " from the filesystem", e);
+            }
+        }
+        throw new IllegalStateException("Resource " + keystorePath + " exists neither in class path nor in the filesystem");
     }
 
 }
