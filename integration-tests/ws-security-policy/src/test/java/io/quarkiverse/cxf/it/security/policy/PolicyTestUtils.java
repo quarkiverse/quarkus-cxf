@@ -45,7 +45,8 @@ public class PolicyTestUtils {
 
     public static RestAssuredConfig restAssuredConfig() {
         return RestAssured.config().sslConfig(new SSLConfig().with().trustStore(
-                "client-truststore." + ConfigProvider.getConfig().getValue("keystore.type", String.class), "password"));
+                "client-truststore." + ConfigProvider.getConfig().getValue("keystore.type", String.class),
+                "client-truststore-password"));
     }
 
 }
