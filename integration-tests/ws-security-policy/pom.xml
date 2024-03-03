@@ -159,10 +159,8 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>keytool-maven-plugin</artifactId>
                         <configuration>
-                            <keypass>password</keypass>
                             <validity>3650</validity>
                             <keyalg>RSA</keyalg>
-                            <storepass>password</storepass>
                             <skip>${keytool.skip}</skip>
                         </configuration>
                         <executions>
@@ -181,6 +179,8 @@
                                         <ext>bc:c=ca:true,pathlen:2147483647</ext>
                                         <ext>IssuerAlternativeName=DNS:NOT-FOR-PRODUCTION-USE</ext>
                                     </exts>
+                                    <keypass>cxfca-password</keypass>
+                                    <storepass>cxfca-password</storepass>
                                     <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
                                 </configuration>
                             </execution>
@@ -194,6 +194,7 @@
                                     <alias>cxfca</alias>
                                     <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
                                     <rfc>true</rfc>
+                                    <storepass>cxfca-password</storepass>
                                     <file>${project.build.outputDirectory}/cxfca.pem</file>
                                 </configuration>
                             </execution>
@@ -212,7 +213,9 @@
                                         <ext>bc:c=ca:true,pathlen:2147483647</ext>
                                         <ext>IssuerAlternativeName=DNS:NOT-FOR-PRODUCTION-USE</ext>
                                     </exts>
-                                    <keystore>${project.build.outputDirectory}/localhost.jks</keystore>
+                                    <keypass>localhost-keystore-password</keypass>
+                                    <storepass>localhost-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/localhost-keystore.jks</keystore>
                                 </configuration>
                             </execution>
                             <execution>
@@ -223,7 +226,8 @@
                                 </goals>
                                 <configuration>
                                     <alias>localhost</alias>
-                                    <keystore>${project.build.outputDirectory}/localhost.jks</keystore>
+                                    <storepass>localhost-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/localhost-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/server.csr</file>
                                 </configuration>
                             </execution>
@@ -235,6 +239,7 @@
                                 </goals>
                                 <configuration>
                                     <alias>cxfca</alias>
+                                    <storepass>cxfca-password</storepass>
                                     <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
                                     <rfc>true</rfc>
                                     <infile>${project.build.outputDirectory}/server.csr</infile>
@@ -251,7 +256,8 @@
                                     <alias>cxfca</alias>
                                     <trustcacerts>true</trustcacerts>
                                     <noprompt>true</noprompt>
-                                    <keystore>${project.build.outputDirectory}/localhost.jks</keystore>
+                                    <storepass>localhost-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/localhost-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/cxfca.pem</file>
                                 </configuration>
                             </execution>
@@ -265,7 +271,8 @@
                                     <alias>localhost</alias>
                                     <trustcacerts>true</trustcacerts>
                                     <noprompt>true</noprompt>
-                                    <keystore>${project.build.outputDirectory}/localhost.jks</keystore>
+                                    <storepass>localhost-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/localhost-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/server.pem</file>
                                 </configuration>
                             </execution>
@@ -282,6 +289,7 @@
                                     <alias>cxfca</alias>
                                     <trustcacerts>true</trustcacerts>
                                     <noprompt>true</noprompt>
+                                    <storepass>client-truststore-password</storepass>
                                     <keystore>${project.build.outputDirectory}/client-truststore.jks</keystore>
                                     <file>${project.build.outputDirectory}/cxfca.pem</file>
                                 </configuration>
@@ -303,7 +311,9 @@
                                         <ext>IssuerAlternativeName=DNS:NOT-FOR-PRODUCTION-USE</ext>
                                         <ext>SubjectAlternativeName=DNS:localhost,IP:127.0.0.1</ext>
                                     </exts>
-                                    <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                                    <keypass>alice-keystore-password</keypass>
+                                    <storepass>alice-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/alice-keystore.jks</keystore>
                                 </configuration>
                             </execution>
                             <execution>
@@ -314,7 +324,8 @@
                                 </goals>
                                 <configuration>
                                     <alias>alice</alias>
-                                    <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                                    <storepass>alice-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/alice-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/alice.csr</file>
                                 </configuration>
                             </execution>
@@ -326,6 +337,7 @@
                                 </goals>
                                 <configuration>
                                     <alias>cxfca</alias>
+                                    <storepass>cxfca-password</storepass>
                                     <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
                                     <rfc>true</rfc>
                                     <infile>${project.build.outputDirectory}/alice.csr</infile>
@@ -342,7 +354,8 @@
                                     <alias>cxfca</alias>
                                     <trustcacerts>true</trustcacerts>
                                     <noprompt>true</noprompt>
-                                    <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                                    <storepass>alice-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/alice-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/cxfca.pem</file>
                                 </configuration>
                             </execution>
@@ -356,7 +369,8 @@
                                     <alias>alice</alias>
                                     <trustcacerts>true</trustcacerts>
                                     <noprompt>true</noprompt>
-                                    <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                                    <storepass>alice-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/alice-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/alice.pem</file>
                                 </configuration>
                             </execution>
@@ -376,7 +390,9 @@
                                         <ext>IssuerAlternativeName=DNS:NOT-FOR-PRODUCTION-USE</ext>
                                         <ext>SubjectAlternativeName=DNS:localhost,IP:127.0.0.1</ext>
                                     </exts>
-                                    <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                                    <keypass>bob-keystore-password</keypass>
+                                    <storepass>bob-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/bob-keystore.jks</keystore>
                                 </configuration>
                             </execution>
                             <execution>
@@ -387,7 +403,8 @@
                                 </goals>
                                 <configuration>
                                     <alias>bob</alias>
-                                    <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                                    <storepass>bob-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/bob-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/bob.csr</file>
                                 </configuration>
                             </execution>
@@ -399,6 +416,7 @@
                                 </goals>
                                 <configuration>
                                     <alias>cxfca</alias>
+                                    <storepass>cxfca-password</storepass>
                                     <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
                                     <rfc>true</rfc>
                                     <infile>${project.build.outputDirectory}/bob.csr</infile>
@@ -415,7 +433,8 @@
                                     <alias>cxfca</alias>
                                     <trustcacerts>true</trustcacerts>
                                     <noprompt>true</noprompt>
-                                    <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                                    <storepass>bob-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/bob-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/cxfca.pem</file>
                                 </configuration>
                             </execution>
@@ -429,7 +448,8 @@
                                     <alias>bob</alias>
                                     <trustcacerts>true</trustcacerts>
                                     <noprompt>true</noprompt>
-                                    <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                                    <storepass>bob-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/bob-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/bob.pem</file>
                                 </configuration>
                             </execution>
@@ -447,7 +467,8 @@
                                     <alias>bob</alias>
                                     <trustcacerts>true</trustcacerts>
                                     <noprompt>true</noprompt>
-                                    <keystore>${project.build.outputDirectory}/alice.jks</keystore>
+                                    <storepass>alice-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/alice-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/bob.pem</file>
                                 </configuration>
                             </execution>
@@ -463,7 +484,8 @@
                                     <alias>alice</alias>
                                     <trustcacerts>true</trustcacerts>
                                     <noprompt>true</noprompt>
-                                    <keystore>${project.build.outputDirectory}/bob.jks</keystore>
+                                    <storepass>bob-keystore-password</storepass>
+                                    <keystore>${project.build.outputDirectory}/bob-keystore.jks</keystore>
                                     <file>${project.build.outputDirectory}/alice.pem</file>
                                 </configuration>
                             </execution>

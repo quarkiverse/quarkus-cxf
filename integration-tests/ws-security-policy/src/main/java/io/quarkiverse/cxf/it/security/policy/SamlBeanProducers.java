@@ -60,7 +60,7 @@ public class SamlBeanProducers {
         private final boolean signAssertion = false;
         private ConditionsBean conditions;
         private String cryptoAlias = "alice";
-        private String cryptoPassword = "password";
+        private String cryptoPassword = "alice-keystore-password";
         private final String cryptoKeystoreFile;
         private String signatureAlgorithm = WSConstants.RSA_SHA1;
         private String digestAlgorithm = WSConstants.SHA1;
@@ -69,7 +69,7 @@ public class SamlBeanProducers {
         public SamlCallbackHandler(Version samlVersion, String keystoreType) {
             this.samlVersion = samlVersion;
             this.keystoreType = keystoreType;
-            this.cryptoKeystoreFile = "alice." + keystoreType;
+            this.cryptoKeystoreFile = "alice-keystore." + keystoreType;
             switch (samlVersion) {
                 case SAML_20:
                     this.confirmationMethod = SAML2Constants.CONF_SENDER_VOUCHES;

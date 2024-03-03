@@ -9,7 +9,6 @@ destinationDir="target/classes"
 keySize=2048
 days=10000
 extFile="$(pwd)/v3.ext"
-password="password"
 encryptionAlgo="aes-256-cbc"
 
 if [[ -n "${JAVA_HOME}" ]] ; then
@@ -43,12 +42,19 @@ for actor in alice bob localhost; do
   openssl x509 -req -in "$workDir/$actor.csr" -extfile "$extFile" -CA "$workDir/cxfca.pem" -CAkey "$workDir/cxfca.key" -CAcreateserial -days $days -out "$workDir/$actor.crt"
 
   # Export keystores
-  openssl pkcs12 -export -in "$workDir/$actor.crt" -inkey "$workDir/$actor.key" -certfile "$workDir/cxfca.crt" -name "$actor" -out "$destinationDir/$actor.pkcs12" -passout pass:"$password" -keypbe "$encryptionAlgo" -certpbe "$encryptionAlgo"
+  openssl pkcs12 -export -in "$workDir/$actor.crt" -inkey "$workDir/$actor.key" -certfile "$workDir/cxfca.crt" -name "$actor" -out "$destinationDir/$actor-keystore.pkcs12" -passout pass:"${actor}-keystore-password" -keypbe "$encryptionAlgo" -certpbe "$encryptionAlgo"
 done
 
-"$keytool" -import -trustcacerts -file "$workDir/localhost.crt" -alias localhost -noprompt -keystore "$destinationDir/client-truststore.pkcs12" -storepass "$password"
-"$keytool" -import -trustcacerts -file "$workDir/bob.crt"       -alias bob       -noprompt -keystore "$destinationDir/alice.pkcs12"             -storepass "$password"
-"$keytool" -import -trustcacerts -file "$workDir/alice.crt"     -alias alice     -noprompt -keystore "$destinationDir/bob.pkcs12"               -storepass "$password"
-"$keytool" -import -trustcacerts -file "$workDir/localhost.crt" -alias localhost -noprompt -keystore "$destinationDir/alice.pkcs12"             -storepass "$password"
-"$keytool" -import -trustcacerts -file "$workDir/localhost.crt" -alias localhost -noprompt -keystore "$destinationDir/bob.pkcs12"               -storepass "$password"
 
+# Truststores
+"$keytool" -import -file "$workDir/localhost.crt" -alias localhost -noprompt -keystore "$destinationDir/client-truststore.pkcs12" -storepass "client-truststore-password"
+"$keytool" -import -file "$workDir/cxfca.crt"     -alias cxfca     -noprompt -keystore "$destinationDir/client-truststore.pkcs12" -storepass "client-truststore-password"
+
+# We use conbined key- and truststores for alice and bob
+"$keytool" -import -file "$workDir/bob.crt"       -alias bob       -noprompt -keystore "$destinationDir/alice-keystore.pkcs12"  -storepass "alice-keystore-password"
+"$keytool" -import -file "$workDir/localhost.crt" -alias localhost -noprompt -keystore "$destinationDir/alice-keystore.pkcs12"  -storepass "alice-keystore-password"
+#"$keytool" -import -file "$workDir/cxfca.crt"     -alias cxfca     -noprompt -keystore "$destinationDir/alice-keystore.pkcs12"  -storepass "alice-keystore-password"
+
+"$keytool" -import -file "$workDir/alice.crt"     -alias alice     -noprompt -keystore "$destinationDir/bob-keystore.pkcs12"    -storepass "bob-keystore-password"
+"$keytool" -import -file "$workDir/localhost.crt" -alias localhost -noprompt -keystore "$destinationDir/bob-keystore.pkcs12"    -storepass "bob-keystore-password"
+#"$keytool" -import -file "$workDir/cxfca.crt"     -alias cxfca     -noprompt -keystore "$destinationDir/bob-keystore.pkcs12"    -storepass "bob-keystore-password"
