@@ -118,6 +118,28 @@ Larger values may give slight performance increases for large responses, at the 
 
 *Environment variable*: `+++QUARKUS_CXF_OUTPUT_BUFFER_SIZE+++`
 
+.<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-http-conduit-factory]]`link:#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
+.<| `QuarkusCXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
+.<| 
+
+3+a|Select the `HTTPConduitFactory` implementation for all clients except the ones that override this setting via
+`quarkus.cxf.client.myClient.http-conduit-factory`.
+
+- `QuarkusCXFDefault` (default): if `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` is present in class path,
+then its `HTTPConduitFactory` implementation will be used; otherwise this value is equivalent with
+`URLConnectionHTTPConduitFactory` (this may change, once issue
+link:https://github.com/quarkiverse/quarkus-cxf/issues/992[++#++992] gets resolved in CXF)
+- `CXFDefault`: the selection of `HTTPConduitFactory` implementation is left to CXF
+- `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning
+`org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the underlying HTTP
+client.
+- `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning
+`org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the underlying
+HTTP client.
+
+*Environment variable*: `+++QUARKUS_CXF_HTTP_CONDUIT_FACTORY+++` +
+*Since Quarkus CXF*: 2.3.0
+
 .<| [[quarkus-cxf_quarkus-cxf-decoupled-endpoint-base]]`link:#quarkus-cxf_quarkus-cxf-decoupled-endpoint-base[quarkus.cxf.decoupled-endpoint-base]`
 .<| `string`
 .<| 
@@ -1141,7 +1163,44 @@ underlying HTTP client.
 returning `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the
 underlying HTTP client.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HTTP_CONDUIT_FACTORY+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HTTP_CONDUIT_FACTORY+++` +
+*Since Quarkus CXF*: 2.3.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-key-store]]`link:#quarkus-cxf_quarkus-cxf-client-clients-key-store[quarkus.cxf.client."clients".key-store]`
+.<| `string`
+.<| 
+
+3+a|The key store location for this client. The resource is first looked up in the classpath, then in the file system.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__KEY_STORE+++` +
+*Since Quarkus CXF*: 3.9.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-key-store-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-key-store-password[quarkus.cxf.client."clients".key-store-password]`
+.<| `string`
+.<| 
+
+3+a|The key store password
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__KEY_STORE_PASSWORD+++` +
+*Since Quarkus CXF*: 3.9.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-key-store-type]]`link:#quarkus-cxf_quarkus-cxf-client-clients-key-store-type[quarkus.cxf.client."clients".key-store-type]`
+.<| `string`
+.<| `JKS`
+
+3+a|The type of the key store.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__KEY_STORE_TYPE+++` +
+*Since Quarkus CXF*: 3.9.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-clients-key-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-key-password[quarkus.cxf.client."clients".key-password]`
+.<| `string`
+.<| 
+
+3+a|The key password.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__KEY_PASSWORD+++` +
+*Since Quarkus CXF*: 3.9.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store[quarkus.cxf.client."clients".trust-store]`
 .<| `string`
@@ -1149,15 +1208,17 @@ underlying HTTP client.
 
 3+a|The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE+++` +
+*Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store-password[quarkus.cxf.client."clients".trust-store-password]`
 .<| `string`
 .<| 
 
-3+a|The trust store password
+3+a|The trust store password.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_PASSWORD+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_PASSWORD+++` +
+*Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store-type]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store-type[quarkus.cxf.client."clients".trust-store-type]`
 .<| `string`
@@ -1165,7 +1226,8 @@ underlying HTTP client.
 
 3+a|The type of the trust store.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_TYPE+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__TRUST_STORE_TYPE+++` +
+*Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-hostname-verifier]]`link:#quarkus-cxf_quarkus-cxf-client-clients-hostname-verifier[quarkus.cxf.client."clients".hostname-verifier]`
 .<| `string`
@@ -1181,7 +1243,8 @@ not specified, then the creation of the `HostnameVerifier` is delegated to CXF, 
 `org.apache.cxf.transport.https.httpclient.PublicSuffixMatcherLoader` as returned from
 `PublicSuffixMatcherLoader.getDefault()`.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HOSTNAME_VERIFIER+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__HOSTNAME_VERIFIER+++` +
+*Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-schema-validation-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-client-clients-schema-validation-enabled-for[quarkus.cxf.client."clients".schema-validation.enabled-for]`
 .<| `in`, `request`, `out`, `response`, `both`, `none`

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaParam;
 import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaParam.Wsdl2JavaParamCollection;
 import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaParam.Wsdl2JavaParamTransformer;
@@ -44,26 +43,6 @@ public interface CxfBuildTimeConfig {
      */
     @WithName("java2ws")
     public Java2WsConfig java2ws();
-
-    /**
-     * Select the `HTTPConduitFactory` implementation for all clients except the ones that override this setting via
-     * `quarkus.cxf.client.myClient.http-conduit-factory`.
-     *
-     * - `QuarkusCXFDefault` (default): if `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` is present in class path,
-     * then its `HTTPConduitFactory` implementation will be used; otherwise this value is equivalent with
-     * `URLConnectionHTTPConduitFactory` (this may change, once issue
-     * link:https://github.com/quarkiverse/quarkus-cxf/issues/992[++#++992] gets resolved in CXF)
-     * - `CXFDefault`: the selection of `HTTPConduitFactory` implementation is left to CXF
-     * - `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning
-     * `org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the underlying HTTP
-     * client.
-     * - `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning
-     * `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the underlying
-     * HTTP client.
-     *
-     * @asciidoclet
-     */
-    public Optional<HTTPConduitImpl> httpConduitFactory();
 
     @ConfigGroup
     public interface CodeGenConfig {

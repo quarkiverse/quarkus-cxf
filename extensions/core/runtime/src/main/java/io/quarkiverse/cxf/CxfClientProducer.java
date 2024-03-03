@@ -4,20 +4,12 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.TrustManagerFactory;
 import javax.xml.namespace.QName;
 
 import jakarta.annotation.PostConstruct;
@@ -27,22 +19,18 @@ import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.inject.Inject;
 import jakarta.xml.ws.BindingProvider;
 
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
-import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.AuthorizationPolicy;
-import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
-import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.ws.addressing.WSAContextUtils;
 import org.jboss.logging.Logger;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
-import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
 
@@ -194,27 +182,6 @@ public abstract class CxfClientProducer {
         CXFRuntimeUtils.addBeans(cxfClientInfo.getInFaultInterceptors(), "inFaultInterceptor", clientString, sei,
                 factory.getInFaultInterceptors());
 
-        final HTTPConduitImpl httpConduitImpl = cxfClientInfo.getHttpConduitImpl();
-        if (httpConduitImpl != null) {
-            switch (httpConduitImpl) {
-                case CXFDefault:
-                    // nothing to do
-                    break;
-                case QuarkusCXFDefault:
-                case URLConnectionHTTPConduitFactory: {
-                    props.put(HTTPConduitFactory.class.getName(), new URLConnectionHTTPConduitFactory());
-                    break;
-                }
-                case HttpClientHTTPConduitFactory: {
-                    props.put(HTTPConduitFactory.class.getName(), new HttpClientHTTPConduitFactory());
-                    break;
-                }
-                default:
-                    throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
-                            + httpConduitImpl);
-            }
-        }
-
         {
             final String value = cxfClientInfo.getDecoupledEndpointBase();
             if (value != null) {
@@ -225,132 +192,31 @@ public abstract class CxfClientProducer {
         loggingFactoryCustomizer.customize(cxfClientInfo, factory);
         customizers.forEach(customizer -> customizer.customize(cxfClientInfo, factory));
 
-        LOGGER.debug("cxf client loaded for " + sei);
-        Object result = factory.create();
+        final Bus bus = BusFactory.getDefaultBus();
+        final HTTPConduitFactory origConduitFactory = bus.getExtension(HTTPConduitFactory.class);
+        final QuarkusHTTPConduitFactory conduitFactory = new QuarkusHTTPConduitFactory(
+                fixedConfig,
+                cxfClientInfo,
+                CXFRecorder.isHc5Present(),
+                origConduitFactory);
+        props.put(HTTPConduitFactory.class.getName(), conduitFactory);
+        Object result;
+        try {
+            /*
+             * Workaround for https://github.com/quarkiverse/quarkus-cxf/issues/1264
+             * We set the client specific HTTPConduitFactory on the bus temporarily,
+             * so that it is honored for getting the WSDL.
+             * We assume that no other tread is accessing the HTTPConduitFactory.class extension in parallel
+             */
+            bus.setExtension(conduitFactory, HTTPConduitFactory.class);
+
+            LOGGER.debug("cxf client loaded for " + sei);
+            result = factory.create();
+        } finally {
+            bus.setExtension(origConduitFactory, HTTPConduitFactory.class);
+        }
+
         final Client client = ClientProxy.getClient(result);
-        final HTTPConduit httpConduit = (HTTPConduit) client.getConduit();
-        final HTTPClientPolicy policy = httpConduit.getClient();
-        policy.setConnectionTimeout(cxfClientInfo.getConnectionTimeout());
-        policy.setReceiveTimeout(cxfClientInfo.getReceiveTimeout());
-        policy.setConnectionRequestTimeout(cxfClientInfo.getConnectionRequestTimeout());
-        policy.setAutoRedirect(cxfClientInfo.isAutoRedirect());
-        policy.setMaxRetransmits(cxfClientInfo.getMaxRetransmits());
-        policy.setAllowChunking(cxfClientInfo.isAllowChunking());
-        policy.setChunkingThreshold(cxfClientInfo.getChunkingThreshold());
-        policy.setChunkLength(cxfClientInfo.getChunkLength());
-        {
-            final String value = cxfClientInfo.getAccept();
-            if (value != null) {
-                policy.setAccept(value);
-            }
-        }
-        {
-            final String value = cxfClientInfo.getAcceptLanguage();
-            if (value != null) {
-                policy.setAcceptLanguage(value);
-            }
-        }
-        {
-            final String value = cxfClientInfo.getAcceptEncoding();
-            if (value != null) {
-                policy.setAcceptEncoding(value);
-            }
-        }
-        {
-            final String value = cxfClientInfo.getContentType();
-            if (value != null) {
-                policy.setContentType(value);
-            }
-        }
-        {
-            final String value = cxfClientInfo.getHost();
-            if (value != null) {
-                policy.setHost(value);
-            }
-        }
-        policy.setConnection(cxfClientInfo.getConnection());
-        {
-            final String value = cxfClientInfo.getCacheControl();
-            if (value != null) {
-                policy.setCacheControl(value);
-            }
-        }
-        policy.setVersion(cxfClientInfo.getVersion());
-        {
-            final String value = cxfClientInfo.getBrowserType();
-            if (value != null) {
-                policy.setBrowserType(value);
-            }
-        }
-        {
-            final String value = cxfClientInfo.getDecoupledEndpoint();
-            if (value != null) {
-                policy.setDecoupledEndpoint(value);
-            }
-        }
-        {
-            final String value = cxfClientInfo.getProxyServer();
-            if (value != null) {
-                policy.setProxyServer(value);
-            }
-        }
-        {
-            final Integer value = cxfClientInfo.getProxyServerPort();
-            if (value != null) {
-                policy.setProxyServerPort(value);
-            }
-        }
-        {
-            final String value = cxfClientInfo.getNonProxyHosts();
-            if (value != null) {
-                policy.setNonProxyHosts(value);
-            }
-        }
-        policy.setProxyServerType(cxfClientInfo.getProxyServerType());
-
-        final String proxyUsername = cxfClientInfo.getProxyUsername();
-        if (proxyUsername != null) {
-            final String proxyPassword = cxfClientInfo.getProxyPassword();
-            final ProxyAuthorizationPolicy proxyAuth = new ProxyAuthorizationPolicy();
-            proxyAuth.setUserName(proxyUsername);
-            proxyAuth.setPassword(proxyPassword);
-            httpConduit.setProxyAuthorization(proxyAuth);
-        }
-
-        final String trustStorePath = cxfClientInfo.getTrustStore();
-        if (trustStorePath != null) {
-            TLSClientParameters tlsCP = new TLSClientParameters();
-            final KeyStore trustStore;
-            final TrustManagerFactory tmf;
-            try (InputStream is = Thread.currentThread().getContextClassLoader()
-                    .getResourceAsStream(trustStorePath)) {
-                trustStore = KeyStore.getInstance(cxfClientInfo.getTrustStoreType());
-                final String pwd = cxfClientInfo.getTrustStorePassword();
-                trustStore.load(is, pwd == null ? null : pwd.toCharArray());
-                tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                tmf.init(trustStore);
-            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
-                throw new RuntimeException("Could not load client-truststore.jks from class path", e);
-            }
-            tlsCP.setTrustManagers(tmf.getTrustManagers());
-
-            final String hostnameVerifierName = cxfClientInfo.getHostnameVerifier();
-            if (hostnameVerifierName != null) {
-                final Optional<WellKnownHostnameVerifier> wellKnownHostNameVerifierName = WellKnownHostnameVerifier
-                        .of(hostnameVerifierName);
-                if (wellKnownHostNameVerifierName.isPresent()) {
-                    wellKnownHostNameVerifierName.get().configure(tlsCP);
-                } else {
-                    final HostnameVerifier hostnameVerifier = CXFRuntimeUtils.getInstance(hostnameVerifierName, true);
-                    if (hostnameVerifier == null) {
-                        throw new RuntimeException("Could not find or instantiate " + hostnameVerifierName);
-                    }
-                    tlsCP.setHostnameVerifier(hostnameVerifier);
-                }
-            }
-
-            httpConduit.setTlsClientParameters(tlsCP);
-        }
         {
             final SchemaValidationType value = cxfClientInfo.getSchemaValidationEnabledFor();
             if (value != null) {
