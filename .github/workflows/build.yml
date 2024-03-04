@@ -60,7 +60,7 @@ jobs:
         git clone --depth 1 --branch main https://github.com/apache/cxf.git \
           && cd cxf \
           && echo "Current CXF commit:" $(git rev-parse HEAD) \
-          && sed -i 's|3.0.3-SNAPSHOT|3.0.3|' rt/ws/security/pom.xml
+          && sed -i 's|3.0.3-SNAPSHOT|3.0.3|' rt/ws/security/pom.xml \
           && mvn clean install -DskipTests -Dcheckstyle.skip
     - name: Build Quarkus
       if: github.ref == 'refs/heads/quarkus-main' || github.base_ref == 'quarkus-main'

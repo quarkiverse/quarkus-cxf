@@ -10,7 +10,7 @@
 
     <artifactId>quarkus-cxf-integration-test-opentelemetry</artifactId>
 
-    <name>Quarkus CXF - Integration Test - Metrics</name>
+    <name>Quarkus CXF - Integration Test - OpenTelemetry</name>
 
     <dependencies>
         <dependency>
