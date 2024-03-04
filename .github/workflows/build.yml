@@ -12,6 +12,17 @@ on:
       - 'LICENSE'
       - 'README*'
   pull_request:
+    branches:
+      - main
+      - cxf-main
+      - quarkus-main
+      - "[0-9]+.[0-9]+"
+      - "[0-9]+.[0-9]+.x"
+    paths-ignore:
+      - '.gitignore'
+      - 'CODEOWNERS'
+      - 'LICENSE'
+      - 'README*'
 
 env:
   QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_INCREMENT_KB: 512
@@ -42,6 +53,25 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
+    - name: Build CXF
+      if: github.ref == 'refs/heads/cxf-main' || github.base_ref == 'cxf-main'
+      run: |
+        cd ~
+        git clone --depth 1 --branch main https://github.com/apache/cxf.git \
+          && cd cxf \
+          && echo "Current CXF commit:" $(git rev-parse HEAD) \
+          && sed -i 's|3.0.3-SNAPSHOT|3.0.3|' rt/ws/security/pom.xml
+          && mvn clean install -DskipTests -Dcheckstyle.skip
+    - name: Build Quarkus
+      if: github.ref == 'refs/heads/quarkus-main' || github.base_ref == 'quarkus-main'
+      run: |
+        cd ~
+        git clone --depth 1 --branch main https://github.com/quarkusio/quarkus.git \
+          && cd quarkus \
+          && echo "Current Quarkus commit:" $(git rev-parse HEAD) \
+          && sed -i '/<module>integration-tests<\/module>/d' pom.xml \
+          && ./mvnw ${CQ_MAVEN_ARGS} clean install -Dquickly
+
     - name: Ensure mvn cq:sync-versions -N causes no changes
       shell: bash
       run: |
@@ -49,7 +79,7 @@ jobs:
         [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
 
     - name: mvn -B formatter:validate install
-      run: ./mvnw -B formatter:validate install
+      run: ./mvnw -B formatter:validate install -fae
 
     - name: 'Upload generated Antora docs site'
       uses: actions/upload-artifact@v4
