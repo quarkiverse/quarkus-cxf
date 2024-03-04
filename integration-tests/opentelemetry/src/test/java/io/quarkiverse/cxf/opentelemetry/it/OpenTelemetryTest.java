@@ -56,8 +56,8 @@ public class OpenTelemetryTest {
             Assertions.assertThat(span.get("name")).isEqualTo("POST /soap/hello");
 
             final Map<?, ?> attribs = (Map<?, ?>) span.get("attributes");
-            Assertions.assertThat(attribs.get("http.status_code")).isEqualTo(200);
-            Assertions.assertThat(attribs.get("http.method")).isEqualTo("POST");
+            Assertions.assertThat(attribs.get("http.response.status_code")).isEqualTo(200);
+            Assertions.assertThat(attribs.get("http.request.method")).isEqualTo("POST");
         }
 
         {
@@ -78,8 +78,8 @@ public class OpenTelemetryTest {
             Assertions.assertThat(span.get("name")).isEqualTo("POST http://localhost:8081/soap/hello");
 
             final Map<?, ?> attribs = (Map<?, ?>) span.get("attributes");
-            Assertions.assertThat(attribs.get("http.status_code")).isEqualTo(200);
-            Assertions.assertThat(attribs.get("http.method")).isEqualTo("POST");
+            Assertions.assertThat(attribs.get("http.response.status_code")).isEqualTo(200);
+            Assertions.assertThat(attribs.get("http.request.method")).isEqualTo("POST");
         }
 
         {
