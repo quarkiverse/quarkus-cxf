@@ -1173,7 +1173,7 @@ underlying HTTP client.
 3+a|The key store location for this client. The resource is first looked up in the classpath, then in the file system.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__KEY_STORE+++` +
-*Since Quarkus CXF*: 3.9.0
+*Since Quarkus CXF*: 3.8.1
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-key-store-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-key-store-password[quarkus.cxf.client."clients".key-store-password]`
 .<| `string`
@@ -1182,7 +1182,7 @@ underlying HTTP client.
 3+a|The key store password
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__KEY_STORE_PASSWORD+++` +
-*Since Quarkus CXF*: 3.9.0
+*Since Quarkus CXF*: 3.8.1
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-key-store-type]]`link:#quarkus-cxf_quarkus-cxf-client-clients-key-store-type[quarkus.cxf.client."clients".key-store-type]`
 .<| `string`
@@ -1191,7 +1191,7 @@ underlying HTTP client.
 3+a|The type of the key store.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__KEY_STORE_TYPE+++` +
-*Since Quarkus CXF*: 3.9.0
+*Since Quarkus CXF*: 3.8.1
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-key-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-key-password[quarkus.cxf.client."clients".key-password]`
 .<| `string`
@@ -1200,7 +1200,7 @@ underlying HTTP client.
 3+a|The key password.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__KEY_PASSWORD+++` +
-*Since Quarkus CXF*: 3.9.0
+*Since Quarkus CXF*: 3.8.1
 
 .<| [[quarkus-cxf_quarkus-cxf-client-clients-trust-store]]`link:#quarkus-cxf_quarkus-cxf-client-clients-trust-store[quarkus.cxf.client."clients".trust-store]`
 .<| `string`

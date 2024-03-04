@@ -33,12 +33,10 @@ public class MutualTlsTest {
                 .post("https://localhost:8444/cxf/mtls-rest/noKeystore")
                 .then()
                 .statusCode(500)
-                .body(Matchers.containsString(noKeystoreMessage()));
+                .body(Matchers.anyOf(
+                        Matchers.containsString("SSLHandshakeException: Received fatal alert: bad_certificate"),
+                        Matchers.containsString("IOException: Error writing to server")));
 
-    }
-
-    protected String noKeystoreMessage() {
-        return "SSLHandshakeException: Received fatal alert: bad_certificate";
     }
 
     public static RestAssuredConfig restAssuredConfig() {

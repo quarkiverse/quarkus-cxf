@@ -397,7 +397,7 @@ public interface CxfClientConfig {
      * The key store location for this client. The resource is first looked up in the classpath, then in the file system.
      *
      * @asciidoclet
-     * @since 3.9.0
+     * @since 3.8.1
      */
     public Optional<String> keyStore();
 
@@ -405,7 +405,7 @@ public interface CxfClientConfig {
      * The key store password
      *
      * @asciidoclet
-     * @since 3.9.0
+     * @since 3.8.1
      */
     public Optional<String> keyStorePassword();
 
@@ -413,7 +413,7 @@ public interface CxfClientConfig {
      * The type of the key store.
      *
      * @asciidoclet
-     * @since 3.9.0
+     * @since 3.8.1
      */
     @WithDefault("JKS")
     public String keyStoreType();
@@ -422,7 +422,7 @@ public interface CxfClientConfig {
      * The key password.
      *
      * @asciidoclet
-     * @since 3.9.0
+     * @since 3.8.1
      */
     public Optional<String> keyPassword();
 

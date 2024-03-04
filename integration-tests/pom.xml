@@ -23,6 +23,7 @@
         <module>ws-security-policy</module>
         <module>ws-trust</module>
         <module>ws-rm-client</module>
+        <module>mtls</module>
         <module>mtom</module>
         <module>mtom-awt</module>
         <module>metrics</module>
