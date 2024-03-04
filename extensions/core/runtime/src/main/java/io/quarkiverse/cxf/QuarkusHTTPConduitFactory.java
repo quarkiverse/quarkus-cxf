@@ -34,7 +34,7 @@ import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
 /**
  * A HTTPConduitFactory with some client specific configuration, such as timeouts and SSL.
  *
- * @since 3.9.0
+ * @since 3.8.1
  */
 public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
 
