@@ -4,8 +4,6 @@ import static org.hamcrest.Matchers.containsString;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 
@@ -33,13 +31,6 @@ public class UsernameTokenSecurityPolicyTest extends AbstractUsernameTokenSecuri
                 + "{http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}SupportingTokens\n"
                 + "{http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}UsernameToken\n"
                 + "{http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}WssUsernameToken11";
-    }
-
-    @Test
-    @Disabled("https://issues.apache.org/jira/browse/CXF-8940")
-    @Override
-    void helloUsernameTokenNoMustUnderstand() {
-        super.helloUsernameTokenNoMustUnderstand();
     }
 
     @Override
