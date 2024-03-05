@@ -101,6 +101,12 @@
                 <groupId>org.apache.cxf.services.sts</groupId>
                 <artifactId>cxf-services-sts-core</artifactId>
                 <version>${cxf.version}</version>
+                <exclusions>
+                    <exclusion><!-- Wokraround for https://issues.apache.org/jira/browse/CXF-8983 -->
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf.xjcplugins</groupId>
