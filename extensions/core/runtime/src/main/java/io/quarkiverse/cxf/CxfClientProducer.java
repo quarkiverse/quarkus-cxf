@@ -57,9 +57,6 @@ public abstract class CxfClientProducer {
     CxfFixedConfig fixedConfig;
 
     @Inject
-    QuarkusHttpConduitConfigurer httpConduitConfigurer;
-
-    @Inject
     @Any
     Instance<ClientFactoryCustomizer> customizers;
 
@@ -149,26 +146,12 @@ public abstract class CxfClientProducer {
         if (cxfClientInfo.getWsdlUrl() != null && !cxfClientInfo.getWsdlUrl().isEmpty()) {
             factory.setWsdlURL(cxfClientInfo.getWsdlUrl());
         }
-        final String username = cxfClientInfo.getUsername();
-        if (username != null) {
-            final String password = cxfClientInfo.getPassword();
-            final AuthorizationPolicy authPolicy = new AuthorizationPolicy();
-            authPolicy.setUserName(username);
-            if (password != null) {
-                authPolicy.setPassword(password);
-            }
-            if (cxfClientInfo.isSecureWsdlAccess()) {
-                /*
-                 * This is the only way how the AuthorizationPolicy can be set early enough to be effective for the WSDL
-                 * GET request. We do not do it by default because of backwards compatibility and for the user to think
-                 * twice whether his WSDL URL uses HTTPS and only then enable secureWsdlAccess
-                 */
-                httpConduitConfigurer.addConfigurer(cxfClientInfo.getEndpointAddress(),
-                        conduit -> conduit.setAuthorization(authPolicy));
-            } else {
-                props.put(AuthorizationPolicy.class.getName(), authPolicy);
-            }
+
+        final AuthorizationPolicy authorizationPolicy = authorizationPolicy(cxfClientInfo);
+        if (authorizationPolicy != null && !cxfClientInfo.isSecureWsdlAccess()) {
+            props.put(AuthorizationPolicy.class.getName(), authorizationPolicy);
         }
+
         final String clientString = "client"
                 + (cxfClientInfo.getConfigKey() != null ? (" " + cxfClientInfo.getConfigKey()) : "");
         CXFRuntimeUtils.addBeans(cxfClientInfo.getFeatures(), "feature", clientString, sei, factory.getFeatures());
@@ -198,7 +181,8 @@ public abstract class CxfClientProducer {
                 fixedConfig,
                 cxfClientInfo,
                 CXFRecorder.isHc5Present(),
-                origConduitFactory);
+                origConduitFactory,
+                authorizationPolicy);
         props.put(HTTPConduitFactory.class.getName(), conduitFactory);
         Object result;
         try {
@@ -225,6 +209,20 @@ public abstract class CxfClientProducer {
         }
 
         return result;
+    }
+
+    private static AuthorizationPolicy authorizationPolicy(CXFClientInfo cxfClientInfo) {
+        final String username = cxfClientInfo.getUsername();
+        if (username != null) {
+            final String password = cxfClientInfo.getPassword();
+            final AuthorizationPolicy authPolicy = new AuthorizationPolicy();
+            authPolicy.setUserName(username);
+            if (password != null) {
+                authPolicy.setPassword(password);
+            }
+            return authPolicy;
+        }
+        return null;
     }
 
     /**
