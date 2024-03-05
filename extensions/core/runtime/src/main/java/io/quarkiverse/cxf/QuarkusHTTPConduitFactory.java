@@ -18,6 +18,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.http.HTTPConduit;
@@ -42,17 +43,20 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     private final CXFClientInfo cxfClientInfo;
     private final boolean hc5Present;
     private final HTTPConduitFactory busHTTPConduitFactory;
+    private final AuthorizationPolicy authorizationPolicy;
 
     public QuarkusHTTPConduitFactory(
             CxfFixedConfig cxFixedConfig,
             CXFClientInfo cxfClientInfo,
             boolean hc5Present,
-            HTTPConduitFactory busHTTPConduitFactory) {
+            HTTPConduitFactory busHTTPConduitFactory,
+            AuthorizationPolicy authorizationPolicy) {
         super();
         this.cxFixedConfig = cxFixedConfig;
         this.cxfClientInfo = cxfClientInfo;
         this.hc5Present = hc5Present;
         this.busHTTPConduitFactory = busHTTPConduitFactory;
+        this.authorizationPolicy = authorizationPolicy;
     }
 
     @Override
@@ -245,6 +249,15 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
             proxyAuth.setUserName(proxyUsername);
             proxyAuth.setPassword(proxyPassword);
             httpConduit.setProxyAuthorization(proxyAuth);
+        }
+
+        if (authorizationPolicy != null && cxfClientInfo.isSecureWsdlAccess()) {
+            /*
+             * This is the only way how the AuthorizationPolicy can be set early enough to be effective for the WSDL
+             * GET request. We do not do it by default because of backwards compatibility and for the user to think
+             * twice whether his WSDL URL uses HTTPS and only then enable secureWsdlAccess
+             */
+            httpConduit.setAuthorization(authorizationPolicy);
         }
 
         return httpConduit;
