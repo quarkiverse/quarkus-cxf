@@ -15,7 +15,30 @@ public class QuarkusCxfWsSecurityProcessor {
 
     @BuildStep
     FeatureBuildItem feature() {
+
+        final boolean realBcAvailable = isClassLoadable("org.bouncycastle.LICENSE");
+        final boolean bcStubAvailable = isClassLoadable("io.quarkiverse.cxf.ws.security.bc.stub.BcStub");
+        if (realBcAvailable && bcStubAvailable) {
+            throw new IllegalStateException("Bouncy Castle's org.bouncycastle:bcprov-jdk18on artifact found in dependencies."
+                    + " To be able to use it, exclude io.quarkiverse.cxf:quarkus-cxf-bc-stub from"
+                    + " io.quarkiverse.cxf:quarkus-cxf-rt-ws-security.");
+        }
+        if (!realBcAvailable && !bcStubAvailable) {
+            throw new IllegalStateException("Neither Bouncy Castle's org.bouncycastle:bcprov-jdk18on"
+                    + " nor io.quarkiverse.cxf:quarkus-cxf-bc-stub detected in dependencies."
+                    + " For quarkus-cxf-rt-ws-security to work properly, either add io.quarkiverse.cxf:quarkus-cxf-bc-stub (if"
+                    + " you do not need Bouncy Castle otherwise) or else add org.bouncycastle:bcprov-jdk18on");
+        }
         return new FeatureBuildItem("cxf-rt-ws-security");
+    }
+
+    private static boolean isClassLoadable(String cl) {
+        try {
+            Thread.currentThread().getContextClassLoader().loadClass(cl);
+            return true;
+        } catch (ClassNotFoundException expected) {
+            return false;
+        }
     }
 
     @BuildStep
