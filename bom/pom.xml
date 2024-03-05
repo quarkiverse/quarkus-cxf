@@ -217,6 +217,11 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-bc-stub</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-rt-ws-rm</artifactId>
                 <version>${quarkus-cxf.version}</version>
             </dependency>
