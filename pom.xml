@@ -70,7 +70,7 @@
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
         <!-- Build time dependencies -->
-        <javaparser.version>3.25.8</javaparser.version>
+        <javaparser.version>3.25.9</javaparser.version>
 
         <cq-maven-plugin.version>4.6.1</cq-maven-plugin.version>
         <exec-maven-plugin.version>3.2.0</exec-maven-plugin.version>
