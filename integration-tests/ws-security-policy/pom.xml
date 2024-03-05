@@ -18,10 +18,6 @@
             <artifactId>quarkus-cxf</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-rt-ws-security</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy</artifactId>
         </dependency>
@@ -122,6 +118,12 @@
             <properties>
                 <keystore.type>pkcs12</keystore.type>
             </properties>
+            <dependencies>
+                <dependency><!-- this profile tests with quarkus-cxf-bc-stub in place instead of real Bouncy Castle -->
+                    <groupId>io.quarkiverse.cxf</groupId>
+                    <artifactId>quarkus-cxf-rt-ws-security</artifactId>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -153,6 +155,26 @@
             <properties>
                 <keystore.type>jks</keystore.type>
             </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>io.quarkiverse.cxf</groupId>
+                    <artifactId>quarkus-cxf-rt-ws-security</artifactId>
+                    <exclusions>
+                        <exclusion><!-- This profile tests with real Bouncy Castle -->
+                            <groupId>io.quarkiverse.cxf</groupId>
+                            <artifactId>quarkus-cxf-bc-stub</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk18on</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-jdk18on</artifactId>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
                    <plugin>
