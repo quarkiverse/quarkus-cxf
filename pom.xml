@@ -114,6 +114,19 @@
         <module>integration-tests</module>
     </modules>
 
+    <repositories>
+        <repository>
+            <id>cxf-staging</id>
+            <url>https://repository.apache.org/content/repositories/orgapachecxf-1197/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <build>
         <extensions>
             <extension>
