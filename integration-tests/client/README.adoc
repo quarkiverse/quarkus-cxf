@@ -31,14 +31,21 @@ curl http://localhost:8080/calculator-ws/CalculatorService?wsdl --output src/mai
 [[soak]]
 == `CxfClientTest.soakRequestScopedHttpClient()` and `CxfClientTest.soakRequestScopedUrlConnectionClient()`
 
-The number of iterations performed by these tests can be set via
+These tests are sensitive to some parameters, such as the number of iterations and acceptable deviation of number of
+threads.
 
 [source,shell]
 ----
-$ export QUARKUS_CXF_CLIENT_SOAK_ITERATIONS=100000
+$ export QUARKUS_CXF_CLIENT_SOAK_ITERATIONS=300 # 300 is default
+$ export QUARKUS_CXF_CLIENT_SOAK_ACCEPTABLE_THREAD_COUNT_DEVIATION=5 # 5 is default
 $ mvn clean test -Dtest=CxfClientTest#soakRequestScopedHttpClient
 $ mvn clean test -Dtest=CxfClientTest#soakRequestScopedUrlConnectionClient
 ----
 
-The hard-coded default of 300 is intentionally low to make the test pass on Quarkus Platform CI.
-Higher values are more likely to uncover resource leaks.
+The hard-coded default `QUARKUS_CXF_CLIENT_SOAK_ITERATIONS=300` should be enough since Quarkus CXF 3.8.1
+when we started watching the number of active threads after the 10th iteration as follows:
+
+* The the number of active threads after the 10th iteration is recorded.
+* After all subsequent iterations, the current number of active threads is compared with the recorded value.
+* The test fails if the current value is higher than the recorded value plus
+  `QUARKUS_CXF_CLIENT_SOAK_ACCEPTABLE_THREAD_COUNT_DEVIATION`.

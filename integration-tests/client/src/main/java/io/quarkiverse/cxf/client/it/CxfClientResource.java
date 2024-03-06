@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -17,6 +18,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.cxf.common.jaxb.JAXBUtils;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
 import org.glassfish.jaxb.core.marshaller.CharacterEscapeHandler;
 import org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl;
 import org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService;
@@ -158,21 +161,17 @@ public class CxfClientResource {
     @Path("/clientInfo/{client}/{key}")
     @Produces(MediaType.TEXT_PLAIN)
     public String clientInfo(@PathParam("client") String client, @PathParam("key") String key) {
-
-        CXFClientInfo clientInfo = null;
-        switch (client) {
-            case "myCalculator":
-                clientInfo = calculatorClientInfo;
-                break;
-            default:
-                throw new IllegalStateException("Unexpected client key " + client);
-        }
+        final Client cl = ClientProxy.getClient(getClient(client));
+        final Map<String, Object> requestContext = cl.getRequestContext();
+        final CXFClientInfo clientInfo = (CXFClientInfo) requestContext.get(CXFClientInfo.class.getName());
 
         switch (key) {
             case "wsdlUrl":
                 return clientInfo.getWsdlUrl();
             case "endpointAddress":
                 return clientInfo.getEndpointAddress();
+            case "httpConduit":
+                return cl.getConduit().getClass().getName().toString();
             default:
                 throw new IllegalStateException("Unexpected client key " + client);
         }
@@ -184,6 +183,17 @@ public class CxfClientResource {
     @Produces(MediaType.TEXT_PLAIN)
     public InputStream resource(@PathParam("path") String path) {
         return getClass().getClassLoader().getResourceAsStream(path);
+    }
+
+    @GET
+    @Path("/activeThreadCount")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int activeThreadCount() {
+        ThreadGroup group = Thread.currentThread().getThreadGroup();
+        while (group.getParent() != null) {
+            group = group.getParent();
+        }
+        return group.activeCount();
     }
 
     @POST
