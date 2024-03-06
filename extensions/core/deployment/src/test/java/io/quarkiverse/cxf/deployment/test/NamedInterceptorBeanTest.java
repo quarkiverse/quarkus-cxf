@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.deployment.test;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -23,10 +24,12 @@ public class NamedInterceptorBeanTest {
                     .addClass(Fruit.class)
                     .addClass(Add.class)
                     .addClass(Delete.class)
-                    .addClass(FruitDescriptionAppender.class))
+                    .addClass(FruitDescriptionAppender.class)
+                    .addClass(BarFruitDescriptionAppender.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".implementor",
                     "io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl")
-            .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".handlers", "#barDescriptionAppender,#fooDescriptionAppender")
+            .overrideConfigKey("quarkus.cxf.endpoint.\"/fruit\".handlers",
+                    "io.quarkiverse.cxf.deployment.test.NamedInterceptorBeanTest$BarFruitDescriptionAppender,#fooDescriptionAppender")
             .overrideConfigKey("quarkus.cxf.client.\"fruitClient\".client-endpoint-url",
                     "http://localhost:8081/services/fruit");
 
@@ -40,17 +43,18 @@ public class NamedInterceptorBeanTest {
         return new FruitDescriptionAppender(" Foo");
     }
 
-    @Produces
-    @Named("barDescriptionAppender")
-    FruitDescriptionAppender barDescriptionAppender() {
-        return new FruitDescriptionAppender(" Bar");
-    }
-
     @Test
     public void namedInterceptor() {
         client.add(new Fruit("Pear", "Sweet"));
 
         Assertions.assertEquals("Sweet Foo Bar", client.getDescriptionByName("Pear"));
+    }
+
+    @ApplicationScoped
+    public static class BarFruitDescriptionAppender extends FruitDescriptionAppender {
+        public BarFruitDescriptionAppender() {
+            super(" Bar");
+        }
     }
 
 }
