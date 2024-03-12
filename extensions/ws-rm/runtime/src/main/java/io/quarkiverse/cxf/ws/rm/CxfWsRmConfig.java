@@ -9,6 +9,7 @@ import org.apache.cxf.ws.rm.RetransmissionQueue;
 import org.apache.cxf.ws.rm.persistence.RMStore;
 
 import io.quarkus.runtime.annotations.ConfigDocFilename;
+import io.quarkus.runtime.annotations.ConfigDocMapKey;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -37,6 +38,8 @@ public interface CxfWsRmConfig {
      * @asciidoclet
      */
     @WithName("client")
+    @ConfigDocMapKey("client-name")
+
     Map<String, ClientsOrEndpointsConfig> clients();
 
     /**
@@ -45,6 +48,7 @@ public interface CxfWsRmConfig {
      * @asciidoclet
      */
     @WithName("endpoint")
+    @ConfigDocMapKey("/endpoint-path")
     Map<String, ClientsOrEndpointsConfig> endpoints();
 
     @ConfigGroup

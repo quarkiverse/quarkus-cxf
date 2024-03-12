@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkus.runtime.annotations.ConfigDocMapKey;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -56,7 +57,7 @@ public interface CxfFixedConfig {
 
     /**
      * Select the `HTTPConduitFactory` implementation for all clients except the ones that override this setting via
-     * `quarkus.cxf.client.myClient.http-conduit-factory`.
+     * `quarkus.cxf.client."client-name".http-conduit-factory`.
      *
      * - `QuarkusCXFDefault` (default): if `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` is present in class path,
      * then its `HTTPConduitFactory` implementation will be used; otherwise this value is equivalent with
@@ -81,6 +82,8 @@ public interface CxfFixedConfig {
      * @asciidoclet
      */
     @WithName("client")
+    @ConfigDocMapKey("client-name")
+
     public Map<String, ClientFixedConfig> clients();
 
     @ConfigGroup

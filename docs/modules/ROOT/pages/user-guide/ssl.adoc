@@ -24,9 +24,9 @@ Once you have prepared the trust store, you need to configure your client to use
 This is the easiest way to set the client trust store.
 The key role is played by the following properties:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-trust-store[quarkus.cxf.client."clients".trust-store]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-trust-store-type[quarkus.cxf.client."clients".trust-store-type]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-trust-store-password[quarkus.cxf.client."clients".trust-store-password]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-type[quarkus.cxf.client."client-name".trust-store-type]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password[quarkus.cxf.client."client-name".trust-store-password]`
 
 Here is an example:
 

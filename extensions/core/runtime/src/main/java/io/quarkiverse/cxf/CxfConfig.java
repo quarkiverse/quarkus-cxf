@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import io.quarkiverse.cxf.LoggingConfig.GlobalLoggingConfig;
 import io.quarkus.runtime.annotations.ConfigDocIgnore;
+import io.quarkus.runtime.annotations.ConfigDocMapKey;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
@@ -18,7 +19,7 @@ public interface CxfConfig {
     // The formatter breaks the java snippet
     // @formatter:off
     /**
-     * An URI base to use as a prefix of `quarkus.cxf.client.myClient.decoupled-endpoint`. You will typically want to set this
+     * An URI base to use as a prefix of `quarkus.cxf.client."client-name".decoupled-endpoint`. You will typically want to set this
      * to something like the following:
      *
      * [source,properties]
@@ -86,6 +87,7 @@ public interface CxfConfig {
      * @asciidoclet
      */
     @WithName("endpoint")
+    @ConfigDocMapKey("/endpoint-path")
     @WithDefaults
     public Map<String, CxfEndpointConfig> endpoints();
 
@@ -95,6 +97,8 @@ public interface CxfConfig {
      * @asciidoclet
      */
     @WithName("client")
+    @ConfigDocMapKey("client-name")
+
     @WithDefaults
     public Map<String, CxfClientConfig> clients();
 

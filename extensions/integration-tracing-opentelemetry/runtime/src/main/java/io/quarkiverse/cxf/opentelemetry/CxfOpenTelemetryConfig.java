@@ -5,6 +5,7 @@ import java.util.Map;
 import io.quarkiverse.cxf.EnabledFor;
 import io.quarkiverse.cxf.EnabledFor.EnabledForConverter;
 import io.quarkus.runtime.annotations.ConfigDocFilename;
+import io.quarkus.runtime.annotations.ConfigDocMapKey;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -34,6 +35,8 @@ public interface CxfOpenTelemetryConfig {
      * @asciidoclet
      */
     @WithName("client")
+    @ConfigDocMapKey("client-name")
+
     Map<String, ClientsConfig> clients();
 
     /**
@@ -42,6 +45,7 @@ public interface CxfOpenTelemetryConfig {
      * @asciidoclet
      */
     @WithName("endpoint")
+    @ConfigDocMapKey("/endpoint-path")
     Map<String, EndpointsConfig> endpoints();
 
     /**
@@ -112,8 +116,8 @@ public interface CxfOpenTelemetryConfig {
 
         /**
          * Specifies whether the OpenTelemetry tracing will be enabled for clients, services, both or none. This global setting
-         * can be overridden per client or service endpoint using the `quarkus.cxf.client."clients".otel.enabled` or
-         * `quarkus.cxf.endpoint."endpoints".otel.enabled` option respectively.
+         * can be overridden per client or service endpoint using the `quarkus.cxf.client."client-name".otel.enabled` or
+         * `quarkus.cxf.endpoint."/endpoint-path".otel.enabled` option respectively.
          *
          * @since 2.7.0
          * @asciidoclet

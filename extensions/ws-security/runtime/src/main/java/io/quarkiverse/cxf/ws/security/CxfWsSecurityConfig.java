@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.apache.cxf.ws.security.SecurityConstants;
 
 import io.quarkus.runtime.annotations.ConfigDocFilename;
+import io.quarkus.runtime.annotations.ConfigDocMapKey;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -29,6 +30,8 @@ public interface CxfWsSecurityConfig {
      * @asciidoclet
      */
     @WithName("client")
+    @ConfigDocMapKey("client-name")
+
     Map<String, ClientConfig> clients();
 
     /**
@@ -37,6 +40,7 @@ public interface CxfWsSecurityConfig {
      * @asciidoclet
      */
     @WithName("endpoint")
+    @ConfigDocMapKey("/endpoint-path")
     Map<String, EndpointConfig> endpoints();
 
     /**

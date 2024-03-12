@@ -5,6 +5,7 @@ import java.util.Map;
 import io.quarkiverse.cxf.EnabledFor;
 import io.quarkiverse.cxf.EnabledFor.EnabledForConverter;
 import io.quarkus.runtime.annotations.ConfigDocFilename;
+import io.quarkus.runtime.annotations.ConfigDocMapKey;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -34,6 +35,8 @@ public interface CxfMetricsConfig {
      * @asciidoclet
      */
     @WithName("client")
+    @ConfigDocMapKey("client-name")
+
     Map<String, ClientsConfig> clients();
 
     /**
@@ -42,6 +45,7 @@ public interface CxfMetricsConfig {
      * @asciidoclet
      */
     @WithName("endpoint")
+    @ConfigDocMapKey("/endpoint-path")
     Map<String, EndpointsConfig> endpoints();
 
     /**
@@ -111,8 +115,8 @@ public interface CxfMetricsConfig {
 
         /**
          * Specifies whether the metrics collection will be enabled for clients, services, both or none. This global setting can
-         * be overridden per client or service endpoint using the `quarkus.cxf.client."clients".metrics.enabled` or
-         * `quarkus.cxf.endpoint."endpoints".metrics.enabled` option respectively.
+         * be overridden per client or service endpoint using the `quarkus.cxf.client."client-name".metrics.enabled` or
+         * `quarkus.cxf.endpoint."/endpoint-path".metrics.enabled` option respectively.
          *
          * @since 2.7.0
          * @asciidoclet

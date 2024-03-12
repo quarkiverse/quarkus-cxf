@@ -156,7 +156,7 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 | Configuration property | Type | Default
 
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-username[quarkus.cxf.client."clients".security.username]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-username[quarkus.cxf.client."client-name".security.username]`
 .<| `string`
 .<| 
 
@@ -167,20 +167,20 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 not set
 - As the alias name in the keystore to get the user's public key for encryption if `encryption.username` is not set
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_USERNAME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-password[quarkus.cxf.client."clients".security.password]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-password[quarkus.cxf.client."client-name".security.password]`
 .<| `string`
 .<| 
 
 3+a|The user's password when a `callback-handler` is not defined. This is only used for the password in a WS-Security
 UsernameToken.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_PASSWORD+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_PASSWORD+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-signature-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-signature-username[quarkus.cxf.client."clients".security.signature.username]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-signature-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-signature-username[quarkus.cxf.client."client-name".security.signature.username]`
 .<| `string`
 .<| 
 
@@ -189,19 +189,19 @@ for signature. If this is not defined, then `username` is used instead. If that 
 the default alias set in the properties file referenced by `signature.properties`. If that's also not set, and the
 keystore only contains a single key, that key will be used.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_USERNAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SIGNATURE_USERNAME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-signature-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-signature-password[quarkus.cxf.client."clients".security.signature.password]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-signature-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-signature-password[quarkus.cxf.client."client-name".security.signature.password]`
 .<| `string`
 .<| 
 
 3+a|The user's password for signature when a `callback-handler` is not defined.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_PASSWORD+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SIGNATURE_PASSWORD+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-encryption-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-encryption-username[quarkus.cxf.client."clients".security.encryption.username]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-username[quarkus.cxf.client."client-name".security.encryption.username]`
 .<| `string`
 .<| 
 
@@ -213,30 +213,30 @@ only contains a single key, that key will be used.
 For the WS-Security web service provider, the `useReqSigCert` value can be used to accept (encrypt to) any client
 whose public key is in the service's truststore (defined in `encrypt.properties`).
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_USERNAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENCRYPTION_USERNAME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-callback-handler]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-callback-handler[quarkus.cxf.client."clients".security.callback-handler]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-callback-handler]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-callback-handler[quarkus.cxf.client."client-name".security.callback-handler]`
 .<| `string`
 .<| 
 
 3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` bean
 used to obtain passwords, for both outbound and inbound requests.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CALLBACK_HANDLER+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CALLBACK_HANDLER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-saml-callback-handler]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-saml-callback-handler[quarkus.cxf.client."clients".security.saml-callback-handler]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-saml-callback-handler]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-saml-callback-handler[quarkus.cxf.client."client-name".security.saml-callback-handler]`
 .<| `string`
 .<| 
 
 3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler`
 implementation used to construct SAML Assertions.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_CALLBACK_HANDLER+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SAML_CALLBACK_HANDLER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-signature-properties[quarkus.cxf.client."clients".security.signature.properties]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-signature-properties[quarkus.cxf.client."client-name".security.signature.properties]`
 .<| ``Map<String,String>``
 .<| 
 
@@ -252,10 +252,10 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SIGNATURE_PROPERTIES+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-encryption-properties[quarkus.cxf.client."clients".security.encryption.properties]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-properties[quarkus.cxf.client."client-name".security.encryption.properties]`
 .<| ``Map<String,String>``
 .<| 
 
@@ -271,30 +271,30 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENCRYPTION_PROPERTIES+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-signature-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-signature-crypto[quarkus.cxf.client."clients".security.signature.crypto]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-signature-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-signature-crypto[quarkus.cxf.client."client-name".security.signature.crypto]`
 .<| `string`
 .<| 
 
 3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used
 for signature. If not set, `signature.properties` will be used to configure a `Crypto` instance.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SIGNATURE_CRYPTO+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SIGNATURE_CRYPTO+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-encryption-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-encryption-crypto[quarkus.cxf.client."clients".security.encryption.crypto]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-crypto[quarkus.cxf.client."client-name".security.encryption.crypto]`
 .<| `string`
 .<| 
 
 3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
 encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_CRYPTO+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENCRYPTION_CRYPTO+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-encryption-certificate]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-encryption-certificate[quarkus.cxf.client."clients".security.encryption.certificate]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-certificate]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-certificate[quarkus.cxf.client."client-name".security.encryption.certificate]`
 .<| `string`
 .<| 
 
@@ -305,10 +305,10 @@ WS-Security is used and if `encryption.username` has value `useReqSigCert`.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENCRYPTION_CERTIFICATE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENCRYPTION_CERTIFICATE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-enable-revocation]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-enable-revocation[quarkus.cxf.client."clients".security.enable-revocation]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-enable-revocation]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-enable-revocation[quarkus.cxf.client."client-name".security.enable-revocation]`
 .<| `boolean`
 .<| `false`
 
@@ -318,10 +318,10 @@ is not enabled.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_REVOCATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENABLE_REVOCATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-enable-unsigned-saml-assertion-principal]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-enable-unsigned-saml-assertion-principal[quarkus.cxf.client."clients".security.enable-unsigned-saml-assertion-principal]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-enable-unsigned-saml-assertion-principal]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-enable-unsigned-saml-assertion-principal[quarkus.cxf.client."client-name".security.enable-unsigned-saml-assertion-principal]`
 .<| `boolean`
 .<| `false`
 
@@ -339,10 +339,10 @@ the security context.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_UNSIGNED_SAML_ASSERTION_PRINCIPAL+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENABLE_UNSIGNED_SAML_ASSERTION_PRINCIPAL+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-validate-saml-subject-confirmation]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-validate-saml-subject-confirmation[quarkus.cxf.client."clients".security.validate-saml-subject-confirmation]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-validate-saml-subject-confirmation]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-validate-saml-subject-confirmation[quarkus.cxf.client."client-name".security.validate-saml-subject-confirmation]`
 .<| `boolean`
 .<| `true`
 
@@ -352,10 +352,10 @@ validated; otherwise they won't be validated.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_VALIDATE_SAML_SUBJECT_CONFIRMATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_VALIDATE_SAML_SUBJECT_CONFIRMATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sc-from-jaas-subject]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sc-from-jaas-subject[quarkus.cxf.client."clients".security.sc-from-jaas-subject]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sc-from-jaas-subject]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sc-from-jaas-subject[quarkus.cxf.client."client-name".security.sc-from-jaas-subject]`
 .<| `boolean`
 .<| `true`
 
@@ -364,10 +364,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SC_FROM_JAAS_SUBJECT+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SC_FROM_JAAS_SUBJECT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-audience-restriction-validation]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-audience-restriction-validation[quarkus.cxf.client."clients".security.audience-restriction-validation]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-audience-restriction-validation]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-audience-restriction-validation[quarkus.cxf.client."client-name".security.audience-restriction-validation]`
 .<| `boolean`
 .<| `true`
 
@@ -377,10 +377,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_AUDIENCE_RESTRICTION_VALIDATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_AUDIENCE_RESTRICTION_VALIDATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-saml-role-attributename]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-saml-role-attributename[quarkus.cxf.client."clients".security.saml-role-attributename]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-saml-role-attributename]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-saml-role-attributename[quarkus.cxf.client."client-name".security.saml-role-attributename]`
 .<| `string`
 .<| `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
 
@@ -389,10 +389,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_ROLE_ATTRIBUTENAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SAML_ROLE_ATTRIBUTENAME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-subject-cert-constraints]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-subject-cert-constraints[quarkus.cxf.client."clients".security.subject-cert-constraints]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-subject-cert-constraints]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-subject-cert-constraints[quarkus.cxf.client."client-name".security.subject-cert-constraints]`
 .<| `string`
 .<| 
 
@@ -403,10 +403,10 @@ certificate chain associated with the certificate.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SUBJECT_CERT_CONSTRAINTS+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SUBJECT_CERT_CONSTRAINTS+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-cert-constraints-separator]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-cert-constraints-separator[quarkus.cxf.client."clients".security.cert-constraints-separator]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-cert-constraints-separator]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-cert-constraints-separator[quarkus.cxf.client."client-name".security.cert-constraints-separator]`
 .<| `string`
 .<| `,`
 
@@ -415,10 +415,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CERT_CONSTRAINTS_SEPARATOR+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CERT_CONSTRAINTS_SEPARATOR+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-actor]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-actor[quarkus.cxf.client."clients".security.actor]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-actor]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-actor[quarkus.cxf.client."client-name".security.actor]`
 .<| `string`
 .<| 
 
@@ -427,19 +427,19 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ACTOR+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ACTOR+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-validate-token]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-validate-token[quarkus.cxf.client."clients".security.validate.token]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-validate-token]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-validate-token[quarkus.cxf.client."client-name".security.validate.token]`
 .<| `boolean`
 .<| `true`
 
 3+a|If `true`, the password of a received `UsernameToken` will be validated; otherwise it won't be validated.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_VALIDATE_TOKEN+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_VALIDATE_TOKEN+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-username-token-always-encrypted]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-username-token-always-encrypted[quarkus.cxf.client."clients".security.username-token.always.encrypted]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-username-token-always-encrypted]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-username-token-always-encrypted[quarkus.cxf.client."client-name".security.username-token.always.encrypted]`
 .<| `boolean`
 .<| `true`
 
@@ -449,10 +449,10 @@ in a production environment, as it exposes the password (or the digest of the pa
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAME_TOKEN_ALWAYS_ENCRYPTED+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_USERNAME_TOKEN_ALWAYS_ENCRYPTED+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-is-bsp-compliant]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-is-bsp-compliant[quarkus.cxf.client."clients".security.is-bsp-compliant]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-is-bsp-compliant]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-is-bsp-compliant[quarkus.cxf.client."client-name".security.is-bsp-compliant]`
 .<| `boolean`
 .<| `true`
 
@@ -462,10 +462,10 @@ ensured.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_IS_BSP_COMPLIANT+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_IS_BSP_COMPLIANT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-enable-nonce-cache]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-enable-nonce-cache[quarkus.cxf.client."clients".security.enable.nonce.cache]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-enable-nonce-cache]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-enable-nonce-cache[quarkus.cxf.client."client-name".security.enable.nonce.cache]`
 .<| `boolean`
 .<| 
 
@@ -480,10 +480,10 @@ Caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effec
 been configured for the non-security-policy case.
 ====
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_NONCE_CACHE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENABLE_NONCE_CACHE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-enable-timestamp-cache]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-enable-timestamp-cache[quarkus.cxf.client."clients".security.enable.timestamp.cache]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-enable-timestamp-cache]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-enable-timestamp-cache[quarkus.cxf.client."client-name".security.enable.timestamp.cache]`
 .<| `boolean`
 .<| 
 
@@ -501,20 +501,20 @@ configured for the non-security-policy case.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_TIMESTAMP_CACHE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENABLE_TIMESTAMP_CACHE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-enable-streaming]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-enable-streaming[quarkus.cxf.client."clients".security.enable.streaming]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-enable-streaming]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-enable-streaming[quarkus.cxf.client."client-name".security.enable.streaming]`
 .<| `boolean`
 .<| `false`
 
 3+a|If `true`, the new streaming (StAX) implementation of WS-Security is used; otherwise the old DOM implementation is
 used.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_STREAMING+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENABLE_STREAMING+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-return-security-error]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-return-security-error[quarkus.cxf.client."clients".security.return.security.error]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-return-security-error]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-return-security-error[quarkus.cxf.client."client-name".security.return.security.error]`
 .<| `boolean`
 .<| `false`
 
@@ -524,10 +524,10 @@ error message is sent.
 The "real" security errors should not be returned to the client in production, as they may leak information about the
 deployment, or otherwise provide an "oracle" for attacks.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_RETURN_SECURITY_ERROR+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_RETURN_SECURITY_ERROR+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-must-understand]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-must-understand[quarkus.cxf.client."clients".security.must-understand]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-must-understand]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-must-understand[quarkus.cxf.client."client-name".security.must-understand]`
 .<| `boolean`
 .<| `true`
 
@@ -536,10 +536,10 @@ the header is always omitted.
 
 Works only with `enable.streaming = true` - see link:https://issues.apache.org/jira/browse/CXF-8940[CXF-8940]
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_MUST_UNDERSTAND+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_MUST_UNDERSTAND+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-enable-saml-cache]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-enable-saml-cache[quarkus.cxf.client."clients".security.enable.saml.cache]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-enable-saml-cache]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-enable-saml-cache[quarkus.cxf.client."client-name".security.enable.saml.cache]`
 .<| `boolean`
 .<| 
 
@@ -553,10 +553,10 @@ non-security-policy case.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ENABLE_SAML_CACHE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENABLE_SAML_CACHE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-store-bytes-in-attachment]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-store-bytes-in-attachment[quarkus.cxf.client."clients".security.store.bytes.in.attachment]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-store-bytes-in-attachment]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-store-bytes-in-attachment[quarkus.cxf.client."client-name".security.store.bytes.in.attachment]`
 .<| `boolean`
 .<| 
 
@@ -567,10 +567,10 @@ efficient, as it means that the BASE-64 encoding step can be skipped. This only 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STORE_BYTES_IN_ATTACHMENT+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STORE_BYTES_IN_ATTACHMENT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-swa-encryption-attachment-transform-content]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-swa-encryption-attachment-transform-content[quarkus.cxf.client."clients".security.swa.encryption.attachment.transform.content]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-swa-encryption-attachment-transform-content]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-swa-encryption-attachment-transform-content[quarkus.cxf.client."client-name".security.swa.encryption.attachment.transform.content]`
 .<| `boolean`
 .<| `false`
 
@@ -581,10 +581,10 @@ WS-SecurityPolicy expression.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SWA_ENCRYPTION_ATTACHMENT_TRANSFORM_CONTENT+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SWA_ENCRYPTION_ATTACHMENT_TRANSFORM_CONTENT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-use-str-transform]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-use-str-transform[quarkus.cxf.client."clients".security.use.str.transform]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-use-str-transform]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-use-str-transform[quarkus.cxf.client."client-name".security.use.str.transform]`
 .<| `boolean`
 .<| `true`
 
@@ -596,10 +596,10 @@ Some frameworks cannot process the `SecurityTokenReference`. You may set this `f
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USE_STR_TRANSFORM+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_USE_STR_TRANSFORM+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-add-inclusive-prefixes]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-add-inclusive-prefixes[quarkus.cxf.client."clients".security.add.inclusive.prefixes]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-add-inclusive-prefixes]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-add-inclusive-prefixes[quarkus.cxf.client."client-name".security.add.inclusive.prefixes]`
 .<| `boolean`
 .<| `true`
 
@@ -609,10 +609,10 @@ Signatures using `WSConstants.C14N_EXCL_OMIT_COMMENTS`; otherwise the `PrefixLis
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ADD_INCLUSIVE_PREFIXES+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ADD_INCLUSIVE_PREFIXES+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-disable-require-client-cert-check]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-disable-require-client-cert-check[quarkus.cxf.client."clients".security.disable.require.client.cert.check]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-disable-require-client-cert-check]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-disable-require-client-cert-check[quarkus.cxf.client."client-name".security.disable.require.client.cert.check]`
 .<| `boolean`
 .<| `false`
 
@@ -625,10 +625,10 @@ certificates may not be available to the WS-Security layer for policy verificati
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_DISABLE_REQUIRE_CLIENT_CERT_CHECK+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_DISABLE_REQUIRE_CLIENT_CERT_CHECK+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-expand-xop-include]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-expand-xop-include[quarkus.cxf.client."clients".security.expand.xop.include]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-expand-xop-include]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-expand-xop-include[quarkus.cxf.client."client-name".security.expand.xop.include]`
 .<| `boolean`
 .<| 
 
@@ -639,10 +639,10 @@ are signed, and not just the reference. The default is `true` if MTOM is enabled
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_EXPAND_XOP_INCLUDE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_EXPAND_XOP_INCLUDE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-timestamp-timetolive]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-timestamp-timetolive[quarkus.cxf.client."clients".security.timestamp.timeToLive]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-timestamp-timetolive]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-timestamp-timetolive[quarkus.cxf.client."client-name".security.timestamp.timeToLive]`
 .<| `string`
 .<| `300`
 
@@ -652,10 +652,10 @@ valid or not.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TIMESTAMP_TIMETOLIVE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_TIMESTAMP_TIMETOLIVE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-timestamp-futuretimetolive]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-timestamp-futuretimetolive[quarkus.cxf.client."clients".security.timestamp.futureTimeToLive]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-timestamp-futuretimetolive]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-timestamp-futuretimetolive[quarkus.cxf.client."client-name".security.timestamp.futureTimeToLive]`
 .<| `string`
 .<| `60`
 
@@ -666,10 +666,10 @@ greater than zero to avoid problems where clocks are slightly askew. Set this to
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TIMESTAMP_FUTURETIMETOLIVE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_TIMESTAMP_FUTURETIMETOLIVE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-usernametoken-timetolive]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-usernametoken-timetolive[quarkus.cxf.client."clients".security.usernametoken.timeToLive]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-usernametoken-timetolive]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-usernametoken-timetolive[quarkus.cxf.client."client-name".security.usernametoken.timeToLive]`
 .<| `string`
 .<| `300`
 
@@ -679,10 +679,10 @@ as valid or not.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAMETOKEN_TIMETOLIVE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_USERNAMETOKEN_TIMETOLIVE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-usernametoken-futuretimetolive]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-usernametoken-futuretimetolive[quarkus.cxf.client."clients".security.usernametoken.futureTimeToLive]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-usernametoken-futuretimetolive]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-usernametoken-futuretimetolive[quarkus.cxf.client."client-name".security.usernametoken.futureTimeToLive]`
 .<| `string`
 .<| `60`
 
@@ -693,10 +693,10 @@ future-created `UsernameToken`s.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_USERNAMETOKEN_FUTURETIMETOLIVE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_USERNAMETOKEN_FUTURETIMETOLIVE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-spnego-client-action]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-spnego-client-action[quarkus.cxf.client."clients".security.spnego.client.action]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-spnego-client-action]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-spnego-client-action[quarkus.cxf.client."client-name".security.spnego.client.action]`
 .<| `string`
 .<| 
 
@@ -706,10 +706,10 @@ bean to use for SPNEGO. This allows the user to plug in a different implementati
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SPNEGO_CLIENT_ACTION+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SPNEGO_CLIENT_ACTION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-nonce-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-nonce-cache-instance[quarkus.cxf.client."clients".security.nonce.cache.instance]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-nonce-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-nonce-cache-instance[quarkus.cxf.client."client-name".security.nonce.cache.instance]`
 .<| `string`
 .<| 
 
@@ -719,10 +719,10 @@ to cache `UsernameToken` nonces. A `org.apache.wss4j.common.cache.EHCacheReplayC
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_NONCE_CACHE_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_NONCE_CACHE_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-timestamp-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-timestamp-cache-instance[quarkus.cxf.client."clients".security.timestamp.cache.instance]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-timestamp-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-timestamp-cache-instance[quarkus.cxf.client."client-name".security.timestamp.cache.instance]`
 .<| `string`
 .<| 
 
@@ -733,10 +733,10 @@ default.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TIMESTAMP_CACHE_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_TIMESTAMP_CACHE_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-saml-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-saml-cache-instance[quarkus.cxf.client."clients".security.saml.cache.instance]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-saml-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-saml-cache-instance[quarkus.cxf.client."client-name".security.saml.cache.instance]`
 .<| `string`
 .<| 
 
@@ -747,10 +747,10 @@ to cache SAML2 Token Identifier Strings (if the token contains a `OneTimeUse` co
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SAML_CACHE_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SAML_CACHE_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-cache-config-file]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-cache-config-file[quarkus.cxf.client."clients".security.cache.config.file]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-cache-config-file]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-cache-config-file[quarkus.cxf.client."client-name".security.cache.config.file]`
 .<| `string`
 .<| 
 
@@ -760,10 +760,10 @@ The default configuration file that is used is `cxf-ehcache.xml` in `org.apache.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CACHE_CONFIG_FILE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CACHE_CONFIG_FILE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-token-store-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-token-store-cache-instance[quarkus.cxf.client."clients".security.token-store-cache-instance]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-token-store-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-token-store-cache-instance[quarkus.cxf.client."client-name".security.token-store-cache-instance]`
 .<| `string`
 .<| 
 
@@ -773,10 +773,10 @@ to use for caching security tokens. By default this uses a instance.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_TOKEN_STORE_CACHE_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_TOKEN_STORE_CACHE_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-cache-identifier]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-cache-identifier[quarkus.cxf.client."clients".security.cache.identifier]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-cache-identifier]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-cache-identifier[quarkus.cxf.client."client-name".security.cache.identifier]`
 .<| `string`
 .<| 
 
@@ -792,10 +792,10 @@ instead.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CACHE_IDENTIFIER+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CACHE_IDENTIFIER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-role-classifier]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-role-classifier[quarkus.cxf.client."clients".security.role.classifier]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-role-classifier]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-role-classifier[quarkus.cxf.client."client-name".security.role.classifier]`
 .<| `string`
 .<| 
 
@@ -807,10 +807,10 @@ uses this value in combination with the `role.classifier.type` to get the roles 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ROLE_CLASSIFIER+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ROLE_CLASSIFIER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-role-classifier-type]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-role-classifier-type[quarkus.cxf.client."clients".security.role.classifier.type]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-role-classifier-type]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-role-classifier-type[quarkus.cxf.client."client-name".security.role.classifier.type]`
 .<| `string`
 .<| `prefix`
 
@@ -821,10 +821,10 @@ are `prefix` or `classname`. Must be used in conjunction with the `role.classifi
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ROLE_CLASSIFIER_TYPE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ROLE_CLASSIFIER_TYPE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-asymmetric-signature-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-asymmetric-signature-algorithm[quarkus.cxf.client."clients".security.asymmetric.signature.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-asymmetric-signature-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-asymmetric-signature-algorithm[quarkus.cxf.client."client-name".security.asymmetric.signature.algorithm]`
 .<| `string`
 .<| 
 
@@ -834,10 +834,10 @@ WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_ASYMMETRIC_SIGNATURE_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ASYMMETRIC_SIGNATURE_ALGORITHM+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-symmetric-signature-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-symmetric-signature-algorithm[quarkus.cxf.client."clients".security.symmetric.signature.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-symmetric-signature-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-symmetric-signature-algorithm[quarkus.cxf.client."client-name".security.symmetric.signature.algorithm]`
 .<| `string`
 .<| 
 
@@ -847,10 +847,10 @@ WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SYMMETRIC_SIGNATURE_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SYMMETRIC_SIGNATURE_ALGORITHM+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-password-encryptor-instance]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-password-encryptor-instance[quarkus.cxf.client."clients".security.password.encryptor.instance]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-password-encryptor-instance]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-password-encryptor-instance[quarkus.cxf.client."client-name".security.password.encryptor.instance]`
 .<| `string`
 .<| 
 
@@ -867,10 +867,10 @@ The encrypted passwords must be stored in the format "ENC(encoded encrypted pass
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_PASSWORD_ENCRYPTOR_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_PASSWORD_ENCRYPTOR_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-delegated-credential]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-delegated-credential[quarkus.cxf.client."clients".security.delegated.credential]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-delegated-credential]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-delegated-credential[quarkus.cxf.client."client-name".security.delegated.credential]`
 .<| `string`
 .<| 
 
@@ -880,10 +880,10 @@ WS-Security. This is used to retrieve a service ticket instead of using the clie
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_DELEGATED_CREDENTIAL+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_DELEGATED_CREDENTIAL+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-security-context-creator]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-security-context-creator[quarkus.cxf.client."clients".security.security.context.creator]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-security-context-creator]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-security-context-creator[quarkus.cxf.client."client-name".security.security.context.creator]`
 .<| `string`
 .<| 
 
@@ -895,10 +895,10 @@ the set of WSS4J processing results. The default implementation is
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SECURITY_CONTEXT_CREATOR+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SECURITY_CONTEXT_CREATOR+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-security-token-lifetime]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-security-token-lifetime[quarkus.cxf.client."clients".security.security.token.lifetime]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-security-token-lifetime]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-security-token-lifetime[quarkus.cxf.client."client-name".security.security.token.lifetime]`
 .<| `long`
 .<| `300000`
 
@@ -907,10 +907,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_SECURITY_TOKEN_LIFETIME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SECURITY_TOKEN_LIFETIME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-request-credential-delegation]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-request-credential-delegation[quarkus.cxf.client."clients".security.kerberos.request.credential.delegation]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-request-credential-delegation]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-request-credential-delegation[quarkus.cxf.client."client-name".security.kerberos.request.credential.delegation]`
 .<| `boolean`
 .<| `false`
 
@@ -920,10 +920,10 @@ the KerberosClient.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_REQUEST_CREDENTIAL_DELEGATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_KERBEROS_REQUEST_CREDENTIAL_DELEGATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-use-credential-delegation]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-use-credential-delegation[quarkus.cxf.client."clients".security.kerberos.use.credential.delegation]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-use-credential-delegation]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-use-credential-delegation[quarkus.cxf.client."client-name".security.kerberos.use.credential.delegation]`
 .<| `boolean`
 .<| `false`
 
@@ -933,10 +933,10 @@ then it is used to obtain a service ticket.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_USE_CREDENTIAL_DELEGATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_KERBEROS_USE_CREDENTIAL_DELEGATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-is-username-in-servicename-form]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-is-username-in-servicename-form[quarkus.cxf.client."clients".security.kerberos.is.username.in.servicename.form]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-is-username-in-servicename-form]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-is-username-in-servicename-form[quarkus.cxf.client."client-name".security.kerberos.is.username.in.servicename.form]`
 .<| `boolean`
 .<| `false`
 
@@ -945,10 +945,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_IS_USERNAME_IN_SERVICENAME_FORM+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_KERBEROS_IS_USERNAME_IN_SERVICENAME_FORM+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-jaas-context]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-jaas-context[quarkus.cxf.client."clients".security.kerberos.jaas.context]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-jaas-context]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-jaas-context[quarkus.cxf.client."client-name".security.kerberos.jaas.context]`
 .<| `string`
 .<| 
 
@@ -957,10 +957,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_JAAS_CONTEXT+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_KERBEROS_JAAS_CONTEXT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-spn]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-spn[quarkus.cxf.client."clients".security.kerberos.spn]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-spn]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-spn[quarkus.cxf.client."client-name".security.kerberos.spn]`
 .<| `string`
 .<| 
 
@@ -969,10 +969,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_SPN+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_KERBEROS_SPN+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-client]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-kerberos-client[quarkus.cxf.client."clients".security.kerberos.client]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-client]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-kerberos-client[quarkus.cxf.client."client-name".security.kerberos.client]`
 .<| `string`
 .<| 
 
@@ -982,10 +982,10 @@ bean used to obtain a service ticket.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_KERBEROS_CLIENT+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_KERBEROS_CLIENT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-digest-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-digest-algorithm[quarkus.cxf.client."clients".security.custom.digest.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[quarkus.cxf.client."client-name".security.custom.digest.algorithm]`
 .<| `string`
 .<| `http://www.w3.org/2001/04/xmlenc#sha256`
 
@@ -1027,10 +1027,10 @@ and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section o
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_DIGEST_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_DIGEST_ALGORITHM+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-encryption-algorithm[quarkus.cxf.client."clients".security.custom.encryption.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-algorithm[quarkus.cxf.client."client-name".security.custom.encryption.algorithm]`
 .<| `string`
 .<| `http://www.w3.org/2009/xmlenc11#aes256-gcm`
 
@@ -1049,10 +1049,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_ENCRYPTION_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_ENCRYPTION_ALGORITHM+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-symmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-symmetric-key-encryption-algorithm[quarkus.cxf.client."clients".security.custom.symmetric.key.encryption.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-symmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-symmetric-key-encryption-algorithm[quarkus.cxf.client."client-name".security.custom.symmetric.key.encryption.algorithm]`
 .<| `string`
 .<| `http://www.w3.org/2001/04/xmlenc#kw-aes256`
 
@@ -1072,10 +1072,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_SYMMETRIC_KEY_ENCRYPTION_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_SYMMETRIC_KEY_ENCRYPTION_ALGORITHM+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-asymmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-asymmetric-key-encryption-algorithm[quarkus.cxf.client."clients".security.custom.asymmetric.key.encryption.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-asymmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-asymmetric-key-encryption-algorithm[quarkus.cxf.client."client-name".security.custom.asymmetric.key.encryption.algorithm]`
 .<| `string`
 .<| `http://www.w3.org/2001/04/xmlenc#rsa-1_5`
 
@@ -1095,10 +1095,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_ASYMMETRIC_KEY_ENCRYPTION_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_ASYMMETRIC_KEY_ENCRYPTION_ALGORITHM+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-encryption-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-encryption-key-derivation[quarkus.cxf.client."clients".security.custom.encryption.key.derivation]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-key-derivation[quarkus.cxf.client."client-name".security.custom.encryption.key.derivation]`
 .<| `string`
 .<| `http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
 
@@ -1117,10 +1117,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_ENCRYPTION_KEY_DERIVATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_ENCRYPTION_KEY_DERIVATION+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-signature-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-signature-key-derivation[quarkus.cxf.client."clients".security.custom.signature.key.derivation]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-signature-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-signature-key-derivation[quarkus.cxf.client."client-name".security.custom.signature.key.derivation]`
 .<| `string`
 .<| `http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
 
@@ -1139,10 +1139,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_SIGNATURE_KEY_DERIVATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_SIGNATURE_KEY_DERIVATION+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-encryption-derived-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-encryption-derived-key-length[quarkus.cxf.client."clients".security.custom.encryption.derived.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-derived-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-derived-key-length[quarkus.cxf.client."client-name".security.custom.encryption.derived.key.length]`
 .<| `int`
 .<| `256`
 
@@ -1162,10 +1162,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_ENCRYPTION_DERIVED_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_ENCRYPTION_DERIVED_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-signature-derived-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-signature-derived-key-length[quarkus.cxf.client."clients".security.custom.signature.derived.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-signature-derived-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-signature-derived-key-length[quarkus.cxf.client."client-name".security.custom.signature.derived.key.length]`
 .<| `int`
 .<| `192`
 
@@ -1185,10 +1185,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_SIGNATURE_DERIVED_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_SIGNATURE_DERIVED_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-minimum-symmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-minimum-symmetric-key-length[quarkus.cxf.client."clients".security.custom.minimum.symmetric.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-minimum-symmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-minimum-symmetric-key-length[quarkus.cxf.client."client-name".security.custom.minimum.symmetric.key.length]`
 .<| `int`
 .<| `256`
 
@@ -1208,10 +1208,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_MINIMUM_SYMMETRIC_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_MINIMUM_SYMMETRIC_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-maximum-symmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-maximum-symmetric-key-length[quarkus.cxf.client."clients".security.custom.maximum.symmetric.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-maximum-symmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-maximum-symmetric-key-length[quarkus.cxf.client."client-name".security.custom.maximum.symmetric.key.length]`
 .<| `int`
 .<| `256`
 
@@ -1230,10 +1230,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_MAXIMUM_SYMMETRIC_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_MAXIMUM_SYMMETRIC_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-minimum-asymmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-minimum-asymmetric-key-length[quarkus.cxf.client."clients".security.custom.minimum.asymmetric.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-minimum-asymmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-minimum-asymmetric-key-length[quarkus.cxf.client."client-name".security.custom.minimum.asymmetric.key.length]`
 .<| `int`
 .<| `1024`
 
@@ -1253,10 +1253,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_MINIMUM_ASYMMETRIC_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_MINIMUM_ASYMMETRIC_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-custom-maximum-asymmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-custom-maximum-asymmetric-key-length[quarkus.cxf.client."clients".security.custom.maximum.asymmetric.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-maximum-asymmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-maximum-asymmetric-key-length[quarkus.cxf.client."client-name".security.custom.maximum.asymmetric.key.length]`
 .<| `int`
 .<| `4096`
 
@@ -1276,10 +1276,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_CUSTOM_MAXIMUM_ASYMMETRIC_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CUSTOM_MAXIMUM_ASYMMETRIC_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client[quarkus.cxf.client."clients".security.sts.client]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client[quarkus.cxf.client."client-name".security.sts.client]`
 .<| `string`
 .<| 
 
@@ -1295,20 +1295,20 @@ cannot thus be used as a CDI bean type, you can use the wrapper class
 Tip: Check the xref:reference/extensions/quarkus-cxf-services-sts.adoc[Security Token Service (STS)] extension page
 for more information about WS-Trust.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-wsdl]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-wsdl[quarkus.cxf.client."clients".security.sts.client.wsdl]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-wsdl]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-wsdl[quarkus.cxf.client."client-name".security.sts.client.wsdl]`
 .<| `string`
 .<| 
 
 3+a|A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service proxy of
 the STS client.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_WSDL+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_WSDL+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-service-name]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-service-name[quarkus.cxf.client."clients".security.sts.client.service-name]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-service-name]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-service-name[quarkus.cxf.client."client-name".security.sts.client.service-name]`
 .<| `string`
 .<| 
 
@@ -1318,10 +1318,10 @@ the STS client.
 - WS-Trust 1.3: `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200512/++}++SecurityTokenService`
 - WS-Trust 1.4: `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200802/++}++SecurityTokenService`
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_SERVICE_NAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_SERVICE_NAME+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-endpoint-name]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-endpoint-name[quarkus.cxf.client."clients".security.sts.client.endpoint-name]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-endpoint-name]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-endpoint-name[quarkus.cxf.client."client-name".security.sts.client.endpoint-name]`
 .<| `string`
 .<| 
 
@@ -1331,10 +1331,10 @@ the STS client.
 - `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200512/++}++Transport_Port`
 - `++{++http://docs.oasis-open.org/ws-sx/ws-trust/200512/++}++UT_Port`
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENDPOINT_NAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_ENDPOINT_NAME+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-username[quarkus.cxf.client."clients".security.sts.client.username]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-username[quarkus.cxf.client."client-name".security.sts.client.username]`
 .<| `string`
 .<| 
 
@@ -1345,19 +1345,19 @@ the STS client.
 not set
 - As the alias name in the keystore to get the user's public key for encryption if `encryption.username` is not set
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_USERNAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_USERNAME+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-password]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-password[quarkus.cxf.client."clients".security.sts.client.password]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-password[quarkus.cxf.client."client-name".security.sts.client.password]`
 .<| `string`
 .<| 
 
 3+a|The password associated with the `username`.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_PASSWORD+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_PASSWORD+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-username[quarkus.cxf.client."clients".security.sts.client.encryption.username]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-username[quarkus.cxf.client."client-name".security.sts.client.encryption.username]`
 .<| `string`
 .<| 
 
@@ -1369,10 +1369,10 @@ only contains a single key, that key will be used.
 For the WS-Security web service provider, the `useReqSigCert` value can be used to accept (encrypt to) any client
 whose public key is in the service's truststore (defined in `encrypt.properties`).
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_USERNAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_ENCRYPTION_USERNAME+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-properties[quarkus.cxf.client."clients".security.sts.client.encryption.properties]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-properties[quarkus.cxf.client."client-name".security.sts.client.encryption.properties]`
 .<| ``Map<String,String>``
 .<| 
 
@@ -1388,20 +1388,20 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_ENCRYPTION_PROPERTIES+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-encryption-crypto[quarkus.cxf.client."clients".security.sts.client.encryption.crypto]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-crypto[quarkus.cxf.client."client-name".security.sts.client.encryption.crypto]`
 .<| `string`
 .<| 
 
 3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
 encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_ENCRYPTION_CRYPTO+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_ENCRYPTION_CRYPTO+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-crypto[quarkus.cxf.client."clients".security.sts.client.token.crypto]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-crypto[quarkus.cxf.client."client-name".security.sts.client.token.crypto]`
 .<| `string`
 .<| 
 
@@ -1414,10 +1414,10 @@ These properties control the way the STS client will decrypt the EncryptedData e
 These are also used by the `token.properties` to send/process any RSA/DSAKeyValue tokens used if the KeyType is
 `PublicKey`
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_CRYPTO+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_TOKEN_CRYPTO+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-properties]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-properties[quarkus.cxf.client."clients".security.sts.client.token.properties]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-properties[quarkus.cxf.client."client-name".security.sts.client.token.properties]`
 .<| ``Map<String,String>``
 .<| 
 
@@ -1432,37 +1432,37 @@ Example
 [prefix].token.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_TOKEN_PROPERTIES+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-username]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-username[quarkus.cxf.client."clients".security.sts.client.token.username]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-username[quarkus.cxf.client."client-name".security.sts.client.token.username]`
 .<| `string`
 .<| 
 
 3+a|The alias name in the keystore to get the user's public key to send to the STS for the PublicKey KeyType case.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_USERNAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_TOKEN_USERNAME+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-usecert]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-token-usecert[quarkus.cxf.client."clients".security.sts.client.token.usecert]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-usecert]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-usecert[quarkus.cxf.client."client-name".security.sts.client.token.usecert]`
 .<| `boolean`
 .<| `false`
 
 3+a|Whether to write out an X509Certificate structure in UseKey/KeyInfo, or whether to write out a KeyValue structure.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_TOKEN_USECERT+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_TOKEN_USECERT+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-soap12-binding]]`link:#quarkus-cxf_quarkus-cxf-client-clients-security-sts-client-soap12-binding[quarkus.cxf.client."clients".security.sts.client.soap12-binding]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-soap12-binding]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-soap12-binding[quarkus.cxf.client."client-name".security.sts.client.soap12-binding]`
 .<| `boolean`
 .<| `false`
 
 3+a|If `true` the STS client will be set to send Soap 1.2 messages; otherwise it will send SOAP 1.1 messages.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__SECURITY_STS_CLIENT_SOAP12_BINDING+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_SOAP12_BINDING+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-username]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-username[quarkus.cxf.endpoint."endpoints".security.username]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-username]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-username[quarkus.cxf.endpoint."/endpoint-path".security.username]`
 .<| `string`
 .<| 
 
@@ -1473,20 +1473,20 @@ Example
 not set
 - As the alias name in the keystore to get the user's public key for encryption if `encryption.username` is not set
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_USERNAME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-password]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-password[quarkus.cxf.endpoint."endpoints".security.password]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-password]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-password[quarkus.cxf.endpoint."/endpoint-path".security.password]`
 .<| `string`
 .<| 
 
 3+a|The user's password when a `callback-handler` is not defined. This is only used for the password in a WS-Security
 UsernameToken.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_PASSWORD+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_PASSWORD+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-signature-username]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-signature-username[quarkus.cxf.endpoint."endpoints".security.signature.username]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-username]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-username[quarkus.cxf.endpoint."/endpoint-path".security.signature.username]`
 .<| `string`
 .<| 
 
@@ -1495,19 +1495,19 @@ for signature. If this is not defined, then `username` is used instead. If that 
 the default alias set in the properties file referenced by `signature.properties`. If that's also not set, and the
 keystore only contains a single key, that key will be used.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_USERNAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SIGNATURE_USERNAME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-signature-password]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-signature-password[quarkus.cxf.endpoint."endpoints".security.signature.password]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-password]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-password[quarkus.cxf.endpoint."/endpoint-path".security.signature.password]`
 .<| `string`
 .<| 
 
 3+a|The user's password for signature when a `callback-handler` is not defined.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_PASSWORD+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SIGNATURE_PASSWORD+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-encryption-username]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-encryption-username[quarkus.cxf.endpoint."endpoints".security.encryption.username]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-username]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-username[quarkus.cxf.endpoint."/endpoint-path".security.encryption.username]`
 .<| `string`
 .<| 
 
@@ -1519,30 +1519,30 @@ only contains a single key, that key will be used.
 For the WS-Security web service provider, the `useReqSigCert` value can be used to accept (encrypt to) any client
 whose public key is in the service's truststore (defined in `encrypt.properties`).
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_USERNAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENCRYPTION_USERNAME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-callback-handler]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-callback-handler[quarkus.cxf.endpoint."endpoints".security.callback-handler]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-callback-handler]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-callback-handler[quarkus.cxf.endpoint."/endpoint-path".security.callback-handler]`
 .<| `string`
 .<| 
 
 3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` bean
 used to obtain passwords, for both outbound and inbound requests.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CALLBACK_HANDLER+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CALLBACK_HANDLER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-saml-callback-handler]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-saml-callback-handler[quarkus.cxf.endpoint."endpoints".security.saml-callback-handler]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-saml-callback-handler]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-saml-callback-handler[quarkus.cxf.endpoint."/endpoint-path".security.saml-callback-handler]`
 .<| `string`
 .<| 
 
 3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler`
 implementation used to construct SAML Assertions.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_CALLBACK_HANDLER+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SAML_CALLBACK_HANDLER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-signature-properties[quarkus.cxf.endpoint."endpoints".security.signature.properties]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-properties[quarkus.cxf.endpoint."/endpoint-path".security.signature.properties]`
 .<| ``Map<String,String>``
 .<| 
 
@@ -1558,10 +1558,10 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SIGNATURE_PROPERTIES+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-encryption-properties[quarkus.cxf.endpoint."endpoints".security.encryption.properties]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-properties[quarkus.cxf.endpoint."/endpoint-path".security.encryption.properties]`
 .<| ``Map<String,String>``
 .<| 
 
@@ -1577,30 +1577,30 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENCRYPTION_PROPERTIES+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-signature-crypto]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-signature-crypto[quarkus.cxf.endpoint."endpoints".security.signature.crypto]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-crypto]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-crypto[quarkus.cxf.endpoint."/endpoint-path".security.signature.crypto]`
 .<| `string`
 .<| 
 
 3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used
 for signature. If not set, `signature.properties` will be used to configure a `Crypto` instance.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SIGNATURE_CRYPTO+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SIGNATURE_CRYPTO+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-encryption-crypto]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-encryption-crypto[quarkus.cxf.endpoint."endpoints".security.encryption.crypto]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-crypto]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-crypto[quarkus.cxf.endpoint."/endpoint-path".security.encryption.crypto]`
 .<| `string`
 .<| 
 
 3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
 encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_CRYPTO+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENCRYPTION_CRYPTO+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-encryption-certificate]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-encryption-certificate[quarkus.cxf.endpoint."endpoints".security.encryption.certificate]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-certificate]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-certificate[quarkus.cxf.endpoint."/endpoint-path".security.encryption.certificate]`
 .<| `string`
 .<| 
 
@@ -1611,10 +1611,10 @@ WS-Security is used and if `encryption.username` has value `useReqSigCert`.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENCRYPTION_CERTIFICATE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENCRYPTION_CERTIFICATE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-revocation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-revocation[quarkus.cxf.endpoint."endpoints".security.enable-revocation]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-revocation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-revocation[quarkus.cxf.endpoint."/endpoint-path".security.enable-revocation]`
 .<| `boolean`
 .<| `false`
 
@@ -1624,10 +1624,10 @@ is not enabled.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_REVOCATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENABLE_REVOCATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-unsigned-saml-assertion-principal]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-unsigned-saml-assertion-principal[quarkus.cxf.endpoint."endpoints".security.enable-unsigned-saml-assertion-principal]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-unsigned-saml-assertion-principal]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-unsigned-saml-assertion-principal[quarkus.cxf.endpoint."/endpoint-path".security.enable-unsigned-saml-assertion-principal]`
 .<| `boolean`
 .<| `false`
 
@@ -1645,10 +1645,10 @@ the security context.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_UNSIGNED_SAML_ASSERTION_PRINCIPAL+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENABLE_UNSIGNED_SAML_ASSERTION_PRINCIPAL+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-validate-saml-subject-confirmation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-validate-saml-subject-confirmation[quarkus.cxf.endpoint."endpoints".security.validate-saml-subject-confirmation]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-validate-saml-subject-confirmation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-validate-saml-subject-confirmation[quarkus.cxf.endpoint."/endpoint-path".security.validate-saml-subject-confirmation]`
 .<| `boolean`
 .<| `true`
 
@@ -1658,10 +1658,10 @@ validated; otherwise they won't be validated.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_VALIDATE_SAML_SUBJECT_CONFIRMATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_VALIDATE_SAML_SUBJECT_CONFIRMATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-sc-from-jaas-subject]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-sc-from-jaas-subject[quarkus.cxf.endpoint."endpoints".security.sc-from-jaas-subject]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-sc-from-jaas-subject]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-sc-from-jaas-subject[quarkus.cxf.endpoint."/endpoint-path".security.sc-from-jaas-subject]`
 .<| `boolean`
 .<| `true`
 
@@ -1670,10 +1670,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SC_FROM_JAAS_SUBJECT+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SC_FROM_JAAS_SUBJECT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-audience-restriction-validation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-audience-restriction-validation[quarkus.cxf.endpoint."endpoints".security.audience-restriction-validation]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-audience-restriction-validation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-audience-restriction-validation[quarkus.cxf.endpoint."/endpoint-path".security.audience-restriction-validation]`
 .<| `boolean`
 .<| `true`
 
@@ -1683,10 +1683,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_AUDIENCE_RESTRICTION_VALIDATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_AUDIENCE_RESTRICTION_VALIDATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-saml-role-attributename]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-saml-role-attributename[quarkus.cxf.endpoint."endpoints".security.saml-role-attributename]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-saml-role-attributename]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-saml-role-attributename[quarkus.cxf.endpoint."/endpoint-path".security.saml-role-attributename]`
 .<| `string`
 .<| `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
 
@@ -1695,10 +1695,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_ROLE_ATTRIBUTENAME+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SAML_ROLE_ATTRIBUTENAME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-subject-cert-constraints]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-subject-cert-constraints[quarkus.cxf.endpoint."endpoints".security.subject-cert-constraints]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-subject-cert-constraints]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-subject-cert-constraints[quarkus.cxf.endpoint."/endpoint-path".security.subject-cert-constraints]`
 .<| `string`
 .<| 
 
@@ -1709,10 +1709,10 @@ certificate chain associated with the certificate.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SUBJECT_CERT_CONSTRAINTS+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SUBJECT_CERT_CONSTRAINTS+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-cert-constraints-separator]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-cert-constraints-separator[quarkus.cxf.endpoint."endpoints".security.cert-constraints-separator]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-cert-constraints-separator]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-cert-constraints-separator[quarkus.cxf.endpoint."/endpoint-path".security.cert-constraints-separator]`
 .<| `string`
 .<| `,`
 
@@ -1721,10 +1721,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CERT_CONSTRAINTS_SEPARATOR+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CERT_CONSTRAINTS_SEPARATOR+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-actor]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-actor[quarkus.cxf.endpoint."endpoints".security.actor]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-actor]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-actor[quarkus.cxf.endpoint."/endpoint-path".security.actor]`
 .<| `string`
 .<| 
 
@@ -1733,19 +1733,19 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ACTOR+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ACTOR+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-validate-token]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-validate-token[quarkus.cxf.endpoint."endpoints".security.validate.token]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-validate-token]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-validate-token[quarkus.cxf.endpoint."/endpoint-path".security.validate.token]`
 .<| `boolean`
 .<| `true`
 
 3+a|If `true`, the password of a received `UsernameToken` will be validated; otherwise it won't be validated.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_VALIDATE_TOKEN+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_VALIDATE_TOKEN+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-username-token-always-encrypted]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-username-token-always-encrypted[quarkus.cxf.endpoint."endpoints".security.username-token.always.encrypted]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-username-token-always-encrypted]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-username-token-always-encrypted[quarkus.cxf.endpoint."/endpoint-path".security.username-token.always.encrypted]`
 .<| `boolean`
 .<| `true`
 
@@ -1755,10 +1755,10 @@ in a production environment, as it exposes the password (or the digest of the pa
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAME_TOKEN_ALWAYS_ENCRYPTED+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_USERNAME_TOKEN_ALWAYS_ENCRYPTED+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-is-bsp-compliant]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-is-bsp-compliant[quarkus.cxf.endpoint."endpoints".security.is-bsp-compliant]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-is-bsp-compliant]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-is-bsp-compliant[quarkus.cxf.endpoint."/endpoint-path".security.is-bsp-compliant]`
 .<| `boolean`
 .<| `true`
 
@@ -1768,10 +1768,10 @@ ensured.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_IS_BSP_COMPLIANT+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_IS_BSP_COMPLIANT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-nonce-cache]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-nonce-cache[quarkus.cxf.endpoint."endpoints".security.enable.nonce.cache]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-nonce-cache]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-nonce-cache[quarkus.cxf.endpoint."/endpoint-path".security.enable.nonce.cache]`
 .<| `boolean`
 .<| 
 
@@ -1786,10 +1786,10 @@ Caching only applies when either a `UsernameToken` WS-SecurityPolicy is in effec
 been configured for the non-security-policy case.
 ====
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_NONCE_CACHE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENABLE_NONCE_CACHE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-timestamp-cache]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-timestamp-cache[quarkus.cxf.endpoint."endpoints".security.enable.timestamp.cache]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-timestamp-cache]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-timestamp-cache[quarkus.cxf.endpoint."/endpoint-path".security.enable.timestamp.cache]`
 .<| `boolean`
 .<| 
 
@@ -1807,20 +1807,20 @@ configured for the non-security-policy case.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_TIMESTAMP_CACHE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENABLE_TIMESTAMP_CACHE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-streaming]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-streaming[quarkus.cxf.endpoint."endpoints".security.enable.streaming]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-streaming]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-streaming[quarkus.cxf.endpoint."/endpoint-path".security.enable.streaming]`
 .<| `boolean`
 .<| `false`
 
 3+a|If `true`, the new streaming (StAX) implementation of WS-Security is used; otherwise the old DOM implementation is
 used.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_STREAMING+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENABLE_STREAMING+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-return-security-error]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-return-security-error[quarkus.cxf.endpoint."endpoints".security.return.security.error]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-return-security-error]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-return-security-error[quarkus.cxf.endpoint."/endpoint-path".security.return.security.error]`
 .<| `boolean`
 .<| `false`
 
@@ -1830,10 +1830,10 @@ error message is sent.
 The "real" security errors should not be returned to the client in production, as they may leak information about the
 deployment, or otherwise provide an "oracle" for attacks.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_RETURN_SECURITY_ERROR+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_RETURN_SECURITY_ERROR+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-must-understand]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-must-understand[quarkus.cxf.endpoint."endpoints".security.must-understand]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-must-understand]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-must-understand[quarkus.cxf.endpoint."/endpoint-path".security.must-understand]`
 .<| `boolean`
 .<| `true`
 
@@ -1842,10 +1842,10 @@ the header is always omitted.
 
 Works only with `enable.streaming = true` - see link:https://issues.apache.org/jira/browse/CXF-8940[CXF-8940]
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_MUST_UNDERSTAND+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_MUST_UNDERSTAND+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-saml-cache]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-enable-saml-cache[quarkus.cxf.endpoint."endpoints".security.enable.saml.cache]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-saml-cache]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-enable-saml-cache[quarkus.cxf.endpoint."/endpoint-path".security.enable.saml.cache]`
 .<| `boolean`
 .<| 
 
@@ -1859,10 +1859,10 @@ non-security-policy case.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ENABLE_SAML_CACHE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENABLE_SAML_CACHE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-store-bytes-in-attachment]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-store-bytes-in-attachment[quarkus.cxf.endpoint."endpoints".security.store.bytes.in.attachment]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-store-bytes-in-attachment]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-store-bytes-in-attachment[quarkus.cxf.endpoint."/endpoint-path".security.store.bytes.in.attachment]`
 .<| `boolean`
 .<| 
 
@@ -1873,10 +1873,10 @@ efficient, as it means that the BASE-64 encoding step can be skipped. This only 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_STORE_BYTES_IN_ATTACHMENT+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_STORE_BYTES_IN_ATTACHMENT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-swa-encryption-attachment-transform-content]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-swa-encryption-attachment-transform-content[quarkus.cxf.endpoint."endpoints".security.swa.encryption.attachment.transform.content]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-swa-encryption-attachment-transform-content]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-swa-encryption-attachment-transform-content[quarkus.cxf.endpoint."/endpoint-path".security.swa.encryption.attachment.transform.content]`
 .<| `boolean`
 .<| `false`
 
@@ -1887,10 +1887,10 @@ WS-SecurityPolicy expression.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SWA_ENCRYPTION_ATTACHMENT_TRANSFORM_CONTENT+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SWA_ENCRYPTION_ATTACHMENT_TRANSFORM_CONTENT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-use-str-transform]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-use-str-transform[quarkus.cxf.endpoint."endpoints".security.use.str.transform]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-use-str-transform]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-use-str-transform[quarkus.cxf.endpoint."/endpoint-path".security.use.str.transform]`
 .<| `boolean`
 .<| `true`
 
@@ -1902,10 +1902,10 @@ Some frameworks cannot process the `SecurityTokenReference`. You may set this `f
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USE_STR_TRANSFORM+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_USE_STR_TRANSFORM+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-add-inclusive-prefixes]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-add-inclusive-prefixes[quarkus.cxf.endpoint."endpoints".security.add.inclusive.prefixes]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-add-inclusive-prefixes]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-add-inclusive-prefixes[quarkus.cxf.endpoint."/endpoint-path".security.add.inclusive.prefixes]`
 .<| `boolean`
 .<| `true`
 
@@ -1915,10 +1915,10 @@ Signatures using `WSConstants.C14N_EXCL_OMIT_COMMENTS`; otherwise the `PrefixLis
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ADD_INCLUSIVE_PREFIXES+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ADD_INCLUSIVE_PREFIXES+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-disable-require-client-cert-check]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-disable-require-client-cert-check[quarkus.cxf.endpoint."endpoints".security.disable.require.client.cert.check]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-disable-require-client-cert-check]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-disable-require-client-cert-check[quarkus.cxf.endpoint."/endpoint-path".security.disable.require.client.cert.check]`
 .<| `boolean`
 .<| `false`
 
@@ -1931,10 +1931,10 @@ certificates may not be available to the WS-Security layer for policy verificati
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_DISABLE_REQUIRE_CLIENT_CERT_CHECK+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_DISABLE_REQUIRE_CLIENT_CERT_CHECK+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-expand-xop-include]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-expand-xop-include[quarkus.cxf.endpoint."endpoints".security.expand.xop.include]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-expand-xop-include]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-expand-xop-include[quarkus.cxf.endpoint."/endpoint-path".security.expand.xop.include]`
 .<| `boolean`
 .<| 
 
@@ -1945,10 +1945,10 @@ are signed, and not just the reference. The default is `true` if MTOM is enabled
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_EXPAND_XOP_INCLUDE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_EXPAND_XOP_INCLUDE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-timestamp-timetolive]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-timestamp-timetolive[quarkus.cxf.endpoint."endpoints".security.timestamp.timeToLive]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-timestamp-timetolive]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-timestamp-timetolive[quarkus.cxf.endpoint."/endpoint-path".security.timestamp.timeToLive]`
 .<| `string`
 .<| `300`
 
@@ -1958,10 +1958,10 @@ valid or not.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TIMESTAMP_TIMETOLIVE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_TIMESTAMP_TIMETOLIVE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-timestamp-futuretimetolive]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-timestamp-futuretimetolive[quarkus.cxf.endpoint."endpoints".security.timestamp.futureTimeToLive]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-timestamp-futuretimetolive]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-timestamp-futuretimetolive[quarkus.cxf.endpoint."/endpoint-path".security.timestamp.futureTimeToLive]`
 .<| `string`
 .<| `60`
 
@@ -1972,10 +1972,10 @@ greater than zero to avoid problems where clocks are slightly askew. Set this to
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TIMESTAMP_FUTURETIMETOLIVE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_TIMESTAMP_FUTURETIMETOLIVE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-usernametoken-timetolive]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-usernametoken-timetolive[quarkus.cxf.endpoint."endpoints".security.usernametoken.timeToLive]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-usernametoken-timetolive]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-usernametoken-timetolive[quarkus.cxf.endpoint."/endpoint-path".security.usernametoken.timeToLive]`
 .<| `string`
 .<| `300`
 
@@ -1985,10 +1985,10 @@ as valid or not.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAMETOKEN_TIMETOLIVE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_USERNAMETOKEN_TIMETOLIVE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-usernametoken-futuretimetolive]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-usernametoken-futuretimetolive[quarkus.cxf.endpoint."endpoints".security.usernametoken.futureTimeToLive]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-usernametoken-futuretimetolive]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-usernametoken-futuretimetolive[quarkus.cxf.endpoint."/endpoint-path".security.usernametoken.futureTimeToLive]`
 .<| `string`
 .<| `60`
 
@@ -1999,10 +1999,10 @@ future-created `UsernameToken`s.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_USERNAMETOKEN_FUTURETIMETOLIVE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_USERNAMETOKEN_FUTURETIMETOLIVE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-spnego-client-action]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-spnego-client-action[quarkus.cxf.endpoint."endpoints".security.spnego.client.action]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-spnego-client-action]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-spnego-client-action[quarkus.cxf.endpoint."/endpoint-path".security.spnego.client.action]`
 .<| `string`
 .<| 
 
@@ -2012,10 +2012,10 @@ bean to use for SPNEGO. This allows the user to plug in a different implementati
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SPNEGO_CLIENT_ACTION+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SPNEGO_CLIENT_ACTION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-nonce-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-nonce-cache-instance[quarkus.cxf.endpoint."endpoints".security.nonce.cache.instance]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-nonce-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-nonce-cache-instance[quarkus.cxf.endpoint."/endpoint-path".security.nonce.cache.instance]`
 .<| `string`
 .<| 
 
@@ -2025,10 +2025,10 @@ to cache `UsernameToken` nonces. A `org.apache.wss4j.common.cache.EHCacheReplayC
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_NONCE_CACHE_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_NONCE_CACHE_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-timestamp-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-timestamp-cache-instance[quarkus.cxf.endpoint."endpoints".security.timestamp.cache.instance]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-timestamp-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-timestamp-cache-instance[quarkus.cxf.endpoint."/endpoint-path".security.timestamp.cache.instance]`
 .<| `string`
 .<| 
 
@@ -2039,10 +2039,10 @@ default.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TIMESTAMP_CACHE_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_TIMESTAMP_CACHE_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-saml-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-saml-cache-instance[quarkus.cxf.endpoint."endpoints".security.saml.cache.instance]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-saml-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-saml-cache-instance[quarkus.cxf.endpoint."/endpoint-path".security.saml.cache.instance]`
 .<| `string`
 .<| 
 
@@ -2053,10 +2053,10 @@ to cache SAML2 Token Identifier Strings (if the token contains a `OneTimeUse` co
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SAML_CACHE_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SAML_CACHE_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-cache-config-file]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-cache-config-file[quarkus.cxf.endpoint."endpoints".security.cache.config.file]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-cache-config-file]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-cache-config-file[quarkus.cxf.endpoint."/endpoint-path".security.cache.config.file]`
 .<| `string`
 .<| 
 
@@ -2066,10 +2066,10 @@ The default configuration file that is used is `cxf-ehcache.xml` in `org.apache.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CACHE_CONFIG_FILE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CACHE_CONFIG_FILE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-token-store-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-token-store-cache-instance[quarkus.cxf.endpoint."endpoints".security.token-store-cache-instance]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-token-store-cache-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-token-store-cache-instance[quarkus.cxf.endpoint."/endpoint-path".security.token-store-cache-instance]`
 .<| `string`
 .<| 
 
@@ -2079,10 +2079,10 @@ to use for caching security tokens. By default this uses a instance.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_TOKEN_STORE_CACHE_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_TOKEN_STORE_CACHE_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-cache-identifier]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-cache-identifier[quarkus.cxf.endpoint."endpoints".security.cache.identifier]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-cache-identifier]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-cache-identifier[quarkus.cxf.endpoint."/endpoint-path".security.cache.identifier]`
 .<| `string`
 .<| 
 
@@ -2098,10 +2098,10 @@ instead.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CACHE_IDENTIFIER+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CACHE_IDENTIFIER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-role-classifier]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-role-classifier[quarkus.cxf.endpoint."endpoints".security.role.classifier]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-role-classifier]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-role-classifier[quarkus.cxf.endpoint."/endpoint-path".security.role.classifier]`
 .<| `string`
 .<| 
 
@@ -2113,10 +2113,10 @@ uses this value in combination with the `role.classifier.type` to get the roles 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ROLE_CLASSIFIER+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ROLE_CLASSIFIER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-role-classifier-type]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-role-classifier-type[quarkus.cxf.endpoint."endpoints".security.role.classifier.type]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-role-classifier-type]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-role-classifier-type[quarkus.cxf.endpoint."/endpoint-path".security.role.classifier.type]`
 .<| `string`
 .<| `prefix`
 
@@ -2127,10 +2127,10 @@ are `prefix` or `classname`. Must be used in conjunction with the `role.classifi
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ROLE_CLASSIFIER_TYPE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ROLE_CLASSIFIER_TYPE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-asymmetric-signature-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-asymmetric-signature-algorithm[quarkus.cxf.endpoint."endpoints".security.asymmetric.signature.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-asymmetric-signature-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-asymmetric-signature-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.asymmetric.signature.algorithm]`
 .<| `string`
 .<| 
 
@@ -2140,10 +2140,10 @@ WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_ASYMMETRIC_SIGNATURE_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ASYMMETRIC_SIGNATURE_ALGORITHM+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-symmetric-signature-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-symmetric-signature-algorithm[quarkus.cxf.endpoint."endpoints".security.symmetric.signature.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-symmetric-signature-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-symmetric-signature-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.symmetric.signature.algorithm]`
 .<| `string`
 .<| 
 
@@ -2153,10 +2153,10 @@ WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SYMMETRIC_SIGNATURE_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SYMMETRIC_SIGNATURE_ALGORITHM+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-password-encryptor-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-password-encryptor-instance[quarkus.cxf.endpoint."endpoints".security.password.encryptor.instance]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-password-encryptor-instance]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-password-encryptor-instance[quarkus.cxf.endpoint."/endpoint-path".security.password.encryptor.instance]`
 .<| `string`
 .<| 
 
@@ -2173,10 +2173,10 @@ The encrypted passwords must be stored in the format "ENC(encoded encrypted pass
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_PASSWORD_ENCRYPTOR_INSTANCE+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_PASSWORD_ENCRYPTOR_INSTANCE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-delegated-credential]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-delegated-credential[quarkus.cxf.endpoint."endpoints".security.delegated.credential]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-delegated-credential]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-delegated-credential[quarkus.cxf.endpoint."/endpoint-path".security.delegated.credential]`
 .<| `string`
 .<| 
 
@@ -2186,10 +2186,10 @@ WS-Security. This is used to retrieve a service ticket instead of using the clie
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_DELEGATED_CREDENTIAL+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_DELEGATED_CREDENTIAL+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-security-context-creator]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-security-context-creator[quarkus.cxf.endpoint."endpoints".security.security.context.creator]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-security-context-creator]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-security-context-creator[quarkus.cxf.endpoint."/endpoint-path".security.security.context.creator]`
 .<| `string`
 .<| 
 
@@ -2201,10 +2201,10 @@ the set of WSS4J processing results. The default implementation is
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SECURITY_CONTEXT_CREATOR+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SECURITY_CONTEXT_CREATOR+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-security-token-lifetime]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-security-token-lifetime[quarkus.cxf.endpoint."endpoints".security.security.token.lifetime]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-security-token-lifetime]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-security-token-lifetime[quarkus.cxf.endpoint."/endpoint-path".security.security.token.lifetime]`
 .<| `long`
 .<| `300000`
 
@@ -2213,10 +2213,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_SECURITY_TOKEN_LIFETIME+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SECURITY_TOKEN_LIFETIME+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-request-credential-delegation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-request-credential-delegation[quarkus.cxf.endpoint."endpoints".security.kerberos.request.credential.delegation]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-request-credential-delegation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-request-credential-delegation[quarkus.cxf.endpoint."/endpoint-path".security.kerberos.request.credential.delegation]`
 .<| `boolean`
 .<| `false`
 
@@ -2226,10 +2226,10 @@ the KerberosClient.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_REQUEST_CREDENTIAL_DELEGATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_KERBEROS_REQUEST_CREDENTIAL_DELEGATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-use-credential-delegation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-use-credential-delegation[quarkus.cxf.endpoint."endpoints".security.kerberos.use.credential.delegation]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-use-credential-delegation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-use-credential-delegation[quarkus.cxf.endpoint."/endpoint-path".security.kerberos.use.credential.delegation]`
 .<| `boolean`
 .<| `false`
 
@@ -2239,10 +2239,10 @@ then it is used to obtain a service ticket.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_USE_CREDENTIAL_DELEGATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_KERBEROS_USE_CREDENTIAL_DELEGATION+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-is-username-in-servicename-form]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-is-username-in-servicename-form[quarkus.cxf.endpoint."endpoints".security.kerberos.is.username.in.servicename.form]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-is-username-in-servicename-form]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-is-username-in-servicename-form[quarkus.cxf.endpoint."/endpoint-path".security.kerberos.is.username.in.servicename.form]`
 .<| `boolean`
 .<| `false`
 
@@ -2251,10 +2251,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_IS_USERNAME_IN_SERVICENAME_FORM+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_KERBEROS_IS_USERNAME_IN_SERVICENAME_FORM+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-jaas-context]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-jaas-context[quarkus.cxf.endpoint."endpoints".security.kerberos.jaas.context]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-jaas-context]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-jaas-context[quarkus.cxf.endpoint."/endpoint-path".security.kerberos.jaas.context]`
 .<| `string`
 .<| 
 
@@ -2263,10 +2263,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_JAAS_CONTEXT+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_KERBEROS_JAAS_CONTEXT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-spn]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-spn[quarkus.cxf.endpoint."endpoints".security.kerberos.spn]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-spn]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-spn[quarkus.cxf.endpoint."/endpoint-path".security.kerberos.spn]`
 .<| `string`
 .<| 
 
@@ -2275,10 +2275,10 @@ tests] yet.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_SPN+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_KERBEROS_SPN+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-client]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-kerberos-client[quarkus.cxf.endpoint."endpoints".security.kerberos.client]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-client]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-kerberos-client[quarkus.cxf.endpoint."/endpoint-path".security.kerberos.client]`
 .<| `string`
 .<| 
 
@@ -2288,10 +2288,10 @@ bean used to obtain a service ticket.
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
 tests] yet.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_KERBEROS_CLIENT+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_KERBEROS_CLIENT+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-digest-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-digest-algorithm[quarkus.cxf.endpoint."endpoints".security.custom.digest.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-digest-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-digest-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.custom.digest.algorithm]`
 .<| `string`
 .<| `http://www.w3.org/2001/04/xmlenc#sha256`
 
@@ -2333,10 +2333,10 @@ and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section o
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_DIGEST_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_DIGEST_ALGORITHM+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-encryption-algorithm[quarkus.cxf.endpoint."endpoints".security.custom.encryption.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.custom.encryption.algorithm]`
 .<| `string`
 .<| `http://www.w3.org/2009/xmlenc11#aes256-gcm`
 
@@ -2355,10 +2355,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_ENCRYPTION_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_ENCRYPTION_ALGORITHM+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-symmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-symmetric-key-encryption-algorithm[quarkus.cxf.endpoint."endpoints".security.custom.symmetric.key.encryption.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-symmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-symmetric-key-encryption-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.custom.symmetric.key.encryption.algorithm]`
 .<| `string`
 .<| `http://www.w3.org/2001/04/xmlenc#kw-aes256`
 
@@ -2378,10 +2378,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_SYMMETRIC_KEY_ENCRYPTION_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_SYMMETRIC_KEY_ENCRYPTION_ALGORITHM+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-asymmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-asymmetric-key-encryption-algorithm[quarkus.cxf.endpoint."endpoints".security.custom.asymmetric.key.encryption.algorithm]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-asymmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-asymmetric-key-encryption-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.custom.asymmetric.key.encryption.algorithm]`
 .<| `string`
 .<| `http://www.w3.org/2001/04/xmlenc#rsa-1_5`
 
@@ -2401,10 +2401,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_ASYMMETRIC_KEY_ENCRYPTION_ALGORITHM+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_ASYMMETRIC_KEY_ENCRYPTION_ALGORITHM+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-encryption-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-encryption-key-derivation[quarkus.cxf.endpoint."endpoints".security.custom.encryption.key.derivation]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-key-derivation[quarkus.cxf.endpoint."/endpoint-path".security.custom.encryption.key.derivation]`
 .<| `string`
 .<| `http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
 
@@ -2423,10 +2423,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_ENCRYPTION_KEY_DERIVATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_ENCRYPTION_KEY_DERIVATION+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-signature-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-signature-key-derivation[quarkus.cxf.endpoint."endpoints".security.custom.signature.key.derivation]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-signature-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-signature-key-derivation[quarkus.cxf.endpoint."/endpoint-path".security.custom.signature.key.derivation]`
 .<| `string`
 .<| `http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
 
@@ -2445,10 +2445,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_SIGNATURE_KEY_DERIVATION+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_SIGNATURE_KEY_DERIVATION+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-encryption-derived-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-encryption-derived-key-length[quarkus.cxf.endpoint."endpoints".security.custom.encryption.derived.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-derived-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-derived-key-length[quarkus.cxf.endpoint."/endpoint-path".security.custom.encryption.derived.key.length]`
 .<| `int`
 .<| `256`
 
@@ -2468,10 +2468,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_ENCRYPTION_DERIVED_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_ENCRYPTION_DERIVED_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-signature-derived-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-signature-derived-key-length[quarkus.cxf.endpoint."endpoints".security.custom.signature.derived.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-signature-derived-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-signature-derived-key-length[quarkus.cxf.endpoint."/endpoint-path".security.custom.signature.derived.key.length]`
 .<| `int`
 .<| `192`
 
@@ -2491,10 +2491,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_SIGNATURE_DERIVED_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_SIGNATURE_DERIVED_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-minimum-symmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-minimum-symmetric-key-length[quarkus.cxf.endpoint."endpoints".security.custom.minimum.symmetric.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-minimum-symmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-minimum-symmetric-key-length[quarkus.cxf.endpoint."/endpoint-path".security.custom.minimum.symmetric.key.length]`
 .<| `int`
 .<| `256`
 
@@ -2514,10 +2514,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_MINIMUM_SYMMETRIC_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_MINIMUM_SYMMETRIC_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-maximum-symmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-maximum-symmetric-key-length[quarkus.cxf.endpoint."endpoints".security.custom.maximum.symmetric.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-maximum-symmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-maximum-symmetric-key-length[quarkus.cxf.endpoint."/endpoint-path".security.custom.maximum.symmetric.key.length]`
 .<| `int`
 .<| `256`
 
@@ -2536,10 +2536,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_MAXIMUM_SYMMETRIC_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_MAXIMUM_SYMMETRIC_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-minimum-asymmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-minimum-asymmetric-key-length[quarkus.cxf.endpoint."endpoints".security.custom.minimum.asymmetric.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-minimum-asymmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-minimum-asymmetric-key-length[quarkus.cxf.endpoint."/endpoint-path".security.custom.minimum.asymmetric.key.length]`
 .<| `int`
 .<| `1024`
 
@@ -2559,10 +2559,10 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_MINIMUM_ASYMMETRIC_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_MINIMUM_ASYMMETRIC_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-maximum-asymmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-security-custom-maximum-asymmetric-key-length[quarkus.cxf.endpoint."endpoints".security.custom.maximum.asymmetric.key.length]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-maximum-asymmetric-key-length]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-maximum-asymmetric-key-length[quarkus.cxf.endpoint."/endpoint-path".security.custom.maximum.asymmetric.key.length]`
 .<| `int`
 .<| `4096`
 
@@ -2582,7 +2582,7 @@ Processing Specification.
 run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
 enabled.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__SECURITY_CUSTOM_MAXIMUM_ASYMMETRIC_KEY_LENGTH+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CUSTOM_MAXIMUM_ASYMMETRIC_KEY_LENGTH+++` +
 *Since Quarkus CXF*: 3.8.1
 |===
 

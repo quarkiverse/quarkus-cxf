@@ -51,14 +51,14 @@ endif::[]
 == Usage
 
 Once your application depends on `quarkus-cxf-rt-ws-rm`, WS-RM is enabled for all clients and service endpoints defined in `application.properties`.
-This is due to the fact that the `quarkus.cxf.client.myClient.rm.enabled` and `quarkus.cxf.endpoint."/my-endpoint".rm.enabled`
+This is due to the fact that the `quarkus.cxf.client."client-name".rm.enabled` and `quarkus.cxf.endpoint."/endpoint-path".rm.enabled`
 properties are `true` by default.
 
 Enabling WS-RM for a client or service endpoints means that https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-RM interceptors] will be added to the given client or endpoint.
 
 In addition to that you may want to set some of the options documented xref:#quarkus-cxf-rt-ws-rm-configuration[below] and/or the following WS-Addressing options:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-clients-decoupled-endpoint[quarkus.cxf.client.myClient.decoupled-endpoint]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-decoupled-endpoint[quarkus.cxf.client."client-name".decoupled-endpoint]`
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-decoupled-endpoint-base[quarkus.cxf.decoupled-endpoint-base]`
 
 [id="extensions-quarkus-cxf-rt-ws-rm-usage-runnable-example"]
@@ -187,22 +187,22 @@ If the value is `++#++defaultRmFeature` then Quarkus CXF creates and configures 
 *Environment variable*: `+++QUARKUS_CXF_RM_FEATURE_REF+++` +
 *Since Quarkus CXF*: 2.7.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-rm-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-clients-rm-enabled[quarkus.cxf.client."clients".rm.enabled]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-rm-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-rm-enabled[quarkus.cxf.client."client-name".rm.enabled]`
 .<| `boolean`
 .<| `true`
 
 3+a|If `true` then the WS-ReliableMessaging link:https://cxf.apache.org/docs/ws-reliablemessaging.html[interceptors]
 will be added to this client or service endpoint.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__RM_ENABLED+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__RM_ENABLED+++`
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-rm-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-rm-enabled[quarkus.cxf.endpoint."endpoints".rm.enabled]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-rm-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-rm-enabled[quarkus.cxf.endpoint."/endpoint-path".rm.enabled]`
 .<| `boolean`
 .<| `true`
 
 3+a|If `true` then the WS-ReliableMessaging link:https://cxf.apache.org/docs/ws-reliablemessaging.html[interceptors]
 will be added to this client or service endpoint.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__RM_ENABLED+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__RM_ENABLED+++`
 |===
 

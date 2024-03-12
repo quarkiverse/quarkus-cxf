@@ -49,8 +49,8 @@ The integration of CXF into the https://quarkus.io/guides/micrometer[Quarkus Mic
 As long as your application depends on `quarkus-cxf-rt-features-metrics`,
 an instance of `QuarkusCxfMetricsFeature` is created internally
 and enabled by default for all clients and service endpoints created by {quarkus-cxf-project-name}.
-You can disable it via `quarkus.cxf.metrics.enabled-for`, `quarkus.cxf.client."clients".metrics.enabled`
-and `quarkus.cxf.endpoint."endpoints".metrics.enabled` properties documented below.
+You can disable it via `quarkus.cxf.metrics.enabled-for`, `quarkus.cxf.client."client-name".metrics.enabled`
+and `quarkus.cxf.endpoint."/endpoint-path".metrics.enabled` properties documented below.
 
 [id="extensions-quarkus-cxf-rt-features-metrics-usage-runnable-example"]
 === Runnable example
@@ -138,30 +138,30 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 .<| `both`
 
 3+a|Specifies whether the metrics collection will be enabled for clients, services, both or none. This global setting can
-be overridden per client or service endpoint using the `quarkus.cxf.client."clients".metrics.enabled` or
-`quarkus.cxf.endpoint."endpoints".metrics.enabled` option respectively.
+be overridden per client or service endpoint using the `quarkus.cxf.client."client-name".metrics.enabled` or
+`quarkus.cxf.endpoint."/endpoint-path".metrics.enabled` option respectively.
 
 *Environment variable*: `+++QUARKUS_CXF_METRICS_ENABLED_FOR+++` +
 *Since Quarkus CXF*: 2.7.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-metrics-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-clients-metrics-enabled[quarkus.cxf.client."clients".metrics.enabled]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-metrics-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-metrics-enabled[quarkus.cxf.client."client-name".metrics.enabled]`
 .<| `boolean`
 .<| `true`
 
 3+a|If `true` and if `quarkus.cxf.metrics.enabled-for` is set to `both` or `clients` then the `MetricsFeature` will
 be added to this client; otherwise the feature will not be added to this client.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__METRICS_ENABLED+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__METRICS_ENABLED+++` +
 *Since Quarkus CXF*: 2.7.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-metrics-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-metrics-enabled[quarkus.cxf.endpoint."endpoints".metrics.enabled]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-metrics-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-metrics-enabled[quarkus.cxf.endpoint."/endpoint-path".metrics.enabled]`
 .<| `boolean`
 .<| `true`
 
 3+a|If `true` and if `quarkus.cxf.metrics.enabled-for` is set to `both` or `services` then the `MetricsFeature` will
 be added to this service endpoint; otherwise the feature will not be added to this service endpoint.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__METRICS_ENABLED+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__METRICS_ENABLED+++` +
 *Since Quarkus CXF*: 2.7.0
 |===
 

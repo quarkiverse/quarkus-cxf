@@ -4,8 +4,8 @@ Instances of these are created and configured internally using the instance of `
 provided by https://quarkus.io/guides/opentelemetry[Quarkus OpenTelemetry].
 
 The tracing is enabled by default for all clients and service endpoints created by {quarkus-cxf-project-name},
-unless you disable it explicitly via `quarkus.cxf.otel.enabled-for`, `quarkus.cxf.client."clients".otel.enabled`
-or `quarkus.cxf.endpoint."endpoints".otel.enabled`.
+unless you disable it explicitly via `quarkus.cxf.otel.enabled-for`, `quarkus.cxf.client."client-name".otel.enabled`
+or `quarkus.cxf.endpoint."/endpoint-path".otel.enabled`.
 
 === Runnable example
 

@@ -140,8 +140,9 @@ public interface LoggingConfig {
         /**
          * Specifies whether the message logging will be enabled for clients, services, both or none. This setting can be
          * overridden per client or service endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-enabled[quarkus.cxf.endpoint."endpoints".logging.enabled]`
-         * or `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-enabled[quarkus.cxf.client."clients".logging.enabled]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-enabled[quarkus.cxf.endpoint."/endpoint-path".logging.enabled]`
+         * or
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-enabled[quarkus.cxf.client."client-name".logging.enabled]`
          * respectively.
          *
          * @since 2.6.0
@@ -154,8 +155,9 @@ public interface LoggingConfig {
         /**
          * If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. This setting can be
          * overridden per client or service endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-pretty[quarkus.cxf.endpoint."endpoints".logging.pretty]` or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-pretty[quarkus.cxf.client."clients".logging.pretty]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-pretty[quarkus.cxf.endpoint."/endpoint-path".logging.pretty]`
+         * or
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-pretty[quarkus.cxf.client."client-name".logging.pretty]`
          * respectively.
          *
          * @since 2.6.0
@@ -167,8 +169,9 @@ public interface LoggingConfig {
         /**
          * A message length in bytes at which it is truncated in the log. This setting can be overridden per client or service
          * endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-limit[quarkus.cxf.endpoint."endpoints".logging.limit]` or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-limit[quarkus.cxf.client."clients".logging.limit]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-limit[quarkus.cxf.endpoint."/endpoint-path".logging.limit]`
+         * or
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-limit[quarkus.cxf.client."client-name".logging.limit]`
          * respectively.
          *
          * @since 2.6.0
@@ -181,9 +184,9 @@ public interface LoggingConfig {
         /**
          * A message length in bytes at which it will be written to disk. `-1` is unlimited. This setting can be overridden per
          * client or service endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-in-mem-threshold[quarkus.cxf.endpoint."endpoints".logging.in-mem-threshold]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-in-mem-threshold[quarkus.cxf.endpoint."/endpoint-path".logging.in-mem-threshold]`
          * or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-in-mem-threshold[quarkus.cxf.client."clients".logging.in-mem-threshold]`
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-in-mem-threshold[quarkus.cxf.client."client-name".logging.in-mem-threshold]`
          * respectively.
          *
          * @since 2.6.0
@@ -195,8 +198,9 @@ public interface LoggingConfig {
         /**
          * If `true`, binary payloads will be logged; otherwise they won't be logged. This setting can be overridden per client
          * or service endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-log-binary[quarkus.cxf.endpoint."endpoints".logging.log-binary]`
-         * or `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-log-binary[quarkus.cxf.client."clients".logging.log-binary]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-log-binary[quarkus.cxf.endpoint."/endpoint-path".logging.log-binary]`
+         * or
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-log-binary[quarkus.cxf.client."client-name".logging.log-binary]`
          * respectively.
          *
          * @since 2.6.0
@@ -208,9 +212,9 @@ public interface LoggingConfig {
         /**
          * If `true`, multipart payloads will be logged; otherwise they won't be logged. This setting can be overridden per
          * client or service endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-log-multipart[quarkus.cxf.endpoint."endpoints".logging.log-multipart]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-log-multipart[quarkus.cxf.endpoint."/endpoint-path".logging.log-multipart]`
          * or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-log-multipart[quarkus.cxf.client."clients".logging.log-multipart]`
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-log-multipart[quarkus.cxf.client."client-name".logging.log-multipart]`
          * respectively.
          *
          * @since 2.6.0
@@ -222,8 +226,9 @@ public interface LoggingConfig {
         /**
          * If `true`, verbose logging will be enabled; otherwise it won't be enabled. This setting can be overridden per client
          * or service endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-verbose[quarkus.cxf.endpoint."endpoints".logging.verbose]`
-         * or `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-verbose[quarkus.cxf.client."clients".logging.verbose]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-verbose[quarkus.cxf.endpoint."/endpoint-path".logging.verbose]`
+         * or
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-verbose[quarkus.cxf.client."client-name".logging.verbose]`
          * respectively.
          *
          * @since 2.6.0
@@ -236,9 +241,9 @@ public interface LoggingConfig {
          * A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor`
          * whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service
          * endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-in-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.in-binary-content-media-types]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-in-binary-content-media-types[quarkus.cxf.endpoint."/endpoint-path".logging.in-binary-content-media-types]`
          * or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-in-binary-content-media-types[quarkus.cxf.client."clients".logging.in-binary-content-media-types]`
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-in-binary-content-media-types[quarkus.cxf.client."client-name".logging.in-binary-content-media-types]`
          * respectively.
          *
          * @since 2.6.0
@@ -250,9 +255,9 @@ public interface LoggingConfig {
          * A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor`
          * whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service
          * endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-out-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.out-binary-content-media-types]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-out-binary-content-media-types[quarkus.cxf.endpoint."/endpoint-path".logging.out-binary-content-media-types]`
          * or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-out-binary-content-media-types[quarkus.cxf.client."clients".logging.out-binary-content-media-types]`
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-out-binary-content-media-types[quarkus.cxf.client."client-name".logging.out-binary-content-media-types]`
          * respectively.
          *
          * @since 2.6.0
@@ -264,9 +269,9 @@ public interface LoggingConfig {
          * A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor`
          * and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. This setting can be
          * overridden per client or service endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-binary-content-media-types[quarkus.cxf.endpoint."endpoints".logging.binary-content-media-types]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-binary-content-media-types[quarkus.cxf.endpoint."/endpoint-path".logging.binary-content-media-types]`
          * or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-binary-content-media-types[quarkus.cxf.client."clients".logging.binary-content-media-types]`
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-binary-content-media-types[quarkus.cxf.client."client-name".logging.binary-content-media-types]`
          * respectively.
          *
          * @since 2.6.0
@@ -277,9 +282,9 @@ public interface LoggingConfig {
         /**
          * A comma separated list of XML elements containing sensitive information to be masked in the log. This setting can be
          * overridden per client or service endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-sensitive-element-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-element-names]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-sensitive-element-names[quarkus.cxf.endpoint."/endpoint-path".logging.sensitive-element-names]`
          * or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-sensitive-element-names[quarkus.cxf.client."clients".logging.sensitive-element-names]`
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-sensitive-element-names[quarkus.cxf.client."client-name".logging.sensitive-element-names]`
          * respectively.
          *
          * @since 2.6.0
@@ -290,9 +295,9 @@ public interface LoggingConfig {
         /**
          * A comma separated list of protocol headers containing sensitive information to be masked in the log. This setting can
          * be overridden per client or service endpoint using
-         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-logging-sensitive-protocol-header-names[quarkus.cxf.endpoint."endpoints".logging.sensitive-protocol-header-names]`
+         * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-sensitive-protocol-header-names[quarkus.cxf.endpoint."/endpoint-path".logging.sensitive-protocol-header-names]`
          * or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-clients-logging-sensitive-protocol-header-names[quarkus.cxf.client."clients".logging.sensitive-protocol-header-names]`
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-sensitive-protocol-header-names[quarkus.cxf.client."client-name".logging.sensitive-protocol-header-names]`
          * respectively.
          *
          * @since 2.6.0

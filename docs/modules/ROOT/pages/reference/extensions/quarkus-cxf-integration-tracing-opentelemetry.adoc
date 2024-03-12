@@ -50,8 +50,8 @@ Instances of these are created and configured internally using the instance of `
 provided by https://quarkus.io/guides/opentelemetry[Quarkus OpenTelemetry].
 
 The tracing is enabled by default for all clients and service endpoints created by {quarkus-cxf-project-name},
-unless you disable it explicitly via `quarkus.cxf.otel.enabled-for`, `quarkus.cxf.client."clients".otel.enabled`
-or `quarkus.cxf.endpoint."endpoints".otel.enabled`.
+unless you disable it explicitly via `quarkus.cxf.otel.enabled-for`, `quarkus.cxf.client."client-name".otel.enabled`
+or `quarkus.cxf.endpoint."/endpoint-path".otel.enabled`.
 
 [id="extensions-quarkus-cxf-integration-tracing-opentelemetry-usage-runnable-example"]
 === Runnable example
@@ -80,13 +80,13 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 .<| `both`
 
 3+a|Specifies whether the OpenTelemetry tracing will be enabled for clients, services, both or none. This global setting
-can be overridden per client or service endpoint using the `quarkus.cxf.client."clients".otel.enabled` or
-`quarkus.cxf.endpoint."endpoints".otel.enabled` option respectively.
+can be overridden per client or service endpoint using the `quarkus.cxf.client."client-name".otel.enabled` or
+`quarkus.cxf.endpoint."/endpoint-path".otel.enabled` option respectively.
 
 *Environment variable*: `+++QUARKUS_CXF_OTEL_ENABLED_FOR+++` +
 *Since Quarkus CXF*: 2.7.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-clients-otel-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-clients-otel-enabled[quarkus.cxf.client."clients".otel.enabled]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-otel-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-otel-enabled[quarkus.cxf.client."client-name".otel.enabled]`
 .<| `boolean`
 .<| `true`
 
@@ -94,17 +94,17 @@ can be overridden per client or service endpoint using the `quarkus.cxf.client."
 `OpenTelemetryClientFeature` will be added to this client; otherwise the feature will not be added to this
 client.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENTS__OTEL_ENABLED+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__OTEL_ENABLED+++` +
 *Since Quarkus CXF*: 2.7.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoints-otel-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoints-otel-enabled[quarkus.cxf.endpoint."endpoints".otel.enabled]`
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-otel-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-otel-enabled[quarkus.cxf.endpoint."/endpoint-path".otel.enabled]`
 .<| `boolean`
 .<| `true`
 
 3+a|If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `services` then the `OpenTelemetryFeature`
 will be added to this service endpoint; otherwise the feature will not be added to this service endpoint.
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT__ENDPOINTS__OTEL_ENABLED+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__OTEL_ENABLED+++` +
 *Since Quarkus CXF*: 2.7.0
 |===
 

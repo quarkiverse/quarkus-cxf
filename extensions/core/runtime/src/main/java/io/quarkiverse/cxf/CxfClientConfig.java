@@ -101,7 +101,7 @@ public interface CxfClientConfig {
      *
      * [source,properties]
      * ----
-     * quarkus.cxf.endpoint.myClient.features = org.apache.cxf.ext.logging.LoggingFeature
+     * quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.LoggingFeature
      * ----
      *
      * @asciidoclet
@@ -291,7 +291,7 @@ public interface CxfClientConfig {
 
     /**
      * HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit`
-     * implementation defined via `quarkus.cxf.client.myClient.http-conduit-factory`. Other possible values: `1.1`, `2`.
+     * implementation defined via `quarkus.cxf.client."client-name".http-conduit-factory`. Other possible values: `1.1`, `2`.
      *
      * Some of these values might be unsupported by some `HTTPConduit` implementations.
      *
@@ -312,7 +312,7 @@ public interface CxfClientConfig {
     /**
      * An URI path (starting with `/`) or a full URI for the receipt of responses over a separate provider -> consumer
      * connection. If the value starts with `/`, then it is prefixed with the base URI configured via
-     * `quarkus.cxf.client.myClient.decoupled-endpoint-base` before being used as a value for the WS-Addressing `ReplyTo`
+     * `quarkus.cxf.client."client-name".decoupled-endpoint-base` before being used as a value for the WS-Addressing `ReplyTo`
      * message header.
      *
      * @since 2.2.3
