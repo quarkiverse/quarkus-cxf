@@ -43,7 +43,7 @@
     <properties>
         <!-- Primary dependencies -->
         <quarkus.version>3.8.2</quarkus.version>
-        <cxf.version>4.0.3</cxf.version>
+        <cxf.version>4.0.4</cxf.version>
 
         <!-- Other compile dependency versions (keep sorted alphabetically) -->
         <!-- Items annotated with @sync can be updated by running mvn cq:sync-versions -N -->
