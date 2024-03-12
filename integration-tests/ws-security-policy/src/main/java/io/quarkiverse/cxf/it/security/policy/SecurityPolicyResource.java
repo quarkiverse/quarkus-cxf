@@ -22,34 +22,6 @@ import io.quarkiverse.cxf.it.security.policy.BeanProducers.RecordingReplayCache;
 public class SecurityPolicyResource {
 
     @Inject
-    @CXFClient("hello")
-    HelloService hello;
-
-    @Inject
-    @CXFClient("helloCustomHostnameVerifier")
-    HelloService helloCustomHostnameVerifier;
-
-    @Inject
-    @CXFClient("helloAllowAll")
-    HelloService helloAllowAll;
-
-    @Inject
-    @CXFClient("helloIp")
-    HelloService helloIp;
-
-    @Inject
-    @CXFClient("helloHttps")
-    HttpsPolicyHelloService helloHttps;
-
-    @Inject
-    @CXFClient("helloHttpsPkcs12")
-    HttpsPolicyHelloService helloHttpsPkcs12;
-
-    @Inject
-    @CXFClient("helloHttp")
-    HelloService helloHttp;
-
-    @Inject
     @CXFClient("helloUsernameToken")
     UsernameTokenPolicyHelloService helloUsernameToken;
 
@@ -109,27 +81,6 @@ public class SecurityPolicyResource {
     public Response hello(@PathParam("client") String client, String body) {
         final AbstractHelloService service;
         switch (client) {
-            case "hello":
-                service = hello;
-                break;
-            case "helloAllowAll":
-                service = helloAllowAll;
-                break;
-            case "helloCustomHostnameVerifier":
-                service = helloCustomHostnameVerifier;
-                break;
-            case "helloIp":
-                service = helloIp;
-                break;
-            case "helloHttps":
-                service = helloHttps;
-                break;
-            case "helloHttpsPkcs12":
-                service = helloHttpsPkcs12;
-                break;
-            case "helloHttp":
-                service = helloHttp;
-                break;
             case "helloUsernameToken":
                 service = helloUsernameToken;
                 break;

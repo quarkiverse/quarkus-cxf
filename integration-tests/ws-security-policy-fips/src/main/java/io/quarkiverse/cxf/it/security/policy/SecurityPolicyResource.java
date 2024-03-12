@@ -2,8 +2,11 @@ package io.quarkiverse.cxf.it.security.policy;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -15,6 +18,34 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 
 @Path("/cxf/security-policy")
 public class SecurityPolicyResource {
+
+    @Inject
+    @CXFClient("hello")
+    HelloService hello;
+
+    @Inject
+    @CXFClient("helloCustomHostnameVerifier")
+    HelloService helloCustomHostnameVerifier;
+
+    @Inject
+    @CXFClient("helloAllowAll")
+    HelloService helloAllowAll;
+
+    @Inject
+    @CXFClient("helloIp")
+    HelloService helloIp;
+
+    @Inject
+    @CXFClient("helloHttps")
+    HttpsPolicyHelloService helloHttps;
+
+    @Inject
+    @CXFClient("helloHttpsPkcs12")
+    HttpsPolicyHelloService helloHttpsPkcs12;
+
+    @Inject
+    @CXFClient("helloHttp")
+    HelloService helloHttp;
 
     @Inject
     @CXFClient("helloCustomEncryptSign")
@@ -32,12 +63,37 @@ public class SecurityPolicyResource {
     @CXFClient("helloCustomizedEncryptSign")
     CustomEncryptSignPolicyHelloService helloCustomizedEncryptSign;
 
+    @Inject
+    @Named("messageCollector")
+    BeanProducers.MessageCollector messageCollector;
+
     @POST
     @Path("/{client}")
     @Produces(MediaType.TEXT_PLAIN)
     public Response hello(@PathParam("client") String client, String body) {
         final AbstractHelloService service;
         switch (client) {
+            case "hello":
+                service = hello;
+                break;
+            case "helloAllowAll":
+                service = helloAllowAll;
+                break;
+            case "helloCustomHostnameVerifier":
+                service = helloCustomHostnameVerifier;
+                break;
+            case "helloIp":
+                service = helloIp;
+                break;
+            case "helloHttps":
+                service = helloHttps;
+                break;
+            case "helloHttpsPkcs12":
+                service = helloHttpsPkcs12;
+                break;
+            case "helloHttp":
+                service = helloHttp;
+                break;
             case "helloCustomizedEncryptSign":
                 service = helloCustomizedEncryptSign;
                 break;
@@ -62,4 +118,12 @@ public class SecurityPolicyResource {
             return Response.status(500).entity(w.toString()).build();
         }
     }
+
+    @GET
+    @Path("/drainMessages")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String drainMessages() {
+        return messageCollector.drainMessages().stream().collect(Collectors.joining("|||"));
+    }
+
 }
