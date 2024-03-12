@@ -21,6 +21,7 @@
 ** xref:user-guide/camel-integration.adoc[Camel Integration]
 * xref:release-notes/index.adoc[Release notes]
 ** xref:release-notes/3.8.0.adoc[3.8.0 LTS]
+** xref:release-notes/3.8.1.adoc[3.8.1 LTS]
 * xref:contributor-guide/index.adoc[Contributor guide]
 ** xref:contributor-guide/releasing.adoc[Releasing]
 * xref:reference/index.adoc[Reference]
