@@ -29,6 +29,7 @@
 ** xref:release-notes/2.5.0.adoc[2.5.0]
 ** xref:release-notes/2.4.0.adoc[2.4.0]
 ** xref:release-notes/2.3.1.adoc[2.3.1]
+** xref:release-notes/2.3.0.adoc[2.3.0]
 * xref:contributor-guide/index.adoc[Contributor guide]
 ** xref:contributor-guide/releasing.adoc[Releasing]
 * xref:reference/index.adoc[Reference]
