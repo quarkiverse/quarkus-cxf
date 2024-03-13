@@ -42,4 +42,4 @@ The following parts of the documentation were improved:
 
 == Full changelog
 
-https://github.com/quarkiverse/quarkus-cxf/compare/3.8.0...2.7.0
+https://github.com/quarkiverse/quarkus-cxf/compare/2.7.1+++...+++3.8.0
