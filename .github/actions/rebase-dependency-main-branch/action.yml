@@ -1,0 +1,89 @@
+name: rebase-dependency-main-branch
+description: 'Rebase a dependency main branch such as quarkus-main or cxf-main, rebuild it and report the status in a dedicated issue'
+
+inputs:
+  java-version:
+    description: 'Java version'
+    required: true
+  dependency-git-repo-url:
+    description: "The URL of the dependency's git repository to checkout and build from"
+    required: true
+  dependency-short-name:
+    description: "The short lower case name of the dependency as quarkus or cxf"
+    required: true
+  issue-id:
+    description: "The issue number where to report any rebase or build issues"
+    required: true
+  additional-maven-args:
+    description: "Additional arguments to append to mvn install -ntp"
+    required: true
+
+outputs:
+  dependency-commit:
+    description: "The SHA1 of the dependency main branch"
+    value: ${{ steps.checkout-dependency.outputs.dependency-commit }}
+  dependency-version:
+    description: "The version of the dependency as present in the top pom.xml of its main branch"
+    value: ${{ steps.checkout-dependency.outputs.dependency-version }}
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: rebase ${{ inputs.dependency-short-name }}-main
+      shell: bash
+      run: |
+        echo "GH_ISSUE_STATE=closed" >> $GITHUB_ENV
+        set -e
+        git fetch origin
+        git checkout ${{ inputs.dependency-short-name }}-main 2>/dev/null || git checkout -b ${{ inputs.dependency-short-name }}-main
+        git rebase origin/main \
+          || ( echo "GH_ISSUE_MESSAGE=Could not rebase ${{ inputs.dependency-short-name }}-main in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV \
+          && echo "GH_ISSUE_STATE=open" >> $GITHUB_ENV )
+
+    - name: test the output
+      shell: bash
+      run: |
+        echo "${{ env.GH_ISSUE_MESSAGE }}"
+        echo "${{ env.GH_ISSUE_STATE }}"
+
+    - name: update-issue
+      uses: ./.github/actions/update-issue
+      with:
+        issue-id: "${{ env.ISSUE_ID }}"
+        add-message: "${{ env.GH_ISSUE_MESSAGE }}"
+        new-state: "${{ env.GH_ISSUE_STATE }}"
+
+    - name: Make the current workflow fail
+      shell: bash
+      if: env.GH_ISSUE_STATE == 'open'
+      run: |
+        exit 1
+
+    - name: Checkout ${{ inputs.dependency-git-repo-url }}
+      id: checkout-dependency
+      shell: bash
+      run: |
+        repoName="$(basename -s .git "${{ inputs.dependency-git-repo-url }}")"
+        cd ~
+        [[ -d "$repoName" ]] || git clone --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
+        cd $repoName \
+          && echo "Current $repoName commit:" $(git rev-parse HEAD) \
+          && echo "dependency-commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          && echo "dependency-version=$(xmllint --xpath "/*[local-name() = 'project']/*[local-name() = 'version']/text()" pom.xml)" >> $GITHUB_OUTPUT
+
+    - name: Set ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}
+      shell: bash
+      run: |
+        sed -i 's|<${{ inputs.dependency-short-name }}.version>\[^<\]*</${{ inputs.dependency-short-name }}.version>|<${{ inputs.dependency-short-name }}.version>${{ steps.checkout-dependency.outputs.dependency-version }}</${{ inputs.dependency-short-name }}.version>|' pom.xml
+        if git diff-index --quiet HEAD --; then
+            echo "${{ inputs.dependency-short-name }}-main uses version ${{ steps.checkout-dependency.outputs.dependency-version }} already"
+            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N
+            git add -A
+            git commit -m "Re-run mvn cq:sync-versions"
+        else
+            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N
+            git add -A
+            git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}"
+        fi

@@ -1,0 +1,37 @@
+name: update-issue
+description: 'Update the status of a specific issue and optionally add a message'
+
+inputs:
+  issue-id:
+    description: "The number of the issue to update"
+    required: true
+  add-message:
+    description: "The message body to add"
+    required: true
+    default: ''
+  new-state:
+    description: "The new issue state to set"
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Add message to issue ${{ inputs.issue-id }}
+      if: inputs.add-message != ''
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        issue-number: ${{ inputs.issue-id }}
+        body: |
+          ${{ inputs.add-message }}
+      env:
+        QUARKIVERSEBOT_TOKEN: ${{ secrets.QUARKIVERSEBOT_TOKEN }}
+
+    - name: Update the status of issue ${{ inputs.issue-id }}
+      shell: bash
+      run: |
+        curl --request PATCH \
+          --url ${{ github.api_url }}/repos/${{ github.repository }}/issues/${{ inputs.issue-id }} \
+          --header 'Authorization: token ${{ secrets.QUARKIVERSEBOT_TOKEN }}' \
+          --header 'Content-Type: application/json' \
+          --data '{"state": "${{ inputs.new-state }}"}'
