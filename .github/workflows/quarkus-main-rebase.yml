@@ -1,0 +1,63 @@
+name: quarkus-main rebase
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run every day at 2AM
+    - cron:  '0 2 * * *'
+
+env:
+  LANG: en_US.UTF-8
+  ISSUE_ID: 1287
+  DEPENDENCY_SHORT_NAME: quarkus
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  rebase-quarkus-main:
+    if: github.repository == 'quarkiverse/quarkus-cxf'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: rebase-dependency-main-branch
+      uses: ./.github/actions/rebase-dependency-main-branch
+      id: rebase-dependency-main-branch
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
+        dependency-short-name: ${{ env.DEPENDENCY_SHORT_NAME }}
+        issue-id: ${{ env.ISSUE_ID }}
+        token: "${{ secrets.QUARKIVERSEBOT_TOKEN }}"
+        additional-maven-args: '-DskipTests -Dcheckstyle.skip'
+
+    - name: build-and-run-jvm-tests
+      uses: ./.github/actions/build-and-run-jvm-tests
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+
+    - name: push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
+      shell: bash
+      run: |
+        push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
+
+    - name: Update issue ${{ env.ISSUE_ID }}
+      if: ${{ failure() }}
+      shell: bash
+      run: |
+        gh issue reopen \
+          --repo ${{ github.repository }} \
+          --comment "Build with ${{ env.DEPENDENCY_SHORT_NAME }} ${{ steps.rebase-dependency-main-branch.outputs.dependency-commit }} failed in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+          ${{ env.ISSUE_ID }}
+      env:
+        GH_TOKEN: ${{ secrets.QUARKIVERSEBOT_TOKEN }}
+
+    - name: Close issue ${{ env.ISSUE_ID }}
+      if: ${{ success() }}
+      shell: bash
+      run: gh issue close --repo ${{ github.repository }} ${{ env.ISSUE_ID }}
+      env:
+        GH_TOKEN: ${{ secrets.QUARKIVERSEBOT_TOKEN }}
+
