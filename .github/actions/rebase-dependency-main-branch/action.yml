@@ -59,10 +59,6 @@ runs:
             --repo ${{ github.repository }} \
             --comment '${{ env.GH_ISSUE_MESSAGE }}' \
             ${{ inputs.issue-id }}
-        else
-          gh issue ${{ env.GH_ISSUE_OPERATION }} \
-            --repo ${{ github.repository }} \
-            ${{ inputs.issue-id }}
         fi
       env:
         GH_TOKEN: ${{ inputs.token }}
@@ -77,12 +73,11 @@ runs:
       id: checkout-dependency
       shell: bash
       run: |
-        repoName="$(basename -s .git "${{ inputs.dependency-git-repo-url }}")"
         cd ~
-        [[ -d "$repoName" ]] || git clone --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
-        cd $repoName \
-          && echo "Current $repoName commit:" $(git rev-parse HEAD) \
-          && echo "dependency-commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        [[ -d "${{ inputs.dependency-short-name }}" ]] || git clone --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
+        cd "${{ inputs.dependency-short-name }}" \
+          && echo "Current ${{ inputs.dependency-short-name }} commit: $(git rev-parse HEAD)" \
+          && echo "dependency-commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT \
           && echo "dependency-version=$(xmllint --xpath "/*[local-name() = 'project']/*[local-name() = 'version']/text()" pom.xml)" >> $GITHUB_OUTPUT
 
     - name: Set ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}
