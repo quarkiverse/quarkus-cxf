@@ -64,7 +64,7 @@ runs:
             --repo ${{ github.repository }} \
             --comment '${{ env.GH_ISSUE_MESSAGE }}' \
             ${{ inputs.issue-id }} \
-          || gh comment \
+          || gh issue comment \
             --repo ${{ github.repository }} \
             --body '${{ env.GH_ISSUE_MESSAGE }}' \
             ${{ inputs.issue-id }}
