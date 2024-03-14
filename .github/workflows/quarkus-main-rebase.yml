@@ -30,7 +30,7 @@ jobs:
         dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
         dependency-short-name: ${{ env.DEPENDENCY_SHORT_NAME }}
         issue-id: ${{ env.ISSUE_ID }}
-        token: "${{ secrets.QUARKIVERSEBOT_TOKEN }}"
+        token: "${{ secrets.GITHUB_TOKEN }}"
         additional-maven-args: '-DskipTests -Dcheckstyle.skip'
 
     - name: build-and-run-jvm-tests
@@ -43,7 +43,7 @@ jobs:
       run: |
         push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
 
-    - name: Update issue ${{ env.ISSUE_ID }}
+    - name: Reopen issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
       if: ${{ failure() }}
       shell: bash
       run: |
@@ -52,12 +52,12 @@ jobs:
           --comment "Build with ${{ env.DEPENDENCY_SHORT_NAME }} ${{ steps.rebase-dependency-main-branch.outputs.dependency-commit }} failed in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
           ${{ env.ISSUE_ID }}
       env:
-        GH_TOKEN: ${{ secrets.QUARKIVERSEBOT_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Close issue ${{ env.ISSUE_ID }}
+    - name: Close issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
       if: ${{ success() }}
       shell: bash
       run: gh issue close --repo ${{ github.repository }} ${{ env.ISSUE_ID }}
       env:
-        GH_TOKEN: ${{ secrets.QUARKIVERSEBOT_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
