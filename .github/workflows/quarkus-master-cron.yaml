@@ -33,7 +33,7 @@ jobs:
 
     - name: Report rebase failure in issue ${{ env.ISSUE_ID }}
       if: env.GH_ISSUE_MESSAGE != ''
-      uses: peter-evans/create-or-update-comment@v2
+      uses: peter-evans/create-or-update-comment@v4
       with:
         issue-number: ${{ env.ISSUE_ID }}
         body: |
