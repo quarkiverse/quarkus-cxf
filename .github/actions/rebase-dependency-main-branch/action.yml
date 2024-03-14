@@ -60,9 +60,13 @@ runs:
       shell: bash
       run: |
         if [[ "${{ env.GH_ISSUE_MESSAGE }}" != "" ]] ; then
-          gh issue ${{ env.GH_ISSUE_OPERATION }} \
+          [[ gh issue ${{ env.GH_ISSUE_OPERATION }} \
             --repo ${{ github.repository }} \
             --comment '${{ env.GH_ISSUE_MESSAGE }}' \
+            ${{ inputs.issue-id }} ]] \
+          || gh comment \
+            --repo ${{ github.repository }} \
+            --body '${{ env.GH_ISSUE_MESSAGE }}' \
             ${{ inputs.issue-id }}
         fi
       env:
