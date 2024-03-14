@@ -1,0 +1,80 @@
+name: build-and-run-jvm-tests
+description: 'Build the project and run JVM tests'
+
+inputs:
+  java-version:
+    description: 'Java version'
+    required: true
+    
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK ${{ inputs.java-version }}
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ inputs.java-version }}
+
+    - name: Cache local Maven repository
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Build CXF
+      if: github.ref == 'refs/heads/cxf-main' || github.base_ref == 'cxf-main' || github.head_ref == 'cxf-main'
+      shell: bash
+      run: |
+        cd ~
+        [[ -d "cxf" ]] || git clone --depth 1 --branch main https://github.com/apache/cxf.git
+        cd cxf \
+          && echo "Current CXF commit:" $(git rev-parse HEAD) \
+          && mvn clean install -DskipTests -Dcheckstyle.skip -ntp
+    - name: Build Quarkus
+      if: github.ref == 'refs/heads/quarkus-main' || github.base_ref == 'quarkus-main' || github.head_ref == 'quarkus-main'
+      shell: bash
+      run: |
+        cd ~
+        [[ -d "quarkus" ]] || git clone --depth 1 --branch main https://github.com/quarkusio/quarkus.git
+        cd quarkus \
+          && echo "Current Quarkus commit:" $(git rev-parse HEAD) \
+          && sed -i '/<module>integration-tests<\/module>/d' pom.xml \
+          && ./mvnw clean install -Dquickly -ntp
+
+    - name: Ensure mvn cq:sync-versions -N causes no changes
+      shell: bash
+      run: |
+        ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N
+        [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
+
+    - name: mvn -B formatter:validate install
+      shell: bash
+      run: ./mvnw -B formatter:validate install -fae
+
+    - name: 'Upload generated Antora docs site'
+      uses: actions/upload-artifact@v4
+      with:
+        name: docs
+        path: docs/target/site
+
+    - name: Fail if there are uncommitted changes
+      shell: bash
+      run: |
+        [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
+
+    - name: Tar Maven Repo
+      shell: bash
+      run: |
+        tar -czf ${{ runner.temp }}/maven-repo.tgz -C ~ .m2/repository
+        # Avoid caching our own artifacts
+        rm -Rf ~/.m2/repository/io/quarkiverse/cxf
+    - name: Persist Maven Repo
+      uses: actions/upload-artifact@v4
+      with:
+        name: maven-repo
+        path: ${{ runner.temp }}/maven-repo.tgz
+        retention-days: 1
