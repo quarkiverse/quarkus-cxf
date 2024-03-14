@@ -9,7 +9,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: actions/checkout@v4
 
     - name: Set up JDK ${{ inputs.java-version }}
       uses: actions/setup-java@v4
@@ -48,12 +47,12 @@ runs:
     - name: Ensure mvn cq:sync-versions -N causes no changes
       shell: bash
       run: |
-        ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N
+        ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
         [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
 
     - name: mvn -B formatter:validate install
       shell: bash
-      run: ./mvnw -B formatter:validate install -fae
+      run: ./mvnw -B formatter:validate install -fae -ntp
 
     - name: 'Upload generated Antora docs site'
       uses: actions/upload-artifact@v4

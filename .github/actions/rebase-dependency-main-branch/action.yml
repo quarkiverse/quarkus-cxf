@@ -28,74 +28,93 @@ outputs:
   dependency-version:
     description: "The version of the dependency as present in the top pom.xml of its main branch"
     value: ${{ steps.checkout-dependency.outputs.dependency-version }}
+  exit-status:
+    description: |
+      A short string describing how the execution went. 
+      It can be one of the following:
+        * success
+        * rebase-failed
+        * build-failed
+    value: ${{ env.REBASE_DEPENDENCY_MAIN_EXIT_STATUS }}
 
 runs:
   using: 'composite'
   steps:
-    - uses: actions/checkout@v4
+
+    - name: Set up JDK ${{ inputs.java-version }}
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ inputs.java-version }}
 
     - name: rebase ${{ inputs.dependency-short-name }}-main
       shell: bash
       run: |
-        echo "GH_ISSUE_OPERATION=close" >> $GITHUB_ENV
-        set -e
-        git fetch origin
-        git checkout ${{ inputs.dependency-short-name }}-main 2>/dev/null || git checkout -b ${{ inputs.dependency-short-name }}-main
-        git rebase origin/main \
-          || ( echo "GH_ISSUE_MESSAGE=Could not rebase ${{ inputs.dependency-short-name }}-main in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV \
-          && echo "GH_ISSUE_OPERATION=reopen" >> $GITHUB_ENV )
+        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=success" >> $GITHUB_ENV
+        git fetch origin main
+        git reset --hard origin/main
+        git fetch origin ${{ inputs.dependency-short-name }}-main
+        git checkout ${{ inputs.dependency-short-name }}-main 2>/dev/null || git checkout -b ${{ inputs.dependency-short-name }}-main origin/main
+        git status
+        echo "${{ inputs.dependency-short-name }}-main is at $(git rev-parse HEAD)"
+        git rebase main
+        rebaseExitCode=$?
+        echo "rebaseExitCode = $rebaseExitCode"
+        exit $rebaseExitCode
 
-    - name: test the output
+    - name: reopen or comment on issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
+      if: ${{ failure() }}
       shell: bash
       run: |
-        echo "${{ env.GH_ISSUE_MESSAGE }}"
-        echo "${{ env.GH_ISSUE_OPERATION }}"
-
-    - name: ${{ env.GH_ISSUE_OPERATION }} issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
-      shell: bash
-      run: |
-        if [[ "${{ env.GH_ISSUE_MESSAGE }}" != "" ]] ; then
-          gh issue ${{ env.GH_ISSUE_OPERATION }} \
+        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=rebase-failed" >> $GITHUB_ENV
+        oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
+        echo "oldState = $oldState"
+        msg="❌ Could not rebase ${{ inputs.dependency-short-name }}-main in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        if [[ "$oldState" == "OPEN" ]] ; then
+          gh issue comment \
             --repo ${{ github.repository }} \
-            --comment '${{ env.GH_ISSUE_MESSAGE }}' \
+            --body "$msg" \
             ${{ inputs.issue-id }}
         else
-          gh issue ${{ env.GH_ISSUE_OPERATION }} \
+          gh issue reopen \
             --repo ${{ github.repository }} \
+            --comment "$msg" \
             ${{ inputs.issue-id }}
         fi
       env:
         GH_TOKEN: ${{ inputs.token }}
 
-    - name: Make the current workflow fail
+    - name: Install xmllint
       shell: bash
-      if: env.GH_ISSUE_OPERATION == 'reopen'
       run: |
-        exit 1
+        sudo apt-get -qq install -y libxml2-utils
 
     - name: Checkout ${{ inputs.dependency-git-repo-url }}
       id: checkout-dependency
       shell: bash
       run: |
-        repoName="$(basename -s .git "${{ inputs.dependency-git-repo-url }}")"
         cd ~
-        [[ -d "$repoName" ]] || git clone --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
-        cd $repoName \
-          && echo "Current $repoName commit:" $(git rev-parse HEAD) \
-          && echo "dependency-commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          && echo "dependency-version=$(xmllint --xpath "/*[local-name() = 'project']/*[local-name() = 'version']/text()" pom.xml)" >> $GITHUB_OUTPUT
+        [[ -d "${{ inputs.dependency-short-name }}" ]] || git clone --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
+        cd "${{ inputs.dependency-short-name }}"
+        echo "Current ${{ inputs.dependency-short-name }} commit: $(git rev-parse HEAD)"
+        echo "dependency-commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        echo "dependency-version=$(xmllint --xpath "/*[local-name() = 'project']/*[local-name() = 'version']/text()" pom.xml)" >> $GITHUB_OUTPUT
 
     - name: Set ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}
       shell: bash
       run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         sed -i 's|<${{ inputs.dependency-short-name }}.version>\[^<\]*</${{ inputs.dependency-short-name }}.version>|<${{ inputs.dependency-short-name }}.version>${{ steps.checkout-dependency.outputs.dependency-version }}</${{ inputs.dependency-short-name }}.version>|' pom.xml
         if git diff-index --quiet HEAD --; then
             echo "${{ inputs.dependency-short-name }}-main uses version ${{ steps.checkout-dependency.outputs.dependency-version }} already"
-            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N
+            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
             git add -A
             git commit -m "Re-run mvn cq:sync-versions"
         else
-            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N
-            git add -A
-            git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}"
+            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
+            if git diff-index --quiet HEAD --; then
+              git add -A
+              git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}"
+            fi 
         fi

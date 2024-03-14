@@ -10,6 +10,7 @@ env:
   LANG: en_US.UTF-8
   ISSUE_ID: 1287
   DEPENDENCY_SHORT_NAME: quarkus
+  JAVA_VERSION: 17
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -21,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: rebase-dependency-main-branch
       uses: ./.github/actions/rebase-dependency-main-branch
@@ -38,26 +41,45 @@ jobs:
       with:
         java-version: ${{ env.JAVA_VERSION }}
 
-    - name: push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
+    - name: git push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
       shell: bash
       run: |
-        push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
+        git push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
 
     - name: Reopen issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
-      if: ${{ failure() }}
+      if: ${{ steps.rebase-dependency-main-branch.outputs.exit-status != 'success' && failure() }}
       shell: bash
       run: |
-        gh issue reopen \
-          --repo ${{ github.repository }} \
-          --comment "Build with ${{ env.DEPENDENCY_SHORT_NAME }} ${{ steps.rebase-dependency-main-branch.outputs.dependency-commit }} failed in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
-          ${{ env.ISSUE_ID }}
+        oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
+        echo "oldState = $oldState"
+        msg="❌ Build with ${{ env.DEPENDENCY_SHORT_NAME }} ${{ steps.rebase-dependency-main-branch.outputs.dependency-commit }} failed in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        if [[ "$oldState" == "OPEN" ]] ; then
+          gh issue comment \
+            --repo ${{ github.repository }} \
+            --body "$msg" \
+            ${{ inputs.issue-id }}
+        else
+          gh issue reopen \
+            --repo ${{ github.repository }} \
+            --comment "$msg" \
+            ${{ inputs.issue-id }}
+        fi
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Close issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
       if: ${{ success() }}
       shell: bash
-      run: gh issue close --repo ${{ github.repository }} ${{ env.ISSUE_ID }}
+      run: |
+        oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
+        echo "oldState = $oldState"
+        msg="✅ Build with ${{ env.DEPENDENCY_SHORT_NAME }} ${{ steps.rebase-dependency-main-branch.outputs.dependency-commit }} succeeded in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        if [[ "$oldState" != "CLOSED" ]] ; then
+          gh issue close \
+            --repo ${{ github.repository }} \
+            --comment "$msg" \
+            ${{ inputs.issue-id }}
+        fi
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
