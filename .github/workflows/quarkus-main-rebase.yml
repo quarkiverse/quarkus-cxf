@@ -10,6 +10,7 @@ env:
   LANG: en_US.UTF-8
   ISSUE_ID: 1287
   DEPENDENCY_SHORT_NAME: quarkus
+  JAVA_VERSION: 17
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
