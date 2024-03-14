@@ -1,0 +1,42 @@
+name: quarkus-main rebase
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run every day at 2AM
+    - cron:  '0 2 * * *'
+
+env:
+  LANG: en_US.UTF-8
+  ISSUE_ID: 1287
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  rebase-quarkus-main:
+    if: github.repository == 'quarkiverse/quarkus-cxf'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: rebase quarkus-main
+      run: |
+        set -e
+        git checkout quarkus-main 2>/dev/null || git checkout -b quarkus-main
+        git rebase origin/main || echo "GH_ISSUE_MESSAGE=Could not rebase ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
+
+    - name: test the output
+      run: |
+        echo "${{ env.GH_ISSUE_MESSAGE }}"
+
+    - name: Report rebase failure in issue ${{ env.ISSUE_ID }}
+      if: env.GH_ISSUE_MESSAGE != ''
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        issue-number: ${{ env.ISSUE_ID }}
+        body: |
+          ${{ env.GH_ISSUE_MESSAGE }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
