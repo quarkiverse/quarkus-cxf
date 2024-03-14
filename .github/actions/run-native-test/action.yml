@@ -1,0 +1,49 @@
+name: run-native-test
+description: 'Run a specific native test'
+
+inputs:
+  java-version:
+    description: 'Java version'
+    required: true
+  test-module-spec:
+    description: 'Name of the test module to run optionally followed by some build arguments'
+    required: true
+    
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK ${{ inputs.java-version }}
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ inputs.java-version }}
+
+    - name: Download Maven Repo
+      uses: actions/download-artifact@v4
+      with:
+        name: maven-repo
+        path: ..
+    - name: Extract Maven Repo
+      shell: bash
+      run: |
+        tar -xzf ../maven-repo.tgz -C ~
+
+    - name: Run integration test ${{ inputs.test-module-spec }}
+      shell: bash
+      # Skip native tests for CodeQL Security Scans
+      if: "${{ env.SKIP_NATIVE_TESTS != 'true' }}"
+      run: |
+        array=(${{ inputs.test-module-spec }})
+        if [ "${array[0]}" == "ws-rm-client" ]; then
+          # ws-rm-client requires test-ws-rm-server-native executable
+          cd test-util-parent/test-ws-rm-server-native && ../../mvnw -B clean install -Pnative
+          cd ../..
+        fi
+        if [ "${#array[@]}" -gt "1" ]; then
+          additionalArgs=("${array[@]:1}")
+          cd integration-tests/${array[0]} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true "${additionalArgs[@]}"
+        else
+          cd integration-tests/${array[0]} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true
+        fi
