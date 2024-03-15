@@ -50,9 +50,14 @@ runs:
           git clone --quiet --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
           cd "${{ inputs.dependency-short-name }}"
           echo "Current ${{ inputs.dependency-short-name }} commit:" $(git rev-parse HEAD)
-          sed -i '/<module>integration-tests<\/module>/d' pom.xml
+          if [[ "${{ inputs.dependency-short-name }}" == "quarkus" ]] ; then
+            sed -i '/<module>integration-tests<\/module>/d' pom.xml
+          fi
           mvn=$([[ -f ./mvnw ]] && echo "./mvnw" || echo "mvn")
           "$mvn" clean install -DskipTests -ntp -Dcheckstyle.skip -Dquickly
+          if [[ "${{ inputs.dependency-short-name }}" == "quarkus" ]] ; then
+            "$mvn" install -DskipTests -ntp -Prelease -f independent-projects/resteasy-reactive/server/vertx/pom.xml -Dno-build-cache -Dgpg.skip
+          fi
         fi
 
     - name: Set outputs

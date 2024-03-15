@@ -107,15 +107,25 @@ runs:
         sed -i 's|<${{ inputs.dependency-short-name }}.version>[^<]*</${{ inputs.dependency-short-name }}.version>|<${{ inputs.dependency-short-name }}.version>${{ steps.rebuild-dependency.outputs.dependency-version }}</${{ inputs.dependency-short-name }}.version>|' pom.xml
         echo "pom.xml after:"
         cat pom.xml | head -n 50
-        if git diff-index --quiet HEAD --; then
-            echo "${{ inputs.dependency-short-name }}-main uses version ${{ steps.rebuild-dependency.outputs.dependency-version }} already"
-            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
-            git add -A
-            git commit -m "Re-run mvn cq:sync-versions"
+        echo "git status before cq:sync-versions"
+        git status
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "The ${{ inputs.dependency-short-name }}.version change needs to get committed"
+          ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
+          git add -A
+          echo "git status before commit"
+          git status
+          git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.rebuild-dependency.outputs.dependency-version }}"
         else
-            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
-            if git diff-index --quiet HEAD --; then
-              git add -A
-              git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.rebuild-dependency.outputs.dependency-version }}"
-            fi 
+          echo "The ${{ inputs.dependency-short-name }}.version change was already committed"
+          ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "./mvnw cq:sync-versions caused changes"
+            git add -A
+            echo "git status before commit"
+            git status
+            git commit -m "Re-run mvn cq:sync-versions"
+          fi
         fi
+        echo "git status after commit"
+        git status
