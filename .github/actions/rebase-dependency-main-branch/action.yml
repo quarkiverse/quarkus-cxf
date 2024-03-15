@@ -104,7 +104,7 @@ runs:
         echo "Setting ${{ inputs.dependency-short-name }}.version = ${{ steps.rebuild-dependency.outputs.dependency-version }}"
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        sed -i 's|<${{ inputs.dependency-short-name }}.version>\[^<\]*</${{ inputs.dependency-short-name }}.version>|<${{ inputs.dependency-short-name }}.version>${{ steps.rebuild-dependency.outputs.dependency-version }}</${{ inputs.dependency-short-name }}.version>|' pom.xml
+        sed -i 's|<${{ inputs.dependency-short-name }}.version>[^<]*</${{ inputs.dependency-short-name }}.version>|<${{ inputs.dependency-short-name }}.version>${{ steps.rebuild-dependency.outputs.dependency-version }}</${{ inputs.dependency-short-name }}.version>|' pom.xml
         echo "pom.xml after:"
         cat pom.xml | head -n 50
         if git diff-index --quiet HEAD --; then
