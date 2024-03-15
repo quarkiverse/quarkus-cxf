@@ -44,8 +44,11 @@ runs:
       run: |
         echo "GH_ISSUE_OPERATION=close" >> $GITHUB_ENV
         set -e
-        git fetch origin
+        git fetch origin main
+        git fetch origin ${{ inputs.dependency-short-name }}-main
         git checkout ${{ inputs.dependency-short-name }}-main 2>/dev/null || git checkout -b ${{ inputs.dependency-short-name }}-main
+        git status
+        echo "${{ inputs.dependency-short-name }}-main is at $(git rev-parse HEAD)"
         git rebase origin/main \
           || ( echo "GH_ISSUE_MESSAGE=Could not rebase ${{ inputs.dependency-short-name }}-main in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV \
           && echo "GH_ISSUE_OPERATION=reopen" >> $GITHUB_ENV )
