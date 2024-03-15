@@ -60,14 +60,18 @@ runs:
       shell: bash
       run: |
         if [[ "${{ env.GH_ISSUE_MESSAGE }}" != "" ]] ; then
-          gh issue ${{ env.GH_ISSUE_OPERATION }} \
-            --repo ${{ github.repository }} \
-            --comment '${{ env.GH_ISSUE_MESSAGE }}' \
-            ${{ inputs.issue-id }} \
-          || gh issue comment \
-            --repo ${{ github.repository }} \
-            --body '${{ env.GH_ISSUE_MESSAGE }}' \
-            ${{ inputs.issue-id }}
+          oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
+          if [[ "$oldState" == "open" ]] ; then
+            gh issue comment \
+              --repo ${{ github.repository }} \
+              --body '${{ env.GH_ISSUE_MESSAGE }}' \
+              ${{ inputs.issue-id }}
+          else
+            gh issue reopen \
+              --repo ${{ github.repository }} \
+              --comment '${{ env.GH_ISSUE_MESSAGE }}' \
+              ${{ inputs.issue-id }}
+          fi
         fi
       env:
         GH_TOKEN: ${{ inputs.token }}
@@ -92,14 +96,16 @@ runs:
     - name: Set ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}
       shell: bash
       run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         sed -i 's|<${{ inputs.dependency-short-name }}.version>\[^<\]*</${{ inputs.dependency-short-name }}.version>|<${{ inputs.dependency-short-name }}.version>${{ steps.checkout-dependency.outputs.dependency-version }}</${{ inputs.dependency-short-name }}.version>|' pom.xml
         if git diff-index --quiet HEAD --; then
             echo "${{ inputs.dependency-short-name }}-main uses version ${{ steps.checkout-dependency.outputs.dependency-version }} already"
-            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N
+            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
             git add -A
             git commit -m "Re-run mvn cq:sync-versions"
         else
-            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N
+            ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
             git add -A
             git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}"
         fi
