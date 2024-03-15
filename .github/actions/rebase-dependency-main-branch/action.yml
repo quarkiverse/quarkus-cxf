@@ -86,6 +86,7 @@ runs:
       id: checkout-dependency
       shell: bash
       run: |
+        sudo apt-get install -y libxml2-utils
         cd ~
         [[ -d "${{ inputs.dependency-short-name }}" ]] || git clone --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
         cd "${{ inputs.dependency-short-name }}" \
@@ -106,6 +107,8 @@ runs:
             git commit -m "Re-run mvn cq:sync-versions"
         else
             ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
-            git add -A
-            git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}"
+            if git diff-index --quiet HEAD --; then
+              git add -A
+              git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}"
+            fi 
         fi
