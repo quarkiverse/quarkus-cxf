@@ -39,10 +39,10 @@ jobs:
       with:
         java-version: ${{ env.JAVA_VERSION }}
 
-    - name: push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
+    - name: git push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
       shell: bash
       run: |
-        push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
+        git push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
 
     - name: Reopen issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
       if: ${{ failure() }}
