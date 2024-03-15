@@ -26,23 +26,18 @@ runs:
 
     - name: Build CXF
       if: github.ref == 'refs/heads/cxf-main' || github.base_ref == 'cxf-main' || github.head_ref == 'cxf-main'
-      shell: bash
-      run: |
-        cd ~
-        [[ -d "cxf" ]] || git clone --depth 1 --branch main https://github.com/apache/cxf.git
-        cd cxf \
-          && echo "Current CXF commit:" $(git rev-parse HEAD) \
-          && mvn clean install -DskipTests -Dcheckstyle.skip -ntp
+      uses: ./.github/actions/rebuild-dependency
+      id: rebuild-cxf
+      with:
+        dependency-git-repo-url: https://github.com/apache/cxf.git
+        dependency-short-name: cxf
     - name: Build Quarkus
       if: github.ref == 'refs/heads/quarkus-main' || github.base_ref == 'quarkus-main' || github.head_ref == 'quarkus-main'
-      shell: bash
-      run: |
-        cd ~
-        [[ -d "quarkus" ]] || git clone --depth 1 --branch main https://github.com/quarkusio/quarkus.git
-        cd quarkus \
-          && echo "Current Quarkus commit:" $(git rev-parse HEAD) \
-          && sed -i '/<module>integration-tests<\/module>/d' pom.xml \
-          && ./mvnw clean install -Dquickly -ntp
+      uses: ./.github/actions/rebuild-dependency
+      id: rebuild-quarkus
+      with:
+        dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
+        dependency-short-name: quarkus
 
     - name: Ensure mvn cq:sync-versions -N causes no changes
       shell: bash

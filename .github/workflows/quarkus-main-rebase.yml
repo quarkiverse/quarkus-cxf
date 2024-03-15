@@ -34,7 +34,6 @@ jobs:
         dependency-short-name: ${{ env.DEPENDENCY_SHORT_NAME }}
         issue-id: ${{ env.ISSUE_ID }}
         token: "${{ secrets.GITHUB_TOKEN }}"
-        additional-maven-args: '-DskipTests -Dcheckstyle.skip'
 
     - name: build-and-run-jvm-tests
       uses: ./.github/actions/build-and-run-jvm-tests
