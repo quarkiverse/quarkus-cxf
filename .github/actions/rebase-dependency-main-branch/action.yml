@@ -61,6 +61,7 @@ runs:
       run: |
         if [[ "${{ env.GH_ISSUE_MESSAGE }}" != "" ]] ; then
           oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
+          echo "oldState = $oldState"
           if [[ "$oldState" == "open" ]] ; then
             gh issue comment \
               --repo ${{ github.repository }} \
