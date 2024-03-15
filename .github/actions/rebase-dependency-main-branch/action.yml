@@ -17,24 +17,21 @@ inputs:
   token:
     description: "The token to use to authenticate against GitHub API"
     required: true
-  additional-maven-args:
-    description: "Additional arguments to append to mvn install -ntp"
-    required: true
 
 outputs:
   dependency-commit:
     description: "The SHA1 of the dependency main branch"
-    value: ${{ steps.checkout-dependency.outputs.dependency-commit }}
+    value: ${{ steps.rebuild-dependency.outputs.dependency-commit }}
   dependency-version:
     description: "The version of the dependency as present in the top pom.xml of its main branch"
-    value: ${{ steps.checkout-dependency.outputs.dependency-version }}
+    value: ${{ steps.rebuild-dependency.outputs.dependency-version }}
   exit-status:
     description: |
       A short string describing how the execution went. 
       It can be one of the following:
         * success
         * rebase-failed
-        * build-failed
+        * dependency-build-failed
     value: ${{ env.REBASE_DEPENDENCY_MAIN_EXIT_STATUS }}
 
 runs:
@@ -84,30 +81,34 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
 
-    - name: Install xmllint
-      shell: bash
-      run: |
-        sudo apt-get -qq install -y libxml2-utils
+    - name: Rebuild ${{ inputs.dependency-git-repo-url }}
+      uses: ./.github/actions/rebuild-dependency
+      id: rebuild-dependency
+      with:
+        dependency-git-repo-url: ${{ inputs.dependency-git-repo-url }}
+        dependency-short-name: ${{ inputs.dependency-short-name }}
+        issue-id: ${{ inputs.issue-id }}
+        token: "${{ inputs.token }}"
 
-    - name: Checkout ${{ inputs.dependency-git-repo-url }}
-      id: checkout-dependency
+    - name: Set status
+      if: ${{ failure() && steps.rebuild-dependency.outputs.exit-status == 'dependency-build-failed' }}
       shell: bash
       run: |
-        cd ~
-        [[ -d "${{ inputs.dependency-short-name }}" ]] || git clone --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
-        cd "${{ inputs.dependency-short-name }}"
-        echo "Current ${{ inputs.dependency-short-name }} commit: $(git rev-parse HEAD)"
-        echo "dependency-commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-        echo "dependency-version=$(xmllint --xpath "/*[local-name() = 'project']/*[local-name() = 'version']/text()" pom.xml)" >> $GITHUB_OUTPUT
+        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=dependency-build-failed" >> $GITHUB_ENV
 
-    - name: Set ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}
+    - name: Set ${{ inputs.dependency-short-name }}.version to ${{ steps.rebuild-dependency.outputs.dependency-version }}
       shell: bash
       run: |
+        echo "pom.xml before:"
+        cat pom.xml | head -n 50
+        echo "Setting ${{ inputs.dependency-short-name }}.version = ${{ steps.rebuild-dependency.outputs.dependency-version }}"
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        sed -i 's|<${{ inputs.dependency-short-name }}.version>\[^<\]*</${{ inputs.dependency-short-name }}.version>|<${{ inputs.dependency-short-name }}.version>${{ steps.checkout-dependency.outputs.dependency-version }}</${{ inputs.dependency-short-name }}.version>|' pom.xml
+        sed -i 's|<${{ inputs.dependency-short-name }}.version>\[^<\]*</${{ inputs.dependency-short-name }}.version>|<${{ inputs.dependency-short-name }}.version>${{ steps.rebuild-dependency.outputs.dependency-version }}</${{ inputs.dependency-short-name }}.version>|' pom.xml
+        echo "pom.xml after:"
+        cat pom.xml | head -n 50
         if git diff-index --quiet HEAD --; then
-            echo "${{ inputs.dependency-short-name }}-main uses version ${{ steps.checkout-dependency.outputs.dependency-version }} already"
+            echo "${{ inputs.dependency-short-name }}-main uses version ${{ steps.rebuild-dependency.outputs.dependency-version }} already"
             ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
             git add -A
             git commit -m "Re-run mvn cq:sync-versions"
@@ -115,6 +116,6 @@ runs:
             ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
             if git diff-index --quiet HEAD --; then
               git add -A
-              git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.checkout-dependency.outputs.dependency-version }}"
+              git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.rebuild-dependency.outputs.dependency-version }}"
             fi 
         fi
