@@ -28,6 +28,7 @@ import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
+import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
@@ -38,7 +39,7 @@ import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
  * @since 3.8.1
  */
 public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
-
+    private static final Logger log = Logger.getLogger(QuarkusHTTPConduitFactory.class);
     private final CxfFixedConfig cxFixedConfig;
     private final CXFClientInfo cxfClientInfo;
     private final boolean hc5Present;
@@ -106,7 +107,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         return configure(result, cxfClientInfo);
     }
 
-    private HTTPConduit configure(HTTPConduit httpConduit, CXFClientInfo cxfClientInfo) {
+    private HTTPConduit configure(HTTPConduit httpConduit, CXFClientInfo cxfClientInfo) throws IOException {
         final String hostnameVerifierName = cxfClientInfo.getHostnameVerifier();
         final String keyStorePath = cxfClientInfo.getKeyStore();
         final String trustStorePath = cxfClientInfo.getTrustStore();
@@ -139,7 +140,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                     kmf.init(keyStore, (keyPassword != null) ? keyPassword.toCharArray() : null);
                 } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException
                         | UnrecoverableKeyException e) {
-                    throw new RuntimeException("Could not load " + keyStorePath + " from class path", e);
+                    throw new RuntimeException("Could not load " + keyStorePath + " from class path or filesystem", e);
                 }
                 tlsCP.setKeyManagers(kmf.getKeyManagers());
             }
@@ -154,7 +155,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                     tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
                     tmf.init(trustStore);
                 } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
-                    throw new RuntimeException("Could not load " + trustStorePath + " from class path", e);
+                    throw new RuntimeException("Could not load " + trustStorePath + " from class path or filesystem", e);
                 }
                 tlsCP.setTrustManagers(tmf.getTrustManagers());
             }
@@ -263,7 +264,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         return httpConduit;
     }
 
-    private InputStream openStream(final String keystorePath) {
+    private InputStream openStream(final String keystorePath) throws IOException {
         final URL url = Thread.currentThread().getContextClassLoader().getResource(keystorePath);
         if (url != null) {
             try {
@@ -280,7 +281,9 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                 throw new RuntimeException("Could not open " + keystorePath + " from the filesystem", e);
             }
         }
-        throw new IllegalStateException("Resource " + keystorePath + " exists neither in class path nor in the filesystem");
+        final String msg = "Resource " + keystorePath + " exists neither in class path nor in the filesystem";
+        log.error(msg);
+        throw new IllegalStateException(msg);
     }
 
 }
