@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: build-and-run-jvm-tests
       uses: ./.github/actions/build-and-run-jvm-tests
