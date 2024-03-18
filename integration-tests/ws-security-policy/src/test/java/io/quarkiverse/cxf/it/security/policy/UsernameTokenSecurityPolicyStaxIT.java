@@ -4,6 +4,7 @@ import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
 public class UsernameTokenSecurityPolicyStaxIT extends UsernameTokenSecurityPolicyStaxTest {
+
     @Override
     protected int getPort() {
         // final Config config = ConfigProvider.getConfig();

@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.it.security.policy;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -49,4 +50,7 @@ public class PolicyTestUtils {
                 "client-truststore-password"));
     }
 
+    public static boolean isFipsLocalEnabled() throws IOException {
+        return java.security.Security.getProvider("SunPKCS11-NSS-FIPS") != null;
+    }
 }

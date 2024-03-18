@@ -21,7 +21,6 @@
         <module>server</module>
         <module>ws-security</module>
         <module>ws-security-policy</module>
-        <module>ws-security-policy-fips</module>
         <module>ws-trust</module>
         <module>ws-rm-client</module>
         <module>mtls</module>
