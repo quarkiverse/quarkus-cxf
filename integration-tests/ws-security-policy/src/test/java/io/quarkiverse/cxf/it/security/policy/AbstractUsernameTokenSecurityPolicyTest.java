@@ -3,6 +3,7 @@ package io.quarkiverse.cxf.it.security.policy;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
@@ -12,8 +13,9 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
 import io.restassured.RestAssured;
+import io.restassured.response.ValidatableResponse;
 
-public abstract class AbstractUsernameTokenSecurityPolicyTest {
+public abstract class AbstractUsernameTokenSecurityPolicyTest extends AbstractFipsAwareTest {
 
     @Test
     void helloUsernameToken() {
@@ -188,26 +190,40 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest {
     protected abstract String usernameTokenNotSatisfied();
 
     @Test
-    void helloEncryptSign() {
+    void helloEncryptSign() throws IOException {
         encryptSign("helloEncryptSign");
     }
 
     @Test
-    void helloEncryptSignCrypto() {
+    void helloEncryptSignCrypto() throws IOException {
         encryptSign("helloEncryptSignCrypto");
     }
 
-    void encryptSign(String endpoint) {
+    void encryptSign(String endpoint) throws IOException {
+        failFipsInNative();
+
         PolicyTestUtils.drainMessages("drainMessages", -1);
 
         final String requestPayload = "random person";
         final String responsePayload = "Hello random person from EncryptSign!";
-        RestAssured.given()
+        ValidatableResponse response = RestAssured.given()
                 .config(PolicyTestUtils.restAssuredConfig())
                 .body(requestPayload)
                 .post("/cxf/security-policy/" + endpoint)
-                .then()
-                .statusCode(200)
+                .then();
+
+        if (isFipsEnabled()) {
+            response.statusCode(500)
+                    .body(containsString("java.security.NoSuchAlgorithmException: Cannot find any provider supporting"));
+
+            final List<String> messages = PolicyTestUtils.drainMessages("drainMessages", 2);
+            //no further testing is required
+            PolicyTestUtils.drainMessages("drainMessages", 2);
+            return;
+        }
+
+        //non-fips environment
+        response.statusCode(200)
                 .body(is(responsePayload));
 
         final List<String> messages = PolicyTestUtils.drainMessages("drainMessages", 2);

@@ -50,6 +50,22 @@ public class SecurityPolicyResource {
     HelloService helloHttp;
 
     @Inject
+    @CXFClient("helloCustomEncryptSign")
+    CustomEncryptSignPolicyHelloService helloCustomEncryptSign;
+
+    @Inject
+    @CXFClient("helloCustomEncryptSignWrong1")
+    CustomEncryptSignWrong1PolicyHelloService helloCustomEncryptSignWrong1;
+
+    @Inject
+    @CXFClient("helloCustomEncryptSignWrong2")
+    CustomEncryptSignWrong2PolicyHelloService helloCustomEncryptSignWrong2;
+
+    @Inject
+    @CXFClient("helloCustomizedEncryptSign")
+    CustomizedEncryptSignPolicyHelloService helloCustomizedEncryptSign;
+
+    @Inject
     @CXFClient("helloUsernameToken")
     UsernameTokenPolicyHelloService helloUsernameToken;
 
@@ -103,6 +119,14 @@ public class SecurityPolicyResource {
         return recordingReplayCache.drainEntries().stream().collect(Collectors.joining("|||"));
     }
 
+    @GET
+    @Path("/isfips")
+    @Produces(MediaType.TEXT_PLAIN)
+    public boolean isfips() {
+        return java.security.Security.getProvider("SunPKCS11-NSS-FIPS") != null;
+
+    }
+
     @POST
     @Path("/{client}")
     @Produces(MediaType.TEXT_PLAIN)
@@ -153,6 +177,18 @@ public class SecurityPolicyResource {
                 break;
             case "helloSaml2":
                 service = helloSaml2;
+                break;
+            case "helloCustomizedEncryptSign":
+                service = helloCustomizedEncryptSign;
+                break;
+            case "helloCustomEncryptSign":
+                service = helloCustomEncryptSign;
+                break;
+            case "helloCustomEncryptSignWrong1":
+                service = helloCustomEncryptSignWrong1;
+                break;
+            case "helloCustomEncryptSignWrong2":
+                service = helloCustomEncryptSignWrong2;
                 break;
             default:
                 throw new IllegalStateException("Unexpected client " + client);
