@@ -82,7 +82,7 @@ Let's say our aim is to ensure that the communication between the client and ser
 and that the message has not been tampered with (through digital signatures).
 We also want to assure that the clients are who they claim to be by authenticating themselves by X.509 certificates.
 
-We can express all these requirements in a single https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/src/main/resources/encrypt-sign-policy.xml[WS-SecurityPolicy document]:
+We can express all these requirements in a single {link-quarkus-cxf-source-tree-base}/integration-tests/ws-security-policy/src/main/resources/encrypt-sign-policy.xml[WS-SecurityPolicy document]:
 
 .encrypt-sign-policy.xml
 [source,xml]
@@ -96,7 +96,7 @@ include::example$ws-security-policy/encrypt-sign-policy.xml[]
 <4> `EncryptedParts` specifies the parts of the SOAP message that must be encrypted to ensure their confidentiality.
 
 We set this policy on the Service Endpoint Interface (SEI)
-`https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/src/main/java/io/quarkiverse/cxf/it/security/policy/EncryptSignPolicyHelloService.java#L11[EncryptSignPolicyHelloService]`
+`{link-quarkus-cxf-source-tree-base}/integration-tests/ws-security-policy/src/main/java/io/quarkiverse/cxf/it/security/policy/EncryptSignPolicyHelloService.java#L11[EncryptSignPolicyHelloService]`
 using `@org.apache.cxf.annotations.Policy` annotation:
 
 .EncryptSignPolicyHelloService.java
