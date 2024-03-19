@@ -16,8 +16,8 @@ Tools like `openssl` or Java `keytool` are commonly used for for creating and ma
 
 We have examples for both tools in {quarkus-cxf-project-name} source tree:
 
-* https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/pom.xml#L127-L440[Create truststore with Java 'keytool' (wrapped by a Maven plugin)]
-* https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/generate-certs.sh[Create truststore with `openssl`]
+* {link-quarkus-cxf-source-tree-base}/integration-tests/ws-security-policy/pom.xml#L127-L440[Create truststore with Java 'keytool' (wrapped by a Maven plugin)]
+* {link-quarkus-cxf-source-tree-base}/integration-tests/ws-security-policy/generate-certs.sh[Create truststore with `openssl`]
 
 Once you have prepared the trust store, you need to configure your client to use it.
 
@@ -78,8 +78,8 @@ The https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/mtl[m
 in the {quarkus-cxf-project-name} source tree can serve as a good starting point.
 
 The keystores and truststores are created with
-`https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/mtls/generate-certs.sh[openssl]`
-(or alternatively with Java https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/mtls/pom.xml#L109-L377[Java `keytool`])
+`{link-quarkus-cxf-source-tree-base}/integration-tests/mtls/generate-certs.sh[openssl]`
+(or alternatively with Java {link-quarkus-cxf-source-tree-base}/integration-tests/mtls/pom.xml#L109-L377[Java `keytool`])
 
 Here is the `application.properties` file:
 
