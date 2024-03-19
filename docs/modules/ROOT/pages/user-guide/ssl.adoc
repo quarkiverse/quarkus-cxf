@@ -1,4 +1,4 @@
-= SSL
+= SSL, TLS and HTTPS
 
 This chapter documents various use cases related to SSL, TLS and HTTPS.
 
@@ -11,11 +11,13 @@ NOTE: The sample code snippets used in this section come from the
 
 If your client is going to communicate with a server whose SSL certificate is not trusted by the client's operating system,
 then you need to set up a custom trust store for your client.
-Tools like `openssl` or Java `keytool` are commonly used for doing that.
-You may want to check
-https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/pom.xml#L127-L440[some]
-https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/generate-certs.sh[examples]
-in {quarkus-cxf-project-name} source tree.
+
+Tools like `openssl` or Java `keytool` are commonly used for for creating and maintaining truststores.
+
+We have examples for both tools in {quarkus-cxf-project-name} source tree:
+
+* https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/pom.xml#L127-L440[Create truststore with Java 'keytool' (wrapped by a Maven plugin)]
+* https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-security-policy/generate-certs.sh[Create truststore with `openssl`]
 
 Once you have prepared the trust store, you need to configure your client to use it.
 
@@ -42,7 +44,8 @@ include::example$ws-security-policy/application.properties[tag=client-trust-stor
 
 == Server SSL configuration
 
-The server SSL configuration is driven by Quarkus HTTP layer a.k.a. Vert.x.
+To make your services available over the HTTPS protocol, you need to setup server keystore in the first place.
+The server SSL configuration is driven by Vert.x, the HTTP layer of Quarkus.
 https://quarkus.io/guides/http-reference#ssl[Quarkus HTTP guide] provides the information about the configuration options.
 
 Here is a basic example:
@@ -54,6 +57,40 @@ include::example$ws-security-policy/application.properties[tag=server-key-store]
 ----
 
 <1> The referenced `localhost.jks` file has to be available in `src/main/resources` directory.
+
+[[mtls]]
+== Mutual TLS (mTLS) authentication
+
+So far, we have explained the simple or single-sided case
+where only the server proves its identity through an SSL certificate
+and the client has to be set up to trust that certificate.
+Mutual TLS authentication goes by letting also the client prove its identity
+using the same means of public key cryptography.
+
+Hence, for the Mutual TLS (mTLS) authentication,
+in addition to setting up the server keystore and client truststore as described above,
+you need to setup the keystore on the client side and the truststore on the server side.
+
+The tools for creating and maintaining the stores are the same
+and the configuration properties to use are pretty much analogous to the ones used in the Simple TLS case.
+
+The https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/mtl[mTLS integration test]
+in the {quarkus-cxf-project-name} source tree can serve as a good starting point.
+
+The keystores and truststores are created with
+`https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/mtls/generate-certs.sh[openssl]`
+(or alternatively with Java https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/mtls/pom.xml#L109-L377[Java `keytool`])
+
+Here is the `application.properties` file:
+
+.application.properties
+[source,properties]
+----
+# The store type could also be jks
+keystore.type = pkcs12
+
+include::example$mtls/application.properties[tag=mtls]
+----
 
 == Enforce SSL through WS-SecurityPolicy
 
