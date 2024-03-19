@@ -11,7 +11,8 @@
 
 === Mutual TLS (mTLS)
 
-Mutual TLS (mTLS) is now https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/mtls[tested]
+Mutual TLS (mTLS) is now xref:user-guide/ssl.adoc#mtls[documented],
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/mtls[tested]
 and and can be configured for clients via `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key*]` family of options.
 
 === Keystores and truststores now looked up in the file system
