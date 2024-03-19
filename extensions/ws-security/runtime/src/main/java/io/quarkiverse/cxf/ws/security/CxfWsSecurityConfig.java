@@ -1093,7 +1093,7 @@ public interface CxfWsSecurityConfig {
          * http://docs.oasis-open.org/ws-sx/ws-securitypolicy/v1.2/errata01/os/ws-securitypolicy-1.2-errata01-os-complete.html#_Toc325572744[WS-SecurityPolicy 1.2 specification]
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1118,7 +1118,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1143,7 +1143,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1168,7 +1168,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1192,7 +1192,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1216,7 +1216,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1241,7 +1241,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1266,7 +1266,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1291,7 +1291,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1315,7 +1315,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1340,7 +1340,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
@@ -1365,7 +1365,7 @@ public interface CxfWsSecurityConfig {
          * and the https://www.w3.org/TR/xmlenc-core1/#sec-Algorithms[Algorithms] section of XML Encryption Syntax and
          * Processing Specification.
          *
-         * `CustomAlgorithmSuite` and the `*.security.custom.*` family of options were introduced to make it possible to
+         * `CustomAlgorithmSuite` and the `+++*.security.custom.*+++` family of options were introduced to make it possible to
          * run CXF SOAP clients and services on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions
          * enabled.
          *
