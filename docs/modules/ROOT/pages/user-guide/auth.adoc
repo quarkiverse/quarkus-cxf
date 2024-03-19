@@ -35,6 +35,10 @@ unless you set the `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quark
 include::example$client-server/application.properties[tag=client-basic-auth-wsdl]
 ----
 
+== Mutual TLS (mTLS) authentication
+
+See the xref:user-guide/ssl.adoc#mtls[Mutual TLS (mTLS) authentication] section in SSL, TLS and HTTPS guide.
+
 == Securing service endpoints
 
 The server-side authentication and authorization is driven by https://quarkus.io/guides/security-overview[Quarkus Security],
