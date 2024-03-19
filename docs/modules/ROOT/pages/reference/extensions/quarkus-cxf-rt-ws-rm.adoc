@@ -80,7 +80,7 @@ $ mvn clean install
 ----
 
 And then you can run the
-https://github.com/quarkiverse/quarkus-cxf/blob/main/integration-tests/ws-rm-client/src/test/java/io/quarkiverse/cxf/it/ws/rm/client/WsReliableMessagingTest.java#L28[test scenario]
+{link-quarkus-cxf-source-tree-base}/integration-tests/ws-rm-client/src/test/java/io/quarkiverse/cxf/it/ws/rm/client/WsReliableMessagingTest.java#L28[test scenario]
 implemented in the client module:
 
 [source,java]
