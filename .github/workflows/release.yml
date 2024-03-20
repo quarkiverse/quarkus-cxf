@@ -68,3 +68,7 @@ jobs:
         run: |
           git push
           git push origin ${{steps.metadata.outputs.current-version}}
+
+      - name: Await ${{steps.metadata.outputs.current-version}} in Maven Central
+        run: |
+          ./mvnw org.l2x6.cq:cq-maven-plugin:4.6.3:await-release -Dcq.version=${{steps.metadata.outputs.current-version}} -N
