@@ -41,8 +41,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
 
     protected boolean waitingForDrain;
 
-    protected boolean drainHandlerRegistered;
-
     protected boolean first = true;
 
     protected Throwable throwable;
@@ -104,7 +102,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
                 boolean bufferRequired = awaitWriteable() || (overflow != null && overflow.size() > 0);
                 if (bufferRequired) {
                     //just buffer everything
-                    //                    registerDrainHandler();
                     if (overflow == null) {
                         overflow = new ByteArrayOutputStream();
                     }
@@ -163,14 +160,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
         return false;
     }
 
-    //    private void registerDrainHandler() {
-    //        if (!drainHandlerRegistered) {
-    //            drainHandlerRegistered = true;
-    //            Handler<Void> handler = new DrainHandler(this);
-    //            request.response().drainHandler(handler);
-    //            request.response().closeHandler(handler);
-    //        }
-    //    }
     /**
      * {@inheritDoc}
      */
