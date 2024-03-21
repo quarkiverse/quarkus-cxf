@@ -26,6 +26,7 @@ public interface CxfClientConfig {
      * this client.
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     @WithName("wsdl")
     public Optional<String> wsdlPath();
@@ -39,6 +40,7 @@ public interface CxfClientConfig {
      * * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<String> soapBinding();
 
@@ -46,6 +48,7 @@ public interface CxfClientConfig {
      * The client endpoint URL
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<String> clientEndpointUrl();
 
@@ -53,6 +56,7 @@ public interface CxfClientConfig {
      * The client endpoint namespace
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<String> endpointNamespace();
 
@@ -60,6 +64,7 @@ public interface CxfClientConfig {
      * The client endpoint name
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<String> endpointName();
 
@@ -67,6 +72,7 @@ public interface CxfClientConfig {
      * The username for HTTP Basic authentication
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<String> username();
 
@@ -74,6 +80,7 @@ public interface CxfClientConfig {
      * The password for HTTP Basic authentication
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<String> password();
 
@@ -105,6 +112,7 @@ public interface CxfClientConfig {
      * ----
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> features();
 
@@ -112,6 +120,7 @@ public interface CxfClientConfig {
      * The comma-separated list of Handler classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> handlers();
 
@@ -119,6 +128,7 @@ public interface CxfClientConfig {
      * The comma-separated list of InInterceptor classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> inInterceptors();
 
@@ -126,6 +136,7 @@ public interface CxfClientConfig {
      * The comma-separated list of OutInterceptor classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> outInterceptors();
 
@@ -133,6 +144,7 @@ public interface CxfClientConfig {
      * The comma-separated list of OutFaultInterceptor classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> outFaultInterceptors();
 
@@ -140,6 +152,7 @@ public interface CxfClientConfig {
      * The comma-separated list of InFaultInterceptor classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> inFaultInterceptors();
 
@@ -238,6 +251,7 @@ public interface CxfClientConfig {
      * Specifies the language the client desires (e.g., English, French, etc.)
      *
      * @asciidoclet
+     * @since 2.2.3
      */
     public Optional<String> acceptLanguage();
 

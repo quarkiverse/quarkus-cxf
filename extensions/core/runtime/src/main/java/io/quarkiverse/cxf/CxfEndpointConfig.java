@@ -16,6 +16,7 @@ public interface CxfEndpointConfig {
      * The service endpoint implementation class
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<String> implementor();
 
@@ -23,6 +24,7 @@ public interface CxfEndpointConfig {
      * The service endpoint WSDL path
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     @WithName("wsdl")
     public Optional<String> wsdlPath();
@@ -36,6 +38,7 @@ public interface CxfEndpointConfig {
      * * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<String> soapBinding();
 
@@ -43,6 +46,7 @@ public interface CxfEndpointConfig {
      * The published service endpoint URL
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<String> publishedEndpointUrl();
 
@@ -87,6 +91,7 @@ public interface CxfEndpointConfig {
      * ----
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     // @formatter:on
     public Optional<List<String>> features();
@@ -95,6 +100,7 @@ public interface CxfEndpointConfig {
      * The comma-separated list of Handler classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> handlers();
 
@@ -102,6 +108,7 @@ public interface CxfEndpointConfig {
      * The comma-separated list of InInterceptor classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> inInterceptors();
 
@@ -109,6 +116,7 @@ public interface CxfEndpointConfig {
      * The comma-separated list of OutInterceptor classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> outInterceptors();
 
@@ -116,6 +124,7 @@ public interface CxfEndpointConfig {
      * The comma-separated list of OutFaultInterceptor classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> outFaultInterceptors();
 
@@ -123,6 +132,7 @@ public interface CxfEndpointConfig {
      * The comma-separated list of InFaultInterceptor classes
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     public Optional<List<String>> inFaultInterceptors();
 
