@@ -102,7 +102,7 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
 
             props.put(
                     "cxf.it.calculator.hostNameUri",
-                    "http://" + "localhost" + ":" + calculatorContainer.getMappedPort(SOAP_SERVICE_PORT));
+                    "http://" + calculatorContainer.getHost() + ":" + calculatorContainer.getMappedPort(SOAP_SERVICE_PORT));
 
             props.put("cxf.it.calculator.proxy.host", "localhost");
             props.put("cxf.it.calculator.proxy.port", String.valueOf(proxyPort));
