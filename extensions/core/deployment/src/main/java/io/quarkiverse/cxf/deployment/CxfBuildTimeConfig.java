@@ -25,6 +25,7 @@ public interface CxfBuildTimeConfig {
      * automatically.
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     @Deprecated(forRemoval = true)
     Optional<List<String>> wsdlPath();
@@ -64,6 +65,7 @@ public interface CxfBuildTimeConfig {
          * locations; otherwise `wsdl2java` is not executed.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         @WithDefault("true")
         public boolean enabled();
@@ -74,6 +76,7 @@ public interface CxfBuildTimeConfig {
          * `wsdl2java` with different parameters for some of your WSDL files.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         @WithParentName
         public Wsdl2JavaParameterSet rootParameterSet();
@@ -83,6 +86,7 @@ public interface CxfBuildTimeConfig {
          * options to be used when invoking `wsdl2java` with the selected files.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         @WithParentName
         public Map<String, Wsdl2JavaParameterSet> namedParameterSets();
@@ -139,6 +143,7 @@ public interface CxfBuildTimeConfig {
          * `quarkus.native.resources.includes/excludes`.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         public Optional<List<String>> includes();
 
@@ -148,6 +153,7 @@ public interface CxfBuildTimeConfig {
          * Gradle module. Same syntax as `includes`.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         public Optional<List<String>> excludes();
 
@@ -182,6 +188,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-p` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @Wsdl2JavaParam(value = "-p", collection = Wsdl2JavaParamCollection.commaSeparated)
         public Optional<List<String>> packageNames();
@@ -192,6 +199,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-nexclude` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @Wsdl2JavaParam(value = "-nexclude", collection = Wsdl2JavaParamCollection.multiParam)
         public Optional<List<String>> excludeNamespaceUris();
@@ -202,6 +210,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-sn` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @Wsdl2JavaParam("-sn")
         public Optional<String> serviceName();
@@ -213,6 +222,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-b` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @Wsdl2JavaParam(value = "-b", collection = Wsdl2JavaParamCollection.multiParam)
         public Optional<List<String>> bindings();
@@ -223,6 +233,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-validate` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @WithDefault("false")
         @Wsdl2JavaParam(value = "-validate", transformer = Wsdl2JavaParamTransformer.bool)
@@ -234,6 +245,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-wsdlLocation` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @Wsdl2JavaParam("-wsdlLocation")
         public Optional<String> wsdlLocation();
@@ -255,6 +267,7 @@ public interface CxfBuildTimeConfig {
          * `-xjc-Xproperty-listener`, `-xjc-Xts` and `-xjc-Xwsdlextension` respectively.
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @Wsdl2JavaParam(value = "-xjc", collection = Wsdl2JavaParamCollection.xjc)
         public Optional<List<String>> xjc();
@@ -265,6 +278,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-exceptionSuper` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @WithDefault("java.lang.Exception")
         @Wsdl2JavaParam("-exceptionSuper")
@@ -277,6 +291,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-asyncMethods` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @Wsdl2JavaParam(value = "-asyncMethods", collection = Wsdl2JavaParamCollection.commaSeparated)
         public Optional<List<String>> asyncMethods();
@@ -288,6 +303,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-bareMethods` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @Wsdl2JavaParam(value = "-bareMethods", collection = Wsdl2JavaParamCollection.commaSeparated)
         public Optional<List<String>> bareMethods();
@@ -299,6 +315,7 @@ public interface CxfBuildTimeConfig {
          * This will be passed as option `-mimeMethods` to `wsdl2java`
          *
          * @asciidoclet
+         * @since 2.4.0
          */
         @Wsdl2JavaParam(value = "-mimeMethods", collection = Wsdl2JavaParamCollection.commaSeparated)
         public Optional<List<String>> mimeMethods();
@@ -309,6 +326,7 @@ public interface CxfBuildTimeConfig {
          * link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         public Optional<List<String>> additionalParams();
     }
@@ -321,6 +339,7 @@ public interface CxfBuildTimeConfig {
          * options; otherwise `java2ws` is not executed.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         @WithDefault("true")
         public boolean enabled();
@@ -331,6 +350,7 @@ public interface CxfBuildTimeConfig {
          * `java2ws` with different parameters for some of your Java classes.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         @WithParentName
         public Java2WsParameterSet rootParameterSet();
@@ -340,6 +360,7 @@ public interface CxfBuildTimeConfig {
          * with `jakarta.jws.WebService` and defines options to be used when invoking `java2ws` with the selected classes.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         @WithParentName
         public Map<String, Java2WsParameterSet> namedParameterSets();
@@ -393,6 +414,7 @@ public interface CxfBuildTimeConfig {
          * `quarkus.native.resources.includes/excludes`.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         public Optional<List<String>> includes();
 
@@ -401,6 +423,7 @@ public interface CxfBuildTimeConfig {
          * tool. Same syntax as `includes`.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         public Optional<List<String>> excludes();
 
@@ -416,6 +439,7 @@ public interface CxfBuildTimeConfig {
          * ====
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         public Optional<List<String>> additionalParams();
 
@@ -433,6 +457,7 @@ public interface CxfBuildTimeConfig {
          * `target/classes` for Maven and `build/classes` for Gradle.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         @WithDefault("%CLASSES_DIR%/wsdl/%SIMPLE_CLASS_NAME%.wsdl")
         public String wsdlNameTemplate();
