@@ -39,7 +39,6 @@ public interface CxfWsRmConfig {
      */
     @WithName("client")
     @ConfigDocMapKey("client-name")
-
     Map<String, ClientsOrEndpointsConfig> clients();
 
     /**
@@ -160,6 +159,7 @@ public interface CxfWsRmConfig {
              * will be added to this client or service endpoint.
              *
              * @asciidoclet
+             * @since 2.7.0
              */
             @WithDefault("true")
             boolean enabled();

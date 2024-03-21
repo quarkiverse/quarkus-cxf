@@ -89,7 +89,8 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 3+a|If `true` `wsdl2java` code generation is run whenever there are WSDL resources found on default or custom defined
 locations; otherwise `wsdl2java` is not executed.
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ENABLED+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ENABLED+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-includes]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-includes[quarkus.cxf.codegen.wsdl2java.includes]`
 .<| List of ``string``
@@ -141,7 +142,8 @@ The files from `src/main/resources` selected by `includes` and `excludes` are au
 and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (deprecated) or
 `quarkus.native.resources.includes/excludes`.
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_INCLUDES+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_INCLUDES+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-excludes]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-excludes[quarkus.cxf.codegen.wsdl2java.excludes]`
 .<| List of ``string``
@@ -151,7 +153,8 @@ and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (depre
 tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or
 Gradle module. Same syntax as `includes`.
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCLUDES+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCLUDES+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-output-directory]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-output-directory[quarkus.cxf.codegen.wsdl2java.output-directory]`
 .<| `string`
@@ -187,7 +190,8 @@ will be generated under the given Java package.
 
 This will be passed as option `-p` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_PACKAGE_NAMES+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_PACKAGE_NAMES+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-exclude-namespace-uris]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-exclude-namespace-uris[quarkus.cxf.codegen.wsdl2java.exclude-namespace-uris]`
 .<| List of ``string``
@@ -197,7 +201,8 @@ This will be passed as option `-p` to `wsdl2java`
 
 This will be passed as option `-nexclude` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCLUDE_NAMESPACE_URIS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCLUDE_NAMESPACE_URIS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-service-name]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-service-name[quarkus.cxf.codegen.wsdl2java.service-name]`
 .<| `string`
@@ -207,7 +212,8 @@ This will be passed as option `-nexclude` to `wsdl2java`
 
 This will be passed as option `-sn` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_SERVICE_NAME+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_SERVICE_NAME+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-bindings]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-bindings[quarkus.cxf.codegen.wsdl2java.bindings]`
 .<| List of ``string``
@@ -218,7 +224,8 @@ relative to the current Maven or Gradle module.
 
 This will be passed as option `-b` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_BINDINGS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_BINDINGS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-validate]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-validate[quarkus.cxf.codegen.wsdl2java.validate]`
 .<| `boolean`
@@ -228,7 +235,8 @@ This will be passed as option `-b` to `wsdl2java`
 
 This will be passed as option `-validate` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_VALIDATE+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_VALIDATE+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-wsdl-location]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-wsdl-location[quarkus.cxf.codegen.wsdl2java.wsdl-location]`
 .<| `string`
@@ -238,7 +246,8 @@ This will be passed as option `-validate` to `wsdl2java`
 
 This will be passed as option `-wsdlLocation` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_WSDL_LOCATION+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_WSDL_LOCATION+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-xjc]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-xjc[quarkus.cxf.codegen.wsdl2java.xjc]`
 .<| List of ``string``
@@ -259,7 +268,8 @@ methods
 These values correspond to `-wsdl2java` options `-xjc-Xbg`, `-xjc-Xbgi`, `-xjc-Xdv`, `-xjc-Xjavadoc`,
 `-xjc-Xproperty-listener`, `-xjc-Xts` and `-xjc-Xwsdlextension` respectively.
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_XJC+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_XJC+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-exception-super]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-exception-super[quarkus.cxf.codegen.wsdl2java.exception-super]`
 .<| `string`
@@ -269,7 +279,8 @@ These values correspond to `-wsdl2java` options `-xjc-Xbg`, `-xjc-Xbgi`, `-xjc-X
 
 This will be passed as option `-exceptionSuper` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCEPTION_SUPER+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_EXCEPTION_SUPER+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-async-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-async-methods[quarkus.cxf.codegen.wsdl2java.async-methods]`
 .<| List of ``string``
@@ -280,7 +291,8 @@ This will be passed as option `-exceptionSuper` to `wsdl2java`
 
 This will be passed as option `-asyncMethods` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ASYNC_METHODS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ASYNC_METHODS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-bare-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-bare-methods[quarkus.cxf.codegen.wsdl2java.bare-methods]`
 .<| List of ``string``
@@ -291,7 +303,8 @@ This will be passed as option `-asyncMethods` to `wsdl2java`
 
 This will be passed as option `-bareMethods` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_BARE_METHODS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_BARE_METHODS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-mime-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-mime-methods[quarkus.cxf.codegen.wsdl2java.mime-methods]`
 .<| List of ``string``
@@ -302,7 +315,8 @@ This will be passed as option `-bareMethods` to `wsdl2java`
 
 This will be passed as option `-mimeMethods` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_MIME_METHODS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_MIME_METHODS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]`
 .<| List of ``string``
@@ -312,7 +326,8 @@ This will be passed as option `-mimeMethods` to `wsdl2java`
 the files selected by `includes` and `excludes`. Example: `-keep,-dex,false`. Check
 link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ADDITIONAL_PARAMS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_ADDITIONAL_PARAMS+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-enabled]]`link:#quarkus-cxf_quarkus-cxf-java2ws-enabled[quarkus.cxf.java2ws.enabled]`
 .<| `boolean`
@@ -321,7 +336,8 @@ link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] fo
 3+a|If `true` `java2ws` WSDL generation is run whenever there are Java classes selected via `includes` and `excludes`
 options; otherwise `java2ws` is not executed.
 
-*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_ENABLED+++`
+*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_ENABLED+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-includes]]`link:#quarkus-cxf_quarkus-cxf-java2ws-includes[quarkus.cxf.java2ws.includes]`
 .<| List of ``string``
@@ -368,7 +384,8 @@ thrown.
 If you would like to include the generated WSDL files in native image, you need to add them yourself using
 `quarkus.native.resources.includes/excludes`.
 
-*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_INCLUDES+++`
+*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_INCLUDES+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-excludes]]`link:#quarkus-cxf_quarkus-cxf-java2ws-excludes[quarkus.cxf.java2ws.excludes]`
 .<| List of ``string``
@@ -377,7 +394,8 @@ If you would like to include the generated WSDL files in native image, you need 
 3+a|A comma separated list of glob patterns for selecting java class names which should *not* be processed with `java2ws`
 tool. Same syntax as `includes`.
 
-*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_EXCLUDES+++`
+*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_EXCLUDES+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-additional-params]]`link:#quarkus-cxf_quarkus-cxf-java2ws-additional-params[quarkus.cxf.java2ws.additional-params]`
 .<| List of ``string``
@@ -393,7 +411,8 @@ link:https://cxf.apache.org/docs/java-to-ws.html[`java2ws` documentation] for al
 Currently, only options related to generation of WSDL from Java are supported.
 ====
 
-*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_ADDITIONAL_PARAMS+++`
+*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_ADDITIONAL_PARAMS+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-wsdl-name-template]]`link:#quarkus-cxf_quarkus-cxf-java2ws-wsdl-name-template[quarkus.cxf.java2ws.wsdl-name-template]`
 .<| `string`
@@ -411,7 +430,8 @@ and `build` for Gradle.
 - `%CLASSES_DIR%` - the compiler output directory of the current module of the current build tool; typically
 `target/classes` for Maven and `build/classes` for Gradle.
 
-*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_WSDL_NAME_TEMPLATE+++`
+*Environment variable*: `+++QUARKUS_CXF_JAVA2WS_WSDL_NAME_TEMPLATE+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-path]]`link:#quarkus-cxf_quarkus-cxf-path[quarkus.cxf.path]`
 .<| `string`
@@ -425,7 +445,8 @@ and `build` for Gradle.
 The default value before Quarkus CXF version 2.0.0 was `/`.
 ====
 
-*Environment variable*: `+++QUARKUS_CXF_PATH+++`
+*Environment variable*: `+++QUARKUS_CXF_PATH+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-min-chunk-size]]`link:#quarkus-cxf_quarkus-cxf-min-chunk-size[quarkus.cxf.min-chunk-size]`
 .<| `int`
@@ -436,7 +457,8 @@ The default value before Quarkus CXF version 2.0.0 was `/`.
 This is a very advanced setting that should only be set if you understand exactly how it affects the output IO operations
 of the application.
 
-*Environment variable*: `+++QUARKUS_CXF_MIN_CHUNK_SIZE+++`
+*Environment variable*: `+++QUARKUS_CXF_MIN_CHUNK_SIZE+++` +
+*Since Quarkus CXF*: 2.6.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-output-buffer-size]]`link:#quarkus-cxf_quarkus-cxf-output-buffer-size[quarkus.cxf.output-buffer-size]`
 .<| `int`
@@ -447,7 +469,8 @@ provided then the response will be chunked.
 
 Larger values may give slight performance increases for large responses, at the expense of more memory usage.
 
-*Environment variable*: `+++QUARKUS_CXF_OUTPUT_BUFFER_SIZE+++`
+*Environment variable*: `+++QUARKUS_CXF_OUTPUT_BUFFER_SIZE+++` +
+*Since Quarkus CXF*: 2.6.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-http-conduit-factory]]`link:#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
 .<| `QuarkusCXFDefault`, `CXFDefault`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
@@ -755,7 +778,8 @@ The files from `src/main/resources` selected by `includes` and `excludes` are au
 and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (deprecated) or
 `quarkus.native.resources.includes/excludes`.
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__INCLUDES+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__INCLUDES+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-excludes]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-excludes[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".excludes]`
 .<| List of ``string``
@@ -765,7 +789,8 @@ and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (depre
 tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or
 Gradle module. Same syntax as `includes`.
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCLUDES+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCLUDES+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-output-directory]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-output-directory[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".output-directory]`
 .<| `string`
@@ -801,7 +826,8 @@ will be generated under the given Java package.
 
 This will be passed as option `-p` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__PACKAGE_NAMES+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__PACKAGE_NAMES+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-exclude-namespace-uris]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-exclude-namespace-uris[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".exclude-namespace-uris]`
 .<| List of ``string``
@@ -811,7 +837,8 @@ This will be passed as option `-p` to `wsdl2java`
 
 This will be passed as option `-nexclude` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCLUDE_NAMESPACE_URIS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCLUDE_NAMESPACE_URIS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-service-name]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-service-name[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".service-name]`
 .<| `string`
@@ -821,7 +848,8 @@ This will be passed as option `-nexclude` to `wsdl2java`
 
 This will be passed as option `-sn` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__SERVICE_NAME+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__SERVICE_NAME+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-bindings]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-bindings[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".bindings]`
 .<| List of ``string``
@@ -832,7 +860,8 @@ relative to the current Maven or Gradle module.
 
 This will be passed as option `-b` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__BINDINGS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__BINDINGS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-validate]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-validate[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".validate]`
 .<| `boolean`
@@ -842,7 +871,8 @@ This will be passed as option `-b` to `wsdl2java`
 
 This will be passed as option `-validate` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__VALIDATE+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__VALIDATE+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-wsdl-location]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-wsdl-location[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".wsdl-location]`
 .<| `string`
@@ -852,7 +882,8 @@ This will be passed as option `-validate` to `wsdl2java`
 
 This will be passed as option `-wsdlLocation` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__WSDL_LOCATION+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__WSDL_LOCATION+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-xjc]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-xjc[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".xjc]`
 .<| List of ``string``
@@ -873,7 +904,8 @@ methods
 These values correspond to `-wsdl2java` options `-xjc-Xbg`, `-xjc-Xbgi`, `-xjc-Xdv`, `-xjc-Xjavadoc`,
 `-xjc-Xproperty-listener`, `-xjc-Xts` and `-xjc-Xwsdlextension` respectively.
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__XJC+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__XJC+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-exception-super]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-exception-super[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".exception-super]`
 .<| `string`
@@ -883,7 +915,8 @@ These values correspond to `-wsdl2java` options `-xjc-Xbg`, `-xjc-Xbgi`, `-xjc-X
 
 This will be passed as option `-exceptionSuper` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCEPTION_SUPER+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__EXCEPTION_SUPER+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-async-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-async-methods[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".async-methods]`
 .<| List of ``string``
@@ -894,7 +927,8 @@ This will be passed as option `-exceptionSuper` to `wsdl2java`
 
 This will be passed as option `-asyncMethods` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ASYNC_METHODS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ASYNC_METHODS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-bare-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-bare-methods[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".bare-methods]`
 .<| List of ``string``
@@ -905,7 +939,8 @@ This will be passed as option `-asyncMethods` to `wsdl2java`
 
 This will be passed as option `-bareMethods` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__BARE_METHODS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__BARE_METHODS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-mime-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-mime-methods[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".mime-methods]`
 .<| List of ``string``
@@ -916,7 +951,8 @@ This will be passed as option `-bareMethods` to `wsdl2java`
 
 This will be passed as option `-mimeMethods` to `wsdl2java`
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__MIME_METHODS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__MIME_METHODS+++` +
+*Since Quarkus CXF*: 2.4.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-additional-params]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-additional-params[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".additional-params]`
 .<| List of ``string``
@@ -926,7 +962,8 @@ This will be passed as option `-mimeMethods` to `wsdl2java`
 the files selected by `includes` and `excludes`. Example: `-keep,-dex,false`. Check
 link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] for all supported options.
 
-*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++`
+*Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-includes]]`link:#quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-includes[quarkus.cxf.java2ws."named-parameter-sets".includes]`
 .<| List of ``string``
@@ -973,7 +1010,8 @@ thrown.
 If you would like to include the generated WSDL files in native image, you need to add them yourself using
 `quarkus.native.resources.includes/excludes`.
 
-*Environment variable*: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__INCLUDES+++`
+*Environment variable*: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__INCLUDES+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-excludes]]`link:#quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-excludes[quarkus.cxf.java2ws."named-parameter-sets".excludes]`
 .<| List of ``string``
@@ -982,7 +1020,8 @@ If you would like to include the generated WSDL files in native image, you need 
 3+a|A comma separated list of glob patterns for selecting java class names which should *not* be processed with `java2ws`
 tool. Same syntax as `includes`.
 
-*Environment variable*: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__EXCLUDES+++`
+*Environment variable*: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__EXCLUDES+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-additional-params]]`link:#quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-additional-params[quarkus.cxf.java2ws."named-parameter-sets".additional-params]`
 .<| List of ``string``
@@ -998,7 +1037,8 @@ link:https://cxf.apache.org/docs/java-to-ws.html[`java2ws` documentation] for al
 Currently, only options related to generation of WSDL from Java are supported.
 ====
 
-*Environment variable*: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++`
+*Environment variable*: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__ADDITIONAL_PARAMS+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-wsdl-name-template]]`link:#quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-wsdl-name-template[quarkus.cxf.java2ws."named-parameter-sets".wsdl-name-template]`
 .<| `string`
@@ -1016,7 +1056,8 @@ and `build` for Gradle.
 - `%CLASSES_DIR%` - the compiler output directory of the current module of the current build tool; typically
 `target/classes` for Maven and `build/classes` for Gradle.
 
-*Environment variable*: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__WSDL_NAME_TEMPLATE+++`
+*Environment variable*: `+++QUARKUS_CXF_JAVA2WS__NAMED_PARAMETER_SETS__WSDL_NAME_TEMPLATE+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-client-name-service-interface]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-service-interface[quarkus.cxf.client."client-name".service-interface]`
 .<| `string`
@@ -1024,7 +1065,8 @@ and `build` for Gradle.
 
 3+a|The client service interface class name
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SERVICE_INTERFACE+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SERVICE_INTERFACE+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-client-name-alternative]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-alternative[quarkus.cxf.client."client-name".alternative]`
 .<| `boolean`
@@ -1033,7 +1075,8 @@ and `build` for Gradle.
 3+a|Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when
 configuring a client without annotation `@CXFClient`.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ALTERNATIVE+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ALTERNATIVE+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-client-name-native-runtime-initialized]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-native-runtime-initialized[quarkus.cxf.client."client-name".native.runtime-initialized]`
 .<| `boolean`
@@ -1050,7 +1093,8 @@ initialized during image building: org.acme.Operands ... jdk.proxy<some-number>.
 initialization of this class`. `jdk.proxy<some-number>.$Proxy<some-number>` is the proxy class generated by the
 native compiler.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__NATIVE_RUNTIME_INITIALIZED+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__NATIVE_RUNTIME_INITIALIZED+++` +
+*Since Quarkus CXF*: 2.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-implementor]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-implementor[quarkus.cxf.endpoint."/endpoint-path".implementor]`
 .<| `string`
@@ -1058,7 +1102,8 @@ native compiler.
 
 3+a|The service endpoint implementation class
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__IMPLEMENTOR+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__IMPLEMENTOR+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-wsdl]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-wsdl[quarkus.cxf.endpoint."/endpoint-path".wsdl]`
 .<| `string`
@@ -1066,7 +1111,8 @@ native compiler.
 
 3+a|The service endpoint WSDL path
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__WSDL+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__WSDL+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-soap-binding]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-soap-binding[quarkus.cxf.endpoint."/endpoint-path".soap-binding]`
 .<| `string`
@@ -1079,7 +1125,8 @@ native compiler.
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SOAP_BINDING+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SOAP_BINDING+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-published-endpoint-url]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-published-endpoint-url[quarkus.cxf.endpoint."/endpoint-path".published-endpoint-url]`
 .<| `string`
@@ -1087,7 +1134,8 @@ native compiler.
 
 3+a|The published service endpoint URL
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__PUBLISHED_ENDPOINT_URL+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__PUBLISHED_ENDPOINT_URL+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-enabled[quarkus.cxf.endpoint."/endpoint-path".logging.enabled]`
 .<| `true`, `false`, `pretty`
@@ -1248,7 +1296,8 @@ class Producers {
 }
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__FEATURES+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__FEATURES+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-handlers]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-handlers[quarkus.cxf.endpoint."/endpoint-path".handlers]`
 .<| List of ``string``
@@ -1256,7 +1305,8 @@ class Producers {
 
 3+a|The comma-separated list of Handler classes
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__HANDLERS+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__HANDLERS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-in-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-in-interceptors[quarkus.cxf.endpoint."/endpoint-path".in-interceptors]`
 .<| List of ``string``
@@ -1264,7 +1314,8 @@ class Producers {
 
 3+a|The comma-separated list of InInterceptor classes
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__IN_INTERCEPTORS+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__IN_INTERCEPTORS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-out-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-out-interceptors[quarkus.cxf.endpoint."/endpoint-path".out-interceptors]`
 .<| List of ``string``
@@ -1272,7 +1323,8 @@ class Producers {
 
 3+a|The comma-separated list of OutInterceptor classes
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__OUT_INTERCEPTORS+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__OUT_INTERCEPTORS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-out-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-out-fault-interceptors[quarkus.cxf.endpoint."/endpoint-path".out-fault-interceptors]`
 .<| List of ``string``
@@ -1280,7 +1332,8 @@ class Producers {
 
 3+a|The comma-separated list of OutFaultInterceptor classes
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__OUT_FAULT_INTERCEPTORS+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__OUT_FAULT_INTERCEPTORS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-in-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-in-fault-interceptors[quarkus.cxf.endpoint."/endpoint-path".in-fault-interceptors]`
 .<| List of ``string``
@@ -1288,7 +1341,8 @@ class Producers {
 
 3+a|The comma-separated list of InFaultInterceptor classes
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__IN_FAULT_INTERCEPTORS+++`
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__IN_FAULT_INTERCEPTORS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-schema-validation-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-schema-validation-enabled-for[quarkus.cxf.endpoint."/endpoint-path".schema-validation.enabled-for]`
 .<| `in`, `request`, `out`, `response`, `both`, `none`
@@ -1308,7 +1362,8 @@ enforced unless it is enabled by other means, such as `@org.apache.cxf.annotatio
 3+a|A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service proxy of
 this client.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__WSDL+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__WSDL+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-soap-binding]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-soap-binding[quarkus.cxf.client."client-name".soap-binding]`
 .<| `string`
@@ -1321,7 +1376,8 @@ this client.
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/+` for SOAP12HTTP_BINDING
 * `+http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true+` for SOAP12HTTP_MTOM_BINDING
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SOAP_BINDING+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SOAP_BINDING+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-client-endpoint-url]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-client-endpoint-url[quarkus.cxf.client."client-name".client-endpoint-url]`
 .<| `string`
@@ -1329,7 +1385,8 @@ this client.
 
 3+a|The client endpoint URL
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__CLIENT_ENDPOINT_URL+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__CLIENT_ENDPOINT_URL+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-endpoint-namespace]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-endpoint-namespace[quarkus.cxf.client."client-name".endpoint-namespace]`
 .<| `string`
@@ -1337,7 +1394,8 @@ this client.
 
 3+a|The client endpoint namespace
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ENDPOINT_NAMESPACE+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ENDPOINT_NAMESPACE+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-endpoint-name]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-endpoint-name[quarkus.cxf.client."client-name".endpoint-name]`
 .<| `string`
@@ -1345,7 +1403,8 @@ this client.
 
 3+a|The client endpoint name
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ENDPOINT_NAME+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ENDPOINT_NAME+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]`
 .<| `string`
@@ -1353,7 +1412,8 @@ this client.
 
 3+a|The username for HTTP Basic authentication
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__USERNAME+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__USERNAME+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]`
 .<| `string`
@@ -1361,7 +1421,8 @@ this client.
 
 3+a|The password for HTTP Basic authentication
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PASSWORD+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PASSWORD+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-secure-wsdl-access]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-secure-wsdl-access[quarkus.cxf.client."client-name".secure-wsdl-access]`
 .<| `boolean`
@@ -1511,7 +1572,8 @@ Example:
 quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.LoggingFeature
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__FEATURES+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__FEATURES+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-handlers]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-handlers[quarkus.cxf.client."client-name".handlers]`
 .<| List of ``string``
@@ -1519,7 +1581,8 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 3+a|The comma-separated list of Handler classes
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__HANDLERS+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__HANDLERS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-in-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-in-interceptors[quarkus.cxf.client."client-name".in-interceptors]`
 .<| List of ``string``
@@ -1527,7 +1590,8 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 3+a|The comma-separated list of InInterceptor classes
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__IN_INTERCEPTORS+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__IN_INTERCEPTORS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-out-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-out-interceptors[quarkus.cxf.client."client-name".out-interceptors]`
 .<| List of ``string``
@@ -1535,7 +1599,8 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 3+a|The comma-separated list of OutInterceptor classes
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__OUT_INTERCEPTORS+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__OUT_INTERCEPTORS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-out-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-out-fault-interceptors[quarkus.cxf.client."client-name".out-fault-interceptors]`
 .<| List of ``string``
@@ -1543,7 +1608,8 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 3+a|The comma-separated list of OutFaultInterceptor classes
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__OUT_FAULT_INTERCEPTORS+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__OUT_FAULT_INTERCEPTORS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-in-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-in-fault-interceptors[quarkus.cxf.client."client-name".in-fault-interceptors]`
 .<| List of ``string``
@@ -1551,7 +1617,8 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 3+a|The comma-separated list of InFaultInterceptor classes
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__IN_FAULT_INTERCEPTORS+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__IN_FAULT_INTERCEPTORS+++` +
+*Since Quarkus CXF*: 1.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-connection-timeout]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-connection-timeout[quarkus.cxf.client."client-name".connection-timeout]`
 .<| `long`
@@ -1650,7 +1717,8 @@ chunk. If chunklen is less than or equal to zero, a default value will be used.
 
 3+a|Specifies the language the client desires (e.g., English, French, etc.)
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ACCEPT_LANGUAGE+++`
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ACCEPT_LANGUAGE+++` +
+*Since Quarkus CXF*: 2.2.3
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-accept-encoding]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-accept-encoding[quarkus.cxf.client."client-name".accept-encoding]`
 .<| `string`
