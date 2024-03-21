@@ -30,15 +30,17 @@ mkdir -p "$destinationDir"
 
 # Certificate authority
 openssl genrsa -out "$workDir/cxfca.key" $keySize
-openssl req -x509 -new -subj '/O=apache.org/OU=eng (NOT FOR PRODUCTION)/CN=cxfca' -key "$workDir/cxfca.key" -nodes -out "$workDir/cxfca.pem" -days $days -extensions v3_req
-openssl req -new -subj '/O=apache.org/OU=eng (NOT FOR PRODUCTION)/CN=cxfca' -x509 -key "$workDir/cxfca.key" -days $days -out "$workDir/cxfca.crt"
+
+# we add MSYS_NO_PATHCONV=1 due to https://stackoverflow.com/a/54924640
+MSYS_NO_PATHCONV=1 openssl req -x509 -new -subj '/O=apache.org/OU=eng (NOT FOR PRODUCTION)/CN=cxfca' -key "$workDir/cxfca.key" -nodes -out "$workDir/cxfca.pem" -days $days -extensions v3_req
+MSYS_NO_PATHCONV=1 openssl req -x509 -new -subj '/O=apache.org/OU=eng (NOT FOR PRODUCTION)/CN=cxfca' -key "$workDir/cxfca.key" -days $days -out "$workDir/cxfca.crt"
 
 for actor in alice bob localhost; do
   # Generate keys
   openssl genrsa -out "$workDir/$actor.key" $keySize
 
   # Generate certificates
-  openssl req -new -subj "/O=apache.org/OU=eng (NOT FOR PRODUCTION)/CN=$actor" -key "$workDir/$actor.key"  -out "$workDir/$actor.csr"
+  MSYS_NO_PATHCONV=1 openssl req -new -subj "/O=apache.org/OU=eng (NOT FOR PRODUCTION)/CN=$actor" -key "$workDir/$actor.key"  -out "$workDir/$actor.csr"
   openssl x509 -req -in "$workDir/$actor.csr" -extfile "$extFile" -CA "$workDir/cxfca.pem" -CAkey "$workDir/cxfca.key" -CAcreateserial -days $days -out "$workDir/$actor.crt"
 
   # Export keystores

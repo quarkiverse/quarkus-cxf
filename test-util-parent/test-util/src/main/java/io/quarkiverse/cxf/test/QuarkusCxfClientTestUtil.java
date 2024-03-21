@@ -22,6 +22,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import io.quarkus.runtime.LaunchMode;
 
 public class QuarkusCxfClientTestUtil {
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("win");
 
     private QuarkusCxfClientTestUtil() {
     }
@@ -102,6 +103,10 @@ public class QuarkusCxfClientTestUtil {
                 throw new IllegalStateException("Cannot find free port", e);
             }
         }
+    }
+
+    public static String maybeWinPath(String path) {
+        return path != null && IS_WINDOWS ? path.replace('/', '\\') : path;
     }
 
 }
