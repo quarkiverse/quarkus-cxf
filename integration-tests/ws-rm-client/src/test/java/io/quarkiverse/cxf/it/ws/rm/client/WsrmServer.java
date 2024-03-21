@@ -20,6 +20,8 @@ import org.jboss.logging.Logger;
 public class WsrmServer implements Closeable {
     private static final Logger log = Logger.getLogger(WsrmServer.class);
     private Process serverProcess;
+    private Thread outputSlurper;
+    private volatile boolean stopped = false;
 
     public WsrmServer(boolean isNative) {
 
@@ -54,6 +56,17 @@ public class WsrmServer implements Closeable {
                     .command(cmd)
                     .redirectErrorStream(true)
                     .start();
+
+            /* Unless we slurp the process output, the server app will eventually freeze on Windows */
+            outputSlurper = new Thread(() -> {
+                try (InputStream in = serverProcess.getInputStream()) {
+                    while (!stopped && in.read() >= 0) {
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            outputSlurper.start();
         } catch (IOException e) {
             throw new RuntimeException(cmd.stream().collect(Collectors.joining(" ")), e);
         }
@@ -144,5 +157,13 @@ public class WsrmServer implements Closeable {
     @Override
     public void close() {
         serverProcess.destroy();
+        stopped = true;
+        if (outputSlurper != null) {
+            try {
+                outputSlurper.join(5000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 }
