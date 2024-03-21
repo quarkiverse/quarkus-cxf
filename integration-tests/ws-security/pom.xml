@@ -131,7 +131,10 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>${basedir}/generate-certs.sh</executable>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>${basedir}/generate-certs.sh</argument>
+                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>
