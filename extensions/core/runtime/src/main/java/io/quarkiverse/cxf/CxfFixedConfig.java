@@ -29,6 +29,7 @@ public interface CxfFixedConfig {
      * ====
      *
      * @asciidoclet
+     * @since 1.0.0
      */
     @WithDefault("/services")
     String path();
@@ -40,6 +41,7 @@ public interface CxfFixedConfig {
      * of the application.
      *
      * @asciidoclet
+     * @since 2.6.0
      */
     @WithDefault("128")
     int minChunkSize();
@@ -51,6 +53,7 @@ public interface CxfFixedConfig {
      * Larger values may give slight performance increases for large responses, at the expense of more memory usage.
      *
      * @asciidoclet
+     * @since 2.6.0
      */
     @WithDefault("8191")
     int outputBufferSize();
@@ -93,6 +96,7 @@ public interface CxfFixedConfig {
          * The client service interface class name
          *
          * @asciidoclet
+         * @since 1.0.0
          */
         public Optional<String> serviceInterface();
 
@@ -101,6 +105,7 @@ public interface CxfFixedConfig {
          * configuring a client without annotation `@CXFClient`.
          *
          * @asciidoclet
+         * @since 1.0.0
          */
         @WithDefault("false")
         public boolean alternative();
@@ -150,6 +155,7 @@ public interface CxfFixedConfig {
          * native compiler.
          *
          * @asciidoclet
+         * @since 2.0.0
          */
         @WithDefault("false")
         public boolean runtimeInitialized();
