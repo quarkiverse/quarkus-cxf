@@ -1,7 +1,6 @@
 name: Build
 
-on:
-  pull_request:
+on: [pull_request]
 
 env:
   QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_INCREMENT_KB: 512
