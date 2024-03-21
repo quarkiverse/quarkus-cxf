@@ -432,6 +432,7 @@
         <profile>
             <id>release</id>
             <properties>
+                <format.skip>true</format.skip>
                 <enforcer.skip>true</enforcer.skip>
                 <formatter.skip>true</formatter.skip>
                 <impsort.skip>true</impsort.skip>

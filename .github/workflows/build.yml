@@ -38,3 +38,38 @@ jobs:
       with:
         java-version: ${{ env.JAVA_VERSION }}
         test-module-spec: ${{matrix.testModule}}
+
+  windows-tests:
+    name: Windows tests
+    needs: build-and-run-jvm-tests
+    runs-on: windows-latest
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ env.JAVA_VERSION }}
+
+    - name: Download Maven Repo
+      uses: actions/download-artifact@v4
+      with:
+        name: maven-repo
+        path: ..
+    - name: Extract Maven Repo
+      shell: bash
+      run: |
+        tar -xzf ../maven-repo.tgz -C ~
+
+    - name: mvn test
+      shell: bash
+      run: |
+        ./mvnw -B test \
+          -Dskip-testcontainers-tests \
+          -Dformat.skip \
+          -Denforcer.skip \
+          -pl '!:quarkus-cxf-docs,!:quarkus-cxf-test-ws-rm-server-native' \
+          -ntp \
+          -fae

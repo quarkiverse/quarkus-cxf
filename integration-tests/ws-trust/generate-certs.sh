@@ -11,6 +11,9 @@ encryptionAlgo="aes-256-cbc"
 workDir="target/openssl-work"
 destinationDir="src/main/resources"
 
+# see https://stackoverflow.com/a/54924640
+export MSYS_NO_PATHCONV=1
+
 if [[ -n "${JAVA_HOME}" ]] ; then
   keytool="$JAVA_HOME/bin/keytool"
 elif ! [[ -x "$(command -v keytool)" ]] ; then
