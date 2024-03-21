@@ -19,7 +19,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 
 @QuarkusTest
-@QuarkusTestResource(CxfWssClientTestResource.class)
+@QuarkusTestResource(value = CxfWssClientTestResource.class, restrictToAnnotatedClass = true)
 public class CxfWssClientTest {
 
     /**
