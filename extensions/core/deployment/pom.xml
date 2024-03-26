@@ -82,6 +82,16 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-tools-java2ws</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-databinding-aegis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-javascript</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
