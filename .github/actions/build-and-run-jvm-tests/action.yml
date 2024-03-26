@@ -16,14 +16,6 @@ runs:
         distribution: temurin
         java-version: ${{ inputs.java-version }}
 
-    - name: Cache local Maven repository
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-
     - name: Build CXF
       if: github.ref == 'refs/heads/cxf-main' || github.base_ref == 'cxf-main' || github.head_ref == 'cxf-main'
       uses: ./.github/actions/rebuild-dependency

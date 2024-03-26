@@ -51,9 +51,10 @@ runs:
         git config --local user.name "GitHub Action"
         echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=success" >> $GITHUB_ENV
         git fetch origin main
+        git checkout main
         git reset --hard origin/main
         git fetch origin ${{ inputs.dependency-short-name }}-main
-        git checkout ${{ inputs.dependency-short-name }}-main 2>/dev/null || git checkout -b ${{ inputs.dependency-short-name }}-main origin/main
+        git checkout ${{ inputs.dependency-short-name }}-main >/dev/null 2>&1 || git checkout -b ${{ inputs.dependency-short-name }}-main origin/main
         git status
         echo "${{ inputs.dependency-short-name }}-main is at $(git rev-parse HEAD)"
         git rebase main
