@@ -82,7 +82,9 @@ runs:
         echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=rebase-failed" >> $GITHUB_ENV
         oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
         echo "oldState = $oldState"
-        msg="❌ Could not build ${{ inputs.dependency-short-name }} at ${{ steps.checkout-dependency.outputs.dependency-commit }} in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        gitUrl="${{ inputs.dependency-git-repo-url }}"
+        commitUrl="${gitUrl/.git/}/commit/${{ steps.checkout-dependency.outputs.dependency-commit }}"
+        msg="❌ Could not build ${{ inputs.dependency-short-name }} at ${commitUrl} in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         if [[ "$oldState" == "OPEN" ]] ; then
           gh issue comment \
             --repo ${{ github.repository }} \
