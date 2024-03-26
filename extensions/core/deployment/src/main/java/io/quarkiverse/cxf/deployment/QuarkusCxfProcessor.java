@@ -1,6 +1,13 @@
 package io.quarkiverse.cxf.deployment;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -92,10 +99,9 @@ import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.logging.LogCleanupFilterBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
-import io.quarkus.deployment.pkg.PackageConfig.BuiltInType;
+import io.quarkus.deployment.pkg.PackageConfig.JarConfig.JarType;
 import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
-import io.quarkus.deployment.pkg.builditem.UberJarRequiredBuildItem;
 import io.quarkus.deployment.pkg.steps.NativeOrNativeSourcesBuild;
 import io.quarkus.gizmo.ClassOutput;
 
@@ -270,7 +276,6 @@ class QuarkusCxfProcessor {
 
     @BuildStep
     void buildResources(BuildProducer<ReflectiveClassBuildItem> reflectiveItems,
-            List<UberJarRequiredBuildItem> uberJarRequired,
             PackageConfig packageConfig,
             BuildProducer<GeneratedResourceBuildItem> generatedResources) {
 
@@ -301,8 +306,7 @@ class QuarkusCxfProcessor {
             }
 
             // for uber jar merge bus-extensions
-            if ((!uberJarRequired.isEmpty() || packageConfig.type.equalsIgnoreCase(BuiltInType.UBER_JAR.toString()))
-                    && (os.size() > 0)) {
+            if (packageConfig.jar().type() == JarType.UBER_JAR && os.size() > 0) {
                 generatedResources.produce(
                         new GeneratedResourceBuildItem("META-INF/cxf/bus-extensions.txt", os.toByteArray()));
             }
@@ -312,11 +316,11 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    void buildXmlResources(List<UberJarRequiredBuildItem> uberJarRequired,
+    void buildXmlResources(
             PackageConfig packageConfig,
             BuildProducer<GeneratedResourceBuildItem> generatedResources) {
         // for uber jar only merge xml resource
-        if (uberJarRequired.isEmpty() && !packageConfig.type.equalsIgnoreCase(PackageConfig.BuiltInType.UBER_JAR.toString())) {
+        if (packageConfig.jar().type() != JarType.UBER_JAR) {
             return;
         }
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
