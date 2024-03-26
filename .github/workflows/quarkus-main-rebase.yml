@@ -33,7 +33,7 @@ jobs:
         dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
         dependency-short-name: ${{ env.DEPENDENCY_SHORT_NAME }}
         issue-id: ${{ env.ISSUE_ID }}
-        token: "${{ secrets.GITHUB_TOKEN }}"
+        token: "${{ secrets.QUARKIVERSEBOT_TOKEN }}"
 
     - name: build-and-run-jvm-tests
       uses: ./.github/actions/build-and-run-jvm-tests
@@ -64,7 +64,7 @@ jobs:
             ${{ env.ISSUE_ID }}
         fi
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.QUARKIVERSEBOT_TOKEN }}
 
     - name: Close issue https://github.com/${{ github.repository }}/issues/${{ env.ISSUE_ID }}
       if: ${{ success() }}
@@ -80,5 +80,5 @@ jobs:
             ${{ env.ISSUE_ID }}
         fi
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ secrets.QUARKIVERSEBOT_TOKEN }}
 
