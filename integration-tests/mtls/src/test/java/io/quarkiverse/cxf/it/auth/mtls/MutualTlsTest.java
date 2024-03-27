@@ -69,8 +69,12 @@ public class MutualTlsTest {
                 .then()
                 .statusCode(500)
                 .body(Matchers.anyOf(
+                        /* On Linux, we randomly get any of the following: */
                         Matchers.containsString("SSLHandshakeException: Received fatal alert: bad_certificate"),
-                        Matchers.containsString("IOException: Error writing to server")));
+                        Matchers.containsString("IOException: Error writing to server"),
+                        /* On Windows, we get this */
+                        Matchers.containsString(
+                                "java.net.SocketException: An established connection was aborted by the software in your host machine")));
 
     }
 
