@@ -199,13 +199,28 @@
                     <configuration>
                         <systemPropertyVariables>
                             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                            <user.language>en</user.language>
+                            <user.country>US</user.country>
                         </systemPropertyVariables>
+                        <environmentVariables>
+                            <LANG>en_US.UTF-8</LANG>
+                        </environmentVariables>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                            <user.language>en</user.language>
+                            <user.country>US</user.country>
+                        </systemPropertyVariables>
+                        <environmentVariables>
+                            <LANG>en_US.UTF-8</LANG>
+                        </environmentVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.l2x6.rpkgtests</groupId>
