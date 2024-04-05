@@ -32,8 +32,6 @@ import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaParam.Wsdl2JavaParamTransf
 import io.quarkus.bootstrap.prebuild.CodeGenException;
 import io.quarkus.deployment.CodeGenContext;
 import io.quarkus.deployment.CodeGenProvider;
-import io.quarkus.deployment.configuration.BuildTimeConfigurationReader;
-import io.quarkus.deployment.configuration.BuildTimeConfigurationReader.ReadResult;
 import io.quarkus.paths.DirectoryPathTree;
 import io.quarkus.paths.PathFilter;
 import io.smallrye.config.SmallRyeConfig;
@@ -73,53 +71,43 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
 
     @Override
     public boolean trigger(CodeGenContext context) throws CodeGenException {
-        try {
-            BuildTimeConfigurationReader reader = new BuildTimeConfigurationReader(
-                    Thread.currentThread().getContextClassLoader());
-            final ReadResult readResult = reader.readConfiguration((SmallRyeConfig) context.config());
-            final Wsdl2JavaConfig config = ((CxfBuildTimeConfig) readResult.requireObjectForClass(CxfBuildTimeConfig.class))
-                    .codegen().wsdl2java();
+        final Wsdl2JavaConfig config = context.config().unwrap(SmallRyeConfig.class)
+                .getConfigMapping(CxfBuildTimeConfig.class)
+                .codegen().wsdl2java();
 
-            // TODO once https://github.com/quarkusio/quarkus/pull/35963 reaches us we can replace the above with
-            // final Wsdl2JavaConfig config = context.config().getValue("quarkus.cxf", CxfBuildTimeConfig.class)
-            // .codegen().wsdl2java();
-
-            if (!config.enabled()) {
-                log.info("Skipping " + this.getClass() + " invocation on user's request");
-                return false;
-            }
-
-            final Path outDir = context.outDir();
-
-            final Wsdl2JavaParameterSet rootParams = config.rootParameterSet();
-            final Map<String, String> processedFiles = new HashMap<>();
-            boolean result = false;
-
-            /*
-             * TODO: this is a workaround for https://github.com/quarkusio/quarkus/issues/34422
-             * While context.workDir() returns target or any other direct subdirectory of the project directory
-             * then this workaround will work. But it may fail as long as the project has configured some non-standard
-             * build directory.
-             */
-            final Path projectDir = context.workDir().getParent();
-            result |= wsdl2java(projectDir, context.inputDir(), rootParams, outDir, WSDL2JAVA_CONFIG_KEY_PREFIX,
-                    processedFiles);
-
-            for (Entry<String, Wsdl2JavaParameterSet> en : config.namedParameterSets().entrySet()) {
-                final String prefix = WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + en.getKey();
-                final Wsdl2JavaParameterSet namedParams = en.getValue();
-                result |= wsdl2java(projectDir, context.inputDir(), namedParams, outDir, prefix, processedFiles);
-            }
-
-            if (!result) {
-                log.infof(
-                        "wsdl2java processed 0 WSDL files under %s",
-                        absModuleRoot(context.inputDir()).relativize(context.inputDir()));
-            }
-            return result;
-        } catch (ClassNotFoundException | IOException e) {
-            throw new RuntimeException(e);
+        if (!config.enabled()) {
+            log.info("Skipping " + this.getClass() + " invocation on user's request");
+            return false;
         }
+
+        final Path outDir = context.outDir();
+
+        final Wsdl2JavaParameterSet rootParams = config.rootParameterSet();
+        final Map<String, String> processedFiles = new HashMap<>();
+        boolean result = false;
+
+        /*
+         * TODO: this is a workaround for https://github.com/quarkusio/quarkus/issues/34422
+         * While context.workDir() returns target or any other direct subdirectory of the project directory
+         * then this workaround will work. But it may fail as long as the project has configured some non-standard
+         * build directory.
+         */
+        final Path projectDir = context.workDir().getParent();
+        result |= wsdl2java(projectDir, context.inputDir(), rootParams, outDir, WSDL2JAVA_CONFIG_KEY_PREFIX,
+                processedFiles);
+
+        for (Entry<String, Wsdl2JavaParameterSet> en : config.namedParameterSets().entrySet()) {
+            final String prefix = WSDL2JAVA_NAMED_CONFIG_KEY_PREFIX + en.getKey();
+            final Wsdl2JavaParameterSet namedParams = en.getValue();
+            result |= wsdl2java(projectDir, context.inputDir(), namedParams, outDir, prefix, processedFiles);
+        }
+
+        if (!result) {
+            log.infof(
+                    "wsdl2java processed 0 WSDL files under %s",
+                    absModuleRoot(context.inputDir()).relativize(context.inputDir()));
+        }
+        return result;
     }
 
     static boolean wsdl2java(Path projectDir, Path inputDir, Wsdl2JavaParameterSet params, Path defaultOutDir, String prefix,
