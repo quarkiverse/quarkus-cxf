@@ -12,8 +12,10 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Random;
@@ -659,7 +661,7 @@ class QuarkusCxfProcessor {
     private static class QuarkusCapture implements GeneratedClassClassLoaderCapture {
         private final ClassOutput classOutput;
 
-        private final Set<String> generatedClasses = new LinkedHashSet<>();
+        private final Map<String, byte[]> generatedClasses = new LinkedHashMap<>();
 
         QuarkusCapture(ClassOutput classOutput) {
             this.classOutput = classOutput;
@@ -668,12 +670,16 @@ class QuarkusCxfProcessor {
         @Override
         public void capture(String name, byte[] bytes) {
             final String dotName = name.indexOf('.') >= 0 ? name : name.replace('/', '.');
-            if (!generatedClasses.contains(dotName)) {
-                final String slashName = name.indexOf('/') >= 0 ? name : name.replace('.', '/');
+            final String slashName = name.indexOf('/') >= 0 ? name : name.replace('.', '/');
+            final byte[] oldVal = generatedClasses.get(dotName);
+            if (oldVal != null && !Arrays.equals(oldVal, bytes)) {
+                throw new IllegalStateException("Cannot overwrite an existing generated class file " + slashName
+                        + " with a different content. Is there perhaps a naming clash among the methods of your service interfaces?");
+            } else {
                 classOutput.getSourceWriter(slashName);
                 LOGGER.debugf("Generated class %s", dotName);
                 classOutput.write(slashName, bytes);
-                generatedClasses.add(dotName);
+                generatedClasses.put(dotName, bytes);
             }
         }
 
@@ -682,7 +688,7 @@ class QuarkusCxfProcessor {
         }
 
         public String[] getGeneratedClasses() {
-            return generatedClasses.toArray(new String[0]);
+            return generatedClasses.keySet().toArray(new String[0]);
         }
     }
 

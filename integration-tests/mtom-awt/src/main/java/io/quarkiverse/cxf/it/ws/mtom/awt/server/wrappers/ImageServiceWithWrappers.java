@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.it.ws.mtom.awt.server;
+package io.quarkiverse.cxf.it.ws.mtom.awt.server.wrappers;
 
 import java.awt.Image;
 
@@ -16,12 +16,12 @@ public interface ImageServiceWithWrappers {
     public static final String NS = "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/mtom-awt-with-wrappers";
 
     @WebMethod
-    @ResponseWrapper(localName = "ImageResponse", targetNamespace = NS, className = "io.quarkiverse.cxf.it.ws.mtom.awt.server.ImageResponse")
+    @ResponseWrapper(localName = "ImageResponse", targetNamespace = NS, className = "io.quarkiverse.cxf.it.ws.mtom.awt.server.wrappers.ImageResponse")
     Image downloadImage(
             @WebParam(name = "name", targetNamespace = NS) String name);
 
     @WebMethod
-    @RequestWrapper(localName = "ImageData", targetNamespace = NS, className = "io.quarkiverse.cxf.it.ws.mtom.awt.server.ImageData")
+    @RequestWrapper(localName = "ImageData", targetNamespace = NS, className = "io.quarkiverse.cxf.it.ws.mtom.awt.server.wrappers.ImageData")
     String uploadImage(
             @WebParam(name = "data", targetNamespace = NS) Image data,
             @WebParam(name = "name", targetNamespace = NS) String name);
