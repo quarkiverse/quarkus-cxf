@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.it.ws.mtom.awt.server;
+package io.quarkiverse.cxf.it.ws.mtom.awt.server.wrappers;
 
 import java.awt.Image;
 
