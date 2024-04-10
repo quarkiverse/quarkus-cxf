@@ -19,6 +19,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.it.ws.mtom.awt.server.wrappers.ImageServiceWithWrappers;
 
 @Path("/mtom-awt-rest")
 @ApplicationScoped
