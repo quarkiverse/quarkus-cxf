@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.it.ws.mtom.awt.server.MtomAwtResource.ClientKey;
+import io.quarkiverse.cxf.it.ws.mtom.awt.server.wrappers.ImageServiceWithWrappersImpl;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
