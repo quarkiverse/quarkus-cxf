@@ -44,6 +44,7 @@
         <!-- Primary dependencies -->
         <quarkus.version>3.9.3</quarkus.version>
         <cxf.version>4.0.4</cxf.version>
+        <quarkus-antora.version>0.0.2</quarkus-antora.version>
 
         <!-- Other compile dependency versions (keep sorted alphabetically) -->
         <!-- Items annotated with @sync can be updated by running mvn cq:sync-versions -N -->
