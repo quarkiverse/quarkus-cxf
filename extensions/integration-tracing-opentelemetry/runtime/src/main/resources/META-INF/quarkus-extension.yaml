@@ -9,4 +9,3 @@ metadata:
   categories:
     - "integration"
   guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/reference/extensions/quarkus-cxf-integration-tracing-opentelemetry.html"
-  status: "experimental"
