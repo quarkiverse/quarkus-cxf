@@ -46,8 +46,8 @@ public class XmlsecResource {
         // Set up the Key
         keyStore = KeyStore.getInstance("jks");
         keyStore.load(
-                this.getClass().getClassLoader().getResource("servicestore.jks").openStream(),
-                "sspass".toCharArray());
+                this.getClass().getClassLoader().getResource("myservice-keystore.jks").openStream(),
+                "myservice-keystore-password".toCharArray());
     }
 
     /**
@@ -62,7 +62,7 @@ public class XmlsecResource {
     @POST
     @Path("/{encryption}/encrypt")
     public byte[] encrypt(byte[] plaintext, @PathParam("encryption") Encryption encryption) throws Exception {
-        X509Certificate cert = (X509Certificate) keyStore.getCertificate("myservicekey");
+        X509Certificate cert = (X509Certificate) keyStore.getCertificate("myservice");
 
         // Set up the secret Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -70,8 +70,8 @@ public class XmlsecResource {
         SecretKey secretKey = keygen.generateKey();
 
         // Encrypt using DOM
-        return encryption.encrypt(plaintext, PAYMENT_INFO, "http://www.w3.org/2001/04/xmlenc#aes128-cbc", secretKey,
-                "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p", cert.getPublicKey(), false);
+        return encryption.encrypt(plaintext, PAYMENT_INFO, "http://www.w3.org/2009/xmlenc11#aes256-gcm", secretKey,
+                "http://www.w3.org/2001/04/xmlenc#rsa-1_5", cert.getPublicKey(), false);
     }
 
     /**
@@ -86,8 +86,8 @@ public class XmlsecResource {
     @POST
     @Path("/{encryption}/decrypt")
     public byte[] decrypt(byte[] encrypted, @PathParam("encryption") Encryption encryption) throws Exception {
-        Key privateKey = keyStore.getKey("myservicekey", "skpass".toCharArray());
-        return encryption.decrypt(encrypted, "http://www.w3.org/2001/04/xmlenc#aes128-cbc", privateKey);
+        Key privateKey = keyStore.getKey("myservice", "myservice-keystore-password".toCharArray());
+        return encryption.decrypt(encrypted, "http://www.w3.org/2009/xmlenc11#aes256-gcm", privateKey);
     }
 
     /**
@@ -106,10 +106,10 @@ public class XmlsecResource {
         // Set up the Key
         KeyStore keyStore = KeyStore.getInstance("jks");
         keyStore.load(
-                this.getClass().getClassLoader().getResource("clientstore.jks").openStream(),
-                "cspass".toCharArray());
-        Key key = keyStore.getKey("myclientkey", "ckpass".toCharArray());
-        X509Certificate cert = (X509Certificate) keyStore.getCertificate("myclientkey");
+                this.getClass().getClassLoader().getResource("myclient-keystore.jks").openStream(),
+                "myclient-keystore-password".toCharArray());
+        Key key = keyStore.getKey("myclient", "myclient-keystore-password".toCharArray());
+        X509Certificate cert = (X509Certificate) keyStore.getCertificate("myclient");
         return signature.sign(plaintext, key, cert, PAYMENT_INFO);
     }
 
@@ -129,9 +129,9 @@ public class XmlsecResource {
         // Set up the Key
         KeyStore keyStore = KeyStore.getInstance("jks");
         keyStore.load(
-                this.getClass().getClassLoader().getResource("clientstore.jks").openStream(),
-                "cspass".toCharArray());
-        X509Certificate cert = (X509Certificate) keyStore.getCertificate("myclientkey");
+                this.getClass().getClassLoader().getResource("myclient-keystore.jks").openStream(),
+                "myclient-keystore-password".toCharArray());
+        X509Certificate cert = (X509Certificate) keyStore.getCertificate("myclient");
         signature.verify(plaintext, cert);
     }
 
