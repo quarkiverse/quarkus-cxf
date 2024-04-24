@@ -1,5 +1,5 @@
 name: Quarkiverse Extension
 release:
-  current-version: 3.10.0.CR1
+  current-version: 3.10.0
   current-major-minor-version: 3.10
-  next-version: 3.10.0-SNAPSHOT
+  next-version: 3.10.1-SNAPSHOT
