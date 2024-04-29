@@ -20,6 +20,7 @@
 ** xref:user-guide/common-problems-troubleshooting.adoc[Common problems and troubleshooting]
 ** xref:user-guide/camel-integration.adoc[Camel Integration]
 * xref:release-notes/index.adoc[Release notes]
+** xref:release-notes/3.10.0.adoc[3.10.0]
 ** xref:release-notes/3.9.0.adoc[3.9.0]
 ** xref:release-notes/3.8.3.adoc[3.8.3 LTS]
 ** xref:release-notes/3.8.2.adoc[3.8.2 LTS]
