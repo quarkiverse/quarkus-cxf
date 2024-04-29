@@ -14,6 +14,8 @@ This table shows which {quarkus-cxf-project-name} version
 |===
 | Quarkus CXF | Quarkus Platform | CXF
 
+| xref:release-notes/3.10.0.adoc[3.10.0] | 3.10 | 4.0.4
+
 | xref:release-notes/3.9.0.adoc[3.9.0] | 3.9 | 4.0.4
 
 | xref:release-notes/3.8.3.adoc[3.8.3 LTS] | 3.8 | 4.0.4
