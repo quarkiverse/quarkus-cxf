@@ -1,4 +1,4 @@
 Collect metrics using https://micrometer.io/[Micrometer].
 
 IMPORTANT: https://cxf.apache.org/docs/dropwizard-metrics.html[Dropwizard Metrics] are not supported.
-           They do not work in native mode and the are no tests for JVM mode.
+           They do not work in native mode and there are no tests for JVM mode.
