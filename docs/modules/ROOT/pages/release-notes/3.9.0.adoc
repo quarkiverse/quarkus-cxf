@@ -2,7 +2,7 @@
 
 == Important dependency upgrades
 
-* Quarkus 3.8.2 -> 3.9.0 - https://quarkus.io/blog/quarkus-3-9-released/[3.9 release notes]
+* Quarkus 3.8.2 -> 3.9.0 - https://quarkus.io/blog/quarkus-3-9-1-released/[3.9 release notes]
 
 == New and noteworthy in {quarkus-cxf-project-name}
 
