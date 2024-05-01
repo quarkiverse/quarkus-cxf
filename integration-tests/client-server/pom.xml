@@ -42,6 +42,11 @@
             <artifactId>awaitility</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+             <groupId>org.mockito</groupId>
+             <artifactId>mockito-core</artifactId>
+             <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -83,6 +88,18 @@
                                     <directory>src/main/java/io/quarkiverse/cxf/it/auth/basic</directory>
                                     <includes>
                                         <include>BasicAuthHelloServiceImpl.java</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/java/io/quarkiverse/cxf/it/annotation/cxfendpoint</directory>
+                                    <includes>
+                                        <include>PathAnnotationHelloServiceImpl.java</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/test/java/io/quarkiverse/cxf/it/annotation/cxfendpoint</directory>
+                                    <includes>
+                                        <include>MockedEndpointTest.java</include>
                                     </includes>
                                 </resource>
                             </resources>

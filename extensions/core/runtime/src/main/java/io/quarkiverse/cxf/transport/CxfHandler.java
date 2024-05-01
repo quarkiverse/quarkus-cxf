@@ -109,7 +109,7 @@ public class CxfHandler implements Handler<RoutingContext> {
             jaxWsServerFactoryBean.setBus(bus);
             jaxWsServerFactoryBean.setProperties(new LinkedHashMap<>());
             final String endpointType = servletInfo.getClassName();
-            Object instanceService = CXFRuntimeUtils.getInstance(endpointType, false);
+            Object instanceService = servletInfo.lookupBean();
 
             if (instanceService != null) {
                 if (servletInfo.isProvider()) {
