@@ -1,0 +1,69 @@
+[[endpoints-and-paths]]
+= Service endpoints and paths
+
+Let's explain how a service endpoint can be exposed under a certain URL path.
+
+[[application-properties]]
+== Set the endpoint path via `application.properties`
+
+In the xref:user-guide/first-soap-web-service.adoc[First SOAP Web service] chapter, we explained how to expose a service using `application.properties`:
+
+.application.properties
+[source,properties]
+----
+include::example$soap-service/application.properties[tag=first-web-service.adoc]
+----
+
+With this setup in place, the `io.quarkiverse.cxf.it.server.HelloServiceImpl` will be accessible under `http://localhost:8080/soap/hello`.
+
+This is the traditional way that worked since the very beginning of {quarkus-cxf-project-name}.
+
+[[cxfendpoint-annotation]]
+== Set the endpoint path using `@CXFEndpoint` annotation
+
+Since {quarkus-cxf-project-name} 3.11.0, there is a new way to expose an endpoint under a specific path: the `@io.quarkiverse.cxf.annotation.CXFEndpoint` annotation.
+The path is set through its non-optional attribute `value`
+and it is relative to `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-path[quarkus.cxf.path]`
+much like when this is done via `application.properties`.
+
+Let's have a look at an example.
+
+[NOTE]
+====
+The sample code snippet shown in this section comes from the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client-server[Client and server integration test]
+in the source tree of {quarkus-cxf-project-name}. You may want to use it as a runnable example.
+====
+
+.PathAnnotationHelloServiceImpl.java
+[source,properties]
+----
+include::example$client-server/PathAnnotationHelloServiceImpl.java[]
+----
+
+<1> If the value of `quarkus.cxf.path` in `application.properties` is `/soap`,
+    then this service will be accessible under `http://localhost:8080/soap/path-annotation`.
+
+`@CXFEndpoint("/my-path")` annotation on `MyServiceImpl` type is equivalent to the `quarkus.cxf.endpoint."/my-path".implementor = org.acme.MyServiceImpl` line in `application.properties`.
+Therefore it is enough to use just one of them.
+
+Other options set in `application.properties` for the `/my-path` endpoint will combine just fine with `@CXFEndpoint("/my-path")`.
+
+=== Use the `@CXFEndpoint` annotation on producer methods
+
+The `@CXFEndpoint` annotation can also be used on producer methods.
+This comes in handy especially when testing clients, because the returned implementation can be a mock.
+
+Here is an example:
+
+.MockedEndpointTest.java
+[source,properties]
+----
+include::example$client-server/MockedEndpointTest.java[]
+----
+
+<1> Here we use the `@CXFEndpoint` annotation on a method that returns a mock of the `HelloService` interface.
+    The `@jakarta.enterprise.inject.Produces` annotation is not required, because {quarkus-cxf-project-name}
+    declares `@CXFEndpoint` as a bean defining annotation.
+<2> The client is configured in `application.properties` to connect to `http://localhost:8080/soap/helloMock`
+<3> The assertion makes sure that the service implementation works as expected.

@@ -19,6 +19,13 @@ public class CxfDeploymentUtils {
     private CxfDeploymentUtils() {
     }
 
+    public static Stream<AnnotationInstance> cxfEndpointAnnotations(IndexView index) {
+        return Stream.of(CxfDotNames.CXF_ENDPOINT_ANNOTATION)
+                .map(index::getAnnotations)
+                .flatMap(Collection::stream)
+                .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.METHOD);
+    }
+
     public static Stream<AnnotationInstance> webServiceAnnotations(IndexView index) {
         return Stream.of(CxfDotNames.WEBSERVICE_ANNOTATION, CxfDotNames.WEBSERVICE_PROVIDER_ANNOTATION)
                 .map(index::getAnnotations)
