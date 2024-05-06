@@ -31,6 +31,7 @@ import io.quarkiverse.cxf.CXFServletInfo;
 import io.quarkiverse.cxf.CXFServletInfos;
 import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.CxfFixedConfig;
+import io.quarkiverse.cxf.QuarkusJaxWsServerFactoryBean;
 import io.quarkiverse.cxf.QuarkusRuntimeJaxWsServiceFactoryBean;
 import io.quarkiverse.cxf.auth.AuthFaultOutInterceptor;
 import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
@@ -103,8 +104,10 @@ public class CxfHandler implements Handler<RoutingContext> {
 
         // suboptimal because done it in loop but not a real issue...
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
+            final String endpointString = "endpoint " + servletInfo.getPath();
             QuarkusRuntimeJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusRuntimeJaxWsServiceFactoryBean();
-            JaxWsServerFactoryBean jaxWsServerFactoryBean = new JaxWsServerFactoryBean(jaxWsServiceFactoryBean);
+            JaxWsServerFactoryBean jaxWsServerFactoryBean = new QuarkusJaxWsServerFactoryBean(jaxWsServiceFactoryBean,
+                    endpointString);
             jaxWsServerFactoryBean.setDestinationFactory(destinationFactory);
             jaxWsServerFactoryBean.setBus(bus);
             jaxWsServerFactoryBean.setProperties(new LinkedHashMap<>());
@@ -125,7 +128,6 @@ public class CxfHandler implements Handler<RoutingContext> {
                 if (servletInfo.getWsdlPath() != null) {
                     jaxWsServerFactoryBean.setWsdlLocation(servletInfo.getWsdlPath());
                 }
-                final String endpointString = "endpoint " + servletInfo.getPath();
                 CXFRuntimeUtils.addBeans(servletInfo.getFeatures(), "feature", endpointString, endpointType,
                         jaxWsServerFactoryBean.getFeatures());
                 CXFRuntimeUtils.addBeans(servletInfo.getHandlers(), "handler", endpointString, endpointType,
