@@ -17,6 +17,8 @@ import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -37,14 +39,18 @@ public class CxfWssServerTest {
 
     }
 
-    @Test
-    void usernameToken() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "rounder",
+            "annotated-rounder" })
+    void usernameToken(String endpointRelPath) throws IOException {
 
         final Config config = ConfigProvider.getConfig();
         final String username = config.getValue("wss.username", String.class);
         final String password = config.getValue("wss.password", String.class);
 
-        final WssRounderService client = QuarkusCxfClientTestUtil.getClient(WssRounderService.class, "/soap/rounder");
+        final WssRounderService client = QuarkusCxfClientTestUtil.getClient(WssRounderService.class,
+                "/soap/" + endpointRelPath);
 
         final CallbackHandler passwordCallback = new CallbackHandler() {
             @Override

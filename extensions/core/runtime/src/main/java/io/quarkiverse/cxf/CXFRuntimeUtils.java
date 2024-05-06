@@ -26,19 +26,28 @@ public class CXFRuntimeUtils {
 
         final Class<T> classObj = (Class<T>) loadClass(beanRef);
         Objects.requireNonNull(classObj, "Could not load class " + beanRef);
+        return getInstance(classObj);
+    }
+
+    /**
+     * @param <T> a type to which the returned bean can be casted
+     * @param beanClass the type to look up in the CDI container or create via reflection
+     * @return an instance of a Bean
+     */
+    public static <T> T getInstance(Class<? extends T> beanClass) {
         try {
-            return CDI.current().select(classObj).get();
+            return CDI.current().select(beanClass).get();
         } catch (UnsatisfiedResolutionException e) {
             // silent fail
         }
         try {
-            return classObj.getConstructor().newInstance();
+            return beanClass.getConstructor().newInstance();
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Could not instantiate " + beanRef
+            throw new RuntimeException("Could not instantiate " + beanClass.getName()
                     + " using the default constructor. Make sure that the constructor exists and that the class is static in case it is an inner class.",
                     e);
         } catch (ReflectiveOperationException | RuntimeException e) {
-            throw new RuntimeException("Could not instantiate " + beanRef + " using the default constructor.", e);
+            throw new RuntimeException("Could not instantiate " + beanClass.getName() + " using the default constructor.", e);
         }
     }
 
@@ -60,12 +69,43 @@ public class CXFRuntimeUtils {
         }
     }
 
+    public static <T> T getInstance(Class<? extends T> beanClass, String beanKind, String sei, String clientOrEndpoint) {
+        try {
+            return getInstance(beanClass);
+        } catch (AmbiguousResolutionException e) {
+            /*
+             * There are multiple beans of this type
+             * and we do not know which one to use
+             */
+            throw new IllegalStateException("Unable to add a " + beanKind + " to CXF " + clientOrEndpoint + " " + sei + ":"
+                    + " there are multiple instances of " + beanClass.getName() + " available in the CDI container."
+                    + " Either make sure there is only one instance available in the container"
+                    + " or create a unique subtype of " + beanClass.getName() + " and set that one on " + sei
+                    + " or add @jakarta.inject.Named(\"myName\") to some of the beans and refer to that bean by #myName on "
+                    + sei,
+                    e);
+        }
+    }
+
     public static <T> void addBeans(List<String> beanRefs, String beanKind, String sei, String clientOrEndpoint,
             List<T> destination) {
         for (String beanRef : beanRefs) {
             T item = getInstance(beanRef, beanKind, sei, clientOrEndpoint);
             if (item == null) {
                 throw new IllegalStateException("Could not lookup bean " + beanRef);
+            } else {
+                destination.add(item);
+            }
+        }
+    }
+
+    public static <T> void addBeansByType(List<Class<? extends T>> beanTypes, String beanKind, String sei,
+            String clientOrEndpoint,
+            List<T> destination) {
+        for (Class<? extends T> beanType : beanTypes) {
+            T item = getInstance(beanType, beanKind, sei, clientOrEndpoint);
+            if (item == null) {
+                throw new IllegalStateException("Could not lookup bean " + beanType.getName());
             } else {
                 destination.add(item);
             }
