@@ -7,7 +7,6 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 import org.jboss.logging.Logger;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.quarkiverse.cxf.transport.VertxReactiveRequestContext;
 import io.quarkus.vertx.core.runtime.VertxBufferImpl;
@@ -52,7 +51,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
     public VertxServletOutputStream(VertxReactiveRequestContext context) {
         this.context = context;
         this.request = context.getContext().request();
-        this.appendBuffer = AppendBuffer.withMinChunks(PooledByteBufAllocator.DEFAULT, context.getDeployment().getResteasyReactiveConfig().getMinChunkSize(), context.getDeployment().getResteasyReactiveConfig().getOutputBufferSize());
+        this.appendBuffer = AppendBuffer.withMinChunks(context.getDeployment().getResteasyReactiveConfig().getMinChunkSize(), context.getDeployment().getResteasyReactiveConfig().getOutputBufferSize());
         request.response().exceptionHandler(new Handler<Throwable>() {
 
             @Override
