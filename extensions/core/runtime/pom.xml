@@ -151,6 +151,7 @@
                         <configuration>
                             <source>file:${maven.multiModuleProjectDirectory}/src/build/scripts/sync-quarkus-classes.groovy</source>
                             <properties>
+                                <project.basedir>${project.basedir}</project.basedir>
                             </properties>
                         </configuration>
                     </execution>
