@@ -38,8 +38,6 @@ public class WsdlLocationTest {
             .overrideConfigKey("quarkus.cxf.path", "/soap")
             .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation\".implementor",
                     HelloServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation\".wsdl",
-                    "wsdllocation/HelloService.wsdl")
             .overrideConfigKey("quarkus.cxf.endpoint.\"/wsdllocation-provider\".implementor",
                     HelloProvider.class.getName());
 
