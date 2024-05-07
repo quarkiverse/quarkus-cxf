@@ -4,7 +4,7 @@ import jakarta.jws.WebService;
 
 import io.quarkiverse.cxf.it.server.xml.schema.validation.model.CalculatorService;
 
-@WebService(serviceName = "CalculatorService", targetNamespace = "http://www.jboss.org/eap/quickstarts/wscalculator/Calculator")
+@WebService(serviceName = "CalculatorService", targetNamespace = "http://www.jboss.org/eap/quickstarts/wscalculator/Calculator", wsdlLocation = "wsdl/calculator.wsdl")
 public class ApplicationPropertiesSchemaValidatedCalculatorServiceImpl implements CalculatorService {
 
     @Override

@@ -18,6 +18,7 @@ import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxws.JAXWSMethodInvoker;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
@@ -105,16 +106,19 @@ public class CxfHandler implements Handler<RoutingContext> {
         // suboptimal because done it in loop but not a real issue...
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
             final String endpointString = "endpoint " + servletInfo.getPath();
-            QuarkusRuntimeJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusRuntimeJaxWsServiceFactoryBean();
-            JaxWsServerFactoryBean jaxWsServerFactoryBean = new QuarkusJaxWsServerFactoryBean(jaxWsServiceFactoryBean,
-                    endpointString);
-            jaxWsServerFactoryBean.setDestinationFactory(destinationFactory);
-            jaxWsServerFactoryBean.setBus(bus);
-            jaxWsServerFactoryBean.setProperties(new LinkedHashMap<>());
-            final String endpointType = servletInfo.getClassName();
-            Object instanceService = servletInfo.lookupBean();
-
+            final Object instanceService = servletInfo.lookupBean();
             if (instanceService != null) {
+                final Class<?> instanceType = io.quarkiverse.cxf.CXFRuntimeUtils.unwrapBeanType(instanceService.getClass());
+                final QuarkusRuntimeJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusRuntimeJaxWsServiceFactoryBean(
+                        new JaxWsImplementorInfo(instanceType));
+                final JaxWsServerFactoryBean jaxWsServerFactoryBean = new QuarkusJaxWsServerFactoryBean(jaxWsServiceFactoryBean,
+                        endpointString);
+                jaxWsServerFactoryBean.setServiceClass(instanceType);
+
+                jaxWsServerFactoryBean.setDestinationFactory(destinationFactory);
+                jaxWsServerFactoryBean.setBus(bus);
+                jaxWsServerFactoryBean.setProperties(new LinkedHashMap<>());
+                final String endpointType = servletInfo.getClassName();
                 if (servletInfo.isProvider()) {
                     // Needed for any Provider interface implementations
                     jaxWsServiceFactoryBean.setInvoker(new JAXWSMethodInvoker(instanceService));
@@ -122,7 +126,6 @@ public class CxfHandler implements Handler<RoutingContext> {
 
                 jaxWsServerFactoryBean
                         .setServiceName(new QName(servletInfo.getServiceTargetNamespace(), servletInfo.getServiceName()));
-                jaxWsServerFactoryBean.setServiceClass(instanceService.getClass());
                 jaxWsServerFactoryBean.setAddress(servletInfo.getRelativePath());
                 jaxWsServerFactoryBean.setServiceBean(instanceService);
                 if (servletInfo.getWsdlPath() != null) {
@@ -161,7 +164,7 @@ public class CxfHandler implements Handler<RoutingContext> {
 
                 LOGGER.info(servletInfo.toString() + " available.");
             } else {
-                LOGGER.error("Cannot initialize " + servletInfo.toString());
+                throw new IllegalStateException("Cannot initialize " + servletInfo.toString());
             }
         }
     }

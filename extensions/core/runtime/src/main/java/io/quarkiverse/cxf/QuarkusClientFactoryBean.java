@@ -10,8 +10,8 @@ import org.apache.cxf.jaxws.support.JaxWsImplementorInfo;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 
 public class QuarkusClientFactoryBean extends ClientFactoryBean {
-    public QuarkusClientFactoryBean() {
-        super(new QuarkusRuntimeJaxWsServiceFactoryBean());
+    public QuarkusClientFactoryBean(Class<?> serviceClass) {
+        super(new QuarkusRuntimeJaxWsServiceFactoryBean(new JaxWsImplementorInfo(serviceClass)));
     }
 
     @Override

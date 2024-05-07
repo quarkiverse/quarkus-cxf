@@ -6,7 +6,7 @@ import jakarta.jws.WebService;
 /**
  * A Web service always throwing an exception.
  */
-@WebService(serviceName = "FaultyHelloService")
+@WebService(serviceName = "FaultyHelloService", portName = "FaultyHelloServicePort")
 public class FaultyHelloServiceImpl implements FaultyHelloService {
 
     @WebMethod
