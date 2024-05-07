@@ -30,12 +30,14 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ThrowStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
-new Transform()
+final Path basedir = Path.of(properties['project.basedir'])
+new Transform(basedir)
 
 public class Transform {
 
-    public Transform() throws IOException {
-        final Path destinationDir = Paths.get("src/main/java/io/quarkiverse/cxf/transport/generated");
+    public Transform(Path basedir) throws IOException {
+        final Path destinationDir = basedir.resolve("src/main/java/io/quarkiverse/cxf/transport/generated");
+        println "destinationDir = " + destinationDir
 
         JavaParser parser = new JavaParser(StaticJavaParser.getParserConfiguration());
         final CompilationUnit appendBuffer = parse("org/jboss/resteasy/reactive/server/vertx/AppendBuffer.java", parser);
