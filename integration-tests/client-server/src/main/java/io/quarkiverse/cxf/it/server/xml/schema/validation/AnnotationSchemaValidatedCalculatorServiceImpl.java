@@ -13,7 +13,7 @@ import io.quarkiverse.cxf.it.server.xml.schema.validation.model.CalculatorServic
  *
  * @org.apache.cxf.annotations.EndpointProperty(key = "schema-validation-enabled", value = "true")
  */
-@WebService(serviceName = "CalculatorService", targetNamespace = "http://www.jboss.org/eap/quickstarts/wscalculator/Calculator")
+@WebService(serviceName = "CalculatorService", targetNamespace = "http://www.jboss.org/eap/quickstarts/wscalculator/Calculator", wsdlLocation = "wsdl/calculator.wsdl")
 public class AnnotationSchemaValidatedCalculatorServiceImpl implements CalculatorService {
 
     @Override
