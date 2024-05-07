@@ -7,7 +7,6 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 import org.jboss.logging.Logger;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.quarkiverse.cxf.transport.VertxReactiveRequestContext;
 import io.quarkus.vertx.core.runtime.VertxBufferImpl;
@@ -41,8 +40,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
 
     protected boolean waitingForDrain;
 
-    protected boolean drainHandlerRegistered;
-
     protected boolean first = true;
 
     protected Throwable throwable;
@@ -52,7 +49,7 @@ public class VertxServletOutputStream extends ServletOutputStream {
     public VertxServletOutputStream(VertxReactiveRequestContext context) {
         this.context = context;
         this.request = context.getContext().request();
-        this.appendBuffer = AppendBuffer.withMinChunks(PooledByteBufAllocator.DEFAULT, context.getDeployment().getResteasyReactiveConfig().getMinChunkSize(), context.getDeployment().getResteasyReactiveConfig().getOutputBufferSize());
+        this.appendBuffer = AppendBuffer.withMinChunks(context.getDeployment().getResteasyReactiveConfig().getMinChunkSize(), context.getDeployment().getResteasyReactiveConfig().getOutputBufferSize());
         request.response().exceptionHandler(new Handler<Throwable>() {
 
             @Override
@@ -104,7 +101,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
                 boolean bufferRequired = awaitWriteable() || (overflow != null && overflow.size() > 0);
                 if (bufferRequired) {
                     //just buffer everything
-                    //                    registerDrainHandler();
                     if (overflow == null) {
                         overflow = new ByteArrayOutputStream();
                     }
@@ -163,14 +159,6 @@ public class VertxServletOutputStream extends ServletOutputStream {
         return false;
     }
 
-    //    private void registerDrainHandler() {
-    //        if (!drainHandlerRegistered) {
-    //            drainHandlerRegistered = true;
-    //            Handler<Void> handler = new DrainHandler(this);
-    //            request.response().drainHandler(handler);
-    //            request.response().closeHandler(handler);
-    //        }
-    //    }
     /**
      * {@inheritDoc}
      */
