@@ -13,7 +13,7 @@ ifeval::[{doc-show-badges} == true]
 Stable • Since 1.1.0
 endif::[]
 
-Implement async SOAP Clients using Apache HttpComponents HttpClient 5.
+Implements async SOAP Clients using Apache HttpComponents HttpClient 5.
 
 
 [id="quarkus-cxf-rt-transports-http-hc5-maven-coordinates"]
