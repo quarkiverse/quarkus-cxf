@@ -74,9 +74,11 @@ You should typically not depend on these directly, but rather use some of the ex
 
 Out of https://cxf.apache.org/docs/frontends.html[CXF front ends] only the
 https://cxf.apache.org/docs/jax-ws.html[JAX-WS front end] is fully supported by `quarkus-cxf`.
+ifeval::[{doc-show-advanced-features} == true]
 
 The https://cxf.apache.org/docs/simple.html[Simple front end] may work in JVM mode, but it is not tested properly.
 We advise not to use it.
+endif::[]
 
 [[databindings]]
 === Data Bindings
