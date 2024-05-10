@@ -1,4 +1,5 @@
 Generate https://opentelemetry.io/[OpenTelemetry] https://opentelemetry.io/docs/concepts/signals/traces/[traces].
 
 IMPORTANT: OpenTelemetry Metrics and Logging are not supported yet on neither Quarkus nor CXF side,
-           hence {quarkus-cxf-project-name} cannot support them either.
+           hence {quarkus-cxf-project-name} cannot support them either. Tracing is thus
+           the only OpenTelemetry feature supported by this extension.
