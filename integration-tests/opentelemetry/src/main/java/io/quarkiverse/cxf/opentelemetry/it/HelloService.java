@@ -13,4 +13,7 @@ public interface HelloService {
     @WebMethod
     String hello(@WebParam(name = "text") String text);
 
+    @WebMethod
+    String helloTraced(@WebParam(name = "text") String text);
+
 }

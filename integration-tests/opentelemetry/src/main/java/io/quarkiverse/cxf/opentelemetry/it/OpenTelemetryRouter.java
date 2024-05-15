@@ -38,6 +38,12 @@ public class OpenTelemetryRouter {
                         .putHeader("content-type", "text/plain; charset=utf-8")
                         .end(helloClient.hello(rc.body().asString())));
 
+        router.post("/opentelemetry/client/helloTraced")
+                .handler(BodyHandler.create())
+                .blockingHandler(rc -> rc.response()
+                        .putHeader("content-type", "text/plain; charset=utf-8")
+                        .end(helloClient.helloTraced(rc.body().asString())));
+
         router.get("/opentelemetry/reset").handler(rc -> {
             exporter.reset();
             rc.response().end();
