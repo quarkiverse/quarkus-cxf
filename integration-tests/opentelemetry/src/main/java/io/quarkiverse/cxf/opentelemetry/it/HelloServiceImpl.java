@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.opentelemetry.it;
 
+import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
@@ -9,6 +10,9 @@ import jakarta.jws.WebService;
  */
 @WebService(serviceName = "HelloService")
 public class HelloServiceImpl implements HelloService {
+
+    @Inject
+    TracedBean traced;
 
     @WebMethod
     @Override
@@ -20,6 +24,12 @@ public class HelloServiceImpl implements HelloService {
             Thread.currentThread().interrupt();
         }
         return "Hello " + text + "!";
+    }
+
+    @WebMethod
+    @Override
+    public String helloTraced(@WebParam(name = "text") String text) {
+        return traced.helloTraced(text);
     }
 
 }
