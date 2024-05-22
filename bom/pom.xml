@@ -369,6 +369,12 @@
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
                 <classifier>jakarta</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.cache</groupId>
+                        <artifactId>cache-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency><!-- org.glassfish.jaxb:jaxb-runtime is managed in io.quarkus-quarkus-bom
                   so we'd normally would not need to manage it also here.
