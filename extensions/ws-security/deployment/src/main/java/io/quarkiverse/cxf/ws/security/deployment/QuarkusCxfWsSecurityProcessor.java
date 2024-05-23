@@ -2,6 +2,8 @@ package io.quarkiverse.cxf.ws.security.deployment;
 
 import java.util.stream.Stream;
 
+import io.quarkiverse.cxf.ws.security.CxfWsSecurityConfig.ClientOrEndpointSecurityConfig;
+import io.quarkiverse.cxf.ws.security.CxfWsSecurityConfig.StsClientConfig;
 import io.quarkiverse.cxf.ws.security.WssFactoryCustomizer;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -60,8 +62,9 @@ public class QuarkusCxfWsSecurityProcessor {
         reflectiveClasses.produce(ReflectiveClassBuildItem.builder(
                 "org.apache.cxf.ws.security.policy.WSSecurityPolicyLoader",
                 "org.apache.cxf.ws.security.tokenstore.SecurityToken",
-                "org.apache.xml.resolver.CatalogManager" // xml-resolver
-        ).methods().build());
+                "org.apache.xml.resolver.CatalogManager", // xml-resolver
+                ClientOrEndpointSecurityConfig.class.getName(),
+                StsClientConfig.class.getName()).methods().build());
 
         reflectiveClasses.produce(ReflectiveClassBuildItem.builder(
                 "org.apache.cxf.ws.security.cache.CacheCleanupListener").methods().fields().build());
