@@ -236,8 +236,9 @@ implementation used to construct SAML Assertions.
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SAML_CALLBACK_HANDLER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-signature-properties[quarkus.cxf.client."client-name".security.signature.properties]`
-.<| ``Map<String,String>``
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-signature-properties-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-signature-properties-signature-properties[quarkus.cxf.client."client-name".security.signature.properties."signature-properties"]`
+.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
+`
 .<| 
 
 3+a|The Crypto property configuration to use for signing, if `signature.crypto` is not set.
@@ -252,11 +253,12 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SIGNATURE_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SIGNATURE_PROPERTIES__SIGNATURE_PROPERTIES_+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-properties[quarkus.cxf.client."client-name".security.encryption.properties]`
-.<| ``Map<String,String>``
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-properties-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-properties-encryption-properties[quarkus.cxf.client."client-name".security.encryption.properties."encryption-properties"]`
+.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
+`
 .<| 
 
 3+a|The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
@@ -271,7 +273,7 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENCRYPTION_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENCRYPTION_PROPERTIES__ENCRYPTION_PROPERTIES_+++` +
 *Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-signature-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-signature-crypto[quarkus.cxf.client."client-name".security.signature.crypto]`
@@ -1372,8 +1374,9 @@ whose public key is in the service's truststore (defined in `encrypt.properties`
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_ENCRYPTION_USERNAME+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-properties[quarkus.cxf.client."client-name".security.sts.client.encryption.properties]`
-.<| ``Map<String,String>``
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-properties-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-properties-encryption-properties[quarkus.cxf.client."client-name".security.sts.client.encryption.properties."encryption-properties"]`
+.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
+`
 .<| 
 
 3+a|The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
@@ -1388,7 +1391,7 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_ENCRYPTION_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_ENCRYPTION_PROPERTIES__ENCRYPTION_PROPERTIES_+++` +
 *Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-crypto]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-crypto[quarkus.cxf.client."client-name".security.sts.client.encryption.crypto]`
@@ -1417,8 +1420,9 @@ These are also used by the `token.properties` to send/process any RSA/DSAKeyValu
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_TOKEN_CRYPTO+++` +
 *Since Quarkus CXF*: 3.8.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-properties[quarkus.cxf.client."client-name".security.sts.client.token.properties]`
-.<| ``Map<String,String>``
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-properties-token-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-properties-token-properties[quarkus.cxf.client."client-name".security.sts.client.token.properties."token-properties"]`
+.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
+`
 .<| 
 
 3+a|The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
@@ -1432,7 +1436,7 @@ Example
 [prefix].token.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_TOKEN_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_TOKEN_PROPERTIES__TOKEN_PROPERTIES_+++` +
 *Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-username[quarkus.cxf.client."client-name".security.sts.client.token.username]`
@@ -1542,8 +1546,9 @@ implementation used to construct SAML Assertions.
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SAML_CALLBACK_HANDLER+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-properties[quarkus.cxf.endpoint."/endpoint-path".security.signature.properties]`
-.<| ``Map<String,String>``
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-properties-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-properties-signature-properties[quarkus.cxf.endpoint."/endpoint-path".security.signature.properties."signature-properties"]`
+.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
+`
 .<| 
 
 3+a|The Crypto property configuration to use for signing, if `signature.crypto` is not set.
@@ -1558,11 +1563,12 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].signature.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SIGNATURE_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SIGNATURE_PROPERTIES__SIGNATURE_PROPERTIES_+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-properties[quarkus.cxf.endpoint."/endpoint-path".security.encryption.properties]`
-.<| ``Map<String,String>``
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-properties-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-properties-encryption-properties[quarkus.cxf.endpoint."/endpoint-path".security.encryption.properties."encryption-properties"]`
+.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
+`
 .<| 
 
 3+a|The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
@@ -1577,7 +1583,7 @@ org.apache.ws.security.components.crypto.Merlin
 [prefix].encryption.properties."org.apache.ws.security.crypto.merlin.file" = certs/alice.jks
 ----
 
-*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENCRYPTION_PROPERTIES+++` +
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENCRYPTION_PROPERTIES__ENCRYPTION_PROPERTIES_+++` +
 *Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-crypto]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-crypto[quarkus.cxf.endpoint."/endpoint-path".security.signature.crypto]`
