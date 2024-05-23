@@ -36,7 +36,7 @@ in the source tree of {quarkus-cxf-project-name}. You may want to use it as a ru
 ====
 
 .PathAnnotationHelloServiceImpl.java
-[source,properties]
+[source,java]
 ----
 include::example$client-server/PathAnnotationHelloServiceImpl.java[]
 ----
