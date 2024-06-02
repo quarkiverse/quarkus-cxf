@@ -8,7 +8,6 @@ import jakarta.enterprise.inject.UnsatisfiedResolutionException;
 import jakarta.enterprise.inject.spi.CDI;
 
 import io.quarkus.arc.Arc;
-import io.quarkus.arc.Subclass;
 
 public class CXFRuntimeUtils {
 
@@ -111,18 +110,6 @@ public class CXFRuntimeUtils {
                 destination.add(item);
             }
         }
-    }
-
-    /**
-     * @param beanType a bean type, or a subclass thereof wrapped by the CDI container
-     * @return the proper bean type, unwrapped if needed
-     */
-    public static Class<?> unwrapBeanType(Class<?> beanType) {
-        Objects.requireNonNull(beanType, "bean type");
-        if (Subclass.class.isAssignableFrom(beanType)) {
-            return beanType.getSuperclass();
-        }
-        return beanType;
     }
 
     private static Class<?> loadClass(String className) {

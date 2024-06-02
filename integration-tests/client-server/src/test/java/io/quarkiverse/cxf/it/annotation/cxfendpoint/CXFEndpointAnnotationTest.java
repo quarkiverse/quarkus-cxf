@@ -19,4 +19,13 @@ public class CXFEndpointAnnotationTest {
         Assertions.assertThat(client.hello("Joe")).isEqualTo("Hello Joe from PathAnnotationHelloServiceImpl!");
     }
 
+    @Test
+    void annotatedImplementationTypeWithBean() {
+        final HelloService client = QuarkusCxfClientTestUtil.getClient(
+                "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test",
+                HelloService.class,
+                "/soap/path-annotation-with-bean");
+        Assertions.assertThat(client.hello("Joe")).isEqualTo("Hello Joe from HelloBean!");
+    }
+
 }

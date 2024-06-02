@@ -12,14 +12,14 @@ import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Supp
 public class CXFServletInfo {
     private final String relativePath;
     private final String path;
-    private final String className;
+    private final Class<?> implementor;
     private final List<String> inInterceptors;
     private final List<String> outInterceptors;
     private final List<String> outFaultInterceptors;
     private final List<String> inFaultInterceptors;
     private final List<String> features;
     private final List<String> handlers;
-    private final String sei;
+    private final Class<?> sei;
     private final String wsdlPath;
     private final String serviceName;
     private final String serviceTargetNamespace;
@@ -34,8 +34,8 @@ public class CXFServletInfo {
     public CXFServletInfo(
             String path,
             String relativePath,
-            String className,
-            String sei,
+            Class<?> implementor,
+            Class<?> sei,
             String wsdlPath,
             String serviceName,
             String serviceTargetNamespace,
@@ -47,7 +47,7 @@ public class CXFServletInfo {
         LOGGER.trace("new CXFServletInfo");
         this.path = path;
         this.relativePath = relativePath;
-        this.className = className;
+        this.implementor = implementor;
         this.inInterceptors = new ArrayList<>();
         this.outInterceptors = new ArrayList<>();
         this.outFaultInterceptors = new ArrayList<>();
@@ -65,8 +65,15 @@ public class CXFServletInfo {
         this.beanLookup = beanLookup;
     }
 
+    /**
+     * @return fully qualified Service Implementation class name
+     */
     public String getClassName() {
-        return className;
+        return implementor.getName();
+    }
+
+    public Class<?> getImplementor() {
+        return implementor;
     }
 
     public String getPath() {
@@ -81,7 +88,7 @@ public class CXFServletInfo {
         return wsdlPath;
     }
 
-    public String getSei() {
+    public Class<?> getSei() {
         return sei;
     }
 
@@ -170,6 +177,6 @@ public class CXFServletInfo {
 
     @Override
     public String toString() {
-        return "Web Service " + className + " on " + path;
+        return "Web Service " + implementor.getName() + " on " + path;
     }
 }
