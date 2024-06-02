@@ -48,46 +48,52 @@ public class CXFRecorder {
     public enum BeanLookupStrategy {
         TYPE {
             @Override
-            public Supplier<Object> createLookUp(String type, String path) {
-                return () -> CXFRuntimeUtils.getInstance(type, false);
+            public Supplier<Object> createLookUp(Class<?> sei, Class<?> wsImplementor, String path) {
+                return () -> CXFRuntimeUtils.getInstance(wsImplementor);
             }
+        },
+        METHOD_WITH_CXFENDPOINT_ANNOTATION {
+            @Override
+            public Supplier<Object> createLookUp(Class<?> sei, Class<?> wsImplementor, String path) {
+                return createLookupInternal(sei, path);
+            }
+
         },
         TYPE_WITH_CXFENDPOINT_ANNOTATION {
             @Override
-            public Supplier<Object> createLookUp(String type, String path) {
-                return () -> {
-                    try {
-                        Class<?> wsImplementorClass = Class.forName(type, false,
-                                Thread.currentThread().getContextClassLoader());
-                        Object result = Arc.container()
-                                .instance(wsImplementorClass,
-                                        new CXFEndpoint.CXFEndpointLiteral(path))
-                                .get();
-                        if (result == null) {
-                            throw new IllegalStateException("Could get bean of type " + type + " qualified by @"
-                                    + CXFEndpoint.class.getName() + "(\"" + path + "\")");
-                        }
-                        return result;
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException("Could not load class " + type, e);
-                    }
-                };
+            public Supplier<Object> createLookUp(Class<?> sei, Class<?> wsImplementor, String path) {
+                return createLookupInternal(wsImplementor, path);
             }
+
         };
 
-        public abstract Supplier<Object> createLookUp(String type, String path);
+        private static Supplier<Object> createLookupInternal(Class<?> type, String path) {
+            return () -> {
+                Object result = Arc.container()
+                        .instance(type,
+                                new CXFEndpoint.CXFEndpointLiteral(path))
+                        .get();
+                if (result == null) {
+                    throw new IllegalStateException("Could get bean of type " + type + " qualified by @"
+                            + CXFEndpoint.class.getName() + "(\"" + path + "\")");
+                }
+                return result;
+            };
+        }
+
+        public abstract Supplier<Object> createLookUp(Class<?> sei, Class<?> wsImplementor, String path);
     }
 
     public void addCxfServletInfo(
             RuntimeValue<CXFServletInfos> runtimeInfos,
             RuntimeValue<Map<String, List<ServletConfig>>> implementorToCfg,
             String path,
-            String sei,
+            Class<?> sei,
             CxfConfig cxfConfig,
             String serviceName,
             String serviceTargetNamepsace,
             String soapBinding,
-            String wsImplementor,
+            Class<?> wsImplementor,
             Boolean isProvider,
             String relativePathFromCxfEndpointAnnotation,
             BeanLookupStrategy beanLookupStrategy) {
@@ -95,6 +101,7 @@ public class CXFRecorder {
         CXFServletInfos infos = runtimeInfos.getValue();
 
         switch (beanLookupStrategy) {
+            case METHOD_WITH_CXFENDPOINT_ANNOTATION:
             case TYPE_WITH_CXFENDPOINT_ANNOTATION: {
                 final CxfEndpointConfig cxfEndPointConfig = cxfConfig.endpoints().get(relativePathFromCxfEndpointAnnotation);
                 final CXFServletInfo info = createServletInfo(
@@ -107,7 +114,7 @@ public class CXFRecorder {
                         cxfEndPointConfig,
                         relativePathFromCxfEndpointAnnotation,
                         isProvider,
-                        beanLookupStrategy.createLookUp(sei, relativePathFromCxfEndpointAnnotation));
+                        beanLookupStrategy.createLookUp(sei, wsImplementor, relativePathFromCxfEndpointAnnotation));
                 infos.add(info);
                 return;
             }
@@ -125,11 +132,11 @@ public class CXFRecorder {
                             cxfEndPointConfig,
                             relativePathFromCxfEndpointAnnotation,
                             isProvider,
-                            beanLookupStrategy.createLookUp(wsImplementor, relativePathFromCxfEndpointAnnotation));
+                            beanLookupStrategy.createLookUp(sei, wsImplementor, relativePathFromCxfEndpointAnnotation));
                     infos.add(info);
                     return;
                 }
-                List<ServletConfig> cfgs = implementorToCfg.getValue().get(wsImplementor);
+                List<ServletConfig> cfgs = implementorToCfg.getValue().get(wsImplementor.getName());
                 if (cfgs != null) {
                     for (ServletConfig cfg : cfgs) {
                         CxfEndpointConfig cxfEndPointConfig = cfg.config;
@@ -144,12 +151,12 @@ public class CXFRecorder {
                                 cxfEndPointConfig,
                                 relativePath,
                                 isProvider,
-                                beanLookupStrategy.createLookUp(wsImplementor, relativePathFromCxfEndpointAnnotation));
+                                beanLookupStrategy.createLookUp(sei, wsImplementor, relativePathFromCxfEndpointAnnotation));
                         infos.add(info);
                     }
                 } else {
                     if (serviceName == null || serviceName.isEmpty()) {
-                        serviceName = sei.toLowerCase();
+                        serviceName = sei.getName().toLowerCase();
                         if (serviceName.contains(".")) {
                             serviceName = serviceName.substring(serviceName.lastIndexOf('.') + 1);
                         }
@@ -165,7 +172,7 @@ public class CXFRecorder {
                             null,
                             relativePath,
                             isProvider,
-                            beanLookupStrategy.createLookUp(wsImplementor, relativePathFromCxfEndpointAnnotation));
+                            beanLookupStrategy.createLookUp(sei, wsImplementor, relativePathFromCxfEndpointAnnotation));
                     infos.add(info);
                 }
                 return;
@@ -198,11 +205,11 @@ public class CXFRecorder {
 
     private static CXFServletInfo createServletInfo(
             String path,
-            String sei,
+            Class<?> sei,
             String serviceName,
             String serviceTargetNamespace,
             String soapBinding,
-            String wsImplementor,
+            Class<?> implementor,
             CxfEndpointConfig cxfEndPointConfig,
             String relativePath,
             Boolean isProvider,
@@ -210,7 +217,7 @@ public class CXFRecorder {
         CXFServletInfo cfg = new CXFServletInfo(
                 path,
                 relativePath,
-                wsImplementor,
+                implementor,
                 sei,
                 cxfEndPointConfig != null ? cxfEndPointConfig.wsdlPath().orElse(null) : null,
                 serviceName,

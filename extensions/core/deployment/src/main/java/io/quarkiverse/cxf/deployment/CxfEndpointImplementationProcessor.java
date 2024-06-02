@@ -81,7 +81,15 @@ public class CxfEndpointImplementationProcessor {
 
                         final AnnotationInstance cxfEndpointAnnotation = wsClassInfo
                                 .declaredAnnotation(CxfDotNames.CXF_ENDPOINT_ANNOTATION);
-                        final String relPath = cxfEndpointAnnotation != null ? cxfEndpointAnnotation.value().asString() : null;
+                        final String relPath;
+                        final BeanLookupStrategy beanLookupStrategy;
+                        if (cxfEndpointAnnotation != null) {
+                            relPath = cxfEndpointAnnotation.value().asString();
+                            beanLookupStrategy = BeanLookupStrategy.TYPE_WITH_CXFENDPOINT_ANNOTATION;
+                        } else {
+                            relPath = null;
+                            beanLookupStrategy = BeanLookupStrategy.TYPE;
+                        }
 
                         submitImpl(
                                 endpointImplementations,
@@ -90,10 +98,11 @@ public class CxfEndpointImplementationProcessor {
                                 reflectives,
                                 annotation,
                                 wsClassInfo,
+                                CxfDeploymentUtils.findSei(index, wsClassInfo),
                                 impl,
                                 hasWebServiceProviderAnnotation,
                                 relPath,
-                                BeanLookupStrategy.TYPE);
+                                beanLookupStrategy);
 
                     } else if (Modifier.isInterface(wsClassInfo.flags())) {
                         String cl = wsClassInfo.name().toString();
@@ -107,12 +116,13 @@ public class CxfEndpointImplementationProcessor {
                     }
 
                 });
-        CxfDeploymentUtils.cxfEndpointAnnotations(index)
+        CxfDeploymentUtils.methodsWithCxfEndpointAnnotations(index)
                 .forEach(annotation -> {
                     final MethodInfo methodInfo = annotation.target().asMethod();
 
-                    final String impl = methodInfo.returnType().name().toString();
-                    final ClassInfo wsClassInfo = index.getClassByName(methodInfo.returnType().name());
+                    final DotName returnType = methodInfo.returnType().name();
+                    final String impl = returnType.toString();
+                    final ClassInfo wsClassInfo = index.getClassByName(returnType);
                     AnnotationInstance wsAnnot = wsClassInfo.declaredAnnotation(CxfDotNames.WEBSERVICE_ANNOTATION);
                     final boolean hasWebServiceProviderAnnotation = wsAnnot != null;
                     if (wsAnnot == null) {
@@ -131,10 +141,11 @@ public class CxfEndpointImplementationProcessor {
                             reflectives,
                             wsAnnot,
                             wsClassInfo,
+                            CxfDeploymentUtils.findSei(index, wsClassInfo),
                             impl,
                             hasWebServiceProviderAnnotation,
                             annotation.value().asString(),
-                            BeanLookupStrategy.TYPE_WITH_CXFENDPOINT_ANNOTATION);
+                            BeanLookupStrategy.METHOD_WITH_CXFENDPOINT_ANNOTATION);
                 });
 
         reflectiveClass
@@ -146,6 +157,7 @@ public class CxfEndpointImplementationProcessor {
             BuildProducer<ServiceSeiBuildItem> serviceSeis,
             BuildProducer<AdditionalBeanBuildItem> additionalBeans, Set<String> reflectives, AnnotationInstance annotation,
             ClassInfo wsClassInfo,
+            String sei,
             String impl,
             boolean hasWebServiceProviderAnnotation,
             String relativePathFromCxfEndpointAnnotation,
@@ -166,7 +178,7 @@ public class CxfEndpointImplementationProcessor {
 
         final String wsName = Optional.ofNullable(annotation.value("serviceName"))
                 .map(AnnotationValue::asString)
-                .orElse(impl.contains(".") ? impl.substring(impl.lastIndexOf('.') + 1) : impl);
+                .orElse(sei.contains(".") ? sei.substring(sei.lastIndexOf('.') + 1) : sei);
 
         String soapBinding = Optional
                 .ofNullable(wsClassInfo.declaredAnnotation(CxfDotNames.BINDING_TYPE_ANNOTATION))
@@ -175,6 +187,7 @@ public class CxfEndpointImplementationProcessor {
 
         endpointImplementations.produce(
                 new CxfEndpointImplementationBuildItem(
+                        sei,
                         impl,
                         soapBinding,
                         wsNamespace,
@@ -204,21 +217,27 @@ public class CxfEndpointImplementationProcessor {
                 .collect(Collectors.toList());
         if (!cxfEndpoints.isEmpty()) {
             RuntimeValue<Map<String, List<ServletConfig>>> implementorToCfgMap = recorder.implementorToCfgMap(cxfConfig);
+
+            final ClassLoader cl = Thread.currentThread().getContextClassLoader();
             for (CxfEndpointImplementationBuildItem cxfWebService : cxfEndpoints) {
-                recorder.addCxfServletInfo(
-                        infos,
-                        implementorToCfgMap,
-                        fixedConfig.path(),
-                        cxfWebService.getImplementor(),
-                        cxfConfig,
-                        cxfWebService.getWsName(),
-                        cxfWebService.getWsNamespace(),
-                        cxfWebService.getSoapBinding(),
-                        cxfWebService.getImplementor(),
-                        cxfWebService.isProvider(),
-                        cxfWebService.getRelativePath(),
-                        cxfWebService.getBeanLookupStrategy());
-                requestors.add(cxfWebService.getImplementor());
+                try {
+                    recorder.addCxfServletInfo(
+                            infos,
+                            implementorToCfgMap,
+                            fixedConfig.path(),
+                            cl.loadClass(cxfWebService.getSei()),
+                            cxfConfig,
+                            cxfWebService.getWsName(),
+                            cxfWebService.getWsNamespace(),
+                            cxfWebService.getSoapBinding(),
+                            cl.loadClass(cxfWebService.getImplementor()),
+                            cxfWebService.isProvider(),
+                            cxfWebService.getRelativePath(),
+                            cxfWebService.getBeanLookupStrategy());
+                    requestors.add(cxfWebService.getImplementor());
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         if (!requestors.isEmpty()) {

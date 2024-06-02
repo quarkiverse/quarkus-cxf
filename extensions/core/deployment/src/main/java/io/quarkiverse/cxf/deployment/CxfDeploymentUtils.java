@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf.deployment;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -11,7 +12,9 @@ import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
+import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.ClassInfo;
+import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 
 public class CxfDeploymentUtils {
@@ -19,7 +22,7 @@ public class CxfDeploymentUtils {
     private CxfDeploymentUtils() {
     }
 
-    public static Stream<AnnotationInstance> cxfEndpointAnnotations(IndexView index) {
+    public static Stream<AnnotationInstance> methodsWithCxfEndpointAnnotations(IndexView index) {
         return Stream.of(CxfDotNames.CXF_ENDPOINT_ANNOTATION)
                 .map(index::getAnnotations)
                 .flatMap(Collection::stream)
@@ -31,6 +34,35 @@ public class CxfDeploymentUtils {
                 .map(index::getAnnotations)
                 .flatMap(Collection::stream)
                 .filter(annotation -> annotation.target().kind() == AnnotationTarget.Kind.CLASS);
+    }
+
+    public static String findSei(IndexView index, ClassInfo wsClassInfo) {
+
+        {
+            final AnnotationInstance webServiceAnnotation = wsClassInfo.annotation(CxfDotNames.WEBSERVICE_ANNOTATION);
+            if (webServiceAnnotation != null) {
+                if (wsClassInfo.isInterface()) {
+                    return wsClassInfo.name().toString();
+                }
+                final AnnotationValue val = webServiceAnnotation.value("endpointInterface");
+                if (val != null) {
+                    final String result = val.asString();
+                    if (!result.isEmpty()) {
+                        return result;
+                    }
+                }
+            }
+        }
+
+        final List<DotName> interfaces = wsClassInfo.interfaceNames();
+        for (DotName interfaceName : interfaces) {
+            final ClassInfo interfaceInfo = index.getClassByName(interfaceName);
+            final AnnotationInstance webServiceAnnotation = interfaceInfo.annotation(CxfDotNames.WEBSERVICE_ANNOTATION);
+            if (webServiceAnnotation != null) {
+                return interfaceInfo.name().toString();
+            }
+        }
+        return wsClassInfo.name().toString();
     }
 
     /**

@@ -108,7 +108,7 @@ public class CxfHandler implements Handler<RoutingContext> {
             final String endpointString = "endpoint " + servletInfo.getPath();
             final Object instanceService = servletInfo.lookupBean();
             if (instanceService != null) {
-                final Class<?> instanceType = io.quarkiverse.cxf.CXFRuntimeUtils.unwrapBeanType(instanceService.getClass());
+                final Class<?> instanceType = servletInfo.getImplementor();
                 final QuarkusRuntimeJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusRuntimeJaxWsServiceFactoryBean(
                         new JaxWsImplementorInfo(instanceType));
                 final JaxWsServerFactoryBean jaxWsServerFactoryBean = new QuarkusJaxWsServerFactoryBean(jaxWsServiceFactoryBean,
