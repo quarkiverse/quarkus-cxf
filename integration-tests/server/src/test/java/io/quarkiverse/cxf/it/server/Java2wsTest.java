@@ -35,13 +35,13 @@ public class Java2wsTest {
 
     @Test
     public void java2WsHelloService() throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        java2Ws("hello", "HelloService");
+        java2Ws("hello", "HelloServiceImpl");
     }
 
     @Test
     public void java2WsFaultyHelloService()
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        java2Ws("faulty-hello", "FaultyHelloService");
+        java2Ws("faulty-hello", "FaultyHelloServiceImpl");
     }
 
     public void java2Ws(String path, String serviceName)

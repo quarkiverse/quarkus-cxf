@@ -25,17 +25,17 @@ in the source tree of {quarkus-cxf-project-name}
 include::example$soap-service/application.properties[tag=generate-wsdl-from-java.adoc]
 ----
 
-Here we have instructed `java2ws` to generate WSDLs for two interfaces,
-namely `HelloService` and `FaultyHelloService`.
+Here we have instructed `java2ws` to generate WSDLs for two service classes,
+namely `HelloServiceImpl` and `FaultyHelloServiceImpl`.
 
 [NOTE]
 .Annotations
 ====
-Note that the Service interfaces must be annotated with `{javaxOrJakartaPackagePrefix}.xml.ws.WebService` to be selected for `java2ws` processing.
+Note that the service classes must be annotated with `{javaxOrJakartaPackagePrefix}.xml.ws.WebService` to be selected for `java2ws` processing.
 ====
 
-The two generated WSDL documents will be stored as `target/Java2wsTest/FaultyHelloService-from-java2ws.wsdl`
-and `target/Java2wsTest/HelloService-from-java2ws.wsdl` respectively.
+The two generated WSDL documents will be stored as `target/Java2wsTest/FaultyHelloServiceImpl-from-java2ws.wsdl`
+and `target/Java2wsTest/HelloServiceImpl-from-java2ws.wsdl` respectively.
 
 NOTE: Unlike `wsdl2java` which is executed within Quarkus source generation phase,
       `java2ws` is a part Quarkus augmentation that happens after compilation.
