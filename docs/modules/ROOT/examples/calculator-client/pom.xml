@@ -125,7 +125,7 @@
                                 import java.nio.file.Path
                                 def srcPath = project.basedir.toPath().resolve('pom.xml')
                                 def newContent = srcPath.getText('UTF-8')
-                                newContent = newContent.replace('&lt;version>${project.version}&lt;/version>', '&lt;version>0.0.1-SNAPSHOT&lt;/version>')
+                                newContent = newContent.replace('&lt;version&gt;${project.version}&lt;/version&gt;', '&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;')
                                 def destPath = Path.of('${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/calculator-client/pom.xml')
                                 if (!Files.exists(destPath) || !newContent.equals(destPath.getText('UTF-8'))) {
                                     destPath.setText(newContent.toString(), 'UTF-8')
