@@ -7,8 +7,6 @@ import java.util.List;
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.jboss.logging.Logger;
 
-import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Supplier;
-
 public class CXFServletInfo {
     private final String relativePath;
     private final String path;
@@ -27,23 +25,13 @@ public class CXFServletInfo {
     private final Boolean isProvider;
     private final String endpointUrl;
     private final SchemaValidationType schemaValidationEnabledFor;
-    private final Supplier<Object> beanLookup;
 
     private static final Logger LOGGER = Logger.getLogger(CXFServletInfo.class);
 
-    public CXFServletInfo(
-            String path,
-            String relativePath,
-            String className,
-            String sei,
-            String wsdlPath,
-            String serviceName,
-            String serviceTargetNamespace,
-            String soapBinding,
-            Boolean provider,
-            String endpointUrl,
-            SchemaValidationType schemaValidationEnabledFor,
-            Supplier<Object> beanLookup) {
+    public CXFServletInfo(String path, String relativePath, String className, String sei, String wsdlPath,
+            String serviceName, String serviceTargetNamespace, String soapBinding,
+            Boolean provider, String endpointUrl,
+            SchemaValidationType schemaValidationEnabledFor) {
         LOGGER.trace("new CXFServletInfo");
         this.path = path;
         this.relativePath = relativePath;
@@ -62,7 +50,6 @@ public class CXFServletInfo {
         this.isProvider = provider;
         this.endpointUrl = endpointUrl;
         this.schemaValidationEnabledFor = schemaValidationEnabledFor;
-        this.beanLookup = beanLookup;
     }
 
     public String getClassName() {
@@ -131,17 +118,6 @@ public class CXFServletInfo {
 
     public SchemaValidationType getSchemaValidationEnabledFor() {
         return schemaValidationEnabledFor;
-    }
-
-    /**
-     * Lookup the implementation of the associated service endpoint in the CDI container.
-     *
-     * @param <T>
-     * @return a bean
-     * @throws IllegalStateException if the given bean does not exist
-     */
-    public <T> T lookupBean() {
-        return (T) beanLookup.get();
     }
 
     public void addFeatures(List<String> features) {

@@ -106,7 +106,7 @@ public class CxfHandler implements Handler<RoutingContext> {
         // suboptimal because done it in loop but not a real issue...
         for (CXFServletInfo servletInfo : cxfServletInfos.getInfos()) {
             final String endpointString = "endpoint " + servletInfo.getPath();
-            final Object instanceService = servletInfo.lookupBean();
+            final Object instanceService = CXFRuntimeUtils.getInstance(servletInfo.getClassName(), false);
             if (instanceService != null) {
                 final Class<?> instanceType = io.quarkiverse.cxf.CXFRuntimeUtils.unwrapBeanType(instanceService.getClass());
                 final QuarkusRuntimeJaxWsServiceFactoryBean jaxWsServiceFactoryBean = new QuarkusRuntimeJaxWsServiceFactoryBean(
