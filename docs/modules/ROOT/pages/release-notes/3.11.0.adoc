@@ -26,8 +26,6 @@ public class HelloServiceImpl implements HelloService {
 }
 ----
 
-You can read more about `@CXFEndpoint` in the new chapter of {quarkus-cxf-project-name} called xref:user-guide/endpoints-and-paths.adoc[Service endpoints and paths].
-
 === Interceptors set through `@InInterceptors` and similar annotations are now looked up in the CDI container
 
 Before {quarkus-cxf-project-name} 3.11.0, xref:user-guide/cxf-interceptors-and-features.adoc[interceptors] specified through `@InInterceptors`, `@InFaultInterceptors`, `@OutInterceptors` and `@OutFaultInterceptors` annotations from `org.apache.cxf.interceptor` package
