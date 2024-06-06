@@ -9,7 +9,7 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import io.quarkiverse.cxf.transport.generated.VertxServletOutputStream;
+import io.quarkus.vertx.java.io.VertxJavaIoContext;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 
@@ -26,7 +26,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
         this.context = context;
         this.outputBufferSize = outputBufferSize;
         this.minChunkSize = minChunkSize;
-        this.os = new VertxServletOutputStream(new VertxReactiveRequestContext(context, minChunkSize, outputBufferSize));
+        this.os = new VertxServletOutputStream(new VertxJavaIoContext(context, minChunkSize, outputBufferSize));
     }
 
     @Override
@@ -189,7 +189,7 @@ public class VertxHttpServletResponse implements HttpServletResponse {
             } catch (IOException e) {
             }
         }
-        os = new VertxServletOutputStream(new VertxReactiveRequestContext(context, minChunkSize, outputBufferSize));
+        os = new VertxServletOutputStream(new VertxJavaIoContext(context, minChunkSize, outputBufferSize));
     }
 
     @Override

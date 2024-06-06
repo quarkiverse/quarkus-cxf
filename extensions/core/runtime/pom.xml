@@ -23,6 +23,10 @@
             <artifactId>quarkus-arc</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.quarkus.resteasy.reactive</groupId>
+            <artifactId>vertx-java-io</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-saaj</artifactId>
         </dependency>
@@ -137,39 +141,6 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>groovy-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sync-quarkus-classes</id>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <source>file:${maven.multiModuleProjectDirectory}/src/build/scripts/sync-quarkus-classes.groovy</source>
-                            <properties>
-                                <project.basedir>${project.basedir}</project.basedir>
-                            </properties>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>io.quarkus.resteasy.reactive</groupId>
-                        <artifactId>resteasy-reactive-vertx</artifactId>
-                        <type>jar</type>
-                        <classifier>sources</classifier>
-                        <version>${quarkus.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.github.javaparser</groupId>
-                        <artifactId>javaparser-symbol-solver-core</artifactId>
-                        <version>${javaparser.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
