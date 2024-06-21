@@ -171,7 +171,7 @@ public class TransportPolicyTest {
                  */
                 .statusCode(500)
                 .body(Matchers.containsString(
-                        "The https URL hostname does not match the Common Name (CN) on the server certificate in the client's truststore"));
+                        "The https URL hostname 127.0.0.1 does not match the Common Name (CN) on the server certificate in the client's truststore"));
 
     }
 
