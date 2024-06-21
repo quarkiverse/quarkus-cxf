@@ -10,6 +10,7 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transport.http.HttpClientHTTPConduit;
+import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -20,6 +21,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.deployment.test.GlobalConduitFactoryTest.HelloService;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduitFactory;
 import io.quarkus.test.QuarkusUnitTest;
 
 public class ClientConduitFactoryTest {
@@ -30,14 +34,38 @@ public class ClientConduitFactoryTest {
                     .addClasses(HelloService.class, HelloServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
                     HelloServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.hello.http-conduit-factory",
-                    HTTPConduitImpl.HttpClientHTTPConduitFactory.name())
-            .overrideConfigKey("quarkus.cxf.http-conduit-factory", HTTPConduitImpl.URLConnectionHTTPConduitFactory.name());
 
-    @CXFClient
-    HelloService helloService;
+            .overrideConfigKey("quarkus.cxf.client.helloDefault.client-endpoint-url", "http://localhost:8081/services/hello")
+            .overrideConfigKey("quarkus.cxf.client.helloDefault.service-interface", HelloService.class.getName())
+
+            .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.client-endpoint-url",
+                    "http://localhost:8081/services/hello")
+            .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.service-interface", HelloService.class.getName())
+            .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.http-conduit-factory",
+                    HTTPConduitImpl.URLConnectionHTTPConduitFactory.name())
+
+            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.client-endpoint-url", "http://localhost:8081/services/hello")
+            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.service-interface", HelloService.class.getName())
+            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.http-conduit-factory",
+                    HTTPConduitImpl.HttpClientHTTPConduitFactory.name())
+
+            .overrideConfigKey("quarkus.cxf.client.helloVertxClient.client-endpoint-url",
+                    "http://localhost:8081/services/hello")
+            .overrideConfigKey("quarkus.cxf.client.helloVertxClient.service-interface", HelloService.class.getName())
+            .overrideConfigKey("quarkus.cxf.client.helloVertxClient.http-conduit-factory",
+                    HTTPConduitImpl.VertxHttpClientHTTPConduitFactory.name());
+
+    @CXFClient("helloDefault")
+    HelloService helloDefault;
+
+    @CXFClient("helloUrlConnection")
+    HelloService helloUrlConnection;
+
+    @CXFClient("helloHttpClient")
+    HelloService helloHttpClient;
+
+    @CXFClient("helloVertxClient")
+    HelloService helloVertxClient;
 
     @Inject
     Logger logger;
@@ -46,13 +74,36 @@ public class ClientConduitFactoryTest {
     void conduitFactory() {
         final Bus bus = BusFactory.getDefaultBus();
         final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
-        Assertions.assertThat(factory).isInstanceOf(URLConnectionHTTPConduitFactory.class);
+        Assertions.assertThat(factory).isInstanceOf(VertxHttpClientHTTPConduitFactory.class);
 
-        final Client client = ClientProxy.getClient(helloService);
-        Assertions.assertThat(client.getConduit()).isInstanceOf(HttpClientHTTPConduit.class);
-
-        /* ... and make sure that the alternative conduit works */
-        Assertions.assertThat(helloService.hello("Joe")).isEqualTo("Hello Joe");
+        {
+            final HelloService service = helloDefault;
+            final Client client = ClientProxy.getClient(service);
+            Assertions.assertThat(client.getConduit()).isInstanceOf(VertxHttpClientHTTPConduit.class);
+            /* ... and make sure that the alternative conduit works */
+            Assertions.assertThat(service.hello("Joe")).isEqualTo("Hello Joe");
+        }
+        {
+            final HelloService service = helloUrlConnection;
+            final Client client = ClientProxy.getClient(service);
+            Assertions.assertThat(client.getConduit()).isInstanceOf(URLConnectionHTTPConduit.class);
+            /* ... and make sure that the alternative conduit works */
+            Assertions.assertThat(service.hello("Joe")).isEqualTo("Hello Joe");
+        }
+        {
+            final HelloService service = helloHttpClient;
+            final Client client = ClientProxy.getClient(service);
+            Assertions.assertThat(client.getConduit()).isInstanceOf(HttpClientHTTPConduit.class);
+            /* ... and make sure that the alternative conduit works */
+            Assertions.assertThat(service.hello("Joe")).isEqualTo("Hello Joe");
+        }
+        {
+            final HelloService service = helloVertxClient;
+            final Client client = ClientProxy.getClient(service);
+            Assertions.assertThat(client.getConduit()).isInstanceOf(VertxHttpClientHTTPConduit.class);
+            /* ... and make sure that the alternative conduit works */
+            Assertions.assertThat(service.hello("Joe")).isEqualTo("Hello Joe");
+        }
     }
 
     @WebService
@@ -63,7 +114,7 @@ public class ClientConduitFactoryTest {
 
     }
 
-    @WebService(endpointInterface = "io.quarkiverse.cxf.deployment.test.ClientConduitFactoryTest$HelloService", serviceName = "HelloService")
+    @WebService(serviceName = "HelloService")
     public static class HelloServiceImpl implements HelloService {
 
         @Override

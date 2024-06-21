@@ -32,6 +32,8 @@ import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
+import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 
 /**
  * A HTTPConduitFactory with some client specific configuration, such as timeouts and SSL.
@@ -40,22 +42,22 @@ import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
  */
 public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     private static final Logger log = Logger.getLogger(QuarkusHTTPConduitFactory.class);
+    private final HttpClientPool httpClientPool;
     private final CxfFixedConfig cxFixedConfig;
     private final CXFClientInfo cxfClientInfo;
-    private final boolean hc5Present;
     private final HTTPConduitFactory busHTTPConduitFactory;
     private final AuthorizationPolicy authorizationPolicy;
 
     public QuarkusHTTPConduitFactory(
+            HttpClientPool httpClientPool,
             CxfFixedConfig cxFixedConfig,
             CXFClientInfo cxfClientInfo,
-            boolean hc5Present,
             HTTPConduitFactory busHTTPConduitFactory,
             AuthorizationPolicy authorizationPolicy) {
         super();
+        this.httpClientPool = httpClientPool;
         this.cxFixedConfig = cxFixedConfig;
         this.cxfClientInfo = cxfClientInfo;
-        this.hc5Present = hc5Present;
         this.busHTTPConduitFactory = busHTTPConduitFactory;
         this.authorizationPolicy = authorizationPolicy;
     }
@@ -67,7 +69,9 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         if (httpConduitImpl == null) {
             httpConduitImpl = cxFixedConfig.httpConduitFactory().orElse(null);
         }
-        if (httpConduitImpl == null && hc5Present && busHTTPConduitFactory != null) {
+        if (httpConduitImpl == null
+                && (CXFRecorder.isHc5Present())
+                && busHTTPConduitFactory != null) {
             return configure(
                     busHTTPConduitFactory.createConduit(f, b, localInfo, target),
                     cxfClientInfo);
@@ -92,6 +96,10 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                 break;
             }
             case QuarkusCXFDefault:
+            case VertxHttpClientHTTPConduitFactory: {
+                result = new VertxHttpClientHTTPConduit(b, localInfo, target, httpClientPool);
+                break;
+            }
             case URLConnectionHTTPConduitFactory: {
                 result = new URLConnectionHTTPConduit(b, localInfo, target);
                 break;
