@@ -40,14 +40,14 @@ public class OpenTelemetryTest {
                 .statusCode(200)
                 .body(CoreMatchers.equalTo("Hello Charles!"));
 
-        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> getSpans().size() == 4);
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> getSpans().size() == 5);
 
         final List<Map<String, Object>> spans = getSpans();
 
         /* The ordering of the spans is not fully deterministic, so let's just check that all 4 are there */
         final Map<String, Map<String, Object>> spansByName = new LinkedHashMap<>();
         spans.forEach(span -> spansByName.put(span.get("name").toString(), span));
-        Assertions.assertThat(spansByName.size()).isEqualTo(4);
+        Assertions.assertThat(spansByName.size()).isEqualTo(5);
 
         {
             /* Quarkus CXF service span */
@@ -83,6 +83,17 @@ public class OpenTelemetryTest {
         }
 
         {
+            /* Vert.x client span */
+            final Map<String, Object> span = spansByName.get("POST");
+            Assertions.assertThat(span.get("kind")).isEqualTo(SpanKind.CLIENT.toString());
+            Assertions.assertThat(span.get("name")).isEqualTo("POST");
+
+            final Map<?, ?> attribs = (Map<?, ?>) span.get("attributes");
+            Assertions.assertThat(attribs.get("http.status_code")).isEqualTo(200);
+            Assertions.assertThat(attribs.get("http.method")).isEqualTo("POST");
+        }
+
+        {
             /* quarkus-vertx-web span invoking the CXF client */
             final Map<String, Object> span = spansByName.get("POST /opentelemetry/client/hello");
             Assertions.assertThat(span.get("kind")).isEqualTo(SpanKind.SERVER.toString());
@@ -108,7 +119,7 @@ public class OpenTelemetryTest {
         Awaitility.await().atMost(5, TimeUnit.SECONDS).until(() -> {
             List<Map<String, Object>> spans = getSpans();
             System.out.println("=== spans " + spans.size() + " " + spans);
-            return spans.size() == 5;
+            return spans.size() == 6;
         });
 
         final List<Map<String, Object>> spans = getSpans();
@@ -116,7 +127,7 @@ public class OpenTelemetryTest {
         /* The ordering of the spans is not fully deterministic, so let's just check that all 4 are there */
         final Map<String, Map<String, Object>> spansByName = new LinkedHashMap<>();
         spans.forEach(span -> spansByName.put(span.get("name").toString(), span));
-        Assertions.assertThat(spansByName.size()).isEqualTo(5);
+        Assertions.assertThat(spansByName.size()).isEqualTo(6);
 
         {
             /* Quarkus CXF service span */
@@ -157,6 +168,17 @@ public class OpenTelemetryTest {
             final Map<?, ?> attribs = (Map<?, ?>) span.get("attributes");
             Assertions.assertThat(attribs.get("http.response.status_code")).isEqualTo(200);
             Assertions.assertThat(attribs.get("http.request.method")).isEqualTo("POST");
+        }
+
+        {
+            /* Vert.x client span */
+            final Map<String, Object> span = spansByName.get("POST");
+            Assertions.assertThat(span.get("kind")).isEqualTo(SpanKind.CLIENT.toString());
+            Assertions.assertThat(span.get("name")).isEqualTo("POST");
+
+            final Map<?, ?> attribs = (Map<?, ?>) span.get("attributes");
+            Assertions.assertThat(attribs.get("http.status_code")).isEqualTo(200);
+            Assertions.assertThat(attribs.get("http.method")).isEqualTo("POST");
         }
 
         {
