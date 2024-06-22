@@ -66,7 +66,7 @@
 
         <slf4j.version>2.0.6</slf4j.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.slf4j:slf4j-api -->
         <stax2.version>4.2.2</stax2.version><!-- @sync com.fasterxml.woodstox:woodstox-core:${woodstox-core.version} dep:org.codehaus.woodstox:stax2-api -->
-        <woodstox-core.version>6.6.2</woodstox-core.version>
+        <woodstox-core.version>6.7.0</woodstox-core.version>
         <wss4j.version>3.0.3</wss4j.version><!-- We may ocassionally want to use a bugfix version of WSS4J that is newer than the one used by CXF -->
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
