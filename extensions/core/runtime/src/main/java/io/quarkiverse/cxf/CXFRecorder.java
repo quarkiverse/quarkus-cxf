@@ -14,6 +14,7 @@ import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Supp
 import io.quarkiverse.cxf.annotation.CXFEndpoint;
 import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkiverse.cxf.transport.VertxDestinationFactory;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduitFactory;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.runtime.RuntimeValue;
@@ -271,6 +272,10 @@ public class CXFRecorder {
         QuarkusBusFactory.addBusCustomizer(customizer.getValue());
     }
 
+    public RuntimeValue<Consumer<Bus>> setVertxHttpClientHTTPConduitFactory() {
+        return new RuntimeValue<>(bus -> bus.setExtension(new VertxHttpClientHTTPConduitFactory(), HTTPConduitFactory.class));
+    }
+
     public RuntimeValue<Consumer<Bus>> setURLConnectionHTTPConduitFactory() {
         return new RuntimeValue<>(bus -> bus.setExtension(new URLConnectionHTTPConduitFactory(), HTTPConduitFactory.class));
     }
@@ -286,4 +291,5 @@ public class CXFRecorder {
     public static boolean isHc5Present() {
         return hc5Present;
     }
+
 }

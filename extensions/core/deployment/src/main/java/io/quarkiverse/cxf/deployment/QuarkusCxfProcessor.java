@@ -106,13 +106,11 @@ import io.quarkus.deployment.pkg.steps.NativeOrNativeSourcesBuild;
 import io.quarkus.gizmo.ClassOutput;
 
 class QuarkusCxfProcessor {
-
-    private static final String FEATURE_CXF = "cxf";
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
 
     @BuildStep
     FeatureBuildItem feature() {
-        return new FeatureBuildItem(FEATURE_CXF);
+        return QuarkusCxfFeature.CXF.asFeature();
     }
 
     @BuildStep
@@ -374,7 +372,7 @@ class QuarkusCxfProcessor {
 
     @BuildStep
     ExtensionSslNativeSupportBuildItem ssl() {
-        return new ExtensionSslNativeSupportBuildItem(FEATURE_CXF);
+        return new ExtensionSslNativeSupportBuildItem(QuarkusCxfFeature.CXF.getKey());
     }
 
     @BuildStep

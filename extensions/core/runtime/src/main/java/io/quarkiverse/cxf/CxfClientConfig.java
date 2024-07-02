@@ -395,6 +395,10 @@ public interface CxfClientConfig {
      * `URLConnectionHTTPConduitFactory` (this may change, once issue
      * link:https://github.com/quarkiverse/quarkus-cxf/issues/992[++#++992] gets resolved in CXF)
      * - `CXFDefault`: the selection of `HTTPConduitFactory` implementation is left to CXF
+     * - `VertxHttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always
+     * returning `io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit`. This will use
+     * `io.vertx.core.http.HttpClient` as the
+     * underlying HTTP client.
      * - `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always
      * returning `org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the
      * underlying HTTP client.
@@ -498,6 +502,8 @@ public interface CxfClientConfig {
         QuarkusCXFDefault,
         @ConfigDocEnumValue("CXFDefault")
         CXFDefault,
+        @ConfigDocEnumValue("VertxHttpClientHTTPConduitFactory")
+        VertxHttpClientHTTPConduitFactory,
         @ConfigDocEnumValue("HttpClientHTTPConduitFactory")
         HttpClientHTTPConduitFactory,
         @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")

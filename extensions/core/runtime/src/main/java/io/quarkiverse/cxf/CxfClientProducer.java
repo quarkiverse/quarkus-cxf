@@ -33,6 +33,7 @@ import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
+import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
 
 /**
  * Base producer class for setting up CXF client proxies and {@link CXFClientInfo}s.
@@ -59,6 +60,9 @@ public abstract class CxfClientProducer {
     @Inject
     @Any
     Instance<ClientFactoryCustomizer> customizers;
+
+    @Inject
+    HttpClientPool httpClientPool;
 
     private LoggingFactoryCustomizer loggingFactoryCustomizer;
 
@@ -177,9 +181,9 @@ public abstract class CxfClientProducer {
         final Bus bus = BusFactory.getDefaultBus();
         final HTTPConduitFactory origConduitFactory = bus.getExtension(HTTPConduitFactory.class);
         final QuarkusHTTPConduitFactory conduitFactory = new QuarkusHTTPConduitFactory(
+                httpClientPool,
                 fixedConfig,
                 cxfClientInfo,
-                CXFRecorder.isHc5Present(),
                 origConduitFactory,
                 authorizationPolicy);
         props.put(HTTPConduitFactory.class.getName(), conduitFactory);

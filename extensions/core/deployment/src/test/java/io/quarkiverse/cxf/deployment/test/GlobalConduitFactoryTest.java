@@ -10,6 +10,7 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transport.http.HttpClientHTTPConduit;
+import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -19,7 +20,10 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
+import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.deployment.test.ClientConduitFactoryTest.HelloService;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 import io.quarkus.test.QuarkusUnitTest;
 
 public class GlobalConduitFactoryTest {
@@ -30,12 +34,30 @@ public class GlobalConduitFactoryTest {
                     .addClasses(HelloService.class, HelloServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
                     HelloServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.http-conduit-factory", HTTPConduitImpl.HttpClientHTTPConduitFactory.name());
+            .overrideConfigKey("quarkus.cxf.client.helloGlobal.client-endpoint-url", "http://localhost:8081/services/hello")
+            .overrideConfigKey("quarkus.cxf.client.helloGlobal.service-interface", HelloService.class.getName())
 
-    @CXFClient
-    HelloService helloService;
+            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.client-endpoint-url", "http://localhost:8081/services/hello")
+            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.service-interface", HelloService.class.getName())
+            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.http-conduit-factory",
+                    HTTPConduitImpl.HttpClientHTTPConduitFactory.name())
+
+            .overrideConfigKey("quarkus.cxf.client.helloVertxClient.client-endpoint-url",
+                    "http://localhost:8081/services/hello")
+            .overrideConfigKey("quarkus.cxf.client.helloVertxClient.service-interface", HelloService.class.getName())
+            .overrideConfigKey("quarkus.cxf.client.helloVertxClient.http-conduit-factory",
+                    HTTPConduitImpl.VertxHttpClientHTTPConduitFactory.name())
+
+            .overrideConfigKey("quarkus.cxf.http-conduit-factory", HTTPConduitImpl.URLConnectionHTTPConduitFactory.name());
+
+    @CXFClient("helloGlobal")
+    HelloService helloGlobal;
+
+    @CXFClient("helloHttpClient")
+    HelloService helloHttpClient;
+
+    @CXFClient("helloVertxClient")
+    HelloService helloVertxClient;
 
     @Inject
     Logger logger;
@@ -44,13 +66,28 @@ public class GlobalConduitFactoryTest {
     void conduitFactory() {
         final Bus bus = BusFactory.getDefaultBus();
         final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
-        Assertions.assertThat(factory).isInstanceOf(HttpClientHTTPConduitFactory.class);
+        Assertions.assertThat(factory).isInstanceOf(URLConnectionHTTPConduitFactory.class);
 
-        final Client client = ClientProxy.getClient(helloService);
-        Assertions.assertThat(client.getConduit()).isInstanceOf(HttpClientHTTPConduit.class);
+        {
+            final Client client = ClientProxy.getClient(helloGlobal);
+            Assertions.assertThat(client.getConduit()).isInstanceOf(URLConnectionHTTPConduit.class);
+            /* ... and make sure that the alternative conduit works */
+            Assertions.assertThat(helloGlobal.hello("Joe")).isEqualTo("Hello Joe");
+        }
 
-        /* ... and make sure that the alternative conduit works */
-        Assertions.assertThat(helloService.hello("Joe")).isEqualTo("Hello Joe");
+        {
+            final Client client = ClientProxy.getClient(helloHttpClient);
+            Assertions.assertThat(client.getConduit()).isInstanceOf(HttpClientHTTPConduit.class);
+            /* ... and make sure that the alternative conduit works */
+            Assertions.assertThat(helloHttpClient.hello("Joe")).isEqualTo("Hello Joe");
+        }
+
+        {
+            final Client client = ClientProxy.getClient(helloVertxClient);
+            Assertions.assertThat(client.getConduit()).isInstanceOf(VertxHttpClientHTTPConduit.class);
+            /* ... and make sure that the alternative conduit works */
+            Assertions.assertThat(helloVertxClient.hello("Joe")).isEqualTo("Hello Joe");
+        }
     }
 
     @WebService
