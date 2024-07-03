@@ -81,3 +81,17 @@ jobs:
           -pl '!:quarkus-cxf-docs,!:quarkus-cxf-test-ws-rm-server-native' \
           -ntp \
           -fae
+
+    # Same as the previous but different default ConduitFactory
+    - name: mvn test
+      env: 
+        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: VertxHttpClientHTTPConduitFactory
+      shell: bash
+      run: |
+        ./mvnw -B clean test \
+          -Dskip-testcontainers-tests \
+          -Dformat.skip \
+          -Denforcer.skip \
+          -pl '!:quarkus-cxf-docs,!:quarkus-cxf-test-ws-rm-server-native' \
+          -ntp \
+          -fae

@@ -47,3 +47,24 @@ runs:
         else
           cd integration-tests/${array[0]} && ../../mvnw -B verify -Pnative -Dquarkus.native.container-build=true
         fi
+
+    # Same as the previous but different default ConduitFactory
+    - name: Run integration test ${{ inputs.test-module-spec }} with QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=VertxHttpClientHTTPConduitFactory
+      shell: bash
+      env: 
+        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: VertxHttpClientHTTPConduitFactory
+        # Skip native tests for CodeQL Security Scans
+      if: "${{ env.SKIP_NATIVE_TESTS != 'true' }}"
+      run: |
+        array=(${{ inputs.test-module-spec }})
+        if [ "${array[0]}" == "ws-rm-client" ]; then
+          # ws-rm-client requires test-ws-rm-server-native executable
+          cd test-util-parent/test-ws-rm-server-native && ../../mvnw -B clean install -Pnative
+          cd ../..
+        fi
+        if [ "${#array[@]}" -gt "1" ]; then
+          additionalArgs=("${array[@]:1}")
+          cd integration-tests/${array[0]} && ../../mvnw -B clean verify -Pnative -Dquarkus.native.container-build=true "${additionalArgs[@]}"
+        else
+          cd integration-tests/${array[0]} && ../../mvnw -B clean verify -Pnative -Dquarkus.native.container-build=true
+        fi

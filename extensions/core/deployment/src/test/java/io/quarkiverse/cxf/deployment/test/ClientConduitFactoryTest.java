@@ -76,10 +76,20 @@ public class ClientConduitFactoryTest {
         final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
         Assertions.assertThat(factory).isInstanceOf(VertxHttpClientHTTPConduitFactory.class);
 
+        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.QuarkusHTTPConduitFactory.findDefaultHTTPConduitImpl();
         {
             final HelloService service = helloDefault;
             final Client client = ClientProxy.getClient(service);
-            Assertions.assertThat(client.getConduit()).isInstanceOf(VertxHttpClientHTTPConduit.class);
+            switch (defaultImpl) {
+                case VertxHttpClientHTTPConduitFactory:
+                    Assertions.assertThat(client.getConduit()).isInstanceOf(VertxHttpClientHTTPConduit.class);
+                    break;
+                case URLConnectionHTTPConduitFactory:
+                    Assertions.assertThat(client.getConduit()).isInstanceOf(URLConnectionHTTPConduit.class);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unexpected value: " + defaultImpl);
+            }
             /* ... and make sure that the alternative conduit works */
             Assertions.assertThat(service.hello("Joe")).isEqualTo("Hello Joe");
         }
