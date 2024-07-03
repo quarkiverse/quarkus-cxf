@@ -12,6 +12,8 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkiverse.cxf.QuarkusHTTPConduitFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 
@@ -159,6 +161,18 @@ public class TransportPolicyTest {
 
     @Test
     void helloIp() {
+        final String expectedMessage;
+        HTTPConduitImpl defaultImpl = QuarkusHTTPConduitFactory.findDefaultHTTPConduitImpl();
+        switch (defaultImpl) {
+            case VertxHttpClientHTTPConduitFactory:
+                expectedMessage = "The https URL hostname 127.0.0.1 does not match the Common Name (CN) on the server certificate in the client's truststore";
+                break;
+            case URLConnectionHTTPConduitFactory:
+                expectedMessage = "The https URL hostname does not match the Common Name (CN) on the server certificate in the client's truststore";
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + defaultImpl);
+        }
         RestAssured.given()
                 .config(PolicyTestUtils.restAssuredConfig())
                 .body("Frank")
@@ -171,7 +185,7 @@ public class TransportPolicyTest {
                  */
                 .statusCode(500)
                 .body(Matchers.containsString(
-                        "The https URL hostname 127.0.0.1 does not match the Common Name (CN) on the server certificate in the client's truststore"));
+                        expectedMessage));
 
     }
 

@@ -42,11 +42,19 @@ import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
  */
 public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     private static final Logger log = Logger.getLogger(QuarkusHTTPConduitFactory.class);
+    /**
+     * The name of the environment variable defining the conduit type to use for QuarkusCXFDefault.
+     * This is only for testing while VertxHttpClientHTTPConduitFactory is not stable.
+     */
+    public static final String QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY = "QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY";
+    private static HTTPConduitImpl defaultHTTPConduitImpl;
+
     private final HttpClientPool httpClientPool;
     private final CxfFixedConfig cxFixedConfig;
     private final CXFClientInfo cxfClientInfo;
     private final HTTPConduitFactory busHTTPConduitFactory;
     private final AuthorizationPolicy authorizationPolicy;
+    private final HTTPConduitImpl defaultHTTPConduitFactory;
 
     public QuarkusHTTPConduitFactory(
             HttpClientPool httpClientPool,
@@ -60,6 +68,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         this.cxfClientInfo = cxfClientInfo;
         this.busHTTPConduitFactory = busHTTPConduitFactory;
         this.authorizationPolicy = authorizationPolicy;
+        this.defaultHTTPConduitFactory = findDefaultHTTPConduitImpl();
     }
 
     @Override
@@ -96,6 +105,24 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                 break;
             }
             case QuarkusCXFDefault:
+                switch (defaultHTTPConduitFactory) {
+                    case VertxHttpClientHTTPConduitFactory: {
+                        result = new VertxHttpClientHTTPConduit(b, localInfo, target, httpClientPool);
+                        break;
+                    }
+                    case URLConnectionHTTPConduitFactory: {
+                        result = new URLConnectionHTTPConduit(b, localInfo, target);
+                        break;
+                    }
+                    case HttpClientHTTPConduitFactory: {
+                        result = new HttpClientHTTPConduit(b, localInfo, target);
+                        break;
+                    }
+                    default:
+                        throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
+                                + httpConduitImpl);
+                }
+                break;
             case VertxHttpClientHTTPConduitFactory: {
                 result = new VertxHttpClientHTTPConduit(b, localInfo, target, httpClientPool);
                 break;
@@ -113,6 +140,16 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                         + httpConduitImpl);
         }
         return configure(result, cxfClientInfo);
+    }
+
+    public static HTTPConduitImpl findDefaultHTTPConduitImpl() {
+        if (defaultHTTPConduitImpl == null) {
+            final String defaultName = System.getenv(QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY);
+            defaultHTTPConduitImpl = defaultName == null || defaultName.isEmpty()
+                    ? HTTPConduitImpl.URLConnectionHTTPConduitFactory
+                    : HTTPConduitImpl.valueOf(defaultName);
+        }
+        return defaultHTTPConduitImpl;
     }
 
     private HTTPConduit configure(HTTPConduit httpConduit, CXFClientInfo cxfClientInfo) throws IOException {

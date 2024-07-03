@@ -9,6 +9,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
+import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -16,6 +17,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduitFactory;
@@ -47,8 +49,17 @@ public class VertxWebClientConduitFactoryTest {
         Assertions.assertThat(factory).isInstanceOf(VertxHttpClientHTTPConduitFactory.class);
 
         final Client client = ClientProxy.getClient(helloService);
-        Assertions.assertThat(client.getConduit()).isInstanceOf(VertxHttpClientHTTPConduit.class);
-
+        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.QuarkusHTTPConduitFactory.findDefaultHTTPConduitImpl();
+        switch (defaultImpl) {
+            case VertxHttpClientHTTPConduitFactory:
+                Assertions.assertThat(client.getConduit()).isInstanceOf(VertxHttpClientHTTPConduit.class);
+                break;
+            case URLConnectionHTTPConduitFactory:
+                Assertions.assertThat(client.getConduit()).isInstanceOf(URLConnectionHTTPConduit.class);
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + defaultImpl);
+        }
         /* ... and make sure that the alternative conduit works */
         Assertions.assertThat(helloService.hello("Joe")).isEqualTo("Hello Joe");
     }
