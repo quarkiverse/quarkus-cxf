@@ -72,6 +72,11 @@ public class MutualTlsTest {
                         /* On Linux, we randomly get any of the following: */
                         Matchers.containsString("SSLHandshakeException: Received fatal alert: bad_certificate"),
                         Matchers.containsString("IOException: Error writing to server"),
+                        /*
+                         * This comes sometimes with the Vert.x client - see
+                         * https://github.com/quarkiverse/quarkus-cxf/issues/1429
+                         */
+                        Matchers.containsString("io.netty.channel.StacklessClosedChannelException"),
                         /* On Windows, we get this */
                         Matchers.containsString(
                                 "java.net.SocketException: An established connection was aborted by the software in your host machine")));
