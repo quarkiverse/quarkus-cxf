@@ -103,4 +103,17 @@ public class Wsdl2JavaTest {
                 .content(StandardCharsets.UTF_8).contains("implements ExtensibilityElement");
     }
 
+    @Test
+    void multiplePackageNames() {
+        /* Make sure that the java files for multiple-package-names.wsdl were generated in multiple packages */
+        Assertions.assertThat(Path.of("target/generated-test-sources/wsdl2java/org/example/add/AddRequest.java"))
+                .isRegularFile();
+        Assertions.assertThat(Path.of("target/generated-test-sources/wsdl2java/org/example/multiply/MultiplyRequest.java"))
+                .isRegularFile();
+        Assertions
+                .assertThat(Path
+                        .of("target/generated-test-sources/wsdl2java/io/quarkiverse/cxf/wsdl2java/it/math/MathService.java"))
+                .isRegularFile();
+    }
+
 }
