@@ -46,7 +46,9 @@ public class Wsdl2JavaParamsTest {
         assertParams(
                 proxy(
                         "outputDirectory", Optional.of(QuarkusCxfClientTestUtil.maybeWinPath("foo/bar")),
-                        "packageNames", Optional.of(Arrays.asList("com.foo", "com.bar")),
+                        "packageNames",
+                        Optional.of(Arrays.asList("http://www.example.org/add=io.quarkiverse.cxf.wsdl2java.it.add",
+                                "http://www.example.org/multiply=io.quarkiverse.cxf.wsdl2java.it.multiply")),
                         "serviceName", Optional.of("HelloService"),
                         "bindings",
                         Optional.of(Arrays.asList(QuarkusCxfClientTestUtil.maybeWinPath("src/main/resources/b1.xml"),
@@ -69,7 +71,8 @@ public class Wsdl2JavaParamsTest {
                 "-nexclude", "http://foo.com",
                 "-nexclude", "http://bar.com",
                 "-mimeMethods", "mime1,mime2",
-                "-p", "com.foo,com.bar",
+                "-p", "http://www.example.org/add=io.quarkiverse.cxf.wsdl2java.it.add",
+                "-p", "http://www.example.org/multiply=io.quarkiverse.cxf.wsdl2java.it.multiply",
                 "-sn", "HelloService",
                 "-validate",
                 "-wsdlLocation", "my.wsdl",

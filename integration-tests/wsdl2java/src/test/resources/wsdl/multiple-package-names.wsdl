@@ -1,0 +1,103 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://www.example.org/math"
+             xmlns:add="http://www.example.org/add"
+             xmlns:multiply="http://www.example.org/multiply"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             targetNamespace="http://www.example.org/math">
+
+    <!-- Types section with two schemas in distinct namespaces -->
+    <types>
+        <xsd:schema targetNamespace="http://www.example.org/add">
+            <xsd:element name="AddRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="a" type="xsd:int"/>
+                        <xsd:element name="b" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="AddResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="result" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+
+        <xsd:schema targetNamespace="http://www.example.org/multiply">
+            <xsd:element name="MultiplyRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="a" type="xsd:int"/>
+                        <xsd:element name="b" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="MultiplyResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="result" type="xsd:int"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <!-- Messages -->
+    <message name="AddRequest">
+        <part name="parameters" element="add:AddRequest"/>
+    </message>
+    <message name="AddResponse">
+        <part name="parameters" element="add:AddResponse"/>
+    </message>
+    <message name="MultiplyRequest">
+        <part name="parameters" element="multiply:MultiplyRequest"/>
+    </message>
+    <message name="MultiplyResponse">
+        <part name="parameters" element="multiply:MultiplyResponse"/>
+    </message>
+
+    <!-- PortType -->
+    <portType name="MathPortType">
+        <operation name="Add">
+            <input message="tns:AddRequest"/>
+            <output message="tns:AddResponse"/>
+        </operation>
+        <operation name="Multiply">
+            <input message="tns:MultiplyRequest"/>
+            <output message="tns:MultiplyResponse"/>
+        </operation>
+    </portType>
+
+    <!-- Binding -->
+    <binding name="MathBinding" type="tns:MathPortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <operation name="Add">
+            <soap:operation soapAction="http://www.example.org/math/Add"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Multiply">
+            <soap:operation soapAction="http://www.example.org/math/Multiply"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <!-- Service -->
+    <service name="MathService">
+        <port name="MathPort" binding="tns:MathBinding">
+            <soap:address location="http://www.example.org/math"/>
+        </port>
+    </service>
+</definitions>

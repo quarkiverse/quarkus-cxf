@@ -190,7 +190,7 @@ public interface CxfBuildTimeConfig {
          * @asciidoclet
          * @since 2.4.0
          */
-        @Wsdl2JavaParam(value = "-p", collection = Wsdl2JavaParamCollection.commaSeparated)
+        @Wsdl2JavaParam(value = "-p", collection = Wsdl2JavaParamCollection.multiParam)
         public Optional<List<String>> packageNames();
 
         /**
