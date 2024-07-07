@@ -1,6 +1,9 @@
 package io.quarkiverse.cxf.deployment;
 
+import jakarta.annotation.Resource;
+import jakarta.annotation.Resources;
 import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 import org.jboss.jandex.DotName;
 
@@ -20,5 +23,9 @@ public class CxfDotNames {
     static final DotName REQUEST_WRAPPER_ANNOTATION = DotName.createSimple("jakarta.xml.ws.RequestWrapper");
     static final DotName RESPONSE_WRAPPER_ANNOTATION = DotName.createSimple("jakarta.xml.ws.ResponseWrapper");
     static final DotName JAXWS_SERVICE_CLASS = DotName.createSimple("jakarta.xml.ws.Service");
-
+    static final DotName JAKARTA_ANNOTATION_RESOURCE = DotName.createSimple(Resource.class.getName());
+    static final DotName JAKARTA_ANNOTATION_RESOURCES = DotName.createSimple(Resources.class.getName());
+    static final DotName INJECT = DotName.createSimple(Inject.class.getName());
+    static final DotName WEBSERVICE_CONTEXT = DotName.createSimple(jakarta.xml.ws.WebServiceContext.class.getName());
+    static final DotName JAVA_LANG_OBJECT = DotName.createSimple(Object.class.getName());
 }

@@ -28,6 +28,14 @@ public class QuarkusJaxWsServerFactoryBean extends JaxWsServerFactoryBean {
     public QuarkusJaxWsServerFactoryBean(JaxWsServiceFactoryBean serviceFactory, String endpointString) {
         super(serviceFactory);
         this.endpointString = endpointString;
+
+        /*
+         * We let Quarkus CDI container handle the injection of @Resource via
+         * io.quarkiverse.cxf.WebServiceContextProducer and
+         * WebServiceContextProcessor.addInjectForResource()
+         */
+        setBlockInjection(true);
+        setBlockPostConstruct(true);
     }
 
     @Override
