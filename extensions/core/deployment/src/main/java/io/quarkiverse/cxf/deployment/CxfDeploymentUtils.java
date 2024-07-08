@@ -57,6 +57,14 @@ public class CxfDeploymentUtils {
         final List<DotName> interfaces = wsClassInfo.interfaceNames();
         for (DotName interfaceName : interfaces) {
             final ClassInfo interfaceInfo = index.getClassByName(interfaceName);
+            if (interfaceInfo == null) {
+                throw new IllegalStateException("Cannot find " + interfaceName + " in Quarkus class index (Jandex)."
+                        + " You may want to register the artifact containing " + interfaceName
+                        + " for indexing using quarkus.index-dependency.* family of properties"
+                        + " or you may want to add io.smallrye:jandex-maven-plugin to the module containing sources of "
+                        + interfaceName
+                        + ". See https://quarkus.io/guides/cdi-reference#bean_discovery for more information.");
+            }
             final AnnotationInstance webServiceAnnotation = interfaceInfo.annotation(CxfDotNames.WEBSERVICE_ANNOTATION);
             if (webServiceAnnotation != null) {
                 return interfaceInfo.name().toString();
