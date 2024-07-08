@@ -23,10 +23,10 @@ got fixed in {quarkus-cxf-project-name} 3.10.0.
 If there are two SEIs in one Java package, both having a `@WebMethod` with the same name but different signature,
 then the default name for the ASM-generated request, response and possibly other classes is the same for both methods of both classes.
 
-Before this version, no exception was thrown when this happened during the class generation.
+Before {quarkus-cxf-project-name} 3.10.0 and 3.8.4, no exception was thrown when this happened during the class generation.
 At runtime, only one set of those classes was present and calls to one of the clients failed inevitably.
 
-Since {quarkus-cxf-project-name} 3.10.0, the problem is detected at build time and the build fails.
+Since {quarkus-cxf-project-name} 3.10.0 and 3.8.4, the problem is detected at build time and the build fails.
 
 This was reported as issue https://github.com/quarkiverse/quarkus-cxf/issues/1326[#1326].
 We filed https://issues.apache.org/jira/browse/CXF-9003[CXF-9003] to see whether a proper solution is possible in CXF.
