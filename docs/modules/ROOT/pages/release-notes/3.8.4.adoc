@@ -1,32 +1,23 @@
-= {quarkus-cxf-project-name} 3.11.0 release notes
+= {quarkus-cxf-project-name} 3.8.4 (LTS) release notes
 
-== Important dependency upgrades
+== Important dependency upgrades:
 
-* Quarkus 3.10.x -> 3.11.0 - https://quarkus.io/blog/quarkus-3-11-0-released/[release notes]
+* Quarkus 3.8.3 -> 3.8.4 - https://quarkus.io/blog/quarkus-3-8-4-released/[release notes]
 
 == New and noteworthy in {quarkus-cxf-project-name}
 
-=== `@CXFEndpoint("/my-service")` - a new annotation for specifying the service endpoint path
+=== Sevice methods with the same name in the same Java package
 
-Since this {quarkus-cxf-project-name} 3.11.0, there is a new way to expose an endpoint under a specific path:
-the `@io.quarkiverse.cxf.annotation.CXFEndpoint` annotation.
-The path is set through its non-optional attribute `value` and it is relative to `quarkus.cxf.path` much like when this is done via `application.properties`.
+If there are two SEIs in one Java package, both having a `@WebMethod` with the same name but different signature,
+then the default name for the ASM-generated request, response and possibly other classes is the same for both methods of both classes.
 
-Here is basic example:
+Before {quarkus-cxf-project-name} 3.10.0 and 3.8.4, no exception was thrown when this happened during the class generation.
+At runtime, only one set of those classes was present and calls to one of the clients failed inevitably.
 
-[source,java]
-----
-@CXFEndpoint("/path-annotation")
-@WebService(serviceName = "HelloService", targetNamespace = "https://acme.org/my-service")
-public class HelloServiceImpl implements HelloService {
-    @Override
-    public String hello(String person) {
-        ...
-    }
-}
-----
+Since {quarkus-cxf-project-name} 3.10.0 and 3.8.4, the problem is detected at build time and the build fails.
 
-You can read more about `@CXFEndpoint` in the new chapter of {quarkus-cxf-project-name} called xref:user-guide/endpoints-and-paths.adoc[Service endpoints and paths].
+This was reported as issue https://github.com/quarkiverse/quarkus-cxf/issues/1326[#1326].
+We filed https://issues.apache.org/jira/browse/CXF-9003[CXF-9003] to see whether a proper solution is possible in CXF.
 
 === Interceptors set through `@InInterceptors` and similar annotations are now looked up in the CDI container
 
@@ -48,6 +39,12 @@ Since {quarkus-cxf-project-name} 3.11.0 and 3.8.4, the `wsdlLocation` attribute 
 
 This was originally reported as issue https://github.com/quarkiverse/quarkus-cxf/issues/557[#557].
 
+=== Other minor changes
+
+* Improved FIPS and OpenTelemetry related test coverage
+* Typos and minor rewordings in the documentation
+* Dependency management improvements
+
 == Full changelog
 
-https://github.com/quarkiverse/quarkus-cxf/compare/3.10.0+++...+++3.11.0
+https://github.com/quarkiverse/quarkus-cxf/compare/3.8.3...3.8.4
