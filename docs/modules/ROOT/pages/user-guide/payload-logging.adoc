@@ -28,26 +28,32 @@ There are several ways how you can set the feature on a client or service endpoi
 === Global settings
 
 The global logging options exist since {quarkus-cxf-project-name} 2.6.0.
-If enabled via `quarkus.cxf.logging.enabled = true`, {quarkus-cxf-project-name} creates a global `LoggingFeature` instance
-and sets it on every client and service endpoint in the application.
+They need to be enabled using `quarkus.cxf.logging.enabled-for`.
+There are four possible values:
+
+* `none` (default) - the global logging feature is enabled for neither clients nor service endpoints
+* `clients` - the global logging feature is enabled for all clients in the application
+* `services` - the global logging feature is enabled for all service endpoints in the application
+* `both` - the global logging feature is enabled for all clients and service endpoints in the application
+
 The global settings can be xref:#per-client-or-service-endpoind-payload-logging[overriden] on the client or service endpoint level.
 
 .application.properties
 [source,properties,subs=attributes+]
 ----
 # Global settings
-quarkus.cxf.logging.enabled = true
+quarkus.cxf.logging.enabled-for = both
 quarkus.cxf.logging.pretty = true
 ----
 
-All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-enabled[quarkus-cxf]` reference page.
+All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus-cxf]` reference page.
 
 [TIP]
 ====
 All logging properties mentioned on this page are *runtime* configuration options.
 Hence you can pass them when starting the application without having to rebuild it.
-It can be done either by passing a system property on the command line (e.g. `-Dquarkus.cxf.logging.enabled=true`)
-or by setting an environment variable (e.g. `export QUARKUS_CXF_LOGGING_ENABLED=true`).
+It can be done either by passing a system property on the command line (e.g. `-Dquarkus.cxf.logging.enabled-for=both`)
+or by setting an environment variable (e.g. `export QUARKUS_CXF_LOGGING_ENABLED_FOR=both`).
 ====
 
 [[per-client-or-service-endpoind-payload-logging]]
@@ -81,9 +87,9 @@ To attach an instance with default settings, you can do one of the following:
 [source,properties,subs=attributes+]
 ----
 # For a service:
-quarkus.cxf.endpoint."/hello".features=org.apache.cxf.ext.logging.LoggingFeature
+quarkus.cxf.endpoint."/hello".features = org.apache.cxf.ext.logging.LoggingFeature
 # For a client:
-quarkus.cxf.client."myClient".features=org.apache.cxf.ext.logging.LoggingFeature
+quarkus.cxf.client."myClient".features = org.apache.cxf.ext.logging.LoggingFeature
 ----
 +
 [TIP]
