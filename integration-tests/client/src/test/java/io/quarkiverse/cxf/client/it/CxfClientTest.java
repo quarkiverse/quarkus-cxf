@@ -28,9 +28,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import io.quarkiverse.cxf.CXFClientInfo;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.vertx.core.json.JsonObject;
 
 @QuarkusTest
 @QuarkusTestResource(CxfClientTestResource.class)
@@ -392,6 +394,14 @@ public class CxfClientTest {
     }
 
     /**
+     * Make sure that a request scoped client backed by Vert.x {@link io.vertx.core.http.HttpClient} does not leak threads
+     */
+    @Test
+    void soakRequestScopedVertxHttpClient() {
+        soak("requestScopedVertxHttpClient", VertxHttpClientHTTPConduit.class.getName());
+    }
+
+    /**
      * Make sure that a request scoped client backed by {@link HttpClient} does not leak threads
      * - see <a href=
      * "https://github.com/quarkiverse/quarkus-cxf/issues/992">https://github.com/quarkiverse/quarkus-cxf/issues/992</a>.
@@ -416,6 +426,24 @@ public class CxfClientTest {
                 .then()
                 .statusCode(200)
                 .body(CoreMatchers.is(expectedConduit));
+
+        /* Make sure that the clients injected into a @RequestScoped bean are re-initialized on each request */
+        final String calculatorBaseUri = ConfigProvider.getConfig().getValue("cxf.it.calculator.baseUri", String.class);
+        final String skewedCalculatorBaseUri = ConfigProvider.getConfig().getValue("cxf.it.skewed-calculator.baseUri",
+                String.class);
+        for (int i = 0; i < 2; i++) {
+            final String body = RestAssured.given()
+                    .get("/cxf/client/clientInfo/" + client + "/dynamicEndpointAddress")
+                    .then()
+                    .statusCode(200)
+                    .extract().body().asString();
+            JsonObject json = new JsonObject(body);
+            Assertions.assertThat(json.getString("urlBefore"))
+                    .isEqualTo(calculatorBaseUri + "/calculator-ws/CalculatorService");
+            Assertions.assertThat(json.getString("urlAfter"))
+                    .isEqualTo(skewedCalculatorBaseUri + "/calculator-ws/CalculatorService");
+            Assertions.assertThat(json.getString("result")).isEqualTo("107");
+        }
 
         final Random rnd = new Random();
         // we divide by 2 to avoid overflow

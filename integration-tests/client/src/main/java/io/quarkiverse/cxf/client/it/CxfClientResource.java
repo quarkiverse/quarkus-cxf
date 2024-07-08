@@ -16,10 +16,12 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.cxf.common.jaxb.JAXBUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.glassfish.jaxb.core.marshaller.CharacterEscapeHandler;
 import org.glassfish.jaxb.runtime.v2.runtime.JAXBContextImpl;
 import org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService;
@@ -28,6 +30,7 @@ import org.jboss.eap.quickstarts.wscalculator.calculator.Operands;
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.client.it.rtinit.ClientWithRuntimeInitializedPayload;
+import io.vertx.core.json.JsonObject;
 
 @Path("/cxf/client")
 public class CxfClientResource {
@@ -65,6 +68,9 @@ public class CxfClientResource {
 
     @Inject
     RequestScopedClients requestScopedClients;
+
+    @ConfigProperty(name = "cxf.it.skewed-calculator.baseUri")
+    String skewedCalculatorBaseUri;
 
     @GET
     @Path("/calculator/{client}/add")
@@ -161,7 +167,8 @@ public class CxfClientResource {
     @Path("/clientInfo/{client}/{key}")
     @Produces(MediaType.TEXT_PLAIN)
     public String clientInfo(@PathParam("client") String client, @PathParam("key") String key) {
-        final Client cl = ClientProxy.getClient(getClient(client));
+        final CalculatorService calculator = getClient(client);
+        final Client cl = ClientProxy.getClient(calculator);
         final Map<String, Object> requestContext = cl.getRequestContext();
         final CXFClientInfo clientInfo = (CXFClientInfo) requestContext.get(CXFClientInfo.class.getName());
 
@@ -172,6 +179,15 @@ public class CxfClientResource {
                 return clientInfo.getEndpointAddress();
             case "httpConduit":
                 return cl.getConduit().getClass().getName().toString();
+            case "dynamicEndpointAddress":
+                Map<String, Object> ctx = ((BindingProvider) calculator).getRequestContext();
+                JsonObject msg = new JsonObject();
+                msg.put("urlBefore", ctx.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY));
+                ctx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                        skewedCalculatorBaseUri + "/calculator-ws/CalculatorService");
+                msg.put("result", calculator.add(3, 4));
+                msg.put("urlAfter", ctx.get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY));
+                return msg.encodePrettily();
             default:
                 throw new IllegalStateException("Unexpected client key " + client);
         }
@@ -221,16 +237,19 @@ public class CxfClientResource {
     @RequestScoped
     public static class RequestScopedClients {
 
-        @Inject
+        @CXFClient("requestScopedVertxHttpClient")
+        CalculatorService requestScopedVertxHttpClient;
+
         @CXFClient("requestScopedHttpClient")
         CalculatorService requestScopedHttpClient;
 
-        @Inject
         @CXFClient("requestScopedUrlConnectionClient")
         CalculatorService requestScopedUrlConnectionClient;
 
         public CalculatorService getClient(String client) {
             switch (client) {
+                case "requestScopedVertxHttpClient":
+                    return requestScopedVertxHttpClient;
                 case "requestScopedHttpClient":
                     return requestScopedHttpClient;
                 case "requestScopedUrlConnectionClient":

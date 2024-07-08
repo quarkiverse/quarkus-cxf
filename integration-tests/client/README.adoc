@@ -29,7 +29,7 @@ curl http://localhost:8080/calculator-ws/CalculatorService?wsdl --output src/mai
 ----
 
 [[soak]]
-== `CxfClientTest.soakRequestScopedHttpClient()` and `CxfClientTest.soakRequestScopedUrlConnectionClient()`
+== `CxfClientTest.soakRequestScopedVertxHttpClient()`, `CxfClientTest.soakRequestScopedHttpClient()` and `CxfClientTest.soakRequestScopedUrlConnectionClient()`
 
 These tests are sensitive to some parameters, such as the number of iterations and acceptable deviation of number of
 threads.
@@ -38,6 +38,7 @@ threads.
 ----
 $ export QUARKUS_CXF_CLIENT_SOAK_ITERATIONS=300 # 300 is default
 $ export QUARKUS_CXF_CLIENT_SOAK_ACCEPTABLE_THREAD_COUNT_DEVIATION=5 # 5 is default
+$ mvn clean test -Dtest=CxfClientTest#soakRequestScopedVertxHttpClient
 $ mvn clean test -Dtest=CxfClientTest#soakRequestScopedHttpClient
 $ mvn clean test -Dtest=CxfClientTest#soakRequestScopedUrlConnectionClient
 ----
