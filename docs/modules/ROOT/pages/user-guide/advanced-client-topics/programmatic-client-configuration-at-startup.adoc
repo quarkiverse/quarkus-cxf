@@ -1,5 +1,4 @@
-[[code-config]]
-= Configure clients programmatically at application startup
+= Programmatic client configuration at startup
 
 To configure all clients at application startup, you can implement an `HTTPConduitConfigurer`
 and set it on the CXF Bus in an `StartupEvent` observer method.
