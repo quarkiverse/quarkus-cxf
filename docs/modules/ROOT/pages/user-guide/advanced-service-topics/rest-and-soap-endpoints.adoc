@@ -1,0 +1,85 @@
+[[rest-and-soap-endpoints]]
+= REST and SOAP Endpoints
+
+Sometimes a REST endpoint may be needed in the same project where the Quarkus CXF Extension is used.
+The REST endpoint path must be different from the SOAP endpoint path (in order to avoid request
+forwarding conflicts between both protocols).
+
+For example, if a WeatherWebService interface is declared in a WSDL, you can
+begin by creating the `org.acme.cxf.WeatherWebServiceImpl` class as follows:
+
+[source,java]
+----
+package org.acme.cxf;
+
+import ...
+
+@Slf4j
+@WebService(endpointInterface = "org.acme.cxf.WeatherWebService")
+public class WeatherWebServiceImpl implements WeatherWebService {
+
+    @Inject
+    BackEndWeatherService backEndWeatherService;
+
+    private Map<String, DailyTemperature> dailyTempByZipCode = Collections.synchronizedMap(new LinkedHashMap<>());
+
+    public WeatherWebServiceImpl() {
+        this.dailyTempByZipCode.addAll(
+                this.backEndWeatherService.getDailyForecast(Instant.now()));
+    }
+
+    @Override
+    public DailyTemperature estimationTemperatures(String zipCode) {
+        log.info("Daily estimation temperatures forecast called with '{}' zip code paramter", zipCode);
+        return this.dailyTempByZipCode.get(zipCode);
+    }
+}
+----
+
+After that, you would need to specify the root context for your CXF web services, as indicated
+in the link:../reference/extensions/quarkus-cxf.html#quarkus-cxf_quarkus-cxf-path[configuration documentation] to split the REST (with RESTEasy for example)
+and SOAP routes based on their root context paths.
+
+CXF's SOAP properties:
+[source,properties]
+----
+quarkus.cxf.path=/soap
+quarkus.cxf.endpoint."/weather".implementor=org.acme.cxf.WeatherWebServiceImpl
+----
+
+Now, imagine the following RESTEasy endpoint:
+
+[source,java]
+----
+package org.acme.reasteasy;
+
+import ...
+
+@Slf4j
+@Path("/healthcheck")
+public class HealthCheckResource {
+
+    @Inject
+    BackEndWeatherService backEndWeatherService;
+
+    @GET
+    public Response doHealthCheck() {
+        if(this.backEndWeatherService.isAvailable()) {
+            return Response.ok().build();
+        } else {
+            return Response.status(Response.Status.SERVICE_UNAVAILABLE);
+        }
+    }
+}
+----
+
+You can separate your REST endpoint by configuring the REASTEasy path:
+[source,properties]
+----
+quarkus.resteasy.path=/rest
+----
+
+You should now be able to send requests to both your REST and SOAP endpoints deployed within a single project, at:
+
+* http://localhost:8080/rest/healthcheck for REST
+* http://localhost:8080/soap/weather for SOAP

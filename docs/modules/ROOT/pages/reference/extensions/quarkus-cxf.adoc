@@ -59,16 +59,16 @@ There are several chapters in the xref:user-guide/index.adoc[User guide] coverin
 * xref:user-guide/payload-logging.adoc[Logging]
 * xref:user-guide/ssl.adoc[SSL]
 * xref:user-guide/auth.adoc[Authentication and authorization]
-* xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
-* xref:user-guide/running-behind-a-reverse-proxy.adoc[Running behind a reverse proxy]
-* xref:user-guide/generate-java-from-wsdl.adoc[Generate Java from WSDL]
-* xref:user-guide/generate-wsdl-from-java.adoc[Generate WSDL from Java]
+* xref:user-guide/advanced-soap-client-topics.adoc[Advanced client topics]
+* xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate Java from WSDL]
+* xref:user-guide/contract-first-code-first/generate-wsdl-from-java.adoc[Generate WSDL from Java]
 * xref:user-guide/contract-first-code-first.adoc[Contract first and code first]
-* xref:user-guide/cxf-interceptors-and-features.adoc[CXF Interceptors and Features]
-* xref:user-guide/jax-ws-handlers.adoc[JAX-WS Handlers]
-* xref:user-guide/jax-ws-providers.adoc[JAX-WS Providers]
+* xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[CXF Interceptors and Features]
+* xref:user-guide/interceptors-features-handlers/jax-ws-handlers.adoc[JAX-WS Handlers]
+* xref:user-guide/advanced-service-topics/jax-ws-providers.adoc[JAX-WS Providers]
 * xref:user-guide/examples.adoc[Examples]
-* xref:user-guide/common-problems-troubleshooting.adoc[Common problems and troubleshooting]
+* xref:user-guide/advanced-service-topics/rest-and-soap-endpoints.adoc[REST and SOAP Endpoints]
+* xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc[Running behind a reverse proxy]
 
 
 [id="quarkus-cxf-configuration"]
@@ -94,7 +94,7 @@ locations; otherwise `wsdl2java` is not executed.
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-includes]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-includes[quarkus.cxf.codegen.wsdl2java.includes]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of glob patterns for selecting WSDL files which should be processed with `wsdl2java` tool. The
 paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module.
@@ -147,7 +147,7 @@ and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (depre
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-excludes]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-excludes[quarkus.cxf.codegen.wsdl2java.excludes]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of path patterns for selecting WSDL files which should *not* be processed with `wsdl2java`
 tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or
@@ -158,7 +158,7 @@ Gradle module. Same syntax as `includes`.
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-output-directory]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-output-directory[quarkus.cxf.codegen.wsdl2java.output-directory]`
 .<| `string`
-.<| 
+.<|
 
 3+a|A directory into which the generated files will be written, either absolute or relative to the current Maven or
 Gradle module directory.
@@ -180,7 +180,7 @@ This will be passed as option `-d` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-package-names]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-package-names[quarkus.cxf.codegen.wsdl2java.package-names]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of tokens; each token can be one of the following:
 
@@ -195,7 +195,7 @@ This will be passed as option `-p` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-exclude-namespace-uris]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-exclude-namespace-uris[quarkus.cxf.codegen.wsdl2java.exclude-namespace-uris]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of WSDL schema namespace URIs to ignore when generating Java code.
 
@@ -206,7 +206,7 @@ This will be passed as option `-nexclude` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-service-name]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-service-name[quarkus.cxf.codegen.wsdl2java.service-name]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The WSDL service name to use for the generated code.
 
@@ -217,7 +217,7 @@ This will be passed as option `-sn` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-bindings]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-bindings[quarkus.cxf.codegen.wsdl2java.bindings]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A list of paths pointing at JAXWS or JAXB binding files or XMLBeans context files. The path to be either absolute or
 relative to the current Maven or Gradle module.
@@ -240,7 +240,7 @@ This will be passed as option `-validate` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-wsdl-location]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-wsdl-location[quarkus.cxf.codegen.wsdl2java.wsdl-location]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Specifies the value of the `@WebServiceClient` annotation's wsdlLocation property.
 
@@ -251,7 +251,7 @@ This will be passed as option `-wsdlLocation` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-xjc]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-xjc[quarkus.cxf.codegen.wsdl2java.xjc]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of XJC extensions to enable. The following extensions are available through
 `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency:
@@ -284,7 +284,7 @@ This will be passed as option `-exceptionSuper` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-async-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-async-methods[quarkus.cxf.codegen.wsdl2java.async-methods]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of SEI methods for which asynchronous sibling methods should be generated; similar to
 `enableAsyncMapping` in a JAX-WS binding file
@@ -296,7 +296,7 @@ This will be passed as option `-asyncMethods` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-bare-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-bare-methods[quarkus.cxf.codegen.wsdl2java.bare-methods]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of SEI methods for which wrapper style sibling methods should be generated; similar to
 `enableWrapperStyle` in JAX-WS binding file
@@ -308,7 +308,7 @@ This will be passed as option `-bareMethods` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-mime-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-mime-methods[quarkus.cxf.codegen.wsdl2java.mime-methods]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of SEI methods for which `mime:content` mapping should be enabled; similar to
 `enableMIMEContent` in JAX-WS binding file
@@ -320,7 +320,7 @@ This will be passed as option `-mimeMethods` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional command line parameters that should be passed to CXF `wsdl2java` tool along with
 the files selected by `includes` and `excludes`. Example: `-keep,-dex,false`. Check
@@ -341,7 +341,7 @@ options; otherwise `java2ws` is not executed.
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-includes]]`link:#quarkus-cxf_quarkus-cxf-java2ws-includes[quarkus.cxf.java2ws.includes]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of glob patterns for selecting class names which should be processed with `java2ws` tool. The
 glob syntax is specified in `io.quarkus.util.GlobUtil`. The patterns are matched against fully qualified class names,
@@ -389,7 +389,7 @@ If you would like to include the generated WSDL files in native image, you need 
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-excludes]]`link:#quarkus-cxf_quarkus-cxf-java2ws-excludes[quarkus.cxf.java2ws.excludes]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of glob patterns for selecting java class names which should *not* be processed with `java2ws`
 tool. Same syntax as `includes`.
@@ -399,7 +399,7 @@ tool. Same syntax as `includes`.
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-additional-params]]`link:#quarkus-cxf_quarkus-cxf-java2ws-additional-params[quarkus.cxf.java2ws.additional-params]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional command line parameters that should be passed to CXF `java2ws` tool along with
 the files selected by `includes` and `excludes`. Example: `-portname,12345`. Check
@@ -474,7 +474,7 @@ Larger values may give slight performance increases for large responses, at the 
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-http-conduit-factory]]`link:#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
 .<| `QuarkusCXFDefault`, `CXFDefault`, `VertxHttpClientHTTPConduitFactory`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
-.<| 
+.<|
 
 3+a|Select the `HTTPConduitFactory` implementation for all clients except the ones that override this setting via
 `quarkus.cxf.client."client-name".http-conduit-factory`.
@@ -499,7 +499,7 @@ HTTP client.
 
 .<| [[quarkus-cxf_quarkus-cxf-decoupled-endpoint-base]]`link:#quarkus-cxf_quarkus-cxf-decoupled-endpoint-base[quarkus.cxf.decoupled-endpoint-base]`
 .<| `string`
-.<| 
+.<|
 
 3+a|An URI base to use as a prefix of `quarkus.cxf.client."client-name".decoupled-endpoint`. You will typically want to set this
 to something like the following:
@@ -660,7 +660,7 @@ respectively.
 
 .<| [[quarkus-cxf_quarkus-cxf-logging-in-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-logging-in-binary-content-media-types[quarkus.cxf.logging.in-binary-content-media-types]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor`
 whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service
@@ -675,7 +675,7 @@ respectively.
 
 .<| [[quarkus-cxf_quarkus-cxf-logging-out-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-logging-out-binary-content-media-types[quarkus.cxf.logging.out-binary-content-media-types]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor`
 whose content will not be logged unless `log-binary` is `true`. This setting can be overridden per client or service
@@ -690,7 +690,7 @@ respectively.
 
 .<| [[quarkus-cxf_quarkus-cxf-logging-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-logging-binary-content-media-types[quarkus.cxf.logging.binary-content-media-types]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor`
 and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. This setting can be
@@ -705,7 +705,7 @@ respectively.
 
 .<| [[quarkus-cxf_quarkus-cxf-logging-sensitive-element-names]]`link:#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of XML elements containing sensitive information to be masked in the log. This setting can be
 overridden per client or service endpoint using
@@ -719,7 +719,7 @@ respectively.
 
 .<| [[quarkus-cxf_quarkus-cxf-logging-sensitive-protocol-header-names]]`link:#quarkus-cxf_quarkus-cxf-logging-sensitive-protocol-header-names[quarkus.cxf.logging.sensitive-protocol-header-names]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of protocol headers containing sensitive information to be masked in the log. This setting can
 be overridden per client or service endpoint using
@@ -733,7 +733,7 @@ respectively.
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-includes]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-includes[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".includes]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of glob patterns for selecting WSDL files which should be processed with `wsdl2java` tool. The
 paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or Gradle module.
@@ -786,7 +786,7 @@ and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (depre
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-excludes]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-excludes[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".excludes]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of path patterns for selecting WSDL files which should *not* be processed with `wsdl2java`
 tool. The paths are relative to `src/main/resources` or `src/test/resources` directories of the current Maven or
@@ -797,7 +797,7 @@ Gradle module. Same syntax as `includes`.
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-output-directory]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-output-directory[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".output-directory]`
 .<| `string`
-.<| 
+.<|
 
 3+a|A directory into which the generated files will be written, either absolute or relative to the current Maven or
 Gradle module directory.
@@ -819,7 +819,7 @@ This will be passed as option `-d` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-package-names]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-package-names[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".package-names]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of tokens; each token can be one of the following:
 
@@ -834,7 +834,7 @@ This will be passed as option `-p` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-exclude-namespace-uris]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-exclude-namespace-uris[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".exclude-namespace-uris]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of WSDL schema namespace URIs to ignore when generating Java code.
 
@@ -845,7 +845,7 @@ This will be passed as option `-nexclude` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-service-name]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-service-name[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".service-name]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The WSDL service name to use for the generated code.
 
@@ -856,7 +856,7 @@ This will be passed as option `-sn` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-bindings]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-bindings[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".bindings]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A list of paths pointing at JAXWS or JAXB binding files or XMLBeans context files. The path to be either absolute or
 relative to the current Maven or Gradle module.
@@ -879,7 +879,7 @@ This will be passed as option `-validate` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-wsdl-location]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-wsdl-location[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".wsdl-location]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Specifies the value of the `@WebServiceClient` annotation's wsdlLocation property.
 
@@ -890,7 +890,7 @@ This will be passed as option `-wsdlLocation` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-xjc]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-xjc[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".xjc]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of XJC extensions to enable. The following extensions are available through
 `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency:
@@ -923,7 +923,7 @@ This will be passed as option `-exceptionSuper` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-async-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-async-methods[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".async-methods]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of SEI methods for which asynchronous sibling methods should be generated; similar to
 `enableAsyncMapping` in a JAX-WS binding file
@@ -935,7 +935,7 @@ This will be passed as option `-asyncMethods` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-bare-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-bare-methods[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".bare-methods]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of SEI methods for which wrapper style sibling methods should be generated; similar to
 `enableWrapperStyle` in JAX-WS binding file
@@ -947,7 +947,7 @@ This will be passed as option `-bareMethods` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-mime-methods]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-mime-methods[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".mime-methods]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of SEI methods for which `mime:content` mapping should be enabled; similar to
 `enableMIMEContent` in JAX-WS binding file
@@ -959,7 +959,7 @@ This will be passed as option `-mimeMethods` to `wsdl2java`
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-additional-params]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-additional-params[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".additional-params]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional command line parameters that should be passed to CXF `wsdl2java` tool along with
 the files selected by `includes` and `excludes`. Example: `-keep,-dex,false`. Check
@@ -970,7 +970,7 @@ link:https://cxf.apache.org/docs/wsdl-to-java.html[`wsdl2java` documentation] fo
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-includes]]`link:#quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-includes[quarkus.cxf.java2ws."named-parameter-sets".includes]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of glob patterns for selecting class names which should be processed with `java2ws` tool. The
 glob syntax is specified in `io.quarkus.util.GlobUtil`. The patterns are matched against fully qualified class names,
@@ -1018,7 +1018,7 @@ If you would like to include the generated WSDL files in native image, you need 
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-excludes]]`link:#quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-excludes[quarkus.cxf.java2ws."named-parameter-sets".excludes]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of glob patterns for selecting java class names which should *not* be processed with `java2ws`
 tool. Same syntax as `includes`.
@@ -1028,7 +1028,7 @@ tool. Same syntax as `includes`.
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-additional-params]]`link:#quarkus-cxf_quarkus-cxf-java2ws-named-parameter-sets-additional-params[quarkus.cxf.java2ws."named-parameter-sets".additional-params]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional command line parameters that should be passed to CXF `java2ws` tool along with
 the files selected by `includes` and `excludes`. Example: `-portname,12345`. Check
@@ -1064,7 +1064,7 @@ and `build` for Gradle.
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-client-name-service-interface]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-service-interface[quarkus.cxf.client."client-name".service-interface]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The client service interface class name
 
@@ -1101,7 +1101,7 @@ native compiler.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-implementor]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-implementor[quarkus.cxf.endpoint."/endpoint-path".implementor]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The service endpoint implementation class
 
@@ -1110,7 +1110,7 @@ native compiler.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-wsdl]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-wsdl[quarkus.cxf.endpoint."/endpoint-path".wsdl]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The service endpoint WSDL path
 
@@ -1119,7 +1119,7 @@ native compiler.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-soap-binding]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-soap-binding[quarkus.cxf.endpoint."/endpoint-path".soap-binding]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The URL of the SOAP Binding, should be one of four values:
 
@@ -1133,7 +1133,7 @@ native compiler.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-published-endpoint-url]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-published-endpoint-url[quarkus.cxf.endpoint."/endpoint-path".published-endpoint-url]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The published service endpoint URL
 
@@ -1142,7 +1142,7 @@ native compiler.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-enabled[quarkus.cxf.endpoint."/endpoint-path".logging.enabled]`
 .<| `true`, `false`, `pretty`
-.<| 
+.<|
 
 3+a|If `true` or `pretty`, the message logging will be enabled; otherwise it will not be enabled. If the value is
 `pretty` (since 2.7.0), the `pretty` attribute will effectively be set to `true`. The default is given by
@@ -1153,7 +1153,7 @@ native compiler.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-pretty]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-pretty[quarkus.cxf.endpoint."/endpoint-path".logging.pretty]`
 .<| `boolean`
-.<| 
+.<|
 
 3+a|If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. The default is given
 by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
@@ -1163,7 +1163,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-limit]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-limit[quarkus.cxf.endpoint."/endpoint-path".logging.limit]`
 .<| `int`
-.<| 
+.<|
 
 3+a|A message length in bytes at which it is truncated in the log. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-limit[quarkus.cxf.logging.limit]`
@@ -1173,7 +1173,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-in-mem-threshold]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-in-mem-threshold[quarkus.cxf.endpoint."/endpoint-path".logging.in-mem-threshold]`
 .<| `long`
-.<| 
+.<|
 
 3+a|A message length in bytes at which it will be written to disk. `-1` is unlimited. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-in-mem-threshold[quarkus.cxf.logging.in-mem-threshold]`
@@ -1183,7 +1183,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-log-binary]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-log-binary[quarkus.cxf.endpoint."/endpoint-path".logging.log-binary]`
 .<| `boolean`
-.<| 
+.<|
 
 3+a|If `true`, binary payloads will be logged; otherwise they won't be logged. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-log-binary[quarkus.cxf.logging.log-binary]`
@@ -1193,7 +1193,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-log-multipart]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-log-multipart[quarkus.cxf.endpoint."/endpoint-path".logging.log-multipart]`
 .<| `boolean`
-.<| 
+.<|
 
 3+a|If `true`, multipart payloads will be logged; otherwise they won't be logged. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-log-multipart[quarkus.cxf.logging.log-multipart]`
@@ -1203,7 +1203,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-verbose]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-verbose[quarkus.cxf.endpoint."/endpoint-path".logging.verbose]`
 .<| `boolean`
-.<| 
+.<|
 
 3+a|If `true`, verbose logging will be enabled; otherwise it won't be enabled. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-verbose[quarkus.cxf.logging.verbose]`
@@ -1213,7 +1213,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-in-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-in-binary-content-media-types[quarkus.cxf.endpoint."/endpoint-path".logging.in-binary-content-media-types]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor`
 whose content will not be logged unless `log-binary` is `true`. The default is given by
@@ -1224,7 +1224,7 @@ whose content will not be logged unless `log-binary` is `true`. The default is g
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-out-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-out-binary-content-media-types[quarkus.cxf.endpoint."/endpoint-path".logging.out-binary-content-media-types]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor`
 whose content will not be logged unless `log-binary` is `true`. The default is given by
@@ -1235,7 +1235,7 @@ whose content will not be logged unless `log-binary` is `true`. The default is g
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-binary-content-media-types[quarkus.cxf.endpoint."/endpoint-path".logging.binary-content-media-types]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor`
 and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by
@@ -1246,7 +1246,7 @@ and `LoggingInInterceptor` whose content will not be logged unless `log-binary` 
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-sensitive-element-names]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-sensitive-element-names[quarkus.cxf.endpoint."/endpoint-path".logging.sensitive-element-names]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of XML elements containing sensitive information to be masked in the log. The default is given
 by `xref:#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
@@ -1256,7 +1256,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.lo
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-sensitive-protocol-header-names]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-sensitive-protocol-header-names[quarkus.cxf.endpoint."/endpoint-path".logging.sensitive-protocol-header-names]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of protocol headers containing sensitive information to be masked in the log. The default is
 given by
@@ -1267,7 +1267,7 @@ given by
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-features]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-features[quarkus.cxf.endpoint."/endpoint-path".features]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma-separated list of fully qualified CXF Feature class names or named CDI beans.
 
@@ -1304,7 +1304,7 @@ class Producers {
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-handlers]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-handlers[quarkus.cxf.endpoint."/endpoint-path".handlers]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of Handler classes
 
@@ -1313,7 +1313,7 @@ class Producers {
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-in-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-in-interceptors[quarkus.cxf.endpoint."/endpoint-path".in-interceptors]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of InInterceptor classes
 
@@ -1322,7 +1322,7 @@ class Producers {
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-out-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-out-interceptors[quarkus.cxf.endpoint."/endpoint-path".out-interceptors]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of OutInterceptor classes
 
@@ -1331,7 +1331,7 @@ class Producers {
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-out-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-out-fault-interceptors[quarkus.cxf.endpoint."/endpoint-path".out-fault-interceptors]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of OutFaultInterceptor classes
 
@@ -1340,7 +1340,7 @@ class Producers {
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-in-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-in-fault-interceptors[quarkus.cxf.endpoint."/endpoint-path".in-fault-interceptors]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of InFaultInterceptor classes
 
@@ -1349,7 +1349,7 @@ class Producers {
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-schema-validation-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-schema-validation-enabled-for[quarkus.cxf.endpoint."/endpoint-path".schema-validation.enabled-for]`
 .<| `in`, `request`, `out`, `response`, `both`, `none`
-.<| 
+.<|
 
 3+a|Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation will be
 enforced unless it is enabled by other means, such as `@org.apache.cxf.annotations.SchemaValidation` or
@@ -1360,7 +1360,7 @@ enforced unless it is enabled by other means, such as `@org.apache.cxf.annotatio
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-wsdl]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-wsdl[quarkus.cxf.client."client-name".wsdl]`
 .<| `string`
-.<| 
+.<|
 
 3+a|A URL, resource path or local filesystem path pointing to a WSDL document to use when generating the service proxy of
 this client.
@@ -1370,7 +1370,7 @@ this client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-soap-binding]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-soap-binding[quarkus.cxf.client."client-name".soap-binding]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The URL of the SOAP Binding, should be one of four values:
 
@@ -1384,7 +1384,7 @@ this client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-client-endpoint-url]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-client-endpoint-url[quarkus.cxf.client."client-name".client-endpoint-url]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The client endpoint URL
 
@@ -1393,7 +1393,7 @@ this client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-endpoint-namespace]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-endpoint-namespace[quarkus.cxf.client."client-name".endpoint-namespace]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The client endpoint namespace
 
@@ -1402,7 +1402,7 @@ this client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-endpoint-name]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-endpoint-name[quarkus.cxf.client."client-name".endpoint-name]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The client endpoint name
 
@@ -1411,7 +1411,7 @@ this client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The username for HTTP Basic authentication
 
@@ -1420,7 +1420,7 @@ this client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The password for HTTP Basic authentication
 
@@ -1439,7 +1439,7 @@ is set; otherwise the WSDL will be requested anonymously.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-enabled[quarkus.cxf.client."client-name".logging.enabled]`
 .<| `true`, `false`, `pretty`
-.<| 
+.<|
 
 3+a|If `true` or `pretty`, the message logging will be enabled; otherwise it will not be enabled. If the value is
 `pretty` (since 2.7.0), the `pretty` attribute will effectively be set to `true`. The default is given by
@@ -1450,7 +1450,7 @@ is set; otherwise the WSDL will be requested anonymously.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-pretty]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-pretty[quarkus.cxf.client."client-name".logging.pretty]`
 .<| `boolean`
-.<| 
+.<|
 
 3+a|If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. The default is given
 by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
@@ -1460,7 +1460,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-limit]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-limit[quarkus.cxf.client."client-name".logging.limit]`
 .<| `int`
-.<| 
+.<|
 
 3+a|A message length in bytes at which it is truncated in the log. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-limit[quarkus.cxf.logging.limit]`
@@ -1470,7 +1470,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-in-mem-threshold]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-in-mem-threshold[quarkus.cxf.client."client-name".logging.in-mem-threshold]`
 .<| `long`
-.<| 
+.<|
 
 3+a|A message length in bytes at which it will be written to disk. `-1` is unlimited. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-in-mem-threshold[quarkus.cxf.logging.in-mem-threshold]`
@@ -1480,7 +1480,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-log-binary]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-log-binary[quarkus.cxf.client."client-name".logging.log-binary]`
 .<| `boolean`
-.<| 
+.<|
 
 3+a|If `true`, binary payloads will be logged; otherwise they won't be logged. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-log-binary[quarkus.cxf.logging.log-binary]`
@@ -1490,7 +1490,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-log-multipart]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-log-multipart[quarkus.cxf.client."client-name".logging.log-multipart]`
 .<| `boolean`
-.<| 
+.<|
 
 3+a|If `true`, multipart payloads will be logged; otherwise they won't be logged. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-log-multipart[quarkus.cxf.logging.log-multipart]`
@@ -1500,7 +1500,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-verbose]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-verbose[quarkus.cxf.client."client-name".logging.verbose]`
 .<| `boolean`
-.<| 
+.<|
 
 3+a|If `true`, verbose logging will be enabled; otherwise it won't be enabled. The default is given by
 `xref:#quarkus-cxf_quarkus-cxf-logging-verbose[quarkus.cxf.logging.verbose]`
@@ -1510,7 +1510,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-in-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-in-binary-content-media-types[quarkus.cxf.client."client-name".logging.in-binary-content-media-types]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingInInterceptor`
 whose content will not be logged unless `log-binary` is `true`. The default is given by
@@ -1521,7 +1521,7 @@ whose content will not be logged unless `log-binary` is `true`. The default is g
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-out-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-out-binary-content-media-types[quarkus.cxf.client."client-name".logging.out-binary-content-media-types]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor`
 whose content will not be logged unless `log-binary` is `true`. The default is given by
@@ -1532,7 +1532,7 @@ whose content will not be logged unless `log-binary` is `true`. The default is g
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-binary-content-media-types]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-binary-content-media-types[quarkus.cxf.client."client-name".logging.binary-content-media-types]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of additional binary media types to add to the default values in the `LoggingOutInterceptor`
 and `LoggingInInterceptor` whose content will not be logged unless `log-binary` is `true`. The default is given by
@@ -1543,7 +1543,7 @@ and `LoggingInInterceptor` whose content will not be logged unless `log-binary` 
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-sensitive-element-names]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-sensitive-element-names[quarkus.cxf.client."client-name".logging.sensitive-element-names]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of XML elements containing sensitive information to be masked in the log. The default is given
 by `xref:#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
@@ -1553,7 +1553,7 @@ by `xref:#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.lo
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-logging-sensitive-protocol-header-names]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-logging-sensitive-protocol-header-names[quarkus.cxf.client."client-name".logging.sensitive-protocol-header-names]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma separated list of protocol headers containing sensitive information to be masked in the log. The default is
 given by
@@ -1564,7 +1564,7 @@ given by
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-features]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-features[quarkus.cxf.client."client-name".features]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|A comma-separated list of fully qualified CXF Feature class names.
 
@@ -1580,7 +1580,7 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-handlers]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-handlers[quarkus.cxf.client."client-name".handlers]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of Handler classes
 
@@ -1589,7 +1589,7 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-in-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-in-interceptors[quarkus.cxf.client."client-name".in-interceptors]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of InInterceptor classes
 
@@ -1598,7 +1598,7 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-out-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-out-interceptors[quarkus.cxf.client."client-name".out-interceptors]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of OutInterceptor classes
 
@@ -1607,7 +1607,7 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-out-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-out-fault-interceptors[quarkus.cxf.client."client-name".out-fault-interceptors]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of OutFaultInterceptor classes
 
@@ -1616,7 +1616,7 @@ quarkus.cxf.endpoint."/my-endpoint".features = org.apache.cxf.ext.logging.Loggin
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-in-fault-interceptors]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-in-fault-interceptors[quarkus.cxf.client."client-name".in-fault-interceptors]`
 .<| List of ``string``
-.<| 
+.<|
 
 3+a|The comma-separated list of InFaultInterceptor classes
 
@@ -1707,7 +1707,7 @@ chunk. If chunklen is less than or equal to zero, a default value will be used.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-accept]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-accept[quarkus.cxf.client."client-name".accept]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Specifies the MIME types the client is prepared to handle (e.g., HTML, JPEG, GIF, etc.)
 
@@ -1716,7 +1716,7 @@ chunk. If chunklen is less than or equal to zero, a default value will be used.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-accept-language]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-accept-language[quarkus.cxf.client."client-name".accept-language]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Specifies the language the client desires (e.g., English, French, etc.)
 
@@ -1725,7 +1725,7 @@ chunk. If chunklen is less than or equal to zero, a default value will be used.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-accept-encoding]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-accept-encoding[quarkus.cxf.client."client-name".accept-encoding]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Specifies the encoding the client is prepared to handle (e.g., gzip)
 
@@ -1734,7 +1734,7 @@ chunk. If chunklen is less than or equal to zero, a default value will be used.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-content-type]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-content-type[quarkus.cxf.client."client-name".content-type]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Specifies the content type of the stream being sent in a post request. (this should be text/xml for web services, or can
 be set to application/x-www-form-urlencoded if the client is sending form data).
@@ -1744,7 +1744,7 @@ be set to application/x-www-form-urlencoded if the client is sending form data).
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-host]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-host[quarkus.cxf.client."client-name".host]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Specifies the Internet host and port number of the resource on which the request is being invoked. This is sent by
 default based upon the URL. Certain DNS scenarios or application designs may request you to set this, but typically it is
@@ -1766,7 +1766,7 @@ the connection is reused. Many servers and proxies do not honor keep-alive reque
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-cache-control]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-cache-control[quarkus.cxf.client."client-name".cache-control]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Most commonly used to specify no-cache, however the standard supports a dozen or so caching related directives for
 requests
@@ -1788,7 +1788,7 @@ Some of these values might be unsupported by some `HTTPConduit` implementations.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-browser-type]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-browser-type[quarkus.cxf.client."client-name".browser-type]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The value of the `User-Agent` HTTP header.
 
@@ -1797,7 +1797,7 @@ Some of these values might be unsupported by some `HTTPConduit` implementations.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-decoupled-endpoint]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-decoupled-endpoint[quarkus.cxf.client."client-name".decoupled-endpoint]`
 .<| `string`
-.<| 
+.<|
 
 3+a|An URI path (starting with `/`) or a full URI for the receipt of responses over a separate provider -> consumer
 connection. If the value starts with `/`, then it is prefixed with the base URI configured via
@@ -1809,7 +1809,7 @@ message header.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-server]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Specifies the address of proxy server if one is used.
 
@@ -1818,7 +1818,7 @@ message header.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port[quarkus.cxf.client."client-name".proxy-server-port]`
 .<| `int`
-.<| 
+.<|
 
 3+a|Specifies the port number used by the proxy server.
 
@@ -1827,7 +1827,7 @@ message header.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts[quarkus.cxf.client."client-name".non-proxy-hosts]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Specifies the list of hostnames that will not use the proxy configuration. Examples:
 
@@ -1849,7 +1849,7 @@ message header.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-username[quarkus.cxf.client."client-name".proxy-username]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Username for the proxy authentication
 
@@ -1858,7 +1858,7 @@ message header.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Password for the proxy authentication
 
@@ -1867,7 +1867,7 @@ message header.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
 .<| `QuarkusCXFDefault`, `CXFDefault`, `VertxHttpClientHTTPConduitFactory`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
-.<| 
+.<|
 
 3+a|Select the `HTTPConduitFactory` implementation for this client.
 
@@ -1891,7 +1891,7 @@ underlying HTTP client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The key store location for this client. The resource is first looked up in the classpath, then in the file system.
 
@@ -1900,7 +1900,7 @@ underlying HTTP client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store-password[quarkus.cxf.client."client-name".key-store-password]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The key store password
 
@@ -1918,7 +1918,7 @@ underlying HTTP client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-password[quarkus.cxf.client."client-name".key-password]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The key password.
 
@@ -1927,7 +1927,7 @@ underlying HTTP client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-trust-store]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
 
@@ -1936,7 +1936,7 @@ underlying HTTP client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password[quarkus.cxf.client."client-name".trust-store-password]`
 .<| `string`
-.<| 
+.<|
 
 3+a|The trust store password.
 
@@ -1954,7 +1954,7 @@ underlying HTTP client.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-hostname-verifier]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-hostname-verifier[quarkus.cxf.client."client-name".hostname-verifier]`
 .<| `string`
-.<| 
+.<|
 
 3+a|Can be one of the following:
 
@@ -1971,7 +1971,7 @@ not specified, then the creation of the `HostnameVerifier` is delegated to CXF, 
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-schema-validation-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-schema-validation-enabled-for[quarkus.cxf.client."client-name".schema-validation.enabled-for]`
 .<| `in`, `request`, `out`, `response`, `both`, `none`
-.<| 
+.<|
 
 3+a|Select for which messages XML Schema validation should be enabled. If not specified, no XML Schema validation will be
 enforced unless it is enabled by other means, such as `@org.apache.cxf.annotations.SchemaValidation` or

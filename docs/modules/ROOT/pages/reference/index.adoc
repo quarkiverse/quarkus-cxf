@@ -102,9 +102,9 @@ Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the foll
 [[tools]]
 === Tools
 
-* `wsdl2Java` - see the xref:user-guide/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL
+* `wsdl2Java` - see the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL
 ] section of User guide
-* `java2ws` - see the xref:user-guide/generate-wsdl-from-java.adoc[Generate WSDL from Java] section of User guide
+* `java2ws` - see the xref:user-guide/contract-first-code-first/generate-wsdl-from-java.adoc[Generate WSDL from Java] section of User guide
 
 === Supported SOAP Bindings
 

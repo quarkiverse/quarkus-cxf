@@ -1,0 +1,16 @@
+= Configure multiple clients
+
+In the example above, we configured just a single client called `myCalculator`.
+Of course, you can configure multiple clients pointing at different URLs and/or implementing different SEIs using multiple identifiers:
+
+.application.properties
+[source,properties]
+----
+cxf.it.calculator.baseUri = http://localhost:8082
+include::example$calculator-client/application.properties[tag=first-soap-client.adoc]
+
+# another client
+quarkus.cxf.client.anotherCalculator.wsdl = https://acme.com/ws/WeatherService?wsdl
+quarkus.cxf.client.anotherCalculator.client-endpoint-url = https://acme.com/ws/WeatherService
+quarkus.cxf.client.anotherCalculator.service-interface = org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService
+----

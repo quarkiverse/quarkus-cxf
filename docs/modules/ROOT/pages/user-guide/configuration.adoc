@@ -10,7 +10,7 @@ https://quarkus.io/guides/config-reference[Quarkus configuration reference] for 
 == Bean references
 
 Several configuration options of {quarkus-cxf-project-name} allow referring to beans present in Quarkus CDI container.
-xref:user-guide/cxf-interceptors-and-features.adoc[Features and interceptors] are typical examples of those.
+xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[Features and interceptors] are typical examples of those.
 
 There are two ways how to set a bean reference in the configuration: by type or by bean name.
 
