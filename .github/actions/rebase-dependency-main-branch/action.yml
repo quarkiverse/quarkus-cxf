@@ -25,6 +25,9 @@ outputs:
   dependency-version:
     description: "The version of the dependency as present in the top pom.xml of its main branch"
     value: ${{ steps.rebuild-dependency.outputs.dependency-version }}
+  upgrade-message:
+    description: "The message of the commit upgrading the dependency version"
+    value: ${{ env.UPGRADE_MESSAGE }}
   exit-status:
     description: |
       A short string describing how the execution went. 
@@ -102,6 +105,7 @@ runs:
     - name: Set ${{ inputs.dependency-short-name }}.version to ${{ steps.rebuild-dependency.outputs.dependency-version }}
       shell: bash
       run: |
+        echo "UPGRADE_MESSAGE=Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.rebuild-dependency.outputs.dependency-version }}" >> $GITHUB_ENV
         echo "pom.xml before:"
         cat pom.xml | head -n 50
         echo "Setting ${{ inputs.dependency-short-name }}.version = ${{ steps.rebuild-dependency.outputs.dependency-version }}"
@@ -116,7 +120,7 @@ runs:
           git add -A
           echo "git status before commit"
           git status
-          git commit -m "Upgrade ${{ inputs.dependency-short-name }}.version to ${{ steps.rebuild-dependency.outputs.dependency-version }}"
+          git commit -m "${{ env.UPGRADE_MESSAGE }}"
         else
           echo "The ${{ inputs.dependency-short-name }}.version change was already committed"
           ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp

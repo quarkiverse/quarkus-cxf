@@ -43,6 +43,13 @@ jobs:
     - name: git push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
       shell: bash
       run: |
+        lastCommitMessage="$(git log -1 --pretty=%B)"
+        if [[ "$lastCommitMessage" == "${{ steps.rebase-dependency-main-branch.outputs.upgrade-message }}" ]]; then
+          echo "Removing last commit '$lastCommitMessage'"
+          git reset --hard HEAD~1
+        else
+          echo "Not removing the last commit because its message is not '${{ steps.rebase-dependency-main-branch.outputs.upgrade-message }}' but '$lastCommitMessage'"
+        fi
         git push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
 
     - name: Reopen issue https://github.com/${{ github.repository }}/issues/${{ env.ISSUE_ID }}
