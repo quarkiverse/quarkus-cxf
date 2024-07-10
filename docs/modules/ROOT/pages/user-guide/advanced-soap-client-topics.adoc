@@ -4,6 +4,6 @@ Check the following chapters for more details about implementing SOAP clients:
 
 * xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` defaults]
 * xref:user-guide/advanced-client-topics/configure-multiple-clients.adoc[Configure multiple clients]
-* xref:user-guide/advanced-client-topics/advanced-client-configuration.adoc[Advanced client configuration]
+* xref:user-guide/advanced-client-topics/configure-clients-programmatically-at-application-startup.adoc[Configure clients programmatically at application startup]
 * xref:user-guide/advanced-client-topics/pure-client-applications.adoc[Pure client applications]
 * xref:user-guide/advanced-client-topics/prevent-resource-leaks.adoc[Prevent resource leaks]

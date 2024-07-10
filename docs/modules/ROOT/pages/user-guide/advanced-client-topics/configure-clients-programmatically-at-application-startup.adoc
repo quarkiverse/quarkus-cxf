@@ -1,0 +1,32 @@
+[[code-config]]
+= Configure clients programmatically at application startup
+
+To configure all clients at application startup, you can implement an `HTTPConduitConfigurer`
+and set it on the CXF Bus in an `StartupEvent` observer method.
+
+In the example snippet below, we configure some aspects of the `HTTPClientPolicy`.
+The same approach can be leveraged to customize also `AuthorizationPolicy`, `ProxyAuthorizationPolicy` or even `TLSClientParameters` of your clients.
+
+[source,java]
+----
+import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.event.Observes;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transport.http.HTTPConduitConfigurer;
+...
+
+void onStart(@Observes StartupEvent ev) {
+
+     HTTPConduitConfigurer httpConduitConfigurer = new HTTPConduitConfigurer() {
+         public void configure(String name, String address, HTTPConduit conduit) {
+             conduit.getClient().setAllowChunking(false);
+             conduit.getClient().setAutoRedirect(true);
+         }
+     };
+
+     final Bus bus = BusFactory.getDefaultBus();
+     bus.setExtension(httpConduitConfigurer, HTTPConduitConfigurer.class);
+}
+----
