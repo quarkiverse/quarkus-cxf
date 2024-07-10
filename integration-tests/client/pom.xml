@@ -101,6 +101,12 @@
                                         <include>CxfClientRestResource.java</include>
                                     </includes>
                                 </resource>
+                                <resource>
+                                    <directory>src/main/java/io/quarkiverse/cxf/client/it</directory>
+                                    <includes>
+                                        <include>DynamicClientConfigRestResource.java</include>
+                                    </includes>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>

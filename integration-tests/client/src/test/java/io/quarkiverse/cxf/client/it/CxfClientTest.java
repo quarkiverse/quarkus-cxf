@@ -394,7 +394,8 @@ public class CxfClientTest {
     }
 
     /**
-     * Make sure that a request scoped client backed by Vert.x {@link io.vertx.core.http.HttpClient} does not leak threads
+     * Make sure that a request scoped client backed by Vert.x {@link io.vertx.core.http.HttpClient} does not leak
+     * threads
      */
     @Test
     void soakRequestScopedVertxHttpClient() {
@@ -418,6 +419,32 @@ public class CxfClientTest {
     @Test
     void soakRequestScopedUrlConnectionClient() {
         soak("requestScopedUrlConnectionClient", URLConnectionHTTPConduit.class.getName());
+    }
+
+    @Test
+    void dynamicClientConfiguration() {
+
+        final String calculatorBaseUri = ConfigProvider.getConfig().getValue("cxf.it.calculator.baseUri", String.class);
+        RestAssured.given()
+                .queryParam("a", 4)
+                .queryParam("b", 3)
+                .queryParam("baseUri", calculatorBaseUri)
+                .get("/cxf/dynamic-client/add")
+                .then()
+                .statusCode(200)
+                .body(is("7"));
+
+        final String skewedCalculatorBaseUri = ConfigProvider.getConfig().getValue("cxf.it.skewed-calculator.baseUri",
+                String.class);
+        RestAssured.given()
+                .queryParam("a", 4)
+                .queryParam("b", 3)
+                .queryParam("baseUri", skewedCalculatorBaseUri)
+                .get("/cxf/dynamic-client/add")
+                .then()
+                .statusCode(200)
+                .body(is("107"));
+
     }
 
     private void soak(String client, String expectedConduit) {
