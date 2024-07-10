@@ -52,7 +52,7 @@ All configuration properties are documented in the xref:reference/extensions/qua
 
 [TIP]
 ====
-Check the xref:user-guide/endpoints-and-paths.adoc[Service endpoints and paths] chapter
+Check the xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc[Service endpoints and paths] chapter
 to learn about alternative ways to expose a service endpoint under a specific path.
 ====
 

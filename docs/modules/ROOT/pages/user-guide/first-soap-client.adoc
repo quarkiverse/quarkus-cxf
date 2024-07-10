@@ -108,7 +108,7 @@ The last option tends to be the easiest and most flexible for client application
 
 [TIP]
 ====
-If you want to use this approach, first follow the xref:user-guide/generate-java-from-wsdl.adoc[Generate Java from WSDL] section and then continue with the next steps.
+If you want to use this approach, first follow the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate Java from WSDL] section and then continue with the next steps.
 ====
 
 == Using SEI as a client
@@ -167,4 +167,4 @@ where `11` is the correct result of adding `5` and `6`.
 You may want to proceed with
 
 * xref:user-guide/package-for-jvm-and-native.adoc[Package for JVM and native].
-* xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
+* xref:user-guide/advanced-soap-client-topics.adoc[Advanced client topics]

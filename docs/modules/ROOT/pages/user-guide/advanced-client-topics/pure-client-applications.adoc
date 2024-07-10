@@ -1,0 +1,10 @@
+[[pure-client]]
+= Pure client applications
+
+Quarkus batch (e.g. periodically scheduled), or command line applications, may do without an HTTP server.
+Use the property below to prevent launching the HTTP server at startup:
+
+[source,properties]
+----
+quarkus.http.host-enabled = false
+----

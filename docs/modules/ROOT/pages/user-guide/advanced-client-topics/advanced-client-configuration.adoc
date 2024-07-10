@@ -1,0 +1,26 @@
+[[code-config]]
+= Advanced client configuration
+
+To globally configure all clients in your application, you can use the example snippet below to configure the
+https://cxf.apache.org/docs/client-http-transport-including-ssl-support.html#ClientHTTPTransport(includingSSLsupport)-Usingjavacode[`HttpConduit`].
+This allows you to set the `HTTPClientPolicy`, `AuthorizationPolicy`, `ProxyAuthorizationPolicy` or even `TLSClientParameters` for your clients.
+
+[source,java]
+----
+void onStart(@Observes StartupEvent ev) {
+
+     HTTPConduitConfigurer httpConduitConfigurer = new HTTPConduitConfigurer() {
+         public void configure(String name, String address, HTTPConduit c) {
+             AsyncHTTPConduit conduit = (AsyncHTTPConduit)c;
+             // use setter to configure client
+             conduit.getHttpAsyncClient().getCredentialsProvider().setCredentials( AuthScope.ANY,
+              new NTCredentials( USER,PWD, "", DOM ) );
+             conduit.getClient().setAllowChunking( false );
+             conduit.getClient().setAutoRedirect( true );
+         }
+     };
+
+     final Bus bus = BusFactory.getDefaultBus();
+     bus.setExtension(httpConduitConfigurer, HTTPConduitConfigurer.class);
+}
+----

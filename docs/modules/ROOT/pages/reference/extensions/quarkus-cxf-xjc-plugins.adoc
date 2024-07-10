@@ -13,7 +13,7 @@ ifeval::[{doc-show-badges} == true]
 Stable • Since 1.5.11
 endif::[]
 
-XJC plugins for xref:user-guide/generate-java-from-wsdl.adoc[wsdl2java] code generation.
+XJC plugins for xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java] code generation.
 You'll need to add this extension if you want to use any of the following in
 xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]:
 
@@ -26,7 +26,7 @@ xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2
 
 [TIP]
 ====
-Check the xref:user-guide/generate-java-from-wsdl.adoc[wsdl2java] section of User guide for more details about `wsdl2java`.
+Check the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java] section of User guide for more details about `wsdl2java`.
 ====
 
 
