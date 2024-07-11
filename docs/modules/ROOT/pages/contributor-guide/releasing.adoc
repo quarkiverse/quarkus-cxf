@@ -23,6 +23,15 @@ After that, you need to do the following:
 * Merge it (without waiting for the CI jobs to pass)
 * Watch the associated https://github.com/quarkiverse/quarkus-cxf/actions/workflows/release.yml[Quarkiverse Release] job
 
+== Write release notes
+
+You may write the release notes while waiting for the artifacts to get available on Maven Central.
+Unfortunately, there is no automation for assembling the release notes yet.
+
+Check some of the
+https://github.com/quarkiverse/quarkus-cxf/pulls?q=is%3Apr+%22release+notes%22+in%3Atitle+is%3Aclosed[recent release notes]
+to learn about the format and from where the new page should be linked.
+
 == Upgrade in Quarkus Platform
 
 Once all artifacts are available on Maven Central, upgrade the Quarkus CXF version in Quarkus Platform:
@@ -51,4 +60,5 @@ $ git push your-fork upgrade-qcxf-$NEW_VERSION
 ----
 
 * Now create a new pull request out of your `upgrade-qcxf-$NEW_VERSION` branch.
+* Add the link to the release notes into the PR description, so that Quarkus team can reference it from their release notes.
 * Watch whether the CI jobs pass against your new pull request.
