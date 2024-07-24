@@ -2,6 +2,7 @@ package io.quarkiverse.cxf.deployment.test;
 
 import java.net.SocketTimeoutException;
 import java.net.http.HttpTimeoutException;
+import java.nio.channels.ClosedChannelException;
 import java.util.concurrent.TimeoutException;
 
 import jakarta.inject.Inject;
@@ -83,7 +84,11 @@ public class ClientReceiveTimeoutTest {
                 .assertThatExceptionOfType(WebServiceException.class)
                 .isThrownBy(() -> helloHttpClient.hello("Joe"))
                 .havingRootCause()
-                .isInstanceOfAny(HttpTimeoutException.class, TimeoutException.class);
+                .isInstanceOfAny(
+                        HttpTimeoutException.class,
+                        TimeoutException.class,
+                        ClosedChannelException.class // seen only on GitHub Actions
+                );
 
         Assertions.assertThat(ClientProxy.getClient(helloVertxClient).getConduit())
                 .isInstanceOf(VertxHttpClientHTTPConduit.class);
