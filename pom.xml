@@ -42,7 +42,7 @@
     </developers>
     <properties>
         <!-- Primary dependencies -->
-        <quarkus.version>3.12.2</quarkus.version>
+        <quarkus.version>3.13.0</quarkus.version>
         <cxf.version>4.0.4</cxf.version>
         <quarkus-antora.version>0.0.5.CR1</quarkus-antora.version>
 
@@ -300,7 +300,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
