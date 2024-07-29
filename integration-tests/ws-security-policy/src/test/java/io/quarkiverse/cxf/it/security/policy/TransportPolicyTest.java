@@ -13,7 +13,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
-import io.quarkiverse.cxf.QuarkusHTTPConduitFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 
@@ -162,7 +161,7 @@ public class TransportPolicyTest {
     @Test
     void helloIp() {
         final String expectedMessage;
-        HTTPConduitImpl defaultImpl = QuarkusHTTPConduitFactory.findDefaultHTTPConduitImpl();
+        HTTPConduitImpl defaultImpl = HTTPConduitImpl.findDefaultHTTPConduitImpl();
         switch (defaultImpl) {
             case VertxHttpClientHTTPConduitFactory:
                 expectedMessage = "The https URL hostname 127.0.0.1 does not match the Common Name (CN) on the server certificate in the client's truststore";

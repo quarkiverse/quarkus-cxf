@@ -86,10 +86,10 @@ public class ClientHttpPolicyDefaultsTest {
     void defaultConduitFactory() {
         final Bus bus = BusFactory.getDefaultBus();
         final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
-        Assertions.assertThat(factory).isInstanceOf(VertxHttpClientHTTPConduitFactory.class);
+        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl.findDefaultHTTPConduitImpl();
+        Assertions.assertThat(factory).isInstanceOf(defaultImpl.newHTTPConduitFactory().getClass());
 
         final Client client = ClientProxy.getClient(helloService);
-        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.QuarkusHTTPConduitFactory.findDefaultHTTPConduitImpl();
         switch (defaultImpl) {
             case VertxHttpClientHTTPConduitFactory:
                 Assertions.assertThat(client.getConduit()).isInstanceOf(VertxHttpClientHTTPConduit.class);

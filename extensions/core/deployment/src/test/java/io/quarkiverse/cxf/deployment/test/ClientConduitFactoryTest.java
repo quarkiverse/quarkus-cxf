@@ -74,9 +74,10 @@ public class ClientConduitFactoryTest {
     void conduitFactory() {
         final Bus bus = BusFactory.getDefaultBus();
         final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
-        Assertions.assertThat(factory).isInstanceOf(VertxHttpClientHTTPConduitFactory.class);
+        final HTTPConduitImpl impl = HTTPConduitImpl.findDefaultHTTPConduitImpl();
+        Assertions.assertThat(factory).isInstanceOf(impl.newHTTPConduitFactory().getClass());
 
-        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.QuarkusHTTPConduitFactory.findDefaultHTTPConduitImpl();
+        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl.findDefaultHTTPConduitImpl();
         {
             final HelloService service = helloDefault;
             final Client client = ClientProxy.getClient(service);

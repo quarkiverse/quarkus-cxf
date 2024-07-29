@@ -11,10 +11,10 @@ import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.jboss.logging.Logger;
 
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Supplier;
+import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.annotation.CXFEndpoint;
 import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkiverse.cxf.transport.VertxDestinationFactory;
-import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduitFactory;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.runtime.RuntimeValue;
@@ -272,24 +272,16 @@ public class CXFRecorder {
         QuarkusBusFactory.addBusCustomizer(customizer.getValue());
     }
 
-    public RuntimeValue<Consumer<Bus>> setVertxHttpClientHTTPConduitFactory() {
-        return new RuntimeValue<>(bus -> bus.setExtension(new VertxHttpClientHTTPConduitFactory(), HTTPConduitFactory.class));
-    }
-
-    public RuntimeValue<Consumer<Bus>> setURLConnectionHTTPConduitFactory() {
-        return new RuntimeValue<>(bus -> bus.setExtension(new URLConnectionHTTPConduitFactory(), HTTPConduitFactory.class));
-    }
-
-    public RuntimeValue<Consumer<Bus>> setHttpClientHTTPConduitFactory() {
-        return new RuntimeValue<>(bus -> bus.setExtension(new HttpClientHTTPConduitFactory(), HTTPConduitFactory.class));
-    }
-
     public void setHc5Present() {
         hc5Present = true;
     }
 
     public static boolean isHc5Present() {
         return hc5Present;
+    }
+
+    public RuntimeValue<Consumer<Bus>> setBusHTTPConduitFactory(HTTPConduitImpl factory) {
+        return new RuntimeValue<>(bus -> bus.setExtension(factory.newHTTPConduitFactory(), HTTPConduitFactory.class));
     }
 
 }

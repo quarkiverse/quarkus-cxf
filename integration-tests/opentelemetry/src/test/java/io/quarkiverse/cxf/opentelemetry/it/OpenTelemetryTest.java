@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import io.opentelemetry.api.trace.SpanKind;
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
-import io.quarkiverse.cxf.QuarkusHTTPConduitFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;
@@ -35,7 +34,7 @@ public class OpenTelemetryTest {
     @Test
     void span() {
         final int spanCount;
-        final HTTPConduitImpl defaultImpl = QuarkusHTTPConduitFactory.findDefaultHTTPConduitImpl();
+        final HTTPConduitImpl defaultImpl = HTTPConduitImpl.findDefaultHTTPConduitImpl();
         switch (defaultImpl) {
             case VertxHttpClientHTTPConduitFactory:
                 spanCount = 5;
@@ -123,7 +122,7 @@ public class OpenTelemetryTest {
     @Test
     void traced() {
         final int spanCount;
-        final HTTPConduitImpl defaultImpl = QuarkusHTTPConduitFactory.findDefaultHTTPConduitImpl();
+        final HTTPConduitImpl defaultImpl = HTTPConduitImpl.findDefaultHTTPConduitImpl();
         switch (defaultImpl) {
             case VertxHttpClientHTTPConduitFactory:
                 spanCount = 6;

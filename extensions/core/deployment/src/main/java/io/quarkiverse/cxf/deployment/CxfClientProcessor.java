@@ -495,13 +495,9 @@ public class CxfClientProcessor {
                 break;
             case QuarkusCXFDefault:
             case VertxHttpClientHTTPConduitFactory:
-                customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setVertxHttpClientHTTPConduitFactory()));
-                break;
             case URLConnectionHTTPConduitFactory:
-                customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setURLConnectionHTTPConduitFactory()));
-                break;
             case HttpClientHTTPConduitFactory: {
-                customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setHttpClientHTTPConduitFactory()));
+                customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setBusHTTPConduitFactory(factory)));
                 break;
             }
             default:

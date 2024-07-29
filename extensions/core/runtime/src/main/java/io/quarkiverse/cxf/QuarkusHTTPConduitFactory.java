@@ -47,7 +47,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
      * This is only for testing while VertxHttpClientHTTPConduitFactory is not stable.
      */
     public static final String QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY = "QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY";
-    private static HTTPConduitImpl defaultHTTPConduitImpl;
+    static HTTPConduitImpl defaultHTTPConduitImpl;
 
     private final HttpClientPool httpClientPool;
     private final CxfFixedConfig cxFixedConfig;
@@ -68,7 +68,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         this.cxfClientInfo = cxfClientInfo;
         this.busHTTPConduitFactory = busHTTPConduitFactory;
         this.authorizationPolicy = authorizationPolicy;
-        this.defaultHTTPConduitFactory = findDefaultHTTPConduitImpl();
+        this.defaultHTTPConduitFactory = HTTPConduitImpl.findDefaultHTTPConduitImpl();
     }
 
     @Override
@@ -120,7 +120,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                     }
                     default:
                         throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
-                                + httpConduitImpl);
+                                + defaultHTTPConduitFactory);
                 }
                 break;
             case VertxHttpClientHTTPConduitFactory: {
@@ -140,16 +140,6 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                         + httpConduitImpl);
         }
         return configure(result, cxfClientInfo);
-    }
-
-    public static HTTPConduitImpl findDefaultHTTPConduitImpl() {
-        if (defaultHTTPConduitImpl == null) {
-            final String defaultName = System.getenv(QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY);
-            defaultHTTPConduitImpl = defaultName == null || defaultName.isEmpty()
-                    ? HTTPConduitImpl.URLConnectionHTTPConduitFactory
-                    : HTTPConduitImpl.valueOf(defaultName);
-        }
-        return defaultHTTPConduitImpl;
     }
 
     private HTTPConduit configure(HTTPConduit httpConduit, CXFClientInfo cxfClientInfo) throws IOException {
