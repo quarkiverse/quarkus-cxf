@@ -27,12 +27,26 @@ image::code.quarkus.io.png[https://code.quarkus.io]
 * Click the blue `Generate your application` button to download a basic skeleton project.
 * Unpack the zip file and import the project the into your favorite IDE.
 
+[[quarkus-platform]]
+== Quarkus Platform
+
+{quarkus-cxf-project-name} is a part of Quarkus Platform since Quarkus Platform version 3.1.0.Final.
+
+Quarkus Platform aggregates Quarkus extensions produced by various independent projects,
+such as Quarkus Core, {quarkus-cxf-project-name}, Apache Camel, Qpid JMS, Debezium and others.
+
+Its main goals are:
+
+* Produce BOMs aligned across all participating projects, thus ensuring that their extensions will work together
+* Produce metadata for https://{link-quarkus-code-generator}[{link-quarkus-code-generator}] and other https://quarkus.io/guides/tooling#build-tool[Quarkus development tools].
+
 [[dependency-management]]
 == Dependency management
 
-{quarkus-cxf-project-name} is a part of Quarkus Platform since Quarkus Platform version 3.1.0.Final.
-Among other things, this means that https://{link-quarkus-code-generator}[{link-quarkus-code-generator}]
-and other https://quarkus.io/guides/tooling#build-tool[Quarkus development tools] generate projects with proper dependency management:
+We recommend using Quarkus Platform BOMs to manage {quarkus-cxf-project-name} dependencies.
+That's exactly what you get,
+when you use https://{link-quarkus-code-generator}[{link-quarkus-code-generator}]
+or other https://quarkus.io/guides/tooling#build-tool[Quarkus development tools], such as Quarkus CLI.
 
 [source,xml,subs=attributes+]
 ----

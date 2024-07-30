@@ -1,20 +1,26 @@
 = Release notes
 
+ifeval::[{doc-is-main} != true]
+Check the `dev` version of the documentation for the https://docs.quarkiverse.io/quarkus-cxf/dev/release-notes/index.html[list of release notes] documents.
+endif::[]
+ifeval::[{doc-is-main} == true]
 Release notes documents for major and minor releases are listed in this section.
+See also xref:release-planning.adoc[Release planning].
 
-[[version-table]]
-== Version table
-
-This table shows
-
-* Which {quarkus-cxf-project-name} version is available in which Quarkus Platform version
-* Which {quarkus-cxf-project-name} version depends on which CXF version
+[NOTE]
+====
+The values in the Release date column refer to release dates of {quarkus-cxf-project-name}.
+We recommend using xref:user-guide/create-project.adoc#quarkus-platform[Quarkus Platform BOMs]
+for managing {quarkus-cxf-project-name} dependencies.
+Those are typically released on Wednesday following the {quarkus-cxf-project-name} release date.
+====
 
 [%autowidth,stripes=hover]
 |===
 | Quarkus CXF | Release date | Quarkus Platform | CXF
 
-| xref:release-notes/3.13.0.adoc[3.13.0] | 2024-07-25 | 3.13 | 4.0.4
+| xref:release-notes/3.13.1.adoc[3.13.1] | 2024-07-30 | 3.13.0 | 4.0.5
+| xref:release-notes/3.13.0.adoc[3.13.0] | 2024-07-25 | | 4.0.4
 
 | xref:release-notes/3.12.0.adoc[3.12.0] | 2024-06-19 | 3.12 | 4.0.4
 
@@ -89,3 +95,4 @@ This table shows
 | 1.5.0 |  | 2.13 | 3.5.3
 
 |===
+endif::[]
