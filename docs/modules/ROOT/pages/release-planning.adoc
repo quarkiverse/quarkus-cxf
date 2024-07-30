@@ -1,0 +1,28 @@
+= Release planning
+
+== Major and minor releases
+
+Major and minor releases of {quarkus-cxf-project-name} mostly follow the
+https://github.com/quarkusio/quarkus/wiki/Release-Planning[release schedule of Quarkus].
+
+Quarkus Core is typically released on a Wednesday (roughly) once a month.
+We normally release {quarkus-cxf-project-name} in the week after that
+and we subsequently send an upgrade to xref:user-guide/create-project.adoc#quarkus-platform[Quarkus Platform].
+Quarkus Platform is then released on the following Wednesday.
+
+An example:
+
+* Wed June 19th - Quarkus Core 2.12.0
+* Thu June 20th - {quarkus-cxf-project-name} 2.12.0
+* Wed June 26th - Quarkus Platform 2.12.0 containing {quarkus-cxf-project-name} 2.12.0
+
+Hence to use {quarkus-cxf-project-name} 2.12.0 you'll best wait for Quarkus Platform 2.12.0 that appears within a week after {quarkus-cxf-project-name} 2.12.0.
+
+== Long term support (LTS) versions
+
+We typically produce patch releases only for LTS streams.
+We choose the same `major.minor` for LTS as Quarkus.
+
+== See also
+
+* xref:release-notes/index.adoc[Release notes]
