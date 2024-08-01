@@ -77,7 +77,7 @@ jobs:
             ${{ env.ISSUE_ID }}
         fi
       env:
-        GH_TOKEN: ${{ secrets.QUARKIVERSEBOT_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Close issue https://github.com/${{ github.repository }}/issues/${{ env.ISSUE_ID }}
       if: ${{ success() }}
@@ -93,5 +93,5 @@ jobs:
             ${{ env.ISSUE_ID }}
         fi
       env:
-        GH_TOKEN: ${{ secrets.QUARKIVERSEBOT_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
