@@ -35,6 +35,11 @@ jobs:
         issue-id: ${{ env.ISSUE_ID }}
         token: "${{ secrets.QUARKIVERSEBOT_TOKEN }}"
 
+    - name: Show steps.rebase-dependency-main-branch.outputs.exit-status
+      shell: bash
+      run: |
+        echo "steps.rebuild-dependency.outputs.exit-status: ${{ steps.rebase-dependency-main-branch.outputs.exit-status }}"
+
     - name: build-and-run-jvm-tests
       uses: ./.github/actions/build-and-run-jvm-tests
       with:
@@ -44,6 +49,7 @@ jobs:
       shell: bash
       run: |
         lastCommitMessage="$(git log -1 --pretty=%B)"
+        echo "Comparing last commit message '$lastCommitMessage' with '${{ steps.rebase-dependency-main-branch.outputs.upgrade-message }}'"
         if [[ "$lastCommitMessage" == "${{ steps.rebase-dependency-main-branch.outputs.upgrade-message }}" ]]; then
           echo "Removing last commit '$lastCommitMessage'"
           git reset --hard HEAD~1
