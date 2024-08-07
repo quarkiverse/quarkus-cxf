@@ -1,5 +1,9 @@
 = Release notes
 
+ifeval::[{doc-is-main} != true]
+Check the `dev` version of the documentation for the https://docs.quarkiverse.io/quarkus-cxf/dev/release-notes/index.html[list of release notes] documents.
+endif::[]
+ifeval::[{doc-is-main} == true]
 Release notes documents for major and minor releases are listed in this section.
 
 [[version-table]]
@@ -84,3 +88,4 @@ This table shows
 | 1.5.0 |  | 2.13 | 3.5.3
 
 |===
+endif::[]
