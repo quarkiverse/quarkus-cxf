@@ -16,6 +16,7 @@ asciidoc:
     doc-show-advanced-features: true # Whether documentation relating to advanced features is rendered
     doc-show-user-guide-link: true # Whether the user guide link is rendered in component extensions
     doc-show-extra-content: false # Whether additional content hosted in external AsciiDoc files should be loaded via an include:: directive
+    doc-is-main: false # Release notes and release planning are only shown and maintained in the main branch
 
     quarkus-cxf-project-name: Quarkus CXF
 
