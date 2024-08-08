@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.quarkiverse.cxf</groupId>
+        <artifactId>quarkus-cxf-integration-tracing-opentelemetry-parent</artifactId>
+        <version>3.8.6-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>quarkus-cxf-integration-tracing-opentelemetry-semconv-compat</artifactId>
+    <name>Quarkus CXF - OpenTelemetry - opentelemetry-semconv compatibility classes</name>
+    <description>Classes added in opentelemetry-semconv 1.24.0-alpha needed to make CXF 4.0.5+ work on Quarkus 3.8 that uses opentelemetry-semconv 1.21.0-alpha - see also https://github.com/quarkiverse/quarkus-cxf/issues/1465</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-integration-tracing-opentelemetry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-opentelemetry</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
