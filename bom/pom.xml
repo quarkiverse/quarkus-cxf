@@ -177,6 +177,11 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-integration-tracing-opentelemetry-semconv-compat</artifactId>
+                <version>${quarkus-cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-rt-features-logging</artifactId>
                 <version>${quarkus-cxf.version}</version>
             </dependency>
