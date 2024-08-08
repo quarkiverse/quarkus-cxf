@@ -160,10 +160,16 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 : uri.getPath();
         requestOptions
                 .setMethod(method)
-                .setPort(uri.getPort())
                 .setHost(uri.getHost())
                 .setURI(pathAndQuery)
                 .setConnectTimeout(determineConnectionTimeout(message, csPolicy));
+
+        final int port = uri.getPort();
+        if (port >= 0) {
+            requestOptions
+                    .setPort(uri.getPort());
+        }
+
         final RequestContext requestContext = new RequestContext(
                 uri,
                 requestOptions,
