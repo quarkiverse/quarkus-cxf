@@ -44,6 +44,7 @@
         <!-- Primary dependencies -->
         <quarkus.version>3.13.2</quarkus.version>
         <cxf.version>4.0.5</cxf.version>
+        <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
         <quarkus-antora.version>0.0.5.CR1</quarkus-antora.version>
 
         <!-- Other compile dependency versions (keep sorted alphabetically) -->
@@ -290,7 +291,7 @@
                     <dependency>
                         <groupId>io.quarkus</groupId>
                         <artifactId>quarkus-enforcer-rules</artifactId>
-                        <version>${quarkus.version}</version>
+                        <version>${quarkus-enforcer-rules.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>
