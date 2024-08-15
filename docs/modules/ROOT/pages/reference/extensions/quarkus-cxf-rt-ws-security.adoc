@@ -237,8 +237,7 @@ implementation used to construct SAML Assertions.
 *Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-signature-properties-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-signature-properties-signature-properties[quarkus.cxf.client."client-name".security.signature.properties."signature-properties"]`
-.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
-`
+.<| `Map<String,String>`
 .<| 
 
 3+a|The Crypto property configuration to use for signing, if `signature.crypto` is not set.
@@ -257,8 +256,7 @@ org.apache.ws.security.components.crypto.Merlin
 *Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-properties-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-encryption-properties-encryption-properties[quarkus.cxf.client."client-name".security.encryption.properties."encryption-properties"]`
-.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
-`
+.<| `Map<String,String>`
 .<| 
 
 3+a|The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
@@ -1375,8 +1373,7 @@ whose public key is in the service's truststore (defined in `encrypt.properties`
 *Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-properties-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-encryption-properties-encryption-properties[quarkus.cxf.client."client-name".security.sts.client.encryption.properties."encryption-properties"]`
-.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
-`
+.<| `Map<String,String>`
 .<| 
 
 3+a|The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
@@ -1421,8 +1418,7 @@ These are also used by the `token.properties` to send/process any RSA/DSAKeyValu
 *Since Quarkus CXF*: 3.8.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-properties-token-properties]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client-token-properties-token-properties[quarkus.cxf.client."client-name".security.sts.client.token.properties."token-properties"]`
-.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
-`
+.<| `Map<String,String>`
 .<| 
 
 3+a|The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.
@@ -1547,8 +1543,7 @@ implementation used to construct SAML Assertions.
 *Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-properties-signature-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-signature-properties-signature-properties[quarkus.cxf.endpoint."/endpoint-path".security.signature.properties."signature-properties"]`
-.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
-`
+.<| `Map<String,String>`
 .<| 
 
 3+a|The Crypto property configuration to use for signing, if `signature.crypto` is not set.
@@ -1567,8 +1562,7 @@ org.apache.ws.security.components.crypto.Merlin
 *Since Quarkus CXF*: 2.5.0
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-properties-encryption-properties]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-encryption-properties-encryption-properties[quarkus.cxf.endpoint."/endpoint-path".security.encryption.properties."encryption-properties"]`
-.<| `link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
-`
+.<| `Map<String,String>`
 .<| 
 
 3+a|The Crypto property configuration to use for encryption, if `encryption.crypto` is not set.

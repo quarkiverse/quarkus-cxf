@@ -10,6 +10,7 @@ import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
 import io.quarkiverse.cxf.LoggingConfig.PerClientOrServiceLoggingConfig;
+import io.quarkus.runtime.annotations.ConfigDocEnum;
 import io.quarkus.runtime.annotations.ConfigDocEnumValue;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.smallrye.config.WithConverter;
@@ -291,8 +292,9 @@ public interface CxfClientConfig {
      * @since 2.2.3
      * @asciidoclet
      */
-    @WithDefault("Keep-Alive")
+    @WithDefault("keep-alive")
     @WithConverter(ConnectionTypeConverter.class)
+    @ConfigDocEnum(enforceHyphenateValues = true)
     public ConnectionType connection();
 
     /**
