@@ -42,7 +42,7 @@
     </developers>
     <properties>
         <!-- Primary dependencies -->
-        <quarkus.version>3.13.2</quarkus.version>
+        <quarkus.version>3.14.0.CR1</quarkus.version>
         <cxf.version>4.0.5</cxf.version>
         <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
         <quarkus-antora.version>0.0.5.CR1</quarkus-antora.version>
@@ -74,7 +74,7 @@
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
-        <cq-maven-plugin.version>4.9.2</cq-maven-plugin.version>
+        <cq-maven-plugin.version>4.10.0</cq-maven-plugin.version>
         <exec-maven-plugin.version>3.4.1</exec-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <groovy.version>3.0.22</groovy.version>
@@ -260,6 +260,7 @@
                         <ownLinkPattern>\Qlink:http\Es?\Q://docs.quarkiverse.io/quarkus-cxf/dev/\E([^\[]+).html</ownLinkPattern>
                         <configOptionExcludes>
                             <configOptionExclude>^quarkus\.cxf\.internal</configOptionExclude>
+                            <configOptionExclude>^quarkus\.cxf\.wsdl-path</configOptionExclude>
                         </configOptionExcludes>
                         <descriptionReplacements>
                             <descriptionReplacement>&amp;#64;/@</descriptionReplacement>
@@ -302,7 +303,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
