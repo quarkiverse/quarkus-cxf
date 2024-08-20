@@ -103,6 +103,11 @@ public interface CxfOpenTelemetryConfig {
              * If `true` and if `quarkus.cxf.otel.enabled-for` is set to `both` or `services` then the `OpenTelemetryFeature`
              * will be added to this service endpoint; otherwise the feature will not be added to this service endpoint.
              *
+             * `quarkus.otel.enabled` and `quarkus.otel.sdk.disabled` also impact whether the CXF telemetry data is
+             * collected. Check
+             * https://quarkus.io/guides/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus OpenTelemetry
+             * guide].
+             *
              * @since 2.7.0
              * @asciidoclet
              */
@@ -118,6 +123,10 @@ public interface CxfOpenTelemetryConfig {
          * Specifies whether the OpenTelemetry tracing will be enabled for clients, services, both or none. This global setting
          * can be overridden per client or service endpoint using the `quarkus.cxf.client."client-name".otel.enabled` or
          * `quarkus.cxf.endpoint."/endpoint-path".otel.enabled` option respectively.
+         *
+         * `quarkus.otel.enabled` and `quarkus.otel.sdk.disabled` also impact whether the CXF telemetry data is
+         * collected. Check https://quarkus.io/guides/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus
+         * OpenTelemetry guide].
          *
          * @since 2.7.0
          * @asciidoclet

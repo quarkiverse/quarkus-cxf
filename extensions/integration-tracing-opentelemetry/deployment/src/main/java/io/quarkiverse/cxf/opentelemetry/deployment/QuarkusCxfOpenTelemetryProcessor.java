@@ -5,6 +5,7 @@ import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
+import io.quarkus.opentelemetry.deployment.OpenTelemetryEnabled;
 
 public class QuarkusCxfOpenTelemetryProcessor {
 
@@ -15,7 +16,7 @@ public class QuarkusCxfOpenTelemetryProcessor {
         return new FeatureBuildItem(FEATURE);
     }
 
-    @BuildStep
+    @BuildStep(onlyIf = OpenTelemetryEnabled.class)
     void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
         additionalBeans.produce(
                 new AdditionalBeanBuildItem(OpenTelemetryCustomizer.class));
