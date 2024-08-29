@@ -42,7 +42,7 @@
     </developers>
     <properties>
         <!-- Primary dependencies -->
-        <quarkus.version>3.14.0</quarkus.version>
+        <quarkus.version>3.14.1</quarkus.version>
         <cxf.version>4.0.5</cxf.version>
         <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
         <quarkus-antora.version>0.0.5.CR1</quarkus-antora.version>
@@ -64,7 +64,6 @@
         <httpcore5.version>5.2.5</httpcore5.version>
         <neethi.version>3.2.0</neethi.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
         <mimepull.version>1.10.0</mimepull.version>
-        <opentelemetry-semconv.version>1.25.0-alpha</opentelemetry-semconv.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.opentelemetry.semconv:opentelemetry-semconv -->
         <saaj-impl.version>2.0.1</saaj-impl.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.saaj-impl.version -->
         <santuario-xmlsec.version>3.0.4</santuario-xmlsec.version>
 
@@ -305,7 +304,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
