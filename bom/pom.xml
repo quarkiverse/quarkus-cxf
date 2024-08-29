@@ -144,11 +144,6 @@
                 <version>${santuario-xmlsec.version}</version>
             </dependency>
 
-            <dependency><!-- TODO: remove once https://github.com/quarkusio/quarkus/pull/42186 reaches us -->
-                <groupId>io.opentelemetry.semconv</groupId>
-                <artifactId>opentelemetry-semconv-incubating</artifactId>
-                <version>${opentelemetry-semconv.version}</version>
-            </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf</artifactId>
