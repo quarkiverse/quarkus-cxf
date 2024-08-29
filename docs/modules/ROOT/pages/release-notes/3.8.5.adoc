@@ -1,4 +1,4 @@
-= {quarkus-cxf-project-name} 3.8.3 (LTS) release notes
+= {quarkus-cxf-project-name} 3.8.5 (LTS) release notes
 
 == Important dependency upgrades:
 
