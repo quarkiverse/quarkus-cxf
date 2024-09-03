@@ -68,6 +68,30 @@ public class Hc5Resource {
         return observableCalculator.add(a, b);
     }
 
+    @Inject
+    @CXFClient("contextPropagationCalculator")
+    CalculatorService contextPropagationCalculator;
+
+    @SuppressWarnings("unchecked")
+    @Path("/add-async-contextPropagation")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public Uni<Integer> addAsyncContextPropagation(@QueryParam("a") int a, @QueryParam("b") int b) {
+        return Uni.createFrom()
+                .future(
+                        (Future<AddResponse>) contextPropagationCalculator
+                                .addAsync(a, b, res -> {
+                                }))
+                .map(addResponse -> addResponse.getReturn());
+    }
+
+    @Path("/add-sync-contextPropagation")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public int addSyncContextPropagation(@QueryParam("a") int a, @QueryParam("b") int b) {
+        return contextPropagationCalculator.add(a, b);
+    }
+
     // tag::quarkus-cxf-rt-transports-http-hc5.usage.mutiny[]
 }
 // end::quarkus-cxf-rt-transports-http-hc5.usage.mutiny[]
