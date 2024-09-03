@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import io.quarkiverse.cxf.hc5.it.MultiplyingAddInterceptor.RequestScopedFactorHeader;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -54,6 +55,27 @@ class Hc5Test {
                     + baseUri + "/calculator-ws/CalculatorService";
             Assertions.assertThat((Integer) clientRequests.get(key)).isGreaterThan(0);
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "sync-contextPropagation", "async-contextPropagation" })
+    void addContextPropagation(String syncMode) {
+        RestAssured.given()
+                .queryParam("a", 7)
+                .queryParam("b", 4)
+                .get("/hc5/add-" + syncMode)
+                .then()
+                .statusCode(200)
+                .body(is("0")); // (7+4) * 0 because RequestScopedFactorHeader.header has no value
+
+        RestAssured.given()
+                .header(RequestScopedFactorHeader.header, "2")
+                .queryParam("a", 7)
+                .queryParam("b", 4)
+                .get("/hc5/add-" + syncMode)
+                .then()
+                .statusCode(200)
+                .body(is("22")); // (7+4) * 2
     }
 
     /**
