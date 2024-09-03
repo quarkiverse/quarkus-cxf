@@ -1,6 +1,8 @@
 package io.quarkiverse.cxf.metrics;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import io.quarkiverse.cxf.EnabledFor;
 import io.quarkiverse.cxf.EnabledFor.EnabledForConverter;
@@ -124,5 +126,16 @@ public interface CxfMetricsConfig {
         @WithDefault("both")
         @WithConverter(EnabledForConverter.class)
         EnabledFor enabledFor();
+
+        /**
+         * A list of xref:user-guide/configuration.adoc#beanRefs[references] to
+         * `org.apache.cxf.metrics.micrometer.provider.TagsCustomizer` beans
+         * that will be attached to the global metrics feature.
+         *
+         * @since 3.15.0
+         * @asciidoclet
+         */
+        public Optional<List<String>> tagsCustomizers();
+
     }
 }

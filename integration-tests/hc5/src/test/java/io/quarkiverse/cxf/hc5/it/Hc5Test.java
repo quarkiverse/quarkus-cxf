@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import io.quarkiverse.cxf.hc5.it.HeaderToMetricsTagRequestFilter.RequestScopedHeader;
 import io.quarkiverse.cxf.hc5.it.MultiplyingAddInterceptor.RequestScopedFactorHeader;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -29,7 +30,7 @@ import io.restassured.path.json.JsonPath;
 class Hc5Test {
 
     @ParameterizedTest
-    @ValueSource(strings = { "sync", "async", "sync-observable", "async-observable" })
+    @ValueSource(strings = { "sync", "async" })
     void add(String syncMode) {
         RestAssured.given()
                 .header(RequestScopedHeader.header, syncMode + "-header-value")
@@ -40,21 +41,33 @@ class Hc5Test {
                 .statusCode(200)
                 .body(is("11"));
 
-        if (syncMode.endsWith("-observable")) {
-            /* Make sure that the tagging done in MeterFilterProducer actually works */
+    }
 
-            final Config config = ConfigProvider.getConfig();
-            final String baseUri = config.getValue("cxf.it.calculator.baseUri", String.class);
-            final Map<String, Object> metrics = getMetrics();
+    @ParameterizedTest
+    @ValueSource(strings = { "sync-observable", "async-observable" })
+    void addObservable(String syncMode) {
+        RestAssured.given()
+                .header(RequestScopedHeader.header, syncMode + "-header-value")
+                .queryParam("a", 7)
+                .queryParam("b", 4)
+                .get("/hc5/add-" + syncMode)
+                .then()
+                .statusCode(200)
+                .body(is("11"));
 
-            @SuppressWarnings("unchecked")
-            Map<String, Object> clientRequests = (Map<String, Object>) metrics.get("cxf.client.requests");
-            Assertions.assertThat(clientRequests).isNotNull();
-            String key = "count;exception=None;faultCode=None;method=POST;my-header=" + syncMode
-                    + "-header-value;operation=add;outcome=SUCCESS;status=200;uri="
-                    + baseUri + "/calculator-ws/CalculatorService";
-            Assertions.assertThat((Integer) clientRequests.get(key)).isGreaterThan(0);
-        }
+        /* Make sure that the tagging done in MeterFilterProducer actually works */
+
+        final Config config = ConfigProvider.getConfig();
+        final String baseUri = config.getValue("cxf.it.calculator.baseUri", String.class);
+        final Map<String, Object> metrics = getMetrics();
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> clientRequests = (Map<String, Object>) metrics.get("cxf.client.requests");
+        Assertions.assertThat(clientRequests).isNotNull();
+        String key = "count;exception=None;faultCode=None;method=POST;my-header=" + syncMode
+                + "-header-value;operation=add;outcome=SUCCESS;status=200;uri="
+                + baseUri + "/calculator-ws/CalculatorService";
+        Assertions.assertThat((Integer) clientRequests.get(key)).isGreaterThan(0);
     }
 
     @ParameterizedTest
