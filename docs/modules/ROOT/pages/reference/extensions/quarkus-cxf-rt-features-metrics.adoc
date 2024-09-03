@@ -145,6 +145,17 @@ be overridden per client or service endpoint using the `quarkus.cxf.client."clie
 *Environment variable*: `+++QUARKUS_CXF_METRICS_ENABLED_FOR+++` +
 *Since Quarkus CXF*: 2.7.0
 
+.<| [[quarkus-cxf_quarkus-cxf-metrics-tags-customizers]]`link:#quarkus-cxf_quarkus-cxf-metrics-tags-customizers[quarkus.cxf.metrics.tags-customizers]`
+.<| List of ``string``
+.<| 
+
+3+a|A list of xref:user-guide/configuration.adoc#beanRefs[references] to
+`org.apache.cxf.metrics.micrometer.provider.TagsCustomizer` beans
+that will be attached to the global metrics feature.
+
+*Environment variable*: `+++QUARKUS_CXF_METRICS_TAGS_CUSTOMIZERS+++` +
+*Since Quarkus CXF*: 3.15.0
+
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-metrics-enabled]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-metrics-enabled[quarkus.cxf.client."client-name".metrics.enabled]`
 .<| `boolean`
 .<| `true`

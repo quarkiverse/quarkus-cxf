@@ -29,7 +29,7 @@ public class MetricsCustomizer implements ClientFactoryCustomizer, EndpointFacto
 
     @PostConstruct
     void init() {
-        this.feature = new QuarkusCxfMetricsFeature();
+        this.feature = new QuarkusCxfMetricsFeature(config.metrics().tagsCustomizers());
     }
 
     @Override
