@@ -111,10 +111,8 @@
     <modules>
         <module>bom</module>
         <module>extensions</module>
-        <module>docs</module>
         <module>bom-test</module>
         <module>test-util-parent</module>
-        <module>integration-tests</module>
     </modules>
 
     <build>
@@ -241,8 +239,7 @@
                             </goals>
                             <phase>compile</phase>
                             <configuration>
-                                <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}
-                                </deployment>
+                                <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}</deployment>
                             </configuration>
                         </execution>
                     </executions>
@@ -304,7 +301,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence/>
+                                <dependencyConvergence />
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
@@ -340,8 +337,7 @@
                             <!-- A Groovy script that updates the list of integration test modules in -->
                             <!-- .github/workflows/build.yml based on the real state in integration-tests -->
                             <!-- directory -->
-                            <source>
-                                import java.nio.file.Files
+                            <source>import java.nio.file.Files
                                 import java.nio.file.Path
                                 import java.nio.file.Paths
                                 import java.util.stream.Collectors
@@ -389,8 +385,7 @@
                                     buildXmlPath.setText(newSource.toString(), 'UTF-8')
                                 } else {
                                     println('testModule attribute in ' + buildYaml + ' is up to date')
-                                }
-                            </source>
+                                }</source>
                         </configuration>
                     </execution>
                 </executions>
@@ -418,6 +413,18 @@
 
     <profiles>
         <profile>
+            <id>docs</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>docs</module>
+            </modules>
+        </profile>
+        <profile>
             <id>format</id>
             <build>
                 <plugins>
@@ -427,11 +434,11 @@
                         <executions>
                             <execution>
                                 <id>format-poms</id>
-                                <inherited>false</inherited>
+                                <phase>process-resources</phase>
                                 <goals>
                                     <goal>format</goal>
                                 </goals>
-                                <phase>process-resources</phase>
+                                <inherited>false</inherited>
                                 <configuration>
                                     <updateVirtualDependencies>
                                         <updateVirtualDependency>
@@ -451,13 +458,25 @@
         <profile>
             <id>release</id>
             <properties>
-                <format.skip>true</format.skip>
-                <enforcer.skip>true</enforcer.skip>
-                <formatter.skip>true</formatter.skip>
                 <impsort.skip>true</impsort.skip>
-                <skipTests>true</skipTests>
                 <quarkus.build.skip>true</quarkus.build.skip>
+                <formatter.skip>true</formatter.skip>
+                <enforcer.skip>true</enforcer.skip>
+                <skipTests>true</skipTests>
+                <format.skip>true</format.skip>
             </properties>
+        </profile>
+        <profile>
+            <id>it</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>integration-tests</module>
+            </modules>
         </profile>
     </profiles>
 
