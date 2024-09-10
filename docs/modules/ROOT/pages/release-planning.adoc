@@ -20,7 +20,7 @@ Hence to use {quarkus-cxf-project-name} 2.12.0 you'll best wait for Quarkus Plat
 
 == Long term support (LTS) versions
 
-We typically produce patch releases only for LTS streams.
+We typically produce patch releases only for https://quarkus.io/blog/lts-releases/[LTS streams].
 We choose the same `major.minor` for LTS as Quarkus.
 
 == See also
