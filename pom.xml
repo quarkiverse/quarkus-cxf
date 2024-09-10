@@ -113,6 +113,7 @@
         <module>extensions</module>
         <module>bom-test</module>
         <module>test-util-parent</module>
+        <module>integration-tests</module>
     </modules>
 
     <build>
@@ -465,18 +466,6 @@
                 <skipTests>true</skipTests>
                 <format.skip>true</format.skip>
             </properties>
-        </profile>
-        <profile>
-            <id>it</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>!true</value>
-                </property>
-            </activation>
-            <modules>
-                <module>integration-tests</module>
-            </modules>
         </profile>
     </profiles>
 
