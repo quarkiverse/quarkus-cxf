@@ -1,8 +1,6 @@
 package io.quarkiverse.cxf.transport;
 
 import java.util.LinkedHashMap;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 import javax.xml.namespace.QName;
 
@@ -195,39 +193,6 @@ public class CxfHandler implements Handler<RoutingContext> {
         }
     }
 
-    /**
-     * Leverages the Quarkus HTTP proxy configuration properties,
-     * instead of relying on pure HTTP headers, and is based on the method referenced below.
-     *
-     * @see org.apache.cxf.transport.servlet.AbstractHTTPServlet#checkXForwardedHeaders(HttpServletRequest)
-     * @see io.quarkus.vertx.http.runtime.ProxyConfig
-     */
-    private HttpServletRequest checkXForwardedHeaders(HttpServletRequest request) {
-        if (httpConfiguration.proxy.proxyAddressForwarding) {
-            String originalProtocol = request.getHeader(X_FORWARDED_PROTO_HEADER);
-            String originalRemoteAddr = request.getHeader(X_FORWARDED_FOR_HEADER);
-            String originalPrefix = httpConfiguration.proxy.enableForwardedPrefix ? null
-                    : request.getHeader(httpConfiguration.proxy.forwardedPrefixHeader);
-            String originalHost = httpConfiguration.proxy.enableForwardedHost ? null
-                    : request.getHeader(httpConfiguration.proxy.forwardedHostHeader);
-            String originalPort = request.getHeader(X_FORWARDED_PORT_HEADER);
-
-            // If at least one of the X-Forwarded-Xxx headers is set, try to use them
-            if (Stream.of(originalProtocol, originalRemoteAddr, originalPrefix,
-                    originalHost, originalPort).anyMatch(Objects::nonNull)) {
-                return new VertxHttpServletRequestXForwardedFilter(request,
-                        originalProtocol,
-                        originalRemoteAddr,
-                        originalPrefix,
-                        originalHost,
-                        originalPort);
-            }
-        }
-
-        return request;
-
-    }
-
     private void process(RoutingContext event) {
         ManagedContext requestContext = this.beanContainer.requestContext();
         requestContext.activate();
@@ -244,7 +209,6 @@ public class CxfHandler implements Handler<RoutingContext> {
         try {
             HttpServletRequest req = new VertxHttpServletRequest(event, contextPath, servletPath);
             VertxHttpServletResponse resp = new VertxHttpServletResponse(event, outputBufferSize, minChunkSize);
-            req = checkXForwardedHeaders(req);
             controller.invoke(req, resp);
             resp.end();
         } catch (ServletException se) {

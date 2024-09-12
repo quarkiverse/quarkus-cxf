@@ -80,6 +80,29 @@ public class XForwardedHeadersTest {
     void testXForwardedPortHeader() {
         given()
                 .when()
+                .header(X_FORWARDED_PORT_HEADER, "1234")
+                .get("/soap/greeting?wsdl")
+                .then()
+                .statusCode(200)
+                .body(
+                        Matchers.hasXPath(
+                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                CoreMatchers.is(
+                                        "http://localhost:1234/soap/greeting")));
+        given()
+                .when()
+                .header(X_FORWARDED_PORT_HEADER, "80")
+                .get("/soap/greeting?wsdl")
+                .then()
+                .statusCode(200)
+                .body(
+                        Matchers.hasXPath(
+                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                CoreMatchers.is(
+                                        "http://localhost/soap/greeting")));
+        given()
+                .when()
+                .header(X_FORWARDED_PROTO_HEADER, "https")
                 .header(X_FORWARDED_PORT_HEADER, "443")
                 .get("/soap/greeting?wsdl")
                 .then()
@@ -88,7 +111,7 @@ public class XForwardedHeadersTest {
                         Matchers.hasXPath(
                                 anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
-                                        "http://localhost:443/soap/greeting")));
+                                        "https://localhost/soap/greeting")));
     }
 
     @Test
@@ -98,7 +121,7 @@ public class XForwardedHeadersTest {
                 .header(X_FORWARDED_PREFIX_HEADER, "/test")
                 .header(X_FORWARDED_PROTO_HEADER, "https")
                 .header(X_FORWARDED_HOST_HEADER, "api.example.com")
-                .header(X_FORWARDED_PORT_HEADER, "443")
+                .header(X_FORWARDED_PORT_HEADER, "1234")
                 .get("/soap/greeting?wsdl")
                 .then()
                 .statusCode(200)
@@ -106,7 +129,7 @@ public class XForwardedHeadersTest {
                         Matchers.hasXPath(
                                 anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
-                                        "https://api.example.com:443/test/soap/greeting")));
+                                        "https://api.example.com:1234/test/soap/greeting")));
     }
 
     @Test
