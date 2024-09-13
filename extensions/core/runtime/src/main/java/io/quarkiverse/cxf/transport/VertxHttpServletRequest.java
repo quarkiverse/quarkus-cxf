@@ -6,15 +6,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -29,25 +32,31 @@ import jakarta.servlet.http.HttpUpgradeHandler;
 import jakarta.servlet.http.Part;
 
 import org.apache.cxf.common.util.UrlUtils;
-import org.jboss.logging.Logger;
 
+import io.quarkiverse.cxf.transport.servlet.DateUtils;
+import io.quarkiverse.cxf.transport.servlet.LocaleUtils;
 import io.quarkus.security.identity.CurrentIdentityAssociation;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.vertx.http.runtime.VertxInputStream;
 import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
+import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
 
 public class VertxHttpServletRequest implements HttpServletRequest {
-    private static final Logger LOG = Logger.getLogger(VertxHttpServletRequest.class);
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
     private static final String SSL_CIPHER_SUITE_ATTRIBUTE = "jakarta.servlet.request.cipher_suite";
     private static final String SSL_PEER_CERT_CHAIN_ATTRIBUTE = "jakarta.servlet.request.X509Certificate";
+
     private final RoutingContext context;
     private final VertxInputStream in;
     private final HttpServerRequest request;
     private final String contextPath;
     private final String servletPath;
     private final Map<String, Object> attributes;
+    private Cookie[] cookies;
+    private String characterEncoding;
 
     public VertxHttpServletRequest(RoutingContext context, String contextPath, String servletPath) {
         this.request = context.request();
@@ -71,31 +80,27 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public AsyncContext getAsyncContext() {
-        return null;
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getAsyncContext()");
     }
 
     @Override
     public DispatcherType getDispatcherType() {
-        LOG.trace("getDispatcherType()");
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getDispatcherType()");
     }
 
     @Override
     public String getRequestId() {
-        LOG.trace("getRequestId()");
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getRequestId()");
     }
 
     @Override
     public String getProtocolRequestId() {
-        LOG.trace("getProtocolRequestId()");
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getProtocolRequestId()");
     }
 
     @Override
     public ServletConnection getServletConnection() {
-        LOG.trace("getServletConnection()");
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getServletConnection()");
     }
 
     @Override
@@ -105,18 +110,19 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public Enumeration<String> getAttributeNames() {
-        return Collections.enumeration(attributes.keySet());
+        return attributes.isEmpty() ? Collections.emptyEnumeration() : Collections.enumeration(attributes.keySet());
     }
 
     @Override
     public String getCharacterEncoding() {
-        LOG.trace("getCharacterEncoding()");
-        return null;
+        if (characterEncoding == null) {
+            characterEncoding = getCharacterEncodingFromHeader();
+        }
+        return characterEncoding;
     }
 
     @Override
     public int getContentLength() {
-        LOG.trace("getContentLength()");
         return getIntHeader("Content-Length");
     }
 
@@ -156,7 +162,7 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
             @Override
             public void setReadListener(ReadListener readListener) {
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException(getClass().getName() + ".setReadListener(ReadListener)");
             }
         };
 
@@ -164,193 +170,275 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public String getLocalAddr() {
-        LOG.trace("getLocalAddr()");
-        try {
-            return new URL(getRequestURI()).getHost();
-        } catch (MalformedURLException e) {
-            LOG.trace("getLocalAddr error", e);
-            return null;
+        SocketAddress adr = request.localAddress();
+        if (adr != null) {
+            return adr.hostAddress();
         }
+        return null;
     }
 
     @Override
     public String getLocalName() {
-        LOG.trace("getLocalName()");
-        try {
-            return new URL(request.absoluteURI()).getHost();
-        } catch (MalformedURLException e) {
-            LOG.trace("getLocalName error", e);
-            return null;
+        SocketAddress adr = request.localAddress();
+        if (adr != null) {
+            return adr.host();
         }
+        return null;
     }
 
     @Override
     public int getLocalPort() {
-        LOG.trace("getLocalPort()");
-        try {
-            return new URL(request.absoluteURI()).getPort();
-        } catch (MalformedURLException e) {
-            LOG.trace("getLocalPort error", e);
-            return 0;
+        SocketAddress adr = request.localAddress();
+        if (adr != null) {
+            return adr.port();
         }
+        return -1;
     }
 
     @Override
     public Locale getLocale() {
-        LOG.trace("getLocale()");
-        return null;
+        return getLocales().nextElement();
     }
 
     @Override
     public Enumeration<Locale> getLocales() {
-        LOG.trace("getLocales()");
-        return null;
+        final List<String> acceptLanguage = request.headers().getAll("Accept-Language");
+        List<Locale> ret = LocaleUtils.getLocalesFromHeader(acceptLanguage);
+        if (ret.isEmpty()) {
+            return Collections.enumeration(Collections.singletonList(Locale.getDefault()));
+        }
+        return Collections.enumeration(ret);
     }
 
     @Override
     public String getParameter(String name) {
-        if (LOG.isTraceEnabled()) {
-            LOG.tracef("getParameter({0})", name);
-        }
-        return null;
+        return request.getParam(name);
     }
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        LOG.trace("getParameterMap()");
-        return Collections.emptyMap();
+        MultiMap params = request.params();
+        if (params.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        LinkedHashMap<String, String[]> result = new LinkedHashMap<>();
+        for (String key : params.names()) {
+            result.put(key, getParameterValues(key));
+        }
+        return result;
     }
 
     @Override
     public Enumeration<String> getParameterNames() {
-        LOG.trace("getParameterNames()");
-        return null;
+        return Collections.enumeration(request.params().names());
     }
 
     @Override
     public String[] getParameterValues(String name) {
-        if (LOG.isTraceEnabled()) {
-            LOG.tracef("getParameterValues({0})", name);
+        List<String> list = request.params().getAll(name);
+        if (list != null) {
+            return (String[]) list.toArray();
         }
-        return new String[0];
+        return EMPTY_STRING_ARRAY;
     }
 
     @Override
     public String getProtocol() {
-        LOG.trace("getProtocol");
-        try {
-            return new URL(request.absoluteURI()).getProtocol();
-        } catch (MalformedURLException e) {
-            LOG.trace("getProtocol error", e);
-            return null;
-        }
+        return request.version().alpnName();
     }
 
     @Override
     public BufferedReader getReader() throws IOException {
-        LOG.trace("getReader");
-        return new BufferedReader(new InputStreamReader(in, UTF_8));
+        final Charset charset = /* getCharacterEncoding() != null ? Charset.forName(characterEncoding) : */ StandardCharsets.UTF_8;
+        return new BufferedReader(new InputStreamReader(in, charset));
     }
 
     @Override
     public String getRemoteAddr() {
-        LOG.trace("getRemoteAddr");
-        return request.remoteAddress().host();
-    }
-
-    @Override
-    public String getRemoteHost() {
-        LOG.trace("getRemoteHost");
-        return request.remoteAddress().host();
-    }
-
-    @Override
-    public int getRemotePort() {
-        LOG.trace("getRemotePort");
-        return request.remoteAddress().port();
-    }
-
-    @Override
-    public RequestDispatcher getRequestDispatcher(String path) {
-        LOG.trace("getRequestDispatcher");
+        final SocketAddress remoteAddress = request.remoteAddress();
+        if (remoteAddress != null) {
+            return remoteAddress.hostAddress();
+        }
         return null;
     }
 
     @Override
+    public String getRemoteHost() {
+        final SocketAddress remoteAddress = request.remoteAddress();
+        if (remoteAddress != null) {
+            return remoteAddress.host();
+        }
+        return null;
+    }
+
+    @Override
+    public int getRemotePort() {
+        final SocketAddress remoteAddress = request.remoteAddress();
+        if (remoteAddress != null) {
+            return remoteAddress.port();
+        }
+        return -1;
+    }
+
+    @Override
+    public RequestDispatcher getRequestDispatcher(String path) {
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getRequestDispatcher(String)");
+    }
+
+    @Override
     public String getScheme() {
-        LOG.trace("getScheme");
         return request.scheme();
     }
 
     @Override
     public String getServerName() {
-        return getLocalName();
+        return request.authority().host();
     }
 
     @Override
     public int getServerPort() {
-        LOG.trace("getServerPort");
-        return getLocalPort();
+        return request.authority().port();
     }
 
     @Override
     public ServletContext getServletContext() {
-        LOG.trace("getServletContext");
-        return null;
+        //        if (servletContext == null) {
+        //            servletContext = new VertxServletContext(contextPath);
+        //        }
+        //        return servletContext;
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getServletContext()");
     }
 
     @Override
     public boolean isAsyncStarted() {
-        LOG.trace("isAsyncStarted");
         return false;
     }
 
     @Override
     public boolean isAsyncSupported() {
-        LOG.trace("isAsyncSupported");
         return false;
     }
 
     @Override
     public boolean isSecure() {
-        LOG.trace("isSecure");
         return request.isSSL();
     }
 
     @Override
     public void removeAttribute(String name) {
-        LOG.trace("removeAttribute");
         attributes.remove(name);
     }
 
     @Override
     public void setAttribute(String name, Object o) {
-        LOG.trace("setAttribute");
         attributes.put(name, o);
     }
 
+    private String getCharacterEncodingFromHeader() {
+        String contentType = request.getHeader("Content-Type");
+        if (contentType == null) {
+            return null;
+        }
+        return extractQuotedValueFromHeader(contentType, "charset");
+    }
+
+    /**
+     * Extracts a quoted value from a header that has a given key. For instance if the header is
+     * <p>
+     * Copied from io.undertow.httpcore.HttpHeaderNames.extractQuotedValueFromHeader(String, String)
+     * <p>
+     * content-disposition=form-data; name="my field"
+     * and the key is name then "my field" will be returned without the quotes.
+     *
+     *
+     * @param header The header
+     * @param key The key that identifies the token to extract
+     * @return The token, or null if it was not found
+     */
+    static String extractQuotedValueFromHeader(final String header, final String key) {
+
+        int keypos = 0;
+        int pos = -1;
+        boolean whiteSpace = true;
+        boolean inQuotes = false;
+        for (int i = 0; i < header.length() - 1; ++i) { // -1 because we need room for the = at the end
+            // TODO: a more efficient matching algorithm
+            char c = header.charAt(i);
+            if (inQuotes) {
+                if (c == '"') {
+                    inQuotes = false;
+                }
+            } else {
+                if (key.charAt(keypos) == c && (whiteSpace || keypos > 0)) {
+                    keypos++;
+                    whiteSpace = false;
+                } else if (c == '"') {
+                    keypos = 0;
+                    inQuotes = true;
+                    whiteSpace = false;
+                } else {
+                    keypos = 0;
+                    whiteSpace = c == ' ' || c == ';' || c == '\t';
+                }
+                if (keypos == key.length()) {
+                    if (header.charAt(i + 1) == '=') {
+                        pos = i + 2;
+                        break;
+                    } else {
+                        keypos = 0;
+                    }
+                }
+            }
+
+        }
+        if (pos == -1) {
+            return null;
+        }
+
+        int end;
+        int start = pos;
+        if (header.charAt(start) == '"') {
+            start++;
+            for (end = start; end < header.length(); ++end) {
+                char c = header.charAt(end);
+                if (c == '"') {
+                    break;
+                }
+            }
+            return header.substring(start, end);
+
+        } else {
+            // no quotes
+            for (end = start; end < header.length(); ++end) {
+                char c = header.charAt(end);
+                if (c == ' ' || c == '\t' || c == ';') {
+                    break;
+                }
+            }
+            return header.substring(start, end);
+        }
+    }
+
     @Override
-    public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
-        LOG.trace("setCharacterEncoding");
-        // ignore as we stick to utf-8.
+    public void setCharacterEncoding(final String env) throws UnsupportedEncodingException {
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".setCharacterEncoding(String)");
     }
 
     @Override
     public AsyncContext startAsync() {
-        LOG.trace("startAsync");
-        return null;
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".startAsync()");
     }
 
     @Override
     public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) {
-        LOG.trace("startAsync");
-        return null;
+        throw new UnsupportedOperationException(
+                "Unsupported method " + getClass().getName() + ".startAsync(ServletRequest, ServletResponse)");
     }
 
     @Override
     public boolean authenticate(HttpServletResponse servletResponse) throws IOException, ServletException {
-        LOG.trace("authenticate");
-        return false;
+        throw new UnsupportedOperationException(
+                "Unsupported method " + getClass().getName() + ".authenticate(HttpServletResponse)");
     }
 
     @Override
@@ -370,60 +458,93 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public Cookie[] getCookies() {
-        LOG.trace("getCookies");
-        return new Cookie[0];
+        if (cookies == null) {
+            Set<io.vertx.core.http.Cookie> vertxCookies = request.cookies();
+            if (vertxCookies.isEmpty()) {
+                return null;
+            }
+            int count = vertxCookies.size();
+            Cookie[] value = new Cookie[count];
+            int i = 0;
+            for (io.vertx.core.http.Cookie cookie : vertxCookies) {
+                try {
+                    Cookie c = new Cookie(cookie.getName(), cookie.getValue());
+                    if (cookie.getDomain() != null) {
+                        c.setDomain(cookie.getDomain());
+                    }
+                    c.setHttpOnly(cookie.isHttpOnly());
+                    if (cookie.getMaxAge() >= 0) {
+                        c.setMaxAge((int) cookie.getMaxAge());
+                    }
+                    if (cookie.getPath() != null) {
+                        c.setPath(cookie.getPath());
+                    }
+                    c.setSecure(cookie.isSecure());
+                    value[i++] = c;
+                } catch (IllegalArgumentException e) {
+                    // Ignore bad cookie
+                }
+            }
+            if (i < count) {
+                Cookie[] shrunkCookies = new Cookie[i];
+                System.arraycopy(value, 0, shrunkCookies, 0, i);
+                value = shrunkCookies;
+            }
+            this.cookies = value;
+        }
+        return cookies;
     }
 
     @Override
     public long getDateHeader(String name) {
-        LOG.trace("getDateHeader");
-        return 0;
+        String header = request.getHeader(name);
+        if (header == null) {
+            return -1;
+        }
+        Date date = DateUtils.parseDate(header);
+        if (date == null) {
+            throw new IllegalArgumentException(String.format("Header %s cannot be converted to a date", header));
+        }
+        return date.getTime();
     }
 
     @Override
     public String getHeader(String name) {
-        LOG.trace("getHeader");
         return request.getHeader(name);
     }
 
     @Override
     public Enumeration<String> getHeaderNames() {
-        LOG.trace("getHeaderNames");
         return Collections.enumeration(request.headers().names());
     }
 
     @Override
     public Enumeration<String> getHeaders(String name) {
-        LOG.trace("getHeaders");
         if (request.headers().contains(name)) {
             return Collections.enumeration(request.headers().getAll(name));
         }
-        return Collections.enumeration(Arrays.asList());
+        return Collections.emptyEnumeration();
     }
 
     @Override
     public int getIntHeader(String name) {
-        LOG.trace("getIntHeader");
         String v = getHeader(name);
         return v == null ? -1 : Integer.parseInt(v);
     }
 
     @Override
     public String getMethod() {
-        LOG.trace("getMethod");
         return request.method().name();
     }
 
     @Override
     public Part getPart(String name) throws IOException, ServletException {
-        LOG.trace("getPart");
-        return null;
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getPart(String)");
     }
 
     @Override
     public Collection<Part> getParts() throws IOException, ServletException {
-        LOG.trace("getParts");
-        return Collections.emptyList();
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getParts()");
     }
 
     @Override
@@ -440,26 +561,30 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public String getPathTranslated() {
+        /*
+         * From jakarta.servlet.ServletContext.getRealPath(String) Javadoc:
+         * This method returns <code>null</code> if the servlet container is unable to translate the given
+         * <i>virtual</i> path to a <i>real</i> path.
+         *
+         * We always return null, because our dummy Servlet implementation is not supposed to be used for serving
+         * static resources.
+         */
         return null;
     }
 
     @Override
     public String getQueryString() {
-        LOG.trace("getQueryString");
         return request.query();
     }
 
     @Override
     public String getRemoteUser() {
-        LOG.trace("getRemoteUser");
-        return null;
+        Principal userPrincipal = getUserPrincipal();
+        return userPrincipal != null ? userPrincipal.getName() : null;
     }
 
     @Override
     public String getRequestURI() {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("getRequestURI " + request.uri());
-        }
         return request.uri();
     }
 
@@ -475,7 +600,11 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public String getRequestedSessionId() {
-        LOG.trace("getRequestedSessionId");
+        /*
+         * We do not support sessions as SOAP Services should typically be stateless.
+         * We cannot throw UnsupportedOperationException, because org.apache.cxf.transport.http.HttpServletRequestSnapshot
+         * is calling this method to make a copy/snapshot of the original request
+         */
         return null;
     }
 
@@ -486,14 +615,15 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public HttpSession getSession() {
-        LOG.trace("getSession");
-        return null;
+        return getSession(true);
     }
 
     @Override
     public HttpSession getSession(boolean create) {
-        LOG.trace("getSession");
-        return null;
+        if (!create) {
+            return null;
+        }
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".getSession(boolean)");
     }
 
     @Override
@@ -507,24 +637,35 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public boolean isRequestedSessionIdFromCookie() {
-        LOG.trace("isRequestedSessionIdFromCookie");
-        return false;
+        throw new UnsupportedOperationException(
+                "Unsupported method " + getClass().getName() + ".isRequestedSessionIdFromCookie()");
     }
 
     @Override
     public boolean isRequestedSessionIdFromURL() {
-        LOG.trace("isRequestedSessionIdFromURL");
-        return false;
+        throw new UnsupportedOperationException(
+                "Unsupported method " + getClass().getName() + ".isRequestedSessionIdFromURL()");
     }
 
     @Override
     public boolean isRequestedSessionIdValid() {
-        LOG.trace("isRequestedSessionIdValid");
+        /*
+         * We do not support sessions as SOAP Services should typically be stateless.
+         * We cannot throw UnsupportedOperationException, because org.apache.cxf.transport.http.HttpServletRequestSnapshot
+         * is calling this method to make a copy/snapshot of the original request
+         */
         return false;
     }
 
     @Override
     public boolean isUserInRole(String role) {
+        if (role == null) {
+            return false;
+        }
+        // according to the servlet spec this aways returns false
+        if (role.equals("*")) {
+            return false;
+        }
         SecurityIdentity user = CurrentIdentityAssociation.current();
         if (role.equals("**")) {
             return !user.isAnonymous();
@@ -534,12 +675,12 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public void login(String username, String password) throws ServletException {
-        LOG.trace("login");
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".login(String, String)");
     }
 
     @Override
     public void logout() throws ServletException {
-        LOG.trace("logout");
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".logout()");
     }
 
     @Override
@@ -550,11 +691,12 @@ public class VertxHttpServletRequest implements HttpServletRequest {
 
     @Override
     public String changeSessionId() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".changeSessionId()");
     }
 
     @Override
     public <T extends HttpUpgradeHandler> T upgrade(Class<T> arg0) throws IOException, ServletException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Unsupported method " + getClass().getName() + ".upgrade(Class<T>)");
     }
+
 }
