@@ -69,41 +69,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <!-- Copy the sample code to docs module where Antora can see it -->
-                        <id>copy-resources-for-antora</id>
-                        <phase>compile</phase><!-- after source formatting -->
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>
-                                ${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/ws-security-policy</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources</directory>
-                                    <includes>
-                                        <include>application.properties</include>
-                                        <include>https-policy.xml</include>
-                                        <include>encrypt-sign-policy.xml</include>
-                                    </includes>
-                                </resource>
-                                <resource>
-                                    <directory>src/main/java/io/quarkiverse/cxf/it/security/policy</directory>
-                                    <includes>
-                                        <include>HttpsPolicyHelloService.java</include>
-                                        <include>EncryptSignPolicyHelloService.java</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -116,6 +81,7 @@
                 </property>
             </activation>
             <properties>
+                <keystore.type.short>p12</keystore.type.short>
                 <keystore.type>pkcs12</keystore.type>
             </properties>
             <dependencies>
@@ -145,6 +111,41 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- Copy the sample code to docs module where Antora can see it -->
+                                <id>copy-resources-for-antora</id>
+                                <phase>compile</phase><!-- after source formatting -->
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>
+                                        ${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/ws-security-policy</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>target/classes</directory>
+                                            <includes>
+                                                <include>application.properties</include>
+                                                <include>https-policy.xml</include>
+                                                <include>encrypt-sign-policy.xml</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>src/main/java/io/quarkiverse/cxf/it/security/policy</directory>
+                                            <includes>
+                                                <include>HttpsPolicyHelloService.java</include>
+                                                <include>EncryptSignPolicyHelloService.java</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -156,6 +157,7 @@
                 </property>
             </activation>
             <properties>
+                <keystore.type.short>jks</keystore.type.short>
                 <keystore.type>jks</keystore.type>
             </properties>
             <dependencies>

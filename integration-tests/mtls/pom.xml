@@ -71,6 +71,7 @@
                 </property>
             </activation>
             <properties>
+                <keystore.type.short>p12</keystore.type.short>
                 <keystore.type>pkcs12</keystore.type>
             </properties>
             <build>
@@ -110,7 +111,7 @@
                                         ${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/mtls</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>src/main/resources</directory>
+                                            <directory>target/classes</directory>
                                             <includes>
                                                 <include>application.properties</include>
                                             </includes>
@@ -131,6 +132,7 @@
                 </property>
             </activation>
             <properties>
+                <keystore.type.short>jks</keystore.type.short>
                 <keystore.type>jks</keystore.type>
             </properties>
             <build>
