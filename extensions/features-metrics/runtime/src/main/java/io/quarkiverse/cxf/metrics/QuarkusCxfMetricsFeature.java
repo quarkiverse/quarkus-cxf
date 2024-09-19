@@ -35,6 +35,10 @@ public class QuarkusCxfMetricsFeature extends MetricsFeature {
             new StandardTags());
     private static final MicrometerMetricsProperties micrometerMetricsProperties = new MicrometerMetricsProperties();
 
+    public QuarkusCxfMetricsFeature() {
+        this(Optional.empty());
+    }
+
     public QuarkusCxfMetricsFeature(Optional<List<String>> tagsCustomizersRefs) {
         super(new MicrometerMetricsProvider(meterRegistry, tagsProvider,
                 joinTagsCustomizers(tagsCustomizersRefs, operationsCustomizer, faultsCustomizer), timedAnnotationProvider,
