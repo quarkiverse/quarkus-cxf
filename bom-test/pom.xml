@@ -52,6 +52,12 @@
                 <version>${quarkus-cxf.version}</version>
             </dependency>
             <dependency>
+                <groupId>io.smallrye.certs</groupId>
+                <artifactId>smallrye-certificate-generator-junit5</artifactId>
+                <version>${smallrye-certificate-generator.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http-netty-server</artifactId>
                 <version>${cxf.version}</version>

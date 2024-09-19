@@ -1888,6 +1888,21 @@ underlying HTTP client.
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__HTTP_CONDUIT_FACTORY+++` +
 *Since Quarkus CXF*: 2.3.0
 
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+.<| `string`
+.<| 
+
+3+a|The name of the TLS configuration to use for setting up trust store and keystore for this SOAP client.
+<p>
+If not set and `.trust-store` or `.key-store` is configured then that the configuration from `.trust-store*`
+and `.key-store*` family of options will be used.
+If a name is configured, it uses the configuration from `quarkus.tls.<name>.*`
+If a name is configured, but no TLS configuration is found with that name then an error will be thrown at runtime.
+Setting `.tls-configuration-name` and any of `.trust-store` or `.key-store` leads to an exception at runtime.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__TLS_CONFIGURATION_NAME+++` +
+*Since Quarkus CXF*: 3.15.0
+
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store]`
 .<| `string`
 .<| 

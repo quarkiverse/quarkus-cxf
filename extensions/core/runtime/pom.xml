@@ -23,6 +23,10 @@
             <artifactId>quarkus-arc</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-tls-registry</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.quarkus.vertx.utils</groupId>
             <artifactId>quarkus-vertx-utils</artifactId>
         </dependency>

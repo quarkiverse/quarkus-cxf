@@ -1,5 +1,10 @@
 package io.quarkiverse.cxf;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -124,5 +129,49 @@ public class CXFRuntimeUtils {
                         + CXFRuntimeUtils.class.getName() + " class loader", e1);
             }
         }
+    }
+
+    public static InputStream openStream(final String keystorePath) throws IOException {
+        final URL url = Thread.currentThread().getContextClassLoader().getResource(keystorePath);
+        if (url != null) {
+            try {
+                return url.openStream();
+            } catch (IOException e) {
+                throw new RuntimeException("Could not open " + keystorePath + " from the class path", e);
+            }
+        }
+        final Path path = Path.of(keystorePath);
+        if (Files.exists(path)) {
+            try {
+                return Files.newInputStream(path);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not open " + keystorePath + " from the filesystem", e);
+            }
+        }
+        final String msg = "Resource " + keystorePath + " exists neither in class path nor in the filesystem";
+        QuarkusHTTPConduitFactory.log.error(msg);
+        throw new IllegalStateException(msg);
+    }
+
+    public static byte[] read(final String keystorePath) {
+        final URL url = Thread.currentThread().getContextClassLoader().getResource(keystorePath);
+        if (url != null) {
+            try (InputStream in = url.openStream()) {
+                return in.readAllBytes();
+            } catch (IOException e) {
+                throw new RuntimeException("Could not open " + keystorePath + " from the class path", e);
+            }
+        }
+        final Path path = Path.of(keystorePath);
+        if (Files.exists(path)) {
+            try {
+                return Files.readAllBytes(path);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not open " + keystorePath + " from the filesystem", e);
+            }
+        }
+        final String msg = "Resource " + keystorePath + " exists neither in class path nor in the filesystem";
+        QuarkusHTTPConduitFactory.log.error(msg);
+        throw new IllegalStateException(msg);
     }
 }

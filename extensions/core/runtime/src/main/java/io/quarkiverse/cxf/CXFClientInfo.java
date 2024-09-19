@@ -1,15 +1,27 @@
 package io.quarkiverse.cxf;
 
+import java.net.URL;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
 import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkus.arc.Arc;
 import io.quarkus.arc.Unremovable;
+import io.quarkus.tls.TlsConfiguration;
+import io.quarkus.tls.TlsConfigurationRegistry;
+import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.net.JksOptions;
+import io.vertx.core.net.KeyStoreOptionsBase;
+import io.vertx.core.net.PfxOptions;
 
 /**
  * CXF client metadata - the complete set as known at runtime.
@@ -172,40 +184,8 @@ public class CXFClientInfo {
      */
     private final String proxyPassword;
 
-    /**
-     * The key store location. Can point to either a classpath resource or a file.
-     */
-    private final String keyStore;
+    private final TlsConfiguration tlsConfiguration;
 
-    /**
-     * The key store password.
-     */
-    private final String keyStorePassword;
-
-    /**
-     * The type of the trust store. Defaults to "JKS".
-     */
-    private final String keyStoreType;
-
-    /**
-     * The key password.
-     */
-    private final String keyPassword;
-
-    /**
-     * The trust store location. Can point to either a classpath resource or a file.
-     */
-    private final String trustStore;
-
-    /**
-     * The trust store password.
-     */
-    private final String trustStorePassword;
-
-    /**
-     * The type of the trust store. Defaults to "JKS".
-     */
-    private final String trustStoreType;
     private final String hostnameVerifier;
 
     private final HTTPConduitImpl httpConduitImpl;
@@ -216,7 +196,7 @@ public class CXFClientInfo {
 
     private final boolean secureWsdlAccess;
 
-    public CXFClientInfo(CXFClientData other, CxfConfig cxfConfig, CxfClientConfig config, String configKey) {
+    public CXFClientInfo(CXFClientData other, CxfConfig cxfConfig, CxfClientConfig config, String configKey, Vertx vertx) {
         Objects.requireNonNull(config);
         this.sei = other.getSei();
         this.soapBinding = config.soapBinding().orElse(other.getSoapBinding());
@@ -259,13 +239,7 @@ public class CXFClientInfo {
         this.proxyUsername = config.proxyUsername().orElse(null);
         this.proxyPassword = config.proxyPassword().orElse(null);
 
-        this.keyStore = config.keyStore().orElse(null);
-        this.keyStorePassword = config.keyStorePassword().orElse(null);
-        this.keyStoreType = Objects.requireNonNull(config.keyStoreType(), "keyStoreType cannot be null");
-        this.keyPassword = config.keyPassword().orElse(null);
-        this.trustStore = config.trustStore().orElse(null);
-        this.trustStorePassword = config.trustStorePassword().orElse(null);
-        this.trustStoreType = Objects.requireNonNull(config.trustStoreType(), "trustStoreType cannot be null");
+        this.tlsConfiguration = tlsConfiguration(vertx, config, configKey);
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
         this.schemaValidationEnabledFor = config.schemaValidationEnabledFor().orElse(null);
 
@@ -276,6 +250,103 @@ public class CXFClientInfo {
          */
         this.httpConduitImpl = config.httpConduitFactory().orElse(null);
         this.configKey = configKey;
+    }
+
+    static TlsConfiguration tlsConfiguration(Vertx vertx, CxfClientConfig config, String configKey) {
+        final TlsConfigurationRegistry tlsRegistry = Arc.container().select(TlsConfigurationRegistry.class).get();
+        final Optional<String> maybeTlsConfigName = config.tlsConfigurationName();
+        if (maybeTlsConfigName.isEmpty()) {
+            if (config.keyStore().isPresent() || config.trustStore().isPresent()) {
+                final String registryKey = "quarkus-cxf-client-" + configKey;
+                final Optional<TlsConfiguration> cachedTlsConfiguration = tlsRegistry.get(registryKey);
+                if (cachedTlsConfiguration.isPresent()) {
+                    return cachedTlsConfiguration.get();
+                }
+
+                final KeyStoreOptionsBase keyStoreOptions;
+                final KeyStore keyStore;
+                if (config.keyStore().isPresent()) {
+                    keyStoreOptions = keyStoreOptions(config.keyStoreType(),
+                            "quarkus.cxf.client." + configKey + ".key-store-type");
+                    keyStoreOptions
+                            .setPassword(config.keyStorePassword().orElse(null))
+                            .setValue(Buffer.buffer(CXFRuntimeUtils.read(config.keyStore().get())))
+                            .setPath(config.keyStore().orElse(null));
+                    if (config.keyPassword().isPresent()) {
+                        keyStoreOptions.setAliasPassword(config.keyPassword().get());
+                    }
+                    try {
+                        keyStore = keyStoreOptions.loadKeyStore(vertx);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Could not load key store from " + config.keyStore().get(), e);
+                    }
+                } else {
+                    keyStore = null;
+                    keyStoreOptions = null;
+                }
+
+                final KeyStoreOptionsBase trustOptions;
+                final KeyStore trustStore;
+                if (config.trustStore().isPresent()) {
+                    trustOptions = keyStoreOptions(config.trustStoreType(),
+                            "quarkus.cxf.client." + configKey + ".trust-store-type");
+                    trustOptions
+                            .setPassword(config.trustStorePassword().orElse(null))
+                            .setValue(Buffer.buffer(CXFRuntimeUtils.read(config.trustStore().get())))
+                            .setPath(config.trustStore().orElse(null));
+                    try {
+                        trustStore = trustOptions.loadKeyStore(vertx);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Could not load trust store from " + config.trustStore().get(), e);
+                    }
+                } else {
+                    trustOptions = null;
+                    trustStore = null;
+                }
+                final CxfTlsConfiguration cxfTlsConfiguration = new CxfTlsConfiguration(keyStoreOptions, keyStore, trustOptions,
+                        trustStore);
+                tlsRegistry.register(registryKey, cxfTlsConfiguration);
+                return cxfTlsConfiguration;
+            }
+
+            /* No TLS config - that's fine too */
+            return null;
+        } else {
+            /* tls-configuration-name is set */
+
+            if (config.keyStore().isPresent()) {
+                throw new IllegalStateException("The configuration options"
+                        + " quarkus.cxf.client." + configKey + ".tls-configuration-name"
+                        + " and quarkus.cxf.client." + configKey + ".key-store cannot be both set at the same time."
+                        + " Use one or the other way to set the TLS options.");
+            }
+            if (config.trustStore().isPresent()) {
+                throw new IllegalStateException("The configuration options"
+                        + " quarkus.cxf.client." + configKey + ".tls-configuration-name"
+                        + " and quarkus.cxf.client." + configKey + ".trust-store cannot be both set at the same time."
+                        + " Use one or the other way to set the TLS options.");
+            }
+
+            Optional<TlsConfiguration> maybeTlsConfig = tlsRegistry.get(maybeTlsConfigName.get());
+            if (maybeTlsConfig.isPresent()) {
+                return maybeTlsConfig.get();
+            } else {
+                throw new IllegalStateException("No such TLS configuration quarkus.tls." + maybeTlsConfigName.get());
+            }
+        }
+    }
+
+    private static KeyStoreOptionsBase keyStoreOptions(String type, String configKey) {
+        return switch (type.toUpperCase(Locale.ROOT)) {
+            case "JKS": {
+                yield new JksOptions();
+            }
+            case "PKCS12": {
+                yield new PfxOptions();
+            }
+            default:
+                throw new IllegalArgumentException("Unexpected key store type " + type + " for " + configKey);
+        };
     }
 
     public String getHostnameVerifier() {
@@ -484,32 +555,8 @@ public class CXFClientInfo {
         return httpConduitImpl;
     }
 
-    public String getKeyStore() {
-        return keyStore;
-    }
-
-    public String getKeyStorePassword() {
-        return keyStorePassword;
-    }
-
-    public String getKeyStoreType() {
-        return keyStoreType;
-    }
-
-    public String getKeyPassword() {
-        return keyPassword;
-    }
-
-    public String getTrustStore() {
-        return trustStore;
-    }
-
-    public String getTrustStorePassword() {
-        return trustStorePassword;
-    }
-
-    public String getTrustStoreType() {
-        return trustStoreType;
+    public TlsConfiguration getTlsConfiguration() {
+        return tlsConfiguration;
     }
 
     public String getConfigKey() {

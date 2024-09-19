@@ -7,9 +7,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import org.assertj.core.api.Assertions;
+import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -17,24 +20,39 @@ import io.restassured.config.RestAssuredConfig;
 import io.restassured.config.SSLConfig;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import io.smallrye.certs.Format;
+import io.smallrye.certs.junit5.Alias;
+import io.smallrye.certs.junit5.Certificate;
+import io.smallrye.certs.junit5.Certificates;
 
+@Certificates(baseDir = "target/classes", //
+        certificates = @Certificate( //
+                name = "localhost", //
+                password = "secret", //
+                aliases = @Alias(//
+                        name = "client", //
+                        password = "secret", //
+                        client = true), //
+                formats = { Format.PKCS12, Format.JKS }))
 @QuarkusTest
 public class MutualTlsTest {
-    @Test
-    void mTls() throws IOException {
 
-        final Path keystorePath = Path
-                .of(ConfigProvider.getConfig().getValue("quarkus.cxf.client.mTls.key-store", String.class));
+    @ParameterizedTest
+    @ValueSource(strings = { "mTls", "mTlsOld" })
+    void mTls(String clientName) throws IOException {
+
+        final Config config = ConfigProvider.getConfig();
+        final String keystoreType = config.getValue("keystore.type.short", String.class);
+        final Path keystorePath = Path.of("target/classes/localhost-client-keystore." + keystoreType);
         extract(keystorePath);
 
-        final Path truststorePath = Path
-                .of(ConfigProvider.getConfig().getValue("quarkus.cxf.client.mTls.trust-store", String.class));
+        final Path truststorePath = Path.of("target/classes/localhost-truststore." + keystoreType);
         extract(truststorePath);
 
         ExtractableResponse<Response> response = RestAssured.given()
                 .config(restAssuredConfig())
                 .body("Sam")
-                .post("https://localhost:8444/cxf/mtls-rest/mTls")
+                .post("https://localhost:8444/cxf/mtls-rest/" + clientName)
                 .then()
                 .extract();
         if (response.statusCode() != 200) {
@@ -84,13 +102,15 @@ public class MutualTlsTest {
     }
 
     public static RestAssuredConfig restAssuredConfig() {
+        final Config config = ConfigProvider.getConfig();
+        final String ext = config.getValue("keystore.type.short", String.class);
         return RestAssured.config().sslConfig(new SSLConfig().with()
                 .trustStore(
-                        "client-truststore." + ConfigProvider.getConfig().getValue("keystore.type", String.class),
-                        "client-truststore-password")
+                        "localhost-truststore." + ext,
+                        "secret")
                 .keyStore(
-                        "client-keystore." + ConfigProvider.getConfig().getValue("keystore.type", String.class),
-                        "client-keystore-password"));
+                        "localhost-client-keystore." + ext,
+                        "secret"));
     }
 
 }

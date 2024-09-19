@@ -414,6 +414,20 @@ public interface CxfClientConfig {
     public Optional<HTTPConduitImpl> httpConduitFactory();
 
     /**
+     * The name of the TLS configuration to use for setting up trust store and keystore for this SOAP client.
+     * <p>
+     * If not set and `.trust-store` or `.key-store` is configured then that the configuration from `.trust-store*`
+     * and `.key-store*` family of options will be used.
+     * If a name is configured, it uses the configuration from `quarkus.tls.<name>.*`
+     * If a name is configured, but no TLS configuration is found with that name then an error will be thrown at runtime.
+     * Setting `.tls-configuration-name` and any of `.trust-store` or `.key-store` leads to an exception at runtime.
+     *
+     * @asciidoclet
+     * @since 3.15.0
+     */
+    Optional<String> tlsConfigurationName();
+
+    /**
      * The key store location for this client. The resource is first looked up in the classpath, then in the file system.
      *
      * @asciidoclet

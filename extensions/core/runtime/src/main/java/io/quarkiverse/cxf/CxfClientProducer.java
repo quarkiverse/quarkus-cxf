@@ -34,6 +34,7 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
+import io.vertx.core.Vertx;
 
 /**
  * Base producer class for setting up CXF client proxies and {@link CXFClientInfo}s.
@@ -64,6 +65,9 @@ public abstract class CxfClientProducer {
     @Inject
     HttpClientPool httpClientPool;
 
+    @Inject
+    Vertx vertx;
+
     private LoggingFactoryCustomizer loggingFactoryCustomizer;
 
     @PostConstruct
@@ -75,7 +79,7 @@ public abstract class CxfClientProducer {
      * Must be public, otherwise: java.lang.VerifyError: Bad access to protected data in invokevirtual
      */
     public Object loadCxfClient(InjectionPoint ip, CXFClientData meta) {
-        return produceCxfClient(selectorCXFClientInfo(config, fixedConfig, ip, meta));
+        return produceCxfClient(selectorCXFClientInfo(config, fixedConfig, ip, meta, vertx));
     }
 
     /**
@@ -96,7 +100,7 @@ public abstract class CxfClientProducer {
      * Must be public, otherwise: java.lang.VerifyError: Bad access to protected data in invokevirtual
      */
     public CXFClientInfo loadCxfClientInfo(InjectionPoint ip, CXFClientData meta) {
-        return selectorCXFClientInfo(config, fixedConfig, ip, meta);
+        return selectorCXFClientInfo(config, fixedConfig, ip, meta, vertx);
     }
 
     /**
@@ -185,7 +189,8 @@ public abstract class CxfClientProducer {
                 fixedConfig,
                 cxfClientInfo,
                 origConduitFactory,
-                authorizationPolicy);
+                authorizationPolicy,
+                vertx);
         props.put(HTTPConduitFactory.class.getName(), conduitFactory);
         Object result;
         try {
@@ -240,7 +245,8 @@ public abstract class CxfClientProducer {
             CxfConfig config,
             CxfFixedConfig fixedConfig,
             InjectionPoint ip,
-            CXFClientData meta) {
+            CXFClientData meta,
+            Vertx vertx) {
 
         // If injection point is annotated with @CXFClient then determine a
         // configuration by looking up annotated config value:
@@ -259,7 +265,8 @@ public abstract class CxfClientProducer {
                 configKey,
                 () -> new IllegalStateException(
                         "quarkus.cxf.client.\"" + configKey + "\" is referenced in " + ip.getMember()
-                                + " but no such build time configuration entry exists"));
+                                + " but no such build time configuration entry exists"),
+                vertx);
     }
 
     public static CXFClientInfo selectorCXFClientInfo(
@@ -267,14 +274,15 @@ public abstract class CxfClientProducer {
             CxfFixedConfig fixedConfig,
             CXFClientData meta,
             String configKey,
-            Supplier<IllegalStateException> exceptionSupplier) {
+            Supplier<IllegalStateException> exceptionSupplier,
+            Vertx vertx) {
 
         // If injection point is annotated with @CXFClient then determine a
         // configuration by looking up annotated config value:
 
         if (configKey != null && !configKey.isEmpty()) {
             if (config.isClientPresent(configKey)) {
-                return new CXFClientInfo(meta, config, config.getClient(configKey), configKey);
+                return new CXFClientInfo(meta, config, config.getClient(configKey), configKey, vertx);
             }
             // If config-key is present and not default: This is an error:
             throw exceptionSupplier.get();
@@ -301,9 +309,9 @@ public abstract class CxfClientProducer {
                 LOGGER.warnf(
                         "No configuration found for quarkus.cxf.*.service-interface = %s and alternative = false. Using the values from the service instead: %s.",
                         meta.getSei(), meta);
-                return new CXFClientInfo(meta, config, config.internal().client(), null);
+                return new CXFClientInfo(meta, config, config.internal().client(), null, vertx);
             case 1:
-                return new CXFClientInfo(meta, config, config.clients().get(keylist.get(0)), keylist.get(0));
+                return new CXFClientInfo(meta, config, config.clients().get(keylist.get(0)), keylist.get(0), vertx);
             default:
                 throw new IllegalStateException("quarkus.cxf.*.service-interface = " + meta.getSei()
                         + " with alternative = false expected once, but found " + keylist.size() + " times in "

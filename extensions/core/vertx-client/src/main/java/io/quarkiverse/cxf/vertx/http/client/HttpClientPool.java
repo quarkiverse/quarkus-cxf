@@ -80,8 +80,8 @@ public class HttpClientPool {
                     .setProtocolVersion(spec.getVersion());
             if (spec.isSsl()) {
                 opts
-                        .setSsl(true)
-                        .setTrustAll(true)
+                        .setSsl(spec.isSsl())
+                        .setTrustAll(true) //
                         .setSslEngineOptions(spec.createSslEngineOptions());
             }
             return vertx.createHttpClient(opts);
@@ -95,9 +95,9 @@ public class HttpClientPool {
         private final TrustManager[] trustManagers;
         private final Set<String> cipherSuites;
         private final HostnameVerifier hostNameVerifier;
+        private final boolean ssl;
 
         private final int hashCode;
-        private final boolean ssl;
 
         public ClientSpec(
                 HttpVersion version,
@@ -137,12 +137,13 @@ public class HttpClientPool {
                     throw new VertxHttpException(e);
                 }
                 this.cipherSuites = new LinkedHashSet<>(Arrays.asList(css));
+                this.ssl = true;
 
                 h = 31 * h + Arrays.hashCode(keyManagers);
                 h = 31 * h + Arrays.hashCode(tms);
                 h = 31 * h + hostNameVerifier.hashCode();
                 h = 31 * h + cipherSuites.hashCode();
-                this.ssl = true;
+                h = 31 * h + (ssl ? 1231 : 1237);
             } else {
                 this.keyManagers = null;
                 this.trustManagers = null;
