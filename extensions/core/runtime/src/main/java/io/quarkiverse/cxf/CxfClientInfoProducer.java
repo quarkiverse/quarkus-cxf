@@ -45,7 +45,7 @@ public class CxfClientInfoProducer extends CxfClientProducer {
                             + CXFClient.class.getSimpleName() + "(\"" + key + "\")");
         }
         final CXFClientData meta = Arc.container().<CXFClientData> instance(serviceInterface.get()).get();
-        return selectorCXFClientInfo(config, fixedConfig, ip, meta);
+        return selectorCXFClientInfo(config, fixedConfig, ip, meta, vertx);
     }
 
 }

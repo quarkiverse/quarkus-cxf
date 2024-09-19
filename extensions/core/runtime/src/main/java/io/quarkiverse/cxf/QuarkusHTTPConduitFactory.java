@@ -1,15 +1,6 @@
 package io.quarkiverse.cxf;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.Optional;
 
 import javax.net.ssl.HostnameVerifier;
@@ -34,6 +25,8 @@ import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
+import io.quarkus.tls.TlsConfiguration;
+import io.vertx.core.Vertx;
 
 /**
  * A HTTPConduitFactory with some client specific configuration, such as timeouts and SSL.
@@ -41,7 +34,7 @@ import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
  * @since 3.8.1
  */
 public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
-    private static final Logger log = Logger.getLogger(QuarkusHTTPConduitFactory.class);
+    static final Logger log = Logger.getLogger(QuarkusHTTPConduitFactory.class);
     /**
      * The name of the environment variable defining the conduit type to use for QuarkusCXFDefault.
      * This is only for testing while VertxHttpClientHTTPConduitFactory is not stable.
@@ -55,13 +48,15 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     private final HTTPConduitFactory busHTTPConduitFactory;
     private final AuthorizationPolicy authorizationPolicy;
     private final HTTPConduitImpl defaultHTTPConduitFactory;
+    private final Vertx vertx;
 
     public QuarkusHTTPConduitFactory(
             HttpClientPool httpClientPool,
             CxfFixedConfig cxFixedConfig,
             CXFClientInfo cxfClientInfo,
             HTTPConduitFactory busHTTPConduitFactory,
-            AuthorizationPolicy authorizationPolicy) {
+            AuthorizationPolicy authorizationPolicy,
+            Vertx vertx) {
         super();
         this.httpClientPool = httpClientPool;
         this.cxFixedConfig = cxFixedConfig;
@@ -69,6 +64,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         this.busHTTPConduitFactory = busHTTPConduitFactory;
         this.authorizationPolicy = authorizationPolicy;
         this.defaultHTTPConduitFactory = HTTPConduitImpl.findDefaultHTTPConduitImpl();
+        this.vertx = vertx;
     }
 
     @Override
@@ -144,9 +140,8 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
 
     private HTTPConduit configure(HTTPConduit httpConduit, CXFClientInfo cxfClientInfo) throws IOException {
         final String hostnameVerifierName = cxfClientInfo.getHostnameVerifier();
-        final String keyStorePath = cxfClientInfo.getKeyStore();
-        final String trustStorePath = cxfClientInfo.getTrustStore();
-        if (hostnameVerifierName != null || keyStorePath != null || trustStorePath != null) {
+        final TlsConfiguration tlsConfig = cxfClientInfo.getTlsConfiguration();
+        if (hostnameVerifierName != null || tlsConfig != null) {
             TLSClientParameters tlsCP = new TLSClientParameters();
 
             if (hostnameVerifierName != null) {
@@ -163,36 +158,24 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                 }
             }
 
-            if (keyStorePath != null) {
-                final KeyStore keyStore;
-                final KeyManagerFactory kmf;
-                try (InputStream is = openStream(keyStorePath)) {
-                    keyStore = KeyStore.getInstance(cxfClientInfo.getKeyStoreType());
-                    final String pwd = cxfClientInfo.getKeyStorePassword();
-                    keyStore.load(is, pwd == null ? null : pwd.toCharArray());
-                    kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-                    final String keyPassword = cxfClientInfo.getKeyPassword();
-                    kmf.init(keyStore, (keyPassword != null) ? keyPassword.toCharArray() : null);
-                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException
-                        | UnrecoverableKeyException e) {
-                    throw new RuntimeException("Could not load " + keyStorePath + " from class path or filesystem", e);
+            if (tlsConfig != null) {
+                if (tlsConfig.getKeyStoreOptions() != null) {
+                    try {
+                        final KeyManagerFactory kmf = tlsConfig.getKeyStoreOptions().getKeyManagerFactory(vertx);
+                        tlsCP.setKeyManagers(kmf.getKeyManagers());
+                    } catch (Exception e) {
+                        throw new RuntimeException("Could not set up key manager factory", e);
+                    }
                 }
-                tlsCP.setKeyManagers(kmf.getKeyManagers());
-            }
 
-            if (trustStorePath != null) {
-                final KeyStore trustStore;
-                final TrustManagerFactory tmf;
-                try (InputStream is = openStream(trustStorePath)) {
-                    trustStore = KeyStore.getInstance(cxfClientInfo.getTrustStoreType());
-                    final String pwd = cxfClientInfo.getTrustStorePassword();
-                    trustStore.load(is, pwd == null ? null : pwd.toCharArray());
-                    tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                    tmf.init(trustStore);
-                } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException e) {
-                    throw new RuntimeException("Could not load " + trustStorePath + " from class path or filesystem", e);
+                if (tlsConfig.getTrustStoreOptions() != null) {
+                    try {
+                        final TrustManagerFactory tmf = tlsConfig.getTrustStoreOptions().getTrustManagerFactory(vertx);
+                        tlsCP.setTrustManagers(tmf.getTrustManagers());
+                    } catch (Exception e) {
+                        throw new RuntimeException("Could not set up trust manager factory", e);
+                    }
                 }
-                tlsCP.setTrustManagers(tmf.getTrustManagers());
             }
 
             httpConduit.setTlsClientParameters(tlsCP);
@@ -297,28 +280,6 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         }
 
         return httpConduit;
-    }
-
-    private InputStream openStream(final String keystorePath) throws IOException {
-        final URL url = Thread.currentThread().getContextClassLoader().getResource(keystorePath);
-        if (url != null) {
-            try {
-                return url.openStream();
-            } catch (IOException e) {
-                throw new RuntimeException("Could not open " + keystorePath + " from the class path", e);
-            }
-        }
-        final Path path = Path.of(keystorePath);
-        if (Files.exists(path)) {
-            try {
-                return Files.newInputStream(path);
-            } catch (IOException e) {
-                throw new RuntimeException("Could not open " + keystorePath + " from the filesystem", e);
-            }
-        }
-        final String msg = "Resource " + keystorePath + " exists neither in class path nor in the filesystem";
-        log.error(msg);
-        throw new IllegalStateException(msg);
     }
 
 }

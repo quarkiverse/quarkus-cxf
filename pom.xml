@@ -68,6 +68,7 @@
         <santuario-xmlsec.version>3.0.4</santuario-xmlsec.version>
 
         <slf4j.version>2.0.6</slf4j.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.slf4j:slf4j-api -->
+        <smallrye-certificate-generator.version>0.8.1</smallrye-certificate-generator.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.smallrye.certs:smallrye-certificate-generator -->
         <stax2.version>4.2.2</stax2.version><!-- @sync com.fasterxml.woodstox:woodstox-core:${woodstox-core.version} dep:org.codehaus.woodstox:stax2-api -->
         <woodstox-core.version>7.0.0</woodstox-core.version>
         <wsdl4j.version>1.6.3</wsdl4j.version><!-- Manage WSDL4J to make sure that quarkus-cxf-xjc-plugins pulls the right version via cxf-xjc-wsdlextension -->
@@ -302,7 +303,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>

@@ -17,6 +17,7 @@ import io.quarkiverse.cxf.CxfClientProducer;
 import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkus.arc.Arc;
+import io.vertx.core.Vertx;
 
 public class CxfJsonRPCService {
 
@@ -31,6 +32,9 @@ public class CxfJsonRPCService {
 
     @Inject
     CxfFixedConfig fixedConfig;
+
+    @Inject
+    Vertx vertx;
 
     public List<DevUiServiceInfo> getServices() {
         return servletInfos;
@@ -54,7 +58,8 @@ public class CxfJsonRPCService {
                     fixedConfig,
                     cxfClientData,
                     ip.getConfigKey(),
-                    () -> new IllegalStateException("Cannot find quarkus.cxf.client.\"" + ip.getConfigKey() + "\""));
+                    () -> new IllegalStateException("Cannot find quarkus.cxf.client.\"" + ip.getConfigKey() + "\""),
+                    vertx);
 
             final DevUiClientInfo devUiIInfo = new DevUiClientInfo(
                     ip.getConfigKey(),
