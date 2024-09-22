@@ -26,7 +26,10 @@ import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 import io.quarkus.tls.TlsConfiguration;
+import io.quarkus.tls.runtime.VertxCertificateHolder;
+import io.quarkus.tls.runtime.config.TlsBucketConfig;
 import io.vertx.core.Vertx;
+import io.vertx.core.net.KeyCertOptions;
 
 /**
  * A HTTPConduitFactory with some client specific configuration, such as timeouts and SSL.
@@ -159,9 +162,10 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
             }
 
             if (tlsConfig != null) {
-                if (tlsConfig.getKeyStoreOptions() != null) {
+                final KeyCertOptions keyStoreOptions = tlsConfig.getKeyStoreOptions();
+                if (keyStoreOptions != null) {
                     try {
-                        final KeyManagerFactory kmf = tlsConfig.getKeyStoreOptions().getKeyManagerFactory(vertx);
+                        final KeyManagerFactory kmf = keyStoreOptions.getKeyManagerFactory(vertx);
                         tlsCP.setKeyManagers(kmf.getKeyManagers());
                     } catch (Exception e) {
                         throw new RuntimeException("Could not set up key manager factory", e);
@@ -175,6 +179,12 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                     } catch (Exception e) {
                         throw new RuntimeException("Could not set up trust manager factory", e);
                     }
+                }
+
+                if (tlsConfig instanceof VertxCertificateHolder) {
+                    final VertxCertificateHolder vertxCertificateHOlder = (VertxCertificateHolder) tlsConfig;
+                    final TlsBucketConfig bucketConfig = vertxCertificateHOlder.config();
+                    bucketConfig.cipherSuites().ifPresent(tlsCP::setCipherSuites);
                 }
             }
 
