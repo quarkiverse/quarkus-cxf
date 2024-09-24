@@ -116,11 +116,8 @@ public class HostnameVerifierTest {
         Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).isEmpty();
         customHostnameVerifier.setReturnVal(false);
         Assertions.assertThatThrownBy(() -> helloVertx.hello("Doe")).hasRootCauseMessage(
-                "The https URL hostname localhost does not match the Common Name (CN) on the server certificate in the client's truststore. Make sure server certificate is correct, or to disable this check (NOT recommended for production) set the CXF client TLS configuration property \"disableCNCheck\" to true.");
-        Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).containsExactly("localhost");
-        customHostnameVerifier.setReturnVal(true);
-        Assertions.assertThat(helloVertx.hello("Joe")).isEqualTo("Hello Joe");
-        Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).containsExactly("localhost", "localhost");
+                "io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit does not support HostNameVerifier");
+        Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).isEmpty();
     }
 
     @Test

@@ -85,7 +85,7 @@ jobs:
     # Same as the previous but different default ConduitFactory
     - name: mvn test
       env: 
-        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: VertxHttpClientHTTPConduitFactory
+        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
       shell: bash
       run: |
         ./mvnw -B clean test \
