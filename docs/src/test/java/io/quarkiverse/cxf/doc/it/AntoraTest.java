@@ -18,7 +18,7 @@ public class AntoraTest {
         RestAssured
                 .given()
                 .contentType(ContentType.HTML)
-                .get("/quarkus-cxf/dev/index.html")
+                .get("/quarkus-cxf/3.15/index.html")
                 .then()
                 .statusCode(200)
                 .body(CoreMatchers.containsString("<h1 class=\"page\">Quarkus CXF</h1>"));
