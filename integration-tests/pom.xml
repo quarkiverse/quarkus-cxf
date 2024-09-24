@@ -28,6 +28,7 @@
         <module>mtom-awt</module>
         <module>metrics</module>
         <module>opentelemetry</module>
+        <module>saaj</module>
         <module>wsdl2java</module>
         <module>wsdl2java-no-config</module>
         <module>santuario-xmlsec</module>
