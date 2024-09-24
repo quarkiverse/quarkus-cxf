@@ -1,0 +1,23 @@
+= {quarkus-cxf-project-name} 3.15.1 LTS release notes
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Add back the default constructor of `QuarkusCxfMetricsFeature`
+
+When implementing the support for
+xref:/release-notes/3.15.0.adoc#_1492_support_using_cxf_tagscustomizers_and_deprecate_dynamic_usage_of_meterfilters[using CXF ``TagsCustomizer``s]
+in 3.15.0, we added a new parameter to the default constructor of `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature`.
+That turned out to be an issue for setting up CXF metrics in Camel Quarkus, where the default constructor was
+https://github.com/apache/camel-quarkus/blob/12be5efba38a0627f1624391dd096eac691caa0d/integration-test-groups/cxf-soap/cxf-soap-metrics/src/main/java/org/apache/camel/quarkus/component/cxf/soap/it/metrics/CxfSoapMetricsRoutes.java#L64[used].
+
+In {quarkus-cxf-project-name} 3.15.1, the default constructor of `QuarkusCxfMetricsFeature` was added back
+to recover the backwards compatibility broken in 3.15.0.
+
+=== Downgrade to `httpclient5` 5.2.3 to be on the same minor as Camel Quarkus
+
+We downgraded `org.apache.httpcomponents.client5:httpclient5` managed in `quarkus-cxf-bom` from 5.3.1 to 5.2.3
+to improve the compatibility and interoperability with Camel Quarkus.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.15.0+++...+++3.15.1

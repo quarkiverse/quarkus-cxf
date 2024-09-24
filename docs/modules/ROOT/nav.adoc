@@ -31,6 +31,7 @@
 ** xref:user-guide/examples.adoc[Examples]
 * xref:release-notes/index.adoc[Release notes]
 ifeval::[{doc-is-main} == true]
+** xref:release-notes/3.15.1.adoc[3.15.1 LTS]
 ** xref:release-notes/3.15.0.adoc[3.15.0 LTS]
 ** xref:release-notes/3.14.0.adoc[3.14.0]
 ** xref:release-notes/3.13.1.adoc[3.13.1]
