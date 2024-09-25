@@ -24,7 +24,20 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.smallrye.certs.Format;
+import io.smallrye.certs.junit5.Alias;
+import io.smallrye.certs.junit5.Certificate;
+import io.smallrye.certs.junit5.Certificates;
 
+@Certificates(baseDir = "target/classes", //
+        certificates = @Certificate( //
+                name = "localhost", //
+                password = XmlsecResource.LOCALHOST_KEYSTORE_PASSWORD, //
+                aliases = @Alias(//
+                        name = "client", //
+                        password = io.quarkiverse.xmlsec.it.XmlsecResource.CLIENT_KEYSTORE_PASSWORD, //
+                        client = true), //
+                formats = { Format.PKCS12 }))
 @QuarkusTest
 public class XmlsecResourceTest {
 
