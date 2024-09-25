@@ -60,7 +60,7 @@
         <jakarta.xml.soap-api.version>2.0.1</jakarta.xml.soap-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.soapapi.version -->
         <jakarta.xml.ws-api.version>3.0.1</jakarta.xml.ws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.wsapi.version -->
         <jasypt.version>1.9.3</jasypt.version><!-- @sync org.apache.wss4j:wss4j-parent:${wss4j.version} prop:jasypt.version -->
-        <httpclient5.version>5.2.3</httpclient5.version>
+        <httpclient5.version>5.4</httpclient5.version>
         <httpcore5.version>5.2.5</httpcore5.version>
         <neethi.version>3.2.0</neethi.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
         <mimepull.version>1.10.0</mimepull.version>
