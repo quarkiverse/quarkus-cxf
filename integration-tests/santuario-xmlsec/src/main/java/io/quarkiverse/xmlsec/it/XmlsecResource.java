@@ -38,16 +38,20 @@ import jakarta.ws.rs.PathParam;
 @ApplicationScoped
 public class XmlsecResource {
 
+    public static final String LOCALHOST_KEYSTORE_PASSWORD = "myservice-keystore-password";
+
+    public static final String CLIENT_KEYSTORE_PASSWORD = "myclient-keystore-password";
+
     public static final List<QName> PAYMENT_INFO = List.of(new QName("urn:example:po", "PaymentInfo"));
 
     private final KeyStore keyStore;
 
     public XmlsecResource() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         // Set up the Key
-        keyStore = KeyStore.getInstance("jks");
+        keyStore = KeyStore.getInstance("pkcs12");
         keyStore.load(
-                this.getClass().getClassLoader().getResource("myservice-keystore.jks").openStream(),
-                "myservice-keystore-password".toCharArray());
+                this.getClass().getClassLoader().getResource("localhost-keystore.p12").openStream(),
+                LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
     }
 
     /**
@@ -62,7 +66,7 @@ public class XmlsecResource {
     @POST
     @Path("/{encryption}/encrypt")
     public byte[] encrypt(byte[] plaintext, @PathParam("encryption") Encryption encryption) throws Exception {
-        X509Certificate cert = (X509Certificate) keyStore.getCertificate("myservice");
+        X509Certificate cert = (X509Certificate) keyStore.getCertificate("localhost");
 
         // Set up the secret Key
         KeyGenerator keygen = KeyGenerator.getInstance("AES");
@@ -86,7 +90,7 @@ public class XmlsecResource {
     @POST
     @Path("/{encryption}/decrypt")
     public byte[] decrypt(byte[] encrypted, @PathParam("encryption") Encryption encryption) throws Exception {
-        Key privateKey = keyStore.getKey("myservice", "myservice-keystore-password".toCharArray());
+        Key privateKey = keyStore.getKey("localhost", LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
         return encryption.decrypt(encrypted, "http://www.w3.org/2009/xmlenc11#aes256-gcm", privateKey);
     }
 
@@ -104,12 +108,12 @@ public class XmlsecResource {
     public byte[] signEnveloped(byte[] plaintext, @PathParam("signature") Signing signature) throws Exception {
 
         // Set up the Key
-        KeyStore keyStore = KeyStore.getInstance("jks");
+        KeyStore keyStore = KeyStore.getInstance("pkcs12");
         keyStore.load(
-                this.getClass().getClassLoader().getResource("myclient-keystore.jks").openStream(),
-                "myclient-keystore-password".toCharArray());
-        Key key = keyStore.getKey("myclient", "myclient-keystore-password".toCharArray());
-        X509Certificate cert = (X509Certificate) keyStore.getCertificate("myclient");
+                this.getClass().getClassLoader().getResource("localhost-client-keystore.p12").openStream(),
+                LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
+        Key key = keyStore.getKey("client", CLIENT_KEYSTORE_PASSWORD.toCharArray());
+        X509Certificate cert = (X509Certificate) keyStore.getCertificate("client");
         return signature.sign(plaintext, key, cert, PAYMENT_INFO);
     }
 
@@ -127,11 +131,11 @@ public class XmlsecResource {
     public void verifyEnveloped(byte[] plaintext, @PathParam("signature") Signing signature) throws Exception {
 
         // Set up the Key
-        KeyStore keyStore = KeyStore.getInstance("jks");
+        KeyStore keyStore = KeyStore.getInstance("pkcs12");
         keyStore.load(
-                this.getClass().getClassLoader().getResource("myclient-keystore.jks").openStream(),
-                "myclient-keystore-password".toCharArray());
-        X509Certificate cert = (X509Certificate) keyStore.getCertificate("myclient");
+                this.getClass().getClassLoader().getResource("localhost-client-keystore.p12").openStream(),
+                LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
+        X509Certificate cert = (X509Certificate) keyStore.getCertificate("client");
         signature.verify(plaintext, cert);
     }
 
