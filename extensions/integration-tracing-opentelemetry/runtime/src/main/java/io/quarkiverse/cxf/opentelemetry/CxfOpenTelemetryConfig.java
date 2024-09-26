@@ -105,7 +105,7 @@ public interface CxfOpenTelemetryConfig {
              *
              * `quarkus.otel.enabled` and `quarkus.otel.sdk.disabled` also impact whether the CXF telemetry data is
              * collected. Check
-             * https://quarkus.io/guides/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus OpenTelemetry
+             * {link-quarkus-docs-base}/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus OpenTelemetry
              * guide].
              *
              * @since 2.7.0
@@ -125,7 +125,7 @@ public interface CxfOpenTelemetryConfig {
          * `quarkus.cxf.endpoint."/endpoint-path".otel.enabled` option respectively.
          *
          * `quarkus.otel.enabled` and `quarkus.otel.sdk.disabled` also impact whether the CXF telemetry data is
-         * collected. Check https://quarkus.io/guides/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus
+         * collected. Check {link-quarkus-docs-base}/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus
          * OpenTelemetry guide].
          *
          * @since 2.7.0

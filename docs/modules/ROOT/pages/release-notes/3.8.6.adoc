@@ -37,4 +37,4 @@ wsdl2java \
 
 == Full changelog
 
-https://github.com/quarkiverse/quarkus-cxf/compare/3.8.5...3.8.6
+https://github.com/quarkiverse/quarkus-cxf/compare/3.8.5+++...+++3.8.6

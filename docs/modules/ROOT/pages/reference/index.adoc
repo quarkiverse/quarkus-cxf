@@ -114,10 +114,10 @@ In order to switch to SOAP 1.2 or to add MTOM, set `quarkus.cxf.[client|endpoint
 |===
 | Binding | Property Value
 
-| SOAP 1.1 (default) | `http://schemas.xmlsoap.org/wsdl/soap/http`
-| SOAP 1.2 | `http://www.w3.org/2003/05/soap/bindings/HTTP/`
-| SOAP 1.1 with MTOM | `http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true`
-| SOAP 1.2 with MTOM | `http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true`
+| SOAP 1.1 (default) | `\http://schemas.xmlsoap.org/wsdl/soap/http`
+| SOAP 1.2 | `\http://www.w3.org/2003/05/soap/bindings/HTTP/`
+| SOAP 1.1 with MTOM | `\http://schemas.xmlsoap.org/wsdl/soap/http?mtom=true`
+| SOAP 1.2 with MTOM | `\http://www.w3.org/2003/05/soap/bindings/HTTP/?mtom=true`
 |===
 
 [[unsupported]]
@@ -131,10 +131,10 @@ Here is a list of CXF modules currently not supported by {quarkus-cxf-project-na
 | JAX-RS +
 `cxf-rt-frontend-jaxrs` +
 `cxf-rt-rs-client`
-| https://quarkus.io/guides/rest-json[Use Quarkus RESTEasy]
+| {link-quarkus-docs-base}/rest-json[Use Quarkus RESTEasy]
 
 | https://cxf.apache.org/fediz.html[Fediz]
-| https://quarkus.io/guides/security-oidc-bearer-token-authentication-tutorial[Use Quarkus OpenID Connect]
+| {link-quarkus-docs-base}/security-oidc-bearer-token-authentication-tutorial[Use Quarkus OpenID Connect]
 
 | https://cxf.apache.org/docs/aegis-21.html[Aegis]
 | Use JAXB and JAX-WS

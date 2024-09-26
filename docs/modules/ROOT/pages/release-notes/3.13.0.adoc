@@ -82,7 +82,7 @@ a `NullPointerException` without any meaningful message was thrown upon looking 
 Since {quarkus-cxf-project-name} 3.13.0, the exception became informative, suggesting the user
 to add index to the dependency using either `quarkus.index-dependency.*` family of options
 or by adding `io.smallrye:jandex-maven-plugin` to the module containing sources of the missing class.
-Check https://quarkus.io/guides/cdi-reference#how-to-generate-a-jandex-index[How to Generate a Jandex Index] section of
+Check {link-quarkus-docs-base}/cdi-reference#how-to-generate-a-jandex-index[How to Generate a Jandex Index] section of
 Quarkus Contexts and dependency injection guide for more details.
 
 === Documentation improvements

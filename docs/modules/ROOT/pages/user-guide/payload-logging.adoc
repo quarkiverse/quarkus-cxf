@@ -1,12 +1,12 @@
 = Logging
 
-Refer to Quarkus https://quarkus.io/guides/logging[Logging guide] for basic information about logging on Quarkus, such as
+Refer to Quarkus {link-quarkus-docs-base}/logging[Logging guide] for basic information about logging on Quarkus, such as
 
-* https://quarkus.io/guides/logging#get-an-application-logger[Getting a logger] in your application code
-* https://quarkus.io/guides/logging#use-log-levels[Log levels]
-* https://quarkus.io/guides/logging#configure-the-log-level-category-and-format[Categories]
-* https://quarkus.io/guides/logging#logging-format[Format]
-* https://quarkus.io/guides/logging#json-logging[JSON format]
+* {link-quarkus-docs-base}/logging#get-an-application-logger[Getting a logger] in your application code
+* {link-quarkus-docs-base}/logging#use-log-levels[Log levels]
+* {link-quarkus-docs-base}/logging#configure-the-log-level-category-and-format[Categories]
+* {link-quarkus-docs-base}/logging#logging-format[Format]
+* {link-quarkus-docs-base}/logging#json-logging[JSON format]
 
 == Payload logging
 

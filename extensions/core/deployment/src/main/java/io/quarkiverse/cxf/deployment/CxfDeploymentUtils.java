@@ -63,7 +63,7 @@ public class CxfDeploymentUtils {
                         + " for indexing using quarkus.index-dependency.* family of properties"
                         + " or you may want to add io.smallrye:jandex-maven-plugin to the module containing sources of "
                         + interfaceName
-                        + ". See https://quarkus.io/guides/cdi-reference#bean_discovery for more information.");
+                        + ". See {link-quarkus-docs-base}/cdi-reference#bean_discovery for more information.");
             }
             final AnnotationInstance webServiceAnnotation = interfaceInfo.annotation(CxfDotNames.WEBSERVICE_ANNOTATION);
             if (webServiceAnnotation != null) {

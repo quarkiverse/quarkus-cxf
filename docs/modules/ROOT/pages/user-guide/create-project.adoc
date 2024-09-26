@@ -5,12 +5,12 @@ This guide explains how to set up a new project for a Quarkus application hostin
 [[prerequisites-project]]
 == Prerequisites
 
-Read the https://quarkus.io/guides/getting-started#prerequisites[Prerequisites section] of Quarkus getting started guide.
+Read the {link-quarkus-docs-base}/getting-started#prerequisites[Prerequisites section] of Quarkus getting started guide.
 
 In addition to that, you may need
 
 * GraalVM with the `native-image` command installed and the `GRAALVM_HOME` environment variable set.
-  See https://quarkus.io/guides/building-native-image-guide[Building a native executable] section of the Quarkus
+  See {link-quarkus-docs-base}/building-native-image[Building a native executable] section of the Quarkus
   documentation.
 * If you are on Linux, a container runtime like `docker` is sufficient for the native mode too.
   Use `-Pnative -Dquarkus.native.container-build=true` instead of `-Pnative` if you choose this option.
@@ -38,7 +38,7 @@ such as Quarkus Core, {quarkus-cxf-project-name}, Apache Camel, Qpid JMS, Debezi
 Its main goals are:
 
 * Produce BOMs aligned across all participating projects, thus ensuring that their extensions will work together
-* Produce metadata for https://{link-quarkus-code-generator}[{link-quarkus-code-generator}] and other https://quarkus.io/guides/tooling#build-tool[Quarkus development tools].
+* Produce metadata for https://{link-quarkus-code-generator}[{link-quarkus-code-generator}] and other {link-quarkus-docs-base}/tooling#build-tool[Quarkus development tools].
 
 [[dependency-management]]
 == Dependency management
@@ -46,7 +46,7 @@ Its main goals are:
 We recommend using Quarkus Platform BOMs to manage {quarkus-cxf-project-name} dependencies.
 That's exactly what you get,
 when you use https://{link-quarkus-code-generator}[{link-quarkus-code-generator}]
-or other https://quarkus.io/guides/tooling#build-tool[Quarkus development tools], such as Quarkus CLI.
+or other {link-quarkus-docs-base}/tooling#build-tool[Quarkus development tools], such as Quarkus CLI.
 
 [source,xml,subs=attributes+]
 ----
