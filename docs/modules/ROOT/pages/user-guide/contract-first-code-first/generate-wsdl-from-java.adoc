@@ -1,6 +1,6 @@
 = Generate WSDL document from Java
 
-If the WSDL served by your service at http://your-host/your-service?wsdl is not enough
+If the WSDL served by your service at `+http://your-host/your-service?wsdl+` is not enough
 because you e.g. want to distribute it as a Maven artifact,
 then you can use `java2ws` to generate the WSDL document at build time.
 

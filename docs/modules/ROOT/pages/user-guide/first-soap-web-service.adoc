@@ -56,7 +56,7 @@ Check the xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc[Servi
 to learn about alternative ways to expose a service endpoint under a specific path.
 ====
 
-With these files in place, you can start Quarkus in https://quarkus.io/guides/maven-tooling#dev-mode[`dev` mode]:
+With these files in place, you can start Quarkus in {link-quarkus-docs-base}/maven-tooling#dev-mode[`dev` mode]:
 
 [source,shell]
 ----
