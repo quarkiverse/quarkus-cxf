@@ -32,7 +32,7 @@ section of CXF documentation for a better understanding of the underlying concep
 Another valid option at your disposal is to write your service in Java, using JAX-WS and JAXB.
 Then you have two options how to obtain the WSDL contract:
 
-1. Start your service and point your clients at http://your-host/your-service?wsdl
+1. Start your service and point your clients at `+http://your-host/your-service?wsdl+`
 2. xref:user-guide/contract-first-code-first.adoc[Generate the WSDL document from Java] classes at build time
 
 

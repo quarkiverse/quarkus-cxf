@@ -48,7 +48,7 @@ endif::[]
 This extension builds on top of `org.apache.cxf.tracing.opentelemetry.OpenTelemetryFeature` (for service endpoints)
 and `org.apache.cxf.tracing.opentelemetry.OpenTelemetryClientFeature` (for clients).
 Instances of these are created and configured internally using the instance of `io.opentelemetry.api.OpenTelemetry`
-provided by https://quarkus.io/guides/opentelemetry[Quarkus OpenTelemetry].
+provided by {link-quarkus-docs-base}/opentelemetry[Quarkus OpenTelemetry].
 
 The tracing is enabled by default for all clients and service endpoints created by {quarkus-cxf-project-name},
 unless you disable it explicitly via `quarkus.cxf.otel.enabled-for`, `quarkus.cxf.client."client-name".otel.enabled`
@@ -61,7 +61,7 @@ There is an https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tes
 covering OpenTelemetry in the {quarkus-cxf-project-name} source tree.
 It is using `InMemorySpanExporter` from `io.opentelemetry:opentelemetry-sdk-testing`,
 so that the spans can be inspected from tests easily.
-Refer to Quarkus https://quarkus.io/guides/opentelemetry#exporters[OpenTelemetry guide] for information
+Refer to Quarkus {link-quarkus-docs-base}/opentelemetry#exporters[OpenTelemetry guide] for information
 about other supported span exporters and collectors.
 
 
@@ -85,7 +85,7 @@ can be overridden per client or service endpoint using the `quarkus.cxf.client."
 `quarkus.cxf.endpoint."/endpoint-path".otel.enabled` option respectively.
 
 `quarkus.otel.enabled` and `quarkus.otel.sdk.disabled` also impact whether the CXF telemetry data is
-collected. Check https://quarkus.io/guides/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus
+collected. Check {link-quarkus-docs-base}/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus
 OpenTelemetry guide].
 
 *Environment variable*: `+++QUARKUS_CXF_OTEL_ENABLED_FOR+++` +
@@ -111,7 +111,7 @@ will be added to this service endpoint; otherwise the feature will not be added 
 
 `quarkus.otel.enabled` and `quarkus.otel.sdk.disabled` also impact whether the CXF telemetry data is
 collected. Check
-https://quarkus.io/guides/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus OpenTelemetry
+{link-quarkus-docs-base}/opentelemetry#disable-all-or-parts-of-the-opentelemetry-extension[Quarkus OpenTelemetry
 guide].
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__OTEL_ENABLED+++` +

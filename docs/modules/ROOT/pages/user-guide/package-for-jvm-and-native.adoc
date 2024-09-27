@@ -138,14 +138,14 @@ with the stack you used before and share your results!
 
 You may also refer to the links below which contain tips on how to work with native images.
 
-* https://quarkus.io/guides/building-native-image[Quarkus: Building a Native Executable]
-* https://quarkus.io/guides/writing-native-applications-tips[Quarkus: Tips for Writing Native Applications]
-* https://quarkus.io/guides/native-reference[Quarkus: Native Reference Guide]
+* {link-quarkus-docs-base}/building-native-image[Quarkus: Building a Native Executable]
+* {link-quarkus-docs-base}/writing-native-applications-tips[Quarkus: Tips for Writing Native Applications]
+* {link-quarkus-docs-base}/native-reference[Quarkus: Native Reference Guide]
 * https://www.graalvm.org/22.0/reference-manual/native-image/Resources/[GraalVM: Accessing Resources in Native Images]
 * https://www.graalvm.org/22.0/reference-manual/native-image/Reflection/[GraalVM: Reflection Use in Native Images]
 * https://www.graalvm.org/22.0/reference-manual/native-image/Agent/[GraalVM: Tracing Agent]
 
 == Create container image
 
-Refer to Quarkus https://quarkus.io/guides/container-image[Container image] guide.
+Refer to Quarkus {link-quarkus-docs-base}/container-image[Container image] guide.
 

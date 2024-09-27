@@ -13,4 +13,4 @@ This change was reverted in 3.8.5.
 
 == Full changelog
 
-https://github.com/quarkiverse/quarkus-cxf/compare/3.8.4...3.8.5
+https://github.com/quarkiverse/quarkus-cxf/compare/3.8.4+++...+++3.8.5

@@ -4,7 +4,7 @@
 Each extension documents its options at the bottom of its xref:reference/index.adoc[reference page].
 
 The configuration options can be set in `application.properties` file or via environment variables - see
-https://quarkus.io/guides/config-reference[Quarkus configuration reference] for details.
+{link-quarkus-docs-base}/config-reference[Quarkus configuration reference] for details.
 
 [[beanRefs]]
 == Bean references

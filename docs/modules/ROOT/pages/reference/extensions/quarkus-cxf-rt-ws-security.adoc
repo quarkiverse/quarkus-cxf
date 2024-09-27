@@ -382,7 +382,7 @@ tests] yet.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-saml-role-attributename]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-saml-role-attributename[quarkus.cxf.client."client-name".security.saml-role-attributename]`
 .<| `string`
-.<| `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
+.<| `\http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
 
 3+a|The attribute URI of the SAML `AttributeStatement` where the role information is stored.
 
@@ -987,7 +987,7 @@ tests] yet.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[quarkus.cxf.client."client-name".security.custom.digest.algorithm]`
 .<| `string`
-.<| `http://www.w3.org/2001/04/xmlenc#sha256`
+.<| `\http://www.w3.org/2001/04/xmlenc#sha256`
 
 3+a|The Digest Algorithm to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set `CustomAlgorithmSuite` as an
@@ -1032,7 +1032,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-algorithm[quarkus.cxf.client."client-name".security.custom.encryption.algorithm]`
 .<| `string`
-.<| `http://www.w3.org/2009/xmlenc11#aes256-gcm`
+.<| `\http://www.w3.org/2009/xmlenc11#aes256-gcm`
 
 3+a|The Encryption Algorithm to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
@@ -1054,7 +1054,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-symmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-symmetric-key-encryption-algorithm[quarkus.cxf.client."client-name".security.custom.symmetric.key.encryption.algorithm]`
 .<| `string`
-.<| `http://www.w3.org/2001/04/xmlenc#kw-aes256`
+.<| `\http://www.w3.org/2001/04/xmlenc#kw-aes256`
 
 3+a|The Symmetric Key Encryption Algorithm to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
@@ -1077,7 +1077,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-asymmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-asymmetric-key-encryption-algorithm[quarkus.cxf.client."client-name".security.custom.asymmetric.key.encryption.algorithm]`
 .<| `string`
-.<| `http://www.w3.org/2001/04/xmlenc#rsa-1_5`
+.<| `\http://www.w3.org/2001/04/xmlenc#rsa-1_5`
 
 3+a|The Asymmetric Key Encryption Algorithm to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
@@ -1100,7 +1100,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-encryption-key-derivation[quarkus.cxf.client."client-name".security.custom.encryption.key.derivation]`
 .<| `string`
-.<| `http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
+.<| `\http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
 
 3+a|The Encryption Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
@@ -1122,7 +1122,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-security-custom-signature-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-signature-key-derivation[quarkus.cxf.client."client-name".security.custom.signature.key.derivation]`
 .<| `string`
-.<| `http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
+.<| `\http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
 
 3+a|The Signature Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
@@ -1688,7 +1688,7 @@ tests] yet.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-saml-role-attributename]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-saml-role-attributename[quarkus.cxf.endpoint."/endpoint-path".security.saml-role-attributename]`
 .<| `string`
-.<| `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
+.<| `\http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role`
 
 3+a|The attribute URI of the SAML `AttributeStatement` where the role information is stored.
 
@@ -2293,7 +2293,7 @@ tests] yet.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-digest-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-digest-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.custom.digest.algorithm]`
 .<| `string`
-.<| `http://www.w3.org/2001/04/xmlenc#sha256`
+.<| `\http://www.w3.org/2001/04/xmlenc#sha256`
 
 3+a|The Digest Algorithm to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set `CustomAlgorithmSuite` as an
@@ -2338,7 +2338,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.custom.encryption.algorithm]`
 .<| `string`
-.<| `http://www.w3.org/2009/xmlenc11#aes256-gcm`
+.<| `\http://www.w3.org/2009/xmlenc11#aes256-gcm`
 
 3+a|The Encryption Algorithm to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
@@ -2360,7 +2360,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-symmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-symmetric-key-encryption-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.custom.symmetric.key.encryption.algorithm]`
 .<| `string`
-.<| `http://www.w3.org/2001/04/xmlenc#kw-aes256`
+.<| `\http://www.w3.org/2001/04/xmlenc#kw-aes256`
 
 3+a|The Symmetric Key Encryption Algorithm to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
@@ -2383,7 +2383,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-asymmetric-key-encryption-algorithm]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-asymmetric-key-encryption-algorithm[quarkus.cxf.endpoint."/endpoint-path".security.custom.asymmetric.key.encryption.algorithm]`
 .<| `string`
-.<| `http://www.w3.org/2001/04/xmlenc#rsa-1_5`
+.<| `\http://www.w3.org/2001/04/xmlenc#rsa-1_5`
 
 3+a|The Asymmetric Key Encryption Algorithm to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
@@ -2406,7 +2406,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-encryption-key-derivation[quarkus.cxf.endpoint."/endpoint-path".security.custom.encryption.key.derivation]`
 .<| `string`
-.<| `http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
+.<| `\http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
 
 3+a|The Encryption Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
@@ -2428,7 +2428,7 @@ enabled.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-signature-key-derivation]]`link:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-security-custom-signature-key-derivation[quarkus.cxf.endpoint."/endpoint-path".security.custom.signature.key.derivation]`
 .<| `string`
-.<| `http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
+.<| `\http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1`
 
 3+a|The Signature Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set

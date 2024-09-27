@@ -377,7 +377,7 @@ public interface CxfBuildTimeConfig {
          * such as `org.acme.MyClass`.
          *
          * The universe of class names to which `includes` and `excludes` are applied is defined as follows: 1. Only classes
-         * link:https://quarkus.io/guides/cdi-reference#bean_discovery[visible in Jandex] are considered. 2. From those, only
+         * link:{link-quarkus-docs-base}/cdi-reference#bean_discovery[visible in Jandex] are considered. 2. From those, only
          * the ones annotated with `@WebService` are selected.
          *
          * Examples:

@@ -45,7 +45,7 @@ endif::[]
 [id="quarkus-cxf-rt-features-metrics-usage"]
 == Usage
 
-The integration of CXF into the https://quarkus.io/guides/micrometer[Quarkus Micrometer] ecosystem is implemented using
+The integration of CXF into the {link-quarkus-docs-base}/telemetry-micrometer-tutorial[Quarkus Micrometer] ecosystem is implemented using
 `io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature`.
 As long as your application depends on `quarkus-cxf-rt-features-metrics`,
 an instance of `QuarkusCxfMetricsFeature` is created internally

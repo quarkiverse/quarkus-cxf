@@ -84,7 +84,7 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 
 .<|[=configDocItem.illustration] [[quarkus-cxf_[=anchor]]]`link:#quarkus-cxf_[=anchor][[=configDocItem.key]]`
 .<| [=configDocItem.type]
-.<| [#if configDocItem.defaultValue?has_content]`[=configDocItem.defaultValue]`[#elseif ! configDocItem.optional ]required icon:exclamation-circle[title=Configuration property is required][/#if]
+.<| [#if configDocItem.defaultValue?has_content]`[=(configDocItem.defaultValue?starts_with("http:") || configDocItem.defaultValue?starts_with("https:"))?then("\\", "")][=configDocItem.defaultValue]`[#elseif ! configDocItem.optional ]required icon:exclamation-circle[title=Configuration property is required][/#if]
 
 3+a|[=configDocItem.configDoc]
 [#if configDocItem.environmentVariable?? ]

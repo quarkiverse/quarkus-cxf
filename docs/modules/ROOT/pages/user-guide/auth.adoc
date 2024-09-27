@@ -41,12 +41,12 @@ See the xref:user-guide/ssl.adoc#mtls[Mutual TLS (mTLS) authentication] section 
 
 == Securing service endpoints
 
-The server-side authentication and authorization is driven by https://quarkus.io/guides/security-overview[Quarkus Security],
+The server-side authentication and authorization is driven by {link-quarkus-docs-base}/security-overview[Quarkus Security],
 especially when it comes to
 
-* https://quarkus.io/guides/security-authentication-mechanisms[Authentication mechanisms]
-* https://quarkus.io/guides/security-identity-providers[Identity providers]
-* https://quarkus.io/guides/security-authorize-web-endpoints-reference[Role-based access control (RBAC)]
+* {link-quarkus-docs-base}/security-authentication-mechanisms[Authentication mechanisms]
+* {link-quarkus-docs-base}/security-identity-providers[Identity providers]
+* {link-quarkus-docs-base}/security-authorize-web-endpoints-reference[Role-based access control (RBAC)]
 
 There is a basic example in our https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client-server[Client and server integration test].
 Its key parts are:

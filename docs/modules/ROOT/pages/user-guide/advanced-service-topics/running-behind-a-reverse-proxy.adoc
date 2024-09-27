@@ -6,7 +6,7 @@ In those scenarios, Quarkus can be configured to automatically update informatio
 
 [TIP]
 ====
-Refer to https://quarkus.io/guides/http-reference#reverse-proxy[Quarkus HTTP reference] for more details.
+Refer to {link-quarkus-docs-base}/http-reference#reverse-proxy[Quarkus HTTP reference] for more details.
 ====
 
 {quarkus-cxf-project-name} support for various `X-Forwarded` headers works in line with Quarkus configuration.
@@ -15,22 +15,22 @@ IMPORTANT: Activating this feature leaves the server exposed to several security
 
 These are the relevant Quarkus properties and their effect on {quarkus-cxf-project-name}:
 
-* `https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus.http.proxy.proxy-address-forwarding[quarkus.http.proxy.proxy-address-forwarding]` - the main switch to enable the rewriting of the request destination parts.
+* `{link-quarkus-docs-base}/all-config#quarkus-vertx-http_quarkus-http-proxy-proxy-address-forwarding[quarkus.http.proxy.proxy-address-forwarding]` - the main switch to enable the rewriting of the request destination parts.
 ** If enabled, the rewriting of the request fields will be effective throughout the whole CXF server stack.
 ** If enabled, the values passed via `X-Forwarded-Proto` and `X-Forwarded-Port` headers
     will be used to set the protocol part and the port part of the URL returned by
     `jakarta.servlet.http.HttpServletRequest.getRequestURL()` respectively.
 ** If enabled, the value passed via  `X-Forwarded-For` will be returned by `jakarta.servlet.ServletRequest.getRemoteAddr()`.
-* `https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus.http.proxy.enable-forwarded-host[quarkus.http.proxy.enable-forwarded-host]` -
+* `{link-quarkus-docs-base}/all-config#quarkus-vertx-http_quarkus-http-proxy-enable-forwarded-host[quarkus.http.proxy.enable-forwarded-host]` -
   enable the rewriting of the host part of URL returned by `jakarta.servlet.http.HttpServletRequest.getRequestURL()`.
   The actual host name is taken from the header configured via
-  `https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus.http.proxy.forwarded-host-header[quarkus.http.proxy.forwarded-host-header]`
+  `{link-quarkus-docs-base}/all-config#quarkus-vertx-http_quarkus-http-proxy-forwarded-host-header[quarkus.http.proxy.forwarded-host-header]`
   (default is `X-Forwarded-Host`).
-* `https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus.http.proxy.enable-forwarded-prefix[quarkus.http.proxy.enable-forwarded-prefix]` -
+* `{link-quarkus-docs-base}/all-config#quarkus-vertx-http_quarkus-http-proxy-enable-forwarded-prefix[quarkus.http.proxy.enable-forwarded-prefix]` -
   enable the rewriting of the path part of the URL returned by `jakarta.servlet.http.HttpServletRequest.getRequestURL()`
   and of the URI returned by `jakarta.servlet.http.HttpServletRequest.getRequestURI()`.
   The actual path prefix is taken from the header configured via
-  `https://quarkus.io/guides/all-config#quarkus-vertx-http_quarkus.http.proxy.forwarded-prefix-header[quarkus.http.proxy.forwarded-prefix-header]`
+  `{link-quarkus-docs-base}/all-config#quarkus-vertx-http_quarkus-http-proxy-forwarded-prefix-header[quarkus.http.proxy.forwarded-prefix-header]`
   (default is `X-Forwarded-Prefix`).
 
 Here is the most common snippet to copy to your `application.properties`:
