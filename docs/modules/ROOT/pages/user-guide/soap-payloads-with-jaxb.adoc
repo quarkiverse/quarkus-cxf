@@ -63,7 +63,7 @@ include::example$soap-service/application.properties[tag=soap-payloads-with-jaxb
 
 == Test with Quarkus `dev` mode and `curl`
 
-Having the above files in place, you can start Quarkus tooling in https://quarkus.io/guides/maven-tooling#dev-mode[`dev` mode]:
+Having the above files in place, you can start Quarkus tooling in {link-quarkus-docs-base}/maven-tooling#dev-mode[`dev` mode]:
 
 [source,shell]
 ----

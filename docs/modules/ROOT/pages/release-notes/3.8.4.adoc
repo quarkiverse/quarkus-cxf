@@ -47,4 +47,4 @@ This was originally reported as issue https://github.com/quarkiverse/quarkus-cxf
 
 == Full changelog
 
-https://github.com/quarkiverse/quarkus-cxf/compare/3.8.3...3.8.4
+https://github.com/quarkiverse/quarkus-cxf/compare/3.8.3+++...+++3.8.4

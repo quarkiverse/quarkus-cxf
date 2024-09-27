@@ -105,7 +105,7 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 
 .<| [[quarkus-cxf_quarkus-cxf-rm-namespace]]`link:#quarkus-cxf_quarkus-cxf-rm-namespace[quarkus.cxf.rm.namespace]`
 .<| `string`
-.<| `http://schemas.xmlsoap.org/ws/2005/02/rm`
+.<| `\http://schemas.xmlsoap.org/ws/2005/02/rm`
 
 3+a|WS-RM version namespace: `http://schemas.xmlsoap.org/ws/2005/02/rm/` or
 `http://docs.oasis-open.org/ws-rx/wsrm/200702`
@@ -115,7 +115,7 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 
 .<| [[quarkus-cxf_quarkus-cxf-rm-wsa-namespace]]`link:#quarkus-cxf_quarkus-cxf-rm-wsa-namespace[quarkus.cxf.rm.wsa-namespace]`
 .<| `string`
-.<| `http://schemas.xmlsoap.org/ws/2004/08/addressing`
+.<| `\http://schemas.xmlsoap.org/ws/2004/08/addressing`
 
 3+a|WS-Addressing version namespace: `http://schemas.xmlsoap.org/ws/2004/08/addressing` or
 `http://www.w3.org/2005/08/addressing`. Note that this property is ignored unless you are using the

@@ -5,7 +5,7 @@ As usual, where we plan to produce patch releases with bug and security fixes fo
 
 == Important dependency upgrades
 
-* Quarkus 3.14.x -> 3.15.0 - https://quarkus.io/blog/quarkus-3-15-0-released/[release notes]
+* Quarkus 3.14.x -> 3.15.0 - https://quarkus.io/blog/quarkus-3-15-1-released/[release notes]
 
 == New and noteworthy in {quarkus-cxf-project-name}
 
