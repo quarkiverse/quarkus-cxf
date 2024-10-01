@@ -164,6 +164,9 @@
                             <goal>generate-code</goal>
                             <goal>build</goal>
                         </goals>
+                        <configuration>
+                            <skip>${skipTests}</skip>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
