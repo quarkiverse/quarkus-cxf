@@ -1,4 +1,4 @@
-[id='cxf-guide-ssl']
+[[ssl-tls-https]]
 = SSL, TLS and HTTPS
 
 This section documents various use cases related to SSL, TLS and HTTPS.
