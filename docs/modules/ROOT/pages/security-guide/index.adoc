@@ -1,0 +1,8 @@
+[[security-guide]]
+= Security guide
+
+The Security guide documents various security related aspects of {quarkus-cxf-project-name}:
+
+* xref:user-guide/ssl.adoc[SSL, TLS and HTTPS]
+* xref:user-guide/auth.adoc[Authentication and authorization]
+* xref:security-guide/ws-securitypolicy-auth.adoc[Authentication enforced by WS-SecurityPolicy]
