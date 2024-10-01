@@ -11,9 +11,12 @@ While http://cxf.apache.org/[Apache CXF] implements wide range of standards and 
 and *Java API for XML Web Services* (https://en.wikipedia.org/wiki/JAX-WS[JAX-WS]).
 Refer to xref:reference/index.adoc[Reference] to learn which parts of CXF are supported.
 
-The documentation is divided in two major parts:
+The documentation is divided into the following main parts:
 
 * xref:user-guide/index.adoc[User guide] - explains the typical usage of {quarkus-cxf-project-name}
+* xref:security-guide/index.adoc[Security guide] - documents various security related aspects of {quarkus-cxf-project-name}, such as SSL/TLS, Authentication and Authorization
+* xref:release-notes/index.adoc[Release notes] - Release notes documents for the past releases
+* xref:release-planning.adoc[Release planning] - when new releases of {quarkus-cxf-project-name} are to be expected
 * xref:reference/index.adoc[Reference] - the full list of supported specifications, use cases and configuration options
 
 [[issues-and-support]]
