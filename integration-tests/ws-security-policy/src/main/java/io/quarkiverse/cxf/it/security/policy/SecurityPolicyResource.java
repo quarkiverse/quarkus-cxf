@@ -21,79 +21,60 @@ import io.quarkiverse.cxf.it.security.policy.BeanProducers.RecordingReplayCache;
 @Path("/cxf/security-policy")
 public class SecurityPolicyResource {
 
-    @Inject
     @CXFClient("hello")
     HelloService hello;
 
-    @Inject
     @CXFClient("helloCustomHostnameVerifier")
     HelloService helloCustomHostnameVerifier;
 
-    @Inject
     @CXFClient("helloAllowAll")
     HelloService helloAllowAll;
 
-    @Inject
     @CXFClient("helloIp")
     HelloService helloIp;
 
-    @Inject
     @CXFClient("helloHttps")
     HttpsPolicyHelloService helloHttps;
 
-    @Inject
     @CXFClient("helloHttpsPkcs12")
     HttpsPolicyHelloService helloHttpsPkcs12;
 
-    @Inject
     @CXFClient("helloHttp")
     HelloService helloHttp;
 
-    @Inject
     @CXFClient("helloCustomEncryptSign")
     CustomEncryptSignPolicyHelloService helloCustomEncryptSign;
 
-    @Inject
     @CXFClient("helloCustomEncryptSignWrong1")
     CustomEncryptSignWrong1PolicyHelloService helloCustomEncryptSignWrong1;
 
-    @Inject
     @CXFClient("helloCustomEncryptSignWrong2")
     CustomEncryptSignWrong2PolicyHelloService helloCustomEncryptSignWrong2;
 
-    @Inject
     @CXFClient("helloCustomizedEncryptSign")
     CustomizedEncryptSignPolicyHelloService helloCustomizedEncryptSign;
 
-    @Inject
     @CXFClient("helloUsernameToken")
     UsernameTokenPolicyHelloService helloUsernameToken;
 
-    @Inject
     @CXFClient("helloUsernameTokenAlt")
     UsernameTokenPolicyHelloService helloUsernameTokenAlt;
 
-    @Inject
     @CXFClient("helloUsernameTokenNoMustUnderstand")
     UsernameTokenPolicyHelloService helloUsernameTokenNoMustUnderstand;
 
-    @Inject
     @CXFClient("helloNoUsernameToken")
     HelloService helloNoUsernameToken;
 
-    @Inject
     @CXFClient("helloEncryptSign")
     EncryptSignPolicyHelloService helloEncryptSign;
 
-    @Inject
     @CXFClient("helloEncryptSignCrypto")
     EncryptSignPolicyHelloService helloEncryptSignCrypto;
 
-    @Inject
     @CXFClient("helloSaml1")
     Saml1PolicyHelloService helloSaml1;
 
-    @Inject
     @CXFClient("helloSaml2")
     Saml2PolicyHelloService helloSaml2;
 

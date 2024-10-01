@@ -1,0 +1,118 @@
+[[ws-securitypolicy-auth]]
+= Authentication enforced by WS-SecurityPolicy
+
+You can enforce authentication through WS-SecurityPolicy, instead of xref:user-guide/ssl.adoc#mtls[Mutual TLS] and Basic HTTP authentication for xref:user-guide/auth.adoc#_client_http_basic_authentication[clients]
+and xref:user-guide/auth.adoc#_securing_service_endpoints[services].
+
+To enforce authentication through WS-SecurityPolicy, follow these steps:
+
+. Add a supporting tokens policy to an endpoint in the WSDL contract.
+. On the server side, implement an authentication callback handler and associate it with the endpoint
+  in `application.properties` or via environment variables.
+  Credentials received from clients are authenticated by the callback handler.
+. On the client side, provide credentials through either configuration in `application.properties` or environment variables.
+  Alternatively, you can implement an authentication callback handler to pass the credentials.
+
+[[Auth-Policy]]
+== Specifying an Authentication Policy
+
+If you want to enforce authentication on a service endpoint, associate a _supporting tokens_ policy assertion with the relevant endpoint binding
+and specify one or more _token assertions_ under it.
+
+There are several different kinds of supporting tokens policy assertions,
+whose XML element names all end with `SupportingTokens` (for example, `SupportingTokens`, `SignedSupportingTokens`, and so on).
+For a complete list, see the https://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/ws-securitypolicy-1.2-spec-os.html#_Toc161826561[Supporting Tokens]
+section of the WS-SecurityPolicy specification.
+
+== `UsernameToken` policy assertion example
+
+[TIP]
+====
+The sample code snippets used in this section come from the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
+in the source tree of {quarkus-cxf-project-name}.
+You may want to use it as a runnable example.
+====
+
+The following listing shows an example of a policy that requires a WS-Security `UsernameToken`
+(which contains username/password credentials) to be included in the security header.
+
+.username-token-policy.xml
+[source,xml]
+----
+include::example$ws-security-policy/username-token-policy.xml[]
+----
+
+There are two ways how you can associate this policy file with a service endpoint:
+
+* Reference the policy on the Service Endpoint Interface (SEI) like this:
++
+.UsernameTokenPolicyHelloService.java
+[source,java]
+----
+include::example$ws-security-policy/UsernameTokenPolicyHelloService.java[tag=ws-securitypolicy-auth.adoc]
+    ...
+}
+----
++
+* Include the policy {link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust/src/main/resources/ws-trust-1.4-service.wsdl#L163[in your WSDL contract]
+  and reference it via {link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust/src/main/resources/ws-trust-1.4-service.wsdl#L95[`PolicyReference` element].
+
+When you have the policy in place, configure the credentials on the service endpoint and the client:
+
+.application.properties
+[source,properties]
+----
+include::example$ws-security-policy/application.properties[tag=ws-securitypolicy-auth.adoc-service]
+
+include::example$ws-security-policy/application.properties[tag=ws-securitypolicy-auth.adoc-client]
+----
+
+In the above listing, `usernameTokenPasswordCallback` is a name of a `@jakarta.inject.Named` bean implementing `javax.security.auth.callback.CallbackHandler`.
+{quarkus-cxf-project-name} will lookup a bean with this xref:user-guide/configuration.adoc#beanRefs[name] in the CDI container.
+
+Here is an example implementation of the bean:
+
+.UsernameTokenPasswordCallback.java
+[source,java]
+----
+include::example$ws-security-policy/UsernameTokenPasswordCallback.java[]
+----
+
+To test the whole setup, you can create a simple `{link-quarkus-docs-base}/getting-started-testing[@QuarkusTest]`:
+
+.UsernameTokenTest.java
+[source,java]
+----
+include::example$ws-security-policy/UsernameTokenTest.java[]
+----
+
+When running the test via `mvn test -Dtest=UsernameTokenTest`, you should see a SOAP message being logged
+with a `Security` header containing `Username` and `Password`:
+
+.Log output of the UsernameTokenTest
+[source,XML]
+----
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Header>
+    <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" soap:mustUnderstand="1">
+      <wsse:UsernameToken xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="UsernameToken-bac4f255-147e-42a4-aeec-e0a3f5cd3587">
+        <wsse:Username>cxf-user</wsse:Username>
+        <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">secret</wsse:Password>
+        <wsse:Nonce EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary">3uX15dZT08jRWFWxyWmfhg==</wsse:Nonce>
+        <wsu:Created>2024-10-02T17:32:10.497Z</wsu:Created>
+      </wsse:UsernameToken>
+    </wsse:Security>
+  </soap:Header>
+  <soap:Body>
+    <ns2:hello xmlns:ns2="http://policy.security.it.cxf.quarkiverse.io/">
+      <arg0>CXF</arg0>
+    </ns2:hello>
+  </soap:Body>
+</soap:Envelope>
+----
+
+== SAML v1 and v2 policy assertion examples
+
+The https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
+contains also analogous examples with SAML v1 and SAML v2 assertions.

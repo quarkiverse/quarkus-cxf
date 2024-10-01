@@ -132,6 +132,7 @@
                                                 <include>application.properties</include>
                                                 <include>https-policy.xml</include>
                                                 <include>encrypt-sign-policy.xml</include>
+                                                <include>username-token-policy.xml</include>
                                             </includes>
                                         </resource>
                                         <resource>
@@ -139,6 +140,14 @@
                                             <includes>
                                                 <include>HttpsPolicyHelloService.java</include>
                                                 <include>EncryptSignPolicyHelloService.java</include>
+                                                <include>UsernameTokenPasswordCallback.java</include>
+                                                <include>UsernameTokenPolicyHelloService.java</include>
+                                            </includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>src/test/java/io/quarkiverse/cxf/it/security/policy</directory>
+                                            <includes>
+                                                <include>UsernameTokenTest.java</include>
                                             </includes>
                                         </resource>
                                     </resources>
