@@ -1,0 +1,34 @@
+= {quarkus-cxf-project-name} 3.8.7 (LTS) release notes
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1533[#1533] Per client or service configuration of `sensitive-element-names` and `sensitive-protocol-header-names` not honored
+
+The following options are supposed to prevent logging of sensitive information in application log,
+when SOAP payload logging is enabled:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-sensitive-element-names[quarkus.cxf.endpoint."/endpoint-path".logging.sensitive-element-names]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-sensitive-protocol-header-names[quarkus.cxf.endpoint."/endpoint-path".logging.sensitive-protocol-header-names]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-logging-sensitive-element-names[quarkus.cxf.client."client-name".logging.sensitive-element-names]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-logging-sensitive-protocol-header-names[quarkus.cxf.client."client-name".logging.sensitive-protocol-header-names]`
+
+They were not honored since {quarkus-cxf-project-name} 2.7.0 due to a bug in code handling the precedence between the above options and the following global options
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-sensitive-protocol-header-names[quarkus.cxf.logging.sensitive-protocol-header-names]`
+
+As a consequence of that, sensitive information may have leaked to the application log.
+
+[NOTE]
+====
+The global options `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-sensitive-element-names[quarkus.cxf.logging.sensitive-element-names]`
+and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-sensitive-protocol-header-names[quarkus.cxf.logging.sensitive-protocol-header-names]`
+worked as expected.
+Those have to be used a workaround for versions from {quarkus-cxf-project-name} 2.7.0 though 3.8.7 and 3.15.2.
+====
+
+This issue was fixed in {quarkus-cxf-project-name} 3.15.2 and 3.8.7.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.8.6+++...+++3.8.7
