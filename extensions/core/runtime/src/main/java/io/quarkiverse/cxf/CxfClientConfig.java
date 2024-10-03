@@ -415,7 +415,7 @@ public interface CxfClientConfig {
 
     /**
      * The name of the TLS configuration to use for setting up trust store and keystore for this SOAP client.
-     * <p>
+     *
      * If not set and `.trust-store` or `.key-store` is configured then that the configuration from `.trust-store*`
      * and `.key-store*` family of options will be used.
      * If a name is configured, it uses the configuration from `quarkus.tls.<name>.*`
@@ -430,59 +430,101 @@ public interface CxfClientConfig {
     /**
      * The key store location for this client. The resource is first looked up in the classpath, then in the file system.
      *
-     * @asciidoclet
-     * @since 3.8.1
-     */
-    public Optional<String> keyStore();
-
-    /**
-     * The key store password
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * instead.
      *
      * @asciidoclet
      * @since 3.8.1
+     * @deprecated Use {@link #tlsConfigurationName()}
      */
+    @Deprecated
+    public Optional<String> keyStore();
+
+    /**
+     * The key store password.
+     *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * instead.
+     *
+     * @asciidoclet
+     * @since 3.8.1
+     * @deprecated Use {@link #tlsConfigurationName()}
+     */
+    @Deprecated
     public Optional<String> keyStorePassword();
 
     /**
      * The type of the key store.
      *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * instead.
+     *
      * @asciidoclet
      * @since 3.8.1
+     * @deprecated Use {@link #tlsConfigurationName()}
      */
     @WithDefault("JKS")
+    @Deprecated
     public String keyStoreType();
 
     /**
      * The key password.
      *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * instead.
+     *
      * @asciidoclet
      * @since 3.8.1
+     * @deprecated Use {@link #tlsConfigurationName()}
      */
+    @Deprecated
     public Optional<String> keyPassword();
 
     /**
      * The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
      *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * instead.
+     *
      * @asciidoclet
      * @since 2.5.0
+     * @deprecated Use {@link #tlsConfigurationName()}
      */
+    @Deprecated
     public Optional<String> trustStore();
 
     /**
      * The trust store password.
      *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * instead.
+     *
      * @asciidoclet
      * @since 2.5.0
+     * @deprecated Use {@link #tlsConfigurationName()}
      */
+    @Deprecated
     public Optional<String> trustStorePassword();
 
     /**
      * The type of the trust store.
      *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * instead.
+     *
      * @asciidoclet
      * @since 2.5.0
+     * @deprecated Use {@link #tlsConfigurationName()}
      */
     @WithDefault("JKS")
+    @Deprecated
     public String trustStoreType();
 
     /**

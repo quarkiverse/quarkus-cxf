@@ -1893,7 +1893,7 @@ underlying HTTP client.
 .<| 
 
 3+a|The name of the TLS configuration to use for setting up trust store and keystore for this SOAP client.
-<p>
+
 If not set and `.trust-store` or `.key-store` is configured then that the configuration from `.trust-store*`
 and `.key-store*` family of options will be used.
 If a name is configured, it uses the configuration from `quarkus.tls.<name>.*`
@@ -1903,65 +1903,93 @@ Setting `.tls-configuration-name` and any of `.trust-store` or `.key-store` lead
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__TLS_CONFIGURATION_NAME+++` +
 *Since Quarkus CXF*: 3.15.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store]`##
 .<| `string`
 .<| 
 
 3+a|The key store location for this client. The resource is first looked up in the classpath, then in the file system.
 
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+instead.
+
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__KEY_STORE+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store-password[quarkus.cxf.client."client-name".key-store-password]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store-password]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store-password[quarkus.cxf.client."client-name".key-store-password]`##
 .<| `string`
 .<| 
 
-3+a|The key store password
+3+a|The key store password.
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__KEY_STORE_PASSWORD+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store-type]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store-type[quarkus.cxf.client."client-name".key-store-type]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store-type]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store-type[quarkus.cxf.client."client-name".key-store-type]`##
 .<| `string`
 .<| `JKS`
 
 3+a|The type of the key store.
 
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+instead.
+
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__KEY_STORE_TYPE+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-password[quarkus.cxf.client."client-name".key-password]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-password]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-password[quarkus.cxf.client."client-name".key-password]`##
 .<| `string`
 .<| 
 
 3+a|The key password.
 
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+instead.
+
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__KEY_PASSWORD+++` +
 *Since Quarkus CXF*: 3.8.1
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-trust-store]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-trust-store]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]`##
 .<| `string`
 .<| 
 
 3+a|The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
 
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+instead.
+
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__TRUST_STORE+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password[quarkus.cxf.client."client-name".trust-store-password]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password[quarkus.cxf.client."client-name".trust-store-password]`##
 .<| `string`
 .<| 
 
 3+a|The trust store password.
 
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+instead.
+
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__TRUST_STORE_PASSWORD+++` +
 *Since Quarkus CXF*: 2.5.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-trust-store-type]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-type[quarkus.cxf.client."client-name".trust-store-type]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-trust-store-type]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-type[quarkus.cxf.client."client-name".trust-store-type]`##
 .<| `string`
 .<| `JKS`
 
 3+a|The type of the trust store.
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__TRUST_STORE_TYPE+++` +
 *Since Quarkus CXF*: 2.5.0
