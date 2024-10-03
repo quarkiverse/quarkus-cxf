@@ -23,6 +23,11 @@ We have examples for both tools in the {quarkus-cxf-project-name} source tree:
 * https://github.com/quarkiverse/quarkus-cxf/blob/3.15/integration-tests/ws-security-policy/pom.xml#L185-L520[Create truststore with Java 'keytool' (wrapped by a Maven plugin)]
 * https://github.com/quarkiverse/quarkus-cxf/blob/3.15/integration-tests/ws-security-policy/generate-certs.sh[Create truststore with `openssl`]
 
+[TIP]
+====
+There is a fast and easy way to generate xref:#ssl-certificates-in-tests[certificates for testing].
+====
+
 Once you have prepared the trust store, you need to configure your client to use it.
 
 === Set the client trust store in `application.properties`
@@ -119,7 +124,7 @@ The functionality is provided by `xref:reference/extensions/quarkus-cxf-rt-ws-se
 Here is an example of a policy file:
 
 .https-policy.xml
-[source,properties]
+[source,xml]
 ----
 include::example$ws-security-policy/https-policy.xml[]
 ----
@@ -140,3 +145,37 @@ ERROR [org.apa.cxf.ws.pol.PolicyVerificationInInterceptor] Inbound policy verifi
  {http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702}TransportBinding: TLS is not enabled
  ...
 ----
+
+[[ssl-certificates-in-tests]]
+== SSL certificates for testing
+
+https://github.com/smallrye/smallrye-certificate-generator[SmallRye Certificate Generator] project offers a Junit 5 extension to generate certificates in tests.
+
+First, you need to add the appropriate dependency to your project:
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>io.smallrye.certs</groupId>
+    <artifactId>smallrye-certificate-generator-junit5</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+Then you can use the `@Certificates` annotation in your tests:
+
+.MutualTlsTest.java
+[source,java]
+----
+include::example$mtls/MutualTlsTest.java[tag=smallrye-cert-gen]
+    ...
+}
+----
+
+This will generate the following files (plus the same files in JKS format) suitable for testing xref:#mtls[mutual TLS] authentication:
+
+* `target/classes/localhost-client-keystore.p12` - the client key store
+* `target/classes/localhost-keystore.p12` - the server key store
+* `target/classes/localhost-server-truststore.p12` - the server trust store
+* `target/classes/localhost-truststore.p12` - the client trust store

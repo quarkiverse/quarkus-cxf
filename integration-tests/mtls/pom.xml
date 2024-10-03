@@ -102,6 +102,12 @@
                                                 <include>application.properties</include>
                                             </includes>
                                         </resource>
+                                        <resource>
+                                            <directory>src/test/java/io/quarkiverse/cxf/it/auth/mtls</directory>
+                                            <includes>
+                                                <include>MutualTlsTest.java</include>
+                                            </includes>
+                                        </resource>
                                     </resources>
                                 </configuration>
                             </execution>
