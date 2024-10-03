@@ -75,8 +75,13 @@ public class LoggingFactoryCustomizer {
                 feature::addOutBinaryContentMediaTypes);
         addList(global.binaryContentMediaTypes(), clientOrServiceConfig.inBinaryContentMediaTypes(),
                 feature::addBinaryContentMediaTypes);
-        global.sensitiveElementNames().ifPresent(feature::addSensitiveElementNames);
-        global.sensitiveProtocolHeaderNames().ifPresent(feature::addSensitiveProtocolHeaderNames);
+
+        clientOrServiceConfig.sensitiveElementNames()
+                .or(global::sensitiveElementNames)
+                .ifPresent(feature::addSensitiveElementNames);
+        clientOrServiceConfig.sensitiveProtocolHeaderNames()
+                .or(global::sensitiveProtocolHeaderNames)
+                .ifPresent(feature::addSensitiveProtocolHeaderNames);
         return feature;
     }
 
