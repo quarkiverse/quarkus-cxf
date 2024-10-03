@@ -19,6 +19,7 @@ Those are typically released on Wednesday following the {quarkus-cxf-project-nam
 |===
 | Quarkus CXF | Release date | Quarkus Platform | CXF
 
+| xref:release-notes/3.15.2.adoc[3.15.2 LTS] | 2024-10-03 | 3.15.? | 4.0.5
 | xref:release-notes/3.15.1.adoc[3.15.1 LTS] | 2024-09-23 | 3.15.0 | 4.0.5
 | xref:release-notes/3.15.0.adoc[3.15.0 LTS] | 2024-09-19 | | 4.0.5
 
@@ -36,6 +37,7 @@ Those are typically released on Wednesday following the {quarkus-cxf-project-nam
 
 | xref:release-notes/3.9.0.adoc[3.9.0] |  | 3.9 | 4.0.4
 
+| xref:release-notes/3.8.7.adoc[3.8.7 LTS] | 2024-10-03 | 3.8.? | 4.0.5
 | xref:release-notes/3.8.6.adoc[3.8.6 LTS] | 2024-08-28 | 3.8.6 | 4.0.5
 | xref:release-notes/3.8.5.adoc[3.8.5 LTS] | 2024-07-06 | 3.8 | 4.0.4
 | xref:release-notes/3.8.4.adoc[3.8.4 LTS] | 2024-05-28 | 3.8 | 4.0.4
