@@ -600,7 +600,7 @@ public interface CxfClientConfig {
             if (QuarkusHTTPConduitFactory.defaultHTTPConduitImpl == null) {
                 final String defaultName = System.getenv(QuarkusHTTPConduitFactory.QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY);
                 QuarkusHTTPConduitFactory.defaultHTTPConduitImpl = defaultName == null || defaultName.isEmpty()
-                        ? URLConnectionHTTPConduitFactory
+                        ? VertxHttpClientHTTPConduitFactory
                         : valueOf(defaultName);
             }
             return QuarkusHTTPConduitFactory.defaultHTTPConduitImpl;

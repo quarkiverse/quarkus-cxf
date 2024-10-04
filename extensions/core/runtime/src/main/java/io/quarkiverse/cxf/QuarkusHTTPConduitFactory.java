@@ -8,7 +8,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.service.model.EndpointInfo;
@@ -30,6 +29,7 @@ import io.quarkus.tls.runtime.VertxCertificateHolder;
 import io.quarkus.tls.runtime.config.TlsBucketConfig;
 import io.vertx.core.Vertx;
 import io.vertx.core.net.KeyCertOptions;
+import io.vertx.core.net.KeyStoreOptionsBase;
 
 /**
  * A HTTPConduitFactory with some client specific configuration, such as timeouts and SSL.
@@ -145,7 +145,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         final String hostnameVerifierName = cxfClientInfo.getHostnameVerifier();
         final TlsConfiguration tlsConfig = cxfClientInfo.getTlsConfiguration();
         if (hostnameVerifierName != null || tlsConfig != null) {
-            TLSClientParameters tlsCP = new TLSClientParameters();
+            QuarkusTLSClientParameters tlsCP = new QuarkusTLSClientParameters(tlsConfig);
 
             if (hostnameVerifierName != null) {
                 final Optional<WellKnownHostnameVerifier> wellKnownHostNameVerifierName = WellKnownHostnameVerifier
@@ -169,6 +169,12 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                         tlsCP.setKeyManagers(kmf.getKeyManagers());
                     } catch (Exception e) {
                         throw new RuntimeException("Could not set up key manager factory", e);
+                    }
+                    if (keyStoreOptions instanceof KeyStoreOptionsBase) {
+                        final KeyStoreOptionsBase keyStoreOptionsBase = (KeyStoreOptionsBase) keyStoreOptions;
+                        if (keyStoreOptionsBase.getAlias() != null) {
+                            tlsCP.setCertAlias(keyStoreOptionsBase.getAlias());
+                        }
                     }
                 }
 

@@ -49,10 +49,10 @@ runs:
         fi
 
     # Same as the previous but different default ConduitFactory
-    - name: Run integration test ${{ inputs.test-module-spec }} with QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=VertxHttpClientHTTPConduitFactory
+    - name: Run integration test ${{ inputs.test-module-spec }} with QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory
       shell: bash
       env: 
-        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: VertxHttpClientHTTPConduitFactory
+        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
         # Skip native tests for CodeQL Security Scans
       if: "${{ env.SKIP_NATIVE_TESTS != 'true' }}"
       run: |
