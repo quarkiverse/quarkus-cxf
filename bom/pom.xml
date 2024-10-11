@@ -262,11 +262,6 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-vertx-client</artifactId>
-                <version>${quarkus-cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-woodstox</artifactId>
                 <version>${quarkus-cxf.version}</version>
             </dependency>

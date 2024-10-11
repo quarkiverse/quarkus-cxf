@@ -14,7 +14,6 @@
 
     <modules>
         <module>axiom-api-stub</module>
-        <module>vertx-client</module>
         <module>runtime</module>
         <module>deployment</module>
     </modules>
