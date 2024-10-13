@@ -116,7 +116,7 @@ public class HostnameVerifierTest {
         Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).isEmpty();
         customHostnameVerifier.setReturnVal(false);
         Assertions.assertThatThrownBy(() -> helloVertx.hello("Doe")).hasRootCauseMessage(
-                "io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit does not support setting a hostname verifier. AllowAllHostnameVerifier can be replaced by using a named TLS configuration with hostname-verification-algorithm set to NONE");
+                "http-conduit-factory = VertxHttpClientHTTPConduitFactory does not support setting a hostname verifier. AllowAllHostnameVerifier can be replaced by using a named TLS configuration with hostname-verification-algorithm set to NONE");
         Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).isEmpty();
     }
 

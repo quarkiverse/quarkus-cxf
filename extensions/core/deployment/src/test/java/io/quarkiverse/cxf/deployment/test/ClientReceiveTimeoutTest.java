@@ -17,7 +17,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
 import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;

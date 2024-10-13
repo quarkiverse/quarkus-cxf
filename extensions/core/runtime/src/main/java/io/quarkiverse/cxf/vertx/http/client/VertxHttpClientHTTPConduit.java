@@ -264,7 +264,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         if (clientParameters.getHostnameVerifier() != null) {
             throw new IllegalStateException(
-                    VertxHttpClientHTTPConduit.class.getName() + " does not support setting a hostname verifier."
+                    getConduitName() + " does not support setting a hostname verifier."
                             + " AllowAllHostnameVerifier can be replaced by using a named TLS configuration"
                             + " with hostname-verification-algorithm set to NONE");
         }

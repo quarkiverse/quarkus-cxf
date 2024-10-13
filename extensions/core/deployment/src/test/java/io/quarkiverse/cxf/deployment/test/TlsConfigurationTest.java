@@ -55,6 +55,12 @@ public class TlsConfigurationTest {
             .overrideConfigKey("quarkus.cxf.client.helloVertx.http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.helloVertx.tls-configuration-name", "client-pkcs12")
 
+            .overrideConfigKey("quarkus.cxf.client.helloVertx2.client-endpoint-url", "https://localhost:8444/services/hello")
+            .overrideConfigKey("quarkus.cxf.client.helloVertx2.logging.enabled", "true")
+            .overrideConfigKey("quarkus.cxf.client.helloVertx2.service-interface", HelloService.class.getName())
+            .overrideConfigKey("quarkus.cxf.client.helloVertx2.http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
+            .overrideConfigKey("quarkus.cxf.client.helloVertx2.tls-configuration-name", "client-pkcs12")
+
             /* Client with HttpClientHTTPConduitFactory */
             .overrideConfigKey("quarkus.cxf.client.helloHttpClient.client-endpoint-url",
                     "https://localhost:8444/services/hello")
@@ -73,6 +79,9 @@ public class TlsConfigurationTest {
 
     @CXFClient("helloVertx")
     HelloService helloVertx;
+
+    @CXFClient("helloVertx2")
+    HelloService helloVertx2;
 
     @CXFClient("helloHttpClient")
     HelloService helloHttpClient;
@@ -101,9 +110,12 @@ public class TlsConfigurationTest {
     @Test
     void sameTlsConfiguration() {
 
-        /* The TlsConfigurations must be the same instance, otherwise the identity based caching in HttpClientPool would not work */
+        /*
+         * The TlsConfigurations must be the same instance, otherwise the identity based caching in HttpClientPool would not
+         * work
+         */
 
-        TLSClientParameters p1 = getTLSClientParameters(helloUrlConnection);
+        TLSClientParameters p1 = getTLSClientParameters(helloVertx2);
         TLSClientParameters p2 = getTLSClientParameters(helloVertx);
 
         Assertions.assertThat(p1).isNotNull().isInstanceOf(QuarkusTLSClientParameters.class);

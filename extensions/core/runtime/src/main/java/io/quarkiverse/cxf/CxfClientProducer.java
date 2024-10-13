@@ -183,16 +183,16 @@ public abstract class CxfClientProducer {
         customizers.forEach(customizer -> customizer.customize(cxfClientInfo, factory));
 
         final Bus bus = BusFactory.getDefaultBus();
-        final HTTPConduitFactory origConduitFactory = bus.getExtension(HTTPConduitFactory.class);
+        final HTTPConduitSpec origConduitImpl = bus.getExtension(HTTPConduitSpec.class);
         final QuarkusHTTPConduitFactory conduitFactory = new QuarkusHTTPConduitFactory(
-                httpClientPool,
                 fixedConfig,
                 cxfClientInfo,
-                origConduitFactory,
+                origConduitImpl,
                 authorizationPolicy,
                 vertx);
         props.put(HTTPConduitFactory.class.getName(), conduitFactory);
         Object result;
+        final HTTPConduitFactory origConduitFactory = bus.getExtension(HTTPConduitFactory.class);
         try {
             /*
              * Workaround for https://github.com/quarkiverse/quarkus-cxf/issues/1264

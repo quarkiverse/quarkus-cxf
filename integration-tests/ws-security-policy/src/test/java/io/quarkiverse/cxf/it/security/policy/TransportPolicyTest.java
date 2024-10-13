@@ -12,7 +12,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 
@@ -47,7 +47,7 @@ public class TransportPolicyTest {
                         .then()
                         .statusCode(500)
                         .body(Matchers.containsString(
-                                "io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit does not support setting a hostname verifier."));
+                                "http-conduit-factory = VertxHttpClientHTTPConduitFactory does not support setting a hostname verifier."));
                 /*
                  * But the same works when the hostname verification is disabled via
                  * quarkus.tls.helloAllowAll.trust-store.hostname-verification-algorithm = NONE
@@ -80,7 +80,7 @@ public class TransportPolicyTest {
                         .then()
                         .statusCode(500)
                         .body(Matchers.containsString(
-                                "org.apache.cxf.transport.http.URLConnectionHTTPConduit does not support quarkus.tls.hostname-verification-algorithm. Use quarkus.cxf.client.\"client-name\".hostname-verifier instead."));
+                                "http-conduit-factory = URLConnectionHTTPConduitFactory does not support quarkus.tls.hostname-verification-algorithm. Use quarkus.cxf.client.\"client-name\".hostname-verifier instead."));
                 break;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + defaultImpl);
@@ -103,7 +103,7 @@ public class TransportPolicyTest {
                         .then()
                         .statusCode(500)
                         .body(Matchers.containsString(
-                                "io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit does not support setting a hostname verifier."));
+                                "http-conduit-factory = VertxHttpClientHTTPConduitFactory does not support setting a hostname verifier. AllowAllHostnameVerifier can be replaced by using a named TLS configuration with hostname-verification-algorithm set to NONE"));
                 break;
             case URLConnectionHTTPConduitFactory:
                 /*

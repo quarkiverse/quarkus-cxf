@@ -8,7 +8,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.assertj.core.api.Assertions;
@@ -18,12 +17,10 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
-import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
+import io.quarkiverse.cxf.HTTPConduitImpl;
+import io.quarkiverse.cxf.HTTPConduitSpec;
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkiverse.cxf.deployment.test.GlobalConduitFactoryTest.HelloService;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
-import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduitFactory;
 import io.quarkus.test.QuarkusUnitTest;
 
 public class ClientConduitFactoryTest {
@@ -73,11 +70,10 @@ public class ClientConduitFactoryTest {
     @Test
     void conduitFactory() {
         final Bus bus = BusFactory.getDefaultBus();
-        final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
-        final HTTPConduitImpl impl = HTTPConduitImpl.findDefaultHTTPConduitImpl();
-        Assertions.assertThat(factory).isInstanceOf(impl.newHTTPConduitFactory().getClass());
+        final HTTPConduitSpec registeredImpl = bus.getExtension(HTTPConduitSpec.class);
+        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.HTTPConduitImpl.findDefaultHTTPConduitImpl();
+        Assertions.assertThat(registeredImpl.resolveDefault()).isEqualTo(defaultImpl);
 
-        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl.findDefaultHTTPConduitImpl();
         {
             final HelloService service = helloDefault;
             final Client client = ClientProxy.getClient(service);

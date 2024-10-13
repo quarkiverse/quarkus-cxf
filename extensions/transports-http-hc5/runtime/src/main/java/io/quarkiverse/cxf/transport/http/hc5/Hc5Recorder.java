@@ -1,13 +1,20 @@
 package io.quarkiverse.cxf.transport.http.hc5;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduitFactory;
 import org.apache.cxf.transport.http.asyncclient.hc5.AsyncHttpResponseWrapperFactory;
 import org.apache.cxf.workqueue.WorkQueueManager;
+import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.eclipse.microprofile.context.ManagedExecutor;
 
+import io.quarkiverse.cxf.HTTPConduitSpec;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 import io.quarkus.runtime.RuntimeValue;
@@ -25,6 +32,7 @@ public class Hc5Recorder {
     public RuntimeValue<Consumer<Bus>> customizeBus() {
 
         return new RuntimeValue<>(bus -> {
+            bus.setExtension(new Hc5HTTPConduitImpl(), HTTPConduitSpec.class);
             final WorkQueueManager wqm = bus.getExtension(WorkQueueManager.class);
             InstanceHandle<ManagedExecutor> managedExecutorInst = Arc.container().instance(ManagedExecutor.class);
             if (managedExecutorInst.isAvailable()) {
@@ -34,5 +42,25 @@ public class Hc5Recorder {
             }
             bus.setExtension(new QuarkusAsyncHttpResponseWrapperFactory(), AsyncHttpResponseWrapperFactory.class);
         });
+    }
+
+    public static class Hc5HTTPConduitImpl implements HTTPConduitSpec {
+        private AsyncHTTPConduitFactory asyncHTTPConduitFactory;
+
+        @Override
+        public HTTPConduit createConduit(HTTPTransportFactory f, Bus b, EndpointInfo localInfo, EndpointReferenceType target)
+                throws IOException {
+            AsyncHTTPConduitFactory factory;
+            if ((factory = asyncHTTPConduitFactory) == null) {
+                factory = asyncHTTPConduitFactory = new AsyncHTTPConduitFactory(b);
+            }
+            return factory.createConduit(f, b, localInfo, target);
+        }
+
+        @Override
+        public String getConduitDescription() {
+            return "io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5";
+        }
+
     }
 }

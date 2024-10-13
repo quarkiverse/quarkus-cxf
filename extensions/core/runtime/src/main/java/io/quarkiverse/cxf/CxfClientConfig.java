@@ -5,13 +5,11 @@ import java.util.Optional;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
-import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
 import io.quarkiverse.cxf.LoggingConfig.PerClientOrServiceLoggingConfig;
 import io.quarkus.runtime.annotations.ConfigDocEnum;
-import io.quarkus.runtime.annotations.ConfigDocEnumValue;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.smallrye.config.WithConverter;
 import io.smallrye.config.WithDefault;
@@ -566,59 +564,6 @@ public interface CxfClientConfig {
      */
     @WithName("schema-validation.enabled-for")
     public Optional<SchemaValidationType> schemaValidationEnabledFor();
-
-    public enum HTTPConduitImpl {
-
-        @ConfigDocEnumValue("QuarkusCXFDefault")
-        QuarkusCXFDefault {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                final HTTPConduitImpl impl = findDefaultHTTPConduitImpl();
-                return impl.newHTTPConduitFactory();
-            }
-
-        },
-        @ConfigDocEnumValue("CXFDefault")
-        CXFDefault {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                return null;
-            }
-        },
-        @ConfigDocEnumValue("VertxHttpClientHTTPConduitFactory")
-        VertxHttpClientHTTPConduitFactory {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                return new io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduitFactory();
-            }
-        },
-        @ConfigDocEnumValue("HttpClientHTTPConduitFactory")
-        HttpClientHTTPConduitFactory {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                return new HttpClientHTTPConduitFactory();
-            }
-        },
-        @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
-        URLConnectionHTTPConduitFactory {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                return new URLConnectionHTTPConduitFactory();
-            }
-        };
-
-        public abstract HTTPConduitFactory newHTTPConduitFactory();
-
-        public static HTTPConduitImpl findDefaultHTTPConduitImpl() {
-            if (QuarkusHTTPConduitFactory.defaultHTTPConduitImpl == null) {
-                final String defaultName = System.getenv(QuarkusHTTPConduitFactory.QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY);
-                QuarkusHTTPConduitFactory.defaultHTTPConduitImpl = defaultName == null || defaultName.isEmpty()
-                        ? VertxHttpClientHTTPConduitFactory
-                        : valueOf(defaultName);
-            }
-            return QuarkusHTTPConduitFactory.defaultHTTPConduitImpl;
-        }
-    }
 
     public enum WellKnownHostnameVerifier {
 
