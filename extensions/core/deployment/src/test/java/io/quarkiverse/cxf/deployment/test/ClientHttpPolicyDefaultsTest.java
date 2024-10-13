@@ -14,7 +14,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.assertj.core.api.Assertions;
@@ -27,10 +26,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.CxfClientConfig;
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkiverse.cxf.HTTPConduitImpl;
+import io.quarkiverse.cxf.HTTPConduitSpec;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
-import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduitFactory;
 import io.quarkus.test.QuarkusUnitTest;
 
 public class ClientHttpPolicyDefaultsTest {
@@ -85,9 +84,9 @@ public class ClientHttpPolicyDefaultsTest {
     @Test
     void defaultConduitFactory() {
         final Bus bus = BusFactory.getDefaultBus();
-        final HTTPConduitFactory factory = bus.getExtension(HTTPConduitFactory.class);
-        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl.findDefaultHTTPConduitImpl();
-        Assertions.assertThat(factory).isInstanceOf(defaultImpl.newHTTPConduitFactory().getClass());
+        final HTTPConduitSpec registeredImpl = bus.getExtension(HTTPConduitSpec.class);
+        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.HTTPConduitImpl.findDefaultHTTPConduitImpl();
+        Assertions.assertThat(registeredImpl.resolveDefault()).isEqualTo(defaultImpl);
 
         final Client client = ClientProxy.getClient(helloService);
         switch (defaultImpl) {

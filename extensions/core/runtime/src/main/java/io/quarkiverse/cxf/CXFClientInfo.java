@@ -12,7 +12,6 @@ import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.tls.TlsConfiguration;
@@ -184,6 +183,8 @@ public class CXFClientInfo {
      */
     private final String proxyPassword;
 
+    private final String tlsConfigurationName;
+
     private final TlsConfiguration tlsConfiguration;
 
     private final String hostnameVerifier;
@@ -239,6 +240,7 @@ public class CXFClientInfo {
         this.proxyUsername = config.proxyUsername().orElse(null);
         this.proxyPassword = config.proxyPassword().orElse(null);
 
+        this.tlsConfigurationName = config.tlsConfigurationName().orElse(null);
         this.tlsConfiguration = tlsConfiguration(vertx, config, configKey);
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
         this.schemaValidationEnabledFor = config.schemaValidationEnabledFor().orElse(null);
@@ -303,7 +305,11 @@ public class CXFClientInfo {
                     trustOptions = null;
                     trustStore = null;
                 }
-                final CxfTlsConfiguration cxfTlsConfiguration = new CxfTlsConfiguration(keyStoreOptions, keyStore, trustOptions,
+
+                final CxfTlsConfiguration cxfTlsConfiguration = new CxfTlsConfiguration(
+                        keyStoreOptions,
+                        keyStore,
+                        trustOptions,
                         trustStore);
                 tlsRegistry.register(registryKey, cxfTlsConfiguration);
                 return cxfTlsConfiguration;
@@ -553,6 +559,10 @@ public class CXFClientInfo {
 
     public HTTPConduitImpl getHttpConduitImpl() {
         return httpConduitImpl;
+    }
+
+    public String getTlsConfigurationName() {
+        return tlsConfigurationName;
     }
 
     public TlsConfiguration getTlsConfiguration() {

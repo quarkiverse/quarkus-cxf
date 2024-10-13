@@ -14,7 +14,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import io.opentelemetry.api.trace.SpanKind;
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.common.mapper.TypeRef;

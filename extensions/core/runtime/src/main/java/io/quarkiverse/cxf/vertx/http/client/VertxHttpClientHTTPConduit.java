@@ -66,6 +66,7 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.version.Version;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
+import io.quarkiverse.cxf.QuarkusTLSClientParameters;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.ClientSpec;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.RequestBodyEvent.RequestBodyEventType;
 import io.vertx.core.AsyncResult;
@@ -112,7 +113,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         final HttpVersion version = getVersion(message, csPolicy);
         final boolean isHttps = "https".equals(uri.getScheme());
-        final TLSClientParameters clientParameters;
+        final QuarkusTLSClientParameters clientParameters;
         if (isHttps) {
             clientParameters = findTLSClientParameters(message);
             if (clientParameters.getSSLSocketFactory() != null) {
@@ -173,7 +174,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         final RequestContext requestContext = new RequestContext(
                 uri,
                 requestOptions,
-                new ClientSpec(version, clientParameters),
+                clientParameters != null
+                        ? new ClientSpec(version, clientParameters.getTlsConfigurationName(),
+                                clientParameters.getTlsConfiguration())
+                        : new ClientSpec(version, null, null),
                 determineReceiveTimeout(message, csPolicy));
         message.put(RequestContext.class, requestContext);
 
@@ -252,15 +256,36 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         return method;
     }
 
-    TLSClientParameters findTLSClientParameters(Message message) {
+    QuarkusTLSClientParameters findTLSClientParameters(Message message) {
         TLSClientParameters clientParameters = message.get(TLSClientParameters.class);
         if (clientParameters == null) {
             clientParameters = this.tlsClientParameters;
         }
         if (clientParameters == null) {
-            clientParameters = new TLSClientParameters();
+            clientParameters = new QuarkusTLSClientParameters(null, null);
         }
-        return clientParameters;
+
+        if (clientParameters.getHostnameVerifier() != null) {
+            throw new IllegalStateException(
+                    getConduitName() + " does not support setting a hostname verifier."
+                            + " AllowAllHostnameVerifier can be replaced by using a named TLS configuration"
+                            + " with hostname-verification-algorithm set to NONE");
+        }
+
+        if (clientParameters instanceof QuarkusTLSClientParameters) {
+            return (QuarkusTLSClientParameters) clientParameters;
+        }
+        throw new IllegalStateException(
+                VertxHttpClientHTTPConduit.class.getName() + " accepts only " + QuarkusTLSClientParameters.class.getName());
+    }
+
+    @Override
+    public void setTlsClientParameters(TLSClientParameters params) {
+        if (params != null && !(params instanceof QuarkusTLSClientParameters)) {
+            throw new IllegalStateException(
+                    VertxHttpClientHTTPConduit.class.getName() + " accepts only " + QuarkusTLSClientParameters.class.getName());
+        }
+        super.setTlsClientParameters(params);
     }
 
     static record RequestContext(
