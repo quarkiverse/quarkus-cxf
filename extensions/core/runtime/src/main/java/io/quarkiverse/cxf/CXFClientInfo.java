@@ -303,7 +303,11 @@ public class CXFClientInfo {
                     trustOptions = null;
                     trustStore = null;
                 }
-                final CxfTlsConfiguration cxfTlsConfiguration = new CxfTlsConfiguration(keyStoreOptions, keyStore, trustOptions,
+
+                final CxfTlsConfiguration cxfTlsConfiguration = new CxfTlsConfiguration(
+                        keyStoreOptions,
+                        keyStore,
+                        trustOptions,
                         trustStore);
                 tlsRegistry.register(registryKey, cxfTlsConfiguration);
                 return cxfTlsConfiguration;

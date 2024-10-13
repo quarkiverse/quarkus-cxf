@@ -1,0 +1,44 @@
+= {quarkus-cxf-project-name} 3.16.0 LTS release notes
+
+This is the first release in the new 3.16 https://quarkus.io/blog/lts-releases/[LTS stream].
+As usual, where we plan to produce patch releases with bug and security fixes for 12 months.
+
+== Important dependency upgrades
+
+* Quarkus 3.15.x -> 3.16.0 - https://quarkus.io/blog/quarkus-3-16-0-released/[release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Vert.x HttpClient based HTTP Conduit is the new default
+
+The `VertxHttpClientHTTPConduitFactory` was introduced in {quarkus-cxf-project-name} 3.13.0.
+Since then, it went through some improvements and testing
+so that we are confident enough to make it the default for the xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory] and
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory] options.
+
+==== SSL/TLS configuration
+
+Prefer the new named TLS configurations for CXF clients.
+
+==== Hostname verifiers not supported in combination with `VertxHttpClientHTTPConduitFactory`
+
+Setting `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-hostname-verifier[quarkus.cxf.client."client-name".hostname-verifier]` together with `VertxHttpClientHTTPConduitFactory` leads to an exception at runtime.
+
+The `AllowAllHostnameVerifier` value of that option can be replaced by using a
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[named TLS configuration]
+with `{link-quarkus-docs-base}/tls-registry-reference#trusting-all-certificates-and-hostname-verification[hostname-verification-algorithm]`
+set to `NONE`.
+
+Otherwise, there is no way to implement custom hostname verification for Vert.x HTTP client.
+
+==== Force the old default
+
+There are three options how you can get back to the old default:
+
+* Set the `QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY` environment variable to `URLConnectionHTTPConduitFactory`
+* Set the global xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]
+* Set the per client xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory] option to `URLConnectionHTTPConduitFactory`
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.15.0+++...+++3.16.0
