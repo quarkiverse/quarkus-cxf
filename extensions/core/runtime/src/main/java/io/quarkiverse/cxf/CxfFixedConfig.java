@@ -3,7 +3,6 @@ package io.quarkiverse.cxf;
 import java.util.Map;
 import java.util.Optional;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkus.runtime.annotations.ConfigDocMapKey;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigPhase;

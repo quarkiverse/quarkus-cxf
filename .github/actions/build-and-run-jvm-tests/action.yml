@@ -42,10 +42,10 @@ runs:
       run: ./mvnw -B formatter:validate install -fae -ntp
 
     # Same as the previous but only JVM tests and different default ConduitFactory
-    - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=VertxHttpClientHTTPConduitFactory mvn -B test
+    - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn -B test
       shell: bash
       env: 
-        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: VertxHttpClientHTTPConduitFactory
+        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
       run: ./mvnw -B clean install -fae -ntp
 
     - name: 'Upload generated Antora docs site'

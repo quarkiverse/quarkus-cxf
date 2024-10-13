@@ -1,0 +1,89 @@
+= {quarkus-cxf-project-name} 3.16.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.15.x -> 3.16.0 - https://quarkus.io/blog/quarkus-3-16-0-released/[release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Vert.x HttpClient based HTTP Conduit is the new default
+
+The `VertxHttpClientHTTPConduitFactory` was xref:release-notes/3.13.0.adoc#_vert_x_httpclient_based_http_conduit[introduced] in {quarkus-cxf-project-name} 3.13.0.
+Since then, it went through some improvements and testing
+so that we are confident to make it the default for the xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory] and
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory] options.
+Before this change, the effective default was `URLConnectionHTTPConduitFactory`.
+
+The main motivations for this change are as follows:
+
+* Support for HTTP/2
+* Seamless integration with Quarkus, especially in the areas of worker thread poolling and SSL/TLS configuration.
+
+==== Force the old default
+
+There are three options how you can get back to the old default:
+
+* Set the `QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY` environment variable to `URLConnectionHTTPConduitFactory`
+* Set the global xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory] option to `URLConnectionHTTPConduitFactory`
+* Set the per client xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory] option to `URLConnectionHTTPConduitFactory`
+
+==== Hostname verifiers not supported in combination with `VertxHttpClientHTTPConduitFactory`
+
+Setting `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-hostname-verifier[quarkus.cxf.client."client-name".hostname-verifier]` together with `VertxHttpClientHTTPConduitFactory` leads to an exception at runtime.
+
+The `AllowAllHostnameVerifier` value of that option can be replaced by using a
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[named TLS configuration]
+with `{link-quarkus-docs-base}/tls-registry-reference#trusting-all-certificates-and-hostname-verification[hostname-verification-algorithm]`
+set to `NONE`.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1486[#1486] TLS Registry support
+
+{link-quarkus-docs-base}/tls-registry-reference[Quarkus TLS registry] is an extension provided by Quarkus that centralizes the TLS configuration,
+making it easier to manage and maintain secure connections across your application.
+`io.quarkus:quarkus-tls-registry` is a transitive dependency of `io.quarkiverse.cxf:quarkus-cxf` since {quarkus-cxf-project-name} 3.16.0,
+so you do not have to add it manually.
+
+This is the new recommended way of configuring trust stores, keystores and other TLS/SSL related settings:
+
+.application.properties
+[source,properties]
+----
+include::example$ws-security-policy/application.properties[tag=client-trust-store]
+----
+
+<1> The referenced `client-truststore.pkcs12` file has to be available either in the classpath
+    or in the file system.
+
+The new way of configuring TLS is optimized for the new Vert.x based CXF clients.
+For those, all client-related options provided by {link-quarkus-docs-base}/tls-registry-reference#configuration-reference[Quarkus TLS registry] are supported.
+
+The named TLS configurations provided by TLS registry can be also used for CXF clients having `http-conduit-factory` set to
+`URLConnectionHTTPConduitFactory`, `HttpClientHTTPConduitFactory` or with
+xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[Async CXF clients on top of Apache HttpClient 5].
+However, in those cases, the following TLS options are not supported and using them will lead to an exception at runtime:
+
+* `{link-quarkus-docs-base}/tls-registry-reference#quarkus-tls-registry_quarkus-tls-tls-bucket-name-trust-all[quarkus.tls."tls-bucket-name".trust-all]`
+* `{link-quarkus-docs-base}/tls-registry-reference#quarkus-tls-registry_quarkus-tls-tls-bucket-name-hostname-verification-algorithm[quarkus.tls."tls-bucket-name".hostname-verification-algorithm]`
+* `{link-quarkus-docs-base}/tls-registry-reference#quarkus-tls-registry_quarkus-tls-tls-bucket-name-reload-period[quarkus.tls."tls-bucket-name".reload-period]`
+
+The xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[older way] of configuring client trust stores and key stores is still supported, but deprecated since {quarkus-cxf-project-name} 3.16.0:
+
+.application.properties
+[source,properties]
+----
+# Deprecated way of setting the client trust store
+quarkus.cxf.client.hello.trust-store-type = pkcs12
+quarkus.cxf.client.hello.trust-store = client-truststore.pkcs12
+quarkus.cxf.client.hello.trust-store-password = client-truststore-password
+----
+
+=== Documentation improvements
+
+* The following security related pages were consolidated into a new xref:security-guide/index.adoc[Security guide]:
+** xref:user-guide/ssl.adoc[SSL, TLS and HTTPS] - updated with the information about using TLS registry
+** xref:user-guide/auth.adoc[Authentication and authorization]
+** xref:security-guide/ws-securitypolicy-auth.adoc[Authentication enforced by WS-SecurityPolicy] - newly added page
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.15.0+++...+++3.16.0

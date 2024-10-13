@@ -12,7 +12,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
+import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 
@@ -33,32 +33,94 @@ public class TransportPolicyTest {
 
     @Test
     void helloAllowAll() {
-        /*
-         * client calling a service having no policy via https://127.0.0.1
-         * Should pass thanks to hostname-verifier = AllowAllHostnameVerifier
-         */
-        RestAssured.given()
-                .config(PolicyTestUtils.restAssuredConfig())
-                .body("Frank")
-                .post("/cxf/security-policy/helloAllowAll")
-                .then()
-                .statusCode(200)
-                .body(is("Hello Frank!"));
+        HTTPConduitImpl defaultImpl = HTTPConduitImpl.findDefaultHTTPConduitImpl();
+        switch (defaultImpl) {
+            case VertxHttpClientHTTPConduitFactory:
+                /*
+                 * client calling a service having no policy via https://127.0.0.1
+                 * hostname-verifier is not supported by VertxHttpClientHTTPConduitFactory
+                 */
+                RestAssured.given()
+                        .config(PolicyTestUtils.restAssuredConfig())
+                        .body("Frank")
+                        .post("/cxf/security-policy/helloAllowAll")
+                        .then()
+                        .statusCode(500)
+                        .body(Matchers.containsString(
+                                "http-conduit-factory = VertxHttpClientHTTPConduitFactory does not support quarkus.cxf.client.helloAllowAll.hostname-verifier. AllowAllHostnameVerifier can be replaced by using a named TLS configuration (via quarkus.cxf.client.helloAllowAll.tls-configuration-name) with quarkus.tls.\"tls-bucket-name\".hostname-verification-algorithm set to NONE"));
+                /*
+                 * But the same works when the hostname verification is disabled via
+                 * quarkus.tls.helloAllowAll.trust-store.hostname-verification-algorithm = NONE
+                 */
+                RestAssured.given()
+                        .config(PolicyTestUtils.restAssuredConfig())
+                        .body("Frank")
+                        .post("/cxf/security-policy/helloAllowAllTlsConfig")
+                        .then()
+                        .statusCode(200)
+                        .body(is("Hello Frank!"));
+                break;
+            case URLConnectionHTTPConduitFactory:
+                /*
+                 * client calling a service having no policy via https://127.0.0.1
+                 * Should pass thanks to hostname-verifier = AllowAllHostnameVerifier
+                 */
+                RestAssured.given()
+                        .config(PolicyTestUtils.restAssuredConfig())
+                        .body("Frank")
+                        .post("/cxf/security-policy/helloAllowAll")
+                        .then()
+                        .statusCode(200)
+                        .body(is("Hello Frank!"));
+
+                RestAssured.given()
+                        .config(PolicyTestUtils.restAssuredConfig())
+                        .body("Frank")
+                        .post("/cxf/security-policy/helloAllowAllTlsConfig")
+                        .then()
+                        .statusCode(500)
+                        .body(Matchers.containsString(
+                                "http-conduit-factory = URLConnectionHTTPConduitFactory does not support quarkus.tls.helloAllowAllTlsConfig.hostname-verification-algorithm. Use quarkus.cxf.client.helloAllowAllTlsConfig.hostname-verifier instead."));
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + defaultImpl);
+        }
     }
 
     @Test
     void helloCustomHostnameVerifier() {
-        /*
-         * client calling a service having no policy via https://127.0.0.1
-         * Should pass thanks to hostname-verifier = io.quarkiverse.cxf.it.security.policy.NoopHostnameVerifier
-         */
-        RestAssured.given()
-                .config(PolicyTestUtils.restAssuredConfig())
-                .body("Frank")
-                .post("/cxf/security-policy/helloCustomHostnameVerifier")
-                .then()
-                .statusCode(200)
-                .body(is("Hello Frank!"));
+        HTTPConduitImpl defaultImpl = HTTPConduitImpl.findDefaultHTTPConduitImpl();
+        switch (defaultImpl) {
+            case VertxHttpClientHTTPConduitFactory:
+                /*
+                 * client calling a service having no policy via https://127.0.0.1
+                 * hostname-verifier is not supported by VertxHttpClientHTTPConduitFactory
+                 */
+                RestAssured.given()
+                        .config(PolicyTestUtils.restAssuredConfig())
+                        .body("Frank")
+                        .post("/cxf/security-policy/helloCustomHostnameVerifier")
+                        .then()
+                        .statusCode(500)
+                        .body(Matchers.containsString(
+                                "http-conduit-factory = VertxHttpClientHTTPConduitFactory does not support quarkus.cxf.client.helloCustomHostnameVerifier.hostname-verifier. AllowAllHostnameVerifier can be replaced by using a named TLS configuration (via quarkus.cxf.client.helloCustomHostnameVerifier.tls-configuration-name) with quarkus.tls.\"tls-bucket-name\".hostname-verification-algorithm set to NONE"));
+                break;
+            case URLConnectionHTTPConduitFactory:
+                /*
+                 * client calling a service having no policy via https://127.0.0.1
+                 * Should pass thanks to hostname-verifier = io.quarkiverse.cxf.it.security.policy.NoopHostnameVerifier
+                 */
+                RestAssured.given()
+                        .config(PolicyTestUtils.restAssuredConfig())
+                        .body("Frank")
+                        .post("/cxf/security-policy/helloCustomHostnameVerifier")
+                        .then()
+                        .statusCode(200)
+                        .body(is("Hello Frank!"));
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + defaultImpl);
+        }
     }
 
     @Test
@@ -164,7 +226,7 @@ public class TransportPolicyTest {
         HTTPConduitImpl defaultImpl = HTTPConduitImpl.findDefaultHTTPConduitImpl();
         switch (defaultImpl) {
             case VertxHttpClientHTTPConduitFactory:
-                expectedMessage = "The https URL hostname 127.0.0.1 does not match the Common Name (CN) on the server certificate in the client's truststore";
+                expectedMessage = "No subject alternative names present";
                 break;
             case URLConnectionHTTPConduitFactory:
                 expectedMessage = "The https URL hostname does not match the Common Name (CN) on the server certificate in the client's truststore";

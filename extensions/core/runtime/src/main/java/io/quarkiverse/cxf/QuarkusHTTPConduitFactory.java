@@ -1,35 +1,19 @@
 package io.quarkiverse.cxf;
 
 import java.io.IOException;
-import java.util.Optional;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
-import org.apache.cxf.transport.http.HttpClientHTTPConduit;
-import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.jboss.logging.Logger;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
-import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
-import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
-import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
-import io.quarkus.tls.TlsConfiguration;
-import io.quarkus.tls.runtime.VertxCertificateHolder;
-import io.quarkus.tls.runtime.config.TlsBucketConfig;
 import io.vertx.core.Vertx;
-import io.vertx.core.net.KeyCertOptions;
 
 /**
  * A HTTPConduitFactory with some client specific configuration, such as timeouts and SSL.
@@ -45,152 +29,50 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     public static final String QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY = "QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY";
     static HTTPConduitImpl defaultHTTPConduitImpl;
 
-    private final HttpClientPool httpClientPool;
     private final CxfFixedConfig cxFixedConfig;
     private final CXFClientInfo cxfClientInfo;
-    private final HTTPConduitFactory busHTTPConduitFactory;
+    private final HTTPConduitSpec busHTTPConduitImpl;
     private final AuthorizationPolicy authorizationPolicy;
-    private final HTTPConduitImpl defaultHTTPConduitFactory;
     private final Vertx vertx;
 
     public QuarkusHTTPConduitFactory(
-            HttpClientPool httpClientPool,
             CxfFixedConfig cxFixedConfig,
             CXFClientInfo cxfClientInfo,
-            HTTPConduitFactory busHTTPConduitFactory,
+            HTTPConduitSpec busHTTPConduitImpl,
             AuthorizationPolicy authorizationPolicy,
             Vertx vertx) {
         super();
-        this.httpClientPool = httpClientPool;
         this.cxFixedConfig = cxFixedConfig;
         this.cxfClientInfo = cxfClientInfo;
-        this.busHTTPConduitFactory = busHTTPConduitFactory;
+        this.busHTTPConduitImpl = busHTTPConduitImpl;
         this.authorizationPolicy = authorizationPolicy;
-        this.defaultHTTPConduitFactory = HTTPConduitImpl.findDefaultHTTPConduitImpl();
         this.vertx = vertx;
     }
 
     @Override
     public HTTPConduit createConduit(HTTPTransportFactory f, Bus b, EndpointInfo localInfo, EndpointReferenceType target)
             throws IOException {
-        HTTPConduitImpl httpConduitImpl = cxfClientInfo.getHttpConduitImpl();
+        HTTPConduitSpec httpConduitImpl = cxfClientInfo.getHttpConduitImpl();
         if (httpConduitImpl == null) {
             httpConduitImpl = cxFixedConfig.httpConduitFactory().orElse(null);
         }
         if (httpConduitImpl == null
                 && (CXFRecorder.isHc5Present())
-                && busHTTPConduitFactory != null) {
-            return configure(
-                    busHTTPConduitFactory.createConduit(f, b, localInfo, target),
-                    cxfClientInfo);
+                && busHTTPConduitImpl != null) {
+            return configure(f, busHTTPConduitImpl.resolveDefault(), cxfClientInfo, b, localInfo, target);
         }
 
         if (httpConduitImpl == null) {
             httpConduitImpl = HTTPConduitImpl.QuarkusCXFDefault;
         }
-
-        final HTTPConduit result;
-        switch (httpConduitImpl) {
-            case CXFDefault: {
-                /*
-                 * Mimic what is done in org.apache.cxf.transport.http.HTTPTransportFactory.getConduit(EndpointInfo,
-                 * EndpointReferenceType, Bus)
-                 */
-                if (Boolean.getBoolean("org.apache.cxf.transport.http.forceURLConnection")) {
-                    result = new URLConnectionHTTPConduit(b, localInfo, target);
-                } else {
-                    result = new HttpClientHTTPConduit(b, localInfo, target);
-                }
-                break;
-            }
-            case QuarkusCXFDefault:
-                switch (defaultHTTPConduitFactory) {
-                    case VertxHttpClientHTTPConduitFactory: {
-                        result = new VertxHttpClientHTTPConduit(b, localInfo, target, httpClientPool);
-                        break;
-                    }
-                    case URLConnectionHTTPConduitFactory: {
-                        result = new URLConnectionHTTPConduit(b, localInfo, target);
-                        break;
-                    }
-                    case HttpClientHTTPConduitFactory: {
-                        result = new HttpClientHTTPConduit(b, localInfo, target);
-                        break;
-                    }
-                    default:
-                        throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
-                                + defaultHTTPConduitFactory);
-                }
-                break;
-            case VertxHttpClientHTTPConduitFactory: {
-                result = new VertxHttpClientHTTPConduit(b, localInfo, target, httpClientPool);
-                break;
-            }
-            case URLConnectionHTTPConduitFactory: {
-                result = new URLConnectionHTTPConduit(b, localInfo, target);
-                break;
-            }
-            case HttpClientHTTPConduitFactory: {
-                result = new HttpClientHTTPConduit(b, localInfo, target);
-                break;
-            }
-            default:
-                throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
-                        + httpConduitImpl);
-        }
-        return configure(result, cxfClientInfo);
+        return configure(f, httpConduitImpl.resolveDefault(), cxfClientInfo, b, localInfo, target);
     }
 
-    private HTTPConduit configure(HTTPConduit httpConduit, CXFClientInfo cxfClientInfo) throws IOException {
-        final String hostnameVerifierName = cxfClientInfo.getHostnameVerifier();
-        final TlsConfiguration tlsConfig = cxfClientInfo.getTlsConfiguration();
-        if (hostnameVerifierName != null || tlsConfig != null) {
-            TLSClientParameters tlsCP = new TLSClientParameters();
-
-            if (hostnameVerifierName != null) {
-                final Optional<WellKnownHostnameVerifier> wellKnownHostNameVerifierName = WellKnownHostnameVerifier
-                        .of(hostnameVerifierName);
-                if (wellKnownHostNameVerifierName.isPresent()) {
-                    wellKnownHostNameVerifierName.get().configure(tlsCP);
-                } else {
-                    final HostnameVerifier hostnameVerifier = CXFRuntimeUtils.getInstance(hostnameVerifierName, true);
-                    if (hostnameVerifier == null) {
-                        throw new RuntimeException("Could not find or instantiate " + hostnameVerifierName);
-                    }
-                    tlsCP.setHostnameVerifier(hostnameVerifier);
-                }
-            }
-
-            if (tlsConfig != null) {
-                final KeyCertOptions keyStoreOptions = tlsConfig.getKeyStoreOptions();
-                if (keyStoreOptions != null) {
-                    try {
-                        final KeyManagerFactory kmf = keyStoreOptions.getKeyManagerFactory(vertx);
-                        tlsCP.setKeyManagers(kmf.getKeyManagers());
-                    } catch (Exception e) {
-                        throw new RuntimeException("Could not set up key manager factory", e);
-                    }
-                }
-
-                if (tlsConfig.getTrustStoreOptions() != null) {
-                    try {
-                        final TrustManagerFactory tmf = tlsConfig.getTrustStoreOptions().getTrustManagerFactory(vertx);
-                        tlsCP.setTrustManagers(tmf.getTrustManagers());
-                    } catch (Exception e) {
-                        throw new RuntimeException("Could not set up trust manager factory", e);
-                    }
-                }
-
-                if (tlsConfig instanceof VertxCertificateHolder) {
-                    final VertxCertificateHolder vertxCertificateHOlder = (VertxCertificateHolder) tlsConfig;
-                    final TlsBucketConfig bucketConfig = vertxCertificateHOlder.config();
-                    bucketConfig.cipherSuites().ifPresent(tlsCP::setCipherSuites);
-                }
-            }
-
-            httpConduit.setTlsClientParameters(tlsCP);
-        }
-
+    private HTTPConduit configure(HTTPTransportFactory f, HTTPConduitSpec httpConduitImpl, CXFClientInfo cxfClientInfo, Bus b,
+            EndpointInfo localInfo,
+            EndpointReferenceType target) throws IOException {
+        final HTTPConduit httpConduit = httpConduitImpl.createConduit(f, b, localInfo, target);
+        httpConduitImpl.tlsClientParameters(cxfClientInfo, vertx).ifPresent(httpConduit::setTlsClientParameters);
         final HTTPClientPolicy policy = new HTTPClientPolicy();
         httpConduit.setClient(policy);
         policy.setConnectionTimeout(cxfClientInfo.getConnectionTimeout());
