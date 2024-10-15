@@ -5,13 +5,11 @@ import java.util.Optional;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
-import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
 import io.quarkiverse.cxf.LoggingConfig.PerClientOrServiceLoggingConfig;
 import io.quarkus.runtime.annotations.ConfigDocEnum;
-import io.quarkus.runtime.annotations.ConfigDocEnumValue;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.smallrye.config.WithConverter;
 import io.smallrye.config.WithDefault;
@@ -532,11 +530,24 @@ public interface CxfClientConfig {
      *
      * - One of the well known values: `AllowAllHostnameVerifier`, `HttpsURLConnectionDefaultHostnameVerifier`
      * - A fully qualified class name implementing `javax.net.ssl.HostnameVerifier` to look up in the CDI container.
-     * - A bean name prefixed with `++#++` that will be looked up in the CDI container; example: `++#++myHostnameVerifier` If
-     * not specified, then the creation of the `HostnameVerifier` is delegated to CXF, which boils down to
+     * - A bean name prefixed with `++#++` that will be looked up in the CDI container; example: `++#++myHostnameVerifier`
+     *
+     * If not specified, then the creation of the `HostnameVerifier` is delegated to CXF, which boils down to
      * `org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier` with the default
      * `org.apache.cxf.transport.https.httpclient.PublicSuffixMatcherLoader` as returned from
      * `PublicSuffixMatcherLoader.getDefault()`.
+     *
+     * [IMPORTANT]
+     * ====
+     * Setting this option when the conduit factory of this client is set to `VertxHttpClientHTTPConduitFactory`
+     * (default since {quarkus-cxf-project-name} 3.16.0) leads to an exception at runtime.
+     * The `AllowAllHostnameVerifier` value of this option can be replaced by using a
+     * xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[named TLS
+     * configuration]
+     * with
+     * `{link-quarkus-docs-base}/tls-registry-reference#trusting-all-certificates-and-hostname-verification[hostname-verification-algorithm]`
+     * set to `NONE`. Otherwise, there is no way to implement custom hostname verification for Vert.x HTTP client.
+     * ====
      *
      * @asciidoclet
      * @since 2.5.0
@@ -553,59 +564,6 @@ public interface CxfClientConfig {
      */
     @WithName("schema-validation.enabled-for")
     public Optional<SchemaValidationType> schemaValidationEnabledFor();
-
-    public enum HTTPConduitImpl {
-
-        @ConfigDocEnumValue("QuarkusCXFDefault")
-        QuarkusCXFDefault {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                final HTTPConduitImpl impl = findDefaultHTTPConduitImpl();
-                return impl.newHTTPConduitFactory();
-            }
-
-        },
-        @ConfigDocEnumValue("CXFDefault")
-        CXFDefault {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                return null;
-            }
-        },
-        @ConfigDocEnumValue("VertxHttpClientHTTPConduitFactory")
-        VertxHttpClientHTTPConduitFactory {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                return new io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduitFactory();
-            }
-        },
-        @ConfigDocEnumValue("HttpClientHTTPConduitFactory")
-        HttpClientHTTPConduitFactory {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                return new HttpClientHTTPConduitFactory();
-            }
-        },
-        @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
-        URLConnectionHTTPConduitFactory {
-            @Override
-            public HTTPConduitFactory newHTTPConduitFactory() {
-                return new URLConnectionHTTPConduitFactory();
-            }
-        };
-
-        public abstract HTTPConduitFactory newHTTPConduitFactory();
-
-        public static HTTPConduitImpl findDefaultHTTPConduitImpl() {
-            if (QuarkusHTTPConduitFactory.defaultHTTPConduitImpl == null) {
-                final String defaultName = System.getenv(QuarkusHTTPConduitFactory.QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY);
-                QuarkusHTTPConduitFactory.defaultHTTPConduitImpl = defaultName == null || defaultName.isEmpty()
-                        ? URLConnectionHTTPConduitFactory
-                        : valueOf(defaultName);
-            }
-            return QuarkusHTTPConduitFactory.defaultHTTPConduitImpl;
-        }
-    }
 
     public enum WellKnownHostnameVerifier {
 

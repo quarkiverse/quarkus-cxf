@@ -30,6 +30,9 @@ public class SecurityPolicyResource {
     @CXFClient("helloAllowAll")
     HelloService helloAllowAll;
 
+    @CXFClient("helloAllowAllTlsConfig")
+    HelloService helloAllowAllTlsConfig;
+
     @CXFClient("helloIp")
     HelloService helloIp;
 
@@ -119,6 +122,9 @@ public class SecurityPolicyResource {
                 break;
             case "helloAllowAll":
                 service = helloAllowAll;
+                break;
+            case "helloAllowAllTlsConfig":
+                service = helloAllowAllTlsConfig;
                 break;
             case "helloCustomHostnameVerifier":
                 service = helloCustomHostnameVerifier;

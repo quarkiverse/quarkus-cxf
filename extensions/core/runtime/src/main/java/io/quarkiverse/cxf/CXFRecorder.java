@@ -7,11 +7,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.jboss.logging.Logger;
 
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Supplier;
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkiverse.cxf.annotation.CXFEndpoint;
 import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkiverse.cxf.transport.VertxDestinationFactory;
@@ -281,7 +279,7 @@ public class CXFRecorder {
     }
 
     public RuntimeValue<Consumer<Bus>> setBusHTTPConduitFactory(HTTPConduitImpl factory) {
-        return new RuntimeValue<>(bus -> bus.setExtension(factory.newHTTPConduitFactory(), HTTPConduitFactory.class));
+        return new RuntimeValue<>(bus -> bus.setExtension(factory, HTTPConduitSpec.class));
     }
 
 }

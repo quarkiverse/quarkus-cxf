@@ -12,7 +12,6 @@ import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
-import io.quarkiverse.cxf.CxfClientConfig.HTTPConduitImpl;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.tls.TlsConfiguration;
@@ -303,7 +302,11 @@ public class CXFClientInfo {
                     trustOptions = null;
                     trustStore = null;
                 }
-                final CxfTlsConfiguration cxfTlsConfiguration = new CxfTlsConfiguration(keyStoreOptions, keyStore, trustOptions,
+
+                final CxfTlsConfiguration cxfTlsConfiguration = new CxfTlsConfiguration(
+                        keyStoreOptions,
+                        keyStore,
+                        trustOptions,
                         trustStore);
                 tlsRegistry.register(registryKey, cxfTlsConfiguration);
                 return cxfTlsConfiguration;
