@@ -1,19 +1,19 @@
 package io.quarkiverse.cxf.vertx.http.client;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.transport.http.HTTPConduit;
 
+import io.quarkus.tls.CertificateUpdatedEvent;
 import io.quarkus.tls.TlsConfiguration;
 import io.quarkus.tls.runtime.config.TlsConfigUtils;
 import io.vertx.core.Vertx;
@@ -21,11 +21,12 @@ import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpVersion;
 
+/**
+ * A pool of HTTP clients so that we do not have to reconnect on every request.
+ */
 @ApplicationScoped
 public class HttpClientPool {
     private final Map<ClientSpec, HttpClient> clients = new ConcurrentHashMap<>();
-    /** Not a concurrent map, has to be synchronized */
-    private final Map<String, Map.Entry<ClientSpec, HttpClient>> clientsByTlsConfigurationName = new HashMap<>();
     private final Vertx vertx;
 
     HttpClientPool() {
@@ -38,27 +39,42 @@ public class HttpClientPool {
         this.vertx = vertx;
     }
 
+    /**
+     * If this method returns a client that is concurrently being removed by
+     * {@link #onCertificateUpdate(CertificateUpdatedEvent)} then the client may still work for one request, but will be
+     * re-created on the subsequent request.
+     *
+     * @param spec the caching key
+     * @return a possibly pooled client
+     */
     public HttpClient getClient(ClientSpec spec) {
         return clients.computeIfAbsent(spec, v -> {
-            synchronized (clientsByTlsConfigurationName) {
-                final HttpClientOptions opts = newHttpClientOptions(spec);
-                final HttpClient client = vertx.createHttpClient(opts);
-                if (spec.tlsConfigurationName != null) {
-                    clientsByTlsConfigurationName.put(spec.tlsConfigurationName,
-                            new AbstractMap.SimpleImmutableEntry<>(spec, client));
-                }
-                return client;
+            final HttpClientOptions opts = new HttpClientOptions()
+                    .setProtocolVersion(spec.getVersion());
+            if (spec.isSsl()) {
+                TlsConfigUtils.configure(opts, spec.tlsConfiguration);
             }
+            return vertx.createHttpClient(opts);
         });
     }
 
-    static HttpClientOptions newHttpClientOptions(ClientSpec spec) {
-        final HttpClientOptions opts = new HttpClientOptions()
-                .setProtocolVersion(spec.getVersion());
-        if (spec.isSsl()) {
-            TlsConfigUtils.configure(opts, spec.tlsConfiguration);
+    /**
+     * Called upon certificate reload. Clients having the given {@link ClientSpec#tlsConfigurationName} will be
+     * removed from this pool, so that they are created anew via {@link #getClient(ClientSpec)} on the next request.
+     *
+     * @param event the update event
+     */
+    public void onCertificateUpdate(@Observes CertificateUpdatedEvent event) {
+        final String tlsConfigName = event.name();
+        if (tlsConfigName != null) {
+            final Iterator<ClientSpec> it = clients.keySet().iterator();
+            while (it.hasNext()) {
+                final ClientSpec spec = it.next();
+                if (tlsConfigName.equals(spec.tlsConfigurationName)) {
+                    it.remove();
+                }
+            }
         }
-        return opts;
     }
 
     public static class ClientSpec {
