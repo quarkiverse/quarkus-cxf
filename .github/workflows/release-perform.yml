@@ -10,6 +10,9 @@ on:
         description: 'Tag to release'
         required: true
 
+env:
+  JAVA_VERSION: 17
+
 permissions:
   attestations: write
   id-token: write
@@ -26,3 +29,4 @@ jobs:
     secrets: inherit
     with:
       version: ${{github.event.inputs.tag || github.ref_name}}
+      java_version: ${{ env.JAVA_VERSION }}
