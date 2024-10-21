@@ -100,6 +100,9 @@
         <!-- keytool-maven-plugin -->
         <keytool.skip>false</keytool.skip>
 
+        <!-- Temporary https://github.com/quarkiverse/quarkus-cxf/issues/1558 -->
+        <cq.update-doc-page.skip>true</cq.update-doc-page.skip>
+
     </properties>
 
     <scm>
