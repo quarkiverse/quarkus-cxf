@@ -44,9 +44,13 @@ jobs:
           java-version: 17
           cache: 'maven'
 
+      - name: Disable native build in test-util-parent/test-ws-rm-server-native/pom.xml
+        shell: bash
+        run: sed -i 's|<name>performRelease</name>|<name>performRelease-disabled</name>|' test-util-parent/test-ws-rm-server-native/pom.xml
+        
       - name: mvn install -DperformRelease
         shell: bash
-        run: ./mvnw -B install -DperformRelease -ntp
+        run: ./mvnw -B install -DperformRelease -Dmaven.javadoc.skip -Dmaven.source.skip -ntp
 
       - name: Await ${{github.event.inputs.tag || github.ref_name}} on Maven Central
         run: |

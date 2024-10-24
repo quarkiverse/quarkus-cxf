@@ -3,6 +3,8 @@ name: "CodeQL"
 on:
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - '.github/project.yml'
 
 jobs:
   analyze:
