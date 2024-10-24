@@ -6,9 +6,6 @@ on:
     paths:
       - '.github/project.yml'
 
-env:
-  JAVA_VERSION: 17
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -20,4 +17,4 @@ jobs:
     uses: quarkiverse/.github/.github/workflows/prepare-release.yml@main
     secrets: inherit
     with:
-      java_version: ${{ env.JAVA_VERSION }}
+      java_version: 17
