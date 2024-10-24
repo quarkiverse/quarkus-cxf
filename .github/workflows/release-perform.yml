@@ -27,3 +27,27 @@ jobs:
     with:
       version: ${{github.event.inputs.tag || github.ref_name}}
       java_version: 17
+
+  await-release-on-central:
+    needs: perform-release
+    runs-on: ubuntu-latest
+    name: Await artifacts on Maven Central
+    steps:
+      - uses: actions/checkout@v4
+        ref: ${{github.event.inputs.tag || github.ref_name}}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: 'maven'
+
+      - name: mvn install -DperformRelease
+        shell: bash
+        run: ./mvnw -B install -DperformRelease -ntp
+
+      - name: Await ${{github.event.inputs.tag || github.ref_name}} on Maven Central
+        run: |
+          ./mvnw org.l2x6.cq:cq-maven-plugin:4.14.2:await-release -Dcq.version=${{github.event.inputs.tag || github.ref_name}} -N
+
