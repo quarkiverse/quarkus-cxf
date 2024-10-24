@@ -459,10 +459,14 @@
         </profile>
         <profile>
             <id>release</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
             <properties>
-                <impsort.skip>true</impsort.skip>
                 <quarkus.build.skip>true</quarkus.build.skip>
-                <formatter.skip>true</formatter.skip>
                 <enforcer.skip>true</enforcer.skip>
                 <skipTests>true</skipTests>
                 <format.skip>true</format.skip>
