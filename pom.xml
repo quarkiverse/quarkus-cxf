@@ -42,7 +42,7 @@
     </developers>
     <properties>
         <!-- Primary dependencies -->
-        <quarkus.version>3.16.0.CR1</quarkus.version>
+        <quarkus.version>3.16.0</quarkus.version>
         <cxf.version>4.0.5</cxf.version>
         <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
         <quarkus-antora.version>0.2.0</quarkus-antora.version>
@@ -76,7 +76,7 @@
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
-        <cq-maven-plugin.version>4.14.1</cq-maven-plugin.version>
+        <cq-maven-plugin.version>4.14.2</cq-maven-plugin.version>
         <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <groovy.version>3.0.22</groovy.version>
