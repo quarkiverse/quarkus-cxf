@@ -24,7 +24,7 @@
         <quarkus-cxf.version>3.16.1-SNAPSHOT</quarkus-cxf.version><!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
 
         <maven.compiler.parameters>true</maven.compiler.parameters>
-        
+
     </properties>
 
     <dependencyManagement>
@@ -135,7 +135,10 @@
         <profile>
             <id>release</id><!-- Keep in sync with the native profile above -->
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
             </activation>
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
