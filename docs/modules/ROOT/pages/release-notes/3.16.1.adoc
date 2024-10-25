@@ -1,0 +1,11 @@
+= {quarkus-cxf-project-name} 3.16.1 release notes
+
+Compared to xref:release-notes/3.16.0.adoc[3.16.0], there are no user facing changes in this release.
+We had to do it only because on the first attempt,
+the https://quarkus.io/blog/quarkiverse-and-smallrye-new-release-process/[new release process]
+failed to deploy some testing artifact to Maven Central that was required for validation on
+https://github.com/quarkusio/quarkus-platform[Quarkus Platform].
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.16.0+++...+++3.16.1
