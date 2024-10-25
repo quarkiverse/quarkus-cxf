@@ -11,10 +11,13 @@
 {link-quarkus-docs-base}/tls-registry-reference[Quarkus TLS registry] is an extension provided by Quarkus that centralizes the TLS configuration,
 making it easier to manage and maintain secure connections across your application.
 
+[NOTE]
+====
 `io.quarkus:quarkus-tls-registry` is a transitive dependency of `io.quarkiverse.cxf:quarkus-cxf` since {quarkus-cxf-project-name} 3.16.0,
 so you do not have to add it manually.
+====
 
-This is the new recommended way of configuring trust stores, keystores and other TLS/SSL related settings:
+This is the new recommended way of configuring trust stores, keystores and other TLS/SSL related settings in {quarkus-cxf-project-name} 3.16.0+:
 
 .application.properties
 [source,properties]
@@ -66,7 +69,7 @@ quarkus.cxf.client."client-name".http-conduit-factory = VertxHttpClientHTTPCondu
 quarkus.cxf.http-conduit-factory = VertxHttpClientHTTPConduitFactory
 ----
 
-Since then, it went through some improvements and testing so that we are confident to make it default.
+Since then, it went through some improvements and testing so that we are now confident to make it default.
 
 The main motivations for using Vert.x HttpClient based HTTP Conduit as a default are as follows:
 
@@ -79,7 +82,7 @@ The main motivations for using Vert.x HttpClient based HTTP Conduit as a default
 Before this change, the effective default was `URLConnectionHTTPConduitFactory`.
 It is still supported and tested regularly.
 
-There are three options how you can get back to the old default:
+There are three ways how you can get back to the old default:
 
 * Set the `QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY` environment variable to `URLConnectionHTTPConduitFactory`
 * Set the global xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory] option to `URLConnectionHTTPConduitFactory`
