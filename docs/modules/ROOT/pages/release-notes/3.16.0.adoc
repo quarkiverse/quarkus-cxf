@@ -2,7 +2,7 @@
 
 == Important dependency upgrades
 
-* Quarkus 3.15.x -> 3.16.0 - https://quarkus.io/blog/quarkus-3-16-0-released/[release notes]
+* Quarkus 3.15.x -> 3.16.0 - https://quarkus.io/blog/quarkus-3-16-1-released/[release notes]
 
 == New and noteworthy in {quarkus-cxf-project-name}
 
