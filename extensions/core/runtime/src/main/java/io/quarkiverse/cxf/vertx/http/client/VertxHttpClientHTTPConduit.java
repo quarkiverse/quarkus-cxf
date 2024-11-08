@@ -577,17 +577,18 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         static void setProtocolHeaders(Message outMessage, RequestOptions requestOptions, String userAgent) throws IOException {
-            final Object contentType = outMessage.get(Message.CONTENT_TYPE);
+            final Headers h = new Headers(outMessage);
             final MultiMap outHeaders;
-            if (contentType instanceof String) {
-                requestOptions.putHeader(HttpHeaderHelper.CONTENT_TYPE, (String) contentType);
+            final String contentType;
+            if (requestHasBody(requestOptions.getMethod())
+                    && (contentType = h.determineContentType()) != null) {
+                requestOptions.putHeader(HttpHeaderHelper.CONTENT_TYPE, contentType);
                 outHeaders = requestOptions.getHeaders();
             } else {
                 outHeaders = HttpHeaders.headers();
                 requestOptions.setHeaders(outHeaders);
             }
 
-            Headers h = new Headers(outMessage);
             boolean addHeaders = MessageUtils.getContextualBoolean(outMessage, Headers.ADD_HEADERS_PROPERTY, false);
 
             for (Map.Entry<String, List<String>> header : h.headerMap().entrySet()) {
@@ -627,6 +628,22 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     outHeaders.set("User-Agent", userAgent);
                 }
             }
+        }
+
+        static boolean requestHasBody(HttpMethod method) {
+            if (HttpMethod.POST == method) {
+                /* Fast track for the most likely value */
+                return true;
+            }
+            if (
+            /* Fast track for the second most likely value */
+            method == HttpMethod.GET
+                    || method == HttpMethod.HEAD
+                    || method == HttpMethod.OPTIONS
+                    || method == HttpMethod.TRACE) {
+                return false;
+            }
+            return true;
         }
 
         ResponseEvent awaitResponse() throws IOException {

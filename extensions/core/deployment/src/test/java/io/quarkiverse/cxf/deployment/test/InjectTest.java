@@ -66,6 +66,9 @@ public class InjectTest {
         Assertions.assertThat(helloService.helloContextTypeMethod("org.apache.cxf.message.Message.BASE_PATH"))
                 .isEqualTo("type method " + path);
 
+        Assertions.assertThat(helloService.helloContextField(org.apache.cxf.message.Message.CONTENT_TYPE))
+                .isEqualTo("field text/xml; charset=UTF-8");
+
     }
 
     @WebService
