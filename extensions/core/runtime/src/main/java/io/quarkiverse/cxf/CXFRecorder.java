@@ -1,5 +1,7 @@
 package io.quarkiverse.cxf;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.function.Consumer;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.jboss.logging.Logger;
 
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Supplier;
@@ -282,6 +285,40 @@ public class CXFRecorder {
 
     public RuntimeValue<Consumer<Bus>> setBusHTTPConduitFactory(HTTPConduitImpl factory) {
         return new RuntimeValue<>(bus -> bus.setExtension(factory.newHTTPConduitFactory(), HTTPConduitFactory.class));
+    }
+
+    public void workaroundBadForceURLConnectionInit() {
+        // A workaround for the bad initialization of HTTPTransportFactory.forceURLConnectionConduit
+        // in the downstream CXF 4.0.5.fuse-redhat-00012:
+        // private static boolean forceURLConnectionConduit
+        // = Boolean.valueOf(SystemPropertyAction.getProperty("org.apache.cxf.transport.http.forceURLConnection", "true"));
+        // Using default "true" breaks the backwards compatibility for us, so we set the property to false at application startup
+        // See also https://issues.redhat.com/browse/CEQ-10395
+        Field forceURLConnectionConduitField = null;
+        for (Field f : HTTPTransportFactory.class.getDeclaredFields()) {
+            if (f.getName().equals("forceURLConnectionConduit")) {
+                f.setAccessible(true);
+                forceURLConnectionConduitField = f;
+                break;
+            }
+        }
+
+        if (forceURLConnectionConduitField != null && Modifier.isStatic(forceURLConnectionConduitField.getModifiers())) {
+            /* We are on a CXF version having the static HTTPTransportFactory.forceURLConnectionConduit field */
+            try {
+                /*
+                 * If the property is null, but HTTPTransportFactory.forceURLConnectionConduit is true
+                 * then we are on a CXF version using the wrong default and we switch to default false
+                 */
+                if (forceURLConnectionConduitField.getBoolean(null)
+                        && System.getProperty("org.apache.cxf.transport.http.forceURLConnection") == null) {
+                    System.setProperty("org.apache.cxf.transport.http.forceURLConnection", "false");
+                    forceURLConnectionConduitField.set(null, false);
+                }
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }
