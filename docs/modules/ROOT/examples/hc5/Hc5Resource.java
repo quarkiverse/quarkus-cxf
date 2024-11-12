@@ -10,6 +10,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.frontend.ClientProxy;
 import org.jboss.eap.quickstarts.wscalculator.calculator.AddResponse;
 import org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService;
 
@@ -90,6 +92,14 @@ public class Hc5Resource {
     @Produces(MediaType.TEXT_PLAIN)
     public int addSyncContextPropagation(@QueryParam("a") int a, @QueryParam("b") int b) {
         return contextPropagationCalculator.add(a, b);
+    }
+
+    @Path("/conduit")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String conduit() {
+        final Client client = ClientProxy.getClient(myCalculator);
+        return client.getConduit().getClass().getName();
     }
 
     // tag::quarkus-cxf-rt-transports-http-hc5.usage.mutiny[]
