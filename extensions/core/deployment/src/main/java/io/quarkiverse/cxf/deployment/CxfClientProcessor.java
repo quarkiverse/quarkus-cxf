@@ -22,6 +22,7 @@ import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.soap.SOAPBinding;
 
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.AnnotationValue;
@@ -504,6 +505,22 @@ public class CxfClientProcessor {
                 throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
                         + config.httpConduitFactory());
         }
+    }
+
+    @BuildStep
+    @Record(ExecutionTime.RUNTIME_INIT)
+    void workaroundBadForceURLConnectionInit(CXFRecorder recorder) {
+        recorder.workaroundBadForceURLConnectionInit();
+    }
+
+    /**
+     * Allow some reflexive trickery in {@link CXFRecorder#workaroundBadForceURLConnectionInit()}.
+     *
+     * @return a new {@link ReflectiveClassBuildItem}
+     */
+    @BuildStep
+    ReflectiveClassBuildItem reflectiveClass() {
+        return ReflectiveClassBuildItem.builder(HTTPTransportFactory.class).fields().build();
     }
 
     private static class ProxyInfo {

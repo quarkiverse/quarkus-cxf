@@ -134,6 +134,15 @@ class Hc5Test {
 
     }
 
+    @Test
+    void conduit() {
+        RestAssured.given()
+                .get("/hc5/conduit")
+                .then()
+                .statusCode(200)
+                .body(is("org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduit"));
+    }
+
     private Map<String, Object> getMetrics() {
         final String body = RestAssured.given()
                 .header("Content-Type", "application/json")
