@@ -392,11 +392,10 @@ public interface CxfClientConfig {
      * Select the `HTTPConduitFactory` implementation for this client.
      *
      * - `QuarkusCXFDefault` (default): if `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` is present in class path,
-     * then its `HTTPConduitFactory` implementation will be used; otherwise this value is equivalent with
-     * `URLConnectionHTTPConduitFactory` (this may change, once issue
-     * link:https://github.com/quarkiverse/quarkus-cxf/issues/992[++#++992] gets resolved in CXF)
+     * then its `HTTPConduitFactory` implementation will be used; otherwise, since 3.16.0, this value is equivalent with
+     * `VertxHttpClientHTTPConduitFactory`. Before 3.16.0, the effective default was `URLConnectionHTTPConduitFactory`.
      * - `CXFDefault`: the selection of `HTTPConduitFactory` implementation is left to CXF
-     * - `VertxHttpClientHTTPConduitFactory`: *(Experimental)* the `HTTPConduitFactory` for this client will be set to
+     * - `VertxHttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to
      * an implementation always returning `io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit`. This will
      * use `io.vertx.core.http.HttpClient` as the underlying HTTP client. Since {quarkus-cxf-project-name} 3.13.0.
      * - `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always
