@@ -1,0 +1,18 @@
+= {quarkus-cxf-project-name} 3.15.3 LTS release notes
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/pull/1589/commits/752171026dd302c49d7922f219acdd66341b1604[7521710] Removed `findbugs` exclusion from `quarkus-cxf-integration-tracing-opentelemetry`
+
+Done because `quarkus-cxf-integration-tracing-opentelemetry` depends on `quarkus-grpc-common` which requires `findbugs` at runtime.
+
+=== https://github.com/quarkiverse/quarkus-cxf/pull/1589/commits/06307368f5b2d7f069774e0f0fccaa41131c70d1[0630736] Bad initialization of `HTTPTransportFactory.forceURLConnectionConduit`
+
+Some downstream builds of CXF 4.0.5 initialize `HTTPTransportFactory.forceURLConnectionConduit` with default `true` which leads to regressions on Quarkus CXF.
+We have put a workaround in place which makes our `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]` and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+properties work as they did in previous releases.
+
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.15.2+++...+++3.15.3
