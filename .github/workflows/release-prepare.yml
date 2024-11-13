@@ -21,14 +21,3 @@ jobs:
     secrets: inherit
     with:
       java_version: 17
-
-  edit-release-notes:
-    name: Edit Release Notes
-    needs: prepare-release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Change release notes
-        run: gh release edit ${RELEASE_VERSION} -n "https://docs.quarkiverse.io/quarkus-cxf/dev/release-notes/${RELEASE_VERSION}.html"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_VERSION: ${{ needs.prepare-release.outputs.release-version }}
