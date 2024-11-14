@@ -13,6 +13,7 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
 import io.vertx.core.Vertx;
 
 /**
@@ -34,19 +35,22 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     private final HTTPConduitSpec busHTTPConduitImpl;
     private final AuthorizationPolicy authorizationPolicy;
     private final Vertx vertx;
+    private final HttpClientPool httpClientPool;
 
     public QuarkusHTTPConduitFactory(
             CxfFixedConfig cxFixedConfig,
             CXFClientInfo cxfClientInfo,
             HTTPConduitSpec busHTTPConduitImpl,
             AuthorizationPolicy authorizationPolicy,
-            Vertx vertx) {
+            Vertx vertx,
+            HttpClientPool httpClientPool) {
         super();
         this.cxFixedConfig = cxFixedConfig;
         this.cxfClientInfo = cxfClientInfo;
         this.busHTTPConduitImpl = busHTTPConduitImpl;
         this.authorizationPolicy = authorizationPolicy;
         this.vertx = vertx;
+        this.httpClientPool = httpClientPool;
     }
 
     @Override
@@ -59,19 +63,19 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         if (httpConduitImpl == null
                 && (CXFRecorder.isHc5Present())
                 && busHTTPConduitImpl != null) {
-            return configure(f, busHTTPConduitImpl.resolveDefault(), cxfClientInfo, b, localInfo, target);
+            return configure(busHTTPConduitImpl.resolveDefault(), cxfClientInfo, b, localInfo, target);
         }
 
         if (httpConduitImpl == null) {
             httpConduitImpl = HTTPConduitImpl.QuarkusCXFDefault;
         }
-        return configure(f, httpConduitImpl.resolveDefault(), cxfClientInfo, b, localInfo, target);
+        return configure(httpConduitImpl.resolveDefault(), cxfClientInfo, b, localInfo, target);
     }
 
-    private HTTPConduit configure(HTTPTransportFactory f, HTTPConduitSpec httpConduitImpl, CXFClientInfo cxfClientInfo, Bus b,
+    private HTTPConduit configure(HTTPConduitSpec httpConduitImpl, CXFClientInfo cxfClientInfo, Bus b,
             EndpointInfo localInfo,
             EndpointReferenceType target) throws IOException {
-        final HTTPConduit httpConduit = httpConduitImpl.createConduit(f, b, localInfo, target);
+        final HTTPConduit httpConduit = httpConduitImpl.createConduit(httpClientPool, b, localInfo, target);
         httpConduitImpl.tlsClientParameters(cxfClientInfo, vertx).ifPresent(httpConduit::setTlsClientParameters);
         final HTTPClientPolicy policy = new HTTPClientPolicy();
         httpConduit.setClient(policy);

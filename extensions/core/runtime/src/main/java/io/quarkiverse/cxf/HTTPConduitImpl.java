@@ -1,13 +1,11 @@
 package io.quarkiverse.cxf;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
@@ -50,10 +48,8 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
     @ConfigDocEnumValue("VertxHttpClientHTTPConduitFactory")
     VertxHttpClientHTTPConduitFactory {
         @Override
-        public HTTPConduit createConduit(HTTPTransportFactory f, Bus b, EndpointInfo localInfo,
+        public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
                 EndpointReferenceType target) throws IOException {
-            final HttpClientPool httpClientPool = Objects.requireNonNull(b.getExtension(HttpClientPool.class),
-                    "HttpClientPool in org.apache.cxf.Bus");
             return new VertxHttpClientHTTPConduit(b, localInfo, target, httpClientPool);
         }
 
@@ -75,7 +71,7 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
     @ConfigDocEnumValue("HttpClientHTTPConduitFactory")
     HttpClientHTTPConduitFactory {
         @Override
-        public HTTPConduit createConduit(HTTPTransportFactory f, Bus b, EndpointInfo localInfo,
+        public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
                 EndpointReferenceType target) throws IOException {
             return new HttpClientHTTPConduit(b, localInfo, target);
         }
@@ -83,7 +79,7 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
     @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
     URLConnectionHTTPConduitFactory {
         @Override
-        public HTTPConduit createConduit(HTTPTransportFactory f, Bus b, EndpointInfo localInfo,
+        public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
                 EndpointReferenceType target) throws IOException {
             return new URLConnectionHTTPConduit(b, localInfo, target);
         }
@@ -100,7 +96,7 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
     }
 
     @Override
-    public HTTPConduit createConduit(HTTPTransportFactory f, Bus b, EndpointInfo localInfo, EndpointReferenceType target)
+    public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo, EndpointReferenceType target)
             throws IOException {
         throw new IllegalStateException(
                 "Call " + HTTPConduitImpl.class.getName() + ".resolveDefault() before calling createConduit()");

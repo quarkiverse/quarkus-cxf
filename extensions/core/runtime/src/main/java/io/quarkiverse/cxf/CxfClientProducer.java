@@ -189,7 +189,8 @@ public abstract class CxfClientProducer {
                 cxfClientInfo,
                 origConduitImpl,
                 authorizationPolicy,
-                vertx);
+                vertx,
+                httpClientPool);
         props.put(HTTPConduitFactory.class.getName(), conduitFactory);
         Object result;
         final HTTPConduitFactory origConduitFactory = bus.getExtension(HTTPConduitFactory.class);

@@ -7,7 +7,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
-import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduitFactory;
 import org.apache.cxf.transport.http.asyncclient.hc5.AsyncHttpResponseWrapperFactory;
 import org.apache.cxf.workqueue.WorkQueueManager;
@@ -15,6 +14,7 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.eclipse.microprofile.context.ManagedExecutor;
 
 import io.quarkiverse.cxf.HTTPConduitSpec;
+import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 import io.quarkus.runtime.RuntimeValue;
@@ -48,13 +48,14 @@ public class Hc5Recorder {
         private AsyncHTTPConduitFactory asyncHTTPConduitFactory;
 
         @Override
-        public HTTPConduit createConduit(HTTPTransportFactory f, Bus b, EndpointInfo localInfo, EndpointReferenceType target)
+        public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
+                EndpointReferenceType target)
                 throws IOException {
             AsyncHTTPConduitFactory factory;
             if ((factory = asyncHTTPConduitFactory) == null) {
                 factory = asyncHTTPConduitFactory = new AsyncHTTPConduitFactory(b);
             }
-            return factory.createConduit(f, b, localInfo, target);
+            return factory.createConduit(b, localInfo, target);
         }
 
         @Override
