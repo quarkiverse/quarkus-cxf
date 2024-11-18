@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
   schedule:
     # Run every day at 2AM
-    - cron:  '0 2 * * *'
+    - cron:  '0 3 * * *'
 
 env:
   LANG: en_US.UTF-8
-  ISSUE_ID: 1287
+  ISSUE_ID: 1607
   DEPENDENCY_SHORT_NAME: quarkus
-  DEPENDENCY_BRANCH: main
+  DEPENDENCY_BRANCH: 3.15
   JAVA_VERSION: 17
 
 concurrency:
