@@ -41,10 +41,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Logger;
 
 import org.apache.cxf.Bus;
-import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.endpoint.ClientCallback;
 import org.apache.cxf.endpoint.Endpoint;
@@ -53,6 +51,7 @@ import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.message.MessageUtils;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.MessageObserver;
@@ -65,10 +64,15 @@ import org.apache.cxf.transport.http.MessageTrustDecider;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.version.Version;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
+import org.eclipse.microprofile.context.ManagedExecutor;
+import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.QuarkusTLSClientParameters;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.ClientSpec;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.RequestBodyEvent.RequestBodyEventType;
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.InstanceHandle;
+import io.quarkus.runtime.BlockingOperationControl;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Handler;
@@ -87,7 +91,9 @@ import io.vertx.core.net.ProxyType;
 /**
  */
 public class VertxHttpClientHTTPConduit extends HTTPConduit {
-    private static final Logger LOG = LogUtils.getL7dLogger(VertxHttpClientHTTPConduit.class);
+    private static final Logger log = Logger.getLogger(VertxHttpClientHTTPConduit.class);
+    public static final String USE_ASYNC = "use.async.http.conduit";
+    public static final String ENABLE_HTTP2 = "org.apache.cxf.transports.http2.enabled";
 
     private final HttpClientPool httpClientPool;
     private final String userAgent;
@@ -109,25 +115,25 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         final HttpMethod method = getMethod(message);
 
-        // message.put("use.async.http.conduit", Boolean.TRUE);
+        final UseAsyncPolicy useAsync = UseAsyncPolicy.of(message.getContextualProperty(USE_ASYNC));
+        final boolean isAsync = useAsync.isAsync(message);
+        message.put(USE_ASYNC, isAsync);
+
+        if (!isAsync && !BlockingOperationControl.isBlockingAllowed()) {
+            throw new IllegalStateException("You have attempted to perform a blocking operation on an IO thread."
+                    + " This is not allowed, as blocking the IO thread will cause major performance issues with your application."
+                    + " You need to offload the blocking CXF client call to a worker thread,"
+                    + " e.g. by using the @io.smallrye.common.annotation.Blocking annotation on a caller method"
+                    + " where it is supported by the underlying Quarkus extension, such as quarkus-rest, quarkus-vertx,"
+                    + " quarkus-reactive-routes, quarkus-grpc, quarkus-messaging-* and possibly others.");
+        }
 
         final HttpVersion version = getVersion(message, csPolicy);
         final boolean isHttps = "https".equals(uri.getScheme());
         final QuarkusTLSClientParameters clientParameters;
         if (isHttps) {
             clientParameters = findTLSClientParameters(message);
-            if (clientParameters.getSSLSocketFactory() != null) {
-                throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
-                        + " does not support SSLSocketFactory set via TLSClientParameters");
-            }
-            if (clientParameters.getSslContext() != null) {
-                throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
-                        + " does not support SSLContext set via TLSClientParameters");
-            }
-            if (clientParameters.isUseHttpsURLConnectionDefaultSslSocketFactory()) {
-                throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
-                        + " does not support TLSClientParameters.isUseHttpsURLConnectionDefaultSslSocketFactory() returning true");
-            }
+            validateClientParameters(clientParameters);
             final List<MessageTrustDecider> trustDeciders;
             final MessageTrustDecider decider2;
             if ((decider2 = message.get(MessageTrustDecider.class)) != null || this.trustDecider != null) {
@@ -178,9 +184,25 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         ? new ClientSpec(version, clientParameters.getTlsConfigurationName(),
                                 clientParameters.getTlsConfiguration())
                         : new ClientSpec(version, null, null),
-                determineReceiveTimeout(message, csPolicy));
+                determineReceiveTimeout(message, csPolicy),
+                isAsync);
         message.put(RequestContext.class, requestContext);
 
+    }
+
+    private static void validateClientParameters(QuarkusTLSClientParameters clientParameters) {
+        if (clientParameters.getSSLSocketFactory() != null) {
+            throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
+                    + " does not support SSLSocketFactory set via TLSClientParameters");
+        }
+        if (clientParameters.getSslContext() != null) {
+            throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
+                    + " does not support SSLContext set via TLSClientParameters");
+        }
+        if (clientParameters.isUseHttpsURLConnectionDefaultSslSocketFactory()) {
+            throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
+                    + " does not support TLSClientParameters.isUseHttpsURLConnectionDefaultSslSocketFactory() returning true");
+        }
     }
 
     static ProxyType toProxyType(Type type) {
@@ -215,12 +237,17 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 requestContext.requestOptions,
                 requestContext.clientSpec,
                 requestContext.receiveTimeoutMs,
-                responseHandler);
+                responseHandler,
+                requestContext.async);
         return new RequestBodyOutputStream(chunkThreshold, requestBodyHandler);
     }
 
     static HttpVersion getVersion(Message message, HTTPClientPolicy csPolicy) {
         String verc = (String) message.getContextualProperty(FORCE_HTTP_VERSION);
+        final Object enableHttp2 = message.getContextualProperty(ENABLE_HTTP2);
+        if (verc == null && enableHttp2 != null) {
+            csPolicy.setVersion("2");
+        }
         if (verc == null) {
             verc = csPolicy.getVersion();
         }
@@ -292,7 +319,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             URI uri,
             RequestOptions requestOptions,
             ClientSpec clientSpec,
-            long receiveTimeoutMs) {
+            long receiveTimeoutMs,
+            boolean async) {
     }
 
     static record RequestBodyEvent(Buffer buffer, RequestBodyEventType eventType) {
@@ -378,9 +406,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private final HttpClientPool clientPool;
         private final RequestOptions requestOptions;
         private final ClientSpec clientSpec;
-        /** Time in epoch milliseconds when the response should be fully received */
-        private final long receiveTimeoutDeadline;
-        private final IOEHandler<ResponseEvent> responseHandler;
 
         /** Read an written only from the producer thread */
         private boolean firstEvent = true;
@@ -389,21 +414,16 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
          * {@link Condition}
          */
         private Result<HttpClientRequest> request;
-        /**
-         * Read from the producer thread, written from the event loop. Protected by {@link #lock} {@link #responseReceived}
-         * {@link Condition}
-         */
-        private Result<ResponseEvent> response;
 
         /* Locks and conditions */
         private final ReentrantLock lock = new ReentrantLock();
         private final Condition requestReady = lock.newCondition();
         private final Condition requestWriteable = lock.newCondition();
-        private final Condition responseReceived = lock.newCondition();
 
         /* Backpressure control when writing the request body */
         private boolean drainHandlerRegistered;
         private boolean waitingForDrain;
+        private Mode mode;
 
         public RequestBodyHandler(
                 Message outMessage,
@@ -413,7 +433,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 RequestOptions requestOptions,
                 ClientSpec clientSpec,
                 long receiveTimeoutMs,
-                IOEHandler<ResponseEvent> responseHandler) {
+                IOEHandler<ResponseEvent> responseHandler,
+                boolean isAsync) {
             super();
             this.outMessage = outMessage;
             this.url = url;
@@ -421,8 +442,11 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             this.clientPool = clientPool;
             this.requestOptions = requestOptions;
             this.clientSpec = clientSpec;
-            this.receiveTimeoutDeadline = System.currentTimeMillis() + receiveTimeoutMs;
-            this.responseHandler = responseHandler;
+
+            final long deadline = System.currentTimeMillis() + receiveTimeoutMs;
+            this.mode = isAsync
+                    ? new Mode.Async(url, deadline, responseHandler, outMessage)
+                    : new Mode.Sync(url, deadline, responseHandler, lock);
         }
 
         @Override
@@ -431,18 +455,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 firstEvent = false;
                 final HttpClient client = clientPool.getClient(clientSpec);
 
-                switch (event.eventType()) {
-                    case NON_FINAL_CHUNK:
-                    case FINAL_CHUNK: {
-                        break;
-                    }
-                    case COMPLETE_BODY: {
-                        requestOptions.putHeader("Content-Length", String.valueOf(event.buffer().length()));
-                        break;
-                    }
-                    default:
-                        throw new IllegalArgumentException(
-                                "Unexpected " + RequestBodyEventType.class.getName() + ": " + event.eventType());
+                if (event.eventType() == RequestBodyEventType.COMPLETE_BODY && requestHasBody(requestOptions.getMethod())) {
+                    requestOptions.putHeader("Content-Length", String.valueOf(event.buffer().length()));
                 }
 
                 setProtocolHeaders(outMessage, requestOptions, userAgent);
@@ -454,7 +468,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                     req
                                             .setChunked(true)
                                             .write(event.buffer())
-                                            .onFailure(RequestBodyHandler.this::failResponse);
+                                            .onFailure(t -> mode.responseFailed(t, true));
 
                                     lock.lock();
                                     try {
@@ -484,8 +498,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 requestReady.signal();
 
                                 /* Fail also the response so that awaitResponse() fails rather than waiting forever */
-                                response = Result.failure(t);
-                                responseReceived.signal();
+                                mode.responseFailed(t, false);
                             } finally {
                                 lock.unlock();
                             }
@@ -497,7 +510,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         break;
                     case FINAL_CHUNK:
                     case COMPLETE_BODY: {
-                        responseHandler.handle(awaitResponse());
+                        mode.awaitResponse();
                         break;
                     }
                     default:
@@ -519,7 +532,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     case FINAL_CHUNK:
                     case COMPLETE_BODY: {
                         finishRequest(req, event.buffer());
-                        responseHandler.handle(awaitResponse());
+                        mode.awaitResponse();
                         break;
                     }
                     default:
@@ -547,19 +560,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                     pipedInputStream.setException(new IOException(ar.cause()));
                                 }
                             }
-                            lock.lock();
-                            try {
-                                response = new Result<>(new ResponseEvent(ar.result(), pipedInputStream),
-                                        ar.cause());
-                                responseReceived.signal();
-                            } finally {
-                                lock.unlock();
-                            }
+                            mode.responseReady(new Result<>(new ResponseEvent(ar.result(), pipedInputStream),
+                                    ar.cause()));
                         });
 
                 req
                         .end(buffer)
-                        .onFailure(RequestBodyHandler.this::failResponse);
+                        .onFailure(t -> mode.responseFailed(t, true));
 
             } catch (IOException e) {
                 throw new VertxHttpException(e);
@@ -567,13 +574,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         void failResponse(Throwable t) {
-            lock.lock();
-            try {
-                response = Result.failure(t);
-                responseReceived.signal();
-            } finally {
-                lock.unlock();
-            }
         }
 
         static void setProtocolHeaders(Message outMessage, RequestOptions requestOptions, String userAgent) throws IOException {
@@ -644,31 +644,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 return false;
             }
             return true;
-        }
-
-        ResponseEvent awaitResponse() throws IOException {
-            /* This should be called from the same worker thread as handle() */
-            if (response == null) {
-                lock.lock();
-                try {
-                    if (response == null) {
-                        if (!responseReceived.await(receiveTimeout(), TimeUnit.MILLISECONDS) || response == null) {
-                            throw new SocketTimeoutException("Timeout waiting for HTTP response from " + url);
-                        }
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new IOException("Interrupted waiting for HTTP response from " + url, e);
-                } finally {
-                    lock.unlock();
-                }
-            }
-            if (response.succeeded()) {
-                return response.result();
-            } else {
-                final Throwable e = response.cause();
-                throw new IOException("Unable to receive HTTP response from " + url, e);
-            }
         }
 
         HttpClientRequest awaitRequest() throws IOException {
@@ -758,27 +733,183 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
                 try {
                     waitingForDrain = true;
-                    requestWriteable.await(receiveTimeout(), TimeUnit.MILLISECONDS);
+                    if (!requestWriteable.await(mode.receiveTimeout(), TimeUnit.MILLISECONDS)) {
+                        throw new SocketTimeoutException("Timeout waiting for sending HTTP headers to " + url);
+                    }
                 } finally {
                     waitingForDrain = false;
                 }
             }
         }
 
-        /**
-         * Computes the timeout for receive related operations based on {@link #receiveTimeoutDeadline}
-         *
-         * @return the timeout in milliseconds for response related operations
-         * @throws SocketTimeoutException if {@link #receiveTimeoutDeadline} was missed already
-         */
-        long receiveTimeout() throws SocketTimeoutException {
-            final long timeout = receiveTimeoutDeadline - System.currentTimeMillis();
-            if (timeout <= 0) {
-                /* Too late already */
-                throw new SocketTimeoutException("Timeout waiting for HTTP response from " + url);
+        static abstract class Mode {
+            /** Time in epoch milliseconds when the response should be fully received */
+            private final long receiveTimeoutDeadline;
+            protected final URI url;
+            protected final IOEHandler<ResponseEvent> responseHandler;
+
+            Mode(URI url, long receiveTimeoutDeadline, IOEHandler<ResponseEvent> responseHandler) {
+                this.url = url;
+                this.receiveTimeoutDeadline = receiveTimeoutDeadline;
+                this.responseHandler = responseHandler;
             }
-            return timeout;
+
+            /**
+             * Computes the timeout for receive related operations based on {@link #receiveTimeoutDeadline}
+             *
+             * @return the timeout in milliseconds for response related operations
+             * @throws SocketTimeoutException if {@link #receiveTimeoutDeadline} was missed already
+             */
+            long receiveTimeout() throws SocketTimeoutException {
+                final long timeout = receiveTimeoutDeadline - System.currentTimeMillis();
+                if (timeout <= 0) {
+                    /* Too late already */
+                    throw new SocketTimeoutException("Timeout waiting for HTTP response from " + url);
+                }
+                return timeout;
+            }
+
+            protected abstract void responseFailed(Throwable t, boolean lockIfNeeded);
+
+            protected abstract void responseReady(Result<ResponseEvent> response);
+
+            protected abstract void awaitResponse() throws IOException;
+
+            static class Sync extends Mode {
+                private final ReentrantLock lock;
+                private final Condition responseReceived;
+                /**
+                 * Read from the producer thread, written from the event loop. Protected by {@link #lock}
+                 * {@link #responseReceived}
+                 * {@link Condition}
+                 */
+                private Result<ResponseEvent> response;
+
+                Sync(URI url, long receiveTimeoutDeadline, IOEHandler<ResponseEvent> responseHandler, ReentrantLock lock) {
+                    super(url, receiveTimeoutDeadline, responseHandler);
+                    this.lock = lock;
+                    this.responseReceived = lock.newCondition();
+                }
+
+                @Override
+                public void responseFailed(Throwable t, boolean lockIfNeeded) {
+                    if (lockIfNeeded) {
+                        lock.lock();
+                        try {
+                            response = Result.failure(t);
+                            responseReceived.signal();
+                        } finally {
+                            lock.unlock();
+                        }
+                    } else {
+                        assert lock.isHeldByCurrentThread();
+                        response = Result.failure(t);
+                        responseReceived.signal();
+                    }
+                }
+
+                @Override
+                public void responseReady(Result<ResponseEvent> response) {
+                    lock.lock();
+                    try {
+                        this.response = response;
+                        responseReceived.signal();
+                    } finally {
+                        lock.unlock();
+                    }
+                }
+
+                @Override
+                public void awaitResponse() throws IOException {
+                    responseHandler.handle(awaitResponseInternal());
+                }
+
+                ResponseEvent awaitResponseInternal() throws IOException {
+                    /* This should be called from the same worker thread as handle() */
+                    if (response == null) {
+                        lock.lock();
+                        try {
+                            if (response == null) {
+                                if (!responseReceived.await(receiveTimeout(), TimeUnit.MILLISECONDS) || response == null) {
+                                    throw new SocketTimeoutException("Timeout waiting for HTTP response from " + url);
+                                }
+                            }
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            throw new IOException("Interrupted waiting for HTTP response from " + url, e);
+                        } finally {
+                            lock.unlock();
+                        }
+                    }
+                    if (response.succeeded()) {
+                        return response.result();
+                    } else {
+                        final Throwable e = response.cause();
+                        throw new IOException("Unable to receive HTTP response from " + url, e);
+                    }
+                }
+
+            }
+
+            static class Async extends Mode {
+                private final Message outMessage;
+
+                Async(URI url, long receiveTimeoutDeadline, IOEHandler<ResponseEvent> responseHandler, Message outMessage) {
+                    super(url, receiveTimeoutDeadline, responseHandler);
+                    this.outMessage = outMessage;
+                }
+
+                @Override
+                protected void responseFailed(Throwable t, boolean lockIfNeeded) {
+                    // dispatch on worker thread
+                    responseReady(Result.failure(t));
+                }
+
+                protected void responseFailedOnWorkerThread(Throwable t) {
+                    // on worker thread already
+                    ((PhaseInterceptorChain) outMessage.getInterceptorChain()).abort();
+                    outMessage.setContent(Exception.class, t);
+                    if (t instanceof Exception) {
+                        outMessage.put(Exception.class, (Exception) t);
+                    } else {
+                        // FIXME: log this special case
+                    }
+                    ((PhaseInterceptorChain) outMessage.getInterceptorChain()).unwind(outMessage);
+                    MessageObserver mo = outMessage.getInterceptorChain().getFaultObserver();
+                    if (mo == null) {
+                        mo = outMessage.getExchange().get(MessageObserver.class);
+                    }
+                    mo.onMessage(outMessage);
+                }
+
+                @Override
+                protected void responseReady(Result<ResponseEvent> response) {
+                    // dispatch on worker thread
+                    final InstanceHandle<ManagedExecutor> managedExecutorInst = Arc.container().instance(ManagedExecutor.class);
+                    if (!managedExecutorInst.isAvailable()) {
+                        throw new IllegalStateException(ManagedExecutor.class.getName() + " not available in Arc");
+                    }
+                    managedExecutorInst.get().execute(() -> {
+                        if (response.succeeded()) {
+                            try {
+                                responseHandler.handle(response.result());
+                            } catch (Throwable e) {
+                                responseFailedOnWorkerThread(e);
+                            }
+                        } else {
+                            responseFailedOnWorkerThread(response.cause());
+                        }
+                    });
+                }
+
+                @Override
+                protected void awaitResponse() throws IOException {
+                    /* Nothing to do in async mode because we dispatch the response via responseReady */
+                }
+
+            }
         }
+
     }
 
     static record ResponseEvent(HttpClientResponse response, InputStream responseBodyInputStream) {
@@ -882,9 +1013,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             final String charset = HttpHeaderHelper.findCharset((String) inMessage.get(Message.CONTENT_TYPE));
             final String normalizedEncoding = HttpHeaderHelper.mapCharset(charset);
             if (normalizedEncoding == null) {
-                final String m = new org.apache.cxf.common.i18n.Message("INVALID_ENCODING_MSG",
-                        LOG, charset).toString();
-                throw new VertxHttpException(m);
+                throw new VertxHttpException("Invalid character set " + charset + " in request");
             }
             inMessage.put(Message.ENCODING, normalizedEncoding);
             if (in == null) {
@@ -899,9 +1028,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         static int doProcessResponseCode(URI uri, HttpClientResponse response, Exchange exchange, Message outMessage)
                 throws IOException {
             final int rc = response.statusCode();
-            if (rc == -1) {
-                LOG.warning("HTTP Response code appears to be corrupted");
-            }
             if (exchange != null) {
                 exchange.put(Message.RESPONSE_CODE, rc);
                 final Collection<Integer> serviceNotAvailableOnHttpStatusCodes = MessageUtils
@@ -945,7 +1071,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     try {
                         contentLength = Integer.parseInt(rawContentLength);
                     } catch (NumberFormatException e) {
-                        LOG.fine("Could not parse Content-Length value " + rawContentLength);
+                        log.debug("Could not parse Content-Length value " + rawContentLength);
                     }
                 }
                 final String transferEncoding = headers.get(HttpHeaderHelper.TRANSFER_ENCODING);
@@ -1073,4 +1199,47 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
          */
         void handle(E event) throws IOException;
     }
+
+    public enum UseAsyncPolicy {
+        ALWAYS(true),
+        NEVER(false),
+        ASYNC_ONLY(false) {
+            @Override
+            public boolean isAsync(Message message) {
+                return !message.getExchange().isSynchronous();
+            }
+        };
+
+        private final boolean async;
+
+        private UseAsyncPolicy(Boolean async) {
+            this.async = async;
+        }
+
+        static final Map<Object, UseAsyncPolicy> values = Map.of(
+                "ALWAYS", ALWAYS,
+                "always", ALWAYS,
+                "ASYNC_ONLY", ASYNC_ONLY,
+                "async_only", ASYNC_ONLY,
+                "NEVER", NEVER,
+                "never", NEVER,
+                Boolean.TRUE, ALWAYS,
+                Boolean.FALSE, NEVER);
+
+        public static UseAsyncPolicy of(Object st) {
+            if (st == null) {
+                return UseAsyncPolicy.ASYNC_ONLY;
+            }
+            if (st instanceof UseAsyncPolicy) {
+                return (UseAsyncPolicy) st;
+            }
+            final UseAsyncPolicy result = values.get(st);
+            return result != null ? result : ASYNC_ONLY;
+        }
+
+        public boolean isAsync(Message message) {
+            return async;
+        }
+    };
+
 }

@@ -134,10 +134,7 @@ public class CertReloadTest {
             vertx.undeploy(deplId).toCompletionStage().toCompletableFuture().get();
         }
         /* Make sure the server is down */
-        Assertions.assertThatThrownBy(() -> helloVertice.hello("Doe"))
-                .rootCause()
-                .hasMessageContaining("Connection refused")
-                .isInstanceOf(java.net.ConnectException.class);
+        assertServerDown();
 
         /* Put the valid stores aside */
         Files.move(localHostKs, localHostKsCp, StandardCopyOption.REPLACE_EXISTING);
@@ -168,10 +165,7 @@ public class CertReloadTest {
 
         }
         /* Make sure the server is down */
-        Assertions.assertThatThrownBy(() -> helloVertice.hello("Doe"))
-                .rootCause()
-                .hasMessageContaining("Connection refused")
-                .isInstanceOf(java.net.ConnectException.class);
+        assertServerDown();
 
         /* Revert everything back */
         Files.move(localHostKsCp, localHostKs, StandardCopyOption.REPLACE_EXISTING);
@@ -194,11 +188,19 @@ public class CertReloadTest {
 
         }
         /* Make sure the server is down */
-        Assertions.assertThatThrownBy(() -> helloVertice.hello("Doe"))
-                .rootCause()
-                .hasMessageContaining("Connection refused")
-                .isInstanceOf(java.net.ConnectException.class);
+        assertServerDown();
 
+    }
+
+    private void assertServerDown() {
+        Awaitility.await().atMost(3000, TimeUnit.SECONDS).until(() -> {
+            try {
+                helloVertice.hello("Doe");
+                return false;
+            } catch (Exception e) {
+                return rootCause(e).getMessage().startsWith("Connection refused"); // There is some suffix on Windows
+            }
+        });
     }
 
     @Test
