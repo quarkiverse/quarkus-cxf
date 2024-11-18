@@ -23,6 +23,8 @@ import jakarta.xml.ws.soap.SOAPBinding;
 
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.wsdl11.CatalogWSDLLocator;
+import org.apache.cxf.wsdl11.WSDLManagerImpl;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationTarget;
 import org.jboss.jandex.AnnotationValue;
@@ -505,6 +507,25 @@ public class CxfClientProcessor {
                 throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
                         + config.httpConduitFactory());
         }
+    }
+
+    /**
+     * Temporary workaround for https://github.com/quarkiverse/quarkus-cxf/issues/1608
+     */
+    @BuildStep
+    @Record(ExecutionTime.STATIC_INIT)
+    void workaroundAsyncWsdlInit(
+            CXFRecorder recorder,
+            BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
+        customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setQuarkusWSDLManager()));
+    }
+
+    /**
+     * Temporary workaround for https://github.com/quarkiverse/quarkus-cxf/issues/1608
+     */
+    @BuildStep
+    ReflectiveClassBuildItem workaroundAsyncWsdlInit() {
+        return ReflectiveClassBuildItem.builder(WSDLManagerImpl.class, CatalogWSDLLocator.class).fields().build();
     }
 
     @BuildStep
