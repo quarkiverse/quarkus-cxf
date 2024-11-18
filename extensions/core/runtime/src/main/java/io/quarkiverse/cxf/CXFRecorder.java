@@ -10,12 +10,14 @@ import java.util.function.Consumer;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.wsdl.WSDLManager;
 import org.jboss.logging.Logger;
 
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Supplier;
 import io.quarkiverse.cxf.annotation.CXFEndpoint;
 import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkiverse.cxf.transport.VertxDestinationFactory;
+import io.quarkiverse.cxf.wsdl.QuarkusWSDLManager;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.runtime.RuntimeValue;
@@ -283,6 +285,13 @@ public class CXFRecorder {
 
     public RuntimeValue<Consumer<Bus>> setBusHTTPConduitFactory(HTTPConduitImpl factory) {
         return new RuntimeValue<>(bus -> bus.setExtension(factory, HTTPConduitSpec.class));
+    }
+
+    /**
+     * Temporary workaround for https://github.com/quarkiverse/quarkus-cxf/issues/1608
+     */
+    public RuntimeValue<Consumer<Bus>> setQuarkusWSDLManager() {
+        return new RuntimeValue<>(bus -> bus.setExtension(QuarkusWSDLManager.newInstance(bus), WSDLManager.class));
     }
 
     public void workaroundBadForceURLConnectionInit() {
