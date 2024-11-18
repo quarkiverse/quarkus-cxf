@@ -1,16 +1,33 @@
 name: rebase-dependency-main-branch
-description: 'Rebase a dependency main branch such as quarkus-main or cxf-main, rebuild it and report the status in a dedicated issue'
+description: |
+   Rebase a maintenenance branch such as quarkus-main or cxf-main, rebuild it and report the status in a dedicated issue 
+   Prerequisites: 
+     * java must be installed'
 
 inputs:
-  java-version:
-    description: 'Java version'
-    required: true
   dependency-git-repo-url:
     description: "The URL of the dependency's git repository to checkout and build from"
     required: true
   dependency-short-name:
     description: "The short lower case name of the dependency as quarkus or cxf"
     required: true
+  dependency-stream:
+    description: |
+       The name of the stream in the dependency git repository, such as main or 3.15 for Quarkus or main or 4.0 for CXF. 
+       Note that the associated remote branch that may be called differently, such as 4.0.x-fixes for CXF. 
+       Therefore, the dependency branch is passed through a separate parameter dependency-branch.
+    required: true
+    default: main
+  dependency-branch:
+    description: "The name of the dependency branch to build against, such as main or 3.15 for Quarkus or main or 4.0.x-fixes for CXF"
+    required: true
+    default: main
+  base-branch:
+    description: |
+      The name of the local branch (such as main or 3.20) on top of which the integration branch (such as quarkus-main, 
+      quarkus-3.20, cxf-main or cxf-4.1) should be rebased
+    required: true
+    default: main
   issue-id:
     description: "The issue number where to report any rebase or build issues"
     required: true
@@ -20,7 +37,7 @@ inputs:
 
 outputs:
   dependency-commit:
-    description: "The SHA1 of the dependency main branch"
+    description: "The SHA1 of the branch specified in inputs.dependency-branch against which the current build was run"
     value: ${{ steps.rebuild-dependency.outputs.dependency-commit }}
   dependency-version:
     description: "The version of the dependency as present in the top pom.xml of its main branch"
@@ -35,44 +52,37 @@ outputs:
         * success
         * rebase-failed
         * dependency-build-failed
-    value: ${{ env.REBASE_DEPENDENCY_MAIN_EXIT_STATUS }}
+    value: ${{ steps.comment-rebase-failed.outputs.exit-status == 'rebase-failed' && 'rebase-failed' || steps.rebuild-dependency.outputs.exit-status }}
 
 runs:
   using: 'composite'
   steps:
 
-    - name: Set up JDK ${{ inputs.java-version }}
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: ${{ inputs.java-version }}
-
-    - name: rebase ${{ inputs.dependency-short-name }}-main
+    - name: rebase ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }}
       shell: bash
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=success" >> $GITHUB_ENV
-        git fetch origin main
-        git checkout main
-        git reset --hard origin/main
-        git fetch origin ${{ inputs.dependency-short-name }}-main
-        git checkout ${{ inputs.dependency-short-name }}-main >/dev/null 2>&1 || git checkout -b ${{ inputs.dependency-short-name }}-main origin/main
+        git fetch origin ${{ inputs.base-branch }}
+        git fetch origin ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} \
+            && git checkout ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} >/dev/null 2>&1 \
+            || git checkout -b ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} origin/${{ inputs.base-branch }} 
         git status
-        echo "${{ inputs.dependency-short-name }}-main is at $(git rev-parse HEAD)"
-        git rebase main
+        echo "${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }}  is at $(git rev-parse HEAD)"
+        git rebase ${{ inputs.base-branch }}
         rebaseExitCode=$?
         echo "rebaseExitCode = $rebaseExitCode"
         exit $rebaseExitCode
 
-    - name: reopen or comment on issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
+    - name: Reopen or comment on issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
+      id: comment-rebase-failed
       if: ${{ failure() }}
       shell: bash
       run: |
-        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=rebase-failed" >> $GITHUB_ENV
+        echo "exit-status=rebase-failed" >> $GITHUB_OUTPUT
         oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
         echo "oldState = $oldState"
-        msg="❌ Could not rebase ${{ inputs.dependency-short-name }}-main in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        msg="❌ Could not rebase ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} on top of ${{ inputs.base-branch }} in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         if [[ "$oldState" == "OPEN" ]] ; then
           gh issue comment \
             --repo ${{ github.repository }} \
@@ -93,6 +103,7 @@ runs:
       with:
         dependency-git-repo-url: ${{ inputs.dependency-git-repo-url }}
         dependency-short-name: ${{ inputs.dependency-short-name }}
+        dependency-branch: ${{ inputs.dependency-branch }}
         issue-id: ${{ inputs.issue-id }}
         token: "${{ inputs.token }}"
 
@@ -100,12 +111,6 @@ runs:
       shell: bash
       run: |
         echo "steps.rebuild-dependency.outputs.exit-status: ${{ steps.rebuild-dependency.outputs.exit-status }}"
-
-    - name: Set status
-      if: ${{ failure() && steps.rebuild-dependency.outputs.exit-status == 'dependency-build-failed' }}
-      shell: bash
-      run: |
-        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=dependency-build-failed" >> $GITHUB_ENV
 
     - name: Set ${{ inputs.dependency-short-name }}.version to ${{ steps.rebuild-dependency.outputs.dependency-version }}
       shell: bash

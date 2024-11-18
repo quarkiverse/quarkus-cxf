@@ -1,5 +1,9 @@
 name: rebuild-dependency
-description: 'Checkout and build a dependency such as CXF or Quarkus. Java must be setup before running this action.'
+description: |
+   Checkout and build a dependency such as CXF or Quarkus. 
+   Prerequisites: 
+     * java must be installed'
+
 
 inputs:
   dependency-git-repo-url:
@@ -8,6 +12,10 @@ inputs:
   dependency-short-name:
     description: "The short lower case name of the dependency as quarkus or cxf"
     required: true
+  dependency-branch:
+    description: "The name of the dependency branch to build against, such as main or 3.15"
+    required: true
+    default: main
   issue-id:
     description: "The issue number where to report the build failure"
     required: false
@@ -18,18 +26,18 @@ inputs:
 
 outputs:
   dependency-commit:
-    description: "The SHA1 of the dependency main branch"
-    value: ${{ steps.set-outputs.outputs.dependency-commit }}
+    description: "The SHA1 of the dependency branch we have built"
+    value: ${{ steps.checkout-dependency.outputs.dependency-commit }}
   dependency-version:
     description: "The version of the dependency as present in the top pom.xml of its main branch"
-    value: ${{ steps.set-outputs.outputs.dependency-version }}
+    value: ${{ steps.checkout-dependency.outputs.dependency-version }}
   exit-status:
     description: |
       A short string describing how the execution went. 
       It can be one of the following:
         * success
         * dependency-build-failed
-    value: ${{ env.REBUILD_DEPENDENCY_EXIT_STATUS }}
+    value: ${{ steps.checkout-dependency.outputs.exit-status == 'success' && 'success' || 'dependency-build-failed' }}
 
 runs:
   using: 'composite'
@@ -47,9 +55,11 @@ runs:
         cd ~
         if [[ ! -d "${{ inputs.dependency-short-name }}" ]] ; then
           # the dependency might have been build already
-          git clone --quiet --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
-          cd "${{ inputs.dependency-short-name }}"
+          git clone --quiet --depth 1 --branch ${{ inputs.dependency-branch }} ${{ inputs.dependency-git-repo-url }} ${{ inputs.dependency-short-name }}
+          cd ${{ inputs.dependency-short-name }}
           echo "Current ${{ inputs.dependency-short-name }} commit:" $(git rev-parse HEAD)
+          echo "dependency-commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "dependency-version=$(xmllint --xpath "/*[local-name() = 'project']/*[local-name() = 'version']/text()" pom.xml)" >> $GITHUB_OUTPUT
           if [[ "${{ inputs.dependency-short-name }}" == "quarkus" ]] ; then
             sed -i '/<module>integration-tests<\/module>/d' pom.xml
           fi
@@ -58,28 +68,13 @@ runs:
           if [[ "${{ inputs.dependency-short-name }}" == "quarkus" ]] ; then
             "$mvn" install -DskipTests -ntp -Prelease -f independent-projects/resteasy-reactive/server/vertx/pom.xml -Dno-build-cache -Dgpg.skip
           fi
+          echo "exit-status=success" >> $GITHUB_OUTPUT
         fi
-
-    - name: Set outputs
-      id: set-outputs
-      shell: bash
-      run: |
-        cd ~/${{ inputs.dependency-short-name }}
-        echo "dependency-commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-        echo "dependency-version=$(xmllint --xpath "/*[local-name() = 'project']/*[local-name() = 'version']/text()" pom.xml)" >> $GITHUB_OUTPUT
-        echo "REBUILD_DEPENDENCY_EXIT_STATUS=success" >> $GITHUB_ENV
-
-    - name: Set status
-      if: ${{ failure() }}
-      shell: bash
-      run: |
-        echo "REBUILD_DEPENDENCY_EXIT_STATUS=dependency-build-failed" >> $GITHUB_ENV
 
     - name: Reopen or comment on issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
       if: ${{ failure() && inputs.issue-id != '' }}
       shell: bash
       run: |
-        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=rebase-failed" >> $GITHUB_ENV
         oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
         echo "oldState = $oldState"
         gitUrl="${{ inputs.dependency-git-repo-url }}"
