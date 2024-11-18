@@ -1,0 +1,40 @@
+name: maintenance-branch-info
+description: 'Figure out some information about the underlying maintenance branch of the current PR, merge or manually triggered event'
+
+inputs:
+  dependency-short-name:
+    description: "The short lower case name of the dependency as quarkus or cxf"
+    required: true
+
+outputs:
+  is-maintenance-branch:
+    description: "'true' if the underlying branch of the PR, merge or manually triggered build is a maintenance branch, such as quarkus-main, quarkus-3.15; otherwise 'false'"
+    value: '${{ steps.maintenance-branch-info-step.outputs.is-maintenance-branch }}'
+  dependency-stream:
+    description: "The name of the stream in the dependency git repository, such as main or 3.15 for Quarkus or main or 4.0 for CXF. The caller may map the stream to a remote branch that may be called differently, such as 4.0.x-fixes in case of CXF."
+    value: '${{ steps.maintenance-branch-info-step.outputs.dependency-stream }}'
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Detect maintenance branch info
+      id: maintenance-branch-info-step
+      shell: bash
+      run: |
+          refs=('${{ github.ref }}' '${{ github.base_ref }}' '${{ github.head_ref }}')
+          regex="${{ inputs.dependency-short-name }}-(main|[0-9]+\.[0-9]+)$"
+          
+          isMaintenanceBranch=false
+          dependencyStream=''
+          for ref in "${refs[@]}"; do
+             if [[ $ref =~ $regex ]]; then
+                isMaintenanceBranch=true
+                dependencyStream="${BASH_REMATCH[1]}"
+                break
+              fi
+          done
+          echo "isMaintenanceBranch = ${isMaintenanceBranch}"
+          echo "is-maintenance-branch='${isMaintenanceBranch}'" >> $GITHUB_OUTPUT
+          echo "dependencyStream = ${dependencyStream}"
+          echo "dependency-stream='$(echo "$dependencyStream")'" >> $GITHUB_OUTPUT

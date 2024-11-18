@@ -29,6 +29,44 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
+    - name: Set up JDK ${{ inputs.java-version }}
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ inputs.java-version }}
+
+
+    - name: Detect CXF maintenance branch
+      id: cxf-branch-info
+      uses: ./.github/actions/maintenance-branch-info
+      with:
+        dependency-short-name: cxf
+
+    - name: Build CXF if needed
+      if: steps.cxf-branch-info.outputs.is-maintenance-branch == 'true'
+      uses: ./.github/actions/rebuild-dependency
+      id: rebuild-cxf
+      with:
+        dependency-git-repo-url: https://github.com/apache/cxf.git
+        dependency-short-name: cxf
+        dependency-branch: '${{ steps.cxf-branch-info.outputs.dependency-stream == 'main' && steps.cxf-branch-info.outputs.dependency-stream || format('{0}.x-fixes', steps.cxf-branch-info.outputs.dependency-stream) }}'
+
+
+    - name: Detect Quarkus maintenance branch
+      id: quarkus-branch-info
+      uses: ./.github/actions/maintenance-branch-info
+      with:
+        dependency-short-name: quarkus
+
+    - name: Build Quarkus if needed
+      if: steps.quarkus-branch-info.outputs.is-maintenance-branch == 'true'
+      uses: ./.github/actions/rebuild-dependency
+      id: rebuild-quarkus
+      with:
+        dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
+        dependency-short-name: quarkus
+        dependency-branch: '${{ steps.quarkus-branch-info.outputs.dependency-stream }}'
+
     - name: build-and-run-jvm-tests
       uses: ./.github/actions/build-and-run-jvm-tests
       with:
