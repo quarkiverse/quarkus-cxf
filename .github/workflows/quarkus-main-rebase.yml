@@ -1,4 +1,4 @@
-name: quarkus-main rebase
+name: rebase-integration-branch
 
 on:
   workflow_dispatch:
@@ -8,8 +8,6 @@ on:
 
 env:
   LANG: en_US.UTF-8
-  ISSUE_ID: 1287
-  DEPENDENCY_SHORT_NAME: quarkus
   JAVA_VERSION: 17
 
 concurrency:
@@ -21,22 +19,42 @@ permissions:
   issues: write
 
 jobs:
-  rebase-quarkus-main:
+  rebase-integration-branch:
     if: github.repository == 'quarkiverse/quarkus-cxf'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - dependency-short-name: 'quarkus'
+            dependency-stream: 'main'
+            dependency-branch: 'main'
+            issue-id: 1287
+            base-branch: 'main'
+            dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
+          - dependency-short-name: 'cxf'
+            dependency-stream: 'main'
+            dependency-branch: 'main'
+            issue-id: 1767
+            base-branch: 'main'
+            dependency-git-repo-url: https://github.com/apache/cxf.git
+
     steps:
-    - uses: actions/checkout@v4
+
+    - name: Set up JDK ${{ inputs.java-version }}
+      uses: actions/setup-java@v4
       with:
-        fetch-depth: 0
+        distribution: temurin
+        java-version: ${{ env.JAVA_VERSION }}
 
     - name: rebase-dependency-main-branch
       uses: ./.github/actions/rebase-dependency-main-branch
       id: rebase-dependency-main-branch
       with:
-        java-version: ${{ env.JAVA_VERSION }}
-        dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
-        dependency-short-name: ${{ env.DEPENDENCY_SHORT_NAME }}
-        issue-id: ${{ env.ISSUE_ID }}
+        dependency-git-repo-url: ${{ matrix.dependency-git-repo-url }}
+        dependency-short-name: ${{ matrix.dependency-short-name }}
+        dependency-stream: ${{ matrix.dependency-stream }}
+        dependency-branch: ${{ matrix.dependency-branch }}
+        issue-id: ${{ matrix.issue-id }}
         token: "${{ secrets.GITHUB_TOKEN }}"
 
     - name: Show steps.rebase-dependency-main-branch.outputs.exit-status
@@ -47,9 +65,9 @@ jobs:
     - name: build-and-run-jvm-tests
       uses: ./.github/actions/build-and-run-jvm-tests
       with:
-        java-version: ${{ env.JAVA_VERSION }}
+        run-native-tests: 'true'
 
-    - name: git push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
+    - name: git push origin ${{ matrix.dependency-short-name }}-${{ matrix.dependency-stream }} -f
       shell: bash
       run: |
         lastCommitMessage="$(git log -1 --pretty=%B)"
@@ -60,41 +78,41 @@ jobs:
         else
           echo "Not removing the last commit because its message is not '${{ steps.rebase-dependency-main-branch.outputs.upgrade-message }}' but '$lastCommitMessage'"
         fi
-        git push origin ${{ env.DEPENDENCY_SHORT_NAME }}-main -f
+        git push origin ${{ matrix.dependency-short-name }}-${{ matrix.dependency-stream }} -f
 
-    - name: Reopen issue https://github.com/${{ github.repository }}/issues/${{ env.ISSUE_ID }}
-      if: ${{ steps.rebase-dependency-main-branch.outputs.exit-status != 'success' && failure() }}
+    - name: Reopen issue https://github.com/${{ github.repository }}/issues/${{ matrix.issue-id }}
+      if: ${{ steps.rebase-dependency-main-branch.outputs.exit-status == 'success' && failure() }}
       shell: bash
       run: |
-        oldState=$(gh issue view ${{ env.ISSUE_ID }} --json state -q .state -R ${{ github.repository }})
+        oldState=$(gh issue view ${{ matrix.issue-id }} --json state -q .state -R ${{ github.repository }})
         echo "oldState = $oldState"
-        msg="❌ Build with ${{ env.DEPENDENCY_SHORT_NAME }} ${{ steps.rebase-dependency-main-branch.outputs.dependency-commit }} failed in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        msg="❌ Build with ${{ matrix.dependency-short-name }} ${{ steps.rebase-dependency-main-branch.outputs.dependency-commit }} failed in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         if [[ "$oldState" == "OPEN" ]] ; then
           gh issue comment \
             --repo ${{ github.repository }} \
             --body "$msg" \
-            ${{ env.ISSUE_ID }}
+            ${{ matrix.issue-id }}
         else
           gh issue reopen \
             --repo ${{ github.repository }} \
             --comment "$msg" \
-            ${{ env.ISSUE_ID }}
+            ${{ matrix.issue-id }}
         fi
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Close issue https://github.com/${{ github.repository }}/issues/${{ env.ISSUE_ID }}
+    - name: Close issue https://github.com/${{ github.repository }}/issues/${{ matrix.issue-id }}
       if: ${{ success() }}
       shell: bash
       run: |
-        oldState=$(gh issue view ${{ env.ISSUE_ID }} --json state -q .state -R ${{ github.repository }})
+        oldState=$(gh issue view ${{ matrix.issue-id }} --json state -q .state -R ${{ github.repository }})
         echo "oldState = $oldState"
-        msg="✅ Build with ${{ env.DEPENDENCY_SHORT_NAME }} ${{ steps.rebase-dependency-main-branch.outputs.dependency-commit }} succeeded in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        msg="✅ Build with ${{ matrix.dependency-short-name }} ${{ steps.rebase-dependency-main-branch.outputs.dependency-commit }} succeeded in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         if [[ "$oldState" != "CLOSED" ]] ; then
           gh issue close \
             --repo ${{ github.repository }} \
             --comment "$msg" \
-            ${{ env.ISSUE_ID }}
+            ${{ matrix.issue-id }}
         fi
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
