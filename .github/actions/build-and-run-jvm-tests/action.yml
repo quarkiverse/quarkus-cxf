@@ -1,35 +1,17 @@
 name: build-and-run-jvm-tests
-description: 'Build the project and run JVM tests'
+description: |
+   Build the project and run JVM tests. 
+   Prerequisites: 
+     * java must be installed'
 
 inputs:
-  java-version:
-    description: 'Java version'
-    required: true
-    
+  run-native-tests:
+    description: "If true, the native tests will be run in addition to JVM tests; otherwise only JVM tests will be run"
+    default: 'false'
+
 runs:
   using: 'composite'
   steps:
-
-    - name: Set up JDK ${{ inputs.java-version }}
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: ${{ inputs.java-version }}
-
-    - name: Build CXF
-      if: github.ref == 'refs/heads/cxf-main' || github.base_ref == 'cxf-main' || github.head_ref == 'cxf-main'
-      uses: ./.github/actions/rebuild-dependency
-      id: rebuild-cxf
-      with:
-        dependency-git-repo-url: https://github.com/apache/cxf.git
-        dependency-short-name: cxf
-    - name: Build Quarkus
-      if: github.ref == 'refs/heads/quarkus-main' || github.base_ref == 'quarkus-main' || github.head_ref == 'quarkus-main'
-      uses: ./.github/actions/rebuild-dependency
-      id: rebuild-quarkus
-      with:
-        dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
-        dependency-short-name: quarkus
 
     - name: Ensure mvn cq:sync-versions -N causes no changes
       shell: bash
@@ -39,14 +21,14 @@ runs:
 
     - name: mvn -B formatter:validate install
       shell: bash
-      run: ./mvnw -B formatter:validate install -fae -ntp
+      run: ./mvnw -B formatter:validate install -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }}
 
     # Same as the previous but only JVM tests and different default ConduitFactory
     - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn -B test
       shell: bash
       env: 
         QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
-      run: ./mvnw -B clean install -fae -ntp
+      run: ./mvnw -B clean install -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }}
 
     - name: 'Upload generated Antora docs site'
       uses: actions/upload-artifact@v4
