@@ -8,6 +8,10 @@ inputs:
   dependency-short-name:
     description: "The short lower case name of the dependency as quarkus or cxf"
     required: true
+  dependency-branch:
+    description: "The name of the dependency branch to build against, such as main or 3.15"
+    required: true
+    default: main
   issue-id:
     description: "The issue number where to report the build failure"
     required: false
@@ -47,7 +51,7 @@ runs:
         cd ~
         if [[ ! -d "${{ inputs.dependency-short-name }}" ]] ; then
           # the dependency might have been build already
-          git clone --quiet --depth 1 --branch main ${{ inputs.dependency-git-repo-url }}
+          git clone --quiet --depth 1 --branch ${{ inputs.dependency-branch }} ${{ inputs.dependency-git-repo-url }}
           cd "${{ inputs.dependency-short-name }}"
           echo "Current ${{ inputs.dependency-short-name }} commit:" $(git rev-parse HEAD)
           if [[ "${{ inputs.dependency-short-name }}" == "quarkus" ]] ; then

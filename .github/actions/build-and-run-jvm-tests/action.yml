@@ -16,21 +16,6 @@ runs:
         distribution: temurin
         java-version: ${{ inputs.java-version }}
 
-    - name: Build CXF
-      if: github.ref == 'refs/heads/cxf-main' || github.base_ref == 'cxf-main' || github.head_ref == 'cxf-main'
-      uses: ./.github/actions/rebuild-dependency
-      id: rebuild-cxf
-      with:
-        dependency-git-repo-url: https://github.com/apache/cxf.git
-        dependency-short-name: cxf
-    - name: Build Quarkus
-      if: github.ref == 'refs/heads/quarkus-main' || github.base_ref == 'quarkus-main' || github.head_ref == 'quarkus-main'
-      uses: ./.github/actions/rebuild-dependency
-      id: rebuild-quarkus
-      with:
-        dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
-        dependency-short-name: quarkus
-
     - name: Ensure mvn cq:sync-versions -N causes no changes
       shell: bash
       run: |
