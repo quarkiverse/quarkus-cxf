@@ -1,0 +1,116 @@
+name: build-integration-branch
+description: 'Build and test an integration branch such as quarkus-main, quarkus-3.15, cxf-main or cxf-4.0 against Quarkus or CXF freshly built from the respective maintenance branch'
+
+inputs:
+  java-version:
+    description: 'Java version'
+    required: true
+  base-branch:
+    description: "The name of the branch in our git repository, such as main or 3.15, on top of which the given integration branch, such as quarkus-main, quarkus-3.15, cxf-main or cxf-4.0, should be rebased"
+    required: true
+    default: main
+  integration-branch:
+    description: "The name of the integration branch in our git repository, such as quarkus-main or quarkus-3.15, which should be rebased on top of the given base branch"
+    required: true
+    default: main
+  dependency-git-repo-url:
+    description: "The URL of the dependency's git repository to checkout and build from"
+    required: true
+  dependency-short-name:
+    description: "The short lower case name of the dependency as quarkus or cxf"
+    required: true
+  dependency-branch:
+    description: "The name of the dependency branch in the dependency git repository to build and test against, such as main or 3.15 for Quarkus or main or 4.0.x-fixes for CXF"
+    required: true
+    default: main
+  issue-id:
+    description: "The issue number where to report any rebase or build issues"
+    required: true
+  token:
+    description: "The token to use to authenticate against GitHub API"
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: rebase-integration-branch
+      uses: ./.github/actions/rebase-integration-branch
+      id: rebase-integration-branch
+      with:
+        java-version: ${{ inputs.java-version }}
+        base-branch: ${{ inputs.base-branch }}
+        integration-branch: ${{ inputs.integration-branch }}
+        dependency-git-repo-url: ${{ inputs.dependency-git-repo-url }}
+        dependency-short-name: ${{ inputs.dependency-short-name }}
+        dependency-branch: ${{ inputs.dependency-branch }}
+        issue-id: ${{ inputs.issue-id }}
+        token: "${{ inputs.token }}"
+
+    - name: Show steps.rebase-integration-branch.outputs.exit-status
+      if: ${{ !cancelled() }}
+      shell: bash
+      run: |
+        echo "steps.rebuild-dependency.outputs.exit-status: ${{ steps.rebase-integration-branch.outputs.exit-status }}"
+
+    - name: build-and-test
+      uses: ./.github/actions/build-and-test
+      with:
+        java-version: ${{ inputs.java-version }}
+        run-native-tests: true
+        upload-antora-site: false
+
+    - name: git push origin ${{ inputs.dependency-integration-branch }} -f
+      shell: bash
+      run: |
+        lastCommitMessage="$(git log -1 --pretty=%B)"
+        echo "Comparing last commit message '$lastCommitMessage' with '${{ steps.rebase-integration-branch.outputs.upgrade-message }}'"
+        if [[ "$lastCommitMessage" == "${{ steps.rebase-integration-branch.outputs.upgrade-message }}" ]]; then
+          echo "Removing last commit '$lastCommitMessage'"
+          git reset --hard HEAD~1
+        else
+          echo "Not removing the last commit because its message is not '${{ steps.rebase-integration-branch.outputs.upgrade-message }}' but '$lastCommitMessage'"
+        fi
+        git push origin ${{ inputs.dependency-integration-branch }} -f
+
+    - name: Reopen issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
+      if: ${{ steps.rebase-integration-branch.outputs.exit-status != 'success' && failure() }}
+      shell: bash
+      run: |
+        oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
+        echo "oldState = $oldState"
+        msg="❌ Build with ${{ inputs.dependency-short-name }} ${{ steps.rebase-integration-branch.outputs.dependency-commit }} failed in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        if [[ "$oldState" == "OPEN" ]] ; then
+          gh issue comment \
+            --repo ${{ github.repository }} \
+            --body "$msg" \
+            ${{ inputs.issue-id }}
+        else
+          gh issue reopen \
+            --repo ${{ github.repository }} \
+            --comment "$msg" \
+            ${{ inputs.issue-id }}
+        fi
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+
+    - name: Close issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
+      if: ${{ success() }}
+      shell: bash
+      run: |
+        oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
+        echo "oldState = $oldState"
+        msg="✅ Build with ${{ inputs.dependency-short-name }} ${{ steps.rebase-integration-branch.outputs.dependency-commit }} succeeded in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        if [[ "$oldState" != "CLOSED" ]] ; then
+          gh issue close \
+            --repo ${{ github.repository }} \
+            --comment "$msg" \
+            ${{ inputs.issue-id }}
+        fi
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+

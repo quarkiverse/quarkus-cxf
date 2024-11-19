@@ -1,11 +1,19 @@
-name: build-and-run-jvm-tests
-description: 'Build the project and run JVM tests'
+name: build-and-test
+description: 'Build the project and run tests, optionally also native tests'
 
 inputs:
   java-version:
     description: 'Java version'
     required: true
-    
+  run-native-tests:
+    description: 'If true, the native tests will be run, otherwise only JVM tests will be run'
+    required: true
+    default: false
+  upload-antora-site:
+    description: 'If true, the Antora documentation site will be zipped and uploaded to the workflow run storage; otherwise it will not be uploaded'
+    required: true
+    default: false
+
 runs:
   using: 'composite'
   steps:
@@ -22,18 +30,19 @@ runs:
         ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
         [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
 
-    - name: mvn -B formatter:validate install
+    - name: mvn -B formatter:validate install ${{ inputs.run-native-tests && '-Pnative -Dquarkus.native.container-build' || '' }}
       shell: bash
-      run: ./mvnw -B formatter:validate install -fae -ntp
+      run: ./mvnw -B formatter:validate install ${{ inputs.run-native-tests && '-Pnative -Dquarkus.native.container-build' || '' }} -fae -ntp
 
     # Same as the previous but only JVM tests and different default ConduitFactory
-    - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn -B test
+    - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn clean install ${{ inputs.run-native-tests && '-Pnative -Dquarkus.native.container-build' || '' }}
       shell: bash
       env: 
         QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
-      run: ./mvnw -B clean install -fae -ntp
+      run: ./mvnw -B clean install ${{ inputs.run-native-tests && '-Pnative -Dquarkus.native.container-build' || '' }} -fae -ntp
 
     - name: 'Upload generated Antora docs site'
+      if: ${{ inputs.upload-antora-site }}
       uses: actions/upload-artifact@v4
       with:
         name: docs

@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-run-jvm-tests:
+  build-and-test:
     if: startsWith(github.head_ref, 'trigger-release-') == false
     runs-on: ubuntu-latest
 
@@ -67,10 +67,12 @@ jobs:
         dependency-short-name: quarkus
         dependency-branch: '${{ steps.quarkus-branch-info.outputs.dependency-stream }}'
 
-    - name: build-and-run-jvm-tests
-      uses: ./.github/actions/build-and-run-jvm-tests
+    - name: build-and-test
+      uses: ./.github/actions/build-and-test
       with:
         java-version: ${{ env.JAVA_VERSION }}
+        run-native-tests: false
+        upload-antora-site: true
 
   native-tests:
     strategy:
@@ -78,7 +80,7 @@ jobs:
       matrix:
         testModule: ['async-vertx-client', 'client', 'client-server', 'fastinfoset', 'hc5', 'metrics', 'mtls', 'mtls -Djks', 'mtom', 'mtom-awt', 'opentelemetry', 'saaj', 'santuario-xmlsec', 'server', 'ws-rm-client', 'ws-security', 'ws-security -Djks', 'ws-security-policy', 'ws-security-policy -Djks', 'ws-trust', 'wsdl2java', 'wsdl2java-no-config']
     name: ${{matrix.testModule}} native tests
-    needs: build-and-run-jvm-tests
+    needs: build-and-test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -90,7 +92,7 @@ jobs:
 
   windows-tests:
     name: Windows tests
-    needs: build-and-run-jvm-tests
+    needs: build-and-test
     runs-on: windows-latest
     steps:
 

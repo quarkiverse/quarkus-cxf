@@ -1,10 +1,18 @@
-name: rebase-dependency-main-branch
-description: 'Rebase a maintenenance branch such as quarkus-main or cxf-main, rebuild it and report the status in a dedicated issue'
+name: rebase-integration-branch
+description: 'Rebase an integration branch such as quarkus-main, quarkus-3.15, cxf-main or cxf-4.0, rebuild it and report the status in a dedicated issue'
 
 inputs:
   java-version:
     description: 'Java version'
     required: true
+  base-branch:
+    description: "The name of the branch in our git repository, such as main or 3.15, on top of which the given integration branch, such as quarkus-main, quarkus-3.15, cxf-main or cxf-4.0, should be rebased"
+    required: true
+    default: main
+  integration-branch:
+    description: "The name of the integration branch in our git repository, such as quarkus-main or quarkus-3.15, which should be rebased on top of the given base branch"
+    required: true
+    default: main
   dependency-git-repo-url:
     description: "The URL of the dependency's git repository to checkout and build from"
     required: true
@@ -12,7 +20,7 @@ inputs:
     description: "The short lower case name of the dependency as quarkus or cxf"
     required: true
   dependency-branch:
-    description: "The name of the dependency branch to build against, such as main or 3.15"
+    description: "The name of the dependency branch in the dependency git repository to build and test against, such as main or 3.15 for Quarkus or main or 4.0.x-fixes for CXF"
     required: true
     default: main
   issue-id:
@@ -39,7 +47,7 @@ outputs:
         * success
         * rebase-failed
         * dependency-build-failed
-    value: ${{ env.REBASE_DEPENDENCY_MAIN_EXIT_STATUS }}
+    value: ${{ steps.rebase.outputs.exit-status != 'success' && steps.rebase.outputs.exit-status || steps.rebuild-dependency.outputs.exit-status }}
 
 runs:
   using: 'composite'
@@ -55,30 +63,30 @@ runs:
       with:
         fetch-depth: 0
 
-    - name: rebase ${{ inputs.dependency-short-name }}-${{ inputs.dependency-branch }}
+    - name: rebase ${{ inputs.integration-branch }}
+      id: rebase
       shell: bash
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=success" >> $GITHUB_ENV
-        git fetch origin ${{ inputs.dependency-short-name }}-${{ inputs.dependency-branch }} \
-            && git checkout ${{ inputs.dependency-short-name }}-${{ inputs.dependency-branch }} >/dev/null 2>&1 \
-            || git checkout -b ${{ inputs.dependency-short-name }}-${{ inputs.dependency-branch }} origin/${{ github.head_ref || github.ref_name }} 
+        git fetch origin ${{ inputs.integration-branch }} \
+            && git checkout ${{ inputs.integration-branch }} >/dev/null 2>&1 \
+            || git checkout -b ${{ inputs.integration-branch }} origin/${{ inputs.base-branch }}
         git status
-        echo "${{ inputs.dependency-short-name }}-${{ github.head_ref || github.ref_name }}  is at $(git rev-parse HEAD)"
-        git rebase ${{ github.head_ref || github.ref_name }} 
+        echo "${{ inputs.integration-branch }}  is at $(git rev-parse HEAD)"
+        git rebase ${{ inputs.base-branch }} 
         rebaseExitCode=$?
         echo "rebaseExitCode = $rebaseExitCode"
+        echo "exit-status=$( [[ $rebaseExitCode == 0 ]] && echo 'success' || echo 'rebase-failed' )" >> $GITHUB_OUTPUT
         exit $rebaseExitCode
 
     - name: Reopen or comment on issue https://github.com/${{ github.repository }}/issues/${{ inputs.issue-id }}
       if: ${{ failure() }}
       shell: bash
       run: |
-        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=rebase-failed" >> $GITHUB_ENV
         oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
         echo "oldState = $oldState"
-        msg="❌ Could not rebase ${{ inputs.dependency-short-name }}-${{ github.head_ref || github.ref_name }}  in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        msg="❌ Could not rebase ${{ inputs.integration-branch }} on top of ${{ inputs.base-branch }}}} in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         if [[ "$oldState" == "OPEN" ]] ; then
           gh issue comment \
             --repo ${{ github.repository }} \
@@ -104,15 +112,10 @@ runs:
         token: "${{ inputs.token }}"
 
     - name: Show steps.rebuild-dependency.outputs.exit-status
+      if: ${{ !cancelled() }}
       shell: bash
       run: |
         echo "steps.rebuild-dependency.outputs.exit-status: ${{ steps.rebuild-dependency.outputs.exit-status }}"
-
-    - name: Set status
-      if: ${{ failure() && steps.rebuild-dependency.outputs.exit-status == 'dependency-build-failed' }}
-      shell: bash
-      run: |
-        echo "REBASE_DEPENDENCY_MAIN_EXIT_STATUS=dependency-build-failed" >> $GITHUB_ENV
 
     - name: Set ${{ inputs.dependency-short-name }}.version to ${{ steps.rebuild-dependency.outputs.dependency-version }}
       shell: bash
