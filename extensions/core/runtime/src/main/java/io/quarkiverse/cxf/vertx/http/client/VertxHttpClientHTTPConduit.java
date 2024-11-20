@@ -685,7 +685,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 try {
                     pipedOutputStream.write(buffer.getBytes());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    pipedInputStream.setException(e);
                 }
             });
 
