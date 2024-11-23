@@ -50,7 +50,7 @@ There are two ways how you can associate this policy file with a service endpoin
 .UsernameTokenPolicyHelloService.java
 [source,java]
 ----
-include::example$ws-security-policy/UsernameTokenPolicyHelloService.java[tag=ws-securitypolicy-authentication-authorization.adoc]
+include::example$ws-security-policy/UsernameTokenPolicyHelloService.java[tag=ws-securitypolicy-auth.adoc]
     ...
 }
 ----
@@ -63,9 +63,9 @@ When you have the policy in place, configure the credentials on the service endp
 .application.properties
 [source,properties]
 ----
-include::example$ws-security-policy/application.properties[tag=ws-securitypolicy-authentication-authorization.adoc-service]
+include::example$ws-security-policy/application.properties[tag=ws-securitypolicy-auth.adoc-service]
 
-include::example$ws-security-policy/application.properties[tag=ws-securitypolicy-authentication-authorization.adoc-client]
+include::example$ws-security-policy/application.properties[tag=ws-securitypolicy-auth.adoc-client]
 ----
 
 In the above listing, `usernameTokenPasswordCallback` is a name of a `@jakarta.inject.Named` bean implementing `javax.security.auth.callback.CallbackHandler`.
