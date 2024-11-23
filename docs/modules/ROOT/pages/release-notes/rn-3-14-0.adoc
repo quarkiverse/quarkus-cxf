@@ -9,7 +9,7 @@
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1460[#1460] IllegalArgumentException: port p must be in range 0 <= p <= 65535 when using client-endpoint-url without explicit port
 
-When using the xref:release-notes/3.13.0.adoc#_vert_x_httpclient_based_http_conduit[new `VertxHttpClientHTTPConduitFactory`],
+When using the xref:release-notes/rn-3-13-0.adoc#_vert_x_httpclient_based_http_conduit[new `VertxHttpClientHTTPConduitFactory`],
 the handling of default ports for `http` and `https` client endpoint URLs was broken resulting in an `IllegalArgumentException`.
 This was fixed in {quarkus-cxf-project-name} 3.14.0.
 
