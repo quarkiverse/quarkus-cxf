@@ -29,20 +29,23 @@ include::example$soap-service/application.properties[tag=generate-wsdl-from-java
 Here we have instructed `java2ws` to generate WSDLs for two service classes,
 namely `HelloServiceImpl` and `FaultyHelloServiceImpl`.
 
-[NOTE]
 .Annotations
+[NOTE]
 ====
-Note that the service classes must be annotated with `{javaxOrJakartaPackagePrefix}.xml.ws.WebService` to be selected for `java2ws` processing.
+The service classes must be annotated with `{javaxOrJakartaPackagePrefix}.xml.ws.WebService` to be selected for `java2ws` processing.
 ====
 
 The two generated WSDL documents will be stored as `target/Java2wsTest/FaultyHelloServiceImpl-from-java2ws.wsdl`
 and `target/Java2wsTest/HelloServiceImpl-from-java2ws.wsdl` respectively.
 
-NOTE: Unlike `wsdl2java` which is executed within Quarkus source generation phase,
-      `java2ws` is a part Quarkus augmentation that happens after compilation.
-      The input of `java2ws` are, after all, Java class files.
-      Hence you do not need to add `<goal>generate-code</goal>` to `quarkus-maven-plugin`
-      for `java2ws`.
+[NOTE]
+====
+Unlike `wsdl2java` which is executed within Quarkus source generation phase,
+`java2ws` is a part Quarkus augmentation that happens after compilation.
+The input of `java2ws` are, after all, Java class files.
+Hence you do not need to add `<goal>generate-code</goal>` to `quarkus-maven-plugin`
+for `java2ws`.
+====
 
 == See also
 

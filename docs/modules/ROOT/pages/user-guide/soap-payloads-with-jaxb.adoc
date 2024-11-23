@@ -8,9 +8,12 @@ Let's have a look at passing and receiving more complex objects.
 
 As an example, let's create an application for managing fruits.
 
-NOTE: The sample code snippets used in this section come from the
-     https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
-     in the source tree of {quarkus-cxf-project-name}
+[NOTE]
+====
+The sample code snippets used in this section come from the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
+in the source tree of {quarkus-cxf-project-name}
+====
 
 Because our representation of fruit is supposed to be a complex, let's model it as a Java bean with a couple of attributes:
 

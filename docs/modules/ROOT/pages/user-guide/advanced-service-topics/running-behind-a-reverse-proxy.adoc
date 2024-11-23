@@ -12,7 +12,11 @@ Refer to {link-quarkus-docs-base}/http-reference#reverse-proxy[Quarkus HTTP refe
 
 {quarkus-cxf-project-name} support for various `X-Forwarded` headers works in line with Quarkus configuration.
 
-IMPORTANT: Activating this feature leaves the server exposed to several security issues (i.e. information spoofing). Consider activating it only when running behind a reverse proxy.
+[IMPORTANT]
+====
+Activating this feature leaves the server exposed to several security issues (i.e. information spoofing).
+Consider activating it only when running behind a reverse proxy.
+====
 
 These are the relevant Quarkus properties and their effect on {quarkus-cxf-project-name}:
 

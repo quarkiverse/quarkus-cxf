@@ -1292,8 +1292,11 @@ To work around the fact that `org.apache.cxf.ws.security.trust.STSClient` does n
 cannot thus be used as a CDI bean type, you can use the wrapper class
 `io.quarkiverse.cxf.ws.security.sts.client.STSClientBean` instead.
 
-Tip: Check the xref:reference/extensions/quarkus-cxf-services-sts.adoc#quarkus-cxf-services-sts[Security Token Service (STS)] extension page
+[TIP]
+====
+Check the xref:reference/extensions/quarkus-cxf-services-sts.adoc#quarkus-cxf-services-sts[Security Token Service (STS)] extension page
 for more information about WS-Trust.
+====
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT+++` +
 *Since Quarkus CXF*: 3.8.0

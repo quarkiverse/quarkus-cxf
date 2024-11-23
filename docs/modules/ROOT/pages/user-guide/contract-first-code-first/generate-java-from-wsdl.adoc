@@ -42,8 +42,11 @@ This will generate Java classes in `target/generated-sources/wsdl2java` or
 They will be automatically picked by the compiler plugin there.
 Hence we are free to refer to them from our application or test code.
 
+[NOTE]
+====
 Note that `quarkus-cxf` code generation uses the https://cxf.apache.org/docs/wsdl-to-java.html[wsdl2Java] utility
 from CXF under the hood. `wsdl2Java` is called separately for each WSDL file selected by `includes` and `excludes`.
+====
 
 Passing custom parameters to `wsdl2java` is possible through
 xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[`quarkus.cxf.codegen.wsdl2java.additional-params`]
