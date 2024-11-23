@@ -42,7 +42,7 @@ Now there is a way to do so via security policy and Quarkus configuration.
 +
 In the policy file, the `AlgorithmSuite` has to be set to `CustomAlgorithmSuite`:
 +
-[[custom-algorithm-suite-example]]
+[[rn-3-8-1-custom-algorithm-suite-example]]
 [source,xml]
 ----
 <wsp:Policy wsu:Id="SecurityServiceEncryptThenSignPolicy"
