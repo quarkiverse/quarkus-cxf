@@ -98,7 +98,7 @@ include::example$mtls/application.properties[tag=mtls]
 
 The requirement for the clients to connect through HTTPS can be defined in a policy.
 
-The functionality is provided by `xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[quarkus-cxf-rt-ws-security]` extension.
+The functionality is provided by `xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security[quarkus-cxf-rt-ws-security]` extension.
 
 Here is an example of a policy file:
 

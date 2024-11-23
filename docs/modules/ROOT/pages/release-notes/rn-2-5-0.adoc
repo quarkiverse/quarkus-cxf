@@ -19,7 +19,7 @@ The trust store and host name verifier of a client are now configurable through 
 
 === `LoggingFeature` configurable through `application.properties`
 
-See the xref:user-guide/payload-logging.adoc[Logging] page.
+See the xref:user-guide/payload-logging.adoc#payload-logging[Logging] page.
 
 === WS-Security configurable through `application.properties`
 

@@ -14,7 +14,7 @@ and run your applications.
 
 === WS-ReliableMessaging (WS-RM) supported
 
-The `xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc[quarkus-cxf-rt-ws-rm]` extension is rather old, but was missing a proper test and documentation.
+The `xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc#quarkus-cxf-rt-ws-rm[quarkus-cxf-rt-ws-rm]` extension is rather old, but was missing a proper test and documentation.
 Both was added in this release and thus the extension status could be promoted from `experimental` to `stable`.
 
 Check the following resources:
@@ -24,14 +24,14 @@ Check the following resources:
 
 === Metrics Feature supported
 
-Similarly, the xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Metrics Feature]'s support status is now `stable`,
+Similarly, the xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf-rt-features-metrics[Metrics Feature]'s support status is now `stable`,
 after we have improved
 the xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf-rt-features-metrics-usage[Usage guide]
 and added some xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf-rt-features-metrics-configuration[Configuration options].
 
 === New OpenTelemetry tracing extension
 
-There is a new xref:reference/extensions/quarkus-cxf-integration-tracing-opentelemetry.adoc[OpenTelemetry] extension.
+There is a new xref:reference/extensions/quarkus-cxf-integration-tracing-opentelemetry.adoc#quarkus-cxf-integration-tracing-opentelemetry[OpenTelemetry] extension.
 It currently supports only tracing.
 OpenTelemetry Metrics and Logging and not implemented yet.
 
@@ -61,9 +61,9 @@ as long as `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-c
 
 === Documentation improvements
 
-* New `xref:user-guide/ssl-tls-https.adoc[SSL guide]`
-* New `xref:user-guide/authentication-authorization.adoc[Authentication and authorization guide]`
-* Improved the xref:user-guide/payload-logging.adoc[Logging guide]
+* New `xref:user-guide/ssl-tls-https.adoc#ssl-tls-https[SSL guide]`
+* New `xref:user-guide/authentication-authorization.adoc#authentication-authorization[Authentication and authorization guide]`
+* Improved the xref:user-guide/payload-logging.adoc#payload-logging[Logging guide]
 * Improved the documentation of `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
   and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-browser-type[quarkus.cxf.client."client-name".browser-type]`
 

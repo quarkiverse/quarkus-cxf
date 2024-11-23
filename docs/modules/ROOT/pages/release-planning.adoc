@@ -26,4 +26,4 @@ We choose the same `major.minor` for LTS as Quarkus.
 
 == See also
 
-* xref:release-notes/index.adoc[Release notes]
+* xref:release-notes/index.adoc#release-notes-index[Release notes]

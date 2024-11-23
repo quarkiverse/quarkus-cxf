@@ -12,49 +12,49 @@ Please follow the links under the extension names to learn about how to use them
 | Quarkus CXF extension | Support level | Since | Supported standards
 // standards: START
 
-| xref:reference/extensions/quarkus-cxf.adoc[Quarkus CXF] +
+| xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf[Quarkus CXF] +
 `quarkus-cxf`
 |Stable
 |0.1.0
 |https://cxf.apache.org/docs/jax-ws.html[JAX-WS], https://cxf.apache.org/docs/jaxb.html[JAXB], https://cxf.apache.org/docs/ws-addressing.html[WS-Addressing], https://cxf.apache.org/docs/ws-policy.html[WS-Policy], https://cxf.apache.org/docs/mtom.html[MTOM]
 
-| xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Quarkus CXF Metrics Feature] +
+| xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf-rt-features-metrics[Quarkus CXF Metrics Feature] +
 `quarkus-cxf-rt-features-metrics`
 |Stable
 |0.14.0
 |
 
-| xref:reference/extensions/quarkus-cxf-integration-tracing-opentelemetry.adoc[Quarkus CXF OpenTelemetry] +
+| xref:reference/extensions/quarkus-cxf-integration-tracing-opentelemetry.adoc#quarkus-cxf-integration-tracing-opentelemetry[Quarkus CXF OpenTelemetry] +
 `quarkus-cxf-integration-tracing-opentelemetry`
 |Stable
 |2.7.0
 |
 
-| xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[Quarkus CXF WS-Security] +
+| xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security[Quarkus CXF WS-Security] +
 `quarkus-cxf-rt-ws-security`
 |Stable
 |0.14.0
 |https://cxf.apache.org/docs/ws-security.html[WS-Security], https://cxf.apache.org/docs/ws-securitypolicy.html[WS-SecurityPolicy]
 
-| xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc[Quarkus CXF WS-ReliableMessaging] +
+| xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc#quarkus-cxf-rt-ws-rm[Quarkus CXF WS-ReliableMessaging] +
 `quarkus-cxf-rt-ws-rm`
 |Stable
 |1.5.3
 |https://cxf.apache.org/docs/ws-reliablemessaging.html[WS-ReliableMessaging]
 
-| xref:reference/extensions/quarkus-cxf-services-sts.adoc[Quarkus CXF Security Token Service (STS)] +
+| xref:reference/extensions/quarkus-cxf-services-sts.adoc#quarkus-cxf-services-sts[Quarkus CXF Security Token Service (STS)] +
 `quarkus-cxf-services-sts`
 |Stable
 |1.5.3
 |https://cxf.apache.org/docs/ws-trust.html[WS-Trust]
 
-| xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[Quarkus CXF HTTP Async Transport] +
+| xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc#quarkus-cxf-rt-transports-http-hc5[Quarkus CXF HTTP Async Transport] +
 `quarkus-cxf-rt-transports-http-hc5`
 |Stable
 |1.1.0
 |
 
-| xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[Quarkus CXF XJC Plugins] +
+| xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc#quarkus-cxf-xjc-plugins[Quarkus CXF XJC Plugins] +
 `quarkus-cxf-xjc-plugins`
 |Stable
 |1.5.11
@@ -94,17 +94,17 @@ Out of https://cxf.apache.org/docs/databindings.html[CXF Data Bindings] only the
 Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the following ones are supported:
 
 * `quarkus-cxf` implements its own custom transport based on Quarkus and Vert.x for serving SOAP endpoints
-* HTTP client via `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]`, including
+* HTTP client via `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf[quarkus-cxf]`, including
 ** xref:user-guide/authentication-authorization.adoc#client-http-basic-authentication[Basic Authentication]
 * https://cxf.apache.org/docs/asynchronous-client-http-transport.html[Asynchronous Client HTTP Transport]
-  via `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]`
+  via `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc#quarkus-cxf-rt-transports-http-hc5[quarkus-cxf-rt-transports-http-hc5]`
 
 [[tools]]
 === Tools
 
-* `wsdl2Java` - see the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL
+* `wsdl2Java` - see the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl[Generate the Model classes from WSDL
 ] section of User guide
-* `java2ws` - see the xref:user-guide/contract-first-code-first/generate-wsdl-from-java.adoc[Generate WSDL from Java] section of User guide
+* `java2ws` - see the xref:user-guide/contract-first-code-first/generate-wsdl-from-java.adoc#generate-wsdl-from-java[Generate WSDL from Java] section of User guide
 
 === Supported SOAP Bindings
 

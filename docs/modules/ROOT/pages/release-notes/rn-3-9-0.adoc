@@ -19,7 +19,7 @@ you will have to add them yourself.
 
 The following parts of the documentation were improved:
 
-* We published a bunch of xref:release-notes/index.adoc[release notes] for older {quarkus-cxf-project-name} versions 2.2.x through 2.7.x.
+* We published a bunch of xref:release-notes/index.adoc#release-notes-index[release notes] for older {quarkus-cxf-project-name} versions 2.2.x through 2.7.x.
 * Build time configuration options, such as `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-enabled[quarkus.cxf.codegen.wsdl2java.*]` were missing in on the `quarkus-cxf` reference page due to a bug in our tooling.
 * We added xref:release-notes/index.adoc#version-table[Version table] to the release notes page.
   It shows which Quarkus CXF version is available in which Quarkus Platform version and which CXF version it depends on.

@@ -3,10 +3,10 @@
 
 Check the following chapters for more details about implementing SOAP clients:
 
-* xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` defaults]
-* xref:user-guide/advanced-client-topics/configure-multiple-clients.adoc[Configure multiple clients]
-* xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc[CDI scope of clients injected via `@CXFClient`]
-* xref:user-guide/advanced-client-topics/programmatic-client-configuration-at-startup.adoc[Configure clients programmatically at application startup]
-* xref:user-guide/advanced-client-topics/dynamic-client-configuration.adoc[Dynamic client configuration]
-* xref:user-guide/advanced-client-topics/pure-client-applications.adoc[Pure client applications]
-* xref:user-guide/advanced-client-topics/prevent-resource-leaks.adoc[Prevent resource leaks]
+* xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc#client-endpoint-url-defaults[`client-endpoint-url` defaults]
+* xref:user-guide/advanced-client-topics/configure-multiple-clients.adoc#configure-multiple-clients[Configure multiple clients]
+* xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc#cdi-scope-of-cxfclient[CDI scope of clients injected via `@CXFClient`]
+* xref:user-guide/advanced-client-topics/programmatic-client-configuration-at-startup.adoc#programmatic-client-configuration-at-startup[Configure clients programmatically at application startup]
+* xref:user-guide/advanced-client-topics/dynamic-client-configuration.adoc#dynamic-client-configuration[Dynamic client configuration]
+* xref:user-guide/advanced-client-topics/pure-client-applications.adoc#pure-client-applications[Pure client applications]
+* xref:user-guide/advanced-client-topics/prevent-resource-leaks.adoc#prevent-resource-leaks[Prevent resource leaks]

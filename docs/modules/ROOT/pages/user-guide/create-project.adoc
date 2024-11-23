@@ -87,6 +87,6 @@ That's the most reliable way to get compatible versions of Quarkus, CXF, {quarku
 
 We recommend to proceed with any of the following chapters:
 
-* xref:user-guide/first-soap-web-service.adoc[Your first SOAP Web service]
-* xref:user-guide/first-soap-client.adoc[Your first SOAP Client]
+* xref:user-guide/first-soap-web-service.adoc#first-soap-web-service[Your first SOAP Web service]
+* xref:user-guide/first-soap-client.adoc#first-soap-client[Your first SOAP Client]
 

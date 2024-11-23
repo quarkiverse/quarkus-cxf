@@ -22,7 +22,7 @@ See https://github.com/quarkiverse/quarkus-cxf/issues/1047[#1047]
 
 === Configurable destination folder of `wsdl2java`
 
-The directory where the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[`wsdl2java` embedded in `quarkus-cxf`] extension produces the Java classes is now configurable
+The directory where the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl[`wsdl2java` embedded in `quarkus-cxf`] extension produces the Java classes is now configurable
 via the `xref:reference/extensions/quarkus-cxf#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.output-directory[quarkus.cxf.codegen.wsdl2java.output-directory]` property.
 
 === Possible thread leaks with CXF clients using `java.net.http.HttpClient`
@@ -41,7 +41,7 @@ as soon as they are disposed by the CDI container.
 
 For client proxies created manually, it is up to you to call `((Closeable) proxy).close()`.
 
-For more information, see xref:user-guide/advanced-client-topics/prevent-resource-leaks.adoc[Prevent resource leaks] section of the user guide.
+For more information, see xref:user-guide/advanced-client-topics/prevent-resource-leaks.adoc#prevent-resource-leaks[Prevent resource leaks] section of the user guide.
 
 === Large responses not written slowly anymore
 
@@ -61,7 +61,7 @@ ____
 
 === Documentation improvements
 
-* New xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc[X-Forwarded support] page
+* New xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc#running-behind-a-reverse-proxy[X-Forwarded support] page
 
 
 == Full changelog

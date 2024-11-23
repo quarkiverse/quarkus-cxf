@@ -2,7 +2,7 @@
 = Configuration
 
 {quarkus-cxf-project-name} exposes a large number of configuration options.
-Each extension documents its options at the bottom of its xref:reference/index.adoc[reference page].
+Each extension documents its options at the bottom of its xref:reference/index.adoc#reference-index[reference page].
 
 The configuration options can be set in `application.properties` file or via environment variables - see
 {link-quarkus-docs-base}/config-reference[Quarkus configuration reference] for details.
@@ -11,7 +11,7 @@ The configuration options can be set in `application.properties` file or via env
 == Bean references
 
 Several configuration options of {quarkus-cxf-project-name} allow referring to beans present in Quarkus CDI container.
-xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[Features and interceptors] are typical examples of those.
+xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc#cxf-interceptors-and-features[Features and interceptors] are typical examples of those.
 
 There are two ways how to set a bean reference in the configuration: by type or by bean name.
 

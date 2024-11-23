@@ -6,7 +6,7 @@ Let's explain how a service endpoint can be exposed under a certain URL path.
 [[application-properties]]
 == Set the endpoint path via `application.properties`
 
-In the xref:user-guide/first-soap-web-service.adoc[First SOAP Web service] chapter, we explained how to expose a service using `application.properties`:
+In the xref:user-guide/first-soap-web-service.adoc#first-soap-web-service[First SOAP Web service] chapter, we explained how to expose a service using `application.properties`:
 
 .application.properties
 [source,properties]

@@ -9,15 +9,15 @@ While http://cxf.apache.org/[Apache CXF] implements wide range of standards and 
 {quarkus-cxf-project-name} is currently focusing *only* on supporting the ones related to
 *Simple Object Access Protocol* (https://en.wikipedia.org/wiki/SOAP[SOAP])
 and *Java API for XML Web Services* (https://en.wikipedia.org/wiki/JAX-WS[JAX-WS]).
-Refer to xref:reference/index.adoc[Reference] to learn which parts of CXF are supported.
+Refer to xref:reference/index.adoc#reference-index[Reference] to learn which parts of CXF are supported.
 
 The documentation is divided into the following main parts:
 
-* xref:user-guide/index.adoc[User guide] - explains the typical usage of {quarkus-cxf-project-name}
-* xref:security-guide/index.adoc[Security guide] - documents various security related aspects of {quarkus-cxf-project-name}, such as SSL/TLS, Authentication and Authorization
-* xref:release-notes/index.adoc[Release notes] - Release notes documents for the past releases
-* xref:release-planning.adoc[Release planning] - when new releases of {quarkus-cxf-project-name} are to be expected
-* xref:reference/index.adoc[Reference] - the full list of supported specifications, use cases and configuration options
+* xref:user-guide/index.adoc#user-guide-index[User guide] - explains the typical usage of {quarkus-cxf-project-name}
+* xref:security-guide/index.adoc#security-guide-index[Security guide] - documents various security related aspects of {quarkus-cxf-project-name}, such as SSL/TLS, Authentication and Authorization
+* xref:release-notes/index.adoc#release-notes-index[Release notes] - Release notes documents for the past releases
+* xref:release-planning.adoc#release-planning[Release planning] - when new releases of {quarkus-cxf-project-name} are to be expected
+* xref:reference/index.adoc#reference-index[Reference] - the full list of supported specifications, use cases and configuration options
 
 [[issues-and-support]]
 == Issues and Support

@@ -12,7 +12,7 @@ in the source tree of {quarkus-cxf-project-name}. You may want to use it as a ru
 == Client HTTP basic authentication
 
 Use the following client configuration options provided by
-`xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]` extension
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf[quarkus-cxf]` extension
 to pass the username and password for HTTP basic authentication:
 
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]`

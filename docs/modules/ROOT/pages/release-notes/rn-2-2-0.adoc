@@ -10,11 +10,11 @@
 
 === XJC plugin options are now tested and documented
 
-See xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[XJC plugins] reference page.
+See xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc#quarkus-cxf-xjc-plugins[XJC plugins] reference page.
 
 === Metrics Feature tested and documented
 
-The xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Metrics Feature] extension has got
+The xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf-rt-features-metrics[Metrics Feature] extension has got
 a proper https://github.com/quarkiverse/quarkus-cxf/tree/2.7.0/integration-tests/metrics[test]
 and a basic xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf-rt-features-metrics-usage[Usage guide].
 

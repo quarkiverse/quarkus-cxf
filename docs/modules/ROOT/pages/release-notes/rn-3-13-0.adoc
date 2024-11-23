@@ -91,13 +91,13 @@ Quarkus Contexts and dependency injection guide for more details.
 
 * https://github.com/quarkiverse/quarkus-cxf/issues/1424[#1424] Replaced references to the non-existent `quarkus.cxf.logging.enabled` option for the correct `quarkus.cxf.logging.enabled-for` option.
 * User guide navigation was restructured: some chapters moved under new nodes
-** xref:user-guide/contract-first-code-first.adoc[Contract first and code first approaches]
-** xref:user-guide/interceptors-features-handlers.adoc[CXF Interceptors and Features, JAX-WS Handlers]
-** xref:user-guide/advanced-service-topics.adoc[Advanced service topics]
-** xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
+** xref:user-guide/contract-first-code-first.adoc#contract-first-code-first[Contract first and code first approaches]
+** xref:user-guide/interceptors-features-handlers.adoc#interceptors-features-handlers[CXF Interceptors and Features, JAX-WS Handlers]
+** xref:user-guide/advanced-service-topics.adoc#advanced-service-topics[Advanced service topics]
+** xref:user-guide/advanced-soap-client-topics.adoc#advanced-soap-client-topics[Advanced SOAP client topics]
 * New chapters:
-** xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc[CDI scope of clients injected via `@CXFClient`] - see also https://github.com/quarkiverse/quarkus-cxf/issues/1441[#1441]
-** xref:user-guide/advanced-client-topics/dynamic-client-configuration.adoc[Dynamic client configuration]
+** xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc#cdi-scope-of-cxfclient[CDI scope of clients injected via `@CXFClient`] - see also https://github.com/quarkiverse/quarkus-cxf/issues/1441[#1441]
+** xref:user-guide/advanced-client-topics/dynamic-client-configuration.adoc#dynamic-client-configuration[Dynamic client configuration]
 
 == Full changelog
 

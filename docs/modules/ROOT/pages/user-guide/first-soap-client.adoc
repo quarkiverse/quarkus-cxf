@@ -6,7 +6,7 @@ In this guide we explain how to create a simple Quarkus application acting as a 
 [NOTE]
 .Create project first
 ====
-Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
+Follow the xref:user-guide/create-project.adoc#create-project[Project creation] guide before proceeding here.
 ====
 
 == Remote Web service for testing
@@ -109,7 +109,7 @@ The last option tends to be the easiest and most flexible for client application
 
 [TIP]
 ====
-If you want to use this approach, first follow the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate Java from WSDL] section and then continue with the next steps.
+If you want to use this approach, first follow the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl[Generate Java from WSDL] section and then continue with the next steps.
 ====
 
 == Using SEI as a client
@@ -167,5 +167,5 @@ where `11` is the correct result of adding `5` and `6`.
 
 You may want to proceed with
 
-* xref:user-guide/package-for-jvm-and-native.adoc[Package for JVM and native].
-* xref:user-guide/advanced-soap-client-topics.adoc[Advanced client topics]
+* xref:user-guide/package-for-jvm-and-native.adoc#package-for-jvm-and-native[Package for JVM and native].
+* xref:user-guide/advanced-soap-client-topics.adoc#advanced-soap-client-topics[Advanced client topics]

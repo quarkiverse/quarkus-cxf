@@ -37,7 +37,7 @@ or add these coordinates to your existing project:
 ifeval::[{doc-show-user-guide-link} == true]
 [TIP]
 ====
-Check the xref:user-guide/index.adoc[User guide] and especially its
+Check the xref:user-guide/index.adoc#user-guide-index[User guide] and especially its
 xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
 for more information about writing applications with {quarkus-cxf-project-name}.
 ====
@@ -1292,7 +1292,7 @@ To work around the fact that `org.apache.cxf.ws.security.trust.STSClient` does n
 cannot thus be used as a CDI bean type, you can use the wrapper class
 `io.quarkiverse.cxf.ws.security.sts.client.STSClientBean` instead.
 
-Tip: Check the xref:reference/extensions/quarkus-cxf-services-sts.adoc[Security Token Service (STS)] extension page
+Tip: Check the xref:reference/extensions/quarkus-cxf-services-sts.adoc#quarkus-cxf-services-sts[Security Token Service (STS)] extension page
 for more information about WS-Trust.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT+++` +

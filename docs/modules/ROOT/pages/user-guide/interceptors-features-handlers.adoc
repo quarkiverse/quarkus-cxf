@@ -3,5 +3,5 @@
 
 Check the following chapters to learn a bout various ways to customize the processing of SOAP requests and responses:
 
-* xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[CXF Interceptors and Features]
-* xref:user-guide/interceptors-features-handlers/jax-ws-handlers.adoc[JAX-WS Handlers]
+* xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc#cxf-interceptors-and-features[CXF Interceptors and Features]
+* xref:user-guide/interceptors-features-handlers/jax-ws-handlers.adoc#jax-ws-handlers[JAX-WS Handlers]

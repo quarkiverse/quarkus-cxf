@@ -35,7 +35,7 @@ or add these coordinates to your existing project:
 ifeval::[{doc-show-user-guide-link} == true]
 [TIP]
 ====
-Check the xref:user-guide/index.adoc[User guide] and especially its
+Check the xref:user-guide/index.adoc#user-guide-index[User guide] and especially its
 xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
 for more information about writing applications with {quarkus-cxf-project-name}.
 ====
