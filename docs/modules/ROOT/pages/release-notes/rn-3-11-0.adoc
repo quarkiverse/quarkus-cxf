@@ -1,0 +1,54 @@
+[[rn-3-11-0]]
+= {quarkus-cxf-project-name} 3.11.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.10.x -> 3.11.0 - https://quarkus.io/blog/quarkus-3-11-0-released/[release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== `@CXFEndpoint("/my-service")` - a new annotation for specifying the service endpoint path
+
+Since this {quarkus-cxf-project-name} 3.11.0, there is a new way to expose an endpoint under a specific path:
+the `@io.quarkiverse.cxf.annotation.CXFEndpoint` annotation.
+The path is set through its non-optional attribute `value` and it is relative to `quarkus.cxf.path` much like when this is done via `application.properties`.
+
+Here is basic example:
+
+[source,java]
+----
+@CXFEndpoint("/path-annotation")
+@WebService(serviceName = "HelloService", targetNamespace = "https://acme.org/my-service")
+public class HelloServiceImpl implements HelloService {
+    @Override
+    public String hello(String person) {
+        ...
+    }
+}
+----
+
+You can read more about `@CXFEndpoint` in the new chapter of {quarkus-cxf-project-name} called xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc[Service endpoints and paths].
+
+=== Interceptors set through `@InInterceptors` and similar annotations are now looked up in the CDI container
+
+Before {quarkus-cxf-project-name} 3.11.0 and 3.8.4, xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[interceptors] specified through `@InInterceptors`, `@InFaultInterceptors`, `@OutInterceptors` and `@OutFaultInterceptors` annotations from `org.apache.cxf.interceptor` package
+were only instantiated using reflection.
+Due to this, injecting beans and configuration values into them did not work.
+
+Since {quarkus-cxf-project-name} 3.11.0 and 3.8.4, those interceptors are looked up in the CDI container first
+and reflexive instantiation is used only as a fallback.
+Injecting other beans and configuration values into interceptor beans created by the CDI container will work flawlessly.
+
+=== `@WebService(wsdlLocation="my-service.wsdl")` now honored
+
+Before {quarkus-cxf-project-name} 3.11.0 and 3.8.4, when a web service implementation had an annotation like `@WebService(wsdlLocation="my-service.wsdl")`,
+then only an auto-generated WSDL without policies and other important parts was served on `http://localhost:8080/services/foo?wsdl`
+instead the local WSDL file.
+
+Since {quarkus-cxf-project-name} 3.11.0 and 3.8.4, the `wsdlLocation` attribute of the `@WebService` annotation is honored properly.
+
+This was originally reported as issue https://github.com/quarkiverse/quarkus-cxf/issues/557[#557].
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.10.0+++...+++3.11.0

@@ -1,0 +1,72 @@
+[[rn-2-7-0]]
+= {quarkus-cxf-project-name} 2.7.0 release notes
+
+== Important dependency upgrades:
+
+* Quarkus 3.6.0 -> 3.7.0 - https://quarkus.io/blog/quarkus-3-7-released/[Quarkus 3.7 release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Java 17 required
+
+Following the Java baseline https://github.com/quarkusio/quarkus/pull/37335[upgrade in Quarkus], {quarkus-cxf-project-name} now also requires Java 17 or newer to build
+and run your applications.
+
+=== WS-ReliableMessaging (WS-RM) supported
+
+The `xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc[quarkus-cxf-rt-ws-rm]` extension is rather old, but was missing a proper test and documentation.
+Both was added in this release and thus the extension status could be promoted from `experimental` to `stable`.
+
+Check the following resources:
+
+* New xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc#quarkus-cxf-rt-ws-rm-usage[Usage] section of the reference page
+* New xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc#quarkus-cxf-rt-ws-rm-configuration[Configuration options].
+
+=== Metrics Feature supported
+
+Similarly, the xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Metrics Feature]'s support status is now `stable`,
+after we have improved
+the xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf-rt-features-metrics-usage[Usage guide]
+and added some xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf-rt-features-metrics-configuration[Configuration options].
+
+=== New OpenTelemetry tracing extension
+
+There is a new xref:reference/extensions/quarkus-cxf-integration-tracing-opentelemetry.adoc[OpenTelemetry] extension.
+It currently supports only tracing.
+OpenTelemetry Metrics and Logging and not implemented yet.
+
+=== DevUI
+
+When you start Quarkus in dev mode using `mvn quarkus:dev` then you can find the DevUI at http://localhost:8080/q/dev-ui[http://localhost:8080/q/dev-ui].
+There are now separate cards listing CXF http://localhost:8080/q/dev-ui/io.quarkiverse.cxf.quarkus-cxf/clients[clients] and http://localhost:8080/q/dev-ui/io.quarkiverse.cxf.quarkus-cxf/service-endpoints[services].
+
+Here is a screenshot of the http://localhost:8080/q/dev-ui/io.quarkiverse.cxf.quarkus-cxf/service-endpoints[Service endpoints] card:
+
+image::release-notes-2.7.0-devui-services.png[DevUI]
+
+
+=== Schema validation configurable via `application.properties`
+
+See `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-schema-validation-enabled-for[quarkus.cxf.client."client-name".schema-validation.enabled-for]`
+
+=== Basic authentication for the WSDL
+
+{quarkus-cxf-project-name} now sends the
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-username[username]
+and xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-password[password]
+when getting the WSDL document,
+as long as `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-secure-wsdl-access[quarkus.cxf.client."client-name".secure-wsdl-access]` is `true`.
+
+
+
+=== Documentation improvements
+
+* New `xref:user-guide/ssl-tls-https.adoc[SSL guide]`
+* New `xref:user-guide/authentication-authorization.adoc[Authentication and authorization guide]`
+* Improved the xref:user-guide/payload-logging.adoc[Logging guide]
+* Improved the documentation of `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
+  and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-browser-type[quarkus.cxf.client."client-name".browser-type]`
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/2.6.1+++...+++2.7.0

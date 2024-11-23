@@ -1,0 +1,93 @@
+[[rn-3-8-1]]
+= {quarkus-cxf-project-name} 3.8.1 (LTS) release notes
+
+== Important dependency upgrades:
+
+* Quarkus 3.8.0 -> 3.8.2 - https://quarkus.io/blog/quarkus-3-8-released/[3.8.1 release notes], https://quarkus.io/blog/quarkus-3-8-2-released/[3.8.2 release notes]
+* CXF 4.0.3 -> 4.0.4 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.0.3+++...+++cxf-4.0.4[changelog]
+* WSS4J 3.0.2 -> 3.0.3 - link:https://github.com/apache/ws-wss4j/compare/wss4j-3.0.2+++...+++wss4j-3.0.3[changelog]
+* Santuario XMLSec 3.0.3 -> 3.0.4 link:https://github.com/apache/santuario-xml-security-java/compare/xmlsec-3.0.3+++...+++xmlsec-3.0.4[changelog]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Mutual TLS (mTLS)
+
+Mutual TLS (mTLS) is now xref:user-guide/ssl-tls-https.adoc#mtls[documented],
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/mtls[tested]
+and and can be configured for clients via `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key*]` family of options.
+
+=== Keystores and truststores now looked up in the file system
+
+The keystores and truststores are now https://github.com/quarkiverse/quarkus-cxf/issues/1280[really looked up in the file system]
+unless they are available in the classpath as documented in
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]`
+and
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store]`.
+
+=== Running on systems with FIPS assertions enabled
+
+Changes in CXF 4.0.4 and {quarkus-cxf-project-name} 3.8.1 make it possible to run applications using WS-Security on systems with https://en.wikipedia.org/wiki/FIPS_140[FIPS] assertions enabled.
+
+Those changes are twofold:
+
+1. Bouncy Castle security provider is not present in the class path anymore.
++
+If your project depends directly or transitively on `org.bouncycastle:bcprov-jdk18on` and you want to keep using it,
+then {quarkus-cxf-project-name} will suggest you at build time to exclude `io.quarkiverse.cxf:quarkus-cxf-bc-stub` from `io.quarkiverse.cxf:quarkus-cxf-rt-ws-security`.
+`io.quarkiverse.cxf:quarkus-cxf-bc-stub` contains some empty methods to allow native compilation with GraalVM
+when Bouncy Castle is not present in class path.
+
+2. Before CXF 4.0.4 and {quarkus-cxf-project-name} 3.8.1 there was no way to select encryption algorithms compatible with FIPS.
+Now there is a way to do so via security policy and Quarkus configuration.
++
+In the policy file, the `AlgorithmSuite` has to be set to `CustomAlgorithmSuite`:
++
+[[custom-algorithm-suite-example]]
+[source,xml]
+----
+<wsp:Policy wsu:Id="SecurityServiceEncryptThenSignPolicy"
+  xmlns:wsp="http://www.w3.org/ns/ws-policy"
+  xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+  xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+  <wsp:ExactlyOne>
+    <wsp:All>
+      <sp:AsymmetricBinding xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+        <wsp:Policy>
+          ...
+          <sp:AlgorithmSuite>
+            <wsp:Policy>
+              <sp:CustomAlgorithmSuite/>
+            </wsp:Policy>
+          </sp:AlgorithmSuite>
+          ...
+        </wsp:Policy>
+      </sp:AsymmetricBinding>
+      ...
+    </wsp:All>
+  </wsp:ExactlyOne>
+</wsp:Policy>
+----
++
+FIPS complaint xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[algorithms] can then be set in `application.properties`.
+Here, we list the default values that are FIPS complaint already:
++
+[source,properties]
+----
+quarkus.cxf.client."client-name".security.custom.digest.algorithm = http://www.w3.org/2001/04/xmlenc#sha256
+quarkus.cxf.client."client-name".security.custom.encryption.algorithm = http://www.w3.org/2009/xmlenc11#aes256-gcm
+quarkus.cxf.client."client-name".security.custom.symmetric.key.encryption.algorithm = http://www.w3.org/2001/04/xmlenc#kw-aes256
+quarkus.cxf.client."client-name".security.custom.asymmetric.key.encryption.algorithm = http://www.w3.org/2001/04/xmlenc#rsa-1_5
+quarkus.cxf.client."client-name".security.custom.encryption.key.derivation = http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1
+quarkus.cxf.client."client-name".security.custom.signature.key.derivation = http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1
+quarkus.cxf.client."client-name".security.custom.encryption.derived.key.length = 256
+quarkus.cxf.client."client-name".security.custom.signature.derived.key.length = 192
+quarkus.cxf.client."client-name".security.custom.minimum.symmetric.key.length = 256
+quarkus.cxf.client."client-name".security.custom.maximum.symmetric.key.length = 256
+quarkus.cxf.client."client-name".security.custom.minimum.asymmetric.key.length = 1024
+quarkus.cxf.client."client-name".security.custom.maximum.asymmetric.key.length = 4096
+----
+
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.8.0+++...+++3.8.1

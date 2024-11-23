@@ -1,0 +1,26 @@
+[[rn-3-13-1]]
+= {quarkus-cxf-project-name} 3.13.1 release notes
+
+== Important dependency upgrades
+
+* CXF 4.0.4 -> 4.0.5 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.0.4+++...+++cxf-4.0.5[changelog]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1455[#1455] Vert.x HTTP client is incorrectly used as the default
+
+We introduced xref:release-notes/3.13.0.adoc#_vert_x_httpclient_based_http_conduit[Vert.x HttpClient based HTTP Conduit] in {quarkus-cxf-project-name} 3.13.0
+and it was not supposed to replace the original `HttpURLConnection` based default conduit.
+However, we screwed the default handling which resulted in using `VertxHttpClientHTTPConduit` as a default in some cases.
+This was fixed in {quarkus-cxf-project-name} 3.13.1.
+`HttpURLConnection` based conduit is now used as a default in all situations as it was the case before 3.13.0.
+We are sorry for the inconvenience.
+
+=== Documentation improvements
+
+* We added a paragraph explaining xref:user-guide/create-project.adoc#quarkus-platform[Quarkus Platform]
+* We added the xref:release-planning.adoc[Release planning] page explaining how and when we release {quarkus-cxf-project-name}
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.13.0+++...+++3.13.1

@@ -1,0 +1,10 @@
+[[rn-2-3-0]]
+= {quarkus-cxf-project-name} 2.3.0 release notes
+
+== Important dependency upgrades:
+
+* Quarkus 3.2.0 -> 3.3.0 - https://quarkus.io/blog/quarkus-3-3-0-released/[Quarkus 3.3.0 release notes]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/2.2.2+++...+++2.3.0

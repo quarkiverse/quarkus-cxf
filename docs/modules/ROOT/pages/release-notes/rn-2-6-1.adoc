@@ -1,0 +1,9 @@
+[[rn-2-6-1]]
+= {quarkus-cxf-project-name} 2.6.1 release notes
+
+This maintenance release brings no fixes visible in end user applications.
+It is rather fixing some project internal build and testing issues.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/2.6.0+++...+++2.6.1

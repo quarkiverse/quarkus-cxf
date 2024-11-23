@@ -1,0 +1,51 @@
+[[rn-3-8-4]]
+= {quarkus-cxf-project-name} 3.8.4 (LTS) release notes
+
+== Important dependency upgrades:
+
+* Quarkus 3.8.3 -> 3.8.4 - https://quarkus.io/blog/quarkus-3-8-4-released/[release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Sevice methods with the same name in the same Java package
+
+If there are two SEIs in one Java package, both having a `@WebMethod` with the same name but different signature,
+then the default name for the ASM-generated request, response and possibly other classes is the same for both methods of both classes.
+
+Before {quarkus-cxf-project-name} 3.10.0 and 3.8.4, no exception was thrown when this happened during the class generation.
+At runtime, only one set of those classes was present and calls to one of the clients failed inevitably.
+
+Since {quarkus-cxf-project-name} 3.10.0 and 3.8.4, the problem is detected at build time and the build fails.
+
+This was reported as issue https://github.com/quarkiverse/quarkus-cxf/issues/1326[#1326].
+We filed https://issues.apache.org/jira/browse/CXF-9003[CXF-9003] to see whether a proper solution is possible in CXF.
+
+=== Interceptors set through `@InInterceptors` and similar annotations are now looked up in the CDI container
+
+Before {quarkus-cxf-project-name} 3.11.0 and 3.8.4, xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[interceptors] specified through `@InInterceptors`, `@InFaultInterceptors`, `@OutInterceptors` and `@OutFaultInterceptors` annotations from `org.apache.cxf.interceptor` package
+were only instantiated using reflection.
+Due to this, injecting beans and configuration values into them did not work.
+
+Since {quarkus-cxf-project-name} 3.11.0 and 3.8.4, those interceptors are looked up in the CDI container first
+and reflexive instantiation is used only as a fallback.
+Injecting other beans and configuration values into interceptor beans created by the CDI container will work flawlessly.
+
+=== `@WebService(wsdlLocation="my-service.wsdl")` now honored
+
+Before {quarkus-cxf-project-name} 3.11.0 and 3.8.4, when a web service implementation had an annotation like `@WebService(wsdlLocation="my-service.wsdl")`,
+then only an auto-generated WSDL without policies and other important parts was served on `http://localhost:8080/services/foo?wsdl`
+instead the local WSDL file.
+
+Since {quarkus-cxf-project-name} 3.11.0 and 3.8.4, the `wsdlLocation` attribute of the `@WebService` annotation is honored properly.
+
+This was originally reported as issue https://github.com/quarkiverse/quarkus-cxf/issues/557[#557].
+
+=== Other minor changes
+
+* Improved FIPS and OpenTelemetry related test coverage
+* Typos and minor rewordings in the documentation
+* Dependency management improvements
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.8.3+++...+++3.8.4

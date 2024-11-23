@@ -1,0 +1,40 @@
+[[rn-2-5-0]]
+= {quarkus-cxf-project-name} 2.5.0 release notes
+
+== Important dependency upgrades:
+
+* CXF 4.0.2 -> 4.0.3 - https://cxf.apache.org/download.html[release notes], https://github.com/apache/cxf/compare/cxf-4.0.2+++...+++cxf-4.0.3[changelog]
+* Quarkus 3.4.0 -> 3.5.0 - https://quarkus.io/blog/quarkus-3-5-0-released/[Quarkus 3.5.0 release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== `TLSClientParameters` configurable through `application.properties`
+
+The trust store and host name verifier of a client are now configurable through some new configuration properties:
+
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password[quarkus.cxf.client."client-name".trust-store-password]
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-type[quarkus.cxf.client."client-name".trust-store-type]
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-hostname-verifier[quarkus.cxf.client."client-name".hostname-verifier]
+
+=== `LoggingFeature` configurable through `application.properties`
+
+See the xref:user-guide/payload-logging.adoc[Logging] page.
+
+=== WS-Security configurable through `application.properties`
+
+See the xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security-configuration[Configuration] section of the WS-Security reference page.
+
+[NOTE]
+====
+Many of the new options are exprimental because they are https://github.com/quarkiverse/quarkus-cxf/issues/1052[not yet covered by tests].
+====
+
+== Fixed bugs
+
+* https://github.com/quarkiverse/quarkus-cxf/issues/1031[soap-binding property ignored in version 2.4.0]
+* https://github.com/quarkiverse/quarkus-cxf/issues/628[HTTPS enforced via HttpsToken WS-SecurityPolicy does not work]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/2.4.0+++...+++2.5.0

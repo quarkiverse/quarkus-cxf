@@ -1,0 +1,30 @@
+[[rn-3-8-2]]
+= {quarkus-cxf-project-name} 3.8.2 (LTS) release notes
+
+== Important dependency upgrades:
+
+* Quarkus 3.8.2 -> 3.8.3 - https://quarkus.io/blog/quarkus-3-8-released/[release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Change in `org.graalvm.sdk:*` dependencies
+
+{quarkus-cxf-project-name} extensions now depend on `org.graalvm.sdk:nativeimage` instead of `org.graalvm.sdk:graal-sdk`.
+Using `org.graalvm.sdk:graal-sdk` was an oversight on our side.
+`org.graalvm.sdk:nativeimage` is just enough for implementing the GraalVM substitutions we need.
+If you rely on other transitive dependencies of `org.graalvm.sdk:graal-sdk`, such as `org.graalvm.sdk:polyglot` or `org.graalvm.sdk:collections`,
+you will have to add them yourself.
+
+=== `cxf-rt-databinding-aegis` and `cxf-rt-javascript` not required by `quarkus-cxf-deployment` anymore.
+
+`io.quarkiverse.cxf:quarkus-cxf-deployment` takes care for build time tasks related to `io.quarkiverse.cxf:quarkus-cxf`.
+Before this release, it depended transitively on `org.apache.cxf:cxf-rt-databinding-aegis` and `org.apache.cxf:cxf-rt-javascript` via `org.apache.cxf:cxf-tools-java2ws`.
+It was an oversight on our side.
+We never intended to support using Aegis or Javascript at runtime or build time.
+We have made that by listing them under xref:reference/index.adoc#unsupported[Unsupported CXF modules].
+The current change makes it impossible to generate WSDL from Aegis model classes at build time.
+The `java2js` functionality was never accessible via `io.quarkiverse.cxf:quarkus-cxf-deployment`.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.8.1+++...+++3.8.2

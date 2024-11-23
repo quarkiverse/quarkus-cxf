@@ -1,0 +1,10 @@
+[[rn-2-2-2]]
+= {quarkus-cxf-project-name} 2.2.2 LTS release notes
+
+== Fixed bugs
+
+* https://github.com/quarkiverse/quarkus-cxf/issues/860[io.quarkus.builder.ChainBuildException: Cycle detected]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/2.2.1+++...+++2.2.2

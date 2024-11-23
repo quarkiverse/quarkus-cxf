@@ -1,0 +1,69 @@
+[[rn-2-6-0]]
+= {quarkus-cxf-project-name} 2.6.0 release notes
+
+== Important dependency upgrades:
+
+* Santuario XML Security 3.0.2 -> 3.0.3 - https://github.com/apache/santuario-xml-security-java/compare/xmlsec-3.0.2+++...+++xmlsec-3.0.3[changelog]
+* WSS4J 3.0.1 -> 3.0.2 - link:https://github.com/apache/ws-wss4j/compare/wss4j-3.0.1+++...+++wss4j-3.0.2[changelog]
+* Quarkus 3.5.0 -> 3.6.0 - https://quarkus.io/blog/quarkus-3-6-0-released/[Quarkus 3.6.0 release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Logging extension is deprecated
+
+The Logging functionality and all associated
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-enabled-for[configuration options] were moved to `io.quarkiverse.cxf:quarkus-cxf` extension.
+The `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` extension is now deprecated and you can remove it from your projects.
+It will be removed altogether in the future.
+
+=== `quarkus.cxf.http-conduit-factory` fixed
+
+See https://github.com/quarkiverse/quarkus-cxf/issues/1047[#1047]
+
+=== Configurable destination folder of `wsdl2java`
+
+The directory where the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[`wsdl2java` embedded in `quarkus-cxf`] extension produces the Java classes is now configurable
+via the `xref:reference/extensions/quarkus-cxf#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.output-directory[quarkus.cxf.codegen.wsdl2java.output-directory]` property.
+
+=== Possible thread leaks with CXF clients using `java.net.http.HttpClient`
+
+[NOTE]
+====
+This issue was originally reported as https://issues.apache.org/jira/browse/CXF-8885[CXF-8885].
+====
+
+CXF client proxies implement `java.io.Closeable`.
+Therefore, it is important to call `((Closeable) proxy).close()` once the client is not needed anymore
+to free all associated system resources, such as threads.
+
+{quarkus-cxf-project-name} now takes care for closing the clients injected via `@io.quarkiverse.cxf.annotation.CXFClient` automatically
+as soon as they are disposed by the CDI container.
+
+For client proxies created manually, it is up to you to call `((Closeable) proxy).close()`.
+
+For more information, see xref:user-guide/advanced-client-topics/prevent-resource-leaks.adoc[Prevent resource leaks] section of the user guide.
+
+=== Large responses not written slowly anymore
+
+Before {quarkus-cxf-project-name} 2.6.0, large responses were written slowly due to allocating too small buffers.
+This https://github.com/quarkiverse/quarkus-cxf/issues/1066[issue] is now fixed.
+
+
+=== More WS-Security configuration options covered by tests
+
+We are continually improving the test coverage of the xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security-configuration[WS-Security configuration options].
+There is now less options marked with the warning
+
+[quote]
+____
+This option is experimental, because it is not covered by tests yet.
+____
+
+=== Documentation improvements
+
+* New xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc[X-Forwarded support] page
+
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/2.5.0+++...+++2.6.0

@@ -1,0 +1,20 @@
+[[rn-2-4-0]]
+= {quarkus-cxf-project-name} 2.4.0 release notes
+
+== Important dependency upgrades:
+
+* Quarkus 3.3.0 -> 3.4.1 - https://quarkus.io/blog/quarkus-3-4-1-released/[Quarkus 3.4.1 release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== More `wsdl2java` options configurable through `application.properties`
+
+See the updated xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate Java from WSDL] page.
+
+== Fixed bugs
+
+* https://github.com/quarkiverse/quarkus-cxf/issues/491[Injected CXFClientInfo does not reflect the wsdl and client-endpoint-url set in application.properties]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/2.3.1+++...+++2.4.0

@@ -1,0 +1,32 @@
+[[rn-2-2-0]]
+= {quarkus-cxf-project-name} 2.2.0 LTS release notes
+
+== Important dependency upgrades:
+
+* Quarkus 3.1.0.Final -> 3.2.0.Final - https://quarkus.io/blog/quarkus-3-2-0-final-released/[Quarkus 3.2.0.Final release notes]
+* CXF 4.0.1 -> 4.0.2 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.0.1+++...+++cxf-4.0.2[changelog]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== XJC plugin options are now tested and documented
+
+See xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[XJC plugins] reference page.
+
+=== Metrics Feature tested and documented
+
+The xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Metrics Feature] extension has got
+a proper https://github.com/quarkiverse/quarkus-cxf/tree/2.7.0/integration-tests/metrics[test]
+and a basic xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf-rt-features-metrics-usage[Usage guide].
+
+[NOTE]
+====
+This extension is still considered experimental.
+====
+
+== Fixed bugs
+
+* https://github.com/quarkiverse/quarkus-cxf/issues/907[`wsdl2java` does not work when the module is built from another directory using `mvn -f "module/pom.xml"`]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/2.1.0+++...+++2.2.0

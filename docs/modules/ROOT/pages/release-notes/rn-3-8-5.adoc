@@ -1,0 +1,17 @@
+[[rn-3-8-5]]
+= {quarkus-cxf-project-name} 3.8.5 (LTS) release notes
+
+== Important dependency upgrades:
+
+* Quarkus 3.8.4 -> 3.8.5 - https://quarkus.io/blog/quarkus-3-8-5-released/[release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Support for `@CXFEndpoint("/myPath")` reverted
+
+In {quarkus-cxf-project-name} 3.8.4 we mistakenly backported a new feature to the 3.8 maintenance branch.
+This change was reverted in 3.8.5.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.8.4+++...+++3.8.5

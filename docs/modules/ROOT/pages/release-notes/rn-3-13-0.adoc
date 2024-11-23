@@ -1,0 +1,103 @@
+[[rn-3-13-0]]
+= {quarkus-cxf-project-name} 3.13.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.12.x -> 3.13.0 - https://quarkus.io/blog/quarkus-3-13-0-released/[release notes]
+* Woodstox 6.6.2 -> 7.0.0 - link:https://github.com/FasterXML/woodstox/blob/master/release-notes/VERSION[release notes], link:https://github.com/FasterXML/woodstox/compare/woodstox-core-6.6.2+++...+++woodstox-core-7.0.0[changelog]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== Vert.x HttpClient based HTTP Conduit
+
+As Vert.x is the preferred HTTP stack on Quarkus, we decided to implement a new HTTP Conduit based on Vert.x
+https://vertx.io/docs/apidocs/io/vertx/core/http/HttpClient.html[HttpClient].
+Although the client per se is non-blocking and asynchronous, our new `VertxHttpClientHTTPConduit`
+currently supports only the synchronous usage.
+We plan to add the https://github.com/quarkiverse/quarkus-cxf/issues/1447[support for asynchronous mode] in near future.
+
+To give it a try, set the `http-conduit-factory` configuration option
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[globally]
+or
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[per client]:
+
+.application.properties
+[source,properties]
+----
+# Set the conduit factory for all clients
+quarkus.cxf.http-conduit-factory = VertxHttpClientHTTPConduitFactory
+
+# Set the conduit factory only for the hello client
+quarkus.cxf.client.hello.http-conduit-factory = VertxHttpClientHTTPConduitFactory
+----
+
+You are welcome to try it and give feedback either on https://github.com/quarkiverse/quarkus-cxf/issues[GitHub Issues]
+or https://github.com/quarkiverse/quarkus-cxf/discussions[Discussions].
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1425[#1425] Injection of `WebServiceContext` into service implementations with `@CXFEndpoint("/my-path")`
+
+The issue https://github.com/quarkiverse/quarkus-cxf/issues/1425[#1425] made us figure out
+that we had no tests at all for injecting `jakarta.xml.ws.WebServiceContext` using the `@jakarta.annotation.Resource` and `@jakarta.annotation.Resources` annotations.
+We not only added the the tests and fixed the malfunctioning case with `@CXFEndpoint("/my-path")`,
+but we also changed how injecting `@Resource WebServiceContext` was implemented.
+Instead of relying on the reflective CXF code that was run at application start,
+the scanning is now done at build time by Arc, the CDI container of Quarkus.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1416[#1416] passing multiple namespace mappings via `quarkus.cxf.codegen.wsdl2java.package-names`
+
+Before {quarkus-cxf-project-name} 3.13.0, the values specified in
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-package-names[quarkus.cxf.codegen.wsdl2java.package-names]`
+were wrongly passed as a single comma-separated value of the `-p` option,
+leading to `BadUsageException: -p has invalid character!`.
+
+Since {quarkus-cxf-project-name} 3.13.0, if `quarkus.cxf.codegen.wsdl2java.package-names` specifies multiple mappings, such as
+
+.application.properties
+[source,properties]
+----
+quarkus.cxf.codegen.wsdl2java.package-names =
+  http://www.example.org/add=io.quarkiverse.cxf.wsdl2java.it.add,
+  http://www.example.org/multiply=io.quarkiverse.cxf.wsdl2java.it.multiply
+----
+
+then they are properly passed to `wsdl2java` as multiple `-p` options:
+
+.application.properties
+[source,console]
+----
+wsdl2java \
+  -p http://www.example.org/add=io.quarkiverse.cxf.wsdl2java.it.add \
+  -p http://www.example.org/multiply=io.quarkiverse.cxf.wsdl2java.it.multiply \
+  ...
+----
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1427[#1427] Better exception message when a service interface is not available in Jandex
+
+{quarkus-cxf-project-name} relies heavily on Quarkus class index, a.k.a. https://smallrye.io/blog/jandex-3-0-0/[Jandex],
+when inspecting various aspects of the application at build time.
+
+Before {quarkus-cxf-project-name} 3.13.0, if some important dependency of the application,
+for example the one containing the service interfaces, was not indexed,
+a `NullPointerException` without any meaningful message was thrown upon looking up a class from that dependency in the index.
+
+Since {quarkus-cxf-project-name} 3.13.0, the exception became informative, suggesting the user
+to add index to the dependency using either `quarkus.index-dependency.*` family of options
+or by adding `io.smallrye:jandex-maven-plugin` to the module containing sources of the missing class.
+Check {link-quarkus-docs-base}/cdi-reference#how-to-generate-a-jandex-index[How to Generate a Jandex Index] section of
+Quarkus Contexts and dependency injection guide for more details.
+
+=== Documentation improvements
+
+* https://github.com/quarkiverse/quarkus-cxf/issues/1424[#1424] Replaced references to the non-existent `quarkus.cxf.logging.enabled` option for the correct `quarkus.cxf.logging.enabled-for` option.
+* User guide navigation was restructured: some chapters moved under new nodes
+** xref:user-guide/contract-first-code-first.adoc[Contract first and code first approaches]
+** xref:user-guide/interceptors-features-handlers.adoc[CXF Interceptors and Features, JAX-WS Handlers]
+** xref:user-guide/advanced-service-topics.adoc[Advanced service topics]
+** xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
+* New chapters:
+** xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc[CDI scope of clients injected via `@CXFClient`] - see also https://github.com/quarkiverse/quarkus-cxf/issues/1441[#1441]
+** xref:user-guide/advanced-client-topics/dynamic-client-configuration.adoc[Dynamic client configuration]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.12.0+++...+++3.13.0

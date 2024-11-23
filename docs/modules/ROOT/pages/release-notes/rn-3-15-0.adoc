@@ -1,0 +1,63 @@
+[[rn-3-15-0]]
+= {quarkus-cxf-project-name} 3.15.0 LTS release notes
+
+This is the first release in the new 3.15 https://quarkus.io/blog/lts-releases/[LTS stream].
+As usual, where we plan to produce patch releases with bug and security fixes for 12 months.
+
+== Important dependency upgrades
+
+* Quarkus 3.14.x -> 3.15.0 - https://quarkus.io/blog/quarkus-3-15-1-released/[release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1492[#1492] Support using CXF ``TagsCustomizer``s and deprecate dynamic usage of ``MeterFilter``s
+
+Before {quarkus-cxf-project-name} 3.15.0, it was possible to have a `MeterFilter` adding a `Tag` to a meter
+relying on a value retrieved from a `@RequestScoped` bean in the following way:
+
+[source,java]
+----
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.config.MeterFilter;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+
+@Singleton
+public class DynamicMeterFilter implements MeterFilter {
+
+    /** A @RequestScoped bean holding a value of an HTTP header */
+    @Inject
+    RequestScopedHeader requestScopedHeader;
+
+    @Override
+    public Meter.Id map(Meter.Id id) {
+        if (id.getName().startsWith("http.client") || id.getName().startsWith("cxf.client")) {
+            return id.withTag(Tag.of("my-header", requestScopedHeader.getHeaderValue()));
+        } else {
+            return id;
+        }
+    }
+}
+----
+
+The `map()` method would be called on every request and thus the set of tags could be different for every service invocation.
+
+Since {quarkus-cxf-project-name} 3.15.0, this kind of dynamic `MeterFilter` usage is not possible anymore.
+It is due to the upgrade to Micrometer 1.13 brought by Quarkus 3.15.0 that caches return values of `MeterFilter`
+methods. Those are therefore called only once.
+
+==== How to add Tags to Meters with {quarkus-cxf-project-name} 3.15.0+
+
+If the old way does not work anymore, how can you do the same with {quarkus-cxf-project-name} 3.15.0 or newer?
+
+The answer consists in providing a bean implementing `org.apache.cxf.metrics.micrometer.provider.TagsCustomizer`
+and making CXF aware of it via the new `xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf_quarkus-cxf-metrics-tags-customizers[quarkus.cxf.metrics.tags-customizers]` configuration property.
+
+There is an example in our https://github.com/quarkiverse/quarkus-cxf/tree/eb553e2a3658581baeeef5836f64bdd9775c0efc/integration-tests/hc5[Apache HTTP Client v5 integration test].
+The crucial parts are the https://github.com/quarkiverse/quarkus-cxf/blob/eb553e2a3658581baeeef5836f64bdd9775c0efc/integration-tests/hc5/src/main/java/io/quarkiverse/cxf/hc5/it/HeaderToMetricsTagsCustomizer.java[`TagsCustomizer` implementation]
+and the `quarkus.cxf.metrics.tags-customizers = #headerToMetricsTagsCustomizer` line in `https://github.com/quarkiverse/quarkus-cxf/blob/eb553e2a3658581baeeef5836f64bdd9775c0efc/integration-tests/hc5/src/main/resources/application.properties#L10[application.properties]`.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.14.0+++...+++3.15.0

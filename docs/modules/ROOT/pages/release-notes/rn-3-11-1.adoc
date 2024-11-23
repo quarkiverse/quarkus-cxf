@@ -1,0 +1,15 @@
+[[rn-3-11-1]]
+= {quarkus-cxf-project-name} 3.11.1 release notes
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1399[#1399] Beans not injected into a service impl with `@CXFEndpoint("/my-path")`
+
+In {quarkus-cxf-project-name} 3.11.0, we added a new feature allowing to specify service endpoint paths through a new annotation `@CXFEndpoint("/myPath")`.
+The new code did not work well for service implementation classes having both `@WebService` and `@CXFEndpoint` annotations.
+In those cases, if the service had some `@Inject` fields, those fields were left blank and the service call has thrown a `NullPointerException`.
+This issue was fixed in In {quarkus-cxf-project-name} 3.11.1.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.11.0+++...+++3.11.1

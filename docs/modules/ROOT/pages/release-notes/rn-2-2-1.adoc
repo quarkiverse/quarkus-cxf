@@ -1,0 +1,16 @@
+[[rn-2-2-1]]
+= {quarkus-cxf-project-name} 2.2.1 LTS release notes
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== HTTP Async Transport extension stable
+
+The `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]` has got a proper test and its support status was upgraded to `stable`.
+
+== Fixed bugs
+
+* https://github.com/quarkiverse/quarkus-cxf/issues/939[`org.apache.wss4j.dom.transform.STRTransform` broken in WSS4j 3.0.0]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/2.2.0+++...+++2.2.1
