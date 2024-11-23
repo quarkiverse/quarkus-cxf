@@ -4,8 +4,8 @@
 {quarkus-cxf-project-name} produces all clients injected via `@io.quarkiverse.cxf.annotation.CXFClient` in the default `@Dependent` scope.
 Due to that, the real scope of the injected instance depends on the CDI scope of the bean into which the client is injected.
 
-Therefore, if the client is injected into an `@ApplicationScoped` bean, then the the client instance also becomes `@ApplicationScoped`.
-If the client is injected into an `@RequestScoped` bean, then the the client instance also becomes `@RequestScoped`.
+Therefore, if the client is injected into an `@ApplicationScoped` bean, then the client instance also becomes `@ApplicationScoped`.
+If the client is injected into an `@RequestScoped` bean, then the client instance also becomes `@RequestScoped`.
 
 This behavior comes in handy if you need to
 xref:user-guide/advanced-client-topics/dynamic-client-configuration.adoc#dynamic-client-configuration[configure clients dynamically]

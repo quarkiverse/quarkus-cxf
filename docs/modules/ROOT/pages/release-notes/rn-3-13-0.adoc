@@ -39,7 +39,7 @@ or https://github.com/quarkiverse/quarkus-cxf/discussions[Discussions].
 
 The issue https://github.com/quarkiverse/quarkus-cxf/issues/1425[#1425] made us figure out
 that we had no tests at all for injecting `jakarta.xml.ws.WebServiceContext` using the `@jakarta.annotation.Resource` and `@jakarta.annotation.Resources` annotations.
-We not only added the the tests and fixed the malfunctioning case with `@CXFEndpoint("/my-path")`,
+We not only added the tests and fixed the malfunctioning case with `@CXFEndpoint("/my-path")`,
 but we also changed how injecting `@Resource WebServiceContext` was implemented.
 Instead of relying on the reflective CXF code that was run at application start,
 the scanning is now done at build time by Arc, the CDI container of Quarkus.
