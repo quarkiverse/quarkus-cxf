@@ -1,3 +1,4 @@
+[[rn-2-2-0]]
 = {quarkus-cxf-project-name} 2.2.0 LTS release notes
 
 == Important dependency upgrades:

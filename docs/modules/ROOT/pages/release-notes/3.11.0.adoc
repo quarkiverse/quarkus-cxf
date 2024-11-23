@@ -1,3 +1,4 @@
+[[rn-3-11-0]]
 = {quarkus-cxf-project-name} 3.11.0 release notes
 
 == Important dependency upgrades

@@ -1,4 +1,4 @@
-[[handlers]]
+[[jax-ws-handlers]]
 = JAX-WS Handlers
 
 As an alternative to the `@HandlerChain` annotation,

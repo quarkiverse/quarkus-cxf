@@ -1,3 +1,4 @@
+[[rn-3-10-0]]
 = {quarkus-cxf-project-name} 3.10.0 release notes
 
 == Important dependency upgrades
@@ -35,7 +36,7 @@ We filed https://issues.apache.org/jira/browse/CXF-9003[CXF-9003] to see whether
 
 * All configuration properties are now tagged with the version of {quarkus-cxf-project-name} since which they exist.
 +
-image::release-notes-2.10.0-since.png[The new since tag]
+image::release-notes-2-10-0-since.png[The new since tag]
 +
 * We added the xref:release-notes/index.adoc[Version table] to the Release notes page showing which version of
   {quarkus-cxf-project-name} uses which CXF version and which Quarkus Platform `<major>.<minor>` you should use

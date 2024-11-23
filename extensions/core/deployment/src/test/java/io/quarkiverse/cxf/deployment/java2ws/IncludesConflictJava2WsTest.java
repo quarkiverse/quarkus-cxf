@@ -37,7 +37,7 @@ public class IncludesConflictJava2WsTest {
             .overrideConfigKey("quarkus.cxf.java2ws.group_02.wsdl-name-template",
                     "%TARGET_DIR%/" + TEST_DIR + "/%SIMPLE_CLASS_NAME%.wsdl")
             .assertException(t -> Assertions.assertThat(t).isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining("Please make sure that the individual include/exclude sets are mutually exclusive"));
+                    .hasMessageContaining("Ensure that the individual include/exclude sets are mutually exclusive"));
 
     @Test
     public void generationTest() throws IOException {

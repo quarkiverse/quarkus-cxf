@@ -1,4 +1,4 @@
-[[user-guide]]
+[[user-guide-index]]
 = User guide
 
 This User guide explains typical use cases of {quarkus-cxf-project-name}.
