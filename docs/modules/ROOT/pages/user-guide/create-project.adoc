@@ -21,7 +21,7 @@ In addition to that, you may need
 
 New project skeletons can be generated using https://{link-quarkus-code-generator}/?e=io.quarkiverse.cxf%3Aquarkus-cxf&extension-search=origin:platform%20quarkus%20cxf[{link-quarkus-code-generator}].
 
-image::code.quarkus.io.png[https://code.quarkus.io]
+image::code-quarkus-io.png[https://code.quarkus.io]
 
 * Here you can select the extensions that you want to work with.
 * For a simple Hello world Web service or client the `quarkus-cxf` extension is enough.

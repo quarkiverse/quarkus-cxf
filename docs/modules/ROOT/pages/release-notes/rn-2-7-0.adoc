@@ -42,7 +42,7 @@ There are now separate cards listing CXF http://localhost:8080/q/dev-ui/io.quark
 
 Here is a screenshot of the http://localhost:8080/q/dev-ui/io.quarkiverse.cxf.quarkus-cxf/service-endpoints[Service endpoints] card:
 
-image::release-notes-2.7.0-devui-services.png[DevUI]
+image::release-notes-2-7-0-devui-services.png[DevUI]
 
 
 === Schema validation configurable via `application.properties`
