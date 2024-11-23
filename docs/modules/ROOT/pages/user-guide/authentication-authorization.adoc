@@ -8,6 +8,7 @@ https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client-se
 in the source tree of {quarkus-cxf-project-name}. You may want to use it as a runnable example.
 ====
 
+[[client-http-basic-authentication]]
 == Client HTTP basic authentication
 
 Use the following client configuration options provided by
@@ -40,6 +41,7 @@ include::example$client-server/application.properties[tag=client-basic-auth-wsdl
 
 See the xref:user-guide/ssl-tls-https.adoc#mtls[Mutual TLS (mTLS) authentication] section in SSL, TLS and HTTPS guide.
 
+[[securing-service-endpoints]]
 == Securing service endpoints
 
 The server-side authentication and authorization is driven by {link-quarkus-docs-base}/security-overview[Quarkus Security],

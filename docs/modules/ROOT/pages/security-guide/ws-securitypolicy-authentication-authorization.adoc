@@ -1,8 +1,8 @@
 [[ws-securitypolicy-authentication-authorization]]
 = Authentication enforced by WS-SecurityPolicy
 
-You can enforce authentication through WS-SecurityPolicy, instead of xref:user-guide/ssl-tls-https.adoc#mtls[Mutual TLS] and Basic HTTP authentication for xref:user-guide/authentication-authorization.adoc#_client_http_basic_authentication[clients]
-and xref:user-guide/authentication-authorization.adoc#_securing_service_endpoints[services].
+You can enforce authentication through WS-SecurityPolicy, instead of xref:user-guide/ssl-tls-https.adoc#mtls[Mutual TLS] and Basic HTTP authentication for xref:user-guide/authentication-authorization.adoc#client-http-basic-authentication[clients]
+and xref:user-guide/authentication-authorization.adoc#securing-service-endpoints[services].
 
 To enforce authentication through WS-SecurityPolicy, follow these steps:
 
