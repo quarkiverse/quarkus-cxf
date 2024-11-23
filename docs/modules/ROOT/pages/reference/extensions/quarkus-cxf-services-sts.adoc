@@ -139,7 +139,7 @@ include::example$ws-trust/application.properties[tag=ws-trust-usage.adoc-client-
 ====
 The properties for configuring the STS client are provided by the `io.quarkiverse.cxf:quarkus-cxf-rt-ws-security`
 extension and documented on its
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security_quarkus-cxf-client-clients-security-sts-client[reference page].
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security[reference page].
 ====
 
 Alternatively, the client can be set as a bean reference:
