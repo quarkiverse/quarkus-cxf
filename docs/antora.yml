@@ -21,11 +21,11 @@ asciidoc:
     quarkus-cxf-project-name: Quarkus CXF
 
     # External URLs
-    link-quarkus-cxf-source-tree-base: https://github.com/quarkiverse/quarkus-cxf/blob/{version}
+    link-quarkus-cxf-source-tree-base: https://github.com/quarkiverse/quarkus-cxf/blob/3.15
     link-quarkus-code-generator: code.quarkus.io
     link-camel-quarkus-docs-index: https://camel.apache.org/camel-quarkus/latest/index.html
     link-camel-quarkus-docs-cxf-soap: https://camel.apache.org/camel-quarkus/latest/reference/extensions/cxf-soap.html
-    link-quarkus-docs-base: https://quarkus.io/version/{version}/guides
+    link-quarkus-docs-base: https://quarkus.io/version/3.15/guides
 
     # Misc
     javaxOrJakartaPackagePrefix: jakarta # this can be switched to javax in older branches
