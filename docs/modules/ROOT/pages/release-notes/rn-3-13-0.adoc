@@ -8,6 +8,7 @@
 
 == New and noteworthy in {quarkus-cxf-project-name}
 
+[[vert-x-httpclient-based-http-conduit]]
 === Vert.x HttpClient based HTTP Conduit
 
 As Vert.x is the preferred HTTP stack on Quarkus, we decided to implement a new HTTP Conduit based on Vert.x

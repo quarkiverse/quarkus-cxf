@@ -141,7 +141,7 @@ include::example$calculator-client/application.properties[tag=first-soap-client.
 
 [TIP]
 ====
-All client configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#_configuration[Configuration properties] reference.
+All client configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf-configuration[Configuration properties] reference.
 ====
 
 With all the above files in place, we should be able to start the application in Quarkus {link-quarkus-docs-base}/maven-tooling#dev-mode[`dev` mode]

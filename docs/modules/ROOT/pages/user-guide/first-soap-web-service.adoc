@@ -6,7 +6,7 @@ In this guide we explain how to create a Quarkus application exposing a simple S
 [NOTE]
 .Create project first
 ====
-Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
+Follow the xref:user-guide/create-project.adoc#create-project[Project creation] guide before proceeding here.
 ====
 
 == Hello world! Web service
@@ -47,7 +47,7 @@ include::example$soap-service/application.properties[tag=first-web-service.adoc]
 
 [TIP]
 ====
-All configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#_configuration[Configuration properties] reference.
+All configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf-configuration[Configuration properties] reference.
 ====
 
 [TIP]

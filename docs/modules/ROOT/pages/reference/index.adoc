@@ -201,6 +201,7 @@ Karaf
 
 |===
 
+[[supported-cxf-annotations]]
 == Supported CXF annotations
 
 Here is the status of https://cxf.apache.org/docs/annotations.html[CXF annotations] on Quarkus.
