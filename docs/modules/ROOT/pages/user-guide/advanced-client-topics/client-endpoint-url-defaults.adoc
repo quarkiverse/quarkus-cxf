@@ -1,7 +1,8 @@
+[[client-endpoint-url-defaults]]
 = `client-endpoint-url` defaults
 
 If you omit the `client-endpoint-url` property in `application.properties`,
-the CXF Quarkus extension will assume that the service is published at `http://localhost:8080/\{service-path}`,
+the CXF Quarkus extension will assume that the service is published at `\http://localhost:8080/\{service-path}`,
 where `\{service-path}` is derived from
 
 * Configuration property `quarkus.cxf.path` (if specified); and the
