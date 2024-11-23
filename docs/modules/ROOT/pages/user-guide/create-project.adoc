@@ -16,8 +16,8 @@ In addition to that, you may need
 * If you are on Linux, a container runtime like `docker` is sufficient for the native mode too.
   Use `-Pnative -Dquarkus.native.container-build=true` instead of `-Pnative` if you choose this option.
 
-[[create-project]]
-== Create project
+[[create-a-project]]
+== Creating a project
 
 New project skeletons can be generated using https://{link-quarkus-code-generator}/?e=io.quarkiverse.cxf%3Aquarkus-cxf&extension-search=origin:platform%20quarkus%20cxf[{link-quarkus-code-generator}].
 

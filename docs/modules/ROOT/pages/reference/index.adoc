@@ -4,8 +4,8 @@
 [[extensions]]
 == {quarkus-cxf-project-name}
 
-Here is the list of extensions produced by this project.
-Please follow the links under the extension names to learn about how to use them, about their configuration and about any known limitations.
+The following table shows the {quarkus-cxf-project-name} extensions.
+Click the extension names to learn more about how to configure and use them, and about any known limitations.
 
 [cols="4,1,1,4"]
 |===
