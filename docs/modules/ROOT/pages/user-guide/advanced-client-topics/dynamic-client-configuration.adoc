@@ -1,3 +1,4 @@
+[[dynamic-client-configuration]]
 = Dynamic client configuration
 
 Sometimes you need to reconfigure the client after the application has

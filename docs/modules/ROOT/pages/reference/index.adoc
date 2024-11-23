@@ -1,11 +1,11 @@
-[[reference]]
+[[reference-index]]
 = Reference
 
 [[extensions]]
 == {quarkus-cxf-project-name}
 
-Here is the list of extensions produced by this project.
-Please follow the links under the extension names to learn about how to use them, about their configuration and about any known limitations.
+The following table shows the {quarkus-cxf-project-name} extensions.
+Click the extension names to learn more about how to configure and use them, and about any known limitations.
 
 [cols="4,1,1,4"]
 |===
@@ -95,7 +95,7 @@ Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the foll
 
 * `quarkus-cxf` implements its own custom transport based on Quarkus and Vert.x for serving SOAP endpoints
 * HTTP client via `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]`, including
-** xref:user-guide/auth.adoc#_client_http_basic_authentication[Basic Authentication]
+** xref:user-guide/authentication-authorization.adoc[Basic Authentication]
 * https://cxf.apache.org/docs/asynchronous-client-http-transport.html[Asynchronous Client HTTP Transport]
   via `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]`
 
@@ -201,6 +201,7 @@ Karaf
 
 |===
 
+[[supported-cxf-annotations]]
 == Supported CXF annotations
 
 Here is the status of https://cxf.apache.org/docs/annotations.html[CXF annotations] on Quarkus.
