@@ -1,3 +1,4 @@
+// user-guide
 * xref:user-guide/index.adoc[User guide]
 ** xref:user-guide/create-project.adoc[Create a new project]
 ** xref:user-guide/first-soap-web-service.adoc[Your first SOAP Web service]
@@ -28,10 +29,13 @@
 ** xref:user-guide/camel-integration.adoc[Camel Integration]
 ** xref:user-guide/examples.adoc[Examples]
 * xref:security-guide/index.adoc[Security guide]
-** xref:user-guide/ssl.adoc[SSL, TLS and HTTPS]
+** xref:user-guide/ssl-tls-https.adoc[SSL, TLS and HTTPS]
 ** xref:user-guide/auth.adoc[Authentication and authorization]
 ** xref:security-guide/ws-securitypolicy-auth.adoc[WS-SecurityPolicy Authentication]
+
+// release-notes
 * xref:release-notes/index.adoc[Release notes]
+
 ifeval::[{doc-is-main} == true]
 ** xref:release-notes/3.15.0.adoc[3.15.0 LTS]
 ** xref:release-notes/3.14.0.adoc[3.14.0]
@@ -61,10 +65,15 @@ ifeval::[{doc-is-main} == true]
 ** xref:release-notes/2.2.1.adoc[2.2.1 LTS]
 ** xref:release-notes/2.2.0.adoc[2.2.0 LTS]
 endif::[]
+
+// release-planning
 * xref:release-planning.adoc[Release planning]
 * xref:contributor-guide/index.adoc[Contributor guide]
 ** xref:contributor-guide/releasing.adoc[Releasing]
+
+// reference
 * xref:reference/index.adoc[Reference]
+
 // extensions: START
 ** xref:reference/extensions/quarkus-cxf.adoc[Quarkus CXF]
 ** xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[Metrics Feature]

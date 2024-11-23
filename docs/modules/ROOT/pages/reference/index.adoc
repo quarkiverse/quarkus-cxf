@@ -1,4 +1,4 @@
-[[reference]]
+[[reference-index]]
 = Reference
 
 [[extensions]]
@@ -95,7 +95,7 @@ Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the foll
 
 * `quarkus-cxf` implements its own custom transport based on Quarkus and Vert.x for serving SOAP endpoints
 * HTTP client via `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]`, including
-** xref:user-guide/auth.adoc#_client_http_basic_authentication[Basic Authentication]
+** xref:user-guide/authentication-authorization.adoc#_client_http_basic_authentication[Basic Authentication]
 * https://cxf.apache.org/docs/asynchronous-client-http-transport.html[Asynchronous Client HTTP Transport]
   via `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]`
 

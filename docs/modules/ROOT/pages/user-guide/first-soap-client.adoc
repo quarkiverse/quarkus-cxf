@@ -1,3 +1,4 @@
+[[first-soap-client]]
 = Your first SOAP Client on Quarkus
 
 In this guide we explain how to create a simple Quarkus application acting as a client of a remote Web service.

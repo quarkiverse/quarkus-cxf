@@ -1,3 +1,4 @@
+[[soap-payloads-with-jaxb]]
 = Complex SOAP payloads with JAXB
 
 Our introductory guides for Quarkus xref:user-guide/first-soap-client.adoc[SOAP client]

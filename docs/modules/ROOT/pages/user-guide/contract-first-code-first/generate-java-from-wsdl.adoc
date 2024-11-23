@@ -1,3 +1,4 @@
+[[generate-java-from-wsdl]]
 = Generate the Model classes from WSDL
 
 `quarkus-cxf` extension supports generating Java classes from WSDL during Quarkus code generation phase.

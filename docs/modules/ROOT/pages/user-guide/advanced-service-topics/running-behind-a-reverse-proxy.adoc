@@ -1,3 +1,4 @@
+[[running-behind-a-reverse-proxy]]
 = Running behind a reverse proxy
 
 SOAP requests aimed towards services running on Quarkus can be routed through proxies that generate additional headers

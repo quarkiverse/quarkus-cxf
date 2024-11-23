@@ -1,3 +1,4 @@
+[[cdi-scope-of-cxfclient]]
 = CDI scope of clients injected via `@CXFClient`
 
 {quarkus-cxf-project-name} produces all clients injected via `@io.quarkiverse.cxf.annotation.CXFClient` in the default `@Dependent` scope.

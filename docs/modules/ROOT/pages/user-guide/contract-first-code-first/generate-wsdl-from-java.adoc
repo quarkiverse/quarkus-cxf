@@ -1,3 +1,4 @@
+[[generate-wsdl-from-java]]
 = Generate WSDL document from Java
 
 If the WSDL served by your service at `+http://your-host/your-service?wsdl+` is not enough

@@ -1,3 +1,4 @@
+[[camel-integration]]
 = Camel Integration
 
 {link-camel-quarkus-docs-index}[Camel Quarkus] supports CXF since its version 2.12.0.

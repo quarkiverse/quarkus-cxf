@@ -1,9 +1,0 @@
-= {quarkus-cxf-project-name} 3.8.3 (LTS) release notes
-
-== New and noteworthy in {quarkus-cxf-project-name}
-
-This release contains just two bug fixes. Check the changelog below for details.
-
-== Full changelog
-
-https://github.com/quarkiverse/quarkus-cxf/compare/3.8.2+++...+++3.8.3

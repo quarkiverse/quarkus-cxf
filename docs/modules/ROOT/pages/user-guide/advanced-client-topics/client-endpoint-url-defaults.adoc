@@ -1,3 +1,4 @@
+[[client-endpoint-url-defaults]]
 = `client-endpoint-url` defaults
 
 If you omit the `client-endpoint-url` property in `application.properties`,

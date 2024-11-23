@@ -1,4 +1,4 @@
-[[cxf-extension-for-quarkus]]
+[[{quarkus-cxf-project-name}-index]]
 = {quarkus-cxf-project-name}
 
 This project aims at porting http://cxf.apache.org/[Apache CXF] to https://quarkus.io/[Quarkus] runtime

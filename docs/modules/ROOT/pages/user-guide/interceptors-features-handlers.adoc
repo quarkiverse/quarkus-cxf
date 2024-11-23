@@ -1,3 +1,4 @@
+[[interceptors-features-handlers]]
 = CXF Interceptors and Features, JAX-WS Handlers
 
 Check the following chapters to learn a bout various ways to customize the processing of SOAP requests and responses:
