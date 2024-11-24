@@ -1,7 +1,7 @@
 [[security-guide-index]]
 = Security guide
 
-The Security guide documents various security related aspects of {quarkus-cxf-project-name}:
+The security guide documents various security related aspects of {quarkus-cxf-project-name}:
 
 * xref:user-guide/ssl-tls-https.adoc#ssl-tls-https[SSL, TLS and HTTPS]
 * xref:user-guide/authentication-authorization.adoc#authentication-authorization[Authentication and authorization]
