@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="LargeSlowService" targetNamespace="https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test" targetNamespace="https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test" version="1.0">
+
+  <xs:element name="largeSlow" type="tns:largeSlow"/>
+
+  <xs:element name="largeSlowResponse" type="tns:largeSlowResponse"/>
+
+  <xs:complexType name="largeSlow">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:int"/>
+      <xs:element name="arg1" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="largeSlowResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:largeSlowOutput"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="largeSlowOutput">
+    <xs:sequence>
+      <xs:element name="delayMs" type="xs:int"/>
+      <xs:element minOccurs="0" name="payload" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="largeSlowResponse">
+    <wsdl:part element="tns:largeSlowResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="largeSlow">
+    <wsdl:part element="tns:largeSlow" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="LargeSlowService">
+    <wsdl:operation name="largeSlow">
+      <wsdl:input message="tns:largeSlow" name="largeSlow">
+    </wsdl:input>
+      <wsdl:output message="tns:largeSlowResponse" name="largeSlowResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="LargeSlowServiceSoapBinding" type="tns:LargeSlowService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="largeSlow">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="largeSlow">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="largeSlowResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="LargeSlowService">
+    <wsdl:port binding="tns:LargeSlowServiceSoapBinding" name="LargeSlowServiceImplPort">
+      <soap:address location="http://localhost:8081/soap/largeSlow"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

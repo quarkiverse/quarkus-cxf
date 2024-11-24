@@ -22,8 +22,6 @@ package io.quarkiverse.cxf.vertx.http.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.PushbackInputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -31,6 +29,9 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -67,6 +69,7 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logging.Logger;
 
+import io.netty.buffer.ByteBuf;
 import io.quarkiverse.cxf.QuarkusTLSClientParameters;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.ClientSpec;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.RequestBodyEvent.RequestBodyEventType;
@@ -75,8 +78,10 @@ import io.quarkus.arc.InstanceHandle;
 import io.quarkus.runtime.BlockingOperationControl;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
+import io.vertx.core.Promise;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
@@ -85,8 +90,11 @@ import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpVersion;
 import io.vertx.core.http.RequestOptions;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.core.net.ProxyType;
+import io.vertx.core.streams.WriteStream;
 
 /**
  */
@@ -544,33 +552,26 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         void finishRequest(HttpClientRequest req, Buffer buffer) {
-            try {
-                final PipedOutputStream pipedOutputStream = new PipedOutputStream();
-                final ExceptionAwarePipedInputStream pipedInputStream = new ExceptionAwarePipedInputStream(
-                        pipedOutputStream);
 
-                req.response()
-                        .onComplete(ar -> {
-                            if (ar.succeeded()) {
-                                pipe(ar.result(), pipedOutputStream, pipedInputStream);
+            req.response()
+                    .onComplete(ar -> {
+                        final InputStreamWriteStream sink = new InputStreamWriteStream(2);
+                        if (ar.succeeded()) {
+                            ar.result().pipeTo(sink);
+                        } else {
+                            if (ar.cause() instanceof IOException) {
+                                sink.setException((IOException) ar.cause());
                             } else {
-                                if (ar.cause() instanceof IOException) {
-                                    pipedInputStream.setException((IOException) ar.cause());
-                                } else {
-                                    pipedInputStream.setException(new IOException(ar.cause()));
-                                }
+                                sink.setException(new IOException(ar.cause()));
                             }
-                            mode.responseReady(new Result<>(new ResponseEvent(ar.result(), pipedInputStream),
-                                    ar.cause()));
-                        });
+                        }
+                        mode.responseReady(new Result<>(new ResponseEvent(ar.result(), sink), ar.cause()));
+                    });
 
-                req
-                        .end(buffer)
-                        .onFailure(t -> mode.responseFailed(t, true));
+            req
+                    .end(buffer)
+                    .onFailure(t -> mode.responseFailed(t, true));
 
-            } catch (IOException e) {
-                throw new VertxHttpException(e);
-            }
         }
 
         void failResponse(Throwable t) {
@@ -674,39 +675,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             }
         }
 
-        static void pipe(
-                HttpClientResponse response,
-                PipedOutputStream pipedOutputStream,
-                ExceptionAwarePipedInputStream pipedInputStream
-
-        ) {
-
-            response.handler(buffer -> {
-                try {
-                    pipedOutputStream.write(buffer.getBytes());
-                } catch (IOException e) {
-                    pipedInputStream.setException(e);
-                }
-            });
-
-            response.endHandler(v -> {
-                try {
-                    pipedOutputStream.close();
-                } catch (IOException e) {
-                    pipedInputStream.setException(e);
-                }
-            });
-
-            response.exceptionHandler(e -> {
-                final IOException ioe = e instanceof IOException
-                        ? (IOException) e
-                        : new IOException(e);
-                pipedInputStream.setException(ioe);
-            });
-        }
-
         void awaitWriteable(HttpClientRequest request) throws IOException, InterruptedException {
-            assert lock.isHeldByCurrentThread();
+            // assert lock.isHeldByCurrentThread();
             while (request.writeQueueFull()) {
                 if (this.request.cause() != null) {
                     throw new IOException(this.request.cause());
@@ -802,7 +772,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                             lock.unlock();
                         }
                     } else {
-                        assert lock.isHeldByCurrentThread();
+                        // assert lock.isHeldByCurrentThread();
                         response = Result.failure(t);
                         responseReceived.signal();
                     }
@@ -1141,53 +1111,694 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
     }
 
-    static class ExceptionAwarePipedInputStream extends PipedInputStream {
-        private IOException exception;
-        private final Object lock = new Object();
+    static class InputStreamWriteStream extends InputStream implements WriteStream<Buffer> {
 
-        public ExceptionAwarePipedInputStream(PipedOutputStream pipedOutputStream) throws IOException {
-            super(pipedOutputStream);
+        private static final Buffer END = new DummyBuffer();
+
+        private final Queue<Buffer> queue;
+        private final ReentrantLock lock = new ReentrantLock();
+        private final Condition queueChange = lock.newCondition();
+
+        /** Written from event loop, read from the consumer worker thread */
+        private volatile Handler<Void> drainHandler;
+        private volatile IOException exception;
+        private int maxQueueSize; // volatile not needed as we assume the value stays stable after being set on init
+
+        /** Read and written from the from the consumer worker thread */
+        private Buffer readBuffer;
+        private int readPosition = 0;
+
+        public InputStreamWriteStream(int queueSize) {
+            setWriteQueueMaxSize(queueSize);
+            this.queue = new ArrayDeque<>(queueSize);
         }
 
-        public void setException(IOException exception) {
-            synchronized (lock) {
-                if (this.exception == null) {
-                    /* Ignore subsequent exceptions */
-                    this.exception = exception;
+        @Override
+        public WriteStream<Buffer> exceptionHandler(Handler<Throwable> handler) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Future<Void> write(Buffer data) {
+            final Promise<Void> promise = Promise.promise();
+            write(data, promise);
+            return promise.future();
+        }
+
+        @Override
+        public void write(Buffer data, Handler<AsyncResult<Void>> handler) {
+            try {
+                final ReentrantLock lock = this.lock;
+                lock.lock();
+                try {
+                    queue.offer(data);
+                    // Log.infof("Adding buffer %d with size %d bytes; queue size after %d", System.identityHashCode(data),
+                    //         data.length(), queue.size());
+                    queueChange.signal();
+                } finally {
+                    lock.unlock();
                 }
+                handler.handle(Future.succeededFuture());
+            } catch (Throwable e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                if (this.exception == null) {
+                    this.exception = e instanceof IOException ? (IOException) e : new IOException(e);
+                }
+                handler.handle(Future.failedFuture(e));
             }
+        }
+
+        @Override
+        public void end(Handler<AsyncResult<Void>> handler) {
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                queue.offer(END);
+                // Log.info("Adding final buffer");
+                queueChange.signal();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        @Override
+        public WriteStream<Buffer> setWriteQueueMaxSize(int maxSize) {
+            if (maxSize < 1) {
+                throw new IllegalArgumentException("maxSize must be >= 1");
+            }
+            this.maxQueueSize = maxSize;
+            return this;
+        }
+
+        @Override
+        public boolean writeQueueFull() {
+            // int size = queue.size();
+            // Log.infof("Queue %s: %d", (size >= maxQueueSize ? "full" : "not full"), size);
+            return queue.size() >= maxQueueSize;
+        }
+
+        @Override
+        public WriteStream<Buffer> drainHandler(Handler<Void> handler) {
+            this.drainHandler = handler;
+            return this;
         }
 
         @Override
         public int read() throws IOException {
-            synchronized (lock) {
-                if (exception != null) {
-                    throw exception;
-                }
+            // Log.infof("> reading 1 byte");
+            final IOException e;
+            if ((e = exception) != null) {
+                throw e;
             }
-            return super.read();
+
+            final Buffer rb = takeBuffer(true);
+            return rb != null ? (rb.getByte(readPosition++) & 0xFF) : -1;
         }
 
         @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            synchronized (lock) {
-                if (exception != null) {
-                    throw exception;
-                }
+        public int read(byte b[], final int off, int len) throws IOException {
+            final IOException e;
+            if ((e = exception) != null) {
+                throw e;
             }
-            return super.read(b, off, len);
+            // Log.infof("Ready to read up to %d bytes", len);
+
+            Buffer rb = takeBuffer(true);
+            if (rb == null) {
+                return -1;
+            }
+            int rbLen = rb.length();
+            int readable = rbLen - readPosition;
+            // Log.infof("Readable %d bytes", readable);
+
+            int result;
+            if (readable >= len) {
+                readable = len;
+                // Log.infof("Downsized readable to %d bytes", readable);
+                rb.getBytes(readPosition, readPosition + readable, b, off);
+                // Log.infof("After read 1: %s", new String(b, off, readable, StandardCharsets.UTF_8));
+                readPosition += readable;
+                // Log.infof("readPosition now at %d", readPosition);
+                if (readPosition >= rbLen) {
+                    /* Nothing more to read from this buffer, so dereference it so that it can be GC's earlier; */
+                    // Log.infof("Buffer read out completely");
+                    if (readBuffer != END) {
+                        readBuffer = null; // deref. so that it can be GC's earlier;
+                    }
+                }
+                result = readable;
+            } else {
+                /* readable < len so we read out the current buffer completely and we try the subsequent ones if available */
+                rb.getBytes(readPosition, readPosition + readable, b, off);
+                // Log.infof("Read out current buffer %d completely: %s", System.identityHashCode(rb),
+                //            new String(b, off, readable, StandardCharsets.UTF_8));
+                readPosition += readable;
+                // assert readPosition == rbLen;
+                len -= readable;
+                int off2 = off + readable;
+
+                result = readable;
+                /* check whether we get more buffers */
+                while (len > 0 && (rb = takeBuffer(false)) != null) {
+                    rbLen = rb.length();
+                    readable = rbLen - readPosition;
+                    if (readable > len) {
+                        readable = len;
+                        // Log.infof("Downsized readable to %d bytes", readable);
+                    }
+                    rb.getBytes(readPosition, readPosition + readable, b, off2);
+                    // Log.infof("Read 2 from buffer %d %d to %d: %s", System.identityHashCode(rb), readPosition,
+                    //           readPosition + readable,
+                    //           new String(b, off2, readable, StandardCharsets.UTF_8));
+                    readPosition += readable;
+                    len -= readable;
+                    off2 += readable;
+                    // Log.infof("readPosition now at %d", readPosition);
+                    result += readable;
+                }
+                if (readPosition == rbLen) {
+                    // Log.infof("Buffer read out completely");
+                    if (readBuffer != END) {
+                        readBuffer = null; // deref. so that it can be GC's earlier;
+                    }
+                }
+                // assert readPosition <= rbLen;
+            }
+            // Log.infof("> read %d bytes: %s", result, new String(b, off, result, StandardCharsets.UTF_8));
+            return result;
         }
 
         @Override
-        public void close() throws IOException {
-            synchronized (lock) {
-                if (exception != null) {
-                    throw exception;
-                }
-            }
-            super.close();
+        public void close() {
+            readBuffer = null;
+            // assert queueEmpty() : "Queue still has " + queue.size() + " items";
         }
 
+        @Override
+        public int available() throws IOException {
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                Buffer rb = takeBuffer(false);
+                if (rb != null) {
+                    int result = rb.length() - readPosition;
+                    for (Buffer b : queue) {
+                        if (rb != b) {
+                            /* Skip the buffer returned by takeBuffer() above */
+                            result += b.length();
+                        }
+                    }
+                    return result;
+                }
+            } finally {
+                lock.unlock();
+            }
+            return 0;
+        }
+
+        private Buffer takeBuffer(boolean blockingAwaitBuffer) throws IOException {
+            // Log.infof("About to take buffer at queue size %d %s", queue.size(),
+            //           blockingAwaitBuffer ? "with blocking" : "without blocking");
+            Buffer rb = readBuffer;
+            if (rb == END) {
+                return null;
+            }
+            // Log.infof("Buffer is null: %s; %d >= %d: %s", rb == null, readPosition, (rb == null ? -1 : rb.length()),
+            //           rb != null && readPosition >= rb.length());
+            if (rb == null || readPosition >= rb.length()) {
+                // Log.info("Buffer is null or empty");
+
+                final ReentrantLock lock = this.lock;
+                try {
+                    lock.lockInterruptibly();
+                    if (blockingAwaitBuffer) {
+                        while ((readBuffer = rb = queue.poll()) == null) {
+                            //Log.infof("Awaiting a buffer at queue size %d", queue.size());
+                            queueChange.await();
+                        }
+                    } else {
+                        readBuffer = rb = queue.poll();
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException(e);
+                } finally {
+                    lock.unlock();
+                }
+                if (rb == END) {
+                    return null;
+                }
+                readPosition = 0;
+
+                final Handler<Void> dh;
+                if (!writeQueueFull() && (dh = drainHandler) != null) {
+                    dh.handle(null);
+                }
+            }
+            // Log.infof("Taken a %s buffer %d, will read from %d to %d; queue size after: %d",
+            //           (rb != null ? "valid" : "null"),
+            //           System.identityHashCode(rb),
+            //           readPosition, (rb != null ? rb.length() : -1), queue.size());
+            return rb;
+        }
+
+        private boolean queueEmpty() {
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                return queue.isEmpty();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        public void setException(IOException exception) {
+            if (this.exception == null) {
+                /* Ignore subsequent exceptions */
+                this.exception = exception;
+            }
+        }
+
+    }
+
+    static class DummyBuffer implements Buffer {
+
+        @Override
+        public void writeToBuffer(Buffer buffer) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int readFromBuffer(int pos, Buffer buffer) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String toString(Charset enc) {
+            return "";
+        }
+
+        @Override
+        public String toString(String enc) {
+            return "";
+        }
+
+        @Override
+        public JsonObject toJsonObject() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public JsonArray toJsonArray() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer slice(int start, int end) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer slice() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setUnsignedShortLE(int pos, int s) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setUnsignedShort(int pos, int s) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setUnsignedIntLE(int pos, long i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setUnsignedInt(int pos, long i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setUnsignedByte(int pos, short b) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setString(int pos, String str, String enc) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setString(int pos, String str) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setShortLE(int pos, short s) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setShort(int pos, short s) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setMediumLE(int pos, int i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setMedium(int pos, int i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setLongLE(int pos, long l) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setLong(int pos, long l) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setIntLE(int pos, int i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setInt(int pos, int i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setFloat(int pos, float f) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setDouble(int pos, double d) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setBytes(int pos, byte[] b, int offset, int len) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setBytes(int pos, byte[] b) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setBytes(int pos, ByteBuffer b) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setByte(int pos, byte b) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setBuffer(int pos, Buffer b, int offset, int len) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer setBuffer(int pos, Buffer b) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int length() {
+            return 0;
+        }
+
+        @Override
+        public int getUnsignedShortLE(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getUnsignedShort(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getUnsignedMediumLE(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getUnsignedMedium(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public long getUnsignedIntLE(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public long getUnsignedInt(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public short getUnsignedByte(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getString(int start, int end, String enc) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getString(int start, int end) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public short getShortLE(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public short getShort(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getMediumLE(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getMedium(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public long getLongLE(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public long getLong(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getIntLE(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getInt(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public float getFloat(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public double getDouble(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer getBytes(int start, int end, byte[] dst, int dstIndex) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer getBytes(int start, int end, byte[] dst) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer getBytes(byte[] dst, int dstIndex) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public byte[] getBytes(int start, int end) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer getBytes(byte[] dst) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public byte[] getBytes() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ByteBuf getByteBuf() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public byte getByte(int pos) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer getBuffer(int start, int end) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer copy() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendUnsignedShortLE(int s) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendUnsignedShort(int s) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendUnsignedIntLE(long i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendUnsignedInt(long i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendUnsignedByte(short b) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendString(String str, String enc) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendString(String str) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendShortLE(short s) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendShort(short s) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendMediumLE(int i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendMedium(int i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendLongLE(long l) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendLong(long l) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendIntLE(int i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendInt(int i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendFloat(float f) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendDouble(double d) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendBytes(byte[] bytes, int offset, int len) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendBytes(byte[] bytes) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendByte(byte b) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendBuffer(Buffer buff, int offset, int len) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Buffer appendBuffer(Buffer buff) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public interface IOEHandler<E> {
