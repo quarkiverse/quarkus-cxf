@@ -28,6 +28,8 @@
 *** xref:user-guide/advanced-client-topics/prevent-resource-leaks.adoc[Prevent resource leaks]
 ** xref:user-guide/camel-integration.adoc[Camel Integration]
 ** xref:user-guide/examples.adoc[Examples]
+
+// security-guide
 * xref:security-guide/index.adoc[Security guide]
 ** xref:user-guide/ssl-tls-https.adoc[SSL, TLS and HTTPS]
 ** xref:user-guide/authentication-authorization.adoc[Authentication and authorization]
