@@ -6,8 +6,8 @@ This section documents various use cases related to SSL, TLS and HTTPS.
 [NOTE]
 ====
 The sample code snippets used in this section come from the
-     {link-quarkus-cxf-source-tree-base}/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
-     in the source tree of {quarkus-cxf-project-name}
+{link-quarkus-cxf-source-tree-base}/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
+in the source tree of {quarkus-cxf-project-name}
 ====
 
 
@@ -74,7 +74,7 @@ using the same means of public key cryptography.
 
 Hence, for the Mutual TLS (mTLS) authentication,
 in addition to setting up the server keystore and client truststore as described above,
-you need to setup the keystore on the client side and the truststore on the server side.
+you need to set up the keystore on the client side and the truststore on the server side.
 
 The tools for creating and maintaining the stores are the same
 and the configuration properties to use are pretty much analogous to the ones used in the Simple TLS case.
