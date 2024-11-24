@@ -31,7 +31,7 @@
 * xref:security-guide/index.adoc[Security guide]
 ** xref:user-guide/ssl-tls-https.adoc[SSL, TLS and HTTPS]
 ** xref:user-guide/authentication-authorization.adoc[Authentication and authorization]
-** xref:security-guide/ws-securitypolicy-auth.adoc[WS-SecurityPolicy Authentication]
+** xref:security-guide/ws-securitypolicy-authentication-authorization.adoc[WS-SecurityPolicy Authentication]
 
 // release-notes
 * xref:release-notes/index.adoc[Release notes]
