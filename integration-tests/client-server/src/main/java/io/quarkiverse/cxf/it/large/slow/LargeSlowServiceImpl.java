@@ -17,12 +17,16 @@ public class LargeSlowServiceImpl implements LargeSlowService {
 
     @Override
     public LargeSlowOutput largeSlow(int sizeBytes, int delayMs) {
+        return new LargeSlowOutput(delayMs, largeString(sizeBytes));
+    }
+
+    public static String largeString(int sizeBytes) {
         final StringBuilder sb = new StringBuilder();
         while (sb.length() < sizeBytes) {
             sb.append("0123456789");
         }
         sb.setLength(sizeBytes);
-        return new LargeSlowOutput(delayMs, sb.toString());
+        return sb.toString();
     }
 
     @Override

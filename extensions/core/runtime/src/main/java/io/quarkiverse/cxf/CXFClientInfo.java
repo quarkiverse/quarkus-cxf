@@ -70,6 +70,14 @@ public class CXFClientInfo {
      * (name is not part of standard)
      */
     private final boolean autoRedirect;
+
+    /**
+     * If `true` relative URIs, such as `/folder/service` received via `Location` response header will be honored when
+     * redirecting; otherwise only absolute URIs will be honored and an exception will be thrown for relative redirects.
+     *
+     * This is equivalent to setting `http.redirect.relative.uri` property to `true` on the CXF client request context.
+     */
+    private final boolean redirectRelativeUri;
     /**
      * Specifies the maximum amount of retransmits that are allowed for redirects. Retransmits for
      * authorization is included in the retransmit count. Each redirect may cause another
@@ -218,6 +226,7 @@ public class CXFClientInfo {
         this.receiveTimeout = config.receiveTimeout();
         this.connectionRequestTimeout = config.connectionRequestTimeout();
         this.autoRedirect = config.autoRedirect();
+        this.redirectRelativeUri = config.redirectRelativeUri();
         this.maxRetransmits = config.maxRetransmits();
         this.allowChunking = config.allowChunking();
         this.chunkingThreshold = config.chunkingThreshold();
@@ -471,6 +480,10 @@ public class CXFClientInfo {
 
     public boolean isAutoRedirect() {
         return autoRedirect;
+    }
+
+    public boolean isRedirectRelativeUri() {
+        return redirectRelativeUri;
     }
 
     public int getMaxRetransmits() {

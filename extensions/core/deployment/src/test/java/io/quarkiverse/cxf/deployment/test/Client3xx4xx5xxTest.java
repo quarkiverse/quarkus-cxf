@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkus.logging.Log;
 import io.quarkus.test.QuarkusUnitTest;
 import io.restassured.RestAssured;
 import io.vertx.ext.web.Router;
@@ -50,7 +51,14 @@ public class Client3xx4xx5xxTest {
             .overrideConfigKey("quarkus.cxf.client.endpointUri404.client-endpoint-url",
                     "http://localhost:8081/services/no-such-service")
             .overrideConfigKey("quarkus.cxf.client.endpointUri404.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.endpointUri404.logging.enabled", "true");
+            .overrideConfigKey("quarkus.cxf.client.endpointUri404.logging.enabled", "true")
+
+            /* Bad service endpoint URI */
+            .overrideConfigKey("quarkus.cxf.client.endpointUri302.client-endpoint-url",
+                    "http://localhost:8081/vertx-redirect")
+            .overrideConfigKey("quarkus.cxf.client.endpointUri302.service-interface", HelloService.class.getName())
+            .overrideConfigKey("quarkus.cxf.client.endpointUri302.auto-redirect", "true")
+            .overrideConfigKey("quarkus.cxf.client.endpointUri302.logging.enabled", "true");
 
     @CXFClient("wsdlUri200")
     // Use Instance to avoid greedy initialization
@@ -62,6 +70,9 @@ public class Client3xx4xx5xxTest {
     @CXFClient("endpointUri404")
     Instance<HelloService> endpointUri404;
 
+    @CXFClient("endpointUri302")
+    Instance<HelloService> endpointUri302;
+
     Instance<HelloService> getClient(String clientName) {
         switch (clientName) {
             case "wsdlUri200": {
@@ -72,6 +83,9 @@ public class Client3xx4xx5xxTest {
             }
             case "endpointUri404": {
                 return endpointUri404;
+            }
+            case "endpointUri302": {
+                return endpointUri302;
             }
             default:
                 throw new IllegalArgumentException("Unexpected client name: " + clientName);
@@ -97,7 +111,7 @@ public class Client3xx4xx5xxTest {
                 "HTTP response '404: Not Found' when communicating with http://localhost:8081/services/no-such-service");
     }
 
-    public void init(@Observes Router router) {
+    void init(@Observes Router router) {
         router.route().handler(BodyHandler.create());
         router.post("/vertx-blocking/:client").blockingHandler(ctx -> {
             final String person = ctx.body().asString();
@@ -113,6 +127,10 @@ public class Client3xx4xx5xxTest {
                 Throwable r = rootCause(e);
                 ctx.response().setStatusCode(500).end(r.getClass().getName() + " " + r.getMessage());
             }
+        });
+        router.post("/vertx-redirect").handler(ctx -> {
+            Log.info("Redirecting");
+            ctx.redirect("http://localhost:8081/services/hello");
         });
     }
 
@@ -187,8 +205,17 @@ public class Client3xx4xx5xxTest {
 
     }
 
+    @Test
+    void endpointUri302OnWorkerThread() {
+        RestAssured.given()
+                .body("Joe")
+                .post("http://localhost:8081/vertx-blocking/endpointUri302")
+                .then()
+                .statusCode(200)
+                .body(Matchers.is("Hello Joe"));
+    }
+
     private static Throwable rootCause(Exception e) {
-        e.printStackTrace();
         Throwable result = e;
         while (result.getCause() != null) {
             result = result.getCause();

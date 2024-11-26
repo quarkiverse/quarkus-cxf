@@ -34,6 +34,7 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 import io.vertx.core.Vertx;
 
 /**
@@ -177,6 +178,9 @@ public abstract class CxfClientProducer {
             if (value != null) {
                 props.put(WSAContextUtils.DECOUPLED_ENDPOINT_BASE_PROPERTY, value);
             }
+        }
+        if (cxfClientInfo.isRedirectRelativeUri()) {
+            props.put(VertxHttpClientHTTPConduit.AUTO_REDIRECT_ALLOW_REL_URI, Boolean.TRUE);
         }
 
         loggingFactoryCustomizer.customize(cxfClientInfo, factory);
