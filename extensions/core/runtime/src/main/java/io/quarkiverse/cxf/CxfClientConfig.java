@@ -187,24 +187,65 @@ public interface CxfClientConfig {
     @WithDefault("60000")
     public long connectionRequestTimeout();
 
+    // The formatter breaks the list with long items
+    // @formatter:off
     /**
-     * Specifies if the consumer will automatically follow a server issued redirection. (name is not part of standard)
+     * If `true` this CXF client will follow HTTP redirects (HTTP status codes 301, 302, 303 and 307 with `Location` response
+     * header); otherwise HTTP redirects will not be followed.
+     *
+     * [WARNING]
+     * ====
+     * Enabling this option may increase memory requirements of your application substantially as request bodies will
+     * have to be cached for retransmission.
+     * ====
+     *
+     * See also:
+     *
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".redirect-relative-uri]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
      *
      * @since 2.2.3
      * @asciidoclet
      */
+    // @formatter:on
     @WithDefault("false")
     public boolean autoRedirect();
 
+    // The formatter breaks the list with long items
+    // @formatter:off
+    /**
+     * If `true` relative URIs, such as `/folder/service` received via `Location` response header will be honored when
+     * redirecting; otherwise only absolute URIs will be honored and an exception will be thrown for relative redirects.
+     *
+     * This is equivalent to setting `http.redirect.relative.uri` property to `true` on the CXF client request context.
+     *
+     * See also:
+     *
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+     *
+     * @since 3.17.0
+     * @asciidoclet
+     */
+    // @formatter:on
+    @WithDefault("false")
+    public boolean redirectRelativeUri();
+
+    // The formatter breaks the list with long items
+    // @formatter:off
     /**
      * Specifies the maximum amount of retransmits that are allowed for redirects. Retransmits for authorization is included in
      * the retransmit count. Each redirect may cause another retransmit for a UNAUTHORIZED response code, ie. 401. Any negative
      * number indicates unlimited retransmits, although, loop protection is provided. The default is unlimited. (name is not
      * part of standard)
      *
+     * See also:
+     *
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+     *
      * @since 2.2.3
      * @asciidoclet
      */
+    // @formatter:on
     @WithDefault("-1")
     public int maxRetransmits();
 

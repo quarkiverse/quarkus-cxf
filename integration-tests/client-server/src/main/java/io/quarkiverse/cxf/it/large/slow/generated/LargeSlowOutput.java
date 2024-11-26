@@ -61,11 +61,13 @@ public class LargeSlowOutput {
     @XmlElement(name = "delayMs")
     public void setDelayMs(int delayMs) {
         Log.infof("Sleeping for %d ms", delayMs);
-        try {
-            Thread.sleep(delayMs);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+        if (delayMs > 0) {
+            try {
+                Thread.sleep(delayMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            }
         }
         this.delayMs = delayMs;
     }

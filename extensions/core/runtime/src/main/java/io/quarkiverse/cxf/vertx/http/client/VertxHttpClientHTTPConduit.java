@@ -19,6 +19,8 @@
 
 package io.quarkiverse.cxf.vertx.http.client;
 
+import static io.vertx.core.http.HttpHeaders.CONTENT_LENGTH;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,8 +31,7 @@ import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.SocketTimeoutException;
 import java.net.URI;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+import java.net.URISyntaxException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,8 +44,11 @@ import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.common.util.PropertyUtils;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.endpoint.ClientCallback;
 import org.apache.cxf.endpoint.Endpoint;
@@ -69,15 +73,14 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logging.Logger;
 
-import io.netty.buffer.ByteBuf;
 import io.quarkiverse.cxf.QuarkusTLSClientParameters;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.ClientSpec;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.RequestBodyEvent.RequestBodyEventType;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
+import io.quarkus.logging.Log;
 import io.quarkus.runtime.BlockingOperationControl;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
@@ -90,8 +93,7 @@ import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpVersion;
 import io.vertx.core.http.RequestOptions;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
+import io.vertx.core.http.impl.HttpUtils;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.core.net.ProxyType;
 import io.vertx.core.streams.WriteStream;
@@ -102,6 +104,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
     private static final Logger log = Logger.getLogger(VertxHttpClientHTTPConduit.class);
     public static final String USE_ASYNC = "use.async.http.conduit";
     public static final String ENABLE_HTTP2 = "org.apache.cxf.transports.http2.enabled";
+    private static final String AUTO_REDIRECT_MAX_SAME_URI_COUNT = "http.redirect.max.same.uri.count";
+    private static final String AUTO_REDIRECT_SAME_HOST_ONLY = "http.redirect.same.host.only";
+    private static final String AUTO_REDIRECT_ALLOWED_URI = "http.redirect.allowed.uri";
+    public static final String AUTO_REDIRECT_ALLOW_REL_URI = "http.redirect.relative.uri";
 
     private final HttpClientPool httpClientPool;
     private final String userAgent;
@@ -193,7 +199,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 clientParameters.getTlsConfiguration())
                         : new ClientSpec(version, null, null),
                 determineReceiveTimeout(message, csPolicy),
-                isAsync);
+                isAsync,
+                csPolicy.getMaxRetransmits(),
+                csPolicy.isAutoRedirect());
         message.put(RequestContext.class, requestContext);
 
     }
@@ -238,15 +246,20 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 incomingObserver);
 
         final IOEHandler<RequestBodyEvent> requestBodyHandler = new RequestBodyHandler(
+                getConduitName(),
                 message,
                 requestContext.uri,
+                cookies,
                 userAgent,
                 httpClientPool,
                 requestContext.requestOptions,
                 requestContext.clientSpec,
                 requestContext.receiveTimeoutMs,
                 responseHandler,
-                requestContext.async);
+                requestContext.async,
+                requestContext.autoRedirect, // we do not support authorizationRetransmit yet possibleRetransmit,
+                requestContext.maxRetransmits,
+                0);
         return new RequestBodyOutputStream(chunkThreshold, requestBodyHandler);
     }
 
@@ -328,7 +341,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             RequestOptions requestOptions,
             ClientSpec clientSpec,
             long receiveTimeoutMs,
-            boolean async) {
+            boolean async,
+            int maxRetransmits,
+            boolean autoRedirect) {
     }
 
     static record RequestBodyEvent(Buffer buffer, RequestBodyEventType eventType) {
@@ -410,6 +425,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
     static class RequestBodyHandler implements IOEHandler<RequestBodyEvent> {
         private final Message outMessage;
         private final URI url;
+        private final Cookies cookies;
         private final String userAgent;
         private final HttpClientPool clientPool;
         private final RequestOptions requestOptions;
@@ -423,6 +439,14 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
          */
         private Result<HttpClientRequest> request;
 
+        /* Retransmit settings, read/written from the event loop */
+        private final boolean possibleRetransmit;
+        private List<Buffer> bodyRecorder;
+        private List<URI> redirects;
+        private final int maxRetransmits;
+        private int performedRetransmits;
+        private final String conduitName;
+
         /* Locks and conditions */
         private final ReentrantLock lock = new ReentrantLock();
         private final Condition requestReady = lock.newCondition();
@@ -434,18 +458,25 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private Mode mode;
 
         public RequestBodyHandler(
+                String conduitName,
                 Message outMessage,
                 URI url,
+                Cookies cookies,
                 String userAgent,
                 HttpClientPool clientPool,
                 RequestOptions requestOptions,
                 ClientSpec clientSpec,
                 long receiveTimeoutMs,
                 IOEHandler<ResponseEvent> responseHandler,
-                boolean isAsync) {
+                boolean isAsync,
+                boolean possibleRetransmit,
+                int maxRetransmits,
+                int performedRetransmits) {
             super();
+            this.conduitName = conduitName;
             this.outMessage = outMessage;
             this.url = url;
+            this.cookies = cookies;
             this.userAgent = userAgent;
             this.clientPool = clientPool;
             this.requestOptions = requestOptions;
@@ -455,16 +486,28 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             this.mode = isAsync
                     ? new Mode.Async(url, deadline, responseHandler, outMessage)
                     : new Mode.Sync(url, deadline, responseHandler, lock);
+
+            this.possibleRetransmit = possibleRetransmit;
+            this.maxRetransmits = maxRetransmits;
+            this.performedRetransmits = performedRetransmits;
         }
 
         @Override
         public void handle(RequestBodyEvent event) throws IOException {
+
+            final Buffer buffer = event.buffer();
             if (firstEvent) {
                 firstEvent = false;
-                final HttpClient client = clientPool.getClient(clientSpec);
+                if (possibleRetransmit) {
+                    final List<Buffer> recorder = bodyRecorder = new ArrayList<>();
+                    recorder.add(buffer.slice());
+                    final List<URI> redirs = redirects = new ArrayList<>();
+                    redirs.add(url);
+                }
 
+                final HttpClient client = clientPool.getClient(clientSpec);
                 if (event.eventType() == RequestBodyEventType.COMPLETE_BODY && requestHasBody(requestOptions.getMethod())) {
-                    requestOptions.putHeader("Content-Length", String.valueOf(event.buffer().length()));
+                    requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(buffer.length()));
                 }
 
                 setProtocolHeaders(outMessage, requestOptions, userAgent);
@@ -475,7 +518,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 case NON_FINAL_CHUNK: {
                                     req
                                             .setChunked(true)
-                                            .write(event.buffer())
+                                            .write(buffer)
                                             .onFailure(t -> mode.responseFailed(t, true));
 
                                     lock.lock();
@@ -490,7 +533,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 }
                                 case FINAL_CHUNK:
                                 case COMPLETE_BODY: {
-                                    finishRequest(req, event.buffer());
+                                    finishRequest(req, buffer);
                                     break;
                                 }
                                 default:
@@ -529,17 +572,20 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
             } else {
                 /* Non-first event */
+                if (bodyRecorder != null) {
+                    bodyRecorder.add(buffer.slice());
+                }
                 final HttpClientRequest req = awaitRequest();
                 switch (event.eventType()) {
                     case NON_FINAL_CHUNK: {
                         req
-                                .write(event.buffer())
+                                .write(buffer)
                                 .onFailure(RequestBodyHandler.this::failResponse);
                         break;
                     }
                     case FINAL_CHUNK:
                     case COMPLETE_BODY: {
-                        finishRequest(req, event.buffer());
+                        finishRequest(req, buffer);
                         mode.awaitResponse();
                         break;
                     }
@@ -551,13 +597,74 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             }
         }
 
+        @SuppressWarnings("resource")
         void finishRequest(HttpClientRequest req, Buffer buffer) {
 
             req.response()
                     .onComplete(ar -> {
                         final InputStreamWriteStream sink = new InputStreamWriteStream(2);
+                        final HttpClientResponse response = ar.result();
                         if (ar.succeeded()) {
-                            ar.result().pipeTo(sink);
+
+                            /* need to retransmit? */
+                            final boolean isRedirect = isRedirect(response.statusCode());
+                            if (possibleRetransmit
+                                    && (maxRetransmits < 0 || performedRetransmits < maxRetransmits)
+                                    && isRedirect) {
+                                performedRetransmits++;
+                                ResponseHandler.updateResponseHeaders(response, outMessage, cookies);
+                                final String loc = response.getHeader("Location");
+                                try {
+
+                                    if (loc != null && !loc.startsWith("http")
+                                            && !MessageUtils.getContextualBoolean(outMessage, AUTO_REDIRECT_ALLOW_REL_URI)) {
+                                        throw new IOException(
+                                                "Relative Redirect detected on Conduit '" + conduitName + "' on '" + loc + "'."
+                                                        + " You may want to set quarkus.cxf.client.\"client-name\".redirect-relative-uri = true,"
+                                                        + " where \"client-name\" is the name of your client in application.properties");
+                                    }
+                                    final URI previousUri = redirects.get(redirects.size() - 1);
+                                    final URI newUri = HttpUtils.resolveURIReference(previousUri, loc);
+                                    detectRedirectLoop(conduitName, redirects, newUri, outMessage);
+                                    redirects.add(newUri);
+                                    checkAllowedRedirectUri(conduitName, previousUri, newUri, outMessage);
+                                    redirectRetransmit(newUri);
+                                } catch (IOException e) {
+                                    sink.setException((IOException) e);
+                                    mode.responseReady(new Result<>(new ResponseEvent(response, sink), ar.cause()));
+                                } catch (URISyntaxException e) {
+                                    sink.setException(new IOException(
+                                            "Could not resolve redirect Location " + loc + " relative to " + url, e));
+                                    mode.responseReady(new Result<>(new ResponseEvent(response, sink), ar.cause()));
+                                } catch (Exception e) {
+                                    sink.setException(new IOException(e));
+                                    mode.responseReady(new Result<>(new ResponseEvent(response, sink), ar.cause()));
+                                }
+                                return;
+                            } else {
+                                if (!possibleRetransmit && isRedirect) {
+                                    Log.warnf(
+                                            "Received redirection status %d from %s, but following redirects is not"
+                                                    + " enabled for this CXF client. You may want to set"
+                                                    + " quarkus.cxf.client.\"client-name\".auto-redirect = true,"
+                                                    + " where \"client-name\" is the name of your client in application.properties",
+                                            response.statusCode(),
+                                            url);
+                                }
+                                if (possibleRetransmit && isRedirect && maxRetransmits >= 0
+                                        && maxRetransmits <= performedRetransmits) {
+                                    Log.warnf(
+                                            "Received redirection status %d from %s, but already performed maximum"
+                                                    + " number %d of allowed retransmits for this exchange; you may want to"
+                                                    + " increase quarkus.cxf.client.\"client-name\".max-retransmits in application.properties",
+                                            response.statusCode(),
+                                            redirects.get(redirects.size() - 1),
+                                            maxRetransmits);
+                                }
+                                /* No retransmit */
+                                /* Pass the body back to CXF */
+                                response.pipeTo(sink);
+                            }
                         } else {
                             if (ar.cause() instanceof IOException) {
                                 sink.setException((IOException) ar.cause());
@@ -565,13 +672,156 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 sink.setException(new IOException(ar.cause()));
                             }
                         }
-                        mode.responseReady(new Result<>(new ResponseEvent(ar.result(), sink), ar.cause()));
+                        mode.responseReady(new Result<>(new ResponseEvent(response, sink), ar.cause()));
                     });
+            if (bodyRecorder != null) {
+                bodyRecorder.add(buffer.slice());
+            }
 
             req
                     .end(buffer)
                     .onFailure(t -> mode.responseFailed(t, true));
 
+        }
+
+        void redirectRetransmit(URI newURL) throws IOException {
+            if (Log.isDebugEnabled()) {
+                Log.debugf("Redirect retransmit from %s to %s", redirects.get(redirects.size() - 1), newURL);
+            }
+            boolean ssl;
+            int port = newURL.getPort();
+            String protocol = newURL.getScheme();
+            char chend = protocol.charAt(protocol.length() - 1);
+            if (chend == 'p') {
+                ssl = false;
+                if (port == -1) {
+                    port = 80;
+                }
+            } else if (chend == 's') {
+                ssl = true;
+                if (port == -1) {
+                    port = 443;
+                }
+            } else {
+                throw new IllegalStateException("Unexpected URI scheme " + protocol + "; expected 'http' or 'https'");
+            }
+            String requestURI = newURL.getPath();
+            if (requestURI == null || requestURI.isEmpty()) {
+                requestURI = "/";
+            }
+            String query = newURL.getQuery();
+            if (query != null) {
+                requestURI += "?" + query;
+            }
+            RequestOptions options = new RequestOptions(requestOptions);
+            options.setHost(newURL.getHost());
+            options.setPort(port);
+            options.setSsl(ssl);
+            options.setURI(requestURI);
+
+            final List<Buffer> body = bodyRecorder;
+            final int last = body.size() - 1;
+            if (last == 0 && requestHasBody(options.getMethod())) {
+                /* Only one buffer recorded */
+                requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(body.get(0).length()));
+            } else if (last == -1 && requestHasBody(options.getMethod())) {
+                /* No buffer recorded */
+                requestOptions.putHeader(CONTENT_LENGTH, "0");
+            } else {
+                options.removeHeader(CONTENT_LENGTH);
+            }
+
+            final HttpClient client = clientPool.getClient(clientSpec);
+
+            // Should not be necessary, because we copy from the original requestOptions
+            // setProtocolHeaders(outMessage, options, userAgent);
+
+            client.request(options)
+                    .onSuccess(req -> {
+                        if (last == 0) {
+                            /* Single buffer recorded */
+                            finishRequest(req, body.get(0).slice());
+                        } else if (last == -1) {
+                            /* Empty body */
+                            finishRequest(req, Buffer.buffer());
+                        } else {
+                            /* Multiple buffers recorded */
+                            req.setChunked(true);
+                            for (int i = 0; i <= last; i++) {
+                                if (i == last) {
+                                    finishRequest(req, body.get(i).slice());
+                                } else {
+                                    req
+                                            .write(body.get(i).slice())
+                                            .onFailure(t -> mode.responseFailed(t, true));
+                                }
+                            }
+                        }
+                    })
+                    .onFailure(t -> {
+                        lock.lock();
+                        try {
+                            request = Result.failure(t);
+                            requestReady.signal();
+
+                            /* Fail also the response so that awaitResponse() fails rather than waiting forever */
+                            mode.responseFailed(t, false);
+                        } finally {
+                            lock.unlock();
+                        }
+                    });
+        }
+
+        private static boolean isRedirect(int statusCode) {
+            return statusCode >= 301 // fast return for statusCode == 200 that we'll see mostly
+                    && (statusCode == 302 || statusCode == 301 || statusCode == 303 || statusCode == 307);
+        }
+
+        private static void detectRedirectLoop(String conduitName,
+                List<URI> redirects,
+                URI newURL,
+                Message message) throws IOException {
+            if (redirects.contains(newURL)) {
+                final Integer maxSameURICount = PropertyUtils.getInteger(message, AUTO_REDIRECT_MAX_SAME_URI_COUNT);
+                if (maxSameURICount != null
+                        && redirects.stream().filter(newURL::equals).count() > maxSameURICount.longValue()) {
+                    final String msg = "Redirect loop detected on Conduit '"
+                            + conduitName + "' (with http.redirect.max.same.uri.count = " + maxSameURICount + "): "
+                            + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")) + " -> " + newURL;
+                    throw new IOException(msg);
+                } else {
+                    final String msg = "Redirect loop detected on Conduit '"
+                            + conduitName + "': " + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> "))
+                            + " -> " + newURL;
+                    throw new IOException(msg);
+                }
+            }
+        }
+
+        private static void checkAllowedRedirectUri(String conduitName,
+                URI lastUri,
+                URI newUri,
+                Message message) throws IOException {
+            if (MessageUtils.getContextualBoolean(message, AUTO_REDIRECT_SAME_HOST_ONLY)) {
+
+                // This can be further restricted to make sure newURL completely contains lastURL
+                // though making sure the same HTTP scheme and host are preserved should be enough
+
+                if (!newUri.getScheme().equals(lastUri.getScheme())
+                        || !newUri.getHost().equals(lastUri.getHost())) {
+                    String msg = "Different HTTP Scheme or Host Redirect detected on Conduit '"
+                            + conduitName + "' on '" + newUri + "'";
+                    LOG.log(Level.INFO, msg);
+                    throw new IOException(msg);
+                }
+            }
+
+            String allowedRedirectURI = (String) message.getContextualProperty(AUTO_REDIRECT_ALLOWED_URI);
+            if (allowedRedirectURI != null && !newUri.toString().startsWith(allowedRedirectURI)) {
+                String msg = "Forbidden Redirect URI " + newUri + "detected on Conduit '" + conduitName;
+                LOG.log(Level.INFO, msg);
+                throw new IOException(msg);
+            }
         }
 
         void failResponse(Throwable t) {
@@ -681,7 +931,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 if (this.request.cause() != null) {
                     throw new IOException(this.request.cause());
                 }
-                if (Context.isOnEventLoopThread()) {
+                if (!BlockingOperationControl.isBlockingAllowed()) {
                     throw new IllegalStateException("Attempting a blocking write on io thread");
                 }
                 if (!drainHandlerRegistered) {
@@ -762,7 +1012,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
 
                 @Override
-                public void responseFailed(Throwable t, boolean lockIfNeeded) {
+                protected void responseFailed(Throwable t, boolean lockIfNeeded) {
                     if (lockIfNeeded) {
                         lock.lock();
                         try {
@@ -779,7 +1029,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
 
                 @Override
-                public void responseReady(Result<ResponseEvent> response) {
+                protected void responseReady(Result<ResponseEvent> response) {
                     lock.lock();
                     try {
                         this.response = response;
@@ -790,7 +1040,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
 
                 @Override
-                public void awaitResponse() throws IOException {
+                protected void awaitResponse() throws IOException {
                     responseHandler.handle(awaitResponseInternal());
                 }
 
@@ -922,7 +1172,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         public void handle(ResponseEvent responseEvent) throws IOException {
             final HttpClientResponse response = responseEvent.response;
             final Exchange exchange = outMessage.getExchange();
-            final int responseCode = doProcessResponseCode(url, response, exchange, outMessage);
+            final URI uri = URI.create(response.request().absoluteURI());
+            final int responseCode = doProcessResponseCode(uri, response, exchange, outMessage);
 
             InputStream in = null;
             // oneway or decoupled twoway calls may expect HTTP 202 with no content
@@ -1152,8 +1403,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 lock.lock();
                 try {
                     queue.offer(data);
-                    // Log.infof("Adding buffer %d with size %d bytes; queue size after %d", System.identityHashCode(data),
-                    //         data.length(), queue.size());
+                    // Log.infof("Adding buffer %d with size %d bytes; queue size after %d",
+                    // System.identityHashCode(data),
+                    // data.length(), queue.size());
                     queueChange.signal();
                 } finally {
                     lock.unlock();
@@ -1250,10 +1502,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
                 result = readable;
             } else {
-                /* readable < len so we read out the current buffer completely and we try the subsequent ones if available */
+                /*
+                 * readable < len so we read out the current buffer completely and we try the subsequent ones if
+                 * available
+                 */
                 rb.getBytes(readPosition, readPosition + readable, b, off);
                 // Log.infof("Read out current buffer %d completely: %s", System.identityHashCode(rb),
-                //            new String(b, off, readable, StandardCharsets.UTF_8));
+                // new String(b, off, readable, StandardCharsets.UTF_8));
                 readPosition += readable;
                 // assert readPosition == rbLen;
                 len -= readable;
@@ -1270,8 +1525,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     }
                     rb.getBytes(readPosition, readPosition + readable, b, off2);
                     // Log.infof("Read 2 from buffer %d %d to %d: %s", System.identityHashCode(rb), readPosition,
-                    //           readPosition + readable,
-                    //           new String(b, off2, readable, StandardCharsets.UTF_8));
+                    // readPosition + readable,
+                    // new String(b, off2, readable, StandardCharsets.UTF_8));
                     readPosition += readable;
                     len -= readable;
                     off2 += readable;
@@ -1320,13 +1575,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         private Buffer takeBuffer(boolean blockingAwaitBuffer) throws IOException {
             // Log.infof("About to take buffer at queue size %d %s", queue.size(),
-            //           blockingAwaitBuffer ? "with blocking" : "without blocking");
+            // blockingAwaitBuffer ? "with blocking" : "without blocking");
             Buffer rb = readBuffer;
             if (rb == END) {
                 return null;
             }
             // Log.infof("Buffer is null: %s; %d >= %d: %s", rb == null, readPosition, (rb == null ? -1 : rb.length()),
-            //           rb != null && readPosition >= rb.length());
+            // rb != null && readPosition >= rb.length());
             if (rb == null || readPosition >= rb.length()) {
                 // Log.info("Buffer is null or empty");
 
@@ -1335,7 +1590,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     lock.lockInterruptibly();
                     if (blockingAwaitBuffer) {
                         while ((readBuffer = rb = queue.poll()) == null) {
-                            //Log.infof("Awaiting a buffer at queue size %d", queue.size());
+                            // Log.infof("Awaiting a buffer at queue size %d", queue.size());
                             queueChange.await();
                         }
                     } else {
@@ -1358,20 +1613,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
             }
             // Log.infof("Taken a %s buffer %d, will read from %d to %d; queue size after: %d",
-            //           (rb != null ? "valid" : "null"),
-            //           System.identityHashCode(rb),
-            //           readPosition, (rb != null ? rb.length() : -1), queue.size());
+            // (rb != null ? "valid" : "null"),
+            // System.identityHashCode(rb),
+            // readPosition, (rb != null ? rb.length() : -1), queue.size());
             return rb;
-        }
-
-        private boolean queueEmpty() {
-            final ReentrantLock lock = this.lock;
-            lock.lock();
-            try {
-                return queue.isEmpty();
-            } finally {
-                lock.unlock();
-            }
         }
 
         public void setException(IOException exception) {
@@ -1381,424 +1626,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             }
         }
 
-    }
-
-    static class DummyBuffer implements Buffer {
-
-        @Override
-        public void writeToBuffer(Buffer buffer) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int readFromBuffer(int pos, Buffer buffer) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String toString(Charset enc) {
-            return "";
-        }
-
-        @Override
-        public String toString(String enc) {
-            return "";
-        }
-
-        @Override
-        public JsonObject toJsonObject() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public JsonArray toJsonArray() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer slice(int start, int end) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer slice() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setUnsignedShortLE(int pos, int s) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setUnsignedShort(int pos, int s) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setUnsignedIntLE(int pos, long i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setUnsignedInt(int pos, long i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setUnsignedByte(int pos, short b) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setString(int pos, String str, String enc) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setString(int pos, String str) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setShortLE(int pos, short s) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setShort(int pos, short s) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setMediumLE(int pos, int i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setMedium(int pos, int i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setLongLE(int pos, long l) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setLong(int pos, long l) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setIntLE(int pos, int i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setInt(int pos, int i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setFloat(int pos, float f) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setDouble(int pos, double d) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setBytes(int pos, byte[] b, int offset, int len) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setBytes(int pos, byte[] b) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setBytes(int pos, ByteBuffer b) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setByte(int pos, byte b) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setBuffer(int pos, Buffer b, int offset, int len) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer setBuffer(int pos, Buffer b) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int length() {
-            return 0;
-        }
-
-        @Override
-        public int getUnsignedShortLE(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int getUnsignedShort(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int getUnsignedMediumLE(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int getUnsignedMedium(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public long getUnsignedIntLE(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public long getUnsignedInt(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public short getUnsignedByte(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getString(int start, int end, String enc) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public String getString(int start, int end) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public short getShortLE(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public short getShort(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int getMediumLE(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int getMedium(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public long getLongLE(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public long getLong(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int getIntLE(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int getInt(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public float getFloat(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public double getDouble(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer getBytes(int start, int end, byte[] dst, int dstIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer getBytes(int start, int end, byte[] dst) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer getBytes(byte[] dst, int dstIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public byte[] getBytes(int start, int end) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer getBytes(byte[] dst) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public byte[] getBytes() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public ByteBuf getByteBuf() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public byte getByte(int pos) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer getBuffer(int start, int end) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer copy() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendUnsignedShortLE(int s) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendUnsignedShort(int s) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendUnsignedIntLE(long i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendUnsignedInt(long i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendUnsignedByte(short b) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendString(String str, String enc) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendString(String str) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendShortLE(short s) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendShort(short s) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendMediumLE(int i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendMedium(int i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendLongLE(long l) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendLong(long l) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendIntLE(int i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendInt(int i) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendFloat(float f) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendDouble(double d) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendBytes(byte[] bytes, int offset, int len) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendBytes(byte[] bytes) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendByte(byte b) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendBuffer(Buffer buff, int offset, int len) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Buffer appendBuffer(Buffer buff) {
-            throw new UnsupportedOperationException();
-        }
     }
 
     public interface IOEHandler<E> {
