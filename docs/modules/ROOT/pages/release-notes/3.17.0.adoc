@@ -1,0 +1,151 @@
+= {quarkus-cxf-project-name} 3.17.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.16.x -> 3.17.0 - https://quarkus.io/blog/quarkus-3-17-0-released/[release notes]
+
+== New features in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1447[#1447] Support asynchronous mode with `VertxHttpClientHTTPConduit`
+
+Before {quarkus-cxf-project-name} 3.17.0, CXF clients based on `VertxHttpClientHTTPConduit` could only be called synchronously:
+
+[source,java]
+----
+@CXFClient("hello")
+HelloService hello;
+
+String callHello() {
+    // Synchronous CXF client call
+    hello.hello("Joe");
+}
+----
+
+{quarkus-cxf-project-name} 3.17.0 introduces the asynchronous mode for `VertxHttpClientHTTPConduit`-based clients:
+
+[source,java]
+----
+import io.smallrye.mutiny.Uni;
+
+@CXFClient("hello")
+HelloService hello;
+
+Uni<String> callHelloAsync() {
+    return Uni.createFrom()
+            // Asynchronous CXF client call returning java.util.concurrent.Future
+            .future(hello.helloAsync("Joe"))
+            .map(HelloResponse::getReturn);
+}
+----
+
+This works much like with the existing `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[Apache HttpClient 5 Async HTTP Transport]`.
+The main difference is that you do not need to add the `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` dependency to your application anymore.
+
+You still need to
+xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc#extensions-quarkus-cxf-rt-transports-http-hc5-usage-generate-async-methods[generate the async methods]
+using the embedded `wsdl2java` tool.
+
+We plan to https://github.com/quarkiverse/quarkus-cxf/issues/1619[add a new documentation page] dedicated to this topic.
+
+We plan to deprecate `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` once the asynchronous mode of `VertxHttpClientHTTPConduit` passes some battle testing.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1609[#1609] Support HTTP redirects with `VertxHttpClientHTTPConduit`
+
+Before {quarkus-cxf-project-name} 3.16.0, the `VertxHttpClientHTTPConduit`-base CXF clients were not following HTTP redirects
+(HTTP status codes 301, 302, 303 and 307 with `Location` response header) even if
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+was enabled for the given client.
+
+{quarkus-cxf-project-name} 3.17.0 adds this functionality along with the proper support for
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`.
+
+A new configuration property
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".redirect-relative-uri]`
+was introduced.
+It is equivalent to setting `http.redirect.relative.uri` property on the CXF client request context as already supported by CXF.
+
+
+== Bugfixes in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1613[#1613] `VertxHttpClientHTTPConduit`-backed client hangs when receiving large responses under load
+
+Before {quarkus-cxf-project-name} 3.17.0, the implementation of `VertxHttpClientHTTPConduit` used a stock `java.io` pipe
+to pass the response body data from Vert.x event loop to the worker thread.
+The pipe was build of `PipedOutputStream` and `PipedInputStream`.
+In situations when Vert.x event loop passed the body data in more than one chunks,
+the event loop was blocked waiting for the worker thread to drain the fixed size buffer of the pipe.
+While the Vert.x event loop was blocked, all Vert.x based functionality of the application
+(other exchanges of the same client, other Vert.x clients, REST endpoints, ...) was hanging.
+Eventually a warning similar to the following one may have appeared in the log:
+
+[source,bash]
+----
+2024-11-05 09:24:19,561 WARN  [io.ver.cor.imp.BlockedThreadChecker] (vertx-blocked-thread-checker) Thread Thread[vert.x-eventloop-thread-2,5,main] has been blocked for 3809 ms, time limit is 2000 ms: io.vertx.core.VertxException: Thread blocked
+    at java.base/java.lang.Object.wait0(Native Method)
+    at java.base/java.lang.Object.wait(Object.java:366)
+    at java.base/java.io.PipedInputStream.awaitSpace(PipedInputStream.java:279)
+    at java.base/java.io.PipedInputStream.receive(PipedInputStream.java:237)
+    at java.base/java.io.PipedOutputStream.write(PipedOutputStream.java:154)
+    at java.base/java.io.OutputStream.write(OutputStream.java:124)
+    at io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit$RequestBodyHandler.lambda$pipe$3(VertxHttpClientHTTPConduit.java:694)
+    at io.vertx.core.impl.ContextInternal.dispatch(ContextInternal.java:270)
+    at io.vertx.core.http.impl.HttpEventHandler.handleChunk(HttpEventHandler.java:51)
+    at io.vertx.core.http.impl.HttpClientResponseImpl.handleChunk(HttpClientResponseImpl.java:239)
+    at io.vertx.core.http.impl.Http1xClientConnection$StreamImpl.lambda$new$0(Http1xClientConnection.java:429)
+    at io.vertx.core.streams.impl.InboundBuffer.handleEvent(InboundBuffer.java:279)
+    at io.vertx.core.streams.impl.InboundBuffer.write(InboundBuffer.java:157)
+    at io.vertx.core.http.impl.Http1xClientConnection$StreamImpl.handleChunk(Http1xClientConnection.java:705)
+    at io.vertx.core.impl.ContextImpl.execute(ContextImpl.java:313)
+    ...
+----
+
+In {quarkus-cxf-project-name} 3.17.0, the blocking `java.io` pipe was replaced by a non-blocking Vert.x pipe
+with a properly implemented back pressure for the case when the worker thread consumes the data more slowly
+than it is produced by the Vert.x event loop.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1599[#1599] `VertxHttpClientHTTPConduit` does not send chatset in `Content-Type`
+
+Before {quarkus-cxf-project-name} 3.16.0 the `Content-Type` request header sent by the client contained `charset=UTF-8`.
+This stopped to be the case with 3.16.0, because we changed the default conduit from `URLConnectionHTTPConduit` to `VertxHttpClientHTTPConduit`.
+In {quarkus-cxf-project-name} 3.17.0 the `VertxHttpClientHTTPConduit` was fixed to behave the same like `URLConnectionHTTPConduit`.
+
+Special thanks to https://github.com/argenstijn[@argenstijn] for https://github.com/quarkiverse/quarkus-cxf/issues/1582[reporting] this and the previous issue.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1579[#1579] NullPointerException: HttpClientPool in org.apache.cxf.Bus using VertxHttpClientHTTPConduitFactory
+
+With {quarkus-cxf-project-name} 3.17.0, some tests started to fail for https://github.com/famod[Falko], throwing the following exception:
+
+[source,bash]
+----
+Caused by: java.lang.NullPointerException: HttpClientPool in org.apache.cxf.Bus
+    at java.base/java.util.Objects.requireNonNull(Objects.java:259)
+    at io.quarkiverse.cxf.HTTPConduitImpl$3.createConduit(HTTPConduitImpl.java:55)
+    at io.quarkiverse.cxf.QuarkusHTTPConduitFactory.configure(QuarkusHTTPConduitFactory.java:74)
+    at io.quarkiverse.cxf.QuarkusHTTPConduitFactory.createConduit(QuarkusHTTPConduitFactory.java:68)
+    at org.apache.cxf.transport.http.HTTPTransportFactory.getConduit(HTTPTransportFactory.java:237)
+    at org.apache.cxf.binding.soap.SoapTransportFactory.getConduit(SoapTransportFactory.java:226)
+    at org.apache.cxf.binding.soap.SoapTransportFactory.getConduit(SoapTransportFactory.java:233)
+    at org.apache.cxf.endpoint.AbstractConduitSelector.createConduit(AbstractConduitSelector.java:144)
+    at org.apache.cxf.endpoint.AbstractConduitSelector.getSelectedConduit(AbstractConduitSelector.java:108)
+    at org.apache.cxf.endpoint.UpfrontConduitSelector.selectConduit(UpfrontConduitSelector.java:77)
+    at org.apache.cxf.endpoint.ClientImpl.getConduit(ClientImpl.java:973)
+    at de.someproject.SoapApiClientSupport.getConduit(TspSoapApiClientSupport.java:36)
+----
+
+A bad initialization ordering between the client and CXF Bus seems to be the most plausible cause of this issue.
+
+In {quarkus-cxf-project-name} 3.17.0, we stoppped relying on CXF Bus when initializing CXF clients and Falko confirmed
+that that this made his tests pass again.
+
+=== Documentation improvements
+
+* Removed dangling experimental status from `VertxHttpClientHTTPConduitFactory` in the ducumentation of
+  `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
+  and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+** xref:user-guide/ssl.adoc[SSL, TLS and HTTPS] - updated with the information about using TLS registry
+** xref:user-guide/auth.adoc[Authentication and authorization]
+** xref:security-guide/ws-securitypolicy-auth.adoc[Authentication enforced by WS-SecurityPolicy] - new
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.16.1+++...+++3.17.0

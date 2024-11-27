@@ -33,6 +33,7 @@
 ** xref:security-guide/ws-securitypolicy-auth.adoc[WS-SecurityPolicy Authentication]
 * xref:release-notes/index.adoc[Release notes]
 ifeval::[{doc-is-main} == true]
+** xref:release-notes/3.17.0.adoc[3.17.0]
 ** xref:release-notes/3.16.1.adoc[3.16.1]
 ** xref:release-notes/3.16.0.adoc[3.16.0]
 ** xref:release-notes/3.15.3.adoc[3.15.3 LTS]
