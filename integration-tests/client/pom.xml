@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy</artifactId>
+            <artifactId>quarkus-rest</artifactId>
         </dependency>
         <dependency><!-- Reproduce https://github.com/quarkiverse/quarkus-cxf/issues/860 -->
             <groupId>io.quarkus</groupId>

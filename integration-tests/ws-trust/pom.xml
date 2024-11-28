@@ -24,7 +24,7 @@
 
         <dependency><!-- Make the native compiler happy -->
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy</artifactId>
+            <artifactId>quarkus-rest</artifactId>
         </dependency>
 
         <dependency>
