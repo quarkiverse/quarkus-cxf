@@ -73,7 +73,7 @@ public class XForwardedHeadersTest {
                         Matchers.hasXPath(
                                 anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
-                                        "http://api.example.com:8081/soap/greeting")));
+                                        "http://api.example.com/soap/greeting")));
     }
 
     @Test
@@ -159,7 +159,7 @@ public class XForwardedHeadersTest {
 
         for (Response response : responses) {
             response.then().body(CoreMatchers.anyOf(
-                    containsString("http://api1.example.com:8081/soap/greeting"),
+                    containsString("http://api1.example.com/soap/greeting"),
                     containsString("http://localhost:443/soap/greeting"),
                     containsString("http://localhost:8081/test/soap/greeting"),
                     containsString("https://localhost:8280/soap/greeting")));
