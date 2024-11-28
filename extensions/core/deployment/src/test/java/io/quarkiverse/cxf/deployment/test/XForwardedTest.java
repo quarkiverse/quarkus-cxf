@@ -107,7 +107,7 @@ public class XForwardedTest {
     void xForwardedHost() {
         Assertions.assertThat(
                 getRequestFieldValue(X_FORWARDED_HOST_HEADER, "foo", "getRequestURL"))
-                .isEqualTo("http://foo:8081/services/hello");
+                .isEqualTo("http://foo/services/hello");
         Assertions.assertThat(
                 getRequestFieldValue(X_FORWARDED_HOST_HEADER, "foo", "getServerName"))
                 .isEqualTo("foo");
