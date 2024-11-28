@@ -51,7 +51,7 @@ We plan to deprecate `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` onc
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1609[#1609] Support HTTP redirects with `VertxHttpClientHTTPConduit`
 
-Before {quarkus-cxf-project-name} 3.16.0, the `VertxHttpClientHTTPConduit`-base CXF clients were not following HTTP redirects
+Before {quarkus-cxf-project-name} 3.16.0, the `VertxHttpClientHTTPConduit`-based CXF clients were not following HTTP redirects
 (HTTP status codes 301, 302, 303 and 307 with `Location` response header) even if
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
 was enabled for the given client.
@@ -142,9 +142,6 @@ that that this made his tests pass again.
 * Removed dangling experimental status from `VertxHttpClientHTTPConduitFactory` in the ducumentation of
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
   and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
-** xref:user-guide/ssl.adoc[SSL, TLS and HTTPS] - updated with the information about using TLS registry
-** xref:user-guide/auth.adoc[Authentication and authorization]
-** xref:security-guide/ws-securitypolicy-auth.adoc[Authentication enforced by WS-SecurityPolicy] - new
 
 == Full changelog
 
