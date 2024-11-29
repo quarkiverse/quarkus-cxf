@@ -17,6 +17,7 @@
       "description": "Ignore any updates for matched packages because we take the version from Quarkus or some other external project",
       "matchPackagePatterns": [
         "^com.sun.xml.messaging.saaj:",
+        "^io.smallrye.certs:",
         "^jakarta.mail:",
         "^jakarta.jws:",
         "^jakarta.xml.soap:",
