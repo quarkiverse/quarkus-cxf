@@ -1,0 +1,20 @@
+= {quarkus-cxf-project-name} 3.17.1 release notes
+
+== Bugfixes in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1630[#1630] `VertxHttpClientHTTPConduit` redirects the request body twice when the body was passed through a single buffer
+
+{quarkus-cxf-project-name} 3.17.0, added
+xref:release-notes/3.17.0.adoc#_1609_support_http_redirects_with_vertxhttpclienthttpconduit[support for redirects] with `VertxHttpClientHTTPConduit`.
+If the request body was small enough to fit into a single Vert.x Buffer, then the request body was cached
+and subsequently streamed twice into the body of the request to the redirection URI.
+
+If the target SOAP service was implemented using CXF, the second XML document in the request body was ignored and the issue did not show up in any way,
+unless the schema validation was enabled for incoming requests.
+See `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-schema-validation-enabled-for[quarkus.cxf.endpoint."/endpoint-path".schema-validation.enabled-for]`.
+
+Since {quarkus-cxf-project-name} 3.17.1, `VertxHttpClientHTTPConduit` always sends the body only once when redirecting.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.17.0+++...+++3.17.1
