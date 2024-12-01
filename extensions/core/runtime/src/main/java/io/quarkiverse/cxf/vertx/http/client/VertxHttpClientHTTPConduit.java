@@ -674,10 +674,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         }
                         mode.responseReady(new Result<>(new ResponseEvent(response, sink), ar.cause()));
                     });
-            if (bodyRecorder != null) {
-                bodyRecorder.add(buffer.slice());
-            }
-
             req
                     .end(buffer)
                     .onFailure(t -> mode.responseFailed(t, true));
@@ -686,7 +682,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         void redirectRetransmit(URI newURL) throws IOException {
             if (Log.isDebugEnabled()) {
-                Log.debugf("Redirect retransmit from %s to %s", redirects.get(redirects.size() - 1), newURL);
+                final int i = redirects.size() - 2;
+                final String previousUrl = i >= 0 ? redirects.get(i).toString() : "null";
+                Log.infof("Redirect retransmit from %s to %s", previousUrl, newURL);
             }
             boolean ssl;
             int port = newURL.getPort();

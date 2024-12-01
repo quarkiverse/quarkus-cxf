@@ -1,5 +1,8 @@
 package io.quarkiverse.cxf.deployment.test;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.jws.WebMethod;
@@ -130,7 +133,28 @@ public class Client3xx4xx5xxTest {
         });
         router.post("/vertx-redirect").handler(ctx -> {
             Log.info("Redirecting");
-            ctx.redirect("http://localhost:8081/services/hello");
+            ctx.redirect("http://localhost:8081/vertx-hello");
+        });
+        router.post("/vertx-hello").handler(ctx -> {
+            final String requestBody = ctx.body().asString();
+            final Matcher m = Pattern.compile("<arg0>([^<]*)</arg0>").matcher(requestBody);
+            final StringBuilder response = new StringBuilder()
+                    .append("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">")
+                    .append("<soap:Body>")
+                    .append("<ns2:helloResponse xmlns:ns2=\"http://test.deployment.cxf.quarkiverse.io/\">")
+                    .append("<return>");
+            while (m.find()) {
+                /*
+                 * Append as many hellos as many <arg0> elements we get to make sure
+                 * we do not get the request body twice - see https://github.com/quarkiverse/quarkus-cxf/issues/1630
+                 */
+                response.append("Hello ").append(m.group(1));
+            }
+            response.append("</return>")
+                    .append("</ns2:helloResponse>")
+                    .append("</soap:Body>")
+                    .append("</soap:Envelope>");
+            ctx.response().end(response.toString());
         });
     }
 
@@ -208,11 +232,11 @@ public class Client3xx4xx5xxTest {
     @Test
     void endpointUri302OnWorkerThread() {
         RestAssured.given()
-                .body("Joe")
+                .body("Single request body")
                 .post("http://localhost:8081/vertx-blocking/endpointUri302")
                 .then()
                 .statusCode(200)
-                .body(Matchers.is("Hello Joe"));
+                .body(Matchers.is("Hello Single request body"));
     }
 
     private static Throwable rootCause(Exception e) {
