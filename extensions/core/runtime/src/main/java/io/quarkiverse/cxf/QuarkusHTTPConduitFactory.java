@@ -9,11 +9,13 @@ import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
+import io.quarkus.logging.Log;
 import io.vertx.core.Vertx;
 
 /**
@@ -76,6 +78,12 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
             EndpointInfo localInfo,
             EndpointReferenceType target) throws IOException {
         final HTTPConduit httpConduit = httpConduitImpl.createConduit(httpClientPool, b, localInfo, target);
+        if (httpConduit instanceof HttpClientHTTPConduit) {
+            Log.warnf("Usage of %s is deprecated since Quarkus CXF 3.18.0."
+                    + " You may want to review the options quarkus.cxf.http-conduit-factory and/or quarkus.cxf.client.\"%s\".http-conduit-factory",
+                    HttpClientHTTPConduit.class.getName(),
+                    cxfClientInfo.getConfigKey());
+        }
         httpConduitImpl.tlsClientParameters(cxfClientInfo, vertx).ifPresent(httpConduit::setTlsClientParameters);
         final HTTPClientPolicy policy = new HTTPClientPolicy();
         httpConduit.setClient(policy);

@@ -1,0 +1,42 @@
+= {quarkus-cxf-project-name} 3.18.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.17.x -> 3.18.0 - https://quarkus.io/blog/quarkus-3-18-0-released/[release notes]
+
+== New features
+
+== Bugfixes
+
+== Deprecations
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1633[#1633] `HttpClientHTTPConduitFactory` value of `*.http-conduit-factory` deprecated
+
+The `HttpClientHTTPConduitFactory` value of
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
+and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+existed since the inception of those options in {quarkus-cxf-project-name} 2.3.0.
+
+`HttpClientHTTPConduit` never gained any real traction within {quarkus-cxf-project-name}.
+When CXF started using it as a default, we were forced to introduce our own default (`URLConnectionHTTPConduitFactory`)
+to avoid bugs like https://github.com/quarkiverse/quarkus-cxf/issues/992[#992],
+https://issues.apache.org/jira/browse/CXF-8885[CXF-8885],
+https://issues.apache.org/jira/browse/CXF-8951[CXF-8951],
+https://issues.apache.org/jira/browse/CXF-8946[CXF-8946],
+https://issues.apache.org/jira/browse/CXF-8903[CXF-8903] and possibly others.
+Now that we have `VertxHttpClientHTTPConduit`,
+which we can support very well on Quarkus,
+there are no more reasons for us to spend our resources on `HttpClientHTTPConduit`.
+
+We should mark it as deprecated in our documentation, add some warnings on startup for the case that somebody is still using it and then at some point remove the item from the `io.quarkiverse.cxf.HTTPConduitImpl` enum and also remove the tests covering it.
+
+
+== Documentation improvements
+
+* Removed dangling experimental status from `VertxHttpClientHTTPConduitFactory` in the ducumentation of
+  `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
+  and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.17.2+++...+++3.18.0
