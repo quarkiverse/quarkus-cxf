@@ -71,6 +71,10 @@ public interface CxfFixedConfig {
      * - `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning
      * `org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the underlying HTTP
      * client.
+     * +
+     * *Deprecated since
+     * xref:release-notes/3.18.0.adoc#_1633_httpclienthttpconduitfactory_value_of_http_conduit_factory_deprecated[3.18.0]*
+     * +++-+++ use other `HTTPConduitFactory` implementations, preferably `QuarkusCXFDefault`.
      * - `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning
      * `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the underlying
      * HTTP client.
