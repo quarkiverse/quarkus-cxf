@@ -3,6 +3,6 @@
 
 The security guide documents various security related aspects of {quarkus-cxf-project-name}:
 
-* xref:user-guide/ssl-tls-https.adoc#ssl-tls-https[SSL, TLS and HTTPS]
-* xref:user-guide/authentication-authorization.adoc#authentication-authorization[Authentication and authorization]
-* xref:security-guide/ws-securitypolicy-authentication-authorization.adoc#ws-securitypolicy-authentication-authorization[Authentication enforced by WS-SecurityPolicy]
+* xref:user-guide/ssl-tls-https.adoc[SSL, TLS and HTTPS]
+* xref:user-guide/authentication-authorization.adoc[Authentication and authorization]
+* xref:security-guide/ws-securitypolicy-authentication-authorization.adoc[Authentication enforced by WS-SecurityPolicy]

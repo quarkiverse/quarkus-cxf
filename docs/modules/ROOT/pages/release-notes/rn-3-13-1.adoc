@@ -9,7 +9,7 @@
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1455[#1455] Vert.x HTTP client is incorrectly used as the default
 
-We introduced xref:release-notes/rn-3-13-0.adoc#vert-x-httpclient_based_http_conduit[Vert.x HttpClient based HTTP Conduit] in {quarkus-cxf-project-name} 3.13.0
+We introduced xref:release-notes/rn-3-13-0.adoc[Vert.x HttpClient based HTTP Conduit] in {quarkus-cxf-project-name} 3.13.0
 and it was not supposed to replace the original `HttpURLConnection` based default conduit.
 However, we screwed the default handling which resulted in using `VertxHttpClientHTTPConduit` as a default in some cases.
 This was fixed in {quarkus-cxf-project-name} 3.13.1.
@@ -18,7 +18,7 @@ We are sorry for the inconvenience.
 
 === Documentation improvements
 
-* We added a paragraph explaining xref:user-guide/create-project.adoc#quarkus-platform[Quarkus Platform]
+* We added a paragraph explaining xref:user-guide/create-project.adoc[Quarkus Platform]
 * We added the xref:release-planning.adoc[Release planning] page explaining how and when we release {quarkus-cxf-project-name}
 
 == Full changelog

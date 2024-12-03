@@ -35,8 +35,8 @@ or add these coordinates to your existing project:
 ifeval::[{doc-show-user-guide-link} == true]
 [TIP]
 ====
-Check the xref:user-guide/index.adoc#user-guide-index[User guide] and especially its
-xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
+Check the xref:user-guide/index.adoc[User guide] and especially its
+xref:user-guide/create-project.adoc[Dependency management] section
 for more information about writing applications with {quarkus-cxf-project-name}.
 ====
 endif::[]
@@ -58,8 +58,8 @@ Enabling WS-RM for a client or service endpoints means that https://cxf.apache.o
 
 In addition to that you may want to set some of the options documented xref:#quarkus-cxf-rt-ws-rm-configuration[below] and/or the following WS-Addressing options:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-decoupled-endpoint[quarkus.cxf.client."client-name".decoupled-endpoint]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-decoupled-endpoint-base[quarkus.cxf.decoupled-endpoint-base]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".decoupled-endpoint]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.decoupled-endpoint-base]`
 
 [id="extensions-quarkus-cxf-rt-ws-rm-usage-runnable-example"]
 === Runnable example
@@ -169,7 +169,7 @@ destination. If not specified, the acknowledgements will be sent immediately.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.cxf.ws.rm.persistence.RMStore` bean used to
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.cxf.ws.rm.persistence.RMStore` bean used to
 store source and destination sequences and message references.
 
 *Environment variable*: `+++QUARKUS_CXF_RM_STORE+++` +
@@ -179,7 +179,7 @@ store source and destination sequences and message references.
 .<| `string`
 .<| `#defaultRmFeature`
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.cxf.ws.rm.feature.RMFeature` bean to set on
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.cxf.ws.rm.feature.RMFeature` bean to set on
 clients and service endpoint which have `quarkus.cxf.++[++client++\|++service++]++."name".rm.enabled = true`.
 
 If the value is `++#++defaultRmFeature` then Quarkus CXF creates and configures the bean for you.

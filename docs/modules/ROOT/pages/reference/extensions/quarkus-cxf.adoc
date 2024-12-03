@@ -31,8 +31,8 @@ or add these coordinates to your existing project:
 ifeval::[{doc-show-user-guide-link} == true]
 [TIP]
 ====
-Check the xref:user-guide/index.adoc#user-guide-index[User guide] and especially its
-xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
+Check the xref:user-guide/index.adoc[User guide] and especially its
+xref:user-guide/create-project.adoc[Dependency management] section
 for more information about writing applications with {quarkus-cxf-project-name}.
 ====
 endif::[]
@@ -50,24 +50,24 @@ endif::[]
 [id="quarkus-cxf-usage"]
 == Usage
 
-There are several chapters in the xref:user-guide/index.adoc#user-guide-index[User guide] covering the usage of this extension:
+There are several chapters in the xref:user-guide/index.adoc[User guide] covering the usage of this extension:
 
-* xref:user-guide/first-soap-web-service.adoc#first-soap-web-service[Your first SOAP Web service]
-* xref:user-guide/first-soap-client.adoc#first-soap-client[Your first SOAP Client]
-* xref:user-guide/configuration.adoc#configuration[Configuration]
-* xref:user-guide/package-for-jvm-and-native.adoc#package-for-jvm-and-native[Package for JVM and native]
-* xref:user-guide/payload-logging.adoc#payload-logging[Logging]
-* xref:user-guide/ssl-tls-https.adoc#ssl-tls-https[SSL]
-* xref:user-guide/authentication-authorization.adoc#authentication-authorization[Authentication and authorization]
-* xref:user-guide/advanced-soap-client-topics.adoc#advanced-soap-client-topics[Advanced SOAP client topics]
-* xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc#running-behind-a-reverse-proxy[Running behind a reverse proxy]
-* xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl[Generate Java from WSDL]
-* xref:user-guide/contract-first-code-first/generate-wsdl-from-java.adoc#generate-wsdl-from-java[Generate WSDL from Java]
-* xref:user-guide/contract-first-code-first.adoc#contract-first-code-first[Contract first and code first]
-* xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc#cxf-interceptors-and-features[CXF Interceptors and Features]
-* xref:user-guide/interceptors-features-handlers/jax-ws-handlers.adoc#jax-ws-handlers[JAX-WS Handlers]
-* xref:user-guide/advanced-service-topics/jax-ws-providers.adoc#jax-ws-providers[JAX-WS Providers]
-* xref:user-guide/examples.adoc#examples[Examples]
+* xref:user-guide/first-soap-web-service.adoc[Your first SOAP Web service]
+* xref:user-guide/first-soap-client.adoc[Your first SOAP Client]
+* xref:user-guide/configuration.adoc[Configuration]
+* xref:user-guide/package-for-jvm-and-native.adoc[Package for JVM and native]
+* xref:user-guide/payload-logging.adoc[Logging]
+* xref:user-guide/ssl-tls-https.adoc[SSL]
+* xref:user-guide/authentication-authorization.adoc[Authentication and authorization]
+* xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
+* xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc[Running behind a reverse proxy]
+* xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate Java from WSDL]
+* xref:user-guide/contract-first-code-first/generate-wsdl-from-java.adoc[Generate WSDL from Java]
+* xref:user-guide/contract-first-code-first.adoc[Contract first and code first]
+* xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[CXF Interceptors and Features]
+* xref:user-guide/interceptors-features-handlers/jax-ws-handlers.adoc[JAX-WS Handlers]
+* xref:user-guide/advanced-service-topics/jax-ws-providers.adoc[JAX-WS Providers]
+* xref:user-guide/examples.adoc[Examples]
 
 
 [id="quarkus-cxf-configuration"]

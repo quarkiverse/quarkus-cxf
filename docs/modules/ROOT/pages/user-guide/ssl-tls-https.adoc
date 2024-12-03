@@ -30,9 +30,9 @@ Once you have prepared the trust store, you need to configure your client to use
 This is the easiest way to set the client trust store.
 The key role is played by the following properties:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-type[quarkus.cxf.client."client-name".trust-store-type]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password[quarkus.cxf.client."client-name".trust-store-password]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".trust-store]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".trust-store-type]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".trust-store-password]`
 
 Here is an example:
 
@@ -98,7 +98,7 @@ include::example$mtls/application.properties[tag=mtls]
 
 The requirement for the clients to connect through HTTPS can be defined in a policy.
 
-The functionality is provided by `xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security[quarkus-cxf-rt-ws-security]` extension.
+The functionality is provided by `xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[quarkus-cxf-rt-ws-security]` extension.
 
 Here is an example of a policy file:
 

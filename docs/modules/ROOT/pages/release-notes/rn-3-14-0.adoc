@@ -9,7 +9,7 @@
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1460[#1460] IllegalArgumentException: port p must be in range 0 <= p <= 65535 when using client-endpoint-url without explicit port
 
-When using the xref:release-notes/rn-3-13-0.adoc#vert-x-httpclient_based_http_conduit[new `VertxHttpClientHTTPConduitFactory`],
+When using the xref:release-notes/rn-3-13-0.adoc[new `VertxHttpClientHTTPConduitFactory`],
 the handling of default ports for `http` and `https` client endpoint URLs was broken resulting in an `IllegalArgumentException`.
 This was fixed in {quarkus-cxf-project-name} 3.14.0.
 
@@ -32,8 +32,8 @@ and if the value is `false`, it disables OpenTelemetry for CXF too.
 === Documentation improvements
 
 Some substantial refactoring took place in the way how we generate the documentation for the
-xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf-configuration[configuration]
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security-configuration[options].
+xref:reference/extensions/quarkus-cxf.adoc[configuration]
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[options].
 Although there are not many https://github.com/quarkiverse/quarkus-cxf/commit/b8913f7fcc58ced6cec9b7c1dc505cfcdd9088f4[observable changes],
 please do not hesitate to https://github.com/quarkiverse/quarkus-cxf/issues/new[file an issue] if you spot some irregularity.
 

@@ -9,7 +9,7 @@
 
 === More `wsdl2java` options configurable through `application.properties`
 
-See the updated xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl[Generate Java from WSDL] page.
+See the updated xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate Java from WSDL] page.
 
 == Fixed bugs
 

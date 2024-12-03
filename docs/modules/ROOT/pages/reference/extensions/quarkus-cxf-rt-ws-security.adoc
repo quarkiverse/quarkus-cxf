@@ -37,8 +37,8 @@ or add these coordinates to your existing project:
 ifeval::[{doc-show-user-guide-link} == true]
 [TIP]
 ====
-Check the xref:user-guide/index.adoc#user-guide-index[User guide] and especially its
-xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
+Check the xref:user-guide/index.adoc[User guide] and especially its
+xref:user-guide/create-project.adoc[Dependency management] section
 for more information about writing applications with {quarkus-cxf-project-name}.
 ====
 endif::[]
@@ -220,7 +220,7 @@ whose public key is in the service's truststore (defined in `encrypt.properties`
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` bean
+3+a|A xref:user-guide/configuration.adoc[reference] to a `javax.security.auth.callback.CallbackHandler` bean
 used to obtain passwords, for both outbound and inbound requests.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_CALLBACK_HANDLER+++` +
@@ -230,7 +230,7 @@ used to obtain passwords, for both outbound and inbound requests.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler`
+3+a|A xref:user-guide/configuration.adoc[reference] to a `javax.security.auth.callback.CallbackHandler`
 implementation used to construct SAML Assertions.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SAML_CALLBACK_HANDLER+++` +
@@ -278,7 +278,7 @@ org.apache.ws.security.components.crypto.Merlin
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used
 for signature. If not set, `signature.properties` will be used to configure a `Crypto` instance.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_SIGNATURE_CRYPTO+++` +
@@ -288,7 +288,7 @@ for signature. If not set, `signature.properties` will be used to configure a `C
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
 encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_ENCRYPTION_CRYPTO+++` +
@@ -700,7 +700,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.spnego.SpnegoClientAction`
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.spnego.SpnegoClientAction`
 bean to use for SPNEGO. This allows the user to plug in a different implementation to obtain a service ticket.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -713,7 +713,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
 to cache `UsernameToken` nonces. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -726,7 +726,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
 to cache `Timestamp` `Created` Strings. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by
 default.
 
@@ -740,7 +740,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
 to cache SAML2 Token Identifier Strings (if the token contains a `OneTimeUse` condition). A
 `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
 
@@ -767,7 +767,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.cxf.ws.security.tokenstore.TokenStore` bean
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.cxf.ws.security.tokenstore.TokenStore` bean
 to use for caching security tokens. By default this uses a instance.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -854,7 +854,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.PasswordEncryptor`
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.crypto.PasswordEncryptor`
 bean, which is used to encrypt or decrypt passwords in the Merlin Crypto implementation (or any custom Crypto
 implementations).
 
@@ -874,7 +874,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a Kerberos `org.ietf.jgss.GSSCredential` bean to use for
+3+a|A xref:user-guide/configuration.adoc[reference] to a Kerberos `org.ietf.jgss.GSSCredential` bean to use for
 WS-Security. This is used to retrieve a service ticket instead of using the client credentials.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -887,7 +887,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a
+3+a|A xref:user-guide/configuration.adoc[reference] to a
 `org.apache.cxf.ws.security.wss4j.WSS4JSecurityContextCreator` bean that is used to create a CXF SecurityContext from
 the set of WSS4J processing results. The default implementation is
 `org.apache.cxf.ws.security.wss4j.DefaultWSS4JSecurityContextCreator`.
@@ -976,7 +976,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.cxf.ws.security.kerberos.KerberosClient`
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.cxf.ws.security.kerberos.KerberosClient`
 bean used to obtain a service ticket.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -1036,7 +1036,7 @@ enabled.
 
 3+a|The Encryption Algorithm to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1059,7 +1059,7 @@ enabled.
 3+a|The Symmetric Key Encryption Algorithm to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1082,7 +1082,7 @@ enabled.
 3+a|The Asymmetric Key Encryption Algorithm to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1104,7 +1104,7 @@ enabled.
 
 3+a|The Encryption Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1126,7 +1126,7 @@ enabled.
 
 3+a|The Signature Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1149,7 +1149,7 @@ enabled.
 3+a|The Encryption Derived Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1172,7 +1172,7 @@ enabled.
 3+a|The Signature Derived Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1195,7 +1195,7 @@ enabled.
 3+a|The Minimum Symmetric Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1217,7 +1217,7 @@ enabled.
 
 3+a|The Maximum Symmetric Key Length to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1240,7 +1240,7 @@ enabled.
 3+a|The Minimum Symmetric Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1263,7 +1263,7 @@ enabled.
 3+a|The Maximum Symmetric Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -1283,7 +1283,7 @@ enabled.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a fully configured
+3+a|A xref:user-guide/configuration.adoc[reference] to a fully configured
 `org.apache.cxf.ws.security.trust.STSClient` bean to communicate with the STS. If not set, the STS client will be
 created and configured based on other `++[++prefix++]++.security.sts.client.++*++` properties as long as they are
 available.
@@ -1294,7 +1294,7 @@ cannot thus be used as a CDI bean type, you can use the wrapper class
 
 [TIP]
 ====
-Check the xref:reference/extensions/quarkus-cxf-services-sts.adoc#quarkus-cxf-services-sts[Security Token Service (STS)] extension page
+Check the xref:reference/extensions/quarkus-cxf-services-sts.adoc[Security Token Service (STS)] extension page
 for more information about WS-Trust.
 ====
 
@@ -1398,7 +1398,7 @@ org.apache.ws.security.components.crypto.Merlin
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
 encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SECURITY_STS_CLIENT_ENCRYPTION_CRYPTO+++` +
@@ -1408,7 +1408,7 @@ encryption. If not set, `encryption.properties` will be used to configure a `Cry
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
 the STS. If not set, `token.properties` will be used to configure a `Crypto` instance.
 
 WCF's trust server sometimes will encrypt the token in the response IN ADDITION TO the full security on the message.
@@ -1529,7 +1529,7 @@ whose public key is in the service's truststore (defined in `encrypt.properties`
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler` bean
+3+a|A xref:user-guide/configuration.adoc[reference] to a `javax.security.auth.callback.CallbackHandler` bean
 used to obtain passwords, for both outbound and inbound requests.
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_CALLBACK_HANDLER+++` +
@@ -1539,7 +1539,7 @@ used to obtain passwords, for both outbound and inbound requests.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `javax.security.auth.callback.CallbackHandler`
+3+a|A xref:user-guide/configuration.adoc[reference] to a `javax.security.auth.callback.CallbackHandler`
 implementation used to construct SAML Assertions.
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SAML_CALLBACK_HANDLER+++` +
@@ -1587,7 +1587,7 @@ org.apache.ws.security.components.crypto.Merlin
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.crypto.Crypto` bean to be used
 for signature. If not set, `signature.properties` will be used to configure a `Crypto` instance.
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_SIGNATURE_CRYPTO+++` +
@@ -1597,7 +1597,7 @@ for signature. If not set, `signature.properties` will be used to configure a `C
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.crypto.Crypto` to be used for
 encryption. If not set, `encryption.properties` will be used to configure a `Crypto` instance.
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT___ENDPOINT_PATH__SECURITY_ENCRYPTION_CRYPTO+++` +
@@ -2009,7 +2009,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.spnego.SpnegoClientAction`
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.spnego.SpnegoClientAction`
 bean to use for SPNEGO. This allows the user to plug in a different implementation to obtain a service ticket.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -2022,7 +2022,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
 to cache `UsernameToken` nonces. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -2035,7 +2035,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
 to cache `Timestamp` `Created` Strings. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by
 default.
 
@@ -2049,7 +2049,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
 to cache SAML2 Token Identifier Strings (if the token contains a `OneTimeUse` condition). A
 `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
 
@@ -2076,7 +2076,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.cxf.ws.security.tokenstore.TokenStore` bean
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.cxf.ws.security.tokenstore.TokenStore` bean
 to use for caching security tokens. By default this uses a instance.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -2163,7 +2163,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.crypto.PasswordEncryptor`
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.wss4j.common.crypto.PasswordEncryptor`
 bean, which is used to encrypt or decrypt passwords in the Merlin Crypto implementation (or any custom Crypto
 implementations).
 
@@ -2183,7 +2183,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a Kerberos `org.ietf.jgss.GSSCredential` bean to use for
+3+a|A xref:user-guide/configuration.adoc[reference] to a Kerberos `org.ietf.jgss.GSSCredential` bean to use for
 WS-Security. This is used to retrieve a service ticket instead of using the client credentials.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -2196,7 +2196,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a
+3+a|A xref:user-guide/configuration.adoc[reference] to a
 `org.apache.cxf.ws.security.wss4j.WSS4JSecurityContextCreator` bean that is used to create a CXF SecurityContext from
 the set of WSS4J processing results. The default implementation is
 `org.apache.cxf.ws.security.wss4j.DefaultWSS4JSecurityContextCreator`.
@@ -2285,7 +2285,7 @@ tests] yet.
 .<| `string`
 .<| 
 
-3+a|A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.cxf.ws.security.kerberos.KerberosClient`
+3+a|A xref:user-guide/configuration.adoc[reference] to a `org.apache.cxf.ws.security.kerberos.KerberosClient`
 bean used to obtain a service ticket.
 
 This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
@@ -2345,7 +2345,7 @@ enabled.
 
 3+a|The Encryption Algorithm to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2368,7 +2368,7 @@ enabled.
 3+a|The Symmetric Key Encryption Algorithm to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2391,7 +2391,7 @@ enabled.
 3+a|The Asymmetric Key Encryption Algorithm to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2413,7 +2413,7 @@ enabled.
 
 3+a|The Encryption Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2435,7 +2435,7 @@ enabled.
 
 3+a|The Signature Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2458,7 +2458,7 @@ enabled.
 3+a|The Encryption Derived Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2481,7 +2481,7 @@ enabled.
 3+a|The Signature Derived Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2504,7 +2504,7 @@ enabled.
 3+a|The Minimum Symmetric Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2526,7 +2526,7 @@ enabled.
 
 3+a|The Maximum Symmetric Key Length to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2549,7 +2549,7 @@ enabled.
 3+a|The Minimum Symmetric Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see
@@ -2572,7 +2572,7 @@ enabled.
 3+a|The Maximum Symmetric Key Length (number of bits) to set on the
 `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
 This value is only taken into account if the current security policy has set
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#ws-security-custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[`CustomAlgorithmSuite` as an
 `AlgorithmSuite`]
 
 For more information about algorithms, see

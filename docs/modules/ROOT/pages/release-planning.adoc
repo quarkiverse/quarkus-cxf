@@ -8,7 +8,7 @@ https://github.com/quarkusio/quarkus/wiki/Release-Planning[release schedule of Q
 
 Quarkus Core is typically released on a Wednesday (roughly) once a month.
 We normally release {quarkus-cxf-project-name} in the week after that
-and we subsequently send an upgrade to xref:user-guide/create-project.adoc#quarkus-platform[Quarkus Platform].
+and we subsequently send an upgrade to xref:user-guide/create-project.adoc[Quarkus Platform].
 Quarkus Platform is then released on the following Wednesday.
 
 An example:
@@ -26,4 +26,4 @@ We choose the same `major.minor` for LTS as Quarkus.
 
 == See also
 
-* xref:release-notes/index.adoc#release-notes-index[Release notes]
+* xref:release-notes/index.adoc[Release notes]

@@ -12,14 +12,14 @@ CXF provides the `wsdl2java` utility for that.
 
 {quarkus-cxf-project-name} wraps `wsdl2java` in the `quarkus-cxf` extension so you do not need to use it directly.
 
-Follow the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl[Generate the Model classes from WSDL] section of the user guide
+Follow the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL] section of the user guide
 for more details about how to use it.
 
 You may also want to check the CXF https://cxf.apache.org/docs/developing-a-consumer.html[Developing a Consumer] as a general introduction.
 
 == Contract first service
 
-When implementing a service the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl[generation of Java code from WSDL]
+When implementing a service the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[generation of Java code from WSDL]
 may also come in handy.
 `wsdl2java` can generate the model classes (with JAXB annotations)
 and service interfaces (with JAX-WS annotations) for you.
@@ -34,7 +34,7 @@ Another valid option at your disposal is to write your service in Java, using JA
 Then you have two options how to obtain the WSDL contract:
 
 1. Start your service and point your clients at `+http://your-host/your-service?wsdl+`
-2. xref:user-guide/contract-first-code-first.adoc#contract-first-code-first[Generate the WSDL document from Java] classes at build time
+2. xref:user-guide/contract-first-code-first.adoc[Generate the WSDL document from Java] classes at build time
 
 
 [TIP]

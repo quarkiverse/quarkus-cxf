@@ -27,11 +27,11 @@ public class HelloServiceImpl implements HelloService {
 }
 ----
 
-You can read more about `@CXFEndpoint` in the new chapter of {quarkus-cxf-project-name} called xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc#endpoints-and-paths[Service endpoints and paths].
+You can read more about `@CXFEndpoint` in the new chapter of {quarkus-cxf-project-name} called xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc[Service endpoints and paths].
 
 === Interceptors set through `@InInterceptors` and similar annotations are now looked up in the CDI container
 
-Before {quarkus-cxf-project-name} 3.11.0 and 3.8.4, xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc#cxf-interceptors-and-features[interceptors] specified through `@InInterceptors`, `@InFaultInterceptors`, `@OutInterceptors` and `@OutFaultInterceptors` annotations from `org.apache.cxf.interceptor` package
+Before {quarkus-cxf-project-name} 3.11.0 and 3.8.4, xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[interceptors] specified through `@InInterceptors`, `@InFaultInterceptors`, `@OutInterceptors` and `@OutFaultInterceptors` annotations from `org.apache.cxf.interceptor` package
 were only instantiated using reflection.
 Due to this, injecting beans and configuration values into them did not work.
 

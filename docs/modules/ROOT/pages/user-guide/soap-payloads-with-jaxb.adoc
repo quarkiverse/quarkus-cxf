@@ -1,8 +1,8 @@
 [[soap-payloads-with-jaxb]]
 = Complex SOAP payloads with JAXB
 
-Our introductory guides for Quarkus xref:user-guide/first-soap-client.adoc#first-soap-client[SOAP client]
-and xref:user-guide/first-soap-web-service.adoc#first-soap-web-service[SOAP service] dealt with services
+Our introductory guides for Quarkus xref:user-guide/first-soap-client.adoc[SOAP client]
+and xref:user-guide/first-soap-web-service.adoc[SOAP service] dealt with services
 having only primitive parameters and return values such as integers and strings.
 Let's have a look at passing and receiving more complex objects.
 
@@ -150,4 +150,4 @@ We can see `Orange` having been added in the returned list as expected.
 
 == Further steps
 
-You may want to proceed with xref:user-guide/package-for-jvm-and-native.adoc#package-for-jvm-and-native[packaging your application for running on a JVM or natively].
+You may want to proceed with xref:user-guide/package-for-jvm-and-native.adoc[packaging your application for running on a JVM or natively].

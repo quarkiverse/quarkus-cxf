@@ -8,35 +8,35 @@
 In plain CXF, these are set via `HTTPClientPolicy`.
 {quarkus-cxf-project-name} now offers configuration options to set them:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-connection-timeout[quarkus.cxf.client."client-name".connection-timeout]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-receive-timeout[quarkus.cxf.client."client-name".receive-timeout]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-connection-request-timeout[quarkus.cxf.client."client-name".connection-request-timeout]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-allow-chunking[quarkus.cxf.client."client-name".allow-chunking]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-chunking-threshold[quarkus.cxf.client."client-name".chunking-threshold]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-chunk-length[quarkus.cxf.client."client-name".chunk-length]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-accept[quarkus.cxf.client."client-name".accept]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-accept-language[quarkus.cxf.client."client-name".accept-language]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-accept-encoding[quarkus.cxf.client."client-name".accept-encoding]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-content-type[quarkus.cxf.client."client-name".content-type]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-host[quarkus.cxf.client."client-name".host]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-connection[quarkus.cxf.client."client-name".connection]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-cache-control[quarkus.cxf.client."client-name".cache-control]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-browser-type[quarkus.cxf.client."client-name".browser-type]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-decoupled-endpoint[quarkus.cxf.client."client-name".decoupled-endpoint]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port[quarkus.cxf.client."client-name".proxy-server-port]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts[quarkus.cxf.client."client-name".non-proxy-hosts]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-type[quarkus.cxf.client."client-name".proxy-server-type]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-username[quarkus.cxf.client."client-name".proxy-username]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".connection-timeout]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".receive-timeout]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".connection-request-timeout]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".auto-redirect]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".max-retransmits]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".allow-chunking]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".chunking-threshold]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".chunk-length]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".accept]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".accept-language]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".accept-encoding]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".content-type]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".host]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".connection]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".cache-control]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".version]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".browser-type]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".decoupled-endpoint]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".proxy-server]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".proxy-server-port]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".non-proxy-hosts]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".proxy-server-type]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".proxy-username]`
+* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".proxy-password]`
 
 === `HTTPConduitFactory` configurable through `application.properties`
 
 There is a new option
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+`xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".http-conduit-factory]`
 intended primarily as a workaround for https://issues.apache.org/jira/browse/CXF-8885[CXF-8885]
 and https://github.com/quarkiverse/quarkus-cxf/issues/992[#992].
 Those are about `java.net.http.HttpClient`-based CXF clients leaking threads.

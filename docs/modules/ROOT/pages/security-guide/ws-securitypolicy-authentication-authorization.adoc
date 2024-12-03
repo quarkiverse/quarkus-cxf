@@ -1,8 +1,8 @@
 [[ws-securitypolicy-authentication-authorization]]
 = Authentication enforced by WS-SecurityPolicy
 
-You can enforce authentication through WS-SecurityPolicy, instead of xref:user-guide/ssl-tls-https.adoc#mtls[Mutual TLS] and Basic HTTP authentication for xref:user-guide/authentication-authorization.adoc#client-http-basic-authentication[clients]
-and xref:user-guide/authentication-authorization.adoc#securing-service-endpoints[services].
+You can enforce authentication through WS-SecurityPolicy, instead of xref:user-guide/ssl-tls-https.adoc[Mutual TLS] and Basic HTTP authentication for xref:user-guide/authentication-authorization.adoc[clients]
+and xref:user-guide/authentication-authorization.adoc[services].
 
 To enforce authentication through WS-SecurityPolicy, follow these steps:
 
@@ -69,7 +69,7 @@ include::example$ws-security-policy/application.properties[tag=ws-securitypolicy
 ----
 
 In the above listing, `usernameTokenPasswordCallback` is a name of a `@jakarta.inject.Named` bean implementing `javax.security.auth.callback.CallbackHandler`.
-{quarkus-cxf-project-name} will lookup a bean with this xref:user-guide/configuration.adoc#beanRefs[name] in the CDI container.
+{quarkus-cxf-project-name} will lookup a bean with this xref:user-guide/configuration.adoc[name] in the CDI container.
 
 Here is an example implementation of the bean:
 

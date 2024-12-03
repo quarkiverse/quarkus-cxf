@@ -21,7 +21,7 @@ you will have to add them yourself.
 Before this release, it depended transitively on `org.apache.cxf:cxf-rt-databinding-aegis` and `org.apache.cxf:cxf-rt-javascript` via `org.apache.cxf:cxf-tools-java2ws`.
 It was an oversight on our side.
 We never intended to support using Aegis or Javascript at runtime or build time.
-We have made that by listing them under xref:reference/index.adoc#unsupported[Unsupported CXF modules].
+We have made that by listing them under xref:reference/index.adoc[Unsupported CXF modules].
 The current change makes it impossible to generate WSDL from Aegis model classes at build time.
 The `java2js` functionality was never accessible via `io.quarkiverse.cxf:quarkus-cxf-deployment`.
 

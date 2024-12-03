@@ -47,7 +47,7 @@ quarkus.cxf.logging.enabled-for = both
 quarkus.cxf.logging.pretty = true
 ----
 
-All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus-cxf]` reference page.
+All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]` reference page.
 
 [TIP]
 ====
@@ -76,8 +76,8 @@ quarkus.cxf.client.hello.logging.pretty = true
 
 All logging configuration options are documented on `quarkus-cxf` reference page:
 
-* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-logging-enabled[For clients]
-* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-enabled[For service endpoints]
+* xref:reference/extensions/quarkus-cxf.adoc[For clients]
+* xref:reference/extensions/quarkus-cxf.adoc[For service endpoints]
 
 == Alternative ways of adding a `LoggingFeature` to a client or service
 
@@ -95,7 +95,7 @@ quarkus.cxf.client."myClient".features = org.apache.cxf.ext.logging.LoggingFeatu
 +
 [TIP]
 ====
-There is an example in xref:user-guide/first-soap-web-service.adoc#logging-feature[Your first SOAP Web service] chapter of the User guide.
+There is an example in xref:user-guide/first-soap-web-service.adoc[Your first SOAP Web service] chapter of the User guide.
 ====
 +
 or alternatively

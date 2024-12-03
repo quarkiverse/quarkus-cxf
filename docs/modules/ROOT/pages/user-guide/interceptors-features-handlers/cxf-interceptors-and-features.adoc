@@ -39,7 +39,7 @@ quarkus.cxf.endpoint."/greeting-service".out-fault-interceptors=org.acme.Test1In
 ====
 Both feature and interceptor classes are loaded via CDI first.
 They can be referenced by fully a qualified class name
-or by a xref:user-guide/configuration.adoc#beanRefs[bean name].
+or by a xref:user-guide/configuration.adoc[bean name].
 
 If no CDI beans are available, the constructor without parameters will be invoked to instantiate each class.
 ====

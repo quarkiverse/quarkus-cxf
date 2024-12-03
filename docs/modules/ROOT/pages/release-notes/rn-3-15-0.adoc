@@ -52,7 +52,7 @@ methods. Those are therefore called only once.
 If the old way does not work anymore, how can you do the same with {quarkus-cxf-project-name} 3.15.0 or newer?
 
 The answer consists in providing a bean implementing `org.apache.cxf.metrics.micrometer.provider.TagsCustomizer`
-and making CXF aware of it via the new `xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#quarkus-cxf_quarkus-cxf-metrics-tags-customizers[quarkus.cxf.metrics.tags-customizers]` configuration property.
+and making CXF aware of it via the new `xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc[quarkus.cxf.metrics.tags-customizers]` configuration property.
 
 There is an example in our https://github.com/quarkiverse/quarkus-cxf/tree/eb553e2a3658581baeeef5836f64bdd9775c0efc/integration-tests/hc5[Apache HTTP Client v5 integration test].
 The crucial parts are the https://github.com/quarkiverse/quarkus-cxf/blob/eb553e2a3658581baeeef5836f64bdd9775c0efc/integration-tests/hc5/src/main/java/io/quarkiverse/cxf/hc5/it/HeaderToMetricsTagsCustomizer.java[`TagsCustomizer` implementation]

@@ -32,8 +32,8 @@ or add these coordinates to your existing project:
 ifeval::[{doc-show-user-guide-link} == true]
 [TIP]
 ====
-Check the xref:user-guide/index.adoc#user-guide-index[User guide] and especially its
-xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
+Check the xref:user-guide/index.adoc[User guide] and especially its
+xref:user-guide/create-project.adoc[Dependency management] section
 for more information about writing applications with {quarkus-cxf-project-name}.
 ====
 endif::[]
@@ -67,8 +67,8 @@ in the source tree of {quarkus-cxf-project-name}
 include::example$hc5/async-binding.xml[]
 ----
 
-This file should then be passed to xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl[wsdl2java]
-through its xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[additional-params] property:
+This file should then be passed to xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java]
+through its xref:reference/extensions/quarkus-cxf.adoc[additional-params] property:
 
 .application.properties
 [source,properties]

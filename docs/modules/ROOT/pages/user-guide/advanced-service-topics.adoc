@@ -3,7 +3,7 @@
 
 Check the following chapters for more details about implementing SOAP service endpoints:
 
-* xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc#endpoints-and-paths[Endpoints and paths]
-* xref:user-guide/advanced-service-topics/jax-ws-providers.adoc#jax-ws-providers[JAX-WS Providers]
-* xref:user-guide/advanced-service-topics/rest-and-soap-endpoints.adoc#rest-and-soap-endpoints[REST and SOAP Endpoints]
-* xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc#running-behind-a-reverse-proxy[Running behind a reverse proxy]
+* xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc[Endpoints and paths]
+* xref:user-guide/advanced-service-topics/jax-ws-providers.adoc[JAX-WS Providers]
+* xref:user-guide/advanced-service-topics/rest-and-soap-endpoints.adoc[REST and SOAP Endpoints]
+* xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc[Running behind a reverse proxy]

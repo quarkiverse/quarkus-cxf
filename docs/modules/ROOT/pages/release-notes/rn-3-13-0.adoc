@@ -18,9 +18,9 @@ currently supports only the synchronous usage.
 We plan to add the https://github.com/quarkiverse/quarkus-cxf/issues/1447[support for asynchronous mode] in near future.
 
 To give it a try, set the `http-conduit-factory` configuration option
-xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[globally]
+xref:reference/extensions/quarkus-cxf.adoc[globally]
 or
-xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[per client]:
+xref:reference/extensions/quarkus-cxf.adoc[per client]:
 
 .application.properties
 [source,properties]
@@ -47,7 +47,7 @@ the scanning is now done at build time by Arc, the CDI container of Quarkus.
 === https://github.com/quarkiverse/quarkus-cxf/issues/1416[#1416] passing multiple namespace mappings via `quarkus.cxf.codegen.wsdl2java.package-names`
 
 Before {quarkus-cxf-project-name} 3.13.0, the values specified in
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-package-names[quarkus.cxf.codegen.wsdl2java.package-names]`
+`xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.codegen.wsdl2java.package-names]`
 were wrongly passed as a single comma-separated value of the `-p` option,
 leading to `BadUsageException: -p has invalid character!`.
 
@@ -91,13 +91,13 @@ Quarkus Contexts and dependency injection guide for more details.
 
 * https://github.com/quarkiverse/quarkus-cxf/issues/1424[#1424] Replaced references to the non-existent `quarkus.cxf.logging.enabled` option for the correct `quarkus.cxf.logging.enabled-for` option.
 * User guide navigation was restructured: some chapters moved under new nodes
-** xref:user-guide/contract-first-code-first.adoc#contract-first-code-first[Contract first and code first approaches]
-** xref:user-guide/interceptors-features-handlers.adoc#interceptors-features-handlers[CXF Interceptors and Features, JAX-WS Handlers]
-** xref:user-guide/advanced-service-topics.adoc#advanced-service-topics[Advanced service topics]
-** xref:user-guide/advanced-soap-client-topics.adoc#advanced-soap-client-topics[Advanced SOAP client topics]
+** xref:user-guide/contract-first-code-first.adoc[Contract first and code first approaches]
+** xref:user-guide/interceptors-features-handlers.adoc[CXF Interceptors and Features, JAX-WS Handlers]
+** xref:user-guide/advanced-service-topics.adoc[Advanced service topics]
+** xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
 * New chapters:
-** xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc#cdi-scope-of-cxfclient[CDI scope of clients injected via `@CXFClient`] - see also https://github.com/quarkiverse/quarkus-cxf/issues/1441[#1441]
-** xref:user-guide/advanced-client-topics/dynamic-client-configuration.adoc#dynamic-client-configuration[Dynamic client configuration]
+** xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc[CDI scope of clients injected via `@CXFClient`] - see also https://github.com/quarkiverse/quarkus-cxf/issues/1441[#1441]
+** xref:user-guide/advanced-client-topics/dynamic-client-configuration.adoc[Dynamic client configuration]
 
 == Full changelog
 

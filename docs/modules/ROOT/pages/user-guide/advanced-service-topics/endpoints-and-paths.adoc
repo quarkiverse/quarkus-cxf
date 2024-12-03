@@ -6,7 +6,7 @@ Let's explain how a service endpoint can be exposed under a certain URL path.
 [[application-properties]]
 == Set the endpoint path via `application.properties`
 
-In the xref:user-guide/first-soap-web-service.adoc#first-soap-web-service[First SOAP Web service] chapter, we explained how to expose a service using `application.properties`:
+In the xref:user-guide/first-soap-web-service.adoc[First SOAP Web service] chapter, we explained how to expose a service using `application.properties`:
 
 .application.properties
 [source,properties]
@@ -23,7 +23,7 @@ This is the traditional way that worked since the very beginning of {quarkus-cxf
 
 Since {quarkus-cxf-project-name} 3.11.0, there is a new way to expose an endpoint under a specific path: the `@io.quarkiverse.cxf.annotation.CXFEndpoint` annotation.
 The path is set through its non-optional attribute `value`
-and it is relative to `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-path[quarkus.cxf.path]`
+and it is relative to `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.path]`
 much like when this is done via `application.properties`.
 
 Let's have a look at an example.

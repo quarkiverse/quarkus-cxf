@@ -5,7 +5,7 @@
 
 === HTTP Async Transport extension stable
 
-The `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc#quarkus-cxf-rt-transports-http-hc5[quarkus-cxf-rt-transports-http-hc5]` has got a proper test and its support status was upgraded to `stable`.
+The `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]` has got a proper test and its support status was upgraded to `stable`.
 
 == Fixed bugs
 

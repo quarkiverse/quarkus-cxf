@@ -32,8 +32,8 @@ or add these coordinates to your existing project:
 ifeval::[{doc-show-user-guide-link} == true]
 [TIP]
 ====
-Check the xref:user-guide/index.adoc#user-guide-index[User guide] and especially its
-xref:user-guide/create-project.adoc#dependency-management[Dependency management] section
+Check the xref:user-guide/index.adoc[User guide] and especially its
+xref:user-guide/create-project.adoc[Dependency management] section
 for more information about writing applications with {quarkus-cxf-project-name}.
 ====
 endif::[]
@@ -139,7 +139,7 @@ include::example$ws-trust/application.properties[tag=ws-trust-usage.adoc-client-
 ====
 The properties for configuring the STS client are provided by the `io.quarkiverse.cxf:quarkus-cxf-rt-ws-security`
 extension and documented on its
-xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security[reference page].
+xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[reference page].
 ====
 
 Alternatively, the client can be set as a bean reference:

@@ -6,7 +6,7 @@ In this guide we explain how to create a Quarkus application exposing a simple S
 [NOTE]
 .Create project first
 ====
-Follow the xref:user-guide/create-project.adoc#create-project[Project creation] guide before proceeding here.
+Follow the xref:user-guide/create-project.adoc[Project creation] guide before proceeding here.
 ====
 
 == Hello world! Web service
@@ -47,12 +47,12 @@ include::example$soap-service/application.properties[tag=first-web-service.adoc]
 
 [TIP]
 ====
-All configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf-configuration[Configuration properties] reference.
+All configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc[Configuration properties] reference.
 ====
 
 [TIP]
 ====
-Check the xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc#endpoints-and-paths[Service endpoints and paths] chapter
+Check the xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc[Service endpoints and paths] chapter
 to learn about alternative ways to expose a service endpoint under a specific path.
 ====
 
@@ -209,4 +209,4 @@ After that you can send a new SOAP request and see some SOAP payloads in the app
 
 == Further steps
 
-You may want to proceed with xref:user-guide/package-for-jvm-and-native.adoc#package-for-jvm-and-native[packaging your application for running on a JVM or natively].
+You may want to proceed with xref:user-guide/package-for-jvm-and-native.adoc[packaging your application for running on a JVM or natively].

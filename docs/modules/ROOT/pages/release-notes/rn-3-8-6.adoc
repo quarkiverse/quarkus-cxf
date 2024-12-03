@@ -11,7 +11,7 @@
 === https://github.com/quarkiverse/quarkus-cxf/issues/1416[#1416] passing multiple namespace mappings via `quarkus.cxf.codegen.wsdl2java.package-names`
 
 Before {quarkus-cxf-project-name} 3.13.0 and 3.8.6, the values specified in
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-package-names[quarkus.cxf.codegen.wsdl2java.package-names]`
+`xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.codegen.wsdl2java.package-names]`
 were wrongly passed as a single comma-separated value of the `-p` option,
 leading to `BadUsageException: -p has invalid character!`.
 

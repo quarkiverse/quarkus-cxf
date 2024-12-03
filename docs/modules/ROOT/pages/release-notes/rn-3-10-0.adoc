@@ -38,7 +38,7 @@ We filed https://issues.apache.org/jira/browse/CXF-9003[CXF-9003] to see whether
 +
 image::release-notes-2.10.0-since.png[The new since tag]
 +
-* We added the xref:release-notes/index.adoc#release-notes-index[Version table] to the Release notes page showing which version of
+* We added the xref:release-notes/index.adoc[Version table] to the Release notes page showing which version of
   {quarkus-cxf-project-name} uses which CXF version and which Quarkus Platform `<major>.<minor>` you should use
   to get the given {quarkus-cxf-project-name} version.
 

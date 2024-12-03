@@ -12,17 +12,17 @@
 
 === Mutual TLS (mTLS)
 
-Mutual TLS (mTLS) is now xref:user-guide/ssl-tls-https.adoc#mtls[documented],
+Mutual TLS (mTLS) is now xref:user-guide/ssl-tls-https.adoc[documented],
 https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/mtls[tested]
-and and can be configured for clients via `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key*]` family of options.
+and and can be configured for clients via `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".key*]` family of options.
 
 === Keystores and truststores now looked up in the file system
 
 The keystores and truststores are now https://github.com/quarkiverse/quarkus-cxf/issues/1280[really looked up in the file system]
 unless they are available in the classpath as documented in
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]`
+`xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".trust-store]`
 and
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store]`.
+`xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".key-store]`.
 
 === Running on systems with FIPS assertions enabled
 
@@ -68,7 +68,7 @@ In the policy file, the `AlgorithmSuite` has to be set to `CustomAlgorithmSuite`
 </wsp:Policy>
 ----
 +
-FIPS complaint xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[algorithms] can then be set in `application.properties`.
+FIPS complaint xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[algorithms] can then be set in `application.properties`.
 Here, we list the default values that are FIPS complaint already:
 +
 [source,properties]

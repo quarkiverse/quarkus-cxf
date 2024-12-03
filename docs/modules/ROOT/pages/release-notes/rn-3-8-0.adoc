@@ -35,11 +35,11 @@ The new Maven coordinates starting with {quarkus-cxf-project-name} 3.8.0 are `io
 
 The following parts of the documentation were improved:
 
-* The Reference page now contains xref:reference/index.adoc#supported-cxf-annotations[List of supported CXF annotations].
-* xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf-rt-ws-security[WS-Security extension page]
-** New example using xref:reference/index.adoc#extensions-quarkus-cxf-rt-ws-security-usage-ws-security-via-ws-securitypolicy[WS-SecurityPolicy]
-** New configuration options for xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-sts-client[STSClient]
-* xref:reference/extensions/quarkus-cxf-services-sts.adoc#quarkus-cxf-services-sts[Security Token Service (STS) extension page] with a more detailed example
+* The Reference page now contains xref:reference/index.adoc[List of supported CXF annotations].
+* xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[WS-Security extension page]
+** New example using xref:reference/index.adoc[WS-SecurityPolicy]
+** New configuration options for xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc[STSClient]
+* xref:reference/extensions/quarkus-cxf-services-sts.adoc[Security Token Service (STS) extension page] with a more detailed example
 
 == Full changelog
 

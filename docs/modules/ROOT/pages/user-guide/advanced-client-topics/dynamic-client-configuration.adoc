@@ -2,7 +2,7 @@
 = Dynamic client configuration
 
 Sometimes you need to reconfigure the client after the application has
-xref:user-guide/advanced-client-topics/programmatic-client-configuration-at-startup.adoc#programmatic-client-configuration-at-startup[been started],
+xref:user-guide/advanced-client-topics/programmatic-client-configuration-at-startup.adoc[been started],
 or even before every request.
 This might be the case, if, for example, each request needs to be sent to a different remote URL.
 
@@ -12,7 +12,7 @@ However using that API on a client instance that may be accessed from other thre
 == Preventing concurrent access to a CXF client
 
 If your client is used as a part of serving an external request,
-you can inject the client into a xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc#cdi-scope-of-cxfclient[`@RequestScoped` bean].
+you can inject the client into a xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc[`@RequestScoped` bean].
 Then every request will be served by a fresh client instance and you can configure it safely.
 
 For example, this solution is applicable when your client is called from a REST-handler method (see below)

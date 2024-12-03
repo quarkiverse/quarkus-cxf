@@ -5,6 +5,6 @@ This User guide explains typical use cases of {quarkus-cxf-project-name}.
 
 You may want to start with some of the following topics:
 
-* xref:user-guide/create-project.adoc#create-project[Create a new project]
-* xref:user-guide/first-soap-web-service.adoc#first-soap-web-service[Your first SOAP Web service]
-* xref:user-guide/first-soap-client.adoc#first-soap-client[Your first SOAP Client]
+* xref:user-guide/create-project.adoc[Create a new project]
+* xref:user-guide/first-soap-web-service.adoc[Your first SOAP Web service]
+* xref:user-guide/first-soap-client.adoc[Your first SOAP Client]
