@@ -19,4 +19,15 @@ class Soap12Test {
                 .body(Matchers.is("Hello Joe, Content-Type: application/soap+xml; action=\"helloAction\"; charset=UTF-8"));
     }
 
+    @Test
+    void contentType() {
+        RestAssured.given()
+                .body("Joe")
+                .post("/Soap12Rest/sync/contentType")
+                .then()
+                .statusCode(200)
+                .body(Matchers
+                        .is("Hello Joe, Content-Type: application/soap+xml; action=\"contentTypeAction\"; charset=UTF-8"));
+    }
+
 }
