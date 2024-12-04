@@ -7,6 +7,6 @@ import jakarta.jws.WebService;
 public interface HelloService {
     public static final String NS = "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test";
 
-    @WebMethod
+    @WebMethod(operationName = "hello", action = "helloAction")
     public String hello(String person);
 }
