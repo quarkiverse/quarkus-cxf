@@ -187,8 +187,12 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         final int port = uri.getPort();
         if (port >= 0) {
-            requestOptions
-                    .setPort(uri.getPort());
+            /* Port was set explicitly */
+            requestOptions.setPort(uri.getPort());
+        } else if (isHttps) {
+            requestOptions.setPort(443);
+        } else {
+            requestOptions.setPort(80);
         }
 
         final RequestContext requestContext = new RequestContext(
