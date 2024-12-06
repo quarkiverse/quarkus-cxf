@@ -51,6 +51,7 @@
         <!-- Items annotated with @sync can be updated by running mvn cq:sync-versions -N -->
         <angus-mail.version>2.0.3</angus-mail.version>
         <assertj.version>3.26.3</assertj.version>
+        <cryptacular.version>1.2.6</cryptacular.version><!-- 1.2.7 does not work - see https://github.com/quarkiverse/quarkus-cxf/issues/1648 -->
         <cxf.xjcplugins.version>4.0.0</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
         <ehcache.version>3.10.8</ehcache.version>
         <fastinfoset.version>2.1.1</fastinfoset.version>
