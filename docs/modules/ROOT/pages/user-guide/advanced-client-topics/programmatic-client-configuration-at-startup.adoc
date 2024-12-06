@@ -1,3 +1,4 @@
+[[programmatic-client-configuration-at-startup]]
 = Programmatic client configuration at startup
 
 To configure all clients at application startup, you can implement an `HTTPConduitConfigurer`

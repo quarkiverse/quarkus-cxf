@@ -124,7 +124,7 @@ public class Wsdl2JavaCodeGenTest {
                         io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaCodeGen.WSDL2JAVA_CONFIG_KEY_PREFIX + ".my-name",
                         files,
                         foundFiles::add))
-                .withMessageContaining("Please make sure that the individual include/exclude sets are mutually exclusive");
+                .withMessageContaining("Ensure that the individual include/exclude sets are mutually exclusive");
 
     }
 

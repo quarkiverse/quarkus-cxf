@@ -1,3 +1,4 @@
+[[contract-first-code-first]]
 = Contract first and code first approaches
 
 Both contract first and code first development modes are fully supported by {quarkus-cxf-project-name}.

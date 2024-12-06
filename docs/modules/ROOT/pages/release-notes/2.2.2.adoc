@@ -1,3 +1,4 @@
+[[rn-2-2-2]]
 = {quarkus-cxf-project-name} 2.2.2 LTS release notes
 
 == Fixed bugs

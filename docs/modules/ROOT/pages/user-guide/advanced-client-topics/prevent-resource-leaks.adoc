@@ -1,4 +1,4 @@
-[[resource-leaks]]
+[[prevent-resource-leaks]]
 = Prevent resource leaks
 
 CXF client proxies implement `java.io.Closeable`.

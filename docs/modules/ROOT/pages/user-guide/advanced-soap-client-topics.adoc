@@ -1,3 +1,4 @@
+[[advanced-soap-client-topics]]
 = Advanced SOAP client topics
 
 Check the following chapters for more details about implementing SOAP clients:

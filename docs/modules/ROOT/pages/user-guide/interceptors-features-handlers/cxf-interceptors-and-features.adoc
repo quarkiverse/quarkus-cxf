@@ -1,4 +1,4 @@
-[[interceptors-and-features]]
+[[cxf-interceptors-and-features]]
 = CXF Interceptors and Features
 
 https://cxf.apache.org/docs/interceptors.html[CXF interceptors] and https://cxf.apache.org/docs/featureslist.html[CXF features] can be added to both your client or server using either annotations or `application.properties` configurations.

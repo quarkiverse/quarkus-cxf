@@ -1,3 +1,4 @@
+[[configure-multiple-clients]]
 = Configure multiple clients
 
 In the example above, we configured just a single client called `myCalculator`.

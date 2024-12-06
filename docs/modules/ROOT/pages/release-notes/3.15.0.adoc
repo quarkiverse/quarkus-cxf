@@ -1,3 +1,4 @@
+[[rn-3-15-0]]
 = {quarkus-cxf-project-name} 3.15.0 LTS release notes
 
 This is the first release in the new 3.15 https://quarkus.io/blog/lts-releases/[LTS stream].

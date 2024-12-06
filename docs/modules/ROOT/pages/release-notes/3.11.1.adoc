@@ -1,3 +1,4 @@
+[[rn-3-11-1]]
 = {quarkus-cxf-project-name} 3.11.1 release notes
 
 == New and noteworthy in {quarkus-cxf-project-name}

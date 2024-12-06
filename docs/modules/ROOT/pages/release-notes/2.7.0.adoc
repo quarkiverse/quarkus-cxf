@@ -1,3 +1,4 @@
+[[rn-2-7-0]]
 = {quarkus-cxf-project-name} 2.7.0 release notes
 
 == Important dependency upgrades:
@@ -41,7 +42,7 @@ There are now separate cards listing CXF http://localhost:8080/q/dev-ui/io.quark
 
 Here is a screenshot of the http://localhost:8080/q/dev-ui/io.quarkiverse.cxf.quarkus-cxf/service-endpoints[Service endpoints] card:
 
-image::release-notes-2.7.0-devui-services.png[DevUI]
+image::release-notes-2-7-0-devui-services.png[DevUI]
 
 
 === Schema validation configurable via `application.properties`
@@ -60,8 +61,8 @@ as long as `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-c
 
 === Documentation improvements
 
-* New `xref:user-guide/ssl.adoc[SSL guide]`
-* New `xref:user-guide/auth.adoc[Authentication and authorization guide]`
+* New `xref:user-guide/ssl-tls-https.adoc[SSL guide]`
+* New `xref:user-guide/authentication-authorization.adoc[Authentication and authorization guide]`
 * Improved the xref:user-guide/payload-logging.adoc[Logging guide]
 * Improved the documentation of `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
   and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-browser-type[quarkus.cxf.client."client-name".browser-type]`

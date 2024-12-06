@@ -1,3 +1,4 @@
+[[release-notes-index]]
 = Release notes
 
 ifeval::[{doc-is-main} != true]

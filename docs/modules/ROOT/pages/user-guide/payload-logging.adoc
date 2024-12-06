@@ -1,3 +1,4 @@
+[[payload-logging]]
 = Logging
 
 Refer to Quarkus {link-quarkus-docs-base}/logging[Logging guide] for basic information about logging on Quarkus, such as

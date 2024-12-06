@@ -1,4 +1,4 @@
-[[pure-client]]
+[[pure-client-applications]]
 = Pure client applications
 
 Quarkus batch (e.g. periodically scheduled), or command line applications, may do without an HTTP server.

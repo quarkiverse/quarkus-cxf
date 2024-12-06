@@ -128,7 +128,7 @@ class Java2WsdlProcessor {
                     throw new IllegalStateException("Service class " + serviceClass + " was already selected by\n\n"
                             + oldSelectors
                             + "\n\nand therefore it cannot once again be selected by\n\n" + selectors
-                            + "\n\nPlease make sure that the individual include/exclude sets are mutually exclusive.");
+                            + "\n\nEnsure that the individual include/exclude sets are mutually exclusive.");
                 }
 
                 processedClasses.put(serviceClass.toString(), selectors);
