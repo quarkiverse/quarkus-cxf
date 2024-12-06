@@ -1,7 +1,8 @@
+[[camel-integration]]
 = Camel Integration
 
 {link-camel-quarkus-docs-index}[Camel Quarkus] supports CXF since its version 2.12.0.
 Under the hood, the implementation is based on {quarkus-cxf-project-name}.
 Therefore, all functionality available in {quarkus-cxf-project-name} is also available in Camel Quarkus.
 
-Please refer to {link-camel-quarkus-docs-cxf-soap}[Camel Quarkus CXF SOAP] extension documentation for further details.
+Refer to {link-camel-quarkus-docs-cxf-soap}[Camel Quarkus CXF SOAP] extension documentation for further details.

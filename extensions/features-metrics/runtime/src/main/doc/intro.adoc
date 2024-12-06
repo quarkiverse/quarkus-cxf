@@ -1,5 +1,8 @@
 Collect metrics using https://micrometer.io/[Micrometer].
 
-IMPORTANT: Unlike https://cxf.apache.org/docs/metrics.html[CXF Metrics feature],
-           this {quarkus-cxf-project-name} extension does not support https://cxf.apache.org/docs/dropwizard-metrics.html[Dropwizard Metrics].
-           Only Micrometer is supported.
+[IMPORTANT]
+====
+Unlike https://cxf.apache.org/docs/metrics.html[CXF Metrics feature],
+this {quarkus-cxf-project-name} extension does not support https://cxf.apache.org/docs/dropwizard-metrics.html[Dropwizard Metrics].
+Only Micrometer is supported.
+====

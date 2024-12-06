@@ -1,3 +1,4 @@
+[[configuration]]
 = Configuration
 
 {quarkus-cxf-project-name} exposes a large number of configuration options.
