@@ -370,6 +370,11 @@
                 <version>${stax2.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.cryptacular</groupId>
+                <artifactId>cryptacular</artifactId>
+                <version>${cryptacular.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>angus-mail</artifactId>
                 <version>${angus-mail.version}</version>
