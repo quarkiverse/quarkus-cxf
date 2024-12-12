@@ -1,0 +1,66 @@
+= {quarkus-cxf-project-name} 3.17.3 release notes
+
+== Important dependency upgrades
+
+* Santuario XML Security 3.0.4 -> 3.0.5 - https://github.com/apache/santuario-xml-security-java/compare/xmlsec-3.0.4+++...+++xmlsec-3.0.5[All changes]
+* WSS4J 3.0.3 -> 3.0.4 - https://issues.apache.org/jira/projects/WSS/versions/12354367[Release notes]
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1646[#1646] `VertxHttpClientHTTPConduit` connects to port 80 when the `client-endpoint-url` starts with `https://` and has no explicit port
+
+Before {quarkus-cxf-project-name} 3.17.3, when a `VertxHttpClientHTTPConduit`-based client was configured with an endpoint URL like the following
+
+.application.properties
+[source,properties]
+----
+quarkus.cxf.client.hello.client-endpoint-url = https://example.com/services/hello
+quarkus.cxf.client.hello.service-interface = io.quarkiverse.cxf.deployment.test.HelloService
+----
+
+where there was no explicit port in the service URL `\https://example.com/services/hello`,
+then the client invocation was failing with an exception similar to this one:
+
+[source,bash]
+----
+WARN  [org.apa.cxf.pha.PhaseInterceptorChain] (executor-thread-1) Interceptor for [REMOVED] has thrown exception, unwinding now: org.apache.cxf.interceptor.Fault: Could not send Message.
+    at org.apache.cxf.interceptor.MessageSenderInterceptor$MessageSenderEndingInterceptor.handleMessage(MessageSenderInterceptor.java:67)
+    at org.apache.cxf.phase.PhaseInterceptorChain.doIntercept(PhaseInterceptorChain.java:307)
+    at org.apache.cxf.endpoint.ClientImpl.doInvoke(ClientImpl.java:530)
+    at org.apache.cxf.endpoint.ClientImpl.invoke(ClientImpl.java:441)
+    at org.apache.cxf.endpoint.ClientImpl.invoke(ClientImpl.java:356)
+    at org.apache.cxf.endpoint.ClientImpl.invoke(ClientImpl.java:314)
+    at org.apache.cxf.frontend.ClientProxy.invokeSync(ClientProxy.java:96)
+    at org.apache.cxf.jaxws.JaxWsClientProxy.invoke(JaxWsClientProxy.java:140)
+    at jdk.proxy5/jdk.proxy5.$Proxy269.hello(Unknown Source)
+    ...
+Caused by: java.io.IOException: Unable to connect to https://example.com/services/hello
+    at io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit$RequestBodyHandler.awaitRequest(VertxHttpClientHTTPConduit.java:922)
+    at io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit$RequestBodyHandler.handle(VertxHttpClientHTTPConduit.java:578)
+    at io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit$RequestBodyHandler.handle(VertxHttpClientHTTPConduit.java:425)
+    at io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit$RequestBodyOutputStream.close(VertxHttpClientHTTPConduit.java:420)
+    at org.apache.cxf.transport.AbstractConduit.close(AbstractConduit.java:56)
+    at org.apache.cxf.transport.http.HTTPConduit.close(HTTPConduit.java:717)
+    at org.apache.cxf.interceptor.MessageSenderInterceptor$MessageSenderEndingInterceptor.handleMessage(MessageSenderInterceptor.java:63)
+    ... 69 more
+Caused by: javax.net.ssl.SSLHandshakeException: Failed to create SSL connection
+    at io.vertx.core.net.impl.ChannelProvider$1.userEventTriggered(ChannelProvider.java:127)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeUserEventTriggered(AbstractChannelHandlerContext.java:398)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeUserEventTriggered(AbstractChannelHandlerContext.java:376)
+    at io.netty.channel.AbstractChannelHandlerContext.fireUserEventTriggered(AbstractChannelHandlerContext.java:368)
+    at io.netty.handler.ssl.SslUtils.handleHandshakeFailure(SslUtils.java:495)
+    at io.netty.handler.ssl.SslHandler.setHandshakeFailure(SslHandler.java:2025)
+    ...
+Caused by: io.netty.handler.ssl.NotSslRecordException: not an SSL/TLS record: [long sequence of number and lower case letters]
+    at io.netty.handler.ssl.SslHandler.decodeJdkCompatible(SslHandler.java:1342)
+    ... 20 more
+----
+
+This was caused by the fact that `io.vertx.core.http.HttpClient` uses port 80 as a default for all URIs not stating the port explicitly.
+Therefore the request was sent to port 80 instead of 443 (the proper default for HTTPS).
+
+Since {quarkus-cxf-project-name} 3.17.3, `VertxHttpClientHTTPConduit` handles the default port for HTTPS protocol correctly.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.17.0+++...+++3.17.3
