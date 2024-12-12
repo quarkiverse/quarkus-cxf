@@ -2,12 +2,11 @@
 
 The generated site is available at https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/
 
-== Build locally
+== Live-edit locally
 
 [source,shell]
 ----
-$ mvn test
-
-# Open the generated site in your browser
-$ google-chrome target/site/quarkus-cxf/dev/index.html
+$ mvn quarkus:dev
 ----
+
+When the site is built, hit `w` and the site should open in browser.
