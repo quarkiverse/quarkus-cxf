@@ -23,7 +23,7 @@ See https://github.com/quarkiverse/quarkus-cxf/issues/1047[#1047]
 === Configurable destination folder of `wsdl2java`
 
 The directory where the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[`wsdl2java` embedded in `quarkus-cxf`] extension produces the Java classes is now configurable
-via the `xref:reference/extensions/quarkus-cxf#quarkus-cxf_quarkus.cxf.codegen.wsdl2java.output-directory[quarkus.cxf.codegen.wsdl2java.output-directory]` property.
+via the `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-output-directory[quarkus.cxf.codegen.wsdl2java.output-directory]` property.
 
 === Possible thread leaks with CXF clients using `java.net.http.HttpClient`
 

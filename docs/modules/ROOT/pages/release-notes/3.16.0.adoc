@@ -54,7 +54,7 @@ quarkus.cxf.client.hello.trust-store-password = client-truststore-password
 
 === Vert.x HttpClient based HTTP Conduit is the new default
 
-Vert.x HttpClient based HTTP Conduit was xref:release-notes/3.13.0.adoc#_vert_x_httpclient_based_http_conduit[introduced] in {quarkus-cxf-project-name} 3.13.0.
+Vert.x HttpClient based HTTP Conduit was xref:release-notes/3.13.0.adoc#vert-x-httpclient-based-http-conduit[introduced] in {quarkus-cxf-project-name} 3.13.0.
 Its usage was optional through setting the `VertxHttpClientHTTPConduitFactory` on either of the options
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]` or
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`:

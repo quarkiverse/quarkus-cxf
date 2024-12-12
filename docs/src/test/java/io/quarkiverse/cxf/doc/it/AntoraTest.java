@@ -6,11 +6,12 @@ import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Pattern;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.antora.test.AntoraTestUtils;
+import io.quarkiverse.antorassured.AntorAssured;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -30,14 +31,9 @@ public class AntoraTest {
     }
 
     @Test
-    public void externalLinks() {
+    public void linksValid() {
 
-        Set<String> ignorables1 = Set.of(
-                "http://quarkus.io/training",
-                "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role",
-                "http://schemas.xmlsoap.org/ws/2005/02/sc/dk/p_sha1",
-                "http://www.w3.org/2009/xmlenc11#aes256-gcm");
-        final Set<String> ignorables = new LinkedHashSet<>(ignorables1);
+        final Set<String> ignorables = new LinkedHashSet<>();
 
         final ZonedDateTime deadline = ZonedDateTime.parse("2025-01-28T23:59:59+01:00[Europe/Paris]");
         if (ZonedDateTime.now(ZoneId.of("Europe/Paris")).isBefore(deadline)) {
@@ -45,6 +41,15 @@ public class AntoraTest {
             ignorables.add("https://github.com/quarkiverse/quarkus-cxf/compare/3.17.2...3.18.0");
         }
 
-        AntoraTestUtils.assertExternalLinksValid(err -> ignorables.contains(err.uri()));
+        AntorAssured
+                .links()
+                .excludeResolved("http://quarkus.io/training", "http://www.w3.org/2009/xmlenc11#aes256-gcm")
+                .excludeResolved(Pattern.compile("^\\Qhttp://localhost:808\\E[02].*"))
+                .excludeResolved(Pattern.compile("^\\Qhttp://schemas.xmlsoap.org/\\E.*"))
+                .excludeEditThisPage()
+                .validate()
+                .ignore(err -> ignorables.contains(err.uri().resolvedUri()))
+                .assertValid();
+
     }
 }
