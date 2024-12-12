@@ -9,7 +9,7 @@ where `\{service-path}` is derived from
 * SEI’s class name in lower case
 
 Given `quarkus.cxf.path = /ws`, the default effective `client-endpoint-url` of the `CalculatorService` would be
-`http://localhost:8080/ws/org.jboss.eap.quickstarts.wscalculator.calculator.calculatorservice`.
+`\http://localhost:8080/ws/org.jboss.eap.quickstarts.wscalculator.calculator.calculatorservice`.
 
 If `quarkus.cxf.path` is not specified, the `client-endpoint-url` would be just
-`http://localhost:8080/org.jboss.eap.quickstarts.wscalculator.calculator.calculatorservice`.
+`\http://localhost:8080/org.jboss.eap.quickstarts.wscalculator.calculator.calculatorservice`.
