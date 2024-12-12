@@ -11,4 +11,9 @@ public class X500Name {
                 + " io.quarkiverse.cxf:quarkus-cxf-rt-ws-security dependencies and add Bouncy Castle instead");
     }
 
+    public X500Name(X500NameStyle style, X500Name name) {
+        throw new UnsupportedOperationException("Exclude io.quarkiverse.cxf:quarkus-cxf-bc-stub from"
+                + " io.quarkiverse.cxf:quarkus-cxf-rt-ws-security dependencies and add Bouncy Castle instead");
+    }
+
 }
