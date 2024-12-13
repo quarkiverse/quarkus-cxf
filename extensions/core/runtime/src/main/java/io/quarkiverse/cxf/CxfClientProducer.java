@@ -182,6 +182,10 @@ public abstract class CxfClientProducer {
         if (cxfClientInfo.isRedirectRelativeUri()) {
             props.put(VertxHttpClientHTTPConduit.AUTO_REDIRECT_ALLOW_REL_URI, Boolean.TRUE);
         }
+        {
+            final int value = cxfClientInfo.getMaxSameUri();
+            props.put(VertxHttpClientHTTPConduit.AUTO_REDIRECT_MAX_SAME_URI_COUNT, value);
+        }
 
         loggingFactoryCustomizer.customize(cxfClientInfo, factory);
         customizers.forEach(customizer -> customizer.customize(cxfClientInfo, factory));
