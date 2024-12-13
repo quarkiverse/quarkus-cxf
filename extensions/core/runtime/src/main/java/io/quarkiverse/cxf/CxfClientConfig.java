@@ -250,6 +250,23 @@ public interface CxfClientConfig {
     public int maxRetransmits();
 
     /**
+     * Specifies the maximum amount of retransmits to the same uri that are allowed for redirects. Retransmits for authorization
+     * is included in the retransmit count. Each redirect may cause another retransmit for a UNAUTHORIZED response code, ie.
+     * 401. Any negative number indicates unlimited retransmits, although, loop protection is provided. The default is
+     * unlimited. (name is not part of standard)
+     *
+     * See also:
+     *
+     * *
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+     *
+     * @since 3.17.4
+     * @asciidoclet
+     */
+    @WithDefault("0")
+    public int maxSameUri();
+
+    /**
      * If true, the client is free to use chunking streams if it wants, but it is not required to use chunking streams. If
      * false, the client must use regular, non-chunked requests in all cases.
      *

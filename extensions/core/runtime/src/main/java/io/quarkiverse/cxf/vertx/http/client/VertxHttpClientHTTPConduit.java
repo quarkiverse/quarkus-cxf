@@ -25,22 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
+import java.net.*;
 import java.net.Proxy.Type;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -61,12 +49,7 @@ import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.MessageObserver;
-import org.apache.cxf.transport.http.Address;
-import org.apache.cxf.transport.http.Cookies;
-import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.cxf.transport.http.HTTPException;
-import org.apache.cxf.transport.http.Headers;
-import org.apache.cxf.transport.http.MessageTrustDecider;
+import org.apache.cxf.transport.http.*;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.version.Version;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
@@ -80,19 +63,9 @@ import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.BlockingOperationControl;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.MultiMap;
-import io.vertx.core.Promise;
+import io.vertx.core.*;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientRequest;
-import io.vertx.core.http.HttpClientResponse;
-import io.vertx.core.http.HttpHeaders;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpVersion;
-import io.vertx.core.http.RequestOptions;
+import io.vertx.core.http.*;
 import io.vertx.core.http.impl.HttpUtils;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.core.net.ProxyType;
@@ -104,7 +77,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
     private static final Logger log = Logger.getLogger(VertxHttpClientHTTPConduit.class);
     public static final String USE_ASYNC = "use.async.http.conduit";
     public static final String ENABLE_HTTP2 = "org.apache.cxf.transports.http2.enabled";
-    private static final String AUTO_REDIRECT_MAX_SAME_URI_COUNT = "http.redirect.max.same.uri.count";
+    public static final String AUTO_REDIRECT_MAX_SAME_URI_COUNT = "http.redirect.max.same.uri.count";
     private static final String AUTO_REDIRECT_SAME_HOST_ONLY = "http.redirect.same.host.only";
     private static final String AUTO_REDIRECT_ALLOWED_URI = "http.redirect.allowed.uri";
     public static final String AUTO_REDIRECT_ALLOW_REL_URI = "http.redirect.relative.uri";
@@ -789,12 +762,14 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         && redirects.stream().filter(newURL::equals).count() > maxSameURICount.longValue()) {
                     final String msg = "Redirect loop detected on Conduit '"
                             + conduitName + "' (with http.redirect.max.same.uri.count = " + maxSameURICount + "): "
-                            + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")) + " -> " + newURL;
+                            + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")) + " -> " + newURL
+                            + ". You may want to increase quarkus.cxf.client.\"client-name\".max-retransmits in application.properties"
+                            + " where \"client-name\" is the name of your client in application.properties";
                     throw new IOException(msg);
-                } else {
-                    final String msg = "Redirect loop detected on Conduit '"
-                            + conduitName + "': " + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> "))
-                            + " -> " + newURL;
+                } else if (maxSameURICount == null) {
+                    final String msg = "Redirect loop detected on Conduit '" + conduitName
+                            + ". You may want to set quarkus.cxf.client.\"client-name\".max-retransmits in application.properties"
+                            + " where \"client-name\" is the name of your client in application.properties";
                     throw new IOException(msg);
                 }
             }

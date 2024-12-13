@@ -1,15 +1,10 @@
 package io.quarkiverse.cxf.it.redirect;
 
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.it.large.slow.generated.LargeSlowService;
@@ -17,6 +12,9 @@ import io.smallrye.mutiny.Uni;
 
 @Path("/RedirectRest")
 public class RedirectRest {
+
+    private final AtomicInteger redirectCounter = new AtomicInteger(0);
+    private static final int NUM_SELF_REDIRECTS = 2;
 
     @CXFClient("singleRedirect")
     LargeSlowService singleRedirect;
@@ -35,6 +33,9 @@ public class RedirectRest {
 
     @CXFClient("doubleRedirectMaxRetransmits2")
     LargeSlowService doubleRedirectMaxRetransmits2;
+
+    @CXFClient("selfRedirect")
+    LargeSlowService selfRedirect;
 
     @CXFClient("loop")
     LargeSlowService loop;
@@ -58,6 +59,9 @@ public class RedirectRest {
             }
             case "doubleRedirectMaxRetransmits2": {
                 return doubleRedirectMaxRetransmits2;
+            }
+            case "selfRedirect": {
+                return selfRedirect;
             }
             case "loop": {
                 return loop;
@@ -87,6 +91,18 @@ public class RedirectRest {
     @POST
     public Response tripleRedirect() {
         return Response.status(302).header("Location", "/RedirectRest/doubleRedirect").build();
+    }
+
+    @Path("/selfRedirect")
+    @POST
+    public Response selfRedirect(@Context HttpHeaders headers) {
+        int count = redirectCounter.incrementAndGet();
+        if (count <= NUM_SELF_REDIRECTS) {
+            return Response.status(302).header("Location", "/RedirectRest/selfRedirect").build();
+        } else {
+            redirectCounter.set(0);
+            return Response.status(302).header("Location", "/RedirectRest/singleRedirect").build();
+        }
     }
 
     @Path("/loop1")
