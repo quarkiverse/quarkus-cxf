@@ -126,12 +126,8 @@ public class HostnameVerifierTest {
         Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).isEmpty();
         customHostnameVerifier.setReturnVal(false);
         Assertions.assertThatThrownBy(() -> helloHttpClient.hello("Doe")).hasRootCauseMessage(
-                "No name matching localhost found");
-        Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).containsExactly("localhost", "localhost");
-        customHostnameVerifier.setReturnVal(true);
-        Assertions.assertThat(helloHttpClient.hello("Joe")).isEqualTo("Hello Joe");
-        Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).containsExactly("localhost", "localhost",
-                "localhost");
+                "http-conduit-factory = HttpClientHTTPConduitFactory does not support quarkus.cxf.client.helloHttpClient.hostname-verifier - see https://github.com/quarkiverse/quarkus-cxf/issues/1687");
+        Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).containsExactly();
     }
 
     @Test

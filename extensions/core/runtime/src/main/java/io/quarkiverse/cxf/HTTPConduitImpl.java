@@ -77,6 +77,17 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
                 EndpointReferenceType target) throws IOException {
             return new HttpClientHTTPConduit(b, localInfo, target);
         }
+
+        @Override
+        public TLSClientParameters createTLSClientParameters(CXFClientInfo cxfClientInfo) {
+            if (cxfClientInfo.getHostnameVerifier() != null) {
+                throw new IllegalStateException(
+                        getConduitDescription() + " does not support quarkus.cxf.client."
+                                + cxfClientInfo.getConfigKey()
+                                + ".hostname-verifier - see https://github.com/quarkiverse/quarkus-cxf/issues/1687");
+            }
+            return super.createTLSClientParameters(cxfClientInfo);
+        }
     },
     @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
     URLConnectionHTTPConduitFactory {
