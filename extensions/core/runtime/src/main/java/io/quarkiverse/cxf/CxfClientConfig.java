@@ -612,6 +612,13 @@ public interface CxfClientConfig {
      * set to `NONE`. Otherwise, there is no way to implement custom hostname verification for Vert.x HTTP client.
      * ====
      *
+     * [IMPORTANT]
+     * ====
+     * Since {quarkus-cxf-project-name} 3.18.0, setting this option when the conduit factory of this client is set to
+     * `HttpClientHTTPConduitFactory` is not supported and leads to an exception at runtime.
+     * See https://github.com/quarkiverse/quarkus-cxf/issues/1687[#1687].
+     * ====
+     *
      * @asciidoclet
      * @since 2.5.0
      */

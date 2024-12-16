@@ -42,6 +42,7 @@ public class BadHostnameTest {
             /* Named TLS configuration for the clients */
             .overrideConfigKey("quarkus.tls.client-pkcs12.trust-store.p12.path", "fake-host-truststore.p12")
             .overrideConfigKey("quarkus.tls.client-pkcs12.trust-store.p12.password", "secret")
+            .overrideConfigKey("quarkus.tls.client-pkcs12.trust-store.certificate-expiration-policy", "IGNORE")
 
             /* Client with VertxHttpClientHTTPConduitFactory */
             .overrideConfigKey("quarkus.cxf.client.helloVertx.client-endpoint-url", "https://localhost:8444/services/hello")
