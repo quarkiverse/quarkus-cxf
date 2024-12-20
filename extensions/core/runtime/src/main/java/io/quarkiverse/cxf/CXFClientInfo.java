@@ -1,7 +1,11 @@
 package io.quarkiverse.cxf;
 
 import java.security.KeyStore;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;

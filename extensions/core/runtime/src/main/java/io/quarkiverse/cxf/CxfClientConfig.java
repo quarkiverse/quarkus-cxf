@@ -233,14 +233,15 @@ public interface CxfClientConfig {
     // The formatter breaks the list with long items
     // @formatter:off
     /**
-     * Specifies the maximum amount of retransmits that are allowed for redirects. Retransmits for authorization is included in
-     * the retransmit count. Each redirect may cause another retransmit for a UNAUTHORIZED response code, ie. 401. Any negative
-     * number indicates unlimited retransmits, although, loop protection is provided. The default is unlimited. (name is not
-     * part of standard)
+     * Specifies the maximum allowed number of retransmits when following redirects.
+     * Retransmits for authorization are included in the retransmit count.
+     * Each 401 UNAUTHORIZED response may cause a new retransmit.
+     * A negative value indicates unlimited retransmits, but even in that case redirect loop protection is provided.
      *
      * See also:
      *
      * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`
      *
      * @since 2.2.3
      * @asciidoclet
@@ -249,20 +250,21 @@ public interface CxfClientConfig {
     @WithDefault("-1")
     public int maxRetransmits();
 
+    // The formatter breaks the list with long items
+    // @formatter:off
     /**
-     * Specifies the maximum amount of retransmits to the same uri that are allowed for redirects. Retransmits for authorization
-     * is included in the retransmit count. Each redirect may cause another retransmit for a UNAUTHORIZED response code, ie.
-     * 401. Any negative number indicates unlimited retransmits, although, loop protection is provided. The default is
-     * unlimited. (name is not part of standard)
+     * Specifies the maximum allowed number of retransmits to the same URI when following HTTP redirects.
+     * The default behavior is to allow a no retransmits to the same URI.
      *
      * See also:
      *
-     * *
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
      *
-     * @since 3.17.4
+     * @since 3.18.0
      * @asciidoclet
      */
+    // @formatter:on
     @WithDefault("0")
     public int maxSameUri();
 
