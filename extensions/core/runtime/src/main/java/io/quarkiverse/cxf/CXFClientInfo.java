@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf;
 
-import java.net.URL;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +87,16 @@ public class CXFClientInfo {
      * (name is not part of standard)
      */
     private final int maxRetransmits;
+    /**
+     * Specifies the maximum amount of retransmits to the same uri that are allowed for redirects.
+     * Retransmits for authorization is included in the retransmit count. Each redirect may cause another
+     * retransmit for a UNAUTHORIZED response code, ie. 401. Any negative number indicates 0 retransmits
+     * to the same uri allowed.
+     * The default is 0.
+     *
+     * This is equivalent to setting `http.redirect.max.same.uri.count` property on the CXF client request context.
+     */
+    private final int maxSameUri;
     /**
      * If true, the client is free to use chunking streams if it wants, but it is not
      * required to use chunking streams. If false, the client
@@ -228,6 +237,7 @@ public class CXFClientInfo {
         this.autoRedirect = config.autoRedirect();
         this.redirectRelativeUri = config.redirectRelativeUri();
         this.maxRetransmits = config.maxRetransmits();
+        this.maxSameUri = config.maxSameUri();
         this.allowChunking = config.allowChunking();
         this.chunkingThreshold = config.chunkingThreshold();
         this.chunkLength = config.chunkLength();
@@ -248,7 +258,6 @@ public class CXFClientInfo {
         this.proxyServerType = config.proxyServerType();
         this.proxyUsername = config.proxyUsername().orElse(null);
         this.proxyPassword = config.proxyPassword().orElse(null);
-
         this.tlsConfigurationName = config.tlsConfigurationName().orElse(null);
         this.tlsConfiguration = tlsConfiguration(vertx, config, configKey);
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
@@ -488,6 +497,10 @@ public class CXFClientInfo {
 
     public int getMaxRetransmits() {
         return maxRetransmits;
+    }
+
+    public int getMaxSameUri() {
+        return maxSameUri;
     }
 
     public boolean isAllowChunking() {

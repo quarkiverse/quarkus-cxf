@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf.it.redirect;
 
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -13,10 +14,13 @@ import jakarta.ws.rs.core.Response;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.it.large.slow.generated.LargeSlowService;
+import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Uni;
 
 @Path("/RedirectRest")
 public class RedirectRest {
+
+    private final AtomicInteger redirectCounter = new AtomicInteger(0);
 
     @CXFClient("singleRedirect")
     LargeSlowService singleRedirect;
@@ -35,6 +39,18 @@ public class RedirectRest {
 
     @CXFClient("doubleRedirectMaxRetransmits2")
     LargeSlowService doubleRedirectMaxRetransmits2;
+
+    @CXFClient("doubleRedirectMaxRetransmits2MaxSameUri0")
+    LargeSlowService doubleRedirectMaxRetransmits2MaxSameUri0;
+
+    @CXFClient("maxSameUri1")
+    LargeSlowService maxSameUri1;
+
+    @CXFClient("maxSameUri2")
+    LargeSlowService maxSameUri2;
+
+    @CXFClient("maxSameUri3")
+    LargeSlowService maxSameUri3;
 
     @CXFClient("loop")
     LargeSlowService loop;
@@ -58,6 +74,18 @@ public class RedirectRest {
             }
             case "doubleRedirectMaxRetransmits2": {
                 return doubleRedirectMaxRetransmits2;
+            }
+            case "doubleRedirectMaxRetransmits2MaxSameUri0": {
+                return doubleRedirectMaxRetransmits2MaxSameUri0;
+            }
+            case "maxSameUri1": {
+                return maxSameUri1;
+            }
+            case "maxSameUri2": {
+                return maxSameUri2;
+            }
+            case "maxSameUri3": {
+                return maxSameUri3;
             }
             case "loop": {
                 return loop;
@@ -87,6 +115,27 @@ public class RedirectRest {
     @POST
     public Response tripleRedirect() {
         return Response.status(302).header("Location", "/RedirectRest/doubleRedirect").build();
+    }
+
+    @Path("/selfRedirect/{selfRedirectsCount}/{resetCount}")
+    @POST
+    public Response selfRedirect(
+            @PathParam("selfRedirectsCount") int selfRedirectsCount,
+            @PathParam("resetCount") int resetCount) {
+        int count = redirectCounter.incrementAndGet();
+
+        if (selfRedirectsCount == resetCount && count == resetCount) {
+            redirectCounter.set(0);
+        }
+        final String loc;
+        if (count <= selfRedirectsCount) {
+            loc = "/RedirectRest/selfRedirect/" + selfRedirectsCount + "/" + resetCount;
+        } else {
+            redirectCounter.set(0);
+            loc = "/soap/largeSlow";
+        }
+        Log.infof("selfRedirect at count %d: sending 302 with Location %s", count, loc);
+        return Response.status(302).header("Location", loc).build();
     }
 
     @Path("/loop1")
