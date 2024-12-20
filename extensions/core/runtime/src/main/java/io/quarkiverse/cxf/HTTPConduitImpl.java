@@ -48,9 +48,9 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
     @ConfigDocEnumValue("VertxHttpClientHTTPConduitFactory")
     VertxHttpClientHTTPConduitFactory {
         @Override
-        public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
+        public HTTPConduit createConduit(String configKey, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
                 EndpointReferenceType target) throws IOException {
-            return new VertxHttpClientHTTPConduit(b, localInfo, target, httpClientPool);
+            return new VertxHttpClientHTTPConduit(configKey, b, localInfo, target, httpClientPool);
         }
 
         @Override
@@ -71,7 +71,7 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
     @ConfigDocEnumValue("HttpClientHTTPConduitFactory")
     HttpClientHTTPConduitFactory {
         @Override
-        public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
+        public HTTPConduit createConduit(String configKey, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
                 EndpointReferenceType target) throws IOException {
             return new HttpClientHTTPConduit(b, localInfo, target);
         }
@@ -79,7 +79,7 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
     @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
     URLConnectionHTTPConduitFactory {
         @Override
-        public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
+        public HTTPConduit createConduit(String configKey, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
                 EndpointReferenceType target) throws IOException {
             return new URLConnectionHTTPConduit(b, localInfo, target);
         }
@@ -96,7 +96,8 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
     }
 
     @Override
-    public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo, EndpointReferenceType target)
+    public HTTPConduit createConduit(String configKey, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
+            EndpointReferenceType target)
             throws IOException {
         throw new IllegalStateException(
                 "Call " + HTTPConduitImpl.class.getName() + ".resolveDefault() before calling createConduit()");

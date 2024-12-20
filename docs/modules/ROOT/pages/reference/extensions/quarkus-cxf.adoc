@@ -1696,14 +1696,15 @@ See also:
 .<| `int`
 .<| `-1`
 
-3+a|Specifies the maximum amount of retransmits that are allowed for redirects. Retransmits for authorization is included in
-the retransmit count. Each redirect may cause another retransmit for a UNAUTHORIZED response code, ie. 401. Any negative
-number indicates unlimited retransmits, although, loop protection is provided. The default is unlimited. (name is not
-part of standard)
+3+a|Specifies the maximum allowed number of retransmits when following redirects.
+Retransmits for authorization are included in the retransmit count.
+Each 401 UNAUTHORIZED response may cause a new retransmit.
+A negative value indicates unlimited retransmits, but even in that case redirect loop protection is provided.
 
 See also:
 
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__MAX_RETRANSMITS+++` +
 *Since Quarkus CXF*: 2.2.3
@@ -1712,18 +1713,16 @@ See also:
 .<| `int`
 .<| `0`
 
-3+a|Specifies the maximum amount of retransmits to the same uri that are allowed for redirects. Retransmits for authorization
-is included in the retransmit count. Each redirect may cause another retransmit for a UNAUTHORIZED response code, ie.
-401. Any negative number indicates unlimited retransmits, although, loop protection is provided. The default is
-unlimited. (name is not part of standard)
+3+a|Specifies the maximum allowed number of retransmits to the same URI when following HTTP redirects.
+The default behavior is to allow a no retransmits to the same URI.
 
 See also:
 
-*
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__MAX_SAME_URI+++` +
-*Since Quarkus CXF*: 3.17.4
+*Since Quarkus CXF*: 3.18.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-allow-chunking]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-allow-chunking[quarkus.cxf.client."client-name".allow-chunking]`
 .<| `boolean`

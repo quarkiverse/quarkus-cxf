@@ -27,7 +27,8 @@ public interface HTTPConduitSpec {
         return this;
     }
 
-    HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo, EndpointReferenceType target)
+    HTTPConduit createConduit(String configKey, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
+            EndpointReferenceType target)
             throws IOException;
 
     default Optional<TLSClientParameters> tlsClientParameters(CXFClientInfo cxfClientInfo, Vertx vertx) {

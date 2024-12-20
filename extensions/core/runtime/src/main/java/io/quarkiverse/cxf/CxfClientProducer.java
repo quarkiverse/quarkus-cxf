@@ -184,7 +184,10 @@ public abstract class CxfClientProducer {
         }
         {
             final int value = cxfClientInfo.getMaxSameUri();
-            props.put(VertxHttpClientHTTPConduit.AUTO_REDIRECT_MAX_SAME_URI_COUNT, value);
+            if (value > 0) {
+                /* 0 is the deafult that makes no difference in the handling so we can ignore it here */
+                props.put(VertxHttpClientHTTPConduit.AUTO_REDIRECT_MAX_SAME_URI_COUNT, value);
+            }
         }
 
         loggingFactoryCustomizer.customize(cxfClientInfo, factory);

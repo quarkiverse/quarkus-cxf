@@ -77,7 +77,12 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     private HTTPConduit configure(HTTPConduitSpec httpConduitImpl, CXFClientInfo cxfClientInfo, Bus b,
             EndpointInfo localInfo,
             EndpointReferenceType target) throws IOException {
-        final HTTPConduit httpConduit = httpConduitImpl.createConduit(httpClientPool, b, localInfo, target);
+        final HTTPConduit httpConduit = httpConduitImpl.createConduit(
+                cxfClientInfo.getConfigKey(),
+                httpClientPool,
+                b,
+                localInfo,
+                target);
         if (httpConduit instanceof HttpClientHTTPConduit) {
             Log.warnf("Usage of %s is deprecated since Quarkus CXF 3.18.0."
                     + " You may want to review the options quarkus.cxf.http-conduit-factory and/or quarkus.cxf.client.\"%s\".http-conduit-factory",
