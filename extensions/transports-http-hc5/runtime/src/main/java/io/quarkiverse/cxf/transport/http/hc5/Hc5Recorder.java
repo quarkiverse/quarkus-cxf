@@ -48,7 +48,7 @@ public class Hc5Recorder {
         private AsyncHTTPConduitFactory asyncHTTPConduitFactory;
 
         @Override
-        public HTTPConduit createConduit(HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
+        public HTTPConduit createConduit(String configKey, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
                 EndpointReferenceType target)
                 throws IOException {
             AsyncHTTPConduitFactory factory;
