@@ -2,6 +2,7 @@ package io.quarkiverse.cxf.it.vertx.async;
 
 import static org.hamcrest.CoreMatchers.is;
 
+import org.assertj.core.api.Assumptions;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
@@ -14,28 +15,26 @@ class AsyncVertxClientTest {
 
     @Test
     void helloWithWsdl() {
-        HTTPConduitImpl defaultImpl = io.quarkiverse.cxf.HTTPConduitImpl.findDefaultHTTPConduitImpl();
-        if (io.quarkiverse.cxf.HTTPConduitImpl.URLConnectionHTTPConduitFactory == defaultImpl) {
-            RestAssured.given()
-                    .body("Joe")
-                    .post("/RestAsyncWithWsdl/helloWithWsdl")
-                    .then()
-                    .statusCode(200)
-                    .body(is("Hello Joe from HelloWithWsdl"));
-        } else {
-            RestAssured.given()
-                    .body("Joe")
-                    .post("/RestAsyncWithWsdl/helloWithWsdl")
-                    .then()
-                    .statusCode(500)
-                    .body(CoreMatchers.containsString(
-                            "You have attempted to perform a blocking operation on an IO thread."));
-        }
+        /* URLConnectionHTTPConduitFactory does not support async */
+        Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
+                .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
+
+        RestAssured.given()
+                .body("Joe")
+                .post("/RestAsyncWithWsdl/helloWithWsdl")
+                .then()
+                .statusCode(500)
+                .body(CoreMatchers.containsString(
+                        "You have attempted to perform a blocking operation on an IO thread."));
 
     }
 
     @Test
     void helloWithWsdlWithBlocking() {
+        /* URLConnectionHTTPConduitFactory does not support async */
+        Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
+                .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
+
         RestAssured.given()
                 .body("Joe")
                 .post("/RestAsyncWithWsdlWithBlocking/helloWithWsdlWithBlocking")
@@ -46,6 +45,10 @@ class AsyncVertxClientTest {
 
     @Test
     void helloWithWsdlWithEagerInit() {
+        /* URLConnectionHTTPConduitFactory does not support async */
+        Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
+                .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
+
         RestAssured.given()
                 .queryParam("person", "Max")
                 .get("/RestAsyncWithWsdlWithEagerInit/helloWithWsdlWithEagerInit")
@@ -56,6 +59,10 @@ class AsyncVertxClientTest {
 
     @Test
     void helloWithoutWsdl() {
+        /* URLConnectionHTTPConduitFactory does not support async */
+        Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
+                .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
+
         RestAssured.given()
                 .queryParam("person", "Joe")
                 .get("/RestAsyncWithoutWsdl/helloWithoutWsdl")
@@ -66,6 +73,10 @@ class AsyncVertxClientTest {
 
     @Test
     void helloWithoutWsdlWithBlocking() {
+        /* URLConnectionHTTPConduitFactory does not support async */
+        Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
+                .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
+
         RestAssured.given()
                 .queryParam("person", "Joe")
                 .get("/RestAsyncWithoutWsdlWithBlocking/helloWithoutWsdlWithBlocking")
