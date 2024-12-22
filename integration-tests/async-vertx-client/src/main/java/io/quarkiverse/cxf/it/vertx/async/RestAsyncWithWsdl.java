@@ -1,30 +1,28 @@
 package io.quarkiverse.cxf.it.vertx.async;
 
 import jakarta.enterprise.inject.Instance;
-import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
-import org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService;
-
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.deployment.test.HelloService;
 import io.smallrye.mutiny.Uni;
 
 @Path("/RestAsyncWithWsdl")
 public class RestAsyncWithWsdl {
 
-    @CXFClient("calculatorWithWsdl")
-    Instance<CalculatorService> calculatorWithWsdl;
+    @CXFClient("helloWithWsdl")
+    Instance<HelloService> helloWithWsdl;
 
-    @Path("/calculatorWithWsdl")
-    @GET
+    @Path("/helloWithWsdl")
+    @POST
     @Produces(MediaType.TEXT_PLAIN)
-    public Uni<String> calculatorWithWsdl(@QueryParam("a") int a, @QueryParam("b") int b) {
+    public Uni<String> helloWithWsdl(String body) {
         /* With WSDL and without @Blocking should fail due to blocking WSDL call on the I/O thread */
         return Uni.createFrom()
-                .future(calculatorWithWsdl.get().addAsync(a, b))
+                .future(helloWithWsdl.get().helloAsync(body))
                 .map(addResponse -> addResponse.getReturn())
                 .map(String::valueOf);
     }
