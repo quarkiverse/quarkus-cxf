@@ -18,6 +18,9 @@ public class Soap12Rest {
     @CXFClient("contentType")
     HelloService contentType;
 
+    @CXFClient("contentTypeSoap12")
+    HelloService contentTypeSoap12;
+
     HelloService getClient(String clientName) {
         switch (clientName) {
             case "soap12": {
@@ -25,6 +28,9 @@ public class Soap12Rest {
             }
             case "contentType": {
                 return contentType;
+            }
+            case "contentTypeSoap12": {
+                return contentTypeSoap12;
             }
             default:
                 throw new IllegalArgumentException("Unexpected client name: " + clientName);

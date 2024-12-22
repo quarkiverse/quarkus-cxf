@@ -27,7 +27,18 @@ class Soap12Test {
                 .then()
                 .statusCode(200)
                 .body(Matchers
-                        .is("Hello Joe, Content-Type: application/soap+xml; action=\"contentTypeAction\"; charset=UTF-8"));
+                        .is("Hello Joe, Content-Type: application/soap+xml; action=\"helloAction\"; foo=bar; charset=UTF-8"));
+    }
+
+    @Test
+    void contentTypeSoap12() {
+        RestAssured.given()
+                .body("Joe")
+                .post("/Soap12Rest/sync/contentTypeSoap12")
+                .then()
+                .statusCode(200)
+                .body(Matchers
+                        .is("Hello Joe, Content-Type: application/soap+xml; action=\"helloAction\"; foo=bar; charset=UTF-8"));
     }
 
 }
