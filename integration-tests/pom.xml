@@ -14,7 +14,6 @@
     <name>Quarkus CXF - Integration Tests</name>
 
     <modules>
-        <module>async-vertx-client</module>
         <module>client</module>
         <module>client-server</module>
         <module>fastinfoset</module>
