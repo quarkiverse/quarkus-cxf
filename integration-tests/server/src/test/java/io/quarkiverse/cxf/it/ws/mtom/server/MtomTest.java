@@ -98,7 +98,7 @@ public class MtomTest {
     }
 
     static void assertMtom(int size) throws MalformedURLException, IOException {
-        final URL serviceUrl = new URL(QuarkusCxfClientTestUtil.getServerUrl() + "/services/mtom?wsdl");
+        final URL serviceUrl = new URL(QuarkusCxfClientTestUtil.getServerUrl() + "/soap/mtom?wsdl");
         final QName qName = new QName("https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/mtom",
                 MtomService.class.getSimpleName());
         final Service service = jakarta.xml.ws.Service.create(serviceUrl, qName);
