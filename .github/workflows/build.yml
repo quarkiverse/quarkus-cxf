@@ -38,7 +38,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        testModule: ['async-vertx-client', 'client', 'client-server', 'fastinfoset', 'hc5', 'metrics', 'mtls', 'mtls -Djks', 'mtom', 'mtom-awt', 'opentelemetry', 'saaj', 'santuario-xmlsec', 'server', 'ws-rm-client', 'ws-security', 'ws-security -Djks', 'ws-security-policy', 'ws-security-policy -Djks', 'ws-trust', 'wsdl2java', 'wsdl2java-no-config']
+        testModule: ['async-vertx-client', 'client', 'client-server', 'fastinfoset', 'hc5', 'metrics', 'mtls', 'mtls -Djks', 'mtom-awt', 'opentelemetry', 'saaj', 'santuario-xmlsec', 'server', 'ws-rm-client', 'ws-security', 'ws-security -Djks', 'ws-security-policy', 'ws-security-policy -Djks', 'ws-trust', 'wsdl2java', 'wsdl2java-no-config']
     name: ${{matrix.testModule}} native tests
     needs: build-and-run-jvm-tests
     runs-on: ubuntu-latest
