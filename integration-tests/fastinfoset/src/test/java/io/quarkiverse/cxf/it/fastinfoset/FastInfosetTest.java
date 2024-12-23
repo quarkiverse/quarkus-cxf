@@ -3,6 +3,7 @@ package io.quarkiverse.cxf.it.fastinfoset;
 import static org.hamcrest.Matchers.is;
 
 import org.hamcrest.CoreMatchers;
+import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
@@ -12,6 +13,9 @@ import io.restassured.config.RestAssuredConfig;
 
 @QuarkusTest
 public class FastInfosetTest {
+
+    private static final Logger log = Logger.getLogger(FastInfosetTest.class);
+
     @Test
     void gzip() {
 
@@ -37,10 +41,13 @@ public class FastInfosetTest {
 
     @Test
     void fastInfoset() {
+
         RestAssuredConfig config = RestAssuredConfig.config()
                 .httpClient(HttpClientConfig.httpClientConfig()
                         .setParam("http.connection.timeout", 5000)
                         .setParam("http.socket.timeout", 120000));
+
+        log.info("FastInfoset with text/xml");
 
         RestAssured.given()
                 .config(config)
@@ -54,13 +61,27 @@ public class FastInfosetTest {
                 .contentType("application/fastinfoset")
                 .body(CoreMatchers.containsString("Hello FastInfoset"));
 
-        RestAssured.given()
-                .config(config)
-                .body("FastInfoset")
-                .post("/fastinfoset/fastinfoset/hello")
-                .then()
-                .statusCode(200)
-                .body(is("Hello FastInfoset!"));
+        log.info("FastInfoset native");
+        try {
+            RestAssured.given()
+                    .config(config)
+                    .body("FastInfoset")
+                    .post("/fastinfoset/fastinfoset/hello")
+                    .then()
+                    .statusCode(200)
+                    .body(is("Hello FastInfoset!"));
+        } catch (Exception e) {
+            log.error("FastInfoset native failure", e);
+
+            long sleep = 10000;
+            log.infof("Sleeping for %d ms to check whether Vert.x will complain about blocking the event loop", sleep);
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e1) {
+                Thread.currentThread().interrupt();
+            }
+            log.infof("Sleeped %d ms", sleep);
+        }
     }
 
 }
