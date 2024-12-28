@@ -27,7 +27,7 @@ public interface HTTPConduitSpec {
         return this;
     }
 
-    HTTPConduit createConduit(String configKey, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
+    HTTPConduit createConduit(CXFClientInfo cxfClientInfo, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
             EndpointReferenceType target)
             throws IOException;
 
