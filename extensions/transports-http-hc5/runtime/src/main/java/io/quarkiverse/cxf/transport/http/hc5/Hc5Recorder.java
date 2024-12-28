@@ -13,6 +13,7 @@ import org.apache.cxf.workqueue.WorkQueueManager;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.eclipse.microprofile.context.ManagedExecutor;
 
+import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.HTTPConduitSpec;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
 import io.quarkus.arc.Arc;
@@ -48,7 +49,8 @@ public class Hc5Recorder {
         private AsyncHTTPConduitFactory asyncHTTPConduitFactory;
 
         @Override
-        public HTTPConduit createConduit(String configKey, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
+        public HTTPConduit createConduit(CXFClientInfo cxfClientInfo, HttpClientPool httpClientPool, Bus b,
+                EndpointInfo localInfo,
                 EndpointReferenceType target)
                 throws IOException {
             AsyncHTTPConduitFactory factory;

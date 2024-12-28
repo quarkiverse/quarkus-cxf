@@ -78,7 +78,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
             EndpointInfo localInfo,
             EndpointReferenceType target) throws IOException {
         final HTTPConduit httpConduit = httpConduitImpl.createConduit(
-                cxfClientInfo.getConfigKey(),
+                cxfClientInfo,
                 httpClientPool,
                 b,
                 localInfo,

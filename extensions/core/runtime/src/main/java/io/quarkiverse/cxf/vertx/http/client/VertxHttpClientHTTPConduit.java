@@ -72,6 +72,7 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.QuarkusCxfUtils;
 import io.quarkiverse.cxf.QuarkusTLSClientParameters;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.ClientSpec;
@@ -110,13 +111,17 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
     private final HttpClientPool httpClientPool;
     private final String userAgent;
-    private final String configKey;
+    private final CXFClientInfo clientInfo;
 
-    public VertxHttpClientHTTPConduit(String configKey, Bus b, EndpointInfo ei, EndpointReferenceType t,
+    public VertxHttpClientHTTPConduit(
+            CXFClientInfo clientInfo,
+            Bus b,
+            EndpointInfo ei,
+            EndpointReferenceType t,
             HttpClientPool httpClientPool)
             throws IOException {
         super(b, ei, t);
-        this.configKey = configKey;
+        this.clientInfo = clientInfo;
         this.httpClientPool = httpClientPool;
         this.userAgent = Version.getCompleteVersionString();
     }
@@ -198,7 +203,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         final RequestContext requestContext = new RequestContext(
-                configKey,
+                clientInfo,
                 uri,
                 requestOptions,
                 clientParameters != null
@@ -253,7 +258,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 incomingObserver);
 
         final IOEHandler<RequestBodyEvent> requestBodyHandler = new RequestBodyHandler(
-                requestContext.configKey,
+                requestContext.clientInfo,
                 message,
                 requestContext.uri,
                 cookies,
@@ -343,7 +348,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
     }
 
     static record RequestContext(
-            String configKey,
+            CXFClientInfo clientInfo,
             URI uri,
             RequestOptions requestOptions,
             ClientSpec clientSpec,
@@ -451,7 +456,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private List<Buffer> bodyRecorder;
         private List<URI> redirects;
         private final int maxRetransmits;
-        private final String configKey;
+        private final CXFClientInfo clientInfo;
 
         /* Locks and conditions */
         private final ReentrantLock lock = new ReentrantLock();
@@ -464,7 +469,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private Mode mode;
 
         public RequestBodyHandler(
-                String configKey,
+                CXFClientInfo clientInfo,
                 Message outMessage,
                 URI url,
                 Cookies cookies,
@@ -478,7 +483,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 boolean possibleRetransmit,
                 int maxRetransmits) {
             super();
-            this.configKey = configKey;
+            this.clientInfo = clientInfo;
             this.outMessage = outMessage;
             this.url = url;
             this.cookies = cookies;
@@ -621,7 +626,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
                                     if (loc != null && !loc.startsWith("http")
                                             && !MessageUtils.getContextualBoolean(outMessage, AUTO_REDIRECT_ALLOW_REL_URI)) {
-                                        final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
+                                        final String qKey = QuarkusCxfUtils
+                                                .quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
                                         throw new IOException(
                                                 "Illegal relative redirect " + loc + " detected by client " + qKey
                                                         + "; you may want to set quarkus.cxf.client."
@@ -629,6 +635,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                     }
                                     final URI previousUri = redirects.get(redirects.size() - 1);
                                     final URI newUri = HttpUtils.resolveURIReference(previousUri, loc);
+                                    final String configKey = clientInfo.getConfigKey();
                                     detectRedirectLoop(configKey, redirects, newUri, outMessage);
                                     redirects.add(newUri);
                                     checkAllowedRedirectUri(configKey, previousUri, newUri, outMessage);
@@ -649,7 +656,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 return;
                             } else {
                                 if (!possibleRetransmit && isRedirect) {
-                                    final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
+                                    final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
                                     final IOException ioe = new IOException(
                                             "Received redirection status " + response.statusCode()
                                                     + " from " + url + " by client " + qKey
@@ -662,7 +669,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 }
                                 if (possibleRetransmit && isRedirect && maxRetransmits >= 0
                                         && maxRetransmits <= performedRetransmits(redirects)) {
-                                    final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
+                                    final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
                                     final IOException ioe = new IOException("Received redirection status " +
                                             response.statusCode() + " from " + redirects.get(redirects.size() - 1)
                                             + " by client " + qKey + ", but already performed maximum"
