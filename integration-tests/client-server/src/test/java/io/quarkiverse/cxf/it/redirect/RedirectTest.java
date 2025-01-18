@@ -1,7 +1,14 @@
 package io.quarkiverse.cxf.it.redirect;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.file.Path;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -12,11 +19,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkiverse.cxf.it.large.slow.LargeSlowServiceImpl;
+import io.quarkus.runtime.configuration.MemorySizeConverter;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
 
 @QuarkusTest
+@QuarkusTestResource(RedirectTestResource.class)
 class RedirectTest {
 
     private static final Logger log = Logger.getLogger(RedirectTest.class);
@@ -176,6 +186,113 @@ class RedirectTest {
                 .queryParam("delayMs", "0")
                 .get("/RedirectRest/" + endpoint)
                 .then();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { //
+            "retransmitCacheSync", //
+            "retransmitCacheAsyncBlocking" //
+    })
+    void retransmitCache(String endpoint) throws IOException {
+
+        if (endpoint.contains("Async")) {
+            /* URLConnectionHTTPConduitFactory does not support async */
+            Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
+                    .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
+        }
+
+        final MemorySizeConverter converter = new MemorySizeConverter();
+        {
+            /*
+             * 1k is smaller than 500K we set in quarkus.cxf.retransmit-cache.threshold
+             * Hence the file should not be cached on disk
+             */
+            final int payloadLen = (int) converter.convert("1K").asLongValue();
+            final Properties props = retransmitCache(payloadLen, 0, endpoint);
+            Assertions.assertThat(props.size()).isEqualTo(1);
+        }
+
+        {
+            /*
+             * 9M is greater than the 500K we set in quarkus.cxf.retransmit-cache.threshold
+             * Hence the file should not be cached on disk
+             */
+            final int payloadLen = (int) converter.convert("9M").asLongValue();
+            final Properties props = retransmitCache(payloadLen, 1, endpoint);
+            Assertions.assertThat(props.size()).isEqualTo(2);
+
+            for (Entry<Object, Object> en : props.entrySet()) {
+                String path = (String) en.getKey();
+                if (path.contains("qcxf-TempStore-")) {
+                    Assertions.assertThat(Path.of(path)).doesNotExist();
+                    Assertions.assertThat((String) en.getValue())
+                            .startsWith("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                                    + "<soap:Body><ns2:retransmitCache xmlns:ns2=\"https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test\">"
+                                    + "<expectedFileCount>");
+                    Assertions.assertThat((String) en.getValue())
+                            .endsWith("</payload></ns2:retransmitCache></soap:Body></soap:Envelope>");
+                    Assertions.assertThat((String) en.getValue())
+                            .contains("<payload>" + LargeSlowServiceImpl.largeString(payloadLen) + "</payload>");
+                }
+            }
+
+        }
+        {
+            /*
+             * Let server return 500
+             */
+            final int payloadLen = (int) converter.convert("501K").asLongValue();
+            final String reqId = UUID.randomUUID().toString();
+            RestAssured.given()
+                    .header(RedirectRest.EXPECTED_FILE_COUNT_HEADER, "1")
+                    .header(RedirectRest.REQUEST_ID_HEADER, reqId)
+                    .header(RedirectRest.STATUS_CODE_HEADER, "500")
+                    .body(LargeSlowServiceImpl.largeString(payloadLen))
+                    .post("/RedirectRest/" + endpoint)
+                    .then()
+                    .statusCode(500);
+
+            final String propString = RestAssured.given()
+                    .get("/RedirectRest/retransmitCache-tempFiles/" + reqId)
+                    .then()
+                    .statusCode(200)
+                    .extract().body().asString();
+
+            Properties props = new Properties();
+            props.load(new StringReader(propString));
+
+            Assertions.assertThat(props.size()).isEqualTo(1);
+            for (Entry<Object, Object> en : props.entrySet()) {
+                String path = (String) en.getKey();
+                if (path.contains("qcxf-TempStore-")) {
+                    Assertions.assertThat(Path.of(path)).doesNotExist();
+                    Assertions.assertThat((String) en.getValue())
+                            .startsWith("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+                                    + "<soap:Body><ns2:retransmitCache xmlns:ns2=\"https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test\">"
+                                    + "<expectedFileCount>");
+                    Assertions.assertThat((String) en.getValue())
+                            .endsWith("</payload></ns2:retransmitCache></soap:Body></soap:Envelope>");
+                    Assertions.assertThat((String) en.getValue())
+                            .contains("<payload>" + LargeSlowServiceImpl.largeString(payloadLen) + "</payload>");
+                }
+            }
+
+        }
+    }
+
+    private Properties retransmitCache(final int payloadLen, int expectedFileCount, String syncAsync) throws IOException {
+        String body = RestAssured.given()
+                .header(RedirectRest.EXPECTED_FILE_COUNT_HEADER, String.valueOf(expectedFileCount))
+                .body(LargeSlowServiceImpl.largeString(payloadLen))
+                .post("/RedirectRest/" + syncAsync)
+                .then()
+                .statusCode(200)
+                .extract().body().asString();
+
+        final Properties props = new Properties();
+        props.load(new StringReader(body));
+        Assertions.assertThat(props.get("payload.length")).isEqualTo(String.valueOf(payloadLen));
+        return props;
     }
 
 }

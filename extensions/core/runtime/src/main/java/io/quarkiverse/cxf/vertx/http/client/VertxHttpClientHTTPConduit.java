@@ -75,6 +75,8 @@ import org.jboss.logging.Logger;
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.QuarkusCxfUtils;
 import io.quarkiverse.cxf.QuarkusTLSClientParameters;
+import io.quarkiverse.cxf.vertx.http.client.BodyRecorder.BodyWriter;
+import io.quarkiverse.cxf.vertx.http.client.BodyRecorder.StoredBody;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.ClientSpec;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.RequestBodyEvent.RequestBodyEventType;
 import io.quarkus.arc.Arc;
@@ -94,6 +96,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpVersion;
 import io.vertx.core.http.RequestOptions;
 import io.vertx.core.http.impl.HttpUtils;
+import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.core.net.ProxyType;
 import io.vertx.core.streams.WriteStream;
@@ -360,9 +363,19 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
     static record RequestBodyEvent(Buffer buffer, RequestBodyEventType eventType) {
         public enum RequestBodyEventType {
-            NON_FINAL_CHUNK,
-            FINAL_CHUNK,
-            COMPLETE_BODY
+            NON_FINAL_CHUNK(false),
+            FINAL_CHUNK(true),
+            COMPLETE_BODY(true);
+
+            private final boolean finalChunk;
+
+            private RequestBodyEventType(boolean finalChunk) {
+                this.finalChunk = finalChunk;
+            }
+
+            public boolean isFinalChunk() {
+                return finalChunk;
+            }
         };
     }
 
@@ -443,9 +456,12 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private final RequestOptions requestOptions;
         private final ClientSpec clientSpec;
 
-        /** Read an written only from the producer thread */
+        /* Read an written only from the producer thread */
         private boolean firstEvent = true;
-        /**
+        private Future<BodyWriter> bodyWriter;
+        private Future<StoredBody> body;
+
+        /*
          * Read from the producer thread, written from the event loop. Protected by {@link #lock} {@link #requestReady}
          * {@link Condition}
          */
@@ -453,7 +469,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         /* Retransmit settings, read/written from the event loop */
         private final boolean possibleRetransmit;
-        private List<Buffer> bodyRecorder;
         private List<URI> redirects;
         private final int maxRetransmits;
         private final CXFClientInfo clientInfo;
@@ -505,11 +520,19 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         public void handle(RequestBodyEvent event) throws IOException {
 
             final Buffer buffer = event.buffer();
+            final boolean finalChunk = event.eventType().isFinalChunk();
             if (firstEvent) {
                 firstEvent = false;
                 if (possibleRetransmit) {
-                    final List<Buffer> recorder = bodyRecorder = new ArrayList<>();
-                    recorder.add(buffer.slice());
+                    Future<BodyWriter> bw = BodyRecorder.openWriter(
+                            (ContextInternal) clientPool.getVertx().getOrCreateContext(),
+                            clientInfo.getRetransmitCache());
+                    bw = bw.compose(w -> w.write(buffer.slice()));
+                    if (finalChunk) {
+                        body = bw.compose(w -> w.close());
+                    } else {
+                        bodyWriter = bw;
+                    }
                     final List<URI> redirs = redirects = new ArrayList<>();
                     redirs.add(url);
                 }
@@ -523,32 +546,21 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
                 client.request(requestOptions)
                         .onSuccess(req -> {
-                            switch (event.eventType()) {
-                                case NON_FINAL_CHUNK: {
-                                    req
-                                            .setChunked(true)
-                                            .write(buffer)
-                                            .onFailure(t -> mode.responseFailed(t, true));
+                            if (!finalChunk) {
+                                req
+                                        .setChunked(true)
+                                        .write(buffer)
+                                        .onFailure(t -> mode.responseFailed(t, true));
 
-                                    lock.lock();
-                                    try {
-                                        this.request = new Result<>(req, null);
-                                        requestReady.signal();
-                                    } finally {
-                                        lock.unlock();
-                                    }
-
-                                    break;
+                                lock.lock();
+                                try {
+                                    this.request = new Result<>(req, null);
+                                    requestReady.signal();
+                                } finally {
+                                    lock.unlock();
                                 }
-                                case FINAL_CHUNK:
-                                case COMPLETE_BODY: {
-                                    finishRequest(req, buffer);
-                                    break;
-                                }
-                                default:
-                                    throw new IllegalArgumentException(
-                                            "Unexpected " + RequestBodyEventType.class.getName() + ": " + event.eventType());
-
+                            } else {
+                                finishRequest(req, buffer);
                             }
                         })
                         .onFailure(t -> {
@@ -564,51 +576,43 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                             }
                         });
 
-                switch (event.eventType()) {
-                    case NON_FINAL_CHUNK:
-                        /* Nothing to do */
-                        break;
-                    case FINAL_CHUNK:
-                    case COMPLETE_BODY: {
-                        mode.awaitResponse();
-                        break;
-                    }
-                    default:
-                        throw new IllegalArgumentException(
-                                "Unexpected " + RequestBodyEventType.class.getName() + ": " + event.eventType());
-
+                if (finalChunk) {
+                    mode.awaitResponse();
                 }
-
             } else {
                 /* Non-first event */
-                if (bodyRecorder != null) {
-                    bodyRecorder.add(buffer.slice());
+                Future<BodyWriter> bw = bodyWriter;
+                if (bw != null) {
+                    bw = bw.compose(w -> w.write(buffer.slice()));
+                    if (finalChunk) {
+                        body = bw.compose(w -> w.close());
+                        bodyWriter = null;
+                    } else {
+                        bodyWriter = bw;
+                    }
                 }
                 final HttpClientRequest req = awaitRequest();
-                switch (event.eventType()) {
-                    case NON_FINAL_CHUNK: {
-                        req
-                                .write(buffer)
-                                .onFailure(RequestBodyHandler.this::failResponse);
-                        break;
-                    }
-                    case FINAL_CHUNK:
-                    case COMPLETE_BODY: {
-                        finishRequest(req, buffer);
-                        mode.awaitResponse();
-                        break;
-                    }
-                    default:
-                        throw new IllegalArgumentException(
-                                "Unexpected " + RequestBodyEventType.class.getName() + ": " + event.eventType());
-
+                if (!finalChunk) {
+                    req
+                            .write(buffer)
+                            .onFailure(RequestBodyHandler.this::failResponse);
+                } else {
+                    finishRequest(req, buffer);
+                    mode.awaitResponse();
                 }
             }
         }
 
         @SuppressWarnings("resource")
         void finishRequest(HttpClientRequest req, Buffer buffer) {
+            prepareResponse(req);
+            req
+                    .end(buffer)
+                    .onFailure(t -> mode.responseFailed(t, true));
 
+        }
+
+        private void prepareResponse(HttpClientRequest req) {
             req.response()
                     .onComplete(ar -> {
                         final InputStreamWriteStream sink = new InputStreamWriteStream(2);
@@ -642,16 +646,16 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                     redirectRetransmit(newUri);
                                 } catch (IOException e) {
                                     sink.setException((IOException) e);
-                                    mode.responseReady(new Result<>(new ResponseEvent(response, sink), e));
+                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), e));
                                 } catch (URISyntaxException e) {
                                     final IOException ioe = new IOException(
                                             "Could not resolve redirect Location " + loc + " relative to " + url, e);
                                     sink.setException(ioe);
-                                    mode.responseReady(new Result<>(new ResponseEvent(response, sink), ioe));
+                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
                                 } catch (Exception e) {
                                     final IOException ioe = new IOException(e);
                                     sink.setException(ioe);
-                                    mode.responseReady(new Result<>(new ResponseEvent(response, sink), ioe));
+                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
                                 }
                                 return;
                             } else {
@@ -664,7 +668,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                                     + " You may want to set quarkus.cxf.client." + qKey
                                                     + ".auto-redirect = true");
                                     sink.setException(ioe);
-                                    mode.responseReady(new Result<>(new ResponseEvent(response, sink), ioe));
+                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
                                     return;
                                 }
                                 if (possibleRetransmit && isRedirect && maxRetransmits >= 0
@@ -678,7 +682,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                             + " increase quarkus.cxf.client." + qKey + ".max-retransmits. Visited URIs: "
                                             + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")));
                                     sink.setException(ioe);
-                                    mode.responseReady(new Result<>(new ResponseEvent(response, sink), ioe));
+                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
                                     return;
                                 }
                                 /* No retransmit */
@@ -692,12 +696,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 sink.setException(new IOException(ar.cause()));
                             }
                         }
-                        mode.responseReady(new Result<>(new ResponseEvent(response, sink), ar.cause()));
+                        mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ar.cause()));
                     });
-            req
-                    .end(buffer)
-                    .onFailure(t -> mode.responseFailed(t, true));
-
         }
 
         private static int performedRetransmits(List<URI> retransmits) {
@@ -741,45 +741,26 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             options.setSsl(ssl);
             options.setURI(requestURI);
 
-            final List<Buffer> body = bodyRecorder;
-            final int last = body.size() - 1;
-            if (last == 0 && requestHasBody(options.getMethod())) {
-                /* Only one buffer recorded */
-                requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(body.get(0).length()));
-            } else if (last == -1 && requestHasBody(options.getMethod())) {
-                /* No buffer recorded */
-                requestOptions.putHeader(CONTENT_LENGTH, "0");
-            } else {
-                options.removeHeader(CONTENT_LENGTH);
-            }
+            this.body.compose(storedBody -> {
+                final long contentLength = storedBody.length();
+                if (contentLength >= 0 && requestHasBody(options.getMethod())) {
+                    /* Only one buffer recorded */
+                    options.putHeader(CONTENT_LENGTH, String.valueOf(contentLength));
+                } else {
+                    options.removeHeader(CONTENT_LENGTH);
+                }
 
-            final HttpClient client = clientPool.getClient(clientSpec);
+                final HttpClient client = clientPool.getClient(clientSpec);
 
-            // Should not be necessary, because we copy from the original requestOptions
-            // setProtocolHeaders(outMessage, options, userAgent);
+                // Should not be necessary, because we copy from the original requestOptions
+                // setProtocolHeaders(outMessage, options, userAgent);
 
-            client.request(options)
-                    .onSuccess(req -> {
-                        if (last == 0) {
-                            /* Single buffer recorded */
-                            finishRequest(req, body.get(0).slice());
-                        } else if (last == -1) {
-                            /* Empty body */
-                            finishRequest(req, Buffer.buffer());
-                        } else {
-                            /* Multiple buffers recorded */
-                            req.setChunked(true);
-                            for (int i = 0; i <= last; i++) {
-                                if (i == last) {
-                                    finishRequest(req, body.get(i).slice());
-                                } else {
-                                    req
-                                            .write(body.get(i).slice())
-                                            .onFailure(t -> mode.responseFailed(t, true));
-                                }
-                            }
-                        }
-                    })
+                return client.request(options)
+                        .compose(req -> {
+                            prepareResponse(req);
+                            return storedBody.pipeTo(req).compose(v -> Future.succeededFuture(req));
+                        });
+            })
                     .onFailure(t -> {
                         lock.lock();
                         try {
@@ -1172,6 +1153,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
     }
 
     static record ResponseEvent(HttpClientResponse response, InputStream responseBodyInputStream) {
+        public static ResponseEvent prepare(Future<StoredBody> body, HttpClientResponse response,
+                InputStream responseBodyInputStream) {
+            if (body != null) {
+                body.compose(b -> b.discard());
+            }
+            return new ResponseEvent(response, responseBodyInputStream);
+        }
     }
 
     /**

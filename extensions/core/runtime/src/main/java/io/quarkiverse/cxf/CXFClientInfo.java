@@ -11,6 +11,7 @@ import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
+import io.quarkiverse.cxf.CxfConfig.RetransmitCacheConfig;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.tls.TlsConfiguration;
@@ -87,6 +88,9 @@ public class CXFClientInfo {
      * (name is not part of standard)
      */
     private final int maxRetransmits;
+
+    private final RetransmitCacheConfig retransmitCache;
+
     /**
      * Specifies the maximum amount of retransmits to the same uri that are allowed for redirects.
      * Retransmits for authorization is included in the retransmit count. Each redirect may cause another
@@ -238,6 +242,7 @@ public class CXFClientInfo {
         this.redirectRelativeUri = config.redirectRelativeUri();
         this.maxRetransmits = config.maxRetransmits();
         this.maxSameUri = config.maxSameUri();
+        this.retransmitCache = cxfConfig.retransmitCache();
         this.allowChunking = config.allowChunking();
         this.chunkingThreshold = config.chunkingThreshold();
         this.chunkLength = config.chunkLength();
@@ -493,6 +498,10 @@ public class CXFClientInfo {
 
     public boolean isRedirectRelativeUri() {
         return redirectRelativeUri;
+    }
+
+    public RetransmitCacheConfig getRetransmitCache() {
+        return retransmitCache;
     }
 
     public int getMaxRetransmits() {
