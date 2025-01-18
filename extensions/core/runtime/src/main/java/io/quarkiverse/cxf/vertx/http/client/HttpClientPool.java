@@ -128,4 +128,8 @@ public class HttpClientPool {
 
     }
 
+    public Vertx getVertx() {
+        return vertx;
+    }
+
 }

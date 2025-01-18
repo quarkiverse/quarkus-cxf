@@ -9,11 +9,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.io.CachedConstants;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.wsdl.WSDLManager;
 import org.jboss.logging.Logger;
 
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue.Supplier;
+import io.quarkiverse.cxf.CxfConfig.RetransmitCacheConfig;
 import io.quarkiverse.cxf.annotation.CXFEndpoint;
 import io.quarkiverse.cxf.transport.CxfHandler;
 import io.quarkiverse.cxf.transport.VertxDestinationFactory;
@@ -326,6 +328,18 @@ public class CXFRecorder {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public RuntimeValue<Consumer<Bus>> busConfigForRetransmitCache(CxfConfig cxfConfig) {
+        return new RuntimeValue<>(bus -> {
+            final RetransmitCacheConfig config = cxfConfig.retransmitCache();
+            bus.setProperty(CachedConstants.THRESHOLD_BUS_PROP, String.valueOf(config.threshold().asLongValue()));
+            config.maxSize().ifPresent(
+                    maxSize -> bus.setProperty(CachedConstants.MAX_SIZE_BUS_PROP, String.valueOf(maxSize.asLongValue())));
+            config.directory().ifPresent(dir -> bus.setProperty(CachedConstants.OUTPUT_DIRECTORY_BUS_PROP, dir));
+            bus.setProperty(CachedConstants.CLEANER_DELAY_BUS_PROP, config.gcDelay().toMillis());
+            bus.setProperty(CachedConstants.CLEANER_CLEAN_ON_SHUTDOWN_BUS_PROP, config.gcOnShutDown());
+        });
     }
 
 }

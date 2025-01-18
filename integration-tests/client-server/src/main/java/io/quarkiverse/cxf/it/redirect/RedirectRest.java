@@ -1,10 +1,15 @@
 package io.quarkiverse.cxf.it.redirect;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -12,10 +17,21 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.soap.SOAPFaultException;
+
+import org.apache.cxf.message.Message;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.it.large.slow.generated.LargeSlowService;
+import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheOutput;
+import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheResponse;
+import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheService;
+import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheServiceImpl;
 import io.quarkus.logging.Log;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 
 @Path("/RedirectRest")
@@ -55,6 +71,12 @@ public class RedirectRest {
 
     @CXFClient("loop")
     LargeSlowService loop;
+
+    @CXFClient("retransmitCache")
+    RetransmitCacheService retransmitCache;
+
+    @ConfigProperty(name = "qcxf.retransmitCacheDir")
+    String retransmitCacheDir;
 
     LargeSlowService getClient(String clientName) {
         switch (clientName) {
@@ -171,6 +193,99 @@ public class RedirectRest {
     public String largeHelloSync(@PathParam("client") String client, @QueryParam("sizeBytes") int sizeBytes,
             @QueryParam("delayMs") int delayMs) {
         return getClient(client).largeSlow(sizeBytes, delayMs).getPayload();
+    }
+
+    @Path("/retransmitCacheSync")
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response retransmitCacheSync(
+            String body,
+            @HeaderParam(EXPECTED_FILE_COUNT_HEADER) int expectedFileCount,
+            @HeaderParam(REQUEST_ID_HEADER) String requestId,
+            @HeaderParam(STATUS_CODE_HEADER) String statusCode) {
+        RetransmitCacheOutput result = null;
+        Map<String, Object> reqContext = ((BindingProvider) retransmitCache).getRequestContext();
+        reqContext.put(
+                MessageContext.HTTP_REQUEST_HEADERS,
+                statusCode != null && requestId != null
+                        ? Map.of(
+                                EXPECTED_FILE_COUNT_HEADER, List.of(String.valueOf(expectedFileCount)),
+                                REQUEST_ID_HEADER, List.of(requestId),
+                                STATUS_CODE_HEADER, List.of(statusCode))
+                        : Map.of());
+        try {
+            result = retransmitCache.retransmitCache(expectedFileCount, body);
+            return Response.ok(result.getPayload()).build();
+        } catch (SOAPFaultException e) {
+            Map<String, Object> responseContext = ((BindingProvider) retransmitCache).getResponseContext();
+            final int sc = (Integer) responseContext.get(Message.RESPONSE_CODE);
+            if (sc != 200) {
+                return Response.status(sc).build();
+            }
+            return Response.status(500, "Unexpected").build();
+        }
+    }
+
+    @Path("/retransmitCacheAsyncBlocking")
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    @Blocking
+    public Uni<Response> retransmitCacheAsyncBlocking(
+            String body,
+            @HeaderParam(EXPECTED_FILE_COUNT_HEADER) int expectedFileCount,
+            @HeaderParam(REQUEST_ID_HEADER) String requestId,
+            @HeaderParam(STATUS_CODE_HEADER) String statusCode) {
+        Map<String, Object> reqContext = ((BindingProvider) retransmitCache).getRequestContext();
+        reqContext.put(
+                MessageContext.HTTP_REQUEST_HEADERS,
+                statusCode != null && requestId != null
+                        ? Map.of(
+                                EXPECTED_FILE_COUNT_HEADER, List.of(String.valueOf(expectedFileCount)),
+                                REQUEST_ID_HEADER, List.of(requestId),
+                                STATUS_CODE_HEADER, List.of(statusCode))
+                        : Map.of());
+
+        final jakarta.xml.ws.Response<RetransmitCacheResponse> resp = retransmitCache.retransmitCacheAsync(expectedFileCount,
+                body);
+        return Uni.createFrom()
+                .future(resp)
+                .map(retransmitCacheResponse -> retransmitCacheResponse.getReturn().getPayload())
+                .map(payload -> Response.ok(payload).build())
+                .onFailure().recoverWithItem(e -> {
+                    final int sc = (Integer) resp.getContext().get(Message.RESPONSE_CODE);
+                    return Response.status(sc).build();
+                });
+    }
+
+    public static final String EXPECTED_FILE_COUNT_HEADER = "X-Expected-File-Count";
+    public static final String REQUEST_ID_HEADER = "X-Request-ID";
+    public static final String STATUS_CODE_HEADER = "X-Status-Code";
+    private final Map<String, String> tempFiles = new ConcurrentHashMap<>();
+
+    @Path("/retransmitCacheRedirect")
+    @POST
+    public Response retransmitCacheRedirect(
+            String body, // consume the body, otherwise the test fails
+            @HeaderParam(EXPECTED_FILE_COUNT_HEADER) int expectedFileCount,
+            @HeaderParam(REQUEST_ID_HEADER) String requestId,
+            @HeaderParam(STATUS_CODE_HEADER) Integer statusCode) {
+
+        if (statusCode != null && requestId != null) {
+            Log.infof("Enforcing status %d", statusCode);
+            Properties props = RetransmitCacheServiceImpl.listTempFiles(expectedFileCount, retransmitCacheDir);
+            final String propsString = RetransmitCacheServiceImpl.toString(props);
+            tempFiles.put(requestId, propsString);
+            Log.infof("Paths %s", props.keySet());
+            return Response.status(statusCode).build();
+        }
+
+        return Response.temporaryRedirect(URI.create("/soap/retransmitCache")).build();
+    }
+
+    @Path("/retransmitCache-tempFiles/{requestId}")
+    @GET
+    public String retransmitCacheTempFiles(@PathParam("requestId") String requestId) {
+        return tempFiles.get(requestId);
     }
 
 }

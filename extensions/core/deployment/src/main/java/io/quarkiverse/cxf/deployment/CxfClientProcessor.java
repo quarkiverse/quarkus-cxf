@@ -41,6 +41,7 @@ import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.ClientInjectionPoint;
 import io.quarkiverse.cxf.CxfClientProducer;
+import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkiverse.cxf.CxfFixedConfig.ClientFixedConfig;
 import io.quarkiverse.cxf.HTTPConduitImpl;
@@ -482,7 +483,7 @@ public class CxfClientProcessor {
 
     @BuildStep
     @Record(ExecutionTime.STATIC_INIT)
-    void customizers(
+    void buildTimeBusCustomizers(
             CXFRecorder recorder,
             CxfFixedConfig config,
             List<FeatureBuildItem> features,
@@ -507,6 +508,15 @@ public class CxfClientProcessor {
                 throw new IllegalStateException("Unexpected " + HTTPConduitImpl.class.getSimpleName() + " value: "
                         + config.httpConduitFactory());
         }
+    }
+
+    @BuildStep
+    @Record(ExecutionTime.RUNTIME_INIT)
+    void runtimeBusCustomizers(
+            CXFRecorder recorder,
+            CxfConfig config,
+            BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
+        customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.busConfigForRetransmitCache(config)));
     }
 
     /**

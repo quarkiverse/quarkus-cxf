@@ -611,7 +611,7 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    @Record(ExecutionTime.STATIC_INIT)
+    @Record(ExecutionTime.RUNTIME_INIT)
     void setupRuntimeBusCustomizers(
             CXFRecorder recorder,
             List<RuntimeBusCustomizerBuildItem> customizers) {
