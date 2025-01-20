@@ -22,13 +22,14 @@ jobs:
   build:
     name: "Build against latest Quarkus snapshot"
     runs-on: ubuntu-latest
-    if: github.actor == 'quarkusbot' || github.actor == 'quarkiversebot' || github.actor == 'dufoli'
+    if: github.actor == 'quarkusbot' || github.actor == 'quarkiversebot'
 
     steps:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
 
       - name: Checkout repo
         uses: actions/checkout@v4
