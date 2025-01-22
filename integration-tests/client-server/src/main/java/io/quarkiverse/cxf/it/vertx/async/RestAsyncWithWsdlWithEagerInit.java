@@ -6,10 +6,9 @@ import java.net.Socket;
 
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
-import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -52,9 +51,9 @@ public class RestAsyncWithWsdlWithEagerInit {
     }
 
     @Path("/helloWithWsdlWithEagerInit")
-    @GET
+    @POST
     @Produces(MediaType.TEXT_PLAIN)
-    public Uni<String> helloWithWsdlWithEagerInit(@QueryParam("person") String person) {
+    public Uni<String> helloWithWsdlWithEagerInit(String person) {
         while (helloWithWsdlWithEagerInit == null) {
             /* Spin until the client is ready */
         }

@@ -1,9 +1,8 @@
 package io.quarkiverse.cxf.it.vertx.async;
 
-import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
@@ -17,9 +16,9 @@ public class RestAsyncWithoutWsdl {
     HelloService helloWithoutWsdl;
 
     @Path("/helloWithoutWsdl")
-    @GET
+    @POST
     @Produces(MediaType.TEXT_PLAIN)
-    public Uni<String> helloWithoutWsdl(@QueryParam("person") String person) {
+    public Uni<String> helloWithoutWsdl(String person) {
         /* Without WSDL and without @Blocking should work */
         return Uni.createFrom()
                 .future(helloWithoutWsdl.helloAsync(person))
