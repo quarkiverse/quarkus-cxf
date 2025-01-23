@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
         <artifactId>quarkus-cxf-parent</artifactId>
-        <version>3.17.4-SNAPSHOT</version>
+        <version>3.18.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -40,8 +40,8 @@
         <quarkus.platform.version>${quarkus.version}</quarkus.platform.version>
         <quarkus-cxf.platform.group-id>io.quarkiverse.cxf</quarkus-cxf.platform.group-id>
         <quarkus-cxf.platform.artifact-id>quarkus-cxf-bom</quarkus-cxf.platform.artifact-id>
-        <quarkus-cxf.platform.version>3.17.4-SNAPSHOT</quarkus-cxf.platform.version>
-        <quarkus-cxf.version>3.17.4-SNAPSHOT</quarkus-cxf.version><!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
+        <quarkus-cxf.platform.version>3.18.0</quarkus-cxf.platform.version>
+        <quarkus-cxf.version>3.18.0</quarkus-cxf.version><!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
 
         <maven.compiler.parameters>true</maven.compiler.parameters>
     </properties>
