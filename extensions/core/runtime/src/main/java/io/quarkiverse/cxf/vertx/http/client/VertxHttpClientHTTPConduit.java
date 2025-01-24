@@ -143,13 +143,16 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         final boolean isAsync = useAsync.isAsync(message);
         message.put(USE_ASYNC, isAsync);
 
-        if (!isAsync && !BlockingOperationControl.isBlockingAllowed()) {
-            throw new IllegalStateException("You have attempted to perform a blocking operation on an IO thread."
-                    + " This is not allowed, as blocking the IO thread will cause major performance issues with your application."
-                    + " You need to offload the blocking CXF client call to a worker thread,"
-                    + " e.g. by using the @io.smallrye.common.annotation.Blocking annotation on a caller method"
-                    + " where it is supported by the underlying Quarkus extension, such as quarkus-rest, quarkus-vertx,"
-                    + " quarkus-reactive-routes, quarkus-grpc, quarkus-messaging-* and possibly others.");
+        final boolean blockingAllowed = BlockingOperationControl.isBlockingAllowed();
+        if (!isAsync && !blockingAllowed) {
+            throw new IllegalStateException(
+                    "You have attempted to perform a blocking service method call on Vert.x event loop thread with CXF client "
+                            + clientInfo.getConfigKey() + "."
+                            + " This is not allowed, as blocking the IO thread will cause major performance issues with your application."
+                            + " You need to offload the blocking CXF client call to a worker thread,"
+                            + " e.g. by using the @io.smallrye.common.annotation.Blocking annotation on a caller method"
+                            + " where it is supported by the underlying Quarkus extension, such as quarkus-rest, quarkus-vertx,"
+                            + " quarkus-reactive-routes, quarkus-grpc, quarkus-messaging-* and possibly others.");
         }
 
         final HttpVersion version = getVersion(message, csPolicy);
