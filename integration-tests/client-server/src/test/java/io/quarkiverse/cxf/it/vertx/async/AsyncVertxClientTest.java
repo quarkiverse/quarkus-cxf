@@ -33,7 +33,7 @@ class AsyncVertxClientTest {
                 .then()
                 .statusCode(500)
                 .body(CoreMatchers.containsString(
-                        "You have attempted to perform a blocking operation on an IO thread."));
+                        "You have attempted to perform a blocking service method call on Vert.x event loop thread"));
 
     }
 

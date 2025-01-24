@@ -187,7 +187,7 @@ public class Client3xx4xx5xxTest {
                     .then()
                     .statusCode(500)
                     .body(CoreMatchers.containsString(
-                            "java.lang.IllegalStateException You have attempted to perform a blocking operation on an IO thread."));
+                            "java.lang.IllegalStateException You have attempted to perform a blocking service method call on Vert.x event loop thread with CXF client wsdlUri200."));
         }
 
     }
@@ -223,7 +223,7 @@ public class Client3xx4xx5xxTest {
                     .then()
                     .statusCode(500)
                     .body(CoreMatchers.containsString(
-                            "java.lang.IllegalStateException You have attempted to perform a blocking operation on an IO thread."));
+                            "java.lang.IllegalStateException You have attempted to perform a blocking service method call on Vert.x event loop thread with CXF client endpointUri404."));
 
         }
 
