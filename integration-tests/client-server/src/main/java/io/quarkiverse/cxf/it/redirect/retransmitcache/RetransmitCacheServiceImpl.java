@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import jakarta.jws.WebService;
@@ -53,55 +54,56 @@ public class RetransmitCacheServiceImpl implements RetransmitCacheService {
     }
 
     public static Properties listTempFiles(int expectedFileCount, String retransmitCacheDir) {
-        final String prefix = "qcxf-TempStore-" + ProcessHandle.current().pid() + "-";
+        final int timeout = 3000;
+        final long deadline = System.currentTimeMillis() + timeout;
         final Properties props = new Properties();
         final Path dir = Path.of(retransmitCacheDir);
-        Log.infof("Listing %s/%s", expectedFileCount, prefix);
+        Log.infof("Expecting %d files in %s", expectedFileCount, retransmitCacheDir);
         if (expectedFileCount == 0) {
             sleep(500);
         }
-        try {
-            while (!Files.isDirectory(dir) && Files.list(dir).count() != expectedFileCount) {
-                sleep(50);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        final AtomicReference<Exception> lastException = new AtomicReference<>();
+        do {
+            if (Files.isDirectory(dir)) {
+                try (Stream<Path> dirFiles = Files.list(dir)) {
+                    dirFiles
+                            .filter(RetransmitCacheServiceImpl::isRetransmitFile)
+                            .forEach(path -> {
+                                Log.infof("Found temp file %s", path);
+                                String content;
 
-        if (Files.isDirectory(dir)) {
-            try (Stream<Path> dirFiles = Files.list(dir)) {
-                dirFiles
-                        .filter(p -> {
-                            String fn = p.getFileName().toString();
-
-                            return fn.startsWith(prefix) //  io.quarkiverse.cxf.vertx.http.client.TempStore
-                                    || // org.apache.cxf.io.CachedOutputStream.createFileOutputStream()
-                                    (fn.startsWith("cos") && fn.endsWith("tmp"));
-
-                        })
-                        .forEach(path -> {
-                            Log.infof("Found temp file %s", path);
-                            String content;
-
-                            /* We have to wait a bit till the event loop finishes writing to the file */
-                            while (true) {
-                                try {
-                                    content = Files.readString(path, StandardCharsets.UTF_8);
-                                } catch (IOException e) {
-                                    throw new RuntimeException("Could not read " + path, e);
+                                /* We have to wait a bit till the event loop finishes writing to the file */
+                                while (true) {
+                                    try {
+                                        content = Files.readString(path, StandardCharsets.UTF_8);
+                                        if (content.endsWith("</payload></ns2:retransmitCache></soap:Body></soap:Envelope>")) {
+                                            break;
+                                        }
+                                    } catch (IOException e) {
+                                        lastException.set(e);
+                                    }
+                                    sleep(50);
                                 }
-                                if (content.endsWith("</payload></ns2:retransmitCache></soap:Body></soap:Envelope>")) {
-                                    break;
-                                }
-                                sleep(50);
-                            }
-                            props.setProperty(path.toString(), content);
-                        });
-            } catch (IOException e) {
-                throw new RuntimeException("Could not list " + expectedFileCount, e);
+                                props.setProperty(path.toString(), content);
+                            });
+                } catch (IOException e) {
+                    lastException.set(e);
+                }
             }
-        }
+            if (System.currentTimeMillis() > deadline) {
+                throw new IllegalStateException("" + expectedFileCount + " expected files in " + retransmitCacheDir
+                        + " did not appear within " + timeout + " ms; found: " + props.keySet(), lastException.get());
+            }
+        } while (props.size() < expectedFileCount);
+
         return props;
+    }
+
+    public static boolean isRetransmitFile(Path p) {
+        final String fn = p.getFileName().toString();
+        return fn.startsWith("qcxf-TempStore-") //  io.quarkiverse.cxf.vertx.http.client.TempStore
+                || // org.apache.cxf.io.CachedOutputStream.createFileOutputStream()
+                (fn.startsWith("cos") && fn.endsWith("tmp"));
     }
 
     private static void sleep(long delay) {
