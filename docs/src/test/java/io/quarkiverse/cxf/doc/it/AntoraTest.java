@@ -35,17 +35,14 @@ public class AntoraTest {
 
         final Set<String> ignorables = new LinkedHashSet<>();
 
-        final ZonedDateTime deadline = ZonedDateTime.parse("2025-01-28T23:59:59+01:00[Europe/Paris]");
+        final ZonedDateTime deadline = ZonedDateTime.parse("2025-01-30T23:59:59+01:00[Europe/Paris]");
         if (ZonedDateTime.now(ZoneId.of("Europe/Paris")).isBefore(deadline)) {
             ignorables.add("https://quarkus.io/blog/quarkus-3-18-0-released/");
-            ignorables.add("https://github.com/quarkiverse/quarkus-cxf/compare/3.17.2...3.18.0");
         }
 
         AntorAssured
                 .links()
-                .excludeResolved("http://quarkus.io/training", "http://www.w3.org/2009/xmlenc11#aes256-gcm")
                 .excludeResolved(Pattern.compile("^\\Qhttp://localhost:808\\E[02].*"))
-                .excludeResolved(Pattern.compile("^\\Qhttp://schemas.xmlsoap.org/\\E.*"))
                 .excludeEditThisPage()
                 .validate()
                 .ignore(err -> ignorables.contains(err.uri().resolvedUri()))
