@@ -193,16 +193,21 @@ public interface CxfClientConfig {
      * If `true` this CXF client will follow HTTP redirects (HTTP status codes 301, 302, 303 and 307 with `Location` response
      * header); otherwise HTTP redirects will not be followed.
      *
-     * [WARNING]
-     * ====
-     * Enabling this option may increase memory requirements of your application substantially as request bodies will
-     * have to be cached for retransmission.
-     * ====
-     *
      * See also:
      *
      * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".redirect-relative-uri]`
      * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`
+     *
+     * [IMPORTANT]
+     * ====
+     * If `auto-redirect` is enabled, the body of every request is cached until a non-redirect response is received.
+     * The request bodies are stored in memory, if their size is less than
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-retransmit-cache-threshold[quarkus.cxf.retransmit-cache.threshold]`.
+     * Otherwise they are stored in a configurable
+     * xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-retransmit-cache-directory[directory]
+     * on disk.
+     * ====
      *
      * @since 2.2.3
      * @asciidoclet
@@ -241,7 +246,6 @@ public interface CxfClientConfig {
      * See also:
      *
      * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`
      *
      * @since 2.2.3
      * @asciidoclet
@@ -259,7 +263,6 @@ public interface CxfClientConfig {
      * See also:
      *
      * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
      *
      * @since 3.18.0
      * @asciidoclet

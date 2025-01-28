@@ -3,10 +3,50 @@
 == Important dependency upgrades
 
 * Quarkus 3.17.x -> 3.18.0 - https://quarkus.io/blog/quarkus-3-18-0-released/[release notes]
+* CXF 4.0.5 -> 4.1.0 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.0.5+++...+++cxf-4.1.0[changelog]
 
 == New features
 
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1639[#1639] Add `quarkus.cxf.client."client-name".max-same-uri` configuration option
+
+Check
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`'s documentation for more information.
+
+Special thanks to https://github.com/dcheng1248[@dcheng1248] for the https://github.com/quarkiverse/quarkus-cxf/pull/1669[contribution].
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1628[#1628] Support offloading the request data to disk with `VertxHttpClientHTTPConduit`
+
+{quarkus-cxf-project-name} 3.17.0, added
+xref:release-notes/3.17.0.adoc#_1609_support_http_redirects_with_vertxhttpclienthttpconduit[support for redirects] with `VertxHttpClientHTTPConduit`.
+It included some basic in-memory caching of the request body for the sake of retransmission.
+Since {quarkus-cxf-project-name} 3.18.0, the `VertxHttpClientHTTPConduit` is able
+to offload the data to disk in case the size of the body surpasses some configurable threshold.
+Check the documentation of the following new configuration options to learn how the new feature works:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-retransmit-cache-threshold[quarkus.cxf.retransmit-cache.threshold]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-retransmit-cache-max-size[quarkus.cxf.retransmit-cache.max-size]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-retransmit-cache-directory[quarkus.cxf.retransmit-cache.directory]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-retransmit-cache-gc-delay[quarkus.cxf.retransmit-cache.gc-delay]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-retransmit-cache-gc-on-shut-down[quarkus.cxf.retransmit-cache.gc-on-shut-down]`
+
+[TIP]
+====
+The above configuration options work also for `VertxHttpClientHTTPConduit`.
+====
+
+
 == Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1685[#1685] `VertxHttpClientHTTPConduit` based client hangs when run asynchronously on Vert.x event loop with a body exceeding single chunk
+
+Before {quarkus-cxf-project-name} 3.18.0, {quarkus-cxf-project-name} did not prevent calling clients in asynchronous mode on Vert.x event loop thread.
+However, that kind use did only work for request bodies not exceeding single HTTP chunk (configurable via
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-chunking-threshold[quarkus.cxf.client."client-name".chunking-threshold]`).
+For larger bodies, the call would block forever.
+
+Since {quarkus-cxf-project-name} 3.18.0, all asynchronous calls of `VertxHttpClientHTTPConduit` based clients
+are transparently dispatched on a Vert.x worker thread, thus preventing blocking of the Vert.x event loop.
 
 == Deprecations
 
@@ -15,7 +55,7 @@
 The `HttpClientHTTPConduitFactory` value of
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
 and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
-existed since the inception of those options in {quarkus-cxf-project-name} 2.3.0.
+existed since their inception in {quarkus-cxf-project-name} 2.3.0.
 
 `HttpClientHTTPConduit` never gained any real traction within {quarkus-cxf-project-name}.
 When CXF started using it as a default, we were forced to introduce our own default (`URLConnectionHTTPConduitFactory`)
@@ -28,15 +68,17 @@ Now that we have `VertxHttpClientHTTPConduit`,
 which we can support very well on Quarkus,
 there are no more reasons for us to spend our resources on `HttpClientHTTPConduit`.
 
-We should mark it as deprecated in our documentation, add some warnings on startup for the case that somebody is still using it and then at some point remove the item from the `io.quarkiverse.cxf.HTTPConduitImpl` enum and also remove the tests covering it.
+`HttpClientHTTPConduitFactory` was marked as deprecated in our documentation and we added some warnings on application startup for folks still using it.
 
 
 == Documentation improvements
 
+* We started using `https://docs.quarkiverse.io/quarkus-antora/dev/testing.html#antorassured[AntorAssured]`
+  for validating external links and internal cross-references in our documentation, so dead links became much less likely.
 * Removed dangling experimental status from `VertxHttpClientHTTPConduitFactory` in the ducumentation of
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
   and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
 
 == Full changelog
 
-https://github.com/quarkiverse/quarkus-cxf/compare/3.17.2+++...+++3.18.0
+https://github.com/quarkiverse/quarkus-cxf/compare/3.17.3+++...+++3.18.0

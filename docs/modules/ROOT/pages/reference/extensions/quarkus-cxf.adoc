@@ -1756,16 +1756,21 @@ appliable). 0 is infinite.
 3+a|If `true` this CXF client will follow HTTP redirects (HTTP status codes 301, 302, 303 and 307 with `Location` response
 header); otherwise HTTP redirects will not be followed.
 
-[WARNING]
-====
-Enabling this option may increase memory requirements of your application substantially as request bodies will
-have to be cached for retransmission.
-====
-
 See also:
 
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".redirect-relative-uri]`
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`
+
+[IMPORTANT]
+====
+If `auto-redirect` is enabled, the body of every request is cached until a non-redirect response is received.
+The request bodies are stored in memory, if their size is less than
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-retransmit-cache-threshold[quarkus.cxf.retransmit-cache.threshold]`.
+Otherwise they are stored in a configurable
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-retransmit-cache-directory[directory]
+on disk.
+====
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__AUTO_REDIRECT+++` +
 *Since Quarkus CXF*: 2.2.3
@@ -1798,7 +1803,6 @@ A negative value indicates unlimited retransmits, but even in that case redirect
 See also:
 
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__MAX_RETRANSMITS+++` +
 *Since Quarkus CXF*: 2.2.3
@@ -1813,7 +1817,6 @@ The default behavior is to allow a no retransmits to the same URI.
 See also:
 
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__MAX_SAME_URI+++` +
 *Since Quarkus CXF*: 3.18.0
