@@ -22,6 +22,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkiverse.cxf.it.large.slow.LargeSlowServiceImpl;
 import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheServiceImpl;
+import io.quarkus.logging.Log;
 import io.quarkus.runtime.configuration.MemorySizeConverter;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -238,6 +239,7 @@ class RedirectTest {
             Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                     .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
         }
+        Log.infof("Starting test RedirectTest.%s500", endpoint);
 
         final MemorySizeConverter converter = new MemorySizeConverter();
 
@@ -282,6 +284,8 @@ class RedirectTest {
             Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                     .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
         }
+
+        Log.infof("Starting test RedirectTest.%s with %s body", endpoint, payloadSize);
 
         final MemorySizeConverter converter = new MemorySizeConverter();
         {
