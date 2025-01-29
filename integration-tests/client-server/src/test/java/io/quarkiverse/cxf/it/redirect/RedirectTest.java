@@ -290,7 +290,7 @@ class RedirectTest {
         final MemorySizeConverter converter = new MemorySizeConverter();
         {
             final int payloadLen = (int) converter.convert(payloadSize).asLongValue();
-            final Properties props = retransmitCache(payloadLen, 0, endpoint);
+            final Properties props = retransmitCache(payloadLen, expectedFileCount, endpoint);
             Assertions.assertThat(props.size()).isEqualTo(expectedFileCount);
 
             if (expectedFileCount >= 1) {
