@@ -34,67 +34,42 @@ jobs:
       with:
         java-version: ${{ env.JAVA_VERSION }}
 
-  native-tests:
-    strategy:
-      fail-fast: false
-      matrix:
-        testModule: ['client', 'client-server', 'fastinfoset', 'hc5', 'metrics', 'mtls', 'mtls -Djks', 'mtom-awt', 'opentelemetry', 'saaj', 'santuario-xmlsec', 'server', 'ws-rm-client', 'ws-security', 'ws-security -Djks', 'ws-security-policy', 'ws-security-policy -Djks', 'ws-trust', 'wsdl2java', 'wsdl2java-no-config']
-    name: ${{matrix.testModule}} native tests
-    needs: build-and-run-jvm-tests
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: run-native-test
-      uses: ./.github/actions/run-native-test
-      with:
-        java-version: ${{ env.JAVA_VERSION }}
-        test-module-spec: ${{matrix.testModule}}
-
-  windows-tests:
-    name: Windows tests
-    needs: build-and-run-jvm-tests
-    runs-on: windows-latest
-    steps:
-
-    - uses: actions/checkout@v4
-
-    - name: Set up JDK ${{ env.JAVA_VERSION }}
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: ${{ env.JAVA_VERSION }}
-
-    - name: Download Maven Repo
-      uses: actions/download-artifact@v4
-      with:
-        name: maven-repo
-        path: ..
-    - name: Extract Maven Repo
+    - name: 1 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
       shell: bash
-      run: |
-        tar -xzf ../maven-repo.tgz -C ~
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
 
-    - name: mvn test
+    - name: 2 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
       shell: bash
-      run: |
-        ./mvnw -B test \
-          -Dskip-testcontainers-tests \
-          -Dformat.skip \
-          -Denforcer.skip \
-          -pl '!:quarkus-cxf-docs,!:quarkus-cxf-test-ws-rm-server-native' \
-          -ntp \
-          -fae
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
 
-    # Same as the previous but different default ConduitFactory
-    - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn test
-      env: 
-        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
+    - name: 3 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
       shell: bash
-      run: |
-        ./mvnw -B clean test \
-          -Dskip-testcontainers-tests \
-          -Dformat.skip \
-          -Denforcer.skip \
-          -pl '!:quarkus-cxf-docs,!:quarkus-cxf-test-ws-rm-server-native' \
-          -ntp \
-          -fae
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+
+    - name: 4 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+      shell: bash
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+
+    - name: 5 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+      shell: bash
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+
+    - name: 6 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+      shell: bash
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+
+    - name: 7 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+      shell: bash
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+
+    - name: 8 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+      shell: bash
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+
+    - name: 9 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+      shell: bash
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+
+    - name: 10 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+      shell: bash
+      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
