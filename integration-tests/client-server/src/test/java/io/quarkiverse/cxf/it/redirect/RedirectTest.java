@@ -2,11 +2,18 @@ package io.quarkiverse.cxf.it.redirect;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.nio.file.Path;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
@@ -321,13 +328,48 @@ class RedirectTest {
 
     private static Properties retransmitCache(final int payloadLen, int expectedFileCount, String syncAsync)
             throws IOException {
-        String body = RestAssured.given()
-                .header(RedirectRest.EXPECTED_FILE_COUNT_HEADER, String.valueOf(expectedFileCount))
-                .body(LargeSlowServiceImpl.largeString(payloadLen))
-                .post("/RedirectRest/" + syncAsync)
-                .then()
-                .statusCode(200)
-                .extract().body().asString();
+        final long start = System.currentTimeMillis();
+        String body;
+        final AtomicBoolean latch = new AtomicBoolean(false);
+        final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(() -> {
+            if (!latch.get()) {
+                Log.infof("Capturing thread dump");
+                StringBuffer threadDump = new StringBuffer(System.lineSeparator());
+                ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+                for (ThreadInfo threadInfo : threadMXBean.dumpAllThreads(true, true)) {
+                    threadDump.append(threadInfo.toString());
+                }
+                Log.infof("Thread dump: %s", threadDump.toString());
+            } else {
+                Log.infof("Request watched has nothing to do");
+            }
+            executor.shutdown();
+        }, 5000, TimeUnit.MILLISECONDS);
+        try {
+            Log.info("Backend call");
+            body = RestAssured.given()
+                    .header(RedirectRest.EXPECTED_FILE_COUNT_HEADER, String.valueOf(expectedFileCount))
+                    .body(LargeSlowServiceImpl.largeString(payloadLen))
+                    .post("/RedirectRest/" + syncAsync)
+                    .then()
+                    .statusCode(200)
+                    .extract().body().asString();
+            Log.infof("Backend call took %d ms", (System.currentTimeMillis() - start));
+            latch.set(true);
+        } catch (Throwable t) {
+            Log.infof("Backend call took %d ms", (System.currentTimeMillis() - start));
+            try {
+                long sleep = 10000L;
+                Log.infof("About to sleep %d ms", sleep);
+                Thread.sleep(sleep);
+                Log.infof("Sleept %d ms", sleep);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            throw t;
+        }
+        executor.shutdown();
 
         final Properties props = new Properties();
         props.load(new StringReader(body));
