@@ -44,5 +44,5 @@ jobs:
            echo "== Run $i"
            echo "========================"
            echo ""
-           ../../mvnw clean test -Dtest=RedirectTest
+           ../../mvnw clean test -Dtest=RedirectTest#retransmitCacheSync9m
         done
