@@ -698,7 +698,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 response.pipeTo(sink)
                                         .onFailure(e -> {
                                             sink.setException(e);
-                                            // log.trace("Pipe failed", e);
+                                            //log.trace("Pipe failed", e);
                                         });
                                 // .onSuccess(v -> log.trace("Pipe finished"));
                             }
@@ -1445,11 +1445,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         @Override
         public void write(Buffer data, Handler<AsyncResult<Void>> handler) {
+            Throwable cause = null;
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
                 // bytesWritten += data.length();
-                // log.tracef("Write #%d: %d bytes; %d total; queue size before %d", writeCounter++, data.length(), bytesWritten,
+                // writeCounter++;
+                // log.tracef("Write #%d: %d bytes; %d total; queue size before %d", writeCounter, data.length(), bytesWritten,
                 // queue.size());
                 queue.offer(data);
                 queueChange.signal();
@@ -1459,24 +1461,28 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
                 queue.offer(new ErrorBuffer(e));
                 queueChange.signal();
-
-                handler.handle(Future.failedFuture(e));
-                return;
+                cause = e;
             } finally {
                 lock.unlock();
             }
-            handler.handle(Future.succeededFuture());
+            if (cause != null) {
+                handler.handle(Future.failedFuture(cause));
+            } else {
+                handler.handle(Future.succeededFuture());
+            }
         }
 
         @Override
         public void end(Handler<AsyncResult<Void>> handler) {
+            // log.trace("Ending writes");
             drainHandler = null;
+            Throwable cause = null;
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
                 // log.tracef("Ending writes, got %d bytes in %d writes; queue size before %d", bytesWritten, writeCounter,
                 // queue.size());
-                // queue.offer(END);
+                queue.offer(END);
                 queueChange.signal();
             } catch (Throwable e) {
                 if (e instanceof InterruptedException) {
@@ -1485,13 +1491,15 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
                 queue.offer(new ErrorBuffer(e));
                 queueChange.signal();
-
-                handler.handle(Future.failedFuture(e));
-                return;
+                cause = e;
             } finally {
                 lock.unlock();
             }
-            handler.handle(Future.succeededFuture());
+            if (cause != null) {
+                handler.handle(Future.failedFuture(cause));
+            } else {
+                handler.handle(Future.succeededFuture());
+            }
         }
 
         @Override
@@ -1532,6 +1540,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         @Override
         public WriteStream<Buffer> drainHandler(Handler<Void> handler) {
+            // log.tracef("drainHandler %s", drainHandler);
             this.drainHandler = handler;
             return this;
         }
@@ -1622,6 +1631,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         @Override
         public void close() {
+            // log.trace("Closing reader");
             // log.tracef("Closing reader: got %d bytes in %d reads", bytesRead, readCounter);
             readBuffer = null;
             // assert queueEmpty() : "Queue still has " + queue.size() + " items";
@@ -1666,7 +1676,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
                 final ReentrantLock lock = this.lock;
                 final boolean writeQueueFull;
-                final int qSize;
+                // final int qSize;
                 try {
                     lock.lockInterruptibly();
                     if (blockingAwaitBuffer) {
@@ -1678,7 +1688,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         readBuffer = rb = queue.poll();
                     }
                     writeQueueFull = writeQueueFullInternal();
-                    qSize = queue.size();
+                    // qSize = queue.size();
                     // log.tracef("%s unblock the producer at queue size %d", (writeQueueFull ? "May not" : "May"), qSize);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -1691,10 +1701,11 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
                 readPosition = 0;
 
+                // log.tracef("Dispatching to drain handler");
                 if (!writeQueueFull) {
-                    // log.tracef("Dispatching to drain handler");
                     context.runOnContext(v -> {
                         final Handler<Void> dh;
+                        // log.tracef("Testing drain handler");
                         if ((dh = drainHandler) != null) {
                             // log.tracef("Calling drain handler");
                             dh.handle(null);
@@ -1720,10 +1731,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         public void setException(Throwable exception) {
+            // log.trace("Passing an exception", exception);
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
-                // log.trace("Passing an excetion", exception);
                 queue.offer(new ErrorBuffer(exception));
                 queueChange.signal();
             } finally {
