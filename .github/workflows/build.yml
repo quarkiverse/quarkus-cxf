@@ -34,42 +34,15 @@ jobs:
       with:
         java-version: ${{ env.JAVA_VERSION }}
 
-    - name: 1 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+    - name: cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
       shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-
-    - name: 2 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-      shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-
-    - name: 3 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-      shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-
-    - name: 4 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-      shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-
-    - name: 5 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-      shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-
-    - name: 6 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-      shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-
-    - name: 7 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-      shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-
-    - name: 8 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-      shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-
-    - name: 9 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-      shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-
-    - name: 10 cd integration-tests/client-server && mvn test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
-      shell: bash
-      run: cd integration-tests/client-server && ../../mvnw test -Dtest=RedirectTest#retransmitCacheAsyncBlocking9m
+      run: |
+        cd integration-tests/client-server
+        for i in {1..100}; do
+           echo ""
+           echo "========================"
+           echo "== Run $i"
+           echo "========================"
+           echo ""
+           ../../mvnw clean test -Dtest=RedirectTest
+        done
