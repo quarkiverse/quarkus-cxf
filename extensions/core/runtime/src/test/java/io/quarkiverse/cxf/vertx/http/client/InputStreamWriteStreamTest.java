@@ -247,6 +247,26 @@ public class InputStreamWriteStreamTest {
     }
 
     @Test
+    void readAfterClose() throws IOException {
+        ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
+        InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2);
+        final String INPUT1 = "abcd";
+        final String INPUT2 = "efgh";
+        final String INPUT3 = "ijkl";
+        ws.write(Buffer.buffer(INPUT1));
+        ws.write(Buffer.buffer(INPUT2));
+        ws.write(Buffer.buffer(INPUT3));
+        ws.end();
+        byte[] arr = new byte[12];
+        Assertions.assertThat(ws.read(arr)).isEqualTo(12);
+        Assertions.assertThat(arr).isEqualTo((INPUT1 + INPUT2 + INPUT3).getBytes(StandardCharsets.UTF_8));
+        Assertions.assertThat(ws.read(arr)).isEqualTo(-1);
+        ws.close();
+        Assertions.assertThat(ws.read(arr)).isEqualTo(-1);
+        ws.close();
+    }
+
+    @Test
     void threeBuffers() throws IOException {
 
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
