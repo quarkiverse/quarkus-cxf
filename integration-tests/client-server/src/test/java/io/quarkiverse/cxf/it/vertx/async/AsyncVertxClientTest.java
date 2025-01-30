@@ -2,18 +2,23 @@ package io.quarkiverse.cxf.it.vertx.async;
 
 import static org.hamcrest.CoreMatchers.is;
 
+import java.time.Duration;
+
 import org.assertj.core.api.Assumptions;
 import org.hamcrest.CoreMatchers;
+import org.jboss.logging.Logger;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import io.quarkiverse.cxf.HTTPConduitImpl;
+import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 import io.quarkus.runtime.configuration.MemorySizeConverter;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 
 @QuarkusTest
 class AsyncVertxClientTest {
+    private static final Logger log = Logger.getLogger(AsyncVertxClientTest.class);
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -25,15 +30,21 @@ class AsyncVertxClientTest {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                 .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
-
-        final String body = body(payloadSize);
-        RestAssured.given()
-                .body(body)
-                .post("/RestAsyncWithWsdl/helloWithWsdl")
-                .then()
-                .statusCode(500)
-                .body(CoreMatchers.containsString(
-                        "You have attempted to perform a blocking service method call on Vert.x event loop thread"));
+        log.infof("Starting AsyncVertxClientTest.helloWithWsdl with %s body", payloadSize);
+        QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
+                () -> {
+                    final String body = body(payloadSize);
+                    RestAssured.given()
+                            .body(body)
+                            .post("/RestAsyncWithWsdl/helloWithWsdl")
+                            .then()
+                            .statusCode(500)
+                            .body(CoreMatchers.containsString(
+                                    "You have attempted to perform a blocking service method call on Vert.x event loop thread"));
+                    return null;
+                },
+                Duration.ofSeconds(5),
+                log::info);
 
     }
 
@@ -47,14 +58,9 @@ class AsyncVertxClientTest {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                 .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
-
-        final String body = body(payloadSize);
-        RestAssured.given()
-                .body(body)
-                .post("/RestAsyncWithWsdlWithBlocking/helloWithWsdlWithBlocking")
-                .then()
-                .statusCode(200)
-                .body(is("Hello " + body + " from HelloWithWsdlWithBlocking"));
+        log.infof("Starting AsyncVertxClientTest.helloWithWsdlWithBlocking with %s body", payloadSize);
+        assert200("/RestAsyncWithWsdlWithBlocking/helloWithWsdlWithBlocking", payloadSize,
+                "Hello from HelloWithWsdlWithBlocking ");
     }
 
     @ParameterizedTest
@@ -67,14 +73,9 @@ class AsyncVertxClientTest {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                 .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
-
-        final String body = body(payloadSize);
-        RestAssured.given()
-                .body(body)
-                .post("/RestAsyncWithWsdlWithEagerInit/helloWithWsdlWithEagerInit")
-                .then()
-                .statusCode(200)
-                .body(is("Hello " + body + " from HelloWithWsdlWithEagerInit"));
+        log.infof("Starting AsyncVertxClientTest.helloWithWsdlWithEagerInit with %s body", payloadSize);
+        assert200("/RestAsyncWithWsdlWithEagerInit/helloWithWsdlWithEagerInit", payloadSize,
+                "Hello from HelloWithWsdlWithEagerInit ");
     }
 
     @ParameterizedTest
@@ -87,14 +88,8 @@ class AsyncVertxClientTest {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                 .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
-
-        final String body = body(payloadSize);
-        RestAssured.given()
-                .body(body)
-                .post("/RestAsyncWithoutWsdl/helloWithoutWsdl")
-                .then()
-                .statusCode(200)
-                .body(is("Hello " + body + " from HelloWithoutWsdl"));
+        log.infof("Starting AsyncVertxClientTest.helloWithoutWsdl with %s body", payloadSize);
+        assert200("/RestAsyncWithoutWsdl/helloWithoutWsdl", payloadSize, "Hello from HelloWithoutWsdl ");
     }
 
     @ParameterizedTest
@@ -107,14 +102,25 @@ class AsyncVertxClientTest {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                 .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
+        log.infof("Starting AsyncVertxClientTest.helloWithoutWsdlWithBlocking with %s body", payloadSize);
+        assert200("/RestAsyncWithoutWsdlWithBlocking/helloWithoutWsdlWithBlocking", payloadSize,
+                "Hello from HelloWithoutWsdlWithBlocking ");
+    }
 
-        final String body = body(payloadSize);
-        RestAssured.given()
-                .body(body)
-                .post("/RestAsyncWithoutWsdlWithBlocking/helloWithoutWsdlWithBlocking")
-                .then()
-                .statusCode(200)
-                .body(is("Hello " + body + " from HelloWithoutWsdlWithBlocking"));
+    static void assert200(String endpoint, String payloadSize, String expectedBodyPrefix) {
+        QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
+                () -> {
+                    final String body = body(payloadSize);
+                    RestAssured.given()
+                            .body(body)
+                            .post(endpoint)
+                            .then()
+                            .statusCode(200)
+                            .body(is(expectedBodyPrefix + body));
+                    return null;
+                },
+                Duration.ofSeconds(5),
+                log::info);
     }
 
     static String body(String payloadSize) {

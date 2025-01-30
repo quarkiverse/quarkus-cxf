@@ -16,7 +16,7 @@ public class HelloWithWsdlWithBlocking implements HelloService {
 
     @Override
     public String hello(String person) {
-        return "Hello " + person + " from " + this.getClass().getSimpleName();
+        return "Hello from " + this.getClass().getSimpleName() + " " + person;
     }
 
     @Override
