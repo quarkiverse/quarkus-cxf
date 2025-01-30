@@ -264,6 +264,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 incomingObserver);
 
         final IOEHandler<RequestBodyEvent> requestBodyHandler = new RequestBodyHandler(
+                (ContextInternal) httpClientPool.getVertx().getOrCreateContext(),
                 requestContext.clientInfo,
                 message,
                 requestContext.uri,
@@ -458,6 +459,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private final HttpClientPool clientPool;
         private final RequestOptions requestOptions;
         private final ClientSpec clientSpec;
+        private final ContextInternal context;
 
         /* Read an written only from the producer thread */
         private boolean firstEvent = true;
@@ -487,6 +489,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private Mode mode;
 
         public RequestBodyHandler(
+                ContextInternal context,
                 CXFClientInfo clientInfo,
                 Message outMessage,
                 URI url,
@@ -501,6 +504,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 boolean possibleRetransmit,
                 int maxRetransmits) {
             super();
+            this.context = context;
             this.clientInfo = clientInfo;
             this.outMessage = outMessage;
             this.url = url;
@@ -618,7 +622,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private void prepareResponse(HttpClientRequest req) {
             req.response()
                     .onComplete(ar -> {
-                        final InputStreamWriteStream sink = new InputStreamWriteStream(2);
+                        final InputStreamWriteStream sink = new InputStreamWriteStream(context, 2);
                         final HttpClientResponse response = ar.result();
                         if (ar.succeeded()) {
 
@@ -690,14 +694,16 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 }
                                 /* No retransmit */
                                 /* Pass the body back to CXF */
-                                response.pipeTo(sink);
+                                // log.trace("Staring pipe");
+                                response.pipeTo(sink)
+                                        .onFailure(e -> {
+                                            sink.setException(e);
+                                            //log.trace("Pipe failed", e);
+                                        });
+                                // .onSuccess(v -> log.trace("Pipe finished"));
                             }
                         } else {
-                            if (ar.cause() instanceof IOException) {
-                                sink.setException((IOException) ar.cause());
-                            } else {
-                                sink.setException(new IOException(ar.cause()));
-                            }
+                            sink.setException(ar.cause());
                         }
                         mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ar.cause()));
                     });
@@ -1394,26 +1400,37 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
     static class InputStreamWriteStream extends InputStream implements WriteStream<Buffer> {
 
-        private static final Buffer END = new DummyBuffer();
+        private static final Buffer END = new ErrorBuffer();
 
-        private final Queue<Buffer> queue;
         private final ReentrantLock lock = new ReentrantLock();
         private final Condition queueChange = lock.newCondition();
+        private final ContextInternal context;
 
-        /** Written from event loop, read from the consumer worker thread */
-        private volatile Handler<Void> drainHandler;
-        private volatile IOException exception;
-        private int maxQueueSize; // volatile not needed as we assume the value stays stable after being set on init
+        /*
+         * Written from the producer thread, read from the consumer thread
+         * All read or write operations must be protected by lock
+         */
+        private final Queue<Buffer> queue;
+        private int maxQueueSize;
 
-        /** Read and written from the from the consumer worker thread */
+        /* Read and written from the consumer thread */
         private Buffer readBuffer;
         private int readPosition = 0;
+        // private int bytesRead = 0;
+        // private int readCounter = 0;
 
-        public InputStreamWriteStream(int queueSize) {
+        /* Read and written from the producer thread */
+        // private int bytesWritten = 0;
+        // private int writeCounter = 0;
+        private Handler<Void> drainHandler;
+
+        public InputStreamWriteStream(ContextInternal context, int queueSize) {
+            this.context = context;
             setWriteQueueMaxSize(queueSize);
             this.queue = new ArrayDeque<>(queueSize);
         }
 
+        /* WriteStream methods */
         @Override
         public WriteStream<Buffer> exceptionHandler(Handler<Throwable> handler) {
             throw new UnsupportedOperationException();
@@ -1428,40 +1445,60 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         @Override
         public void write(Buffer data, Handler<AsyncResult<Void>> handler) {
+            Throwable cause = null;
+            final ReentrantLock lock = this.lock;
+            lock.lock();
             try {
-                final ReentrantLock lock = this.lock;
-                lock.lock();
-                try {
-                    queue.offer(data);
-                    // Log.infof("Adding buffer %d with size %d bytes; queue size after %d",
-                    // System.identityHashCode(data),
-                    // data.length(), queue.size());
-                    queueChange.signal();
-                } finally {
-                    lock.unlock();
-                }
-                handler.handle(Future.succeededFuture());
+                // bytesWritten += data.length();
+                // writeCounter++;
+                // log.tracef("Write #%d: %d bytes; %d total; queue size before %d", writeCounter, data.length(), bytesWritten,
+                // queue.size());
+                queue.offer(data);
+                queueChange.signal();
             } catch (Throwable e) {
                 if (e instanceof InterruptedException) {
                     Thread.currentThread().interrupt();
                 }
-                if (this.exception == null) {
-                    this.exception = e instanceof IOException ? (IOException) e : new IOException(e);
-                }
-                handler.handle(Future.failedFuture(e));
+                queue.offer(new ErrorBuffer(e));
+                queueChange.signal();
+                cause = e;
+            } finally {
+                lock.unlock();
+            }
+            if (cause != null) {
+                handler.handle(Future.failedFuture(cause));
+            } else {
+                handler.handle(Future.succeededFuture());
             }
         }
 
         @Override
         public void end(Handler<AsyncResult<Void>> handler) {
+            // log.trace("Ending writes");
+            drainHandler = null;
+            Throwable cause = null;
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
+                // log.tracef("Ending writes, got %d bytes in %d writes; queue size before %d", bytesWritten, writeCounter,
+                // queue.size());
                 queue.offer(END);
-                // Log.info("Adding final buffer");
                 queueChange.signal();
+            } catch (Throwable e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+
+                queue.offer(new ErrorBuffer(e));
+                queueChange.signal();
+                cause = e;
             } finally {
                 lock.unlock();
+            }
+            if (cause != null) {
+                handler.handle(Future.failedFuture(cause));
+            } else {
+                handler.handle(Future.succeededFuture());
             }
         }
 
@@ -1470,45 +1507,60 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             if (maxSize < 1) {
                 throw new IllegalArgumentException("maxSize must be >= 1");
             }
-            this.maxQueueSize = maxSize;
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                this.maxQueueSize = maxSize;
+            } finally {
+                lock.unlock();
+            }
             return this;
         }
 
         @Override
         public boolean writeQueueFull() {
-            // int size = queue.size();
-            // Log.infof("Queue %s: %d", (size >= maxQueueSize ? "full" : "not full"), size);
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                return writeQueueFullInternal();
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        /**
+         * Must be called under {@link #lock}.
+         *
+         * @return
+         */
+        private boolean writeQueueFullInternal() {
+            assert lock.isHeldByCurrentThread();
             return queue.size() >= maxQueueSize;
         }
 
         @Override
         public WriteStream<Buffer> drainHandler(Handler<Void> handler) {
+            // log.tracef("drainHandler %s", drainHandler);
             this.drainHandler = handler;
             return this;
         }
 
+        /* InputStream methods */
+
         @Override
         public int read() throws IOException {
-            // Log.infof("> reading 1 byte");
-            final IOException e;
-            if ((e = exception) != null) {
-                throw e;
-            }
-
             final Buffer rb = takeBuffer(true);
-            return rb != null ? (rb.getByte(readPosition++) & 0xFF) : -1;
+            int result = rb != null ? (rb.getByte(readPosition++) & 0xFF) : -1;
+            // log.tracef("Read single byte %d", result);
+            return result;
         }
 
         @Override
         public int read(byte b[], final int off, int len) throws IOException {
-            final IOException e;
-            if ((e = exception) != null) {
-                throw e;
-            }
             // Log.infof("Ready to read up to %d bytes", len);
-
             Buffer rb = takeBuffer(true);
             if (rb == null) {
+                // log.trace("Nothing more to read");
                 return -1;
             }
             int rbLen = rb.length();
@@ -1524,11 +1576,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 readPosition += readable;
                 // Log.infof("readPosition now at %d", readPosition);
                 if (readPosition >= rbLen) {
-                    /* Nothing more to read from this buffer, so dereference it so that it can be GC's earlier; */
-                    // Log.infof("Buffer read out completely");
-                    if (readBuffer != END) {
-                        readBuffer = null; // deref. so that it can be GC's earlier;
-                    }
+                    freeReadBufferIfNeeded();
                 }
                 result = readable;
             } else {
@@ -1565,40 +1613,60 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
                 if (readPosition == rbLen) {
                     // Log.infof("Buffer read out completely");
-                    if (readBuffer != END) {
-                        readBuffer = null; // deref. so that it can be GC's earlier;
-                    }
+                    freeReadBufferIfNeeded();
                 }
                 // assert readPosition <= rbLen;
             }
-            // Log.infof("> read %d bytes: %s", result, new String(b, off, result, StandardCharsets.UTF_8));
+            // bytesRead += result;
+            // log.tracef("Read #%d: %d bytes, %d total", readCounter++, result, bytesRead);
             return result;
+        }
+
+        private void freeReadBufferIfNeeded() {
+            if (!(readBuffer instanceof ErrorBuffer)) {
+                /* readBuffer is either == END or there is an exception set on it */
+                readBuffer = null; // deref. so that it can be GC's earlier;
+            }
         }
 
         @Override
         public void close() {
+            // log.trace("Closing reader");
+            // log.tracef("Closing reader: got %d bytes in %d reads", bytesRead, readCounter);
             readBuffer = null;
             // assert queueEmpty() : "Queue still has " + queue.size() + " items";
         }
 
         @Override
         public int available() throws IOException {
-            final ReentrantLock lock = this.lock;
-            lock.lock();
-            try {
-                Buffer rb = takeBuffer(false);
-                if (rb != null) {
-                    int result = rb.length() - readPosition;
-                    for (Buffer b : queue) {
-                        if (rb != b) {
-                            /* Skip the buffer returned by takeBuffer() above */
-                            result += b.length();
-                        }
-                    }
-                    return result;
+            Buffer rb = takeBuffer(false);
+            if (rb != null) {
+                int result = rb.length() - readPosition;
+
+                final List<Buffer> queueCopy;
+                final ReentrantLock lock = this.lock;
+                lock.lock();
+                try {
+                    queueCopy = new ArrayList<>(queue);
+                } finally {
+                    lock.unlock();
                 }
-            } finally {
-                lock.unlock();
+                final int len = queueCopy.size();
+                for (int i = 0; i < len; i++) {
+                    final Buffer b = queueCopy.get(i);
+                    if (b instanceof ErrorBuffer) {
+                        /*
+                         * Either at END or there is some exception passed via an ErrorBuffer
+                         * There is no point in iterating further
+                         */
+                        break;
+                    }
+                    if (rb != b) {
+                        /* Skip the buffer returned by takeBuffer() above */
+                        result += b.length();
+                    }
+                }
+                return result;
             }
             return 0;
         }
@@ -1607,7 +1675,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             // Log.infof("About to take buffer at queue size %d %s", queue.size(),
             // blockingAwaitBuffer ? "with blocking" : "without blocking");
             Buffer rb = readBuffer;
-            if (rb == END) {
+            if (checkEndOrException(rb)) {
                 return null;
             }
             // Log.infof("Buffer is null: %s; %d >= %d: %s", rb == null, readPosition, (rb == null ? -1 : rb.length()),
@@ -1616,6 +1684,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 // Log.info("Buffer is null or empty");
 
                 final ReentrantLock lock = this.lock;
+                final boolean writeQueueFull;
+                // final int qSize;
                 try {
                     lock.lockInterruptibly();
                     if (blockingAwaitBuffer) {
@@ -1626,20 +1696,30 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     } else {
                         readBuffer = rb = queue.poll();
                     }
+                    writeQueueFull = writeQueueFullInternal();
+                    // qSize = queue.size();
+                    // log.tracef("%s unblock the producer at queue size %d", (writeQueueFull ? "May not" : "May"), qSize);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     throw new IOException(e);
                 } finally {
                     lock.unlock();
                 }
-                if (rb == END) {
+                if (checkEndOrException(rb)) {
                     return null;
                 }
                 readPosition = 0;
 
-                final Handler<Void> dh;
-                if (!writeQueueFull() && (dh = drainHandler) != null) {
-                    dh.handle(null);
+                // log.tracef("Dispatching to drain handler");
+                if (!writeQueueFull) {
+                    context.runOnContext(v -> {
+                        final Handler<Void> dh;
+                        // log.tracef("Testing drain handler");
+                        if ((dh = drainHandler) != null) {
+                            // log.tracef("Calling drain handler");
+                            dh.handle(null);
+                        }
+                    });
                 }
             }
             // Log.infof("Taken a %s buffer %d, will read from %d to %d; queue size after: %d",
@@ -1649,10 +1729,25 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             return rb;
         }
 
-        public void setException(IOException exception) {
-            if (this.exception == null) {
-                /* Ignore subsequent exceptions */
-                this.exception = exception;
+        private static boolean checkEndOrException(Buffer rb) throws IOException {
+            if (rb == END) {
+                return true;
+            }
+            if (rb instanceof ErrorBuffer) {
+                ((ErrorBuffer) rb).throwIOExceptionIfNeeded();
+            }
+            return false;
+        }
+
+        public void setException(Throwable exception) {
+            // log.trace("Passing an exception", exception);
+            final ReentrantLock lock = this.lock;
+            lock.lock();
+            try {
+                queue.offer(new ErrorBuffer(exception));
+                queueChange.signal();
+            } finally {
+                lock.unlock();
             }
         }
 

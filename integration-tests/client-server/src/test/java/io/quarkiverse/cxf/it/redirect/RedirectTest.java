@@ -3,6 +3,7 @@ package io.quarkiverse.cxf.it.redirect;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkiverse.cxf.it.large.slow.LargeSlowServiceImpl;
 import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheServiceImpl;
+import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.configuration.MemorySizeConverter;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -290,7 +292,7 @@ class RedirectTest {
         final MemorySizeConverter converter = new MemorySizeConverter();
         {
             final int payloadLen = (int) converter.convert(payloadSize).asLongValue();
-            final Properties props = retransmitCache(payloadLen, 0, endpoint);
+            final Properties props = retransmitCache(payloadLen, expectedFileCount, endpoint);
             Assertions.assertThat(props.size()).isEqualTo(expectedFileCount);
 
             if (expectedFileCount >= 1) {
@@ -321,13 +323,16 @@ class RedirectTest {
 
     private static Properties retransmitCache(final int payloadLen, int expectedFileCount, String syncAsync)
             throws IOException {
-        String body = RestAssured.given()
-                .header(RedirectRest.EXPECTED_FILE_COUNT_HEADER, String.valueOf(expectedFileCount))
-                .body(LargeSlowServiceImpl.largeString(payloadLen))
-                .post("/RedirectRest/" + syncAsync)
-                .then()
-                .statusCode(200)
-                .extract().body().asString();
+        String body = QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
+                () -> RestAssured.given()
+                        .header(RedirectRest.EXPECTED_FILE_COUNT_HEADER, String.valueOf(expectedFileCount))
+                        .body(LargeSlowServiceImpl.largeString(payloadLen))
+                        .post("/RedirectRest/" + syncAsync)
+                        .then()
+                        .statusCode(200)
+                        .extract().body().asString(),
+                Duration.ofSeconds(5),
+                log::info);
 
         final Properties props = new Properties();
         props.load(new StringReader(body));
