@@ -2,7 +2,7 @@
 
 == Important dependency upgrades
 
-* Quarkus 3.17.x -> 3.18.0 - https://quarkus.io/blog/quarkus-3-18-0-released/[release notes]
+* Quarkus 3.17.x -> 3.18.0 - https://quarkus.io/blog/quarkus-3-18-1-released/[release notes]
 * CXF 4.0.5 -> 4.1.0 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.0.5+++...+++cxf-4.1.0[changelog]
 
 == New features
