@@ -1,0 +1,35 @@
+= {quarkus-cxf-project-name} 3.18.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.18.0 -> 3.18.1 - https://quarkus.io/blog/quarkus-3-18-1-released/[release notes]
+
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1700[#1700] Pipe source resumed from wrong thread when passing response body from Vert.x HttpClient to CXF
+
+In {quarkus-cxf-project-name} versions 3.18.0 (and possibly earlier), CXF clients based on Vert.x HTTP client froze sometimes,
+especially when receiving larger requests.
+The issue was caused by the fact that an internal class of Quarkus CXF, in an attempt to implement a standard Vert.x backpressure,
+was resuming a Vert.x Pipe from a worker thread instead of Vert.x Event Loop.
+That might sometimes have failed to awake the Pipe source from the paused state.
+Due to that, the consuming thread would keep waiting for input forever.
+
+Check https://github.com/quarkiverse/quarkus-cxf/issues/1700[#1700] for more details.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1636[#1636] FastInfosetTest.fastInfoset fails intemittently
+
+When using FastInfoset serialization format, the `InputStream` from which CXF is reading the service response,
+is first closed by the deserialization layer,
+but then, the HTTP layer tries to read all unconsumed data from it
+and closes it once again.
+`VertxHttpClientHTTPConduit` was not able to handle that sequence of operations properly.
+After the first close, the subsequent read hanged sometimes waiting for more input,
+when the producer was finished already.
+
+Check https://github.com/quarkiverse/quarkus-cxf/issues/1636[#1636] for more details.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.18.0+++...+++3.18.1
