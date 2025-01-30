@@ -694,7 +694,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 }
                                 /* No retransmit */
                                 /* Pass the body back to CXF */
-                                // log.trace("Staring pipe");
+                                log.trace("Staring pipe");
                                 response.pipeTo(sink)
                                         .onFailure(e -> {
                                             sink.setException(e);
@@ -1416,12 +1416,12 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         /* Read and written from the consumer thread */
         private Buffer readBuffer;
         private int readPosition = 0;
-        // private int bytesRead = 0;
-        // private int readCounter = 0;
+        private int bytesRead = 0;
+        private int readCounter = 0;
 
         /* Read and written from the producer thread */
-        // private int bytesWritten = 0;
-        // private int writeCounter = 0;
+        private int bytesWritten = 0;
+        private int writeCounter = 0;
         private Handler<Void> drainHandler;
 
         public InputStreamWriteStream(ContextInternal context, int queueSize) {
@@ -1449,10 +1449,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
-                // bytesWritten += data.length();
-                // writeCounter++;
-                // log.tracef("Write #%d: %d bytes; %d total; queue size before %d", writeCounter, data.length(), bytesWritten,
-                // queue.size());
+                bytesWritten += data.length();
+                writeCounter++;
+                log.tracef("Write #%d: %d bytes; %d total; queue size before %d", writeCounter, data.length(), bytesWritten,
+                        queue.size());
                 queue.offer(data);
                 queueChange.signal();
             } catch (Throwable e) {
@@ -1480,8 +1480,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
-                // log.tracef("Ending writes, got %d bytes in %d writes; queue size before %d", bytesWritten, writeCounter,
-                // queue.size());
+                log.tracef("Ending writes, got %d bytes in %d writes; queue size before %d", bytesWritten, writeCounter,
+                        queue.size());
                 queue.offer(END);
                 queueChange.signal();
             } catch (Throwable e) {
@@ -1549,18 +1549,22 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         @Override
         public int read() throws IOException {
+            log.trace("Ready to read single byte");
             final Buffer rb = takeBuffer(true);
             int result = rb != null ? (rb.getByte(readPosition++) & 0xFF) : -1;
-            // log.tracef("Read single byte %d", result);
+            if (result >= 0) {
+                bytesRead++;
+            }
+            log.tracef("Read (single) #%d: %d, %d total", readCounter++, result, bytesRead);
             return result;
         }
 
         @Override
         public int read(byte b[], final int off, int len) throws IOException {
-            // Log.infof("Ready to read up to %d bytes", len);
+            log.tracef("Ready to read up to %d bytes", len);
             Buffer rb = takeBuffer(true);
             if (rb == null) {
-                // log.trace("Nothing more to read");
+                log.trace("Nothing more to read");
                 return -1;
             }
             int rbLen = rb.length();
@@ -1617,8 +1621,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
                 // assert readPosition <= rbLen;
             }
-            // bytesRead += result;
-            // log.tracef("Read #%d: %d bytes, %d total", readCounter++, result, bytesRead);
+            bytesRead += result;
+            log.tracef("Read #%d: %d bytes, %d total", readCounter++, result, bytesRead);
             return result;
         }
 
@@ -1632,7 +1636,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         @Override
         public void close() {
             // log.trace("Closing reader");
-            // log.tracef("Closing reader: got %d bytes in %d reads", bytesRead, readCounter);
+            log.tracef("Closing reader: got %d bytes in %d reads", bytesRead, readCounter);
             readBuffer = null;
             // assert queueEmpty() : "Queue still has " + queue.size() + " items";
         }
@@ -1710,13 +1714,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
                 readPosition = 0;
 
-                // log.tracef("Dispatching to drain handler");
                 if (!writeQueueFull) {
+                    log.tracef("Dispatching to drain handler");
                     context.runOnContext(v -> {
                         final Handler<Void> dh;
-                        // log.tracef("Testing drain handler");
+                        log.tracef("Testing drain handler");
                         if ((dh = drainHandler) != null) {
-                            // log.tracef("Calling drain handler");
+                            log.tracef("Calling drain handler");
                             dh.handle(null);
                         }
                     });
@@ -1740,7 +1744,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         public void setException(Throwable exception) {
-            // log.trace("Passing an exception", exception);
+            log.trace("Passing an exception", exception);
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
