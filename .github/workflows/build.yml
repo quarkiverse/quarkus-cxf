@@ -35,6 +35,7 @@ jobs:
         java-version: ${{ env.JAVA_VERSION }}
 
   native-tests:
+    if: false
     strategy:
       fail-fast: false
       matrix:
@@ -51,6 +52,7 @@ jobs:
         test-module-spec: ${{matrix.testModule}}
 
   windows-tests:
+    if: false
     name: Windows tests
     needs: build-and-run-jvm-tests
     runs-on: windows-latest

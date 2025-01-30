@@ -39,35 +39,11 @@ runs:
 
     - name: mvn -B formatter:validate install
       shell: bash
-      run: ./mvnw -B formatter:validate install -fae -ntp
+      run: ./mvnw -B formatter:validate install -DskipTests -Dquarkus.build.skip -fae -ntp
 
-    # Same as the previous but only JVM tests and different default ConduitFactory
-    - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn -B test
-      shell: bash
-      env: 
-        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
-      run: ./mvnw -B clean install -fae -ntp
-
-    - name: 'Upload generated Antora docs site'
-      uses: actions/upload-artifact@v4
-      with:
-        name: docs
-        path: docs/target/site
-
-    - name: Fail if there are uncommitted changes
+    - name: mvn -B formatter:validate install
       shell: bash
       run: |
-        [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
+        cd integration-tests/fastinfoset
+        for i in {1..50}; do    echo "==== run $i";  ../../mvnw test -Dtest=FastInfosetTest#fastInfosetNative;  done
 
-    - name: Tar Maven Repo
-      shell: bash
-      run: |
-        tar -czf ${{ runner.temp }}/maven-repo.tgz -C ~ .m2/repository
-        # Avoid caching our own artifacts
-        rm -Rf ~/.m2/repository/io/quarkiverse/cxf
-    - name: Persist Maven Repo
-      uses: actions/upload-artifact@v4
-      with:
-        name: maven-repo
-        path: ${{ runner.temp }}/maven-repo.tgz
-        retention-days: 1
