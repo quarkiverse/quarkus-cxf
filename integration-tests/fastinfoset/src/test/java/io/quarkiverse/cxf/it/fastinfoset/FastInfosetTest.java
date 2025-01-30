@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.config.HttpClientConfig;
-import io.restassured.config.RestAssuredConfig;
 
 @QuarkusTest
 public class FastInfosetTest {
@@ -43,19 +41,12 @@ public class FastInfosetTest {
     }
 
     @Test
-    void fastInfoset() {
-
-        RestAssuredConfig config = RestAssuredConfig.config()
-                .httpClient(HttpClientConfig.httpClientConfig()
-                        .setParam("http.connection.timeout", 5000)
-                        .setParam("http.socket.timeout", 120000));
-
-        log.info("FastInfoset with text/xml");
+    void fastInfosetTextXml() {
+        log.info("FastInfosetTest.fastInfosetTextXml()");
 
         QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
                 () -> {
                     RestAssured.given()
-                            .config(config)
                             .accept("application/fastinfoset")
                             .contentType("text/xml")
                             .body("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:hello xmlns:ns2=\"https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test\"><arg0>FastInfoset</arg0></ns2:hello></soap:Body></soap:Envelope>")
@@ -69,12 +60,14 @@ public class FastInfosetTest {
                 },
                 Duration.ofSeconds(5),
                 log::info);
+    }
 
-        log.info("FastInfoset native");
+    @Test
+    void fastInfosetNative() {
+        log.info("FastInfosetTest.fastInfosetNative()");
         QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
                 () -> {
                     RestAssured.given()
-                            .config(config)
                             .body("FastInfoset")
                             .post("/fastinfoset/fastinfoset/hello")
                             .then()
