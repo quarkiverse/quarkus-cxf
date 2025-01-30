@@ -1557,7 +1557,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         @Override
         public int read(byte b[], final int off, int len) throws IOException {
-            // Log.infof("Ready to read up to %d bytes", len);
+            // log.tracef("Ready to read up to %d bytes", len);
             Buffer rb = takeBuffer(true);
             if (rb == null) {
                 // log.trace("Nothing more to read");
@@ -1633,7 +1633,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         public void close() {
             // log.trace("Closing reader");
             // log.tracef("Closing reader: got %d bytes in %d reads", bytesRead, readCounter);
-            readBuffer = null;
+            freeReadBufferIfNeeded();
             // assert queueEmpty() : "Queue still has " + queue.size() + " items";
         }
 
