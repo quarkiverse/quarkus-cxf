@@ -10,7 +10,7 @@
 === https://github.com/quarkiverse/quarkus-cxf/issues/1700[#1700] Pipe source resumed from wrong thread when passing response body from Vert.x HttpClient to CXF
 
 In {quarkus-cxf-project-name} versions 3.18.0 (and possibly earlier), CXF clients based on Vert.x HTTP client froze sometimes,
-especially when receiving larger requests.
+especially when receiving larger response bodies.
 The issue was caused by the fact that an internal class of Quarkus CXF, in an attempt to implement a standard Vert.x backpressure,
 was resuming a Vert.x Pipe from a worker thread instead of Vert.x Event Loop.
 That might sometimes have failed to awake the Pipe source from the paused state.
