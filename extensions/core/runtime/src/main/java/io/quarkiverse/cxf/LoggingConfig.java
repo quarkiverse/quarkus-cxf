@@ -41,7 +41,8 @@ public interface LoggingConfig {
 
         /**
          * A message length in bytes at which it is truncated in the log. The default is given by
-         * `xref:#quarkus-cxf_quarkus-cxf-logging-limit[quarkus.cxf.logging.limit]`
+         * `xref:#quarkus-cxf_quarkus-cxf-logging-limit[quarkus.cxf.logging.limit]`.
+         * '-1' means no limit.
          *
          * @since 2.6.0
          * @asciidoclet
@@ -167,8 +168,9 @@ public interface LoggingConfig {
         boolean pretty();
 
         /**
-         * A message length in bytes at which it is truncated in the log. This setting can be overridden per client or service
-         * endpoint using
+         * A message length in bytes at which it is truncated in the log.
+         * '-1' means no limit.
+         * This setting can be overridden per client or service endpoint using
          * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-limit[quarkus.cxf.endpoint."/endpoint-path".logging.limit]`
          * or
          * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-limit[quarkus.cxf.client."client-name".logging.limit]`
