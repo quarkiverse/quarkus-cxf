@@ -8,6 +8,7 @@ There are several chapters in the xref:user-guide/index.adoc[User guide] coverin
 * xref:user-guide/ssl-tls-https.adoc[SSL]
 * xref:user-guide/authentication-authorization.adoc[Authentication and authorization]
 * xref:user-guide/advanced-soap-client-topics.adoc[Advanced SOAP client topics]
+* xref:user-guide/advanced-client-topics/synchronous-vs-asynchronous-client.adoc[Synchronous vs. Asynchronous client]
 * xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc[Running behind a reverse proxy]
 * xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate Java from WSDL]
 * xref:user-guide/contract-first-code-first/generate-wsdl-from-java.adoc[Generate WSDL from Java]

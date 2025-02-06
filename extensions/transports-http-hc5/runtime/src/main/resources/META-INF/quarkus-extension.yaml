@@ -9,3 +9,5 @@ metadata:
   categories:
     - "integration"
   guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/reference/extensions/quarkus-cxf-rt-transports-http-hc5.html"
+  status: "deprecated"
+  unlisted: true
