@@ -42,7 +42,7 @@ This works much like with the existing `xref:reference/extensions/quarkus-cxf-rt
 The main difference is that you do not need to add the `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` dependency to your application anymore.
 
 You still need to
-xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc#extensions-quarkus-cxf-rt-transports-http-hc5-usage-generate-async-methods[generate the async methods]
+xref:user-guide/advanced-client-topics/synchronous-vs-asynchronous-client.adoc#extensions-quarkus-cxf-rt-transports-http-hc5-usage-generate-async-methods[generate the async methods]
 using the embedded `wsdl2java` tool.
 
 We plan to https://github.com/quarkiverse/quarkus-cxf/issues/1619[add a new documentation page] dedicated to this topic.

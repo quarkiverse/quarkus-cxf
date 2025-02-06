@@ -7,7 +7,7 @@
 The following table shows the {quarkus-cxf-project-name} extensions.
 Click the extension names to learn more about how to configure and use them, and about any known limitations.
 
-[cols="4,1,1,4"]
+[cols="40,25,10,40"]
 |===
 | Quarkus CXF extension | Support level | Since | Supported standards
 // standards: START
@@ -51,6 +51,7 @@ Click the extension names to learn more about how to configure and use them, and
 | xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[Quarkus CXF HTTP Async Transport] +
 `quarkus-cxf-rt-transports-http-hc5`
 |Stable
+⚠️Deprecated
 |1.1.0
 |
 
@@ -94,10 +95,9 @@ Out of https://cxf.apache.org/docs/databindings.html[CXF Data Bindings] only the
 Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the following ones are supported:
 
 * `quarkus-cxf` implements its own custom transport based on Quarkus and Vert.x for serving SOAP endpoints
-* HTTP client via `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]`, including
+* SOAP client via `xref:reference/extensions/quarkus-cxf.adoc[io.quarkiverse.cxf:quarkus-cxf]` extension, including
+** Synchronous and xref:user-guide/advanced-client-topics/synchronous-vs-asynchronous-client.adoc[asynchronous] mode
 ** xref:user-guide/authentication-authorization.adoc[Basic Authentication]
-* https://cxf.apache.org/docs/asynchronous-client-http-transport.html[Asynchronous Client HTTP Transport]
-  via `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[quarkus-cxf-rt-transports-http-hc5]`
 
 [[tools]]
 === Tools

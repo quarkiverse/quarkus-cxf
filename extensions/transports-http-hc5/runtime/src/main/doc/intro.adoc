@@ -1,1 +1,7 @@
+[IMPORTANT]
+====
+This extension is deprecated since {quarkus-cxf-project-name} 3.19.0 and is scheduled for removal in 3.21.0.
+Use the xref:user-guide/advanced-client-topics/synchronous-vs-asynchronous-client.adoc[asynchronous mode of `VertxHttpClientHTTPConduit`] instead.
+====
+
 Implement async SOAP Clients using Apache HttpComponents HttpClient 5.
