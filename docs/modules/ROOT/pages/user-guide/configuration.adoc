@@ -7,6 +7,18 @@ Each extension documents its options at the bottom of its xref:reference/index.a
 The configuration options can be set in `application.properties` file or via environment variables - see
 {link-quarkus-docs-base}/config-reference[Quarkus configuration reference] for details.
 
+[[declarative-vs-programmatic-configuration]]
+== Declarative vs. programmatic configuration
+
+The declarative configuration set via `application.properties` or via environment variables typically causes
+creation and/or configuration of some CXF objects,
+such as `org.apache.cxf.ext.logging.LoggingFeature`, `org.apache.cxf.metrics.MetricsFeature`, `org.apache.cxf.configuration.jsse.TLSClientParameters` or similar.
+Unless explicitly stated in the documentation, the whole life cycle of those objects is controlled by {quarkus-cxf-project-name}.
+To prevent non-deterministic behavior, you should not mutate those objects even if they are accessible via public API of CXF.
+
+If you need more flexibility, you should avoid configuring the given feature declaratively
+and rather switch to purely programmatic approach.
+
 [[beanRefs]]
 == Bean references
 
@@ -14,7 +26,6 @@ Several configuration options of {quarkus-cxf-project-name} allow referring to b
 xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[Features and interceptors] are typical examples of those.
 
 There are two ways how to set a bean reference in the configuration: by type or by bean name.
-
 
 === Bean reference by type
 

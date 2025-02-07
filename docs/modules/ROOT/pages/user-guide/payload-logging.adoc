@@ -12,7 +12,7 @@ Refer to Quarkus {link-quarkus-docs-base}/logging[Logging guide] for basic infor
 == Payload logging
 
 [NOTE]
-.History
+.Historical note
 ====
 Since {quarkus-cxf-project-name} 2.6.0, the payload logging functionality is available via
 `io.quarkiverse.cxf:quarkus-cxf` extension.
@@ -37,7 +37,7 @@ There are four possible values:
 * `services` - the global logging feature is enabled for all service endpoints in the application
 * `both` - the global logging feature is enabled for all clients and service endpoints in the application
 
-The global settings can be xref:#per-client-or-service-endpoind-payload-logging[overriden] on the client or service endpoint level.
+Here is an example:
 
 .application.properties
 [source,properties,subs=attributes+]
@@ -46,6 +46,8 @@ The global settings can be xref:#per-client-or-service-endpoind-payload-logging[
 quarkus.cxf.logging.enabled-for = both
 quarkus.cxf.logging.pretty = true
 ----
+
+The global settings can be xref:#per-client-or-service-endpoind-payload-logging[overriden] on the client or service endpoint level.
 
 All logging configuration options are listed on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus-cxf]` reference page.
 
@@ -67,12 +69,17 @@ endpoint declaratively by setting the appropriate options in `application.proper
 [source,properties,subs=attributes+]
 ----
 # For a service:
-quarkus.cxf.endpoint."/hello".logging.enabled = true
-quarkus.cxf.endpoint."/hello".logging.pretty = true
+quarkus.cxf.endpoint."/hello".logging.enabled = pretty
+quarkus.cxf.endpoint."/hello".logging.limit = 256
 # For a client:
-quarkus.cxf.client.hello.logging.enabled = true
-quarkus.cxf.client.hello.logging.pretty = true
+quarkus.cxf.client.hello.logging.enabled = pretty
+quarkus.cxf.client.hello.logging.sensitive-protocol-header-names = X-my-secret
 ----
+
+[TIP]
+====
+`*.logging.enabled = pretty` is a shorthand for `*.logging.enabled = true` and `*.logging.pretty = true`.
+====
 
 All logging configuration options are documented on `quarkus-cxf` reference page:
 
@@ -81,40 +88,13 @@ All logging configuration options are documented on `quarkus-cxf` reference page
 
 == Alternative ways of adding a `LoggingFeature` to a client or service
 
-To attach an instance with default settings, you can do one of the following:
+The `quarkus.cxf*.logging.*` configuration options mentioned above will configure an internal instance of `LoggingFeature`
+and attach it to the respective client or service.
+There is no way how you can interact with this internal instance of `LoggingFeature` programmatically.
 
-1. In `application.properties`:
-+
-[source,properties,subs=attributes+]
-----
-# For a service:
-quarkus.cxf.endpoint."/hello".features = org.apache.cxf.ext.logging.LoggingFeature
-# For a client:
-quarkus.cxf.client."myClient".features = org.apache.cxf.ext.logging.LoggingFeature
-----
-+
-[TIP]
-====
-There is an example in xref:user-guide/first-soap-web-service.adoc#logging-feature[Your first SOAP Web service] chapter of the User guide.
-====
-+
-or alternatively
-+
-2. Use the `@Features` annotation of CXF:
-+
-[source,java]
-----
-@org.apache.cxf.feature.Features (features = {"org.apache.cxf.ext.logging.LoggingFeature"})
-@WebService(endpointInterface = "org.acme.SayHi", targetNamespace = "uri:org.acme")
-public class SayHiImplementation implements SayHi {
-   public long sayHi(long arg) {
-       return arg;
-   }
-   //...
-}
-----
+If you need more control or if you migrate from other platforms, some of the following options may come in handy.
 
-=== Producing a custom `LoggingFeature` bean
+=== Produce a custom `LoggingFeature` bean
 
 If you need some custom logic to setup the `LoggingFeature`, you can produce a named `LoggingFeature` bean:
 
@@ -146,4 +126,21 @@ Then you can refer to it by its name prefixed with `#` in `application.propertie
 quarkus.cxf.endpoint."/hello".features = #limitedLoggingFeature
 # For a client:
 quarkus.cxf.client.hello.features = #limitedLoggingFeature
+----
+
+=== `@Features` annotation of CXF
+
+The `@org.apache.cxf.feature.Features` annotation of CXF works too.
+Here is how you can set an uncustomized instance of `LoggingFeature` on a service implementation class.
+
+[source,java]
+----
+@org.apache.cxf.feature.Features (features = {"org.apache.cxf.ext.logging.LoggingFeature"})
+@WebService(endpointInterface = "org.acme.SayHi", targetNamespace = "uri:org.acme")
+public class SayHiImplementation implements SayHi {
+   public long sayHi(long arg) {
+       return arg;
+   }
+   //...
+}
 ----

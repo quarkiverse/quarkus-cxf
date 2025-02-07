@@ -151,33 +151,19 @@ $ curl -v -X POST -H "Content-Type: text/xml;charset=UTF-8" \
 You can see the expected `<return>Hello World!</return>` in the SOAP response.
 
 [[logging-feature]]
-== Add the logging feature while dev mode is running
+== Enable payload logging while dev mode is running
 
 Sometimes it may come in handy to be able to inspect the SOAP messages received or sent by the server or client.
-This is easily doable by adding the `quarkus-cxf-rt-features-logging` extension to `pom.xml`.
+This is easily doable by enabling the xref:user-guide/payload-logging.adoc[logging] feature in `application.properties`:
 
-[TIP]
-====
-Try to do that while Quarkus dev mode is running.
-You should see the application being recompiled and redeployed upon saving your changes in the source tree.
-====
-
-.Add this to `pom.xml`
+.application.properties
 [source,xml,subs=attributes+]
 ----
-<dependency>
-    <groupId>io.quarkiverse.cxf</groupId>
-    <artifactId>quarkus-cxf-rt-features-logging</artifactId>
-</dependency>
+quarkus.cxf.logging.enabled-for = services
+# other possible values are clients, both and none
 ----
 
-.Enable SOAP payload logging in `application.properties`
-[source,xml,subs=attributes+]
-----
-quarkus.cxf.endpoint."/hello".features=org.apache.cxf.ext.logging.LoggingFeature
-----
-
-After that you can send a new SOAP request and see some SOAP payloads in the application console:
+After that, you can send a new SOAP request and see some SOAP payloads in the console:
 
 [source,shell]
 ----
