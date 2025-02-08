@@ -12,12 +12,14 @@ import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.Assumptions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkiverse.cxf.hc5.it.HeaderToMetricsTagRequestFilter.RequestScopedHeader;
 import io.quarkiverse.cxf.hc5.it.MultiplyingAddInterceptor.RequestScopedFactorHeader;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -46,6 +48,13 @@ class Hc5Test {
     @ParameterizedTest
     @ValueSource(strings = { "sync-observable", "async-observable" })
     void addObservable(String syncMode) {
+
+        if (syncMode.contains("async")) {
+            /* URLConnectionHTTPConduitFactory does not support async */
+            Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
+                    .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
+        }
+
         RestAssured.given()
                 .header(RequestScopedHeader.header, syncMode + "-header-value")
                 .queryParam("a", 7)
@@ -136,11 +145,23 @@ class Hc5Test {
 
     @Test
     void conduit() {
+        Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
+                .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
+
+        boolean isHc5;
+        try {
+            Class<?> cl = Class.forName("org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduit");
+            isHc5 = true;
+        } catch (ClassNotFoundException e) {
+            isHc5 = false;
+        }
         RestAssured.given()
                 .get("/hc5/conduit")
                 .then()
                 .statusCode(200)
-                .body(is("org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduit"));
+                .body(is(isHc5
+                        ? "org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduit"
+                        : "io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit"));
     }
 
     private Map<String, Object> getMetrics() {

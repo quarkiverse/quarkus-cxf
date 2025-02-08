@@ -19,10 +19,6 @@
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-rt-transports-http-hc5</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-rt-features-metrics</artifactId>
         </dependency>
         <dependency>
@@ -112,6 +108,20 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>jks</id>
+            <activation>
+                <property>
+                    <name>jks</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.quarkiverse.cxf</groupId>
+                    <artifactId>quarkus-cxf-rt-transports-http-hc5</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
         <profile>
             <id>native</id>
             <activation>
