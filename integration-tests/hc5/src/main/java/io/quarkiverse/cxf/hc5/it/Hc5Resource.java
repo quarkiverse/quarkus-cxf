@@ -1,8 +1,6 @@
 // tag::quarkus-cxf-rt-transports-http-hc5.usage.mutiny[]
 package io.quarkiverse.cxf.hc5.it;
 
-import java.util.concurrent.Future;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -16,6 +14,7 @@ import org.jboss.eap.quickstarts.wscalculator.calculator.AddResponse;
 import org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.mutiny.CxfMutinyUtils;
 import io.smallrye.mutiny.Uni;
 
 @Path("/hc5")
@@ -30,12 +29,9 @@ public class Hc5Resource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public Uni<Integer> addAsync(@QueryParam("a") int a, @QueryParam("b") int b) {
-        return Uni.createFrom()
-                .future(
-                        (Future<AddResponse>) myCalculator
-                                .addAsync(a, b, res -> {
-                                }))
-                .map(addResponse -> addResponse.getReturn());
+        return CxfMutinyUtils
+                .<AddResponse> toUni(handler -> myCalculator.addAsync(a, b, handler))
+                .map(AddResponse::getReturn);
     }
 
     // end::quarkus-cxf-rt-transports-http-hc5.usage.mutiny[]
@@ -55,12 +51,9 @@ public class Hc5Resource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public Uni<Integer> addAsyncObservable(@QueryParam("a") int a, @QueryParam("b") int b) {
-        return Uni.createFrom()
-                .future(
-                        (Future<AddResponse>) observableCalculator
-                                .addAsync(a, b, res -> {
-                                }))
-                .map(addResponse -> addResponse.getReturn());
+        return CxfMutinyUtils
+                .<AddResponse> toUni(handler -> observableCalculator.addAsync(a, b, handler))
+                .map(AddResponse::getReturn);
     }
 
     @Path("/add-sync-observable")
@@ -79,12 +72,9 @@ public class Hc5Resource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public Uni<Integer> addAsyncContextPropagation(@QueryParam("a") int a, @QueryParam("b") int b) {
-        return Uni.createFrom()
-                .future(
-                        (Future<AddResponse>) contextPropagationCalculator
-                                .addAsync(a, b, res -> {
-                                }))
-                .map(addResponse -> addResponse.getReturn());
+        return CxfMutinyUtils
+                .<AddResponse> toUni(handler -> contextPropagationCalculator.addAsync(a, b, handler))
+                .map(AddResponse::getReturn);
     }
 
     @Path("/add-sync-contextPropagation")

@@ -96,7 +96,7 @@ Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the foll
 
 * `quarkus-cxf` implements its own custom transport based on Quarkus and Vert.x for serving SOAP endpoints
 * SOAP client via `xref:reference/extensions/quarkus-cxf.adoc[io.quarkiverse.cxf:quarkus-cxf]` extension, including
-** Synchronous and xref:user-guide/advanced-client-topics/synchronous-vs-asynchronous-client.adoc[asynchronous] mode
+** Synchronous and xref:user-guide/advanced-client-topics/asynchronous-client.adoc[asynchronous] mode
 ** xref:user-guide/authentication-authorization.adoc[Basic Authentication]
 
 [[tools]]

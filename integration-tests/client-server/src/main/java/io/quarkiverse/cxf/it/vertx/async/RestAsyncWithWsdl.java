@@ -7,7 +7,9 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.deployment.test.HelloResponse;
 import io.quarkiverse.cxf.deployment.test.HelloService;
+import io.quarkiverse.cxf.mutiny.CxfMutinyUtils;
 import io.smallrye.mutiny.Uni;
 
 @Path("/RestAsyncWithWsdl")
@@ -21,10 +23,9 @@ public class RestAsyncWithWsdl {
     @Produces(MediaType.TEXT_PLAIN)
     public Uni<String> helloWithWsdl(String body) {
         /* With WSDL and without @Blocking should fail due to blocking WSDL call on the I/O thread */
-        return Uni.createFrom()
-                .future(helloWithWsdl.get().helloAsync(body))
-                .map(addResponse -> addResponse.getReturn())
-                .map(String::valueOf);
+        return CxfMutinyUtils
+                .<HelloResponse> toUni(handler -> helloWithWsdl.get().helloAsync(body, handler))
+                .map(HelloResponse::getReturn);
     }
 
 }

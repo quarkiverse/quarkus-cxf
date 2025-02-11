@@ -25,13 +25,15 @@ import org.apache.cxf.message.Message;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.it.large.slow.generated.LargeSlowResponse;
 import io.quarkiverse.cxf.it.large.slow.generated.LargeSlowService;
 import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheOutput;
 import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheResponse;
 import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheService;
 import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheServiceImpl;
+import io.quarkiverse.cxf.mutiny.CxfMutinyUtils;
+import io.quarkiverse.cxf.mutiny.FailedResponse;
 import io.quarkus.logging.Log;
-import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 
 @Path("/RedirectRest")
@@ -182,9 +184,12 @@ public class RedirectRest {
     @Produces(MediaType.TEXT_PLAIN)
     public Uni<String> async(@PathParam("client") String client, @QueryParam("sizeBytes") int sizeBytes,
             @QueryParam("delayMs") int delayMs) {
-        return Uni.createFrom()
-                .future(getClient(client).largeSlowAsync(sizeBytes, delayMs))
-                .map(addResponse -> addResponse.getReturn().getPayload());
+        return CxfMutinyUtils
+                .<LargeSlowResponse> toUni(handler -> getClient(client).largeSlowAsync(sizeBytes, delayMs, res -> {
+                    Log.info("=============== res");
+                    handler.handleResponse(res);
+                }))
+                .map(response -> response.getReturn().getPayload());
     }
 
     @Path("/sync/{client}")
@@ -229,7 +234,7 @@ public class RedirectRest {
     @Path("/retransmitCacheAsyncBlocking")
     @POST
     @Produces(MediaType.TEXT_PLAIN)
-    @Blocking
+    //@Blocking
     public Uni<Response> retransmitCacheAsyncBlocking(
             String body,
             @HeaderParam(EXPECTED_FILE_COUNT_HEADER) int expectedFileCount,
@@ -245,15 +250,21 @@ public class RedirectRest {
                                 STATUS_CODE_HEADER, List.of(statusCode))
                         : Map.of());
 
-        final jakarta.xml.ws.Response<RetransmitCacheResponse> resp = retransmitCache.retransmitCacheAsync(expectedFileCount,
-                body);
-        return Uni.createFrom()
-                .future(resp)
-                .map(retransmitCacheResponse -> retransmitCacheResponse.getReturn().getPayload())
+        Log.info("=============== caller");
+        return CxfMutinyUtils.<io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheResponse> toResponseUni(
+                handler -> retransmitCache.retransmitCacheAsync(expectedFileCount, body, res -> {
+                    Log.info("=============== res");
+                    handler.handleResponse(res);
+                }))
+                .map(retransmitCacheResponse -> retransmitCacheResponse.getPayload().getReturn().getPayload())
                 .map(payload -> Response.ok(payload).build())
                 .onFailure().recoverWithItem(e -> {
-                    final int sc = (Integer) resp.getContext().get(Message.RESPONSE_CODE);
-                    return Response.status(sc).build();
+                    if (e instanceof FailedResponse) {
+                        final FailedResponse fr = (FailedResponse) e;
+                        final int sc = (Integer) fr.getContext().get(Message.RESPONSE_CODE);
+                        return Response.status(sc).build();
+                    }
+                    return Response.status(500).build();
                 });
     }
 

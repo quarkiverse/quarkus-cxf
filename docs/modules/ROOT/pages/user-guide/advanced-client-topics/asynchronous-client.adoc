@@ -1,0 +1,212 @@
+[[asynchronous-client]]
+= Asynchronous client
+
+== Synchronous vs. asynchronous client calls
+
+When calling a SOAP client _synchronously_, the service method returns
+only after the whole response from the remote service is received and parsed.
+The result of the operation is passed as the return value to the caller:
+
+[source,java]
+----
+@CXFClient("hello")
+HelloService hello;
+
+void callHello() {
+    // Synchronous CXF client call
+    String result = hello.hello("Joe");
+    Log.info(result); // prints "Hello Joe"
+}
+----
+
+When calling the client _asynchronously_, the service method may terminate
+before the response from the remote service was received.
+The result of the operation is passed either through a future object
+or through a callback.
+
+Here is an example:
+
+[source,java]
+----
+import java.util.concurrent.Future;
+
+@CXFClient("hello")
+HelloService hello;
+
+void callHelloAsyncWithFuture() {
+    Future<HelloResponse> future = hello.helloAsync("Joe");
+    Log.info(future.isDone()); // may print true or false
+    // the get() method will block until the response is ready
+    HelloResponse response = future.get();
+    Log.info(response.getResult()); // prints "Hello Joe"
+}
+
+void callHelloAsyncWithCallback() {
+    hello.helloAsync("Joe", response -> {
+        // this callback method is invoked when the response is ready
+        Log.info(response.get().getResult()); // prints "Hello Joe"
+    });
+}
+----
+
+== The `*Async()` methods
+
+You may ask yourself where do those `helloAsync(...)` methods in the above example come from?
+
+They are specified by the JAX-WS 2.0 standard
+and their use is supported by {quarkus-cxf-project-name} since version 1.1.0.
+
+The `*Async()` methods can either be crafted manually
+or they can be xref:user-guide/advanced-client-topics/asynchronous-client.adoc#asynchronous-client-generate-async-methods[generated from WSDL by `wsdl2java`]
+for you, in case you do xref:user-guide/contract-first-code-first.adoc[Contract first] development.
+
+There are two flavors of those methods:
+
+1. `java.util.concurrent.Future`-based where the availability of the result needs to be polled
+
+2. Callback-based, where the callback is notified once the result or failure is available.
+
+Let's have a look at an example.
+
+[[future-based-asynchronous-method]]
+=== `java.util.concurrent.Future`-based asynchronous method
+
+Given the synchronous method signature
+
+[source,java]
+----
+@WebMethod
+@ResponseWrapper(
+    localName = "helloResponse",
+    targetNamespace = "http://acme.org/",
+    className = "org.acme.HelloResponse")
+@WebResult(name = "return", targetNamespace = "")
+public String hello(String person);
+----
+
+its `Future`-based asynchronous companion would be
+
+[source,java]
+----
+import jakarta.xml.ws.Response;
+
+@WebMethod(operationName = "hello")
+@ResponseWrapper(
+    localName = "helloResponse",
+    targetNamespace = "http://acme.org/",
+    className = "org.acme.HelloResponse")
+public Response<org.acme.HelloResponse> helloAsync(String person);
+----
+
+where `jakarta.xml.ws.Response` (extending `java.util.concurrent.Future`) represents the result of the asynchronous operation
+that is either available immediately
+or it will become available at some point in the future.
+The `isDone()` method of `java.util.concurrent.Future` can be used for polling the state of the execution,
+whereas the `get()` and `get(long timeout, TimeUnit timeUnit)` methods block until the result is available.
+
+Polling for some I/O dependent state or blocking calls in general are not especially useful in the context of Quarkus and its reactive Vert.x core.
+Blocking the Vert.x Event Loop is forbidden, while dispatching the blocking call to a worker thread would not be very performant.
+Luckily, there is the other, callback-based flavor of asynchronous SEI methods.
+
+[[callback-based-asynchronous-method]]
+=== Callback-based asynchronous method (preferred)
+
+For the above `String hello(String person)` method, its callback-based asynchronous pendant would be
+
+[source,java]
+----
+import jakarta.xml.ws.AsyncHandler;
+
+@WebMethod(operationName = "hello")
+@ResponseWrapper(
+    localName = "helloResponse",
+    targetNamespace = "http://acme.org/",
+    className = "org.acme.HelloResponse")
+public Future<?> helloAsync(
+        String person,
+        AsyncHandler<org.acme.HelloResponse> asyncHandler);
+----
+
+where `AsyncHandler` is the callback that will be called when the execution succeeds or fails.
+
+This style of communication is much easier to reconcile with Quarkus reactive core.
+For example, to wrap a call of
+`helloAsync(String person, AsyncHandler<HelloResponse> asyncHandler)`
+in a `io.smallrye.mutiny.Uni` you can leverage the
+`toUni()` utility method provided by {quarkus-cxf-project-name}.
+For example, the resulting `Uni` can be used as a return value of a reactive REST handler method:
+
+[source,java]
+----
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import io.smallrye.mutiny.Uni;
+import io.quarkiverse.cxf.mutiny.CxfMutinyUtils;
+
+@Path("/rest")
+class HelloRest {
+
+    @CXFClient("hello")
+    HelloService hello;
+
+    @Path("/hello")
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    Uni<String> helloWithWsdl(String person) {
+        return CxfMutinyUtils
+            .<HelloResponse> toUni(handler -> helloService.helloAsync(person, handler))
+            .map(HelloResponse::getReturn);
+    }
+}
+----
+
+[id="asynchronous-client-generate-async-methods"]
+== Generate async methods
+
+Asynchronous client invocations require some additional methods in the service endpoint interface which are not generated by default.
+
+To enable it, you need to create a JAX-WS binding file with `enableAsyncMapping` set to `true`:
+
+[TIP]
+====
+The sample code snippets used in this section come from the
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/hc5[HC5 integration test]
+in the source tree of {quarkus-cxf-project-name}
+====
+
+.src/main/resources/wsdl/async-binding.xml
+[source,xml]
+----
+include::example$hc5/async-binding.xml[]
+----
+
+This file should then be passed to xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java]
+through its xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[additional-params] property:
+
+.application.properties
+[source,properties]
+----
+include::example$hc5/application.properties[tag=quarkus-cxf-rt-transports-http-hc5.usage.wsdl2java]
+----
+
+== Caller threads and callback threads
+
+As mentioned above, you should prefer using the
+xref:user-guide/advanced-client-topics/asynchronous-client.adoc#callback-based-asynchronous-method[callback based asynchronous client methods].
+You can call those on any thread, including Vert.x Event Loop threads.
+Internally, the client call is always dispatched on a worker thread.
+This is due to technical limitations of the CXF client API
+and also because there is no guarantee that all parts of the CXF interceptor chain will avoid performing blocking operations.
+
+The asynchronous callback is always notified on a worker thread.
+
+== Historical note
+
+Since {quarkus-cxf-project-name} 3.17.0, the asynchronous mode is supported by `VertxHttpClientHTTPConduit` provided via the
+`xref:reference/extensions/quarkus-cxf.adoc[io.quarkiverse.cxf:quarkus-cxf]` extension.
+
+Before {quarkus-cxf-project-name} 3.17.0, the asynchronous use case was only supported via
+`xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5]`
+which is now deprecated and scheduled for removal in {quarkus-cxf-project-name} 3.21.0.
