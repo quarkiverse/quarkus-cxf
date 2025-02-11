@@ -14,7 +14,9 @@ import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkiverse.cxf.deployment.test.HelloResponse;
 import io.quarkiverse.cxf.deployment.test.HelloService;
+import io.quarkiverse.cxf.mutiny.CxfMutinyUtils;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.mutiny.Uni;
@@ -58,8 +60,8 @@ public class RestAsyncWithWsdlWithEagerInit {
             /* Spin until the client is ready */
         }
         /* We have triggered the initialization of helloWithWsdlWithEagerInit in init() above so it should work */
-        return Uni.createFrom()
-                .future(helloWithWsdlWithEagerInit.helloAsync(person))
-                .map(helloResponse -> helloResponse.getReturn());
+        return CxfMutinyUtils
+                .<HelloResponse> toUni(handler -> helloWithWsdlWithEagerInit.helloAsync(person, handler))
+                .map(HelloResponse::getReturn);
     }
 }

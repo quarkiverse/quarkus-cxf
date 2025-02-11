@@ -15,4 +15,4 @@ You can see more details about the CXF asynchronous client and how to tune it fu
 
 === See also
 
-* xref:user-guide/advanced-client-topics/synchronous-vs-asynchronous-client.adoc[Synchronous vs. Asynchronous client]
+* xref:user-guide/advanced-client-topics/asynchronous-client.adoc[Synchronous vs. Asynchronous client]
