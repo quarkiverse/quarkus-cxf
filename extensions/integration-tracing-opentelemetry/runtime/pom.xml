@@ -22,6 +22,10 @@
             <artifactId>quarkus-cxf</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-rt-management</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-integration-tracing-opentelemetry</artifactId>
         </dependency>

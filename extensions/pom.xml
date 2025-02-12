@@ -16,6 +16,7 @@
         <module>saaj</module>
         <module>santuario-xmlsec</module>
         <module>woodstox</module>
+        <module>rt-management</module>
         <module>core</module>
         <module>features-logging</module>
         <module>features-metrics</module>

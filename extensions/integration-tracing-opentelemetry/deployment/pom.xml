@@ -18,6 +18,10 @@
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-rt-management-deployment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-integration-tracing-opentelemetry</artifactId>
         </dependency>
         <dependency>
