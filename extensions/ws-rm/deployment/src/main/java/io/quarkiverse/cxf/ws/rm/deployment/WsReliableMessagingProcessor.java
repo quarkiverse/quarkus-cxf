@@ -25,8 +25,7 @@ public class WsReliableMessagingProcessor {
     @BuildStep
     void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
         Stream.of(
-                "org.apache.cxf:cxf-rt-ws-rm",
-                "org.apache.cxf:cxf-rt-management")
+                "org.apache.cxf:cxf-rt-ws-rm")
                 .forEach(ga -> {
                     String[] coords = ga.split(":");
                     indexDependencies.produce(new IndexDependencyBuildItem(coords[0], coords[1]));
