@@ -25,6 +25,10 @@
             <artifactId>quarkus-cxf-rt-ws-security</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-rt-management</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-ws-rm</artifactId>
         </dependency>
