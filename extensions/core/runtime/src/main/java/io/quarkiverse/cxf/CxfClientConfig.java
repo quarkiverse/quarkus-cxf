@@ -1,19 +1,18 @@
 package io.quarkiverse.cxf;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
-import org.apache.cxf.configuration.jsse.TLSClientParameters;
-import org.apache.cxf.transports.http.configuration.ConnectionType;
-import org.apache.cxf.transports.http.configuration.ProxyServerType;
-
 import io.quarkiverse.cxf.LoggingConfig.PerClientOrServiceLoggingConfig;
 import io.quarkus.runtime.annotations.ConfigDocEnum;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.smallrye.config.WithConverter;
 import io.smallrye.config.WithDefault;
 import io.smallrye.config.WithName;
+import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.transports.http.configuration.ConnectionType;
+import org.apache.cxf.transports.http.configuration.ProxyServerType;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A class that provides configurable options of a CXF client.
@@ -485,6 +484,8 @@ public interface CxfClientConfig {
      * If a name is configured, it uses the configuration from `quarkus.tls.<name>.*`
      * If a name is configured, but no TLS configuration is found with that name then an error will be thrown at runtime.
      * Setting `.tls-configuration-name` and any of `.trust-store` or `.key-store` leads to an exception at runtime.
+     * If none of `.tls-configuration-name`, `.trust-store` or `.key-store` is set, the default configuration is given by
+     * `xref:#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`
      *
      * @asciidoclet
      * @since 3.15.0

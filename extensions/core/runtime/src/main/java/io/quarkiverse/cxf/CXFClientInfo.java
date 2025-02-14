@@ -1,9 +1,17 @@
 package io.quarkiverse.cxf;
 
+import static io.quarkus.tls.runtime.CertificateRecorder.verifyKeyStore;
+import static io.quarkus.tls.runtime.CertificateRecorder.verifyTrustStore;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,11 +19,19 @@ import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
+import io.quarkiverse.cxf.CxfConfig.CxfGlobalClientConfig;
 import io.quarkiverse.cxf.CxfConfig.RetransmitCacheConfig;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.tls.TlsConfiguration;
 import io.quarkus.tls.TlsConfigurationRegistry;
+import io.quarkus.tls.runtime.CertificateRecorder;
+import io.quarkus.tls.runtime.KeyStoreAndKeyCertOptions;
+import io.quarkus.tls.runtime.TrustStoreAndTrustOptions;
+import io.quarkus.tls.runtime.VertxCertificateHolder;
+import io.quarkus.tls.runtime.config.KeyStoreConfig;
+import io.quarkus.tls.runtime.config.TlsBucketConfig;
+import io.quarkus.tls.runtime.keystores.TrustAllOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.net.JksOptions;
@@ -28,6 +44,7 @@ import io.vertx.core.net.PfxOptions;
 @Unremovable
 public class CXFClientInfo {
     private static final String DEFAULT_EP_ADDR = "http://localhost:8080";
+    private static final String JAVA_NET_SSL_TLS_CONFIGURATION_NAME = "javax.net.ssl";
 
     private final String sei;
     private final String endpointAddress;
@@ -264,7 +281,7 @@ public class CXFClientInfo {
         this.proxyUsername = config.proxyUsername().orElse(null);
         this.proxyPassword = config.proxyPassword().orElse(null);
         this.tlsConfigurationName = config.tlsConfigurationName().orElse(null);
-        this.tlsConfiguration = tlsConfiguration(vertx, config, configKey);
+        this.tlsConfiguration = tlsConfiguration(vertx, cxfConfig.client(), config, configKey);
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
         this.schemaValidationEnabledFor = config.schemaValidationEnabledFor().orElse(null);
 
@@ -277,7 +294,8 @@ public class CXFClientInfo {
         this.configKey = configKey;
     }
 
-    static TlsConfiguration tlsConfiguration(Vertx vertx, CxfClientConfig config, String configKey) {
+    static TlsConfiguration tlsConfiguration(Vertx vertx, CxfGlobalClientConfig globalConfig, CxfClientConfig config,
+            String configKey) {
         final TlsConfigurationRegistry tlsRegistry = Arc.container().select(TlsConfigurationRegistry.class).get();
         final Optional<String> maybeTlsConfigName = config.tlsConfigurationName();
         if (maybeTlsConfigName.isEmpty()) {
@@ -336,10 +354,28 @@ public class CXFClientInfo {
                         trustStore);
                 tlsRegistry.register(registryKey, cxfTlsConfiguration);
                 return cxfTlsConfiguration;
+            } else {
+                /* use global client tls configuration */
+                if (globalConfig.tlsConfigurationName().equals(JAVA_NET_SSL_TLS_CONFIGURATION_NAME)) {
+                    /*
+                     * temporary hosting of functionality until Quarkus is updated to 3.19.0.CR1
+                     * Can then be replaced by return tlsRegistry.get(JAVA_NET_SSL_TLS_CONFIGURATION_NAME);
+                     */
+                    final Map<String, TlsConfiguration> certificates = getCertificateField(tlsRegistry);
+                    certificates.computeIfAbsent(JAVA_NET_SSL_TLS_CONFIGURATION_NAME,
+                            k -> verifyCertificateConfigInternal(new JavaNetSslTlsBucketConfig(), vertx,
+                                    JAVA_NET_SSL_TLS_CONFIGURATION_NAME));
+                    return certificates.get(JAVA_NET_SSL_TLS_CONFIGURATION_NAME);
+                } else {
+                    Optional<TlsConfiguration> maybeTlsConfig = tlsRegistry.get(globalConfig.tlsConfigurationName());
+                    if (maybeTlsConfig.isPresent()) {
+                        return maybeTlsConfig.get();
+                    } else {
+                        throw new IllegalStateException(
+                                "No such TLS configuration quarkus.tls." + globalConfig.tlsConfigurationName());
+                    }
+                }
             }
-
-            /* No TLS config - that's fine too */
-            return null;
         } else {
             /* tls-configuration-name is set */
 
@@ -362,6 +398,73 @@ public class CXFClientInfo {
             } else {
                 throw new IllegalStateException("No such TLS configuration quarkus.tls." + maybeTlsConfigName.get());
             }
+        }
+    }
+
+    /* temporary hosting of functionality until Quarkus is updated to 3.19.0.CR1 */
+    private static TlsConfiguration verifyCertificateConfigInternal(TlsBucketConfig config, Vertx vertx, String name) {
+        // Verify the key store
+        KeyStoreAndKeyCertOptions ks = null;
+        boolean sni;
+        if (config.keyStore().isPresent()) {
+            KeyStoreConfig keyStoreConfig = config.keyStore().get();
+            ks = verifyKeyStore(keyStoreConfig, vertx, name);
+            sni = keyStoreConfig.sni();
+            if (sni && ks != null) {
+                try {
+                    if (Collections.list(ks.keyStore.aliases()).size() <= 1) {
+                        throw new IllegalStateException(
+                                "The SNI option cannot be used when the keystore contains only one alias or the `alias` property has been set");
+                    }
+                } catch (KeyStoreException e) {
+                    // Should not happen
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        // Verify the trust store
+        TrustStoreAndTrustOptions ts = null;
+        if (config.trustStore().isPresent()) {
+            ts = verifyTrustStore(config.trustStore().get(), vertx, name);
+        }
+
+        if (config.trustAll() && ts != null) {
+            throw new IllegalStateException("The trust-all option cannot be used when a trust-store is configured");
+        } else if (config.trustAll()) {
+            ts = new TrustStoreAndTrustOptions(null, TrustAllOptions.INSTANCE);
+        }
+
+        try {
+            Constructor<?> constructor = VertxCertificateHolder.class.getDeclaredConstructor(Vertx.class, String.class,
+                    TlsBucketConfig.class, KeyStoreAndKeyCertOptions.class, TrustStoreAndTrustOptions.class);
+            constructor.setAccessible(true);
+            Object instance = constructor.newInstance(vertx, name, config, ks, ts);
+            if (instance instanceof VertxCertificateHolder) {
+                return (VertxCertificateHolder) instance;
+            } else {
+                throw new IllegalStateException(
+                        "The required method verifyCertificateConfigInternal did not return a TlsConfiguration.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /* temporary hosting of functionality until Quarkus is updated to 3.19.0.CR1 */
+    private static Map<String, TlsConfiguration> getCertificateField(TlsConfigurationRegistry tlsRegistry) {
+        try {
+            Field certificatesField = CertificateRecorder.class.getDeclaredField("certificates");
+            certificatesField.setAccessible(true);
+            CertificateRecorder certificateRecorder = (CertificateRecorder) tlsRegistry;
+            Object certificateValue = certificatesField.get(certificateRecorder);
+            if (certificateValue instanceof Map<?, ?>) {
+                return (Map<String, TlsConfiguration>) certificateValue;
+            } else {
+                throw new IllegalStateException("The required field certificates did not return a Map.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
