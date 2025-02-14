@@ -1,0 +1,33 @@
+name: build-quarkus-main
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run every day at 2AM
+    - cron:  '0 2 * * *'
+
+env:
+  LANG: en_US.UTF-8
+  JAVA_VERSION: 17
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  rebase-quarkus-main:
+    if: github.repository == 'quarkiverse/quarkus-cxf'
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: build-integration-branch
+      uses: ./.github/actions/build-integration-branch
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        base-branch: main
+        integration-branch: quarkus-main
+        dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
+        dependency-short-name: quarkus
+        dependency-branch: main
+        issue-id: 1287
+        token: "${{ secrets.QUARKIVERSEBOT_TOKEN }}"
