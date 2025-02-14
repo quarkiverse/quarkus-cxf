@@ -485,6 +485,8 @@ public interface CxfClientConfig {
      * If a name is configured, it uses the configuration from `quarkus.tls.<name>.*`
      * If a name is configured, but no TLS configuration is found with that name then an error will be thrown at runtime.
      * Setting `.tls-configuration-name` and any of `.trust-store` or `.key-store` leads to an exception at runtime.
+     * If none of `.tls-configuration-name`, `.trust-store` or `.key-store` is set, the default configuration is given by
+     * `xref:#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`
      *
      * @asciidoclet
      * @since 3.15.0

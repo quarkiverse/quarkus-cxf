@@ -98,13 +98,19 @@ public interface CxfConfig {
     public Map<String, CxfEndpointConfig> endpoints();
 
     /**
+     * Global client related configurations.
+     *
+     * @asciidoclet
+     */
+    public CxfGlobalClientConfig client();
+
+    /**
      * Configure client proxies.
      *
      * @asciidoclet
      */
     @WithName("client")
     @ConfigDocMapKey("client-name")
-
     @WithDefaults
     public Map<String, CxfClientConfig> clients();
 
@@ -136,6 +142,47 @@ public interface CxfConfig {
 
     default CxfClientConfig getClient(String key) {
         return Optional.ofNullable(clients()).map(m -> m.get(key)).orElse(null);
+    }
+
+    public interface CxfGlobalClientConfig {
+        // The formatter breaks the list with long items
+        // @formatter:off
+        /**
+         * The name of the TLS configuration to use for setting up trust store and keystore for all clients. This setting can be
+         * overridden per client using
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+         * or (deprecated) `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store*]`
+         * and (deprecated) `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store*]`
+         * options.
+         *
+         * For each client, if the per-client `.tls-configuration-name` or `.trust-store` or `.key-store` is configured then the
+         * relevant per client configuration will be used.
+         * Otherwise, this configuration will be used.
+         *
+         * By default value `javax.net.ssl` is a special named TLS configuration provided by Quarkus.
+         * It exists since Quarkus 3.19.0 and can be characterized as follows:
+         *
+         * * If the `javax.net.ssl.trustStore` system property is defined, then its value is honored as a truststore
+         * * Otherwise, the paths `$JAVA_HOME/lib/security/jssecacerts` and `$JAVA_HOME/lib/security/cacerts` are checked
+         * and the first existing file is used as a truststore
+         * * Otherwise an `IllegalStateException` is thrown.
+         * * The password for opening the truststore is taken from the `javax.net.ssl.trustStorePassword` system property.
+         *   If it is not set, the default password `changeit` is used.
+         *
+         * [NOTE]
+         * ====
+         * We chose `javax.net.ssl` as a default for better compatibility of `VertxHttpClientHTTPConduit` with
+         * `URLConnectionHTTPConduit`.
+         * Other Quarkus extensions do not take `javax.net.ssl.trustStore` system property or
+         * `$JAVA_HOME/lib/security/*cacerts` files into account by default.
+         * ====
+         *
+         * @asciidoclet
+         * @since 3.19.0
+         */
+        // @formatter:on
+        @WithDefault("javax.net.ssl")
+        public String tlsConfigurationName();
     }
 
     public interface InternalConfig {

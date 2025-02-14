@@ -563,6 +563,42 @@ public class MyRestEasyResource {
 *Environment variable*: `+++QUARKUS_CXF_DECOUPLED_ENDPOINT_BASE+++` +
 *Since Quarkus CXF*: 2.7.0
 
+.<| [[quarkus-cxf_quarkus-cxf-client-tls-configuration-name]]`link:#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`
+.<| `string`
+.<| `javax.net.ssl`
+
+3+a|The name of the TLS configuration to use for setting up trust store and keystore for all clients. This setting can be
+overridden per client using
+`xref:#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+or (deprecated) `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store*]`
+and (deprecated) `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store*]`
+options.
+
+For each client, if the per-client `.tls-configuration-name` or `.trust-store` or `.key-store` is configured then the
+relevant per client configuration will be used.
+Otherwise, this configuration will be used.
+
+By default value `javax.net.ssl` is a special named TLS configuration provided by Quarkus.
+It exists since Quarkus 3.19.0 and can be characterized as follows:
+
+* If the `javax.net.ssl.trustStore` system property is defined, then its value is honored as a truststore
+* Otherwise, the paths `$JAVA_HOME/lib/security/jssecacerts` and `$JAVA_HOME/lib/security/cacerts` are checked
+and the first existing file is used as a truststore
+* Otherwise an `IllegalStateException` is thrown.
+* The password for opening the truststore is taken from the `javax.net.ssl.trustStorePassword` system property.
+  If it is not set, the default password `changeit` is used.
+
+[NOTE]
+====
+We chose `javax.net.ssl` as a default for better compatibility of `VertxHttpClientHTTPConduit` with
+`URLConnectionHTTPConduit`.
+Other Quarkus extensions do not take `javax.net.ssl.trustStore` system property or
+`$JAVA_HOME/lib/security/*cacerts` files into account by default.
+====
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT_TLS_CONFIGURATION_NAME+++` +
+*Since Quarkus CXF*: 3.19.0
+
 .<| [[quarkus-cxf_quarkus-cxf-logging-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus.cxf.logging.enabled-for]`
 .<| `clients`, `services`, `both`, `none`
 .<| `none`
@@ -2054,6 +2090,8 @@ and `.key-store*` family of options will be used.
 If a name is configured, it uses the configuration from `quarkus.tls.<name>.*`
 If a name is configured, but no TLS configuration is found with that name then an error will be thrown at runtime.
 Setting `.tls-configuration-name` and any of `.trust-store` or `.key-store` leads to an exception at runtime.
+If none of `.tls-configuration-name`, `.trust-store` or `.key-store` is set, the default configuration is given by
+`xref:#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__TLS_CONFIGURATION_NAME+++` +
 *Since Quarkus CXF*: 3.15.0
