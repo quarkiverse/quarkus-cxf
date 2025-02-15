@@ -1,16 +1,18 @@
 package io.quarkiverse.cxf.deployment.test;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.file.Path;
-import java.security.KeyStore;
-
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.inject.Instance;
+import io.quarkiverse.cxf.QuarkusTLSClientParameters;
+import io.quarkiverse.cxf.annotation.CXFClient;
+import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.tls.CertificateUpdatedEvent;
+import io.quarkus.tls.TlsConfiguration;
+import io.quarkus.tls.TlsConfigurationRegistry;
+import io.smallrye.certs.Format;
+import io.smallrye.certs.junit5.Certificate;
+import io.smallrye.certs.junit5.Certificates;
+import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebService;
-
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
@@ -19,22 +21,28 @@ import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkiverse.cxf.QuarkusTLSClientParameters;
-import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
-import io.smallrye.certs.Format;
-import io.smallrye.certs.junit5.Certificate;
-import io.smallrye.certs.junit5.Certificates;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 @Certificates(baseDir = "target/classes", //
-        certificates = @Certificate( //
-                name = "localhost", //
-                password = "secret", //
-                formats = { Format.PKCS12 }))
+        certificates = { //
+                @Certificate( //
+                        name = "localhost", //
+                        password = "secret", //
+                        formats = { Format.PKCS12 }),
+                @Certificate( //
+                        name = "localhost2", //
+                        password = "secret", //
+                        formats = { Format.PKCS12 }),
+                @Certificate( //
+                        name = "localhost3", //
+                        password = "secret", //
+                        formats = { Format.PKCS12 }),
+        })
 public class TlsConfigurationTest {
 
     @RegisterExtension
@@ -52,19 +60,27 @@ public class TlsConfigurationTest {
                     HelloServiceImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
 
+            /* Named global client TLS configuration */
+            .overrideConfigKey("quarkus.tls.client-global-pkcs12.trust-store.p12.path",
+                    "target/classes/localhost-truststore.p12")
+            .overrideConfigKey("quarkus.tls.client-global-pkcs12.trust-store.p12.password", "secret")
+
             /* Default Quarkus TLS configuration for the clients */
-            .overrideConfigKey("quarkus.tls.trust-store.p12.path", "target/classes/localhost-truststore.p12")
+            .overrideConfigKey("quarkus.tls.trust-store.p12.path", "target/classes/localhost2-truststore.p12")
             .overrideConfigKey("quarkus.tls.trust-store.p12.password", "secret")
 
-            /* Named TLS configuration for the clients */
-            .overrideConfigKey("quarkus.tls.client-pkcs12.trust-store.p12.path", "target/classes/localhost-truststore.p12")
+            /* Named per client TLS configuration */
+            .overrideConfigKey("quarkus.tls.client-pkcs12.trust-store.p12.path", "target/classes/localhost3-truststore.p12")
             .overrideConfigKey("quarkus.tls.client-pkcs12.trust-store.p12.password", "secret")
+
+            /* Client global TLS configuration */
+            .overrideConfigKey("quarkus.cxf.client.tls-configuration-name", "client-global-pkcs12")
 
             /*
              * Client with VertxHttpClientHTTPConduitFactory
-             * Clients 1 and 2 test the java.net.ssl.trustStore
-             * Clients 3 and 4 test the default Quarkus TLS configurations
-             * Clients 5 and 6 test the named TLS configurations
+             * Clients 1 and 2 test the client global named TLS configuration
+             * Clients 3 and 4 test the default Quarkus TLS configuration
+             * Clients 5 and 6 test the per client named TLS configuration
              */
             .overrideConfigKey("quarkus.cxf.client.helloVertx.client-endpoint-url", "https://localhost:8444/services/hello")
             .overrideConfigKey("quarkus.cxf.client.helloVertx.logging.enabled", "true")
@@ -142,15 +158,11 @@ public class TlsConfigurationTest {
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection3.http-conduit-factory", "URLConnectionHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection3.tls-configuration-name", "client-pkcs12");
 
+    @CXFClient("helloVertx")
     HelloService helloVertx;
 
-    HelloService helloVertx2;
-
-    @CXFClient("helloVertx")
-    Instance<HelloService> helloVertxInstance;
-
     @CXFClient("helloVertx2")
-    Instance<HelloService> helloVertxInstance2;
+    HelloService helloVertx2;
 
     @CXFClient("helloVertx3")
     HelloService helloVertx3;
@@ -164,10 +176,8 @@ public class TlsConfigurationTest {
     @CXFClient("helloVertx6")
     HelloService helloVertx6;
 
-    HelloService helloHttpClient;
-
     @CXFClient("helloHttpClient")
-    Instance<HelloService> helloHttpClientInstance;
+    HelloService helloHttpClient;
 
     @CXFClient("helloHttpClient2")
     HelloService helloHttpClient2;
@@ -175,10 +185,8 @@ public class TlsConfigurationTest {
     @CXFClient("helloHttpClient3")
     HelloService helloHttpClient3;
 
-    HelloService helloUrlConnection;
-
     @CXFClient("helloUrlConnection")
-    Instance<HelloService> helloUrlConnectionInstance;
+    HelloService helloUrlConnection;
 
     @CXFClient("helloUrlConnection2")
     HelloService helloUrlConnection2;
@@ -187,66 +195,18 @@ public class TlsConfigurationTest {
     HelloService helloUrlConnection3;
 
     @Inject
+    TlsConfigurationRegistry registry;
+
+    @Inject
+    Event<CertificateUpdatedEvent> event;
+
+    @Inject
     Logger logger;
 
-    @PostConstruct
-    void setup() throws Exception {
-        addCertToDefaultCacert();
-        this.helloVertx = helloVertxInstance.get();
-        this.helloVertx2 = helloVertxInstance2.get();
-        this.helloHttpClient = helloHttpClientInstance.get();
-        this.helloUrlConnection = helloUrlConnectionInstance.get();
-    }
-
-    @AfterAll
-    public static void cleanup() throws Exception {
-        removeCertFromDefaultCacert();
-    }
-
-    private static void addCertToDefaultCacert() throws Exception {
-        String cacertsPath = System.getProperty("java.home") + "/lib/security/cacerts";
-        String cacertsPassword = "changeit";
-
-        KeyStore cacerts = KeyStore.getInstance(KeyStore.getDefaultType());
-        try (FileInputStream cacertsInput = new FileInputStream(cacertsPath)) {
-            cacerts.load(cacertsInput, cacertsPassword.toCharArray());
-        }
-
-        Path p12FilePath = Path.of("target/classes/localhost-truststore.p12");
-        String p12Password = "secret";
-        KeyStore p12Store = KeyStore.getInstance("PKCS12");
-        try (FileInputStream p12Input = new FileInputStream(p12FilePath.toFile())) {
-            p12Store.load(p12Input, p12Password.toCharArray());
-        }
-
-        java.security.cert.Certificate cert = p12Store.getCertificate("localhost");
-        cacerts.setCertificateEntry("localhost", cert);
-
-        try (FileOutputStream cacertsOutput = new FileOutputStream(cacertsPath)) {
-            cacerts.store(cacertsOutput, cacertsPassword.toCharArray());
-        }
-
-        System.out.println("Successfully updated cacerts with certificates from the P12 file.");
-    }
-
-    public static void removeCertFromDefaultCacert() throws Exception {
-        String cacertsPath = System.getProperty("java.home") + "/lib/security/cacerts";
-        String cacertsPassword = "changeit";
-
-        KeyStore cacerts = KeyStore.getInstance(KeyStore.getDefaultType());
-        try (FileInputStream cacertsInput = new FileInputStream(cacertsPath)) {
-            cacerts.load(cacertsInput, cacertsPassword.toCharArray());
-        }
-
-        if (cacerts.containsAlias("localhost")) {
-            cacerts.deleteEntry("localhost");
-
-            try (FileOutputStream cacertsOutput = new FileOutputStream(cacertsPath)) {
-                cacerts.store(cacertsOutput, cacertsPassword.toCharArray());
-            }
-            System.out.println("Removed certificate with alias localhost");
-        }
-    }
+    static final Path localHostKs = Path.of("target/classes/localhost-keystore.p12");
+    static final Path localHostKsCp = Path.of("target/classes/localhost-keystore-cp.p12");
+    static final Path localHostKs2 = Path.of("target/classes/localhost2-keystore.p12");
+    static final Path localHostKs3 = Path.of("target/classes/localhost3-keystore.p12");
 
     @Test
     void vertxJVMDefault() {
@@ -255,12 +215,16 @@ public class TlsConfigurationTest {
 
     @Test
     void vertxQuarkusDefault() {
+        changeKeystore(localHostKs2);
         Assertions.assertThat(helloVertx3.hello("Doe")).isEqualTo("Hello Doe");
+        restoreKeystore();
     }
 
     @Test
     void vertxNamed() {
+        changeKeystore(localHostKs3);
         Assertions.assertThat(helloVertx5.hello("Doe")).isEqualTo("Hello Doe");
+        restoreKeystore();
     }
 
     @Test
@@ -270,12 +234,16 @@ public class TlsConfigurationTest {
 
     @Test
     void httpClientQuarkusDefault() {
+        changeKeystore(localHostKs2);
         Assertions.assertThat(helloHttpClient2.hello("Doe")).isEqualTo("Hello Doe");
+        restoreKeystore();
     }
 
     @Test
     void httpClientNamed() {
+        changeKeystore(localHostKs3);
         Assertions.assertThat(helloHttpClient3.hello("Doe")).isEqualTo("Hello Doe");
+        restoreKeystore();
     }
 
     @Test
@@ -285,12 +253,16 @@ public class TlsConfigurationTest {
 
     @Test
     void urlConnectionQuarkusDefault() {
+        changeKeystore(localHostKs2);
         Assertions.assertThat(helloUrlConnection2.hello("Doe")).isEqualTo("Hello Doe");
+        restoreKeystore();
     }
 
     @Test
     void urlConnectionNamed() {
+        changeKeystore(localHostKs3);
         Assertions.assertThat(helloUrlConnection3.hello("Doe")).isEqualTo("Hello Doe");
+        restoreKeystore();
     }
 
     @Test
@@ -334,6 +306,31 @@ public class TlsConfigurationTest {
         @WebMethod
         String hello(String person);
 
+    }
+
+    private void changeKeystore(Path newKeystore) {
+        try {
+            Files.copy(localHostKs, localHostKsCp, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(newKeystore, localHostKs, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        reload();
+    }
+
+    void restoreKeystore() {
+        try {
+            Files.copy(localHostKsCp, localHostKs, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        reload();
+    }
+
+    private void reload() {
+        final TlsConfiguration c = registry.get("localhost-pkcs12").get();
+        Assertions.assertThat(c.reload()).isTrue();
+        event.fire(new CertificateUpdatedEvent("localhost-pkcs12", c));
     }
 
     @WebService(serviceName = "HelloService")
