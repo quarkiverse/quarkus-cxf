@@ -11,6 +11,7 @@ import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
+import io.quarkiverse.cxf.CxfConfig.CxfGlobalClientConfig;
 import io.quarkiverse.cxf.CxfConfig.RetransmitCacheConfig;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.Unremovable;
@@ -28,6 +29,7 @@ import io.vertx.core.net.PfxOptions;
 @Unremovable
 public class CXFClientInfo {
     private static final String DEFAULT_EP_ADDR = "http://localhost:8080";
+    private static final String JAVA_NET_SSL_TLS_CONFIGURATION_NAME = "javax.net.ssl";
 
     private final String sei;
     private final String endpointAddress;
@@ -264,7 +266,7 @@ public class CXFClientInfo {
         this.proxyUsername = config.proxyUsername().orElse(null);
         this.proxyPassword = config.proxyPassword().orElse(null);
         this.tlsConfigurationName = config.tlsConfigurationName().orElse(null);
-        this.tlsConfiguration = tlsConfiguration(vertx, config, configKey);
+        this.tlsConfiguration = tlsConfiguration(vertx, cxfConfig.client(), config, configKey);
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
         this.schemaValidationEnabledFor = config.schemaValidationEnabledFor().orElse(null);
 
@@ -277,7 +279,8 @@ public class CXFClientInfo {
         this.configKey = configKey;
     }
 
-    static TlsConfiguration tlsConfiguration(Vertx vertx, CxfClientConfig config, String configKey) {
+    static TlsConfiguration tlsConfiguration(Vertx vertx, CxfGlobalClientConfig globalConfig, CxfClientConfig config,
+            String configKey) {
         final TlsConfigurationRegistry tlsRegistry = Arc.container().select(TlsConfigurationRegistry.class).get();
         final Optional<String> maybeTlsConfigName = config.tlsConfigurationName();
         if (maybeTlsConfigName.isEmpty()) {
@@ -336,10 +339,16 @@ public class CXFClientInfo {
                         trustStore);
                 tlsRegistry.register(registryKey, cxfTlsConfiguration);
                 return cxfTlsConfiguration;
+            } else {
+                /* use global client tls configuration */
+                Optional<TlsConfiguration> maybeTlsConfig = tlsRegistry.get(globalConfig.tlsConfigurationName());
+                if (maybeTlsConfig.isPresent()) {
+                    return maybeTlsConfig.get();
+                } else {
+                    throw new IllegalStateException(
+                            "No such TLS configuration quarkus.tls." + globalConfig.tlsConfigurationName());
+                }
             }
-
-            /* No TLS config - that's fine too */
-            return null;
         } else {
             /* tls-configuration-name is set */
 
