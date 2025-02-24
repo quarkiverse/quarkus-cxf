@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
         <artifactId>quarkus-cxf-core</artifactId>
-        <version>3.19.0</version>
+        <version>3.19.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
