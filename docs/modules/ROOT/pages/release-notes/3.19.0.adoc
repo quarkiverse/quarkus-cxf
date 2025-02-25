@@ -21,6 +21,29 @@ Since {quarkus-cxf-project-name} 3.19.0, it is possible to set the trust stores 
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]` option.
 
 
+== Known issues
+
+=== https://github.com/quarkusio/quarkus/issues/46368[quarkus#46368] `javax.net.ssl` TLS configuration does not work in native mode
+
+This issue exists in `io.quarkus:quarkus-tls-registry` 3.19.0  and will be fixed in version 3.19.1 due on Wednesday Feb. 26, 2025.
+
+With {quarkus-cxf-project-name} 3.19.0, all CXF clients in native mode are impacted
+which rely on the default value `javax.net.ssl` of configuration property
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`.
+
+There are several options to workaround the issue:
+
+* Start the native executable with `-Djavax.net.ssl.trustStore=$JAVA_HOME/lib/security/cacerts -Djavax.net.ssl.trustStorePassword=changeit`
+* Set a custom trust store on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`:
++
+.application.properties
+[source,properties]
+----
+quarkus.tls.localCacertsFile.trust-store.p12.path = ${JAVA_HOME}/lib/security/cacerts
+quarkus.tls.localCacertsFile.trust-store.p12.password = changeit
+quarkus.cxf.client.tls-configuration-name = localCacertsFile
+----
+
 == Bugfixes
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1697[#1697] Native build fails when using `quarkus-cxf-integration-tracing-opentelemetry` and `quarkus-jdbc-oracle`
@@ -37,6 +60,7 @@ Class of disallowed object: com.sun.jmx.mbeanserver.JmxMBeanServer
 ----
 
 We have fixed this in {quarkus-cxf-project-name} 3.19.0, but note that JMX features are not supported in native mode.
+
 
 == Deprecations
 
