@@ -31,6 +31,7 @@ import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.ws.addressing.WSAContextUtils;
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.cxf.CxfClientConfig.Auth;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.logging.LoggingFactoryCustomizer;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
@@ -156,7 +157,7 @@ public abstract class CxfClientProducer {
             factory.setWsdlURL(cxfClientInfo.getWsdlUrl());
         }
 
-        final AuthorizationPolicy authorizationPolicy = authorizationPolicy(cxfClientInfo);
+        final AuthorizationPolicy authorizationPolicy = authorizationPolicy(cxfClientInfo.getAuth());
         if (authorizationPolicy != null && !cxfClientInfo.isSecureWsdlAccess()) {
             props.put(AuthorizationPolicy.class.getName(), authorizationPolicy);
         }
@@ -232,15 +233,19 @@ public abstract class CxfClientProducer {
         return result;
     }
 
-    private static AuthorizationPolicy authorizationPolicy(CXFClientInfo cxfClientInfo) {
-        final String username = cxfClientInfo.getUsername();
-        if (username != null) {
-            final String password = cxfClientInfo.getPassword();
+    private static AuthorizationPolicy authorizationPolicy(Auth authorization) {
+        final String username = authorization.username().orElse(null);
+        final String type = authorization.scheme().orElse(null);
+        final String header = authorization.token().orElse(null);
+        if (username != null || type != null || header != null) {
+            final String password = authorization.password().orElse(null);
             final AuthorizationPolicy authPolicy = new AuthorizationPolicy();
             authPolicy.setUserName(username);
             if (password != null) {
                 authPolicy.setPassword(password);
             }
+            authPolicy.setAuthorizationType(type);
+            authPolicy.setAuthorization(header);
             return authPolicy;
         }
         return null;

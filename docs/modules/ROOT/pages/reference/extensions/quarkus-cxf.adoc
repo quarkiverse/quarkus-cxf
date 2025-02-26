@@ -1544,23 +1544,91 @@ this client.
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ENDPOINT_NAME+++` +
 *Since Quarkus CXF*: 1.0.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-username]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]`##
 .<| `string`
 .<| 
 
-3+a|The username for HTTP Basic authentication
+3+a|The username for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a username
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
+instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__USERNAME+++` +
 *Since Quarkus CXF*: 1.0.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-password]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]`##
 .<| `string`
 .<| 
 
-3+a|The password for HTTP Basic authentication
+3+a|The password for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a password
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
+instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PASSWORD+++` +
 *Since Quarkus CXF*: 1.0.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-auth-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
+.<| `string`
+.<| 
+
+3+a|The username for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a username.
+
+If not set, the value is taken from the deprecated
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__AUTH_USERNAME+++` +
+*Since Quarkus CXF*: 3.20.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-auth-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
+.<| `string`
+.<| 
+
+3+a|The password for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a password.
+
+If not set, the value is taken from the deprecated
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]`
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__AUTH_PASSWORD+++` +
+*Since Quarkus CXF*: 3.20.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-auth-scheme]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-auth-scheme[quarkus.cxf.client."client-name".auth.scheme]`
+.<| `string`
+.<| 
+
+3+a|The authentication scheme to send in the `Authorization` request header.
+
+If not set and
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
+and
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
+are set, then `Basic` is assumed for
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-scheme[quarkus.cxf.client."client-name".auth.scheme]`.
+
+Common values include `Basic`, `Digest`, `Negotiate` or `Bearer`.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__AUTH_SCHEME+++` +
+*Since Quarkus CXF*: 3.20.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-auth-token]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-auth-token[quarkus.cxf.client."client-name".auth.token]`
+.<| `string`
+.<| 
+
+3+a|Typically used to pass the access token when
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-scheme[quarkus.cxf.client."client-name".auth.scheme]`
+is set to `Bearer`.
+
+May also be used to pass any other authorization parameters of the `Authorization` HTTP request header to append
+after the authorization
+scheme passed via
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-scheme[quarkus.cxf.client."client-name".auth.scheme]`.
+
+Not required for authorization schemes `Basic` and `Digest`.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__AUTH_TOKEN+++` +
+*Since Quarkus CXF*: 3.20.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-secure-wsdl-access]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-secure-wsdl-access[quarkus.cxf.client."client-name".secure-wsdl-access]`
 .<| `boolean`
@@ -1798,9 +1866,9 @@ header); otherwise HTTP redirects will not be followed.
 
 See also:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".redirect-relative-uri]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".auth.redirect-relative-uri]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".auth.max-retransmits]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".auth.max-same-uri]`
 
 [IMPORTANT]
 ====
@@ -1826,7 +1894,7 @@ This is equivalent to setting `http.redirect.relative.uri` property to `true` on
 
 See also:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auth.auto-redirect]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__REDIRECT_RELATIVE_URI+++` +
 *Since Quarkus CXF*: 3.17.0
@@ -1842,7 +1910,7 @@ A negative value indicates unlimited retransmits, but even in that case redirect
 
 See also:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auth.auto-redirect]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__MAX_RETRANSMITS+++` +
 *Since Quarkus CXF*: 2.2.3
@@ -1856,7 +1924,7 @@ The default behavior is to allow a no retransmits to the same URI.
 
 See also:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auth.auto-redirect]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__MAX_SAME_URI+++` +
 *Since Quarkus CXF*: 3.18.0
@@ -1966,7 +2034,8 @@ requests
 .<| `auto`
 
 3+a|HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit`
-implementation defined via `quarkus.cxf.client."client-name".http-conduit-factory`. Other possible values: `1.1`, `2`.
+implementation defined via `quarkus.cxf.client."client-name".auth.http-conduit-factory`. Other possible values: `1.1`,
+`2`.
 
 Some of these values might be unsupported by some `HTTPConduit` implementations.
 
@@ -1988,7 +2057,8 @@ Some of these values might be unsupported by some `HTTPConduit` implementations.
 
 3+a|An URI path (starting with `/`) or a full URI for the receipt of responses over a separate provider -> consumer
 connection. If the value starts with `/`, then it is prefixed with the base URI configured via
-`quarkus.cxf.client."client-name".decoupled-endpoint-base` before being used as a value for the WS-Addressing `ReplyTo`
+`quarkus.cxf.client."client-name".auth.decoupled-endpoint-base` before being used as a value for the WS-Addressing
+`ReplyTo`
 message header.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__DECOUPLED_ENDPOINT+++` +
@@ -2103,7 +2173,7 @@ If none of `.tls-configuration-name`, `.trust-store` or `.key-store` is set, the
 3+a|The key store location for this client. The resource is first looked up in the classpath, then in the file system.
 
 *Deprecated* - use
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
 instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__KEY_STORE+++` +
@@ -2116,7 +2186,7 @@ instead.
 3+a|The key store password.
 
 *Deprecated* - use
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
 instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__KEY_STORE_PASSWORD+++` +
@@ -2129,7 +2199,7 @@ instead.
 3+a|The type of the key store.
 
 *Deprecated* - use
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
 instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__KEY_STORE_TYPE+++` +
@@ -2142,7 +2212,7 @@ instead.
 3+a|The key password.
 
 *Deprecated* - use
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
 instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__KEY_PASSWORD+++` +
@@ -2155,7 +2225,7 @@ instead.
 3+a|The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
 
 *Deprecated* - use
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
 instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__TRUST_STORE+++` +
@@ -2168,7 +2238,7 @@ instead.
 3+a|The trust store password.
 
 *Deprecated* - use
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
 instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__TRUST_STORE_PASSWORD+++` +
@@ -2181,7 +2251,7 @@ instead.
 3+a|The type of the trust store.
 
 *Deprecated* - use
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
 instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__TRUST_STORE_TYPE+++` +
