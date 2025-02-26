@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
@@ -69,20 +70,41 @@ public interface CxfClientConfig {
     public Optional<String> endpointName();
 
     /**
-     * The username for HTTP Basic authentication
+     * The username for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a username
+     *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
+     * instead.
      *
      * @asciidoclet
      * @since 1.0.0
+     * @deprecated use {@code auth.username}
      */
-    public Optional<String> username();
+    @Deprecated
+    Optional<String> username();
 
     /**
-     * The password for HTTP Basic authentication
+     * The password for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a password
+     *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
+     * instead.
      *
      * @asciidoclet
      * @since 1.0.0
+     * @deprecated use {@code auth.password}
      */
-    public Optional<String> password();
+    @Deprecated
+    Optional<String> password();
+
+    /**
+     * The
+     * `https://cxf.apache.org/javadoc/latest-3.1.x/org/apache/cxf/configuration/security/AuthorizationPolicy.html[AuthorizationPolicy]`
+     *
+     * @asciidoclet
+     * @since 3.20.0
+     */
+    Auth auth();
 
     /**
      * If `true`, then the `Authentication` header will be sent preemptively when requesting the WSDL, as long as the `username`
@@ -195,9 +217,9 @@ public interface CxfClientConfig {
      *
      * See also:
      *
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".redirect-relative-uri]`
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".auth.redirect-relative-uri]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".auth.max-retransmits]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".auth.max-same-uri]`
      *
      * [IMPORTANT]
      * ====
@@ -226,7 +248,7 @@ public interface CxfClientConfig {
      *
      * See also:
      *
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auth.auto-redirect]`
      *
      * @since 3.17.0
      * @asciidoclet
@@ -245,7 +267,7 @@ public interface CxfClientConfig {
      *
      * See also:
      *
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auth.auto-redirect]`
      *
      * @since 2.2.3
      * @asciidoclet
@@ -262,7 +284,7 @@ public interface CxfClientConfig {
      *
      * See also:
      *
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auth.auto-redirect]`
      *
      * @since 3.18.0
      * @asciidoclet
@@ -369,7 +391,8 @@ public interface CxfClientConfig {
 
     /**
      * HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit`
-     * implementation defined via `quarkus.cxf.client."client-name".http-conduit-factory`. Other possible values: `1.1`, `2`.
+     * implementation defined via `quarkus.cxf.client."client-name".auth.http-conduit-factory`. Other possible values: `1.1`,
+     * `2`.
      *
      * Some of these values might be unsupported by some `HTTPConduit` implementations.
      *
@@ -390,7 +413,8 @@ public interface CxfClientConfig {
     /**
      * An URI path (starting with `/`) or a full URI for the receipt of responses over a separate provider -> consumer
      * connection. If the value starts with `/`, then it is prefixed with the base URI configured via
-     * `quarkus.cxf.client."client-name".decoupled-endpoint-base` before being used as a value for the WS-Addressing `ReplyTo`
+     * `quarkus.cxf.client."client-name".auth.decoupled-endpoint-base` before being used as a value for the WS-Addressing
+     * `ReplyTo`
      * message header.
      *
      * @since 2.2.3
@@ -497,7 +521,7 @@ public interface CxfClientConfig {
      * The key store location for this client. The resource is first looked up in the classpath, then in the file system.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -511,7 +535,7 @@ public interface CxfClientConfig {
      * The key store password.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -525,7 +549,7 @@ public interface CxfClientConfig {
      * The type of the key store.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -540,7 +564,7 @@ public interface CxfClientConfig {
      * The key password.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -554,7 +578,7 @@ public interface CxfClientConfig {
      * The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -568,7 +592,7 @@ public interface CxfClientConfig {
      * The trust store password.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -582,7 +606,7 @@ public interface CxfClientConfig {
      * The type of the trust store.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -639,6 +663,67 @@ public interface CxfClientConfig {
      */
     @WithName("schema-validation.enabled-for")
     public Optional<SchemaValidationType> schemaValidationEnabledFor();
+
+    /**
+     * A configuration interface for {@link AuthorizationPolicy}.
+     */
+    interface Auth {
+        /**
+         * The username for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a username.
+         *
+         * If not set, the value is taken from the deprecated
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]`
+         *
+         * @asciidoclet
+         * @since 3.20.0
+         */
+        Optional<String> username();
+
+        /**
+         * The password for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a password.
+         *
+         * If not set, the value is taken from the deprecated
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]`
+         *
+         * @asciidoclet
+         * @since 3.20.0
+         */
+        Optional<String> password();
+
+        /**
+         * The authentication scheme to send in the `Authorization` request header.
+         *
+         * If not set and
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
+         * and
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
+         * are set, then `Basic` is assumed for
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-scheme[quarkus.cxf.client."client-name".auth.scheme]`.
+         *
+         * Common values include `Basic`, `Digest`, `Negotiate` or `Bearer`.
+         *
+         * @asciidoclet
+         * @since 3.20.0
+         */
+        Optional<String> scheme();
+
+        /**
+         * Typically used to pass the access token when
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-scheme[quarkus.cxf.client."client-name".auth.scheme]`
+         * is set to `Bearer`.
+         *
+         * May also be used to pass any other authorization parameters of the `Authorization` HTTP request header to append
+         * after the authorization
+         * scheme passed via
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-scheme[quarkus.cxf.client."client-name".auth.scheme]`.
+         *
+         * Not required for authorization schemes `Basic` and `Digest`.
+         *
+         * @asciidoclet
+         * @since 3.20.0
+         */
+        Optional<String> token();
+    }
 
     public enum WellKnownHostnameVerifier {
 

@@ -37,18 +37,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.util.PropertyUtils;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.endpoint.ClientCallback;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.helpers.HttpHeaderHelper;
@@ -66,6 +70,8 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPException;
 import org.apache.cxf.transport.http.Headers;
 import org.apache.cxf.transport.http.MessageTrustDecider;
+import org.apache.cxf.transport.http.auth.HttpAuthHeader;
+import org.apache.cxf.transport.http.auth.HttpAuthSupplier;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.version.Version;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
@@ -263,6 +269,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 cookies,
                 incomingObserver);
 
+        final HttpAuthSupplier authSupp = authSupplier;
         final IOEHandler<RequestBodyEvent> requestBodyHandler = new RequestBodyHandler(
                 (ContextInternal) httpClientPool.getVertx().getOrCreateContext(),
                 requestContext.clientInfo,
@@ -276,8 +283,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 requestContext.receiveTimeoutMs,
                 responseHandler,
                 requestContext.async,
-                requestContext.autoRedirect, // we do not support authorizationRetransmit yet possibleRetransmit,
-                requestContext.maxRetransmits);
+                requestContext.autoRedirect || (authSupp != null && authSupp.requiresRequestCaching()),
+                requestContext.maxRetransmits,
+                getAuthorization(),
+                authSupp);
         return new RequestBodyOutputStream(chunkThreshold, requestBodyHandler);
     }
 
@@ -460,6 +469,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private final RequestOptions requestOptions;
         private final ClientSpec clientSpec;
         private final ContextInternal context;
+        private final AuthorizationPolicy authorizationPolicy;
+        private final HttpAuthSupplier authSupplier;
 
         /* Read an written only from the producer thread */
         private boolean firstEvent = true;
@@ -475,6 +486,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         /* Retransmit settings, read/written from the event loop */
         private final boolean possibleRetransmit;
         private List<URI> redirects;
+        private Set<String> authUris;
         private final int maxRetransmits;
         private final CXFClientInfo clientInfo;
 
@@ -502,7 +514,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 IOEHandler<ResponseEvent> responseHandler,
                 boolean isAsync,
                 boolean possibleRetransmit,
-                int maxRetransmits) {
+                int maxRetransmits,
+                AuthorizationPolicy authorizationPolicy,
+                HttpAuthSupplier authSupplier) {
             super();
             this.context = context;
             this.clientInfo = clientInfo;
@@ -521,6 +535,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
             this.possibleRetransmit = possibleRetransmit;
             this.maxRetransmits = maxRetransmits;
+
+            this.authorizationPolicy = authorizationPolicy;
+            this.authSupplier = authSupplier;
         }
 
         @Override
@@ -627,38 +644,25 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         if (ar.succeeded()) {
 
                             /* need to retransmit? */
-                            final boolean isRedirect = isRedirect(response.statusCode());
+                            final int statusCode = response.statusCode();
+                            final boolean isRedirect = isRedirect(statusCode);
+                            final boolean isAuthRetransmit = statusCode == 401 || statusCode == 407;
                             if (possibleRetransmit
-                                    && isRedirect
+                                    && (isRedirect || isAuthRetransmit)
                                     && (maxRetransmits < 0 || performedRetransmits(redirects) < maxRetransmits)) {
                                 ResponseHandler.updateResponseHeaders(response, outMessage, cookies);
-                                final String loc = response.getHeader("Location");
-                                try {
 
-                                    if (loc != null && !loc.startsWith("http")
-                                            && !MessageUtils.getContextualBoolean(outMessage, AUTO_REDIRECT_ALLOW_REL_URI)) {
-                                        final String qKey = QuarkusCxfUtils
-                                                .quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
-                                        throw new IOException(
-                                                "Illegal relative redirect " + loc + " detected by client " + qKey
-                                                        + "; you may want to set quarkus.cxf.client."
-                                                        + qKey + ".redirect-relative-uri = true");
+                                try {
+                                    if (isAuthRetransmit) {
+                                        authorize(clientInfo.getConfigKey(), response);
+                                    } else if (isRedirect) {
+                                        redirect(response);
+                                    } else {
+                                        throw new IllegalStateException("Either authorize or retransmit should be true");
                                     }
-                                    final URI previousUri = redirects.get(redirects.size() - 1);
-                                    final URI newUri = HttpUtils.resolveURIReference(previousUri, loc);
-                                    final String configKey = clientInfo.getConfigKey();
-                                    detectRedirectLoop(configKey, redirects, newUri, outMessage);
-                                    redirects.add(newUri);
-                                    checkAllowedRedirectUri(configKey, previousUri, newUri, outMessage);
-                                    redirectRetransmit(newUri);
                                 } catch (IOException e) {
                                     sink.setException((IOException) e);
                                     mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), e));
-                                } catch (URISyntaxException e) {
-                                    final IOException ioe = new IOException(
-                                            "Could not resolve redirect Location " + loc + " relative to " + url, e);
-                                    sink.setException(ioe);
-                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
                                 } catch (Exception e) {
                                     final IOException ioe = new IOException(e);
                                     sink.setException(ioe);
@@ -669,7 +673,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 if (!possibleRetransmit && isRedirect) {
                                     final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
                                     final IOException ioe = new IOException(
-                                            "Received redirection status " + response.statusCode()
+                                            "Received redirection status " + statusCode
                                                     + " from " + url + " by client " + qKey
                                                     + " but following redirects is not enabled for this client."
                                                     + " You may want to set quarkus.cxf.client." + qKey
@@ -682,7 +686,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                         && maxRetransmits <= performedRetransmits(redirects)) {
                                     final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
                                     final IOException ioe = new IOException("Received redirection status " +
-                                            response.statusCode() + " from " + redirects.get(redirects.size() - 1)
+                                            statusCode + " from " + redirects.get(redirects.size() - 1)
                                             + " by client " + qKey + ", but already performed maximum"
                                             + " number " + maxRetransmits
                                             + " of allowed retransmits; you may want to"
@@ -709,12 +713,39 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     });
         }
 
+        private void redirect(final HttpClientResponse response) throws IOException {
+            final URI newUri;
+            final String loc = response.getHeader("Location");
+
+            if (loc != null && !loc.startsWith("http")
+                    && !MessageUtils.getContextualBoolean(outMessage, AUTO_REDIRECT_ALLOW_REL_URI)) {
+                final String qKey = QuarkusCxfUtils
+                        .quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
+                throw new IOException(
+                        "Illegal relative redirect " + loc + " detected by client " + qKey
+                                + "; you may want to set quarkus.cxf.client."
+                                + qKey + ".redirect-relative-uri = true");
+            }
+            final URI previousUri = redirects.get(redirects.size() - 1);
+            try {
+                newUri = HttpUtils.resolveURIReference(previousUri, loc);
+                final String configKey = clientInfo.getConfigKey();
+                detectRedirectLoop(configKey, redirects, newUri, outMessage);
+                redirects.add(newUri);
+                checkAllowedRedirectUri(configKey, previousUri, newUri, outMessage);
+                retransmit(newUri, Function.identity());
+            } catch (URISyntaxException e) {
+                throw new IOException(
+                        "Could not resolve redirect Location " + loc + " relative to " + url, e);
+            }
+        }
+
         private static int performedRetransmits(List<URI> retransmits) {
             /* The first element in the retransmits list is the original URI that we do not count as a retransmit */
             return retransmits.size() - 1;
         }
 
-        void redirectRetransmit(URI newURL) throws IOException {
+        void retransmit(URI newURL, Function<RequestOptions, RequestOptions> requestOptionsCustomizer) throws IOException {
             if (log.isDebugEnabled()) {
                 log.debugf("Redirect retransmit: %s",
                         redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")));
@@ -764,7 +795,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 // Should not be necessary, because we copy from the original requestOptions
                 // setProtocolHeaders(outMessage, options, userAgent);
 
-                return client.request(options)
+                return client.request(requestOptionsCustomizer.apply(options))
                         .compose(req -> {
                             prepareResponse(req);
                             return storedBody.pipeTo(req).compose(v -> Future.succeededFuture(req));
@@ -850,6 +881,80 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 String msg = "Illegal redirect URI " + newUri + " detected by client " + qKey
                         + "; expected to start with " + allowedRedirectURI;
                 throw new IOException(msg);
+            }
+        }
+
+        private void authorize(
+                String configKey,
+                HttpClientResponse response) throws IOException {
+            final URI currentURI = url;
+            final String authHeaderVal = response.getHeader("WWW-Authenticate");
+            if (authHeaderVal == null) {
+                final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
+                final String logMessage = "WWW-Authenticate response header is not set on a response from "
+                        + currentURI
+                        + " for client " + qKey;
+                throw new IOException(logMessage);
+            }
+            final HttpAuthHeader authHeader = new HttpAuthHeader(authHeaderVal);
+            final String realm = authHeader.getRealm();
+            detectAuthorizationLoop(configKey, outMessage, currentURI, realm);
+            AuthorizationPolicy effectiveAthPolicy = getEffectiveAuthPolicy(outMessage, authorizationPolicy);
+            String authorizationToken = authSupplier.getAuthorization(
+                    effectiveAthPolicy, currentURI, outMessage, authHeader.getFullHeader());
+            if (authorizationToken == null) {
+                // authentication not possible => we give up
+                final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
+                final String logMessage = "No authorization token supplied for client " + qKey
+                        + " remote URI " + currentURI
+                        + " and WWW-Authenticate: " + authHeader.getFullHeader();
+                throw new IOException(logMessage);
+            }
+            retransmit(currentURI, requestOptions -> requestOptions.addHeader("Authorization", authorizationToken));
+        }
+
+        /**
+         * Determines effective auth policy from message, conduit and empty default
+         * with priority from first to last
+         *
+         * @param message
+         * @return effective AthorizationPolicy
+         */
+        static AuthorizationPolicy getEffectiveAuthPolicy(Message message, AuthorizationPolicy authPolicy) {
+            final AuthorizationPolicy newPolicy = message.get(AuthorizationPolicy.class);
+            if (newPolicy != null) {
+                return newPolicy;
+            }
+            if (authPolicy != null) {
+                return authPolicy;
+            }
+            return new AuthorizationPolicy();
+        }
+
+        private void detectAuthorizationLoop(
+                String configKey,
+                Message message,
+                URI currentURL,
+                String realm) throws IOException {
+            @SuppressWarnings("unchecked")
+            Set<String> authURLs = authUris;
+            if (authURLs == null) {
+                authURLs = authUris = new LinkedHashSet<>();
+            }
+            // If we have been here (URL & Realm) before for this particular message
+            // retransmit, it means we have already supplied information
+            // which must have been wrong, or we wouldn't be here again.
+            // Otherwise, the server may be 401 looping us around the realms.
+            if (!authURLs.add(currentURL.toString() + realm)) {
+                final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
+
+                final String logMessage = "Authorization loop detected by client "
+                        + qKey + " on URL \""
+                        + currentURL
+                        + "\" with realm \""
+                        + realm
+                        + "\"";
+                throw new IOException(logMessage);
             }
         }
 

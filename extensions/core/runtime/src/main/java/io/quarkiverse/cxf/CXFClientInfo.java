@@ -11,6 +11,7 @@ import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
+import io.quarkiverse.cxf.CxfClientConfig.Auth;
 import io.quarkiverse.cxf.CxfConfig.CxfGlobalClientConfig;
 import io.quarkiverse.cxf.CxfConfig.RetransmitCacheConfig;
 import io.quarkus.arc.Arc;
@@ -39,8 +40,7 @@ public class CXFClientInfo {
     private final String wsName;
     private final String epNamespace;
     private final String epName;
-    private final String username;
-    private final String password;
+    private final Auth auth;
     private final boolean proxyClassRuntimeInitialized;
     private final List<String> inInterceptors = new ArrayList<>();
     private final List<String> outInterceptors = new ArrayList<>();
@@ -229,8 +229,7 @@ public class CXFClientInfo {
         this.proxyClassRuntimeInitialized = other.isProxyClassRuntimeInitialized();
         this.epNamespace = config.endpointNamespace().orElse(null);
         this.epName = config.endpointName().orElse(null);
-        this.username = config.username().orElse(null);
-        this.password = config.password().orElse(null);
+        this.auth = new AuthWrapper(config.auth(), config);
         this.secureWsdlAccess = config.secureWsdlAccess();
         this.endpointAddress = config.clientEndpointUrl().orElse(DEFAULT_EP_ADDR + "/" + this.sei.toLowerCase());
         this.wsdlUrl = config.wsdlPath().orElse(null);
@@ -423,12 +422,8 @@ public class CXFClientInfo {
         return epName;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
+    public Auth getAuth() {
+        return auth;
     }
 
     public boolean isProxyClassRuntimeInitialized() {
@@ -623,6 +618,37 @@ public class CXFClientInfo {
 
     public boolean isSecureWsdlAccess() {
         return secureWsdlAccess;
+    }
+
+    static class AuthWrapper implements Auth {
+        private final Auth auth;
+        private final CxfClientConfig config;
+
+        public AuthWrapper(Auth auth, CxfClientConfig config) {
+            super();
+            this.auth = auth;
+            this.config = config;
+        }
+
+        @Override
+        public Optional<String> username() {
+            return auth.username().or(config::username);
+        }
+
+        @Override
+        public Optional<String> password() {
+            return auth.password().or(config::password);
+        }
+
+        @Override
+        public Optional<String> scheme() {
+            return auth.scheme();
+        }
+
+        @Override
+        public Optional<String> token() {
+            return auth.token();
+        }
     }
 
 }
