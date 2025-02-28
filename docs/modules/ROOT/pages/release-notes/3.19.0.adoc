@@ -2,7 +2,7 @@
 
 == Important dependency upgrades
 
-* Quarkus 3.18.x -> 3.19.0 - https://quarkus.io/blog/quarkus-3-19-0-released/[release notes]
+* Quarkus 3.18.x -> 3.19.0 - https://quarkus.io/blog/quarkus-3-19-1-released/[release notes]
 
 == New features
 

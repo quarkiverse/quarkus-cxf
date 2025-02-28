@@ -37,7 +37,7 @@ public class AntoraTest {
 
         final ZonedDateTime deadline = ZonedDateTime.parse("2025-02-27T23:59:59+01:00[Europe/Paris]");
         if (ZonedDateTime.now(ZoneId.of("Europe/Paris")).isBefore(deadline)) {
-            ignorables.add("https://quarkus.io/blog/quarkus-3-19-0-released/");
+            //ignorables.add("https://quarkus.io/blog/quarkus-3-19-1-released/");
         }
 
         AntorAssured
