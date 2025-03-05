@@ -6,10 +6,13 @@ import java.util.function.Consumer;
 
 import jakarta.xml.ws.AsyncHandler;
 
+import io.quarkus.arc.Arc;
+import io.quarkus.runtime.BlockingOperationControl;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.smallrye.mutiny.operators.AbstractUni;
 import io.smallrye.mutiny.subscription.UniSubscriber;
+import io.vertx.core.Vertx;
 
 /**
  * Methods to map JAX-WS 2.0 asynchronous SOAP client calls to Mutiny types.
@@ -34,7 +37,8 @@ public class CxfMutinyUtils {
     }
 
     /**
-     * Use this rather than {@link #toUni(Consumer)} when you need to access the response context map in the subsequent steps.
+     * Use this rather than {@link #toUni(Consumer)} when you need to access the response context map in the subsequent
+     * steps.
      *
      * See <a href=
      * "https://docs.quarkiverse.io/quarkus-cxf/dev/user-guide/advanced-client-topics/asynchronous-client.html#callback-based-asynchronous-method">Quarkus
@@ -59,29 +63,50 @@ public class CxfMutinyUtils {
 
         @Override
         public void subscribe(UniSubscriber<? super T> downstream) {
-            AtomicBoolean terminated = new AtomicBoolean();
+            final AtomicBoolean terminated = new AtomicBoolean();
             downstream.onSubscribe(() -> terminated.set(true));
-
             if (!terminated.get()) {
-                try {
-                    subscriptionConsumer.accept(response -> {
-                        if (!terminated.getAndSet(true)) {
-                            try {
-                                downstream.onItem(response.get());
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                                downstream.onFailure(e);
-                            } catch (ExecutionException e) {
-                                downstream.onFailure(e.getCause());
-                            } catch (Exception e) {
-                                downstream.onFailure(e);
-                            }
+                if (!BlockingOperationControl.isBlockingAllowed()) {
+                    /*
+                     * We are on Vert.x event loop.
+                     * Because subscriptionConsumer.accept() can perform blocking operations,
+                     * we dispatch the task to a worker thread.
+                     */
+                    final Vertx vertx = Arc.container().instance(Vertx.class).get();
+                    vertx.executeBlocking(() -> {
+                        if (!terminated.get()) {
+                            subscribeIntenal(downstream, terminated);
                         }
+                        return null;
                     });
-                } catch (Exception e) {
+                } else {
+                    /*
+                     * We are not on Vert.x event loop so we may call subscriptionConsumer.accept() as is.
+                     */
+                    subscribeIntenal(downstream, terminated);
+                }
+            }
+        }
+
+        private void subscribeIntenal(UniSubscriber<? super T> downstream, AtomicBoolean terminated) {
+            try {
+                subscriptionConsumer.accept(response -> {
                     if (!terminated.getAndSet(true)) {
-                        downstream.onFailure(e);
+                        try {
+                            downstream.onItem(response.get());
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            downstream.onFailure(e);
+                        } catch (ExecutionException e) {
+                            downstream.onFailure(e.getCause());
+                        } catch (Exception e) {
+                            downstream.onFailure(e);
+                        }
                     }
+                });
+            } catch (Exception e) {
+                if (!terminated.getAndSet(true)) {
+                    downstream.onFailure(e);
                 }
             }
         }
@@ -100,28 +125,52 @@ public class CxfMutinyUtils {
             downstream.onSubscribe(() -> terminated.set(true));
 
             if (!terminated.get()) {
-                try {
-                    subscriptionConsumer.accept(response -> {
-                        if (!terminated.getAndSet(true)) {
-                            try {
-                                downstream.onItem(new SucceededResponse<T>(response.get(), response.getContext()));
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                                downstream.onFailure(new FailedResponse(e, response.getContext()));
-                            } catch (ExecutionException e) {
-                                downstream.onFailure(new FailedResponse(e.getCause(), response.getContext()));
-                            } catch (Exception e) {
-                                downstream.onFailure(new FailedResponse(e, response.getContext()));
-                            }
+                if (!BlockingOperationControl.isBlockingAllowed()) {
+                    /*
+                     * We are on Vert.x event loop.
+                     * Because subscriptionConsumer.accept() can perform blocking operations,
+                     * we dispatch the task to a worker thread.
+                     */
+                    final Vertx vertx = Arc.container().instance(Vertx.class).get();
+                    vertx.executeBlocking(() -> {
+                        if (!terminated.get()) {
+                            subscribeIntenal(downstream, terminated);
                         }
+                        return null;
                     });
-                } catch (Exception e) {
-                    if (!terminated.getAndSet(true)) {
-                        downstream.onFailure(e);
-                    }
+                } else {
+                    /*
+                     * We are not on Vert.x event loop so we may call subscriptionConsumer.accept() as is.
+                     */
+                    subscribeIntenal(downstream, terminated);
                 }
             }
         }
+
+        private void subscribeIntenal(UniSubscriber<? super SucceededResponse<T>> downstream, AtomicBoolean terminated) {
+
+            try {
+                subscriptionConsumer.accept(response -> {
+                    if (!terminated.getAndSet(true)) {
+                        try {
+                            downstream.onItem(new SucceededResponse<T>(response.get(), response.getContext()));
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            downstream.onFailure(new FailedResponse(e, response.getContext()));
+                        } catch (ExecutionException e) {
+                            downstream.onFailure(new FailedResponse(e.getCause(), response.getContext()));
+                        } catch (Exception e) {
+                            downstream.onFailure(new FailedResponse(e, response.getContext()));
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                if (!terminated.getAndSet(true)) {
+                    downstream.onFailure(e);
+                }
+            }
+        }
+
     }
 
 }
