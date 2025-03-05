@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.is;
 import java.time.Duration;
 
 import org.assertj.core.api.Assumptions;
-import org.hamcrest.CoreMatchers;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -31,20 +30,9 @@ class AsyncVertxClientTest {
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                 .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
         log.infof("Starting AsyncVertxClientTest.helloWithWsdl with %s body", payloadSize);
-        QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
-                () -> {
-                    final String body = body(payloadSize);
-                    RestAssured.given()
-                            .body(body)
-                            .post("/RestAsyncWithWsdl/helloWithWsdl")
-                            .then()
-                            .statusCode(500)
-                            .body(CoreMatchers.containsString(
-                                    "You have attempted to perform a blocking service method call on Vert.x event loop thread"));
-                    return null;
-                },
-                Duration.ofSeconds(5),
-                log::info);
+
+        assert200("/RestAsyncWithWsdl/helloWithWsdl", payloadSize,
+                "Hello from HelloWithWsdl ");
 
     }
 
