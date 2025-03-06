@@ -28,7 +28,8 @@ public class OpenSamlProcessor {
     @BuildStep
     void indexDependencies(BuildProducer<IndexDependencyBuildItem> indexDependencies) {
         Stream.of(
-                "org.opensaml:opensaml-core",
+                "org.opensaml:opensaml-core-api",
+                "org.opensaml:opensaml-core-impl",
                 "org.opensaml:opensaml-profile-api",
                 "org.opensaml:opensaml-saml-api",
                 "org.opensaml:opensaml-saml-impl",

@@ -53,6 +53,10 @@
             <artifactId>nativeimage</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
