@@ -28,10 +28,7 @@ public class AsmNamingClashTest {
                     "http://localhost:8081/services/helloString")
             .overrideConfigKey("quarkus.cxf.endpoint.\"/helloInt\".implementor", HelloServiceIntImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.client.helloInt.service-interface", HelloServiceInt.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.helloInt.client-endpoint-url", "http://localhost:8081/services/helloInt")
-            .assertException(t -> Assertions.assertThat(t).isInstanceOf(IllegalStateException.class)
-                    .hasMessageContaining(
-                            "Cannot overwrite an existing generated class file io/quarkiverse/cxf/deployment/test/jaxws_asm/Hello with a different content"));
+            .overrideConfigKey("quarkus.cxf.client.helloInt.client-endpoint-url", "http://localhost:8081/services/helloInt");
 
     @CXFClient("helloString")
     HelloServiceString helloString;
