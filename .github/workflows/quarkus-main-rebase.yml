@@ -16,6 +16,9 @@ concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   rebase-quarkus-main:
     if: github.repository == 'quarkiverse/quarkus-cxf'
@@ -33,7 +36,7 @@ jobs:
         dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
         dependency-short-name: ${{ env.DEPENDENCY_SHORT_NAME }}
         issue-id: ${{ env.ISSUE_ID }}
-        token: "${{ secrets.QUARKIVERSEBOT_TOKEN }}"
+        token: "${{ secrets.GITHUB_TOKEN }}"
 
     - name: Show steps.rebase-dependency-main-branch.outputs.exit-status
       shell: bash
