@@ -1,6 +1,8 @@
 package io.quarkiverse.cxf.vertx.http.client;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +12,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.InputStreamWriteStream;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.TimeoutSpec;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.impl.ContextInternal;
@@ -19,7 +22,7 @@ public class InputStreamWriteStreamTest {
     @Test
     void readBeforeWriteTimeout() throws IOException, InterruptedException {
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             CountDownLatch started = new CountDownLatch(1);
             CountDownLatch readFinished = new CountDownLatch(1);
             Thread t = new Thread(() -> {
@@ -41,11 +44,19 @@ public class InputStreamWriteStreamTest {
         }
     }
 
+    static TimeoutSpec timeoutSpec() {
+        try {
+            return TimeoutSpec.create(2000, new URI("http://acme.com"));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Test
     void readBeforeWrite() throws IOException, InterruptedException {
 
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final CountDownLatch started = new CountDownLatch(1);
 
             final CountDownLatch read1Finished = new CountDownLatch(1);
@@ -108,7 +119,7 @@ public class InputStreamWriteStreamTest {
     void available0AfterEnd() throws IOException {
 
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             ws.end();
             Assertions.assertThat(ws.available()).isEqualTo(0);
             Assertions.assertThat(ws.read(new byte[8])).isEqualTo(-1);
@@ -120,7 +131,7 @@ public class InputStreamWriteStreamTest {
     void available0BeforeEnd() throws IOException {
 
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             Assertions.assertThat(ws.available()).isEqualTo(0);
             ws.end();
             Assertions.assertThat(ws.read(new byte[8])).isEqualTo(-1);
@@ -131,7 +142,7 @@ public class InputStreamWriteStreamTest {
     void readEmpty() throws IOException {
 
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             ws.end();
             Assertions.assertThat(ws.read(new byte[8])).isEqualTo(-1);
         }
@@ -141,7 +152,7 @@ public class InputStreamWriteStreamTest {
     void singleBuffer() throws IOException {
 
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT = "abcd";
             final Buffer b = Buffer.buffer(INPUT);
             ws.write(b);
@@ -153,7 +164,7 @@ public class InputStreamWriteStreamTest {
             Assertions.assertThat(arr).isEqualTo((INPUT + "\0\0\0\0").getBytes(StandardCharsets.UTF_8));
         }
 
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT = "abcd";
             final Buffer b = Buffer.buffer(INPUT);
             ws.write(b);
@@ -165,7 +176,7 @@ public class InputStreamWriteStreamTest {
             Assertions.assertThat(arr).isEqualTo(INPUT.getBytes(StandardCharsets.UTF_8));
         }
 
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT = "abcd";
             final Buffer b = Buffer.buffer(INPUT);
             ws.write(b);
@@ -185,7 +196,7 @@ public class InputStreamWriteStreamTest {
     void twoBuffers() throws IOException {
 
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT1 = "abcd";
             final String INPUT2 = "efgh";
             ws.write(Buffer.buffer(INPUT1));
@@ -198,7 +209,7 @@ public class InputStreamWriteStreamTest {
             Assertions.assertThat(arr).isEqualTo((INPUT1 + INPUT2).getBytes(StandardCharsets.UTF_8));
         }
 
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT1 = "abcd";
             final String INPUT2 = "efgh";
             ws.write(Buffer.buffer(INPUT1));
@@ -211,7 +222,7 @@ public class InputStreamWriteStreamTest {
             Assertions.assertThat(arr).isEqualTo((INPUT1 + INPUT2 + "\0\0").getBytes(StandardCharsets.UTF_8));
         }
 
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT1 = "abcd";
             final String INPUT2 = "efgh";
             ws.write(Buffer.buffer(INPUT1));
@@ -226,7 +237,7 @@ public class InputStreamWriteStreamTest {
             Assertions.assertThat(arr).isEqualTo(("ghcdef").getBytes(StandardCharsets.UTF_8));
         }
 
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT1 = "abcd";
             final String INPUT2 = "efgh";
             ws.write(Buffer.buffer(INPUT1));
@@ -249,7 +260,7 @@ public class InputStreamWriteStreamTest {
     @Test
     void readAfterClose() throws IOException {
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
-        InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2);
+        InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2);
         final String INPUT1 = "abcd";
         final String INPUT2 = "efgh";
         final String INPUT3 = "ijkl";
@@ -270,7 +281,7 @@ public class InputStreamWriteStreamTest {
     void threeBuffers() throws IOException {
 
         ContextInternal ctx = (ContextInternal) Vertx.vertx().getOrCreateContext();
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT1 = "abcd";
             final String INPUT2 = "efgh";
             final String INPUT3 = "ijkl";
@@ -285,7 +296,7 @@ public class InputStreamWriteStreamTest {
             Assertions.assertThat(arr).isEqualTo((INPUT1 + INPUT2 + INPUT3).getBytes(StandardCharsets.UTF_8));
         }
 
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT1 = "abcd";
             final String INPUT2 = "efgh";
             final String INPUT3 = "ijkl";
@@ -300,7 +311,7 @@ public class InputStreamWriteStreamTest {
             Assertions.assertThat(arr).isEqualTo((INPUT1 + INPUT2 + INPUT3 + "\0\0").getBytes(StandardCharsets.UTF_8));
         }
 
-        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, 2)) {
+        try (InputStreamWriteStream ws = new InputStreamWriteStream(ctx, timeoutSpec(), 2)) {
             final String INPUT1 = "abcd";
             final String INPUT2 = "efgh";
             final String INPUT3 = "ijkl";

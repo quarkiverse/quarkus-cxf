@@ -185,10 +185,7 @@ public class RedirectRest {
     public Uni<String> async(@PathParam("client") String client, @QueryParam("sizeBytes") int sizeBytes,
             @QueryParam("delayMs") int delayMs) {
         return CxfMutinyUtils
-                .<LargeSlowResponse> toUni(handler -> getClient(client).largeSlowAsync(sizeBytes, delayMs, res -> {
-                    Log.info("=============== res");
-                    handler.handleResponse(res);
-                }))
+                .<LargeSlowResponse> toUni(handler -> getClient(client).largeSlowAsync(sizeBytes, delayMs, 0, handler))
                 .map(response -> response.getReturn().getPayload());
     }
 
@@ -197,7 +194,7 @@ public class RedirectRest {
     @Produces(MediaType.TEXT_PLAIN)
     public String largeHelloSync(@PathParam("client") String client, @QueryParam("sizeBytes") int sizeBytes,
             @QueryParam("delayMs") int delayMs) {
-        return getClient(client).largeSlow(sizeBytes, delayMs).getPayload();
+        return getClient(client).largeSlow(sizeBytes, delayMs, 0).getPayload();
     }
 
     @Path("/retransmitCacheSync")
@@ -250,12 +247,8 @@ public class RedirectRest {
                                 STATUS_CODE_HEADER, List.of(statusCode))
                         : Map.of());
 
-        Log.info("=============== caller");
         return CxfMutinyUtils.<io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheResponse> toResponseUni(
-                handler -> retransmitCache.retransmitCacheAsync(expectedFileCount, body, res -> {
-                    Log.info("=============== res");
-                    handler.handleResponse(res);
-                }))
+                handler -> retransmitCache.retransmitCacheAsync(expectedFileCount, body, handler))
                 .map(retransmitCacheResponse -> retransmitCacheResponse.getPayload().getReturn().getPayload())
                 .map(payload -> Response.ok(payload).build())
                 .onFailure().recoverWithItem(e -> {

@@ -8,8 +8,9 @@
 
   <xs:complexType name="largeSlow">
     <xs:sequence>
-      <xs:element name="arg0" type="xs:int"/>
-      <xs:element name="arg1" type="xs:int"/>
+      <xs:element name="sizeBytes" type="xs:int"/>
+      <xs:element name="clientDeserializationDelayMs" type="xs:int"/>
+      <xs:element name="serviceExecutionDelayMs" type="xs:int"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -21,7 +22,7 @@
 
   <xs:complexType name="largeSlowOutput">
     <xs:sequence>
-      <xs:element name="delayMs" type="xs:int"/>
+      <xs:element name="clientDeserializationDelayMs" type="xs:int"/>
       <xs:element minOccurs="0" name="payload" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>

@@ -16,8 +16,9 @@ import jakarta.xml.bind.annotation.XmlType;
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
- *         <element name="arg0" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         <element name="arg1" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         <element name="sizeBytes" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         <element name="clientDeserializationDelayMs" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         <element name="serviceExecutionDelayMs" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       </sequence>
  *     </restriction>
  *   </complexContent>
@@ -28,44 +29,62 @@ import jakarta.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "largeSlow", propOrder = {
-    "arg0",
-    "arg1"
+    "sizeBytes",
+    "clientDeserializationDelayMs",
+    "serviceExecutionDelayMs"
 })
 public class LargeSlow {
 
-    protected int arg0;
-    protected int arg1;
+    protected int sizeBytes;
+    protected int clientDeserializationDelayMs;
+    protected int serviceExecutionDelayMs;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the sizeBytes property.
      * 
      */
-    public int getArg0() {
-        return arg0;
+    public int getSizeBytes() {
+        return sizeBytes;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the sizeBytes property.
      * 
      */
-    public void setArg0(int value) {
-        this.arg0 = value;
+    public void setSizeBytes(int value) {
+        this.sizeBytes = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the clientDeserializationDelayMs property.
      * 
      */
-    public int getArg1() {
-        return arg1;
+    public int getClientDeserializationDelayMs() {
+        return clientDeserializationDelayMs;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the clientDeserializationDelayMs property.
      * 
      */
-    public void setArg1(int value) {
-        this.arg1 = value;
+    public void setClientDeserializationDelayMs(int value) {
+        this.clientDeserializationDelayMs = value;
+    }
+
+    /**
+     * Gets the value of the serviceExecutionDelayMs property.
+     * 
+     */
+    public int getServiceExecutionDelayMs() {
+        return serviceExecutionDelayMs;
+    }
+
+    /**
+     * Sets the value of the serviceExecutionDelayMs property.
+     * 
+     */
+    public void setServiceExecutionDelayMs(int value) {
+        this.serviceExecutionDelayMs = value;
     }
 
 }
