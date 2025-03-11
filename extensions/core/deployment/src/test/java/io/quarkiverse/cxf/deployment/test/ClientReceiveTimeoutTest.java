@@ -3,11 +3,15 @@ package io.quarkiverse.cxf.deployment.test;
 import java.net.SocketTimeoutException;
 import java.net.http.HttpTimeoutException;
 import java.nio.channels.ClosedChannelException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Response;
 import jakarta.xml.ws.WebServiceException;
 
 import org.apache.cxf.frontend.ClientProxy;
@@ -18,8 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.HTTPConduitImpl;
-import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
-import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 import io.quarkus.test.QuarkusUnitTest;
@@ -98,6 +100,10 @@ public class ClientReceiveTimeoutTest {
                 .isThrownBy(() -> helloVertxClient.hello("Joe"))
                 .withRootCauseInstanceOf(SocketTimeoutException.class);
 
+        Assertions
+                .assertThatExceptionOfType(ExecutionException.class)
+                .isThrownBy(() -> helloVertxClient.helloAsync("Joe").get())
+                .withRootCauseInstanceOf(SocketTimeoutException.class);
     }
 
     @WebService
@@ -106,6 +112,11 @@ public class ClientReceiveTimeoutTest {
         @WebMethod
         String hello(String person);
 
+        @WebMethod
+        Response<String> helloAsync(String reqBody);
+
+        @WebMethod
+        Future<?> helloAsync(String reqBody, AsyncHandler<String> asyncHandler);
     }
 
     @WebService(endpointInterface = "io.quarkiverse.cxf.deployment.test.ClientReceiveTimeoutTest$HelloService", serviceName = "HelloService")
@@ -114,12 +125,22 @@ public class ClientReceiveTimeoutTest {
         @Override
         public String hello(String person) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(200);
                 return "Hello " + person;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public Response<String> helloAsync(String reqBody) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Future<?> helloAsync(String reqBody, AsyncHandler<String> asyncHandler) {
+            throw new UnsupportedOperationException();
         }
     }
 

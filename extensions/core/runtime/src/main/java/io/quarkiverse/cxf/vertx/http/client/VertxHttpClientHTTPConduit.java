@@ -19,36 +19,37 @@
 
 package io.quarkiverse.cxf.vertx.http.client;
 
-import static io.vertx.core.http.HttpHeaders.CONTENT_LENGTH;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PushbackInputStream;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.Proxy.Type;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import io.quarkiverse.cxf.CXFClientInfo;
+import io.quarkiverse.cxf.QuarkusCxfUtils;
+import io.quarkiverse.cxf.QuarkusTLSClientParameters;
+import io.quarkiverse.cxf.vertx.http.client.BodyRecorder;
+import io.quarkiverse.cxf.vertx.http.client.BodyRecorder.BodyWriter;
+import io.quarkiverse.cxf.vertx.http.client.BodyRecorder.StoredBody;
+import io.quarkiverse.cxf.vertx.http.client.ErrorBuffer;
+import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
+import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.ClientSpec;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpException;
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.InstanceHandle;
+import io.quarkus.runtime.BlockingOperationControl;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.MultiMap;
+import io.vertx.core.Promise;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpClientResponse;
+import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpVersion;
+import io.vertx.core.http.RequestOptions;
+import io.vertx.core.http.impl.HttpUtils;
+import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.net.ProxyOptions;
+import io.vertx.core.net.ProxyType;
+import io.vertx.core.streams.WriteStream;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.util.PropertyUtils;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
@@ -78,34 +79,36 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logging.Logger;
 
-import io.quarkiverse.cxf.CXFClientInfo;
-import io.quarkiverse.cxf.QuarkusCxfUtils;
-import io.quarkiverse.cxf.QuarkusTLSClientParameters;
-import io.quarkiverse.cxf.vertx.http.client.BodyRecorder.BodyWriter;
-import io.quarkiverse.cxf.vertx.http.client.BodyRecorder.StoredBody;
-import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.ClientSpec;
-import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.RequestBodyEvent.RequestBodyEventType;
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.InstanceHandle;
-import io.quarkus.runtime.BlockingOperationControl;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.MultiMap;
-import io.vertx.core.Promise;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientRequest;
-import io.vertx.core.http.HttpClientResponse;
-import io.vertx.core.http.HttpHeaders;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpVersion;
-import io.vertx.core.http.RequestOptions;
-import io.vertx.core.http.impl.HttpUtils;
-import io.vertx.core.impl.ContextInternal;
-import io.vertx.core.net.ProxyOptions;
-import io.vertx.core.net.ProxyType;
-import io.vertx.core.streams.WriteStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PushbackInputStream;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static io.vertx.core.http.HttpHeaders.CONTENT_LENGTH;
 
 /**
  */
@@ -123,12 +126,12 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
     private final CXFClientInfo clientInfo;
 
     public VertxHttpClientHTTPConduit(
-            CXFClientInfo clientInfo,
-            Bus b,
-            EndpointInfo ei,
-            EndpointReferenceType t,
-            HttpClientPool httpClientPool)
-            throws IOException {
+        CXFClientInfo clientInfo,
+        Bus b,
+        EndpointInfo ei,
+        EndpointReferenceType t,
+        HttpClientPool httpClientPool)
+        throws IOException {
         super(b, ei, t);
         this.clientInfo = clientInfo;
         this.httpClientPool = httpClientPool;
@@ -152,13 +155,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         final boolean blockingAllowed = BlockingOperationControl.isBlockingAllowed();
         if (!isAsync && !blockingAllowed) {
             throw new IllegalStateException(
-                    "You have attempted to perform a blocking service method call on Vert.x event loop thread with CXF client "
-                            + clientInfo.getConfigKey() + "."
-                            + " This is not allowed, as blocking the IO thread will cause major performance issues with your application."
-                            + " You need to offload the blocking CXF client call to a worker thread,"
-                            + " e.g. by using the @io.smallrye.common.annotation.Blocking annotation on a caller method"
-                            + " where it is supported by the underlying Quarkus extension, such as quarkus-rest, quarkus-vertx,"
-                            + " quarkus-reactive-routes, quarkus-grpc, quarkus-messaging-* and possibly others.");
+                "You have attempted to perform a blocking service method call on Vert.x event loop thread with CXF client "
+                    + clientInfo.getConfigKey() + "."
+                    + " This is not allowed, as blocking the IO thread will cause major performance issues with your application."
+                    + " You need to offload the blocking CXF client call to a worker thread,"
+                    + " e.g. by using the @io.smallrye.common.annotation.Blocking annotation on a caller method"
+                    + " where it is supported by the underlying Quarkus extension, such as quarkus-rest, quarkus-vertx,"
+                    + " quarkus-reactive-routes, quarkus-grpc, quarkus-messaging-* and possibly others.");
         }
 
         final HttpVersion version = getVersion(message, csPolicy);
@@ -188,21 +191,21 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         InetSocketAddress adr;
         if (proxy != null && (adr = (InetSocketAddress) proxy.address()) != null) {
             requestOptions.setProxyOptions(
-                    new ProxyOptions()
-                            .setHost(adr.getHostName())
-                            .setPort(adr.getPort())
-                            .setType(toProxyType(proxy.type())));
+                new ProxyOptions()
+                    .setHost(adr.getHostName())
+                    .setPort(adr.getPort())
+                    .setType(toProxyType(proxy.type())));
         }
 
         final String query = uri.getQuery();
         final String pathAndQuery = query != null && !query.isEmpty()
-                ? uri.getPath() + "?" + query
-                : uri.getPath();
+            ? uri.getPath() + "?" + query
+            : uri.getPath();
         requestOptions
-                .setMethod(method)
-                .setHost(uri.getHost())
-                .setURI(pathAndQuery)
-                .setConnectTimeout(determineConnectionTimeout(message, csPolicy));
+            .setMethod(method)
+            .setHost(uri.getHost())
+            .setURI(pathAndQuery)
+            .setConnectTimeout(determineConnectionTimeout(message, csPolicy));
 
         final int port = uri.getPort();
         if (port >= 0) {
@@ -215,17 +218,17 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         final RequestContext requestContext = new RequestContext(
-                clientInfo,
-                uri,
-                requestOptions,
-                clientParameters != null
-                        ? new ClientSpec(version, clientParameters.getTlsConfigurationName(),
-                                clientParameters.getTlsConfiguration())
-                        : new ClientSpec(version, null, null),
-                determineReceiveTimeout(message, csPolicy),
-                isAsync,
-                csPolicy.getMaxRetransmits(),
-                csPolicy.isAutoRedirect());
+            clientInfo,
+            uri,
+            requestOptions,
+            clientParameters != null
+                ? new ClientSpec(version, clientParameters.getTlsConfigurationName(),
+                clientParameters.getTlsConfiguration())
+                : new ClientSpec(version, null, null),
+            determineReceiveTimeout(message, csPolicy),
+            isAsync,
+            csPolicy.getMaxRetransmits(),
+            csPolicy.isAutoRedirect());
         message.put(RequestContext.class, requestContext);
 
     }
@@ -233,15 +236,15 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
     private static void validateClientParameters(QuarkusTLSClientParameters clientParameters) {
         if (clientParameters.getSSLSocketFactory() != null) {
             throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
-                    + " does not support SSLSocketFactory set via TLSClientParameters");
+                + " does not support SSLSocketFactory set via TLSClientParameters");
         }
         if (clientParameters.getSslContext() != null) {
             throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
-                    + " does not support SSLContext set via TLSClientParameters");
+                + " does not support SSLContext set via TLSClientParameters");
         }
         if (clientParameters.isUseHttpsURLConnectionDefaultSslSocketFactory()) {
             throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
-                    + " does not support TLSClientParameters.isUseHttpsURLConnectionDefaultSslSocketFactory() returning true");
+                + " does not support TLSClientParameters.isUseHttpsURLConnectionDefaultSslSocketFactory() returning true");
         }
     }
 
@@ -258,35 +261,35 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
     @Override
     protected OutputStream createOutputStream(
-            Message message,
-            boolean possibleRetransmit,
-            boolean isChunking,
-            int chunkThreshold) throws IOException {
+        Message message,
+        boolean possibleRetransmit,
+        boolean isChunking,
+        int chunkThreshold) throws IOException {
         final RequestContext requestContext = message.get(RequestContext.class);
         final IOEHandler<ResponseEvent> responseHandler = new ResponseHandler(
-                requestContext.uri,
-                message,
-                cookies,
-                incomingObserver);
+            requestContext.uri,
+            message,
+            cookies,
+            incomingObserver);
 
         final HttpAuthSupplier authSupp = authSupplier;
         final IOEHandler<RequestBodyEvent> requestBodyHandler = new RequestBodyHandler(
-                (ContextInternal) httpClientPool.getVertx().getOrCreateContext(),
-                requestContext.clientInfo,
-                message,
-                requestContext.uri,
-                cookies,
-                userAgent,
-                httpClientPool,
-                requestContext.requestOptions,
-                requestContext.clientSpec,
-                requestContext.receiveTimeoutMs,
-                responseHandler,
-                requestContext.async,
-                requestContext.autoRedirect || (authSupp != null && authSupp.requiresRequestCaching()),
-                requestContext.maxRetransmits,
-                getAuthorization(),
-                authSupp);
+            (ContextInternal) httpClientPool.getVertx().getOrCreateContext(),
+            requestContext.clientInfo,
+            message,
+            requestContext.uri,
+            cookies,
+            userAgent,
+            httpClientPool,
+            requestContext.requestOptions,
+            requestContext.clientSpec,
+            requestContext.receiveTimeoutMs,
+            responseHandler,
+            requestContext.async,
+            requestContext.autoRedirect || (authSupp != null && authSupp.requiresRequestCaching()),
+            requestContext.maxRetransmits,
+            getAuthorization(),
+            authSupp);
         return new RequestBodyOutputStream(chunkThreshold, requestBodyHandler);
     }
 
@@ -342,36 +345,36 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         if (clientParameters.getHostnameVerifier() != null) {
             throw new IllegalStateException(
-                    getConduitName() + " does not support setting a hostname verifier."
-                            + " AllowAllHostnameVerifier can be replaced by using a named TLS configuration"
-                            + " with hostname-verification-algorithm set to NONE");
+                getConduitName() + " does not support setting a hostname verifier."
+                    + " AllowAllHostnameVerifier can be replaced by using a named TLS configuration"
+                    + " with hostname-verification-algorithm set to NONE");
         }
 
         if (clientParameters instanceof QuarkusTLSClientParameters) {
             return (QuarkusTLSClientParameters) clientParameters;
         }
         throw new IllegalStateException(
-                VertxHttpClientHTTPConduit.class.getName() + " accepts only " + QuarkusTLSClientParameters.class.getName());
+            VertxHttpClientHTTPConduit.class.getName() + " accepts only " + QuarkusTLSClientParameters.class.getName());
     }
 
     @Override
     public void setTlsClientParameters(TLSClientParameters params) {
         if (params != null && !(params instanceof QuarkusTLSClientParameters)) {
             throw new IllegalStateException(
-                    VertxHttpClientHTTPConduit.class.getName() + " accepts only " + QuarkusTLSClientParameters.class.getName());
+                VertxHttpClientHTTPConduit.class.getName() + " accepts only " + QuarkusTLSClientParameters.class.getName());
         }
         super.setTlsClientParameters(params);
     }
 
     static record RequestContext(
-            CXFClientInfo clientInfo,
-            URI uri,
-            RequestOptions requestOptions,
-            ClientSpec clientSpec,
-            long receiveTimeoutMs,
-            boolean async,
-            int maxRetransmits,
-            boolean autoRedirect) {
+        CXFClientInfo clientInfo,
+        URI uri,
+        RequestOptions requestOptions,
+        ClientSpec clientSpec,
+        long receiveTimeoutMs,
+        boolean async,
+        int maxRetransmits,
+        boolean autoRedirect) {
     }
 
     static record RequestBodyEvent(Buffer buffer, RequestBodyEventType eventType) {
@@ -422,7 +425,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     off += remainingCapacity;
                     len -= remainingCapacity;
                     final Buffer buf = buffer;
-                    bodyHandler.handle(new RequestBodyEvent(buf, RequestBodyEventType.NON_FINAL_CHUNK));
+                    bodyHandler.handle(new RequestBodyEvent(buf, RequestBodyEvent.RequestBodyEventType.NON_FINAL_CHUNK));
                     firstChunkSent = true;
                     buffer = Buffer.buffer(chunkSize);
                 }
@@ -439,7 +442,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         public void write(int b) throws IOException {
             if (chunkSize > 0 && buffer.length() == chunkSize) {
                 final Buffer buf = buffer;
-                bodyHandler.handle(new RequestBodyEvent(buf, RequestBodyEventType.NON_FINAL_CHUNK));
+                bodyHandler.handle(new RequestBodyEvent(buf, RequestBodyEvent.RequestBodyEventType.NON_FINAL_CHUNK));
                 firstChunkSent = true;
                 buffer = Buffer.buffer(chunkSize);
             }
@@ -451,8 +454,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             if (!closed) {
                 closed = true;
                 super.close();
-                RequestBodyEventType eventType = firstChunkSent ? RequestBodyEventType.FINAL_CHUNK
-                        : RequestBodyEventType.COMPLETE_BODY;
+                RequestBodyEvent.RequestBodyEventType eventType = firstChunkSent ? RequestBodyEvent.RequestBodyEventType.FINAL_CHUNK
+                    : RequestBodyEvent.RequestBodyEventType.COMPLETE_BODY;
                 final Buffer buf = buffer;
                 buffer = null;
                 bodyHandler.handle(new RequestBodyEvent(buf, eventType));
@@ -488,6 +491,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private List<URI> redirects;
         private Set<String> authUris;
         private final int maxRetransmits;
+        private final long receiveTimeout;
         private final CXFClientInfo clientInfo;
 
         /* Locks and conditions */
@@ -501,22 +505,22 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private Mode mode;
 
         public RequestBodyHandler(
-                ContextInternal context,
-                CXFClientInfo clientInfo,
-                Message outMessage,
-                URI url,
-                Cookies cookies,
-                String userAgent,
-                HttpClientPool clientPool,
-                RequestOptions requestOptions,
-                ClientSpec clientSpec,
-                long receiveTimeoutMs,
-                IOEHandler<ResponseEvent> responseHandler,
-                boolean isAsync,
-                boolean possibleRetransmit,
-                int maxRetransmits,
-                AuthorizationPolicy authorizationPolicy,
-                HttpAuthSupplier authSupplier) {
+            ContextInternal context,
+            CXFClientInfo clientInfo,
+            Message outMessage,
+            URI url,
+            Cookies cookies,
+            String userAgent,
+            HttpClientPool clientPool,
+            RequestOptions requestOptions,
+            ClientSpec clientSpec,
+            long receiveTimeoutMs,
+            IOEHandler<ResponseEvent> responseHandler,
+            boolean isAsync,
+            boolean possibleRetransmit,
+            int maxRetransmits,
+            AuthorizationPolicy authorizationPolicy,
+            HttpAuthSupplier authSupplier) {
             super();
             this.context = context;
             this.clientInfo = clientInfo;
@@ -527,11 +531,12 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             this.clientPool = clientPool;
             this.requestOptions = requestOptions;
             this.clientSpec = clientSpec;
+            this.receiveTimeout = receiveTimeoutMs;
 
             final long deadline = System.currentTimeMillis() + receiveTimeoutMs;
             this.mode = isAsync
-                    ? new Mode.Async(url, deadline, responseHandler, outMessage)
-                    : new Mode.Sync(url, deadline, responseHandler, lock);
+                ? new Mode.Async(url, deadline, responseHandler, outMessage)
+                : new Mode.Sync(url, deadline, responseHandler, lock);
 
             this.possibleRetransmit = possibleRetransmit;
             this.maxRetransmits = maxRetransmits;
@@ -549,8 +554,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 firstEvent = false;
                 if (possibleRetransmit) {
                     Future<BodyWriter> bw = BodyRecorder.openWriter(
-                            (ContextInternal) clientPool.getVertx().getOrCreateContext(),
-                            clientInfo.getRetransmitCache());
+                        (ContextInternal) clientPool.getVertx().getOrCreateContext(),
+                        clientInfo.getRetransmitCache());
                     bw = bw.compose(w -> w.write(buffer.slice()));
                     if (finalChunk) {
                         body = bw.compose(w -> w.close());
@@ -562,43 +567,43 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
 
                 final HttpClient client = clientPool.getClient(clientSpec);
-                if (event.eventType() == RequestBodyEventType.COMPLETE_BODY && requestHasBody(requestOptions.getMethod())) {
+                if (event.eventType() == RequestBodyEvent.RequestBodyEventType.COMPLETE_BODY && requestHasBody(requestOptions.getMethod())) {
                     requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(buffer.length()));
                 }
 
                 setProtocolHeaders(outMessage, requestOptions, userAgent);
 
                 client.request(requestOptions)
-                        .onSuccess(req -> {
-                            if (!finalChunk) {
-                                req
-                                        .setChunked(true)
-                                        .write(buffer)
-                                        .onFailure(t -> mode.responseFailed(t, true));
+                    .onSuccess(req -> {
+                        if (!finalChunk) {
+                            req
+                                .setChunked(true)
+                                .write(buffer)
+                                .onFailure(t -> mode.responseFailed(t, true));
 
-                                lock.lock();
-                                try {
-                                    this.request = new Result<>(req, null);
-                                    requestReady.signal();
-                                } finally {
-                                    lock.unlock();
-                                }
-                            } else {
-                                finishRequest(req, buffer);
-                            }
-                        })
-                        .onFailure(t -> {
                             lock.lock();
                             try {
-                                request = Result.failure(t);
+                                this.request = new Result<>(req, null);
                                 requestReady.signal();
-
-                                /* Fail also the response so that awaitResponse() fails rather than waiting forever */
-                                mode.responseFailed(t, false);
                             } finally {
                                 lock.unlock();
                             }
-                        });
+                        } else {
+                            finishRequest(req, buffer);
+                        }
+                    })
+                    .onFailure(t -> {
+                        lock.lock();
+                        try {
+                            request = Result.failure(t);
+                            requestReady.signal();
+
+                            /* Fail also the response so that awaitResponse() fails rather than waiting forever */
+                            mode.responseFailed(t, false);
+                        } finally {
+                            lock.unlock();
+                        }
+                    });
 
                 if (finalChunk) {
                     mode.awaitResponse();
@@ -618,8 +623,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 final HttpClientRequest req = awaitRequest();
                 if (!finalChunk) {
                     req
-                            .write(buffer)
-                            .onFailure(RequestBodyHandler.this::failResponse);
+                        .write(buffer)
+                        .onFailure(RequestBodyHandler.this::failResponse);
                 } else {
                     finishRequest(req, buffer);
                     mode.awaitResponse();
@@ -629,88 +634,101 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         @SuppressWarnings("resource")
         void finishRequest(HttpClientRequest req, Buffer buffer) {
-            prepareResponse(req);
+            prepareResponse(req, receiveTimeout);
             req
-                    .end(buffer)
-                    .onFailure(t -> mode.responseFailed(t, true));
+                .end(buffer)
+                .onFailure(t -> mode.responseFailed(t, true));
 
         }
 
-        private void prepareResponse(HttpClientRequest req) {
+        private void prepareResponse(HttpClientRequest req, long receiveTimeout) {
             req.response()
-                    .onComplete(ar -> {
-                        final InputStreamWriteStream sink = new InputStreamWriteStream(context, 2);
-                        final HttpClientResponse response = ar.result();
-                        if (ar.succeeded()) {
+                .timeout(receiveTimeout, TimeUnit.MILLISECONDS)
+                .onComplete(ar -> {
+                    final InputStreamWriteStream sink = new InputStreamWriteStream(context, 2);
+                    final HttpClientResponse response = ar.result();
+                    if (ar.succeeded()) {
 
-                            /* need to retransmit? */
-                            final int statusCode = response.statusCode();
-                            final boolean isRedirect = isRedirect(statusCode);
-                            final boolean isAuthRetransmit = statusCode == 401 || statusCode == 407;
-                            if (possibleRetransmit
-                                    && (isRedirect || isAuthRetransmit)
-                                    && (maxRetransmits < 0 || performedRetransmits(redirects) < maxRetransmits)) {
-                                ResponseHandler.updateResponseHeaders(response, outMessage, cookies);
+                        /* need to retransmit? */
+                        final int statusCode = response.statusCode();
+                        final boolean isRedirect = isRedirect(statusCode);
+                        final boolean isAuthRetransmit = statusCode == 401 || statusCode == 407;
+                        if (possibleRetransmit
+                            && (isRedirect || isAuthRetransmit)
+                            && (maxRetransmits < 0 || performedRetransmits(redirects) < maxRetransmits)) {
+                            ResponseHandler.updateResponseHeaders(response, outMessage, cookies);
 
-                                try {
-                                    if (isAuthRetransmit) {
-                                        authorize(clientInfo.getConfigKey(), response);
-                                    } else if (isRedirect) {
-                                        redirect(response);
-                                    } else {
-                                        throw new IllegalStateException("Either authorize or retransmit should be true");
-                                    }
-                                } catch (IOException e) {
-                                    sink.setException((IOException) e);
-                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), e));
-                                } catch (Exception e) {
-                                    final IOException ioe = new IOException(e);
-                                    sink.setException(ioe);
-                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
+                            try {
+                                if (isAuthRetransmit) {
+                                    authorize(clientInfo.getConfigKey(), response);
+                                } else if (isRedirect) {
+                                    redirect(response);
+                                } else {
+                                    throw new IllegalStateException("Either authorize or retransmit should be true");
                                 }
-                                return;
-                            } else {
-                                if (!possibleRetransmit && isRedirect) {
-                                    final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
-                                    final IOException ioe = new IOException(
-                                            "Received redirection status " + statusCode
-                                                    + " from " + url + " by client " + qKey
-                                                    + " but following redirects is not enabled for this client."
-                                                    + " You may want to set quarkus.cxf.client." + qKey
-                                                    + ".auto-redirect = true");
-                                    sink.setException(ioe);
-                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
-                                    return;
-                                }
-                                if (possibleRetransmit && isRedirect && maxRetransmits >= 0
-                                        && maxRetransmits <= performedRetransmits(redirects)) {
-                                    final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
-                                    final IOException ioe = new IOException("Received redirection status " +
-                                            statusCode + " from " + redirects.get(redirects.size() - 1)
-                                            + " by client " + qKey + ", but already performed maximum"
-                                            + " number " + maxRetransmits
-                                            + " of allowed retransmits; you may want to"
-                                            + " increase quarkus.cxf.client." + qKey + ".max-retransmits. Visited URIs: "
-                                            + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")));
-                                    sink.setException(ioe);
-                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
-                                    return;
-                                }
-                                /* No retransmit */
-                                /* Pass the body back to CXF */
-                                // log.trace("Staring pipe");
-                                response.pipeTo(sink)
-                                        .onFailure(e -> {
-                                            sink.setException(e);
-                                            //log.trace("Pipe failed", e);
-                                        });
-                                // .onSuccess(v -> log.trace("Pipe finished"));
+                            } catch (IOException e) {
+                                sink.setException((IOException) e);
+                                mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), e));
+                            } catch (Exception e) {
+                                final IOException ioe = new IOException(e);
+                                sink.setException(ioe);
+                                mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
                             }
+                            return;
+                        } else {
+                            if (!possibleRetransmit && isRedirect) {
+                                final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
+                                final IOException ioe = new IOException(
+                                    "Received redirection status " + statusCode
+                                        + " from " + url + " by client " + qKey
+                                        + " but following redirects is not enabled for this client."
+                                        + " You may want to set quarkus.cxf.client." + qKey
+                                        + ".auto-redirect = true");
+                                sink.setException(ioe);
+                                mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
+                                return;
+                            }
+                            if (possibleRetransmit && isRedirect && maxRetransmits >= 0
+                                && maxRetransmits <= performedRetransmits(redirects)) {
+                                final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
+                                final IOException ioe = new IOException("Received redirection status " +
+                                    statusCode + " from " + redirects.get(redirects.size() - 1)
+                                    + " by client " + qKey + ", but already performed maximum"
+                                    + " number " + maxRetransmits
+                                    + " of allowed retransmits; you may want to"
+                                    + " increase quarkus.cxf.client." + qKey + ".max-retransmits. Visited URIs: "
+                                    + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")));
+                                sink.setException(ioe);
+                                mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
+                                return;
+                            }
+                            /* No retransmit */
+                            /* Pass the body back to CXF */
+                            // log.trace("Staring pipe");
+                            response.pipeTo(sink)
+                                .onFailure(e -> {
+                                    sink.setException(e);
+                                    //log.trace("Pipe failed", e);
+                                });
+                            // .onSuccess(v -> log.trace("Pipe finished"));
+                        }
+
+                        mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), null));
+                    } else {
+                        Throwable cause;
+                        if (ar.cause() instanceof TimeoutException) {
+                            SocketTimeoutException socketTimeoutException = new SocketTimeoutException(
+                                "Timeout waiting for HTTP response from" + url);
+                            sink.setException(socketTimeoutException);
+                            cause = socketTimeoutException;
                         } else {
                             sink.setException(ar.cause());
+                            cause = ar.cause();
                         }
-                        mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ar.cause()));
-                    });
+
+                        mode.responseReady(Result.failure(cause));
+                    }
+                });
         }
 
         private void redirect(final HttpClientResponse response) throws IOException {
@@ -718,13 +736,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             final String loc = response.getHeader("Location");
 
             if (loc != null && !loc.startsWith("http")
-                    && !MessageUtils.getContextualBoolean(outMessage, AUTO_REDIRECT_ALLOW_REL_URI)) {
+                && !MessageUtils.getContextualBoolean(outMessage, AUTO_REDIRECT_ALLOW_REL_URI)) {
                 final String qKey = QuarkusCxfUtils
-                        .quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
+                    .quoteCongurationKeyIfNeeded(clientInfo.getConfigKey());
                 throw new IOException(
-                        "Illegal relative redirect " + loc + " detected by client " + qKey
-                                + "; you may want to set quarkus.cxf.client."
-                                + qKey + ".redirect-relative-uri = true");
+                    "Illegal relative redirect " + loc + " detected by client " + qKey
+                        + "; you may want to set quarkus.cxf.client."
+                        + qKey + ".redirect-relative-uri = true");
             }
             final URI previousUri = redirects.get(redirects.size() - 1);
             try {
@@ -736,7 +754,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 retransmit(newUri, Function.identity());
             } catch (URISyntaxException e) {
                 throw new IOException(
-                        "Could not resolve redirect Location " + loc + " relative to " + url, e);
+                    "Could not resolve redirect Location " + loc + " relative to " + url, e);
             }
         }
 
@@ -748,7 +766,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         void retransmit(URI newURL, Function<RequestOptions, RequestOptions> requestOptionsCustomizer) throws IOException {
             if (log.isDebugEnabled()) {
                 log.debugf("Redirect retransmit: %s",
-                        redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")));
+                    redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")));
             }
             boolean ssl;
             int port = newURL.getPort();
@@ -782,95 +800,95 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             options.setURI(requestURI);
 
             this.body.compose(storedBody -> {
-                final long contentLength = storedBody.length();
-                if (contentLength >= 0 && requestHasBody(options.getMethod())) {
-                    /* Only one buffer recorded */
-                    options.putHeader(CONTENT_LENGTH, String.valueOf(contentLength));
-                } else {
-                    options.removeHeader(CONTENT_LENGTH);
-                }
+                    final long contentLength = storedBody.length();
+                    if (contentLength >= 0 && requestHasBody(options.getMethod())) {
+                        /* Only one buffer recorded */
+                        options.putHeader(CONTENT_LENGTH, String.valueOf(contentLength));
+                    } else {
+                        options.removeHeader(CONTENT_LENGTH);
+                    }
 
-                final HttpClient client = clientPool.getClient(clientSpec);
+                    final HttpClient client = clientPool.getClient(clientSpec);
 
-                // Should not be necessary, because we copy from the original requestOptions
-                // setProtocolHeaders(outMessage, options, userAgent);
+                    // Should not be necessary, because we copy from the original requestOptions
+                    // setProtocolHeaders(outMessage, options, userAgent);
 
-                return client.request(requestOptionsCustomizer.apply(options))
+                    return client.request(requestOptionsCustomizer.apply(options))
                         .compose(req -> {
-                            prepareResponse(req);
+                            prepareResponse(req, receiveTimeout);
                             return storedBody.pipeTo(req).compose(v -> Future.succeededFuture(req));
                         });
-            })
-                    .onFailure(t -> {
-                        lock.lock();
-                        try {
-                            request = Result.failure(t);
-                            requestReady.signal();
+                })
+                .onFailure(t -> {
+                    lock.lock();
+                    try {
+                        request = Result.failure(t);
+                        requestReady.signal();
 
-                            /* Fail also the response so that awaitResponse() fails rather than waiting forever */
-                            mode.responseFailed(t, false);
-                        } finally {
-                            lock.unlock();
-                        }
-                    });
+                        /* Fail also the response so that awaitResponse() fails rather than waiting forever */
+                        mode.responseFailed(t, false);
+                    } finally {
+                        lock.unlock();
+                    }
+                });
         }
 
         private static boolean isRedirect(int statusCode) {
             return statusCode >= 301 // fast return for statusCode == 200 that we'll see mostly
-                    && (statusCode == 302 || statusCode == 301 || statusCode == 303 || statusCode == 307);
+                && (statusCode == 302 || statusCode == 301 || statusCode == 303 || statusCode == 307);
         }
 
         private static void detectRedirectLoop(
-                String configKey,
-                List<URI> redirects,
-                URI newURL,
-                Message message) throws IOException {
+            String configKey,
+            List<URI> redirects,
+            URI newURL,
+            Message message) throws IOException {
             if (redirects.contains(newURL)) {
                 final Integer maxSameURICount = PropertyUtils.getInteger(message, AUTO_REDIRECT_MAX_SAME_URI_COUNT);
                 final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
                 if (maxSameURICount != null) {
                     final long sameUriRetransmitsToBePerformed = redirects.stream()
-                            .skip(1) // the first element is not a retransmit
-                            .filter(newURL::equals)
-                            .count()
-                            + 1 // +1 because newURL was not added to redirects yet
-                    ;
+                        .skip(1) // the first element is not a retransmit
+                        .filter(newURL::equals)
+                        .count()
+                        + 1 // +1 because newURL was not added to redirects yet
+                        ;
                     if (sameUriRetransmitsToBePerformed > maxSameURICount.longValue()) {
                         final String msg = "Redirect chain with too many same URIs " + newURL
-                                + " (found " + sameUriRetransmitsToBePerformed + ", allowed <= " + maxSameURICount.longValue()
-                                + ")"
-                                + " detected by client " + qKey + ": "
-                                + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> "))
-                                + " -> " + newURL
-                                + ". You may want to increase quarkus.cxf.client." + qKey
-                                + ".max-same-uri";
+                            + " (found " + sameUriRetransmitsToBePerformed + ", allowed <= " + maxSameURICount.longValue()
+                            + ")"
+                            + " detected by client " + qKey + ": "
+                            + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> "))
+                            + " -> " + newURL
+                            + ". You may want to increase quarkus.cxf.client." + qKey
+                            + ".max-same-uri";
                         throw new IOException(msg);
                     }
                     /* Allowed number of same URI */
                     return;
                 }
                 final String msg = "Redirect loop detected by client " + qKey + ": "
-                        + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")) + " -> " + newURL
-                        + ". You may want to increase quarkus.cxf.client." + qKey
-                        + ".max-same-uri";
+                    + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")) + " -> " + newURL
+                    + ". You may want to increase quarkus.cxf.client." + qKey
+                    + ".max-same-uri";
                 throw new IOException(msg);
             }
         }
 
         private static void checkAllowedRedirectUri(String configKey,
-                URI lastUri,
-                URI newUri,
-                Message message) throws IOException {
+                                                    URI lastUri,
+                                                    URI newUri,
+                                                    Message message) throws IOException {
             if (MessageUtils.getContextualBoolean(message, AUTO_REDIRECT_SAME_HOST_ONLY)) {
 
                 // This can be further restricted to make sure newURL completely contains lastURL
                 // though making sure the same HTTP scheme and host are preserved should be enough
 
                 if (!newUri.getScheme().equals(lastUri.getScheme())
-                        || !newUri.getHost().equals(lastUri.getHost())) {
+                    || !newUri.getHost().equals(lastUri.getHost())) {
                     final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
                     String msg = "Different HTTP scheme or different host detected in redirect URI " + newUri
-                            + " compared to original URI " + lastUri + " by client " + qKey;
+                        + " compared to original URI " + lastUri + " by client " + qKey;
                     throw new IOException(msg);
                 }
             }
@@ -879,21 +897,21 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             if (allowedRedirectURI != null && !newUri.toString().startsWith(allowedRedirectURI)) {
                 final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
                 String msg = "Illegal redirect URI " + newUri + " detected by client " + qKey
-                        + "; expected to start with " + allowedRedirectURI;
+                    + "; expected to start with " + allowedRedirectURI;
                 throw new IOException(msg);
             }
         }
 
         private void authorize(
-                String configKey,
-                HttpClientResponse response) throws IOException {
+            String configKey,
+            HttpClientResponse response) throws IOException {
             final URI currentURI = url;
             final String authHeaderVal = response.getHeader("WWW-Authenticate");
             if (authHeaderVal == null) {
                 final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
                 final String logMessage = "WWW-Authenticate response header is not set on a response from "
-                        + currentURI
-                        + " for client " + qKey;
+                    + currentURI
+                    + " for client " + qKey;
                 throw new IOException(logMessage);
             }
             final HttpAuthHeader authHeader = new HttpAuthHeader(authHeaderVal);
@@ -901,13 +919,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             detectAuthorizationLoop(configKey, outMessage, currentURI, realm);
             AuthorizationPolicy effectiveAthPolicy = getEffectiveAuthPolicy(outMessage, authorizationPolicy);
             String authorizationToken = authSupplier.getAuthorization(
-                    effectiveAthPolicy, currentURI, outMessage, authHeader.getFullHeader());
+                effectiveAthPolicy, currentURI, outMessage, authHeader.getFullHeader());
             if (authorizationToken == null) {
                 // authentication not possible => we give up
                 final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
                 final String logMessage = "No authorization token supplied for client " + qKey
-                        + " remote URI " + currentURI
-                        + " and WWW-Authenticate: " + authHeader.getFullHeader();
+                    + " remote URI " + currentURI
+                    + " and WWW-Authenticate: " + authHeader.getFullHeader();
                 throw new IOException(logMessage);
             }
             retransmit(currentURI, requestOptions -> requestOptions.addHeader("Authorization", authorizationToken));
@@ -932,10 +950,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         private void detectAuthorizationLoop(
-                String configKey,
-                Message message,
-                URI currentURL,
-                String realm) throws IOException {
+            String configKey,
+            Message message,
+            URI currentURL,
+            String realm) throws IOException {
             @SuppressWarnings("unchecked")
             Set<String> authURLs = authUris;
             if (authURLs == null) {
@@ -949,11 +967,11 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 final String qKey = QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
 
                 final String logMessage = "Authorization loop detected by client "
-                        + qKey + " on URL \""
-                        + currentURL
-                        + "\" with realm \""
-                        + realm
-                        + "\"";
+                    + qKey + " on URL \""
+                    + currentURL
+                    + "\" with realm \""
+                    + realm
+                    + "\"";
                 throw new IOException(logMessage);
             }
         }
@@ -966,7 +984,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             final MultiMap outHeaders;
             final String contentType;
             if (requestHasBody(requestOptions.getMethod())
-                    && (contentType = h.determineContentType()) != null) {
+                && (contentType = h.determineContentType()) != null) {
                 requestOptions.putHeader(HttpHeaderHelper.CONTENT_TYPE, contentType);
                 outHeaders = requestOptions.getHeaders();
             } else {
@@ -976,7 +994,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
             boolean addHeaders = MessageUtils.getContextualBoolean(outMessage, Headers.ADD_HEADERS_PROPERTY, false);
 
-            for (Map.Entry<String, List<String>> header : h.headerMap().entrySet()) {
+            for (Entry<String, List<String>> header : h.headerMap().entrySet()) {
                 if (HttpHeaderHelper.CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
                     continue;
                 }
@@ -1021,8 +1039,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 return true;
             }
             if (
-            /* Fast track for the second most likely value */
-            method == HttpMethod.GET
+                /* Fast track for the second most likely value */
+                method == HttpMethod.GET
                     || method == HttpMethod.HEAD
                     || method == HttpMethod.OPTIONS
                     || method == HttpMethod.TRACE) {
@@ -1268,7 +1286,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
     static record ResponseEvent(HttpClientResponse response, InputStream responseBodyInputStream) {
         public static ResponseEvent prepare(Future<StoredBody> body, HttpClientResponse response,
-                InputStream responseBodyInputStream) {
+                                            InputStream responseBodyInputStream) {
             if (body != null) {
                 body.compose(b -> b.discard());
             }
@@ -1294,7 +1312,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
     static class ResponseHandler implements IOEHandler<ResponseEvent> {
         private static final Collection<Integer> DEFAULT_SERVICE_NOT_AVAILABLE_ON_HTTP_STATUS_CODES = Arrays.asList(404, 429,
-                503);
+            503);
 
         private final URI url;
         private final Message outMessage;
@@ -1329,23 +1347,23 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             propagateConduit(exchange, inMessage);
 
             if ((!doProcessResponse(outMessage, responseCode)
-                    || HttpURLConnection.HTTP_ACCEPTED == responseCode)
-                    && MessageUtils.getContextualBoolean(outMessage,
-                            Message.PROCESS_202_RESPONSE_ONEWAY_OR_PARTIAL, true)) {
+                || HttpURLConnection.HTTP_ACCEPTED == responseCode)
+                && MessageUtils.getContextualBoolean(outMessage,
+                Message.PROCESS_202_RESPONSE_ONEWAY_OR_PARTIAL, true)) {
                 in = getPartialResponse(response, responseEvent.responseBodyInputStream);
                 if (in == null
-                        || !MessageUtils.getContextualBoolean(outMessage, Message.PROCESS_ONEWAY_RESPONSE, false)) {
+                    || !MessageUtils.getContextualBoolean(outMessage, Message.PROCESS_ONEWAY_RESPONSE, false)) {
                     // oneway operation or decoupled MEP without
                     // partial response
                     if (isOneway(exchange) && responseCode > 300) {
                         final String msg = "HTTP response '" + responseCode + ": "
-                                + response.statusMessage() + "' when communicating with " + url.toString();
+                            + response.statusMessage() + "' when communicating with " + url.toString();
                         throw new VertxHttpException(msg);
                     }
                     // REVISIT move the decoupled destination property name into api
                     Endpoint ep = exchange.getEndpoint();
                     if (null != ep && null != ep.getEndpointInfo() && null == ep.getEndpointInfo()
-                            .getProperty("org.apache.cxf.ws.addressing.MAPAggregator.decoupledDestination")) {
+                        .getProperty("org.apache.cxf.ws.addressing.MAPAggregator.decoupledDestination")) {
                         // remove callback so that it won't be invoked twice
                         ClientCallback cc = exchange.remove(ClientCallback.class);
                         if (null != cc) {
@@ -1356,7 +1374,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
                     exchange.setInMessage(inMessage);
                     if (MessageUtils.getContextualBoolean(outMessage,
-                            Message.PROPAGATE_202_RESPONSE_ONEWAY_OR_PARTIAL, false)) {
+                        Message.PROPAGATE_202_RESPONSE_ONEWAY_OR_PARTIAL, false)) {
                         incomingObserver.onMessage(inMessage);
                     }
 
@@ -1388,13 +1406,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         static int doProcessResponseCode(URI uri, HttpClientResponse response, Exchange exchange, Message outMessage)
-                throws IOException {
+            throws IOException {
             final int rc = response.statusCode();
             if (exchange != null) {
                 exchange.put(Message.RESPONSE_CODE, rc);
                 final Collection<Integer> serviceNotAvailableOnHttpStatusCodes = MessageUtils
-                        .getContextualIntegers(outMessage, SERVICE_NOT_AVAILABLE_ON_HTTP_STATUS_CODES,
-                                DEFAULT_SERVICE_NOT_AVAILABLE_ON_HTTP_STATUS_CODES);
+                    .getContextualIntegers(outMessage, SERVICE_NOT_AVAILABLE_ON_HTTP_STATUS_CODES,
+                        DEFAULT_SERVICE_NOT_AVAILABLE_ON_HTTP_STATUS_CODES);
                 if (serviceNotAvailableOnHttpStatusCodes.contains(rc)) {
                     exchange.put("org.apache.cxf.transport.service_not_available", true);
                 }
@@ -1407,8 +1425,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             // soap fault because of a HTTP 400 should be returned back to the client (SOAP 1.2 spec)
 
             if (rc >= 400 && rc != 500
-                    && !MessageUtils.getContextualBoolean(outMessage, NO_IO_EXCEPTIONS)
-                    && (rc > 400 || !MessageUtils.getContextualBoolean(outMessage, PROCESS_FAULT_ON_HTTP_400))) {
+                && !MessageUtils.getContextualBoolean(outMessage, NO_IO_EXCEPTIONS)
+                && (rc > 400 || !MessageUtils.getContextualBoolean(outMessage, PROCESS_FAULT_ON_HTTP_400))) {
 
                 throw new HTTPException(rc, response.statusMessage(), uri.toURL());
             }
@@ -1885,14 +1903,14 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         static final Map<Object, UseAsyncPolicy> values = Map.of(
-                "ALWAYS", ALWAYS,
-                "always", ALWAYS,
-                "ASYNC_ONLY", ASYNC_ONLY,
-                "async_only", ASYNC_ONLY,
-                "NEVER", NEVER,
-                "never", NEVER,
-                Boolean.TRUE, ALWAYS,
-                Boolean.FALSE, NEVER);
+            "ALWAYS", ALWAYS,
+            "always", ALWAYS,
+            "ASYNC_ONLY", ASYNC_ONLY,
+            "async_only", ASYNC_ONLY,
+            "NEVER", NEVER,
+            "never", NEVER,
+            Boolean.TRUE, ALWAYS,
+            Boolean.FALSE, NEVER);
 
         public static UseAsyncPolicy of(Object st) {
             if (st == null) {
