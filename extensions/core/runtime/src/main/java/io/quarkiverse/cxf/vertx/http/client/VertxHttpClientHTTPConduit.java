@@ -29,7 +29,6 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayDeque;
@@ -46,6 +45,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -103,6 +103,7 @@ import io.vertx.core.http.HttpVersion;
 import io.vertx.core.http.RequestOptions;
 import io.vertx.core.http.impl.HttpUtils;
 import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.impl.NoStackTraceTimeoutException;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.core.net.ProxyType;
 import io.vertx.core.streams.WriteStream;
@@ -528,10 +529,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             this.requestOptions = requestOptions;
             this.clientSpec = clientSpec;
 
-            final long deadline = System.currentTimeMillis() + receiveTimeoutMs;
             this.mode = isAsync
-                    ? new Mode.Async(url, deadline, responseHandler, outMessage)
-                    : new Mode.Sync(url, deadline, responseHandler, lock);
+                    ? new Mode.Async(TimeoutSpec.create(receiveTimeoutMs, url), responseHandler, outMessage)
+                    : new Mode.Sync(TimeoutSpec.create(receiveTimeoutMs, url), responseHandler, lock);
 
             this.possibleRetransmit = possibleRetransmit;
             this.maxRetransmits = maxRetransmits;
@@ -569,11 +569,16 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 setProtocolHeaders(outMessage, requestOptions, userAgent);
 
                 client.request(requestOptions)
+                        .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                        .recover(e -> mode.timeoutSpec.mapTimeoutException(e, "Timeout %d ms sending request headers to %s"))
                         .onSuccess(req -> {
                             if (!finalChunk) {
                                 req
                                         .setChunked(true)
                                         .write(buffer)
+                                        .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                                        .recover(e -> mode.timeoutSpec.mapTimeoutException(e,
+                                                "Timeout %d ms sending request body to %s"))
                                         .onFailure(t -> mode.responseFailed(t, true));
 
                                 lock.lock();
@@ -619,6 +624,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 if (!finalChunk) {
                     req
                             .write(buffer)
+                            .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                            .recover(e -> mode.timeoutSpec.mapTimeoutException(e, "Timeout %d ms sending request body to %s"))
                             .onFailure(RequestBodyHandler.this::failResponse);
                 } else {
                     finishRequest(req, buffer);
@@ -632,14 +639,19 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             prepareResponse(req);
             req
                     .end(buffer)
+                    .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                    .recover(e -> mode.timeoutSpec.mapTimeoutException(e, "Timeout %d ms sending request body to %s"))
                     .onFailure(t -> mode.responseFailed(t, true));
 
         }
 
         private void prepareResponse(HttpClientRequest req) {
             req.response()
+                    .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                    .recover(e -> mode.timeoutSpec.mapTimeoutException(e,
+                            "Timeout waiting %d ms to receive response headers from %s"))
                     .onComplete(ar -> {
-                        final InputStreamWriteStream sink = new InputStreamWriteStream(context, 2);
+                        final InputStreamWriteStream sink = new InputStreamWriteStream(context, mode.timeoutSpec, 2);
                         final HttpClientResponse response = ar.result();
                         if (ar.succeeded()) {
 
@@ -700,6 +712,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 /* Pass the body back to CXF */
                                 // log.trace("Staring pipe");
                                 response.pipeTo(sink)
+                                        .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                                        .recover(e -> mode.timeoutSpec.mapTimeoutException(e,
+                                                "Timeout waiting %d ms to receive response body from %s"))
                                         .onFailure(e -> {
                                             sink.setException(e);
                                             //log.trace("Pipe failed", e);
@@ -936,7 +951,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 Message message,
                 URI currentURL,
                 String realm) throws IOException {
-            @SuppressWarnings("unchecked")
             Set<String> authURLs = authUris;
             if (authURLs == null) {
                 authURLs = authUris = new LinkedHashSet<>();
@@ -1038,7 +1052,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 try {
                     if (request == null) {
                         if (!requestReady.await(requestOptions.getConnectTimeout(), TimeUnit.MILLISECONDS) || request == null) {
-                            throw new SocketTimeoutException("Timeout waiting for HTTP connect to " + url);
+                            throw new TimeoutIOException(
+                                    "Timeout waiting " + requestOptions.getConnectTimeout() + " ms for HTTP connect to " + url);
                         }
                     }
                     if (request.succeeded()) {
@@ -1087,8 +1102,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
                 try {
                     waitingForDrain = true;
-                    if (!requestWriteable.await(mode.receiveTimeout(), TimeUnit.MILLISECONDS)) {
-                        throw new SocketTimeoutException("Timeout waiting for sending HTTP headers to " + url);
+                    if (!requestWriteable.await(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)) {
+                        throw new TimeoutIOException("Timeout waiting " + mode.timeoutSpec.totalReceiveTimeout
+                                + " ms for sending HTTP headers to " + url);
                     }
                 } finally {
                     waitingForDrain = false;
@@ -1098,29 +1114,12 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         static abstract class Mode {
             /** Time in epoch milliseconds when the response should be fully received */
-            private final long receiveTimeoutDeadline;
-            protected final URI url;
+            protected final TimeoutSpec timeoutSpec;
             protected final IOEHandler<ResponseEvent> responseHandler;
 
-            Mode(URI url, long receiveTimeoutDeadline, IOEHandler<ResponseEvent> responseHandler) {
-                this.url = url;
-                this.receiveTimeoutDeadline = receiveTimeoutDeadline;
+            Mode(TimeoutSpec timeoutSpec, IOEHandler<ResponseEvent> responseHandler) {
+                this.timeoutSpec = timeoutSpec;
                 this.responseHandler = responseHandler;
-            }
-
-            /**
-             * Computes the timeout for receive related operations based on {@link #receiveTimeoutDeadline}
-             *
-             * @return the timeout in milliseconds for response related operations
-             * @throws SocketTimeoutException if {@link #receiveTimeoutDeadline} was missed already
-             */
-            long receiveTimeout() throws SocketTimeoutException {
-                final long timeout = receiveTimeoutDeadline - System.currentTimeMillis();
-                if (timeout <= 0) {
-                    /* Too late already */
-                    throw new SocketTimeoutException("Timeout waiting for HTTP response from " + url);
-                }
-                return timeout;
             }
 
             protected abstract void responseFailed(Throwable t, boolean lockIfNeeded);
@@ -1139,8 +1138,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                  */
                 private Result<ResponseEvent> response;
 
-                Sync(URI url, long receiveTimeoutDeadline, IOEHandler<ResponseEvent> responseHandler, ReentrantLock lock) {
-                    super(url, receiveTimeoutDeadline, responseHandler);
+                Sync(TimeoutSpec timeoutSpec, IOEHandler<ResponseEvent> responseHandler, ReentrantLock lock) {
+                    super(timeoutSpec, responseHandler);
                     this.lock = lock;
                     this.responseReceived = lock.newCondition();
                 }
@@ -1184,13 +1183,15 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         lock.lock();
                         try {
                             if (response == null) {
-                                if (!responseReceived.await(receiveTimeout(), TimeUnit.MILLISECONDS) || response == null) {
-                                    throw new SocketTimeoutException("Timeout waiting for HTTP response from " + url);
+                                if (!responseReceived.await(timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                                        || response == null) {
+                                    timeoutSpec.throwTimeoutException(null,
+                                            "Timeout waiting %d ms to receive response headers from %s");
                                 }
                             }
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
-                            throw new IOException("Interrupted waiting for HTTP response from " + url, e);
+                            throw new IOException("Interrupted waiting for HTTP response from " + timeoutSpec.url, e);
                         } finally {
                             lock.unlock();
                         }
@@ -1199,7 +1200,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         return response.result();
                     } else {
                         final Throwable e = response.cause();
-                        throw new IOException("Unable to receive HTTP response from " + url, e);
+                        throw new IOException("Unable to receive HTTP response from " + timeoutSpec.url, e);
                     }
                 }
 
@@ -1208,8 +1209,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             static class Async extends Mode {
                 private final Message outMessage;
 
-                Async(URI url, long receiveTimeoutDeadline, IOEHandler<ResponseEvent> responseHandler, Message outMessage) {
-                    super(url, receiveTimeoutDeadline, responseHandler);
+                Async(TimeoutSpec timeoutSpec, IOEHandler<ResponseEvent> responseHandler, Message outMessage) {
+                    super(timeoutSpec, responseHandler);
                     this.outMessage = outMessage;
                 }
 
@@ -1264,6 +1265,67 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             }
         }
 
+    }
+
+    static record TimeoutSpec(long receiveTimeoutDeadline, long totalReceiveTimeout, URI url) {
+
+        static TimeoutSpec create(long receiveTimeoutMs, URI url) {
+            return new TimeoutSpec(System.currentTimeMillis() + receiveTimeoutMs, receiveTimeoutMs, url);
+        }
+
+        /**
+         * Computes the timeout for receive related operations based on {@link #receiveTimeoutDeadline} and current time
+         *
+         * @return the timeout in milliseconds for response related operations
+         */
+        long remainingTimeout() {
+            return receiveTimeoutDeadline - System.currentTimeMillis();
+        }
+
+        /**
+         * Throws a {@link TimeoutIOException} optionally passing it to the given {@code exceptionConsumer}.
+         *
+         * @param exceptionConsumer can be {@code null}
+         * @param messageTemplate
+         * @throws TimeoutIOException
+         */
+        void throwTimeoutException(Consumer<TimeoutIOException> exceptionConsumer, String messageTemplate)
+                throws TimeoutIOException {
+            TimeoutIOException result = createTimeoutException(messageTemplate);
+            if (exceptionConsumer != null) {
+                exceptionConsumer.accept(result);
+            }
+            throw result;
+        }
+
+        /**
+         * @return a new {@link TimeoutIOException} without throwing it
+         */
+        TimeoutIOException createTimeoutException(String messageTemplate) {
+            return new TimeoutIOException(messageTemplate.formatted(totalReceiveTimeout, url));
+        }
+
+        <T> Future<T> mapTimeoutException(Throwable originalException, String messageTemplate) {
+            return Future.failedFuture(
+                    originalException instanceof NoStackTraceTimeoutException ? createTimeoutException(messageTemplate)
+                            : originalException);
+        }
+
+    }
+
+    /**
+     * A custom timeout exception inheriting from {@link IOException} and having no stack trace for performance reasons
+     */
+    @SuppressWarnings("serial")
+    public static class TimeoutIOException extends IOException {
+        public TimeoutIOException(String msg) {
+            super(msg);
+        }
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            return this;
+        }
     }
 
     static record ResponseEvent(HttpClientResponse response, InputStream responseBodyInputStream) {
@@ -1507,6 +1569,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         private static final Buffer END = new ErrorBuffer();
 
+        private final TimeoutSpec timeoutSpec;
         private final ReentrantLock lock = new ReentrantLock();
         private final Condition queueChange = lock.newCondition();
         private final ContextInternal context;
@@ -1517,6 +1580,12 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
          */
         private final Queue<Buffer> queue;
         private int maxQueueSize;
+
+        /*
+         * Written from the consumer thread, read from the producer thread
+         * All read or write operations must be protected by lock
+         */
+        private TimeoutIOException timeoutException;
 
         /* Read and written from the consumer thread */
         private Buffer readBuffer;
@@ -1529,8 +1598,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         // private int writeCounter = 0;
         private Handler<Void> drainHandler;
 
-        public InputStreamWriteStream(ContextInternal context, int queueSize) {
+        public InputStreamWriteStream(ContextInternal context, TimeoutSpec timeoutSpec, int queueSize) {
             this.context = context;
+            this.timeoutSpec = timeoutSpec;
             setWriteQueueMaxSize(queueSize);
             this.queue = new ArrayDeque<>(queueSize);
         }
@@ -1554,6 +1624,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
+                if ((cause = timeoutException) != null) {
+                    handler.handle(Future.failedFuture(cause));
+                    return;
+                }
                 // bytesWritten += data.length();
                 // writeCounter++;
                 // log.tracef("Write #%d: %d bytes; %d total; queue size before %d", writeCounter, data.length(), bytesWritten,
@@ -1585,6 +1659,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
+                if ((cause = timeoutException) != null) {
+                    handler.handle(Future.failedFuture(cause));
+                    return;
+                }
                 // log.tracef("Ending writes, got %d bytes in %d writes; queue size before %d", bytesWritten, writeCounter,
                 // queue.size());
                 queue.offer(END);
@@ -1670,16 +1748,16 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             }
             int rbLen = rb.length();
             int readable = rbLen - readPosition;
-            // Log.infof("Readable %d bytes", readable);
+            // log.infof("Readable %d bytes", readable);
 
             int result;
             if (readable >= len) {
                 readable = len;
-                // Log.infof("Downsized readable to %d bytes", readable);
+                // log.infof("Downsized readable to %d bytes", readable);
                 rb.getBytes(readPosition, readPosition + readable, b, off);
-                // Log.infof("After read 1: %s", new String(b, off, readable, StandardCharsets.UTF_8));
+                // log.infof("After read 1: %s", new String(b, off, readable, StandardCharsets.UTF_8));
                 readPosition += readable;
-                // Log.infof("readPosition now at %d", readPosition);
+                // log.infof("readPosition now at %d", readPosition);
                 if (readPosition >= rbLen) {
                     freeReadBufferIfNeeded();
                 }
@@ -1690,7 +1768,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                  * available
                  */
                 rb.getBytes(readPosition, readPosition + readable, b, off);
-                // Log.infof("Read out current buffer %d completely: %s", System.identityHashCode(rb),
+                // log.infof("Read out current buffer %d completely: %s", System.identityHashCode(rb),
                 // new String(b, off, readable, StandardCharsets.UTF_8));
                 readPosition += readable;
                 // assert readPosition == rbLen;
@@ -1704,20 +1782,20 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     readable = rbLen - readPosition;
                     if (readable > len) {
                         readable = len;
-                        // Log.infof("Downsized readable to %d bytes", readable);
+                        // log.infof("Downsized readable to %d bytes", readable);
                     }
                     rb.getBytes(readPosition, readPosition + readable, b, off2);
-                    // Log.infof("Read 2 from buffer %d %d to %d: %s", System.identityHashCode(rb), readPosition,
+                    // log.infof("Read 2 from buffer %d %d to %d: %s", System.identityHashCode(rb), readPosition,
                     // readPosition + readable,
                     // new String(b, off2, readable, StandardCharsets.UTF_8));
                     readPosition += readable;
                     len -= readable;
                     off2 += readable;
-                    // Log.infof("readPosition now at %d", readPosition);
+                    // log.infof("readPosition now at %d", readPosition);
                     result += readable;
                 }
                 if (readPosition == rbLen) {
-                    // Log.infof("Buffer read out completely");
+                    // log.infof("Buffer read out completely");
                     freeReadBufferIfNeeded();
                 }
                 // assert readPosition <= rbLen;
@@ -1777,16 +1855,16 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         private Buffer takeBuffer(boolean blockingAwaitBuffer) throws IOException {
-            // Log.infof("About to take buffer at queue size %d %s", queue.size(),
+            // log.infof("About to take buffer at queue size %d %s", queue.size(),
             // blockingAwaitBuffer ? "with blocking" : "without blocking");
             Buffer rb = readBuffer;
             if (checkEndOrException(rb)) {
                 return null;
             }
-            // Log.infof("Buffer is null: %s; %d >= %d: %s", rb == null, readPosition, (rb == null ? -1 : rb.length()),
+            // log.infof("Buffer is null: %s; %d >= %d: %s", rb == null, readPosition, (rb == null ? -1 : rb.length()),
             // rb != null && readPosition >= rb.length());
             if (rb == null || readPosition >= rb.length()) {
-                // Log.info("Buffer is null or empty");
+                // log.info("Buffer is null or empty");
 
                 final ReentrantLock lock = this.lock;
                 final boolean writeQueueFull;
@@ -1795,15 +1873,19 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     lock.lockInterruptibly();
                     if (blockingAwaitBuffer) {
                         while ((readBuffer = rb = queue.poll()) == null) {
-                            // Log.infof("Awaiting a buffer at queue size %d", queue.size());
-                            queueChange.await();
+                            // log.infof("Awaiting a buffer at queue size %d", queue.size());
+                            if (!queueChange.await(timeoutSpec.remainingTimeout(),
+                                    TimeUnit.MILLISECONDS)) {
+                                timeoutSpec.throwTimeoutException(e -> timeoutException = e,
+                                        "Timeout waiting %d ms to receive response body from %s");
+                            }
                         }
                     } else {
                         readBuffer = rb = queue.poll();
                     }
                     writeQueueFull = writeQueueFullInternal();
                     // qSize = queue.size();
-                    // log.tracef("%s unblock the producer at queue size %d", (writeQueueFull ? "May not" : "May"), qSize);
+                    // log.tracef("%s unblock the producer at queue size %d", (writeQueueFull ? "May not" : "May"), queue.size());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     throw new IOException(e);
@@ -1827,7 +1909,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     });
                 }
             }
-            // Log.infof("Taken a %s buffer %d, will read from %d to %d; queue size after: %d",
+            // log.infof("Taken a %s buffer %d, will read from %d to %d; queue size after: %d",
             // (rb != null ? "valid" : "null"),
             // System.identityHashCode(rb),
             // readPosition, (rb != null ? rb.length() : -1), queue.size());

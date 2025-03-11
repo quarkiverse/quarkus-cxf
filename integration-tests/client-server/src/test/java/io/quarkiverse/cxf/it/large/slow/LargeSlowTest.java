@@ -16,6 +16,9 @@ import java.util.concurrent.Future;
 
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
+import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.logging.Log;
@@ -24,19 +27,20 @@ import io.restassured.RestAssured;
 
 @QuarkusTest
 class LargeSlowTest {
+    private static final Logger log = Logger.getLogger(LargeSlowTest.class);
     private static final int KiB = 1024;
     private static final int DELAY_MS = 4000;
     private static final int PAYLOAD_SIZE = 9 * KiB;
     private static final int WORKERS_COUNT = 5;
 
     @Test
-    void largeHelloAsync() throws InterruptedException, ExecutionException {
-        assertEndpoint("largeHelloAsync");
+    void asyncLargeSlow() throws InterruptedException, ExecutionException {
+        assertEndpoint("async/largeSlow");
     }
 
     @Test
-    void largeHelloSync() throws InterruptedException, ExecutionException {
-        assertEndpoint("largeHelloSync");
+    void syncLargeSlow() throws InterruptedException, ExecutionException {
+        assertEndpoint("sync/largeSlow");
     }
 
     private void assertEndpoint(String endpoint) throws InterruptedException, ExecutionException {
@@ -51,7 +55,8 @@ class LargeSlowTest {
                     Log.infof("Sending a request with delay %d ms", DELAY_MS);
                     String result = RestAssured.given()
                             .queryParam("sizeBytes", PAYLOAD_SIZE)
-                            .queryParam("delayMs", DELAY_MS)
+                            .queryParam("clientDeserializationDelayMs", DELAY_MS)
+                            .queryParam("serviceExecutionDelayMs", 0)
                             .get("/LargeSlowRest/" + endpoint)
                             .then()
                             .statusCode(200)
@@ -71,7 +76,7 @@ class LargeSlowTest {
             executor.shutdown();
         }
         /*
-         * Asserting that the requests pass in DELAY_MS plus some snallish constant time proves that their execution
+         * Asserting that the requests pass in DELAY_MS plus some smallish constant time proves that their execution
          * does not block each other. Otherwise, it would take nearly WORKERS_COUNT times DELAY_MS.
          */
         long diff = System.currentTimeMillis() - startTime;
@@ -80,6 +85,36 @@ class LargeSlowTest {
 
         /* Make sure the Thread.sleep() was not removed from LargeSlowOutput.setDelayMs(int) */
         Assertions.assertThat(diff).isGreaterThan(DELAY_MS);
+    }
+
+    @Test
+    void asyncLargeSlowReceiveTimeout() throws InterruptedException, ExecutionException {
+        log.info("Starting LargeSlowTest.asyncLargeSlowReceiveTimeout()");
+        assertTimeout("async/largeSlowReceiveTimeout");
+    }
+
+    @Test
+    void syncLargeSlowReceiveTimeout() throws InterruptedException, ExecutionException {
+        log.info("Starting LargeSlowTest.syncLargeSlowReceiveTimeout()");
+        assertTimeout("sync/largeSlowReceiveTimeout");
+    }
+
+    static void assertTimeout(String endpoint) {
+        final int sizeBytes = 5;
+        RestAssured.given()
+                .queryParam("sizeBytes", sizeBytes)
+                .queryParam("clientDeserializationDelayMs", 0)
+                .queryParam("serviceExecutionDelayMs", 500)
+                .get("/LargeSlowRest/" + endpoint)
+                .then()
+                .statusCode(500)
+                .body(
+                        CoreMatchers
+                                .is(
+                                        Matchers.oneOf(
+                                                "Timeout waiting 100 ms to receive response headers from http://localhost:8081/soap/largeSlow",
+                                                "Read timed out" // with export QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory
+                                        )));
     }
 
     /**

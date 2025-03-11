@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *   <complexContent>
  *     <restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       <sequence>
- *         <element name="delayMs" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         <element name="clientDeserializationDelayMs" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         <element name="payload" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       </sequence>
  *     </restriction>
@@ -30,46 +30,47 @@ import jakarta.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(name = "largeSlowOutput", propOrder = {
-    "delayMs",
+    "clientDeserializationDelayMs",
     "payload"
 })
 public class LargeSlowOutput {
 
-    protected int delayMs;
+    protected int clientDeserializationDelayMs;
     protected String payload;
 
     public LargeSlowOutput() {
-
     }
-    public LargeSlowOutput(int delayMs, String payload) {
-        this.delayMs = delayMs;
+
+    public LargeSlowOutput(int clientDeserializationDelayMs, String payload) {
+        super();
+        this.clientDeserializationDelayMs = clientDeserializationDelayMs;
         this.payload = payload;
     }
 
     /**
-     * Gets the value of the delayMs property.
+     * Gets the value of the clientDeserializationDelayMs property.
      *
      */
-    public int getDelayMs() {
-        return delayMs;
+    public int getClientDeserializationDelayMs() {
+        return clientDeserializationDelayMs;
     }
 
     /**
-     * Sets the value of the delayMs property.
+     * Sets the value of the clientDeserializationDelayMs property.
      *
      */
-    @XmlElement(name = "delayMs")
-    public void setDelayMs(int delayMs) {
-        Log.infof("Sleeping for %d ms", delayMs);
-        if (delayMs > 0) {
+    @XmlElement(name = "clientDeserializationDelayMs")
+    public void setClientDeserializationDelayMs(int value) {
+        Log.infof("Prolonging deserialization by %d ms", value);
+        if (value > 0) {
             try {
-                Thread.sleep(delayMs);
+                Thread.sleep(value);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
         }
-        this.delayMs = delayMs;
+        this.clientDeserializationDelayMs = value;
     }
 
     /**

@@ -22,6 +22,8 @@ import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
 import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.TimeoutIOException;
+import io.quarkus.logging.Log;
 import io.quarkus.test.QuarkusUnitTest;
 
 public class ClientReceiveTimeoutTest {
@@ -73,12 +75,16 @@ public class ClientReceiveTimeoutTest {
      * response.
      */
     @Test
-    public void expectReceiveTimeout() {
+    public void helloUrlConnection() {
 
         Assertions
                 .assertThatExceptionOfType(WebServiceException.class)
                 .isThrownBy(() -> helloUrlConnection.hello("Joe"))
                 .withRootCauseInstanceOf(SocketTimeoutException.class);
+    }
+
+    @Test
+    public void helloHttpClient() {
 
         Assertions
                 .assertThatExceptionOfType(WebServiceException.class)
@@ -90,13 +96,20 @@ public class ClientReceiveTimeoutTest {
                         ClosedChannelException.class // seen only on GitHub Actions
                 );
 
+    }
+
+    @Test
+    public void helloVertxClient() {
         Assertions.assertThat(ClientProxy.getClient(helloVertxClient).getConduit())
                 .isInstanceOf(VertxHttpClientHTTPConduit.class);
 
         Assertions
                 .assertThatExceptionOfType(WebServiceException.class)
                 .isThrownBy(() -> helloVertxClient.hello("Joe"))
-                .withRootCauseInstanceOf(SocketTimeoutException.class);
+                .havingRootCause()
+                .isInstanceOf(TimeoutIOException.class)
+                .withMessage("Timeout waiting " + RECEIVE_TIMEOUT
+                        + " ms to receive response headers from http://localhost:8081/services/hello");
 
     }
 
@@ -113,8 +126,10 @@ public class ClientReceiveTimeoutTest {
 
         @Override
         public String hello(String person) {
+            int delay = 500;
             try {
-                Thread.sleep(500);
+                Log.infof("Sleeping %d ms", delay);
+                Thread.sleep(delay);
                 return "Hello " + person;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
