@@ -24,6 +24,9 @@ public class LargeSlowRest {
     @CXFClient("largeSlowReceiveTimeout")
     LargeSlowService largeSlowReceiveTimeout;
 
+    @CXFClient("largeSlowSOAPHandler")
+    LargeSlowService largeSlowSOAPHandler;
+
     @Path("/async/{client}")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -69,6 +72,9 @@ public class LargeSlowRest {
             }
             case "largeSlowReceiveTimeout": {
                 return largeSlowReceiveTimeout;
+            }
+            case "largeSlowSOAPHandler": {
+                return largeSlowSOAPHandler;
             }
             default:
                 throw new IllegalArgumentException("Unexpected client: " + client);
