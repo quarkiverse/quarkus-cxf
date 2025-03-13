@@ -24,6 +24,9 @@ public class LargeSlowRest {
     @CXFClient("largeSlowReceiveTimeout")
     LargeSlowService largeSlowReceiveTimeout;
 
+    @CXFClient("largeSlowSOAPHandler")
+    LargeSlowService largeSlowSOAPHandler;
+
     @Path("/async/{client}")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -31,9 +34,15 @@ public class LargeSlowRest {
             @PathParam("client") String client,
             @QueryParam("sizeBytes") int sizeBytes,
             @QueryParam("clientDeserializationDelayMs") int clientDeserializationDelayMs,
-            @QueryParam("serviceExecutionDelayMs") int serviceExecutionDelayMs) {
-        Log.infof("Invoking async %s client with clientDeserializationDelayMs %s and serviceExecutionDelayMs %d", client,
-                clientDeserializationDelayMs, serviceExecutionDelayMs);
+            @QueryParam("serviceExecutionDelayMs") int serviceExecutionDelayMs,
+            @QueryParam("worker") Integer worker,
+            @QueryParam("iteration") Integer iteration) {
+        if (worker != null) {
+            Log.infof("Invoking async %s client with worker %s and iteration %d", client, worker, iteration);
+        } else {
+            Log.infof("Invoking async %s client with clientDeserializationDelayMs %s and serviceExecutionDelayMs %d", client,
+                    clientDeserializationDelayMs, serviceExecutionDelayMs);
+        }
         return CxfMutinyUtils
                 .<LargeSlowResponse> toUni(handler -> getClient(client)
                         .largeSlowAsync(sizeBytes, clientDeserializationDelayMs, serviceExecutionDelayMs, handler))
@@ -50,9 +59,15 @@ public class LargeSlowRest {
             @PathParam("client") String client,
             @QueryParam("sizeBytes") int sizeBytes,
             @QueryParam("clientDeserializationDelayMs") int clientDeserializationDelayMs,
-            @QueryParam("serviceExecutionDelayMs") int serviceExecutionDelayMs) {
-        Log.infof("Invoking sync %s client with clientDeserializationDelayMs %s and serviceExecutionDelayMs %d", client,
-                clientDeserializationDelayMs, serviceExecutionDelayMs);
+            @QueryParam("serviceExecutionDelayMs") int serviceExecutionDelayMs,
+            @QueryParam("worker") Integer worker,
+            @QueryParam("iteration") Integer iteration) {
+        if (worker != null) {
+            Log.infof("Invoking sync %s client with worker %s and iteration %d", client, worker, iteration);
+        } else {
+            Log.infof("Invoking sync %s client with clientDeserializationDelayMs %s and serviceExecutionDelayMs %d", client,
+                    clientDeserializationDelayMs, serviceExecutionDelayMs);
+        }
         try {
             return Response.ok(
                     getClient(client).largeSlow(sizeBytes, clientDeserializationDelayMs, serviceExecutionDelayMs).getPayload())
@@ -69,6 +84,9 @@ public class LargeSlowRest {
             }
             case "largeSlowReceiveTimeout": {
                 return largeSlowReceiveTimeout;
+            }
+            case "largeSlowSOAPHandler": {
+                return largeSlowSOAPHandler;
             }
             default:
                 throw new IllegalArgumentException("Unexpected client: " + client);
