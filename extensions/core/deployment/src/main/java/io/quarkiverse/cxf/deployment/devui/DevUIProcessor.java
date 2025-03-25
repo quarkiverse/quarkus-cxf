@@ -48,7 +48,7 @@ public class DevUIProcessor {
         return cardPageBuildItem;
     }
 
-    @BuildStep(onlyIf = IsDevelopment.class)
+    @BuildStep
     JsonRPCProvidersBuildItem createJsonRPCServiceForCache() {
         return new JsonRPCProvidersBuildItem(CxfJsonRPCService.class);
     }
