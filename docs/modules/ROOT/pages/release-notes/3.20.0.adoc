@@ -1,0 +1,111 @@
+= {quarkus-cxf-project-name} 3.20.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.19.x -> 3.20.0 - https://quarkus.io/blog/quarkus-3-20-0-released/[release notes]
+* CXF 4.1.0 -> 4.1.1 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.1.0+++...+++cxf-4.1.1[changelog]
+
+== New features
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1616[#1616] Support authorization retransmits in `VertxHttpClientHTTPConduit`
+
+Before {quarkus-cxf-project-name} 3.20.0, when a remote service responded with `401 Unauthorized` or `407 Proxy Authentication Required`,
+then clients backed by `VertxHttpClientHTTPConduit` would simply fail
+and the only possible workaround was to use some other HTTP conduit, such as `URLConnectionHTTPConduit`.
+
+Since {quarkus-cxf-project-name} 3.20.0, `VertxHttpClientHTTPConduit` handles `401` and `407` status codes properly
+by sending a new request with an `Authorization` header value derived from one or more of following options:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-scheme[quarkus.cxf.client."client-name".auth.scheme]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-token[quarkus.cxf.client."client-name".auth.token]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-username[quarkus.cxf.client."client-name".proxy-username]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`
+
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1730[#1730] Async client fails when getting remote WSDL: `IllegalStateException: You have attempted to perform a blocking service method...`
+
+Before {quarkus-cxf-project-name} 3.20.0, when an asynchronous client backed by `VertxHttpClientHTTPConduit` that had a remote WSDL URI set via
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-wsdl[quarkus.cxf.client."client-name".wsdl]`,
+was called for the first time from a Vert.x Event Loop thread,
+then Quarkus CXF would reject performing the blocking operation of fetching the WSDL with the following message:
+
+[source]
+----
+java.lang.IllegalStateException: You have attempted to perform a blocking service method call on Vert.x event loop thread
+with CXF client my-client. This is not allowed, as blocking the IO thread will cause major performance issues with your
+application. You need to offload the blocking CXF client call to a worker thread, e.g. by using the
+@io.smallrye.common.annotation.Blocking annotation on a caller method where it is supported by the underlying Quarkus
+extension, such as quarkus-rest, quarkus-vertx, quarkus-reactive-routes, quarkus-grpc, quarkus-messaging-* and possibly
+others.
+----
+
+Since {quarkus-cxf-project-name} 3.20.0, the implementation of `io.quarkiverse.cxf.mutiny.CxfMutinyUtils.toUni(Consumer<AsyncHandler<T>>)` takes care
+that the `Consumer` call is dispatched on a worker thread if needed.
+
+See also xref:user-guide/advanced-client-topics/asynchronous-client.adoc#callback-based-asynchronous-method[Callback-based asynchronous method] section of Asynchronous client guide.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1326[#1326] https://issues.apache.org/jira/browse/CXF-9003[CXF-9003] Name clash between Service methods with the same name in one Java package
+
+For each service method, several ancillary classes are generated at build time.
+These may represent a request or a response of an operation.
+So, for `com.acme.HelloService.hello()` method at least two classes `com.acme.jaxws_asm.Hello` and `com.acme.jaxws_asm.HelloResponse` would be generated.
+Before {quarkus-cxf-project-name} 3.20.0 and CXF 4.1.1, the name of the service class was not taken into account.
+Therefore, when there were multiple service interfaces containing methods with the same name in a single Java package,
+then the names for their ancillary classes would clash.
+Followingly, only one set of those classes, suiting only one of those services, would be stored in the application.
+At runtime, the following error message may appear in the application log:
+
+[source]
+----
+java.lang.IllegalArgumentException: argument type mismatch
+     at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+     at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+     at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+     at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+     at org.apache.cxf.databinding.AbstractWrapperHelper.createWrapperObject(AbstractWrapperHelper.java:114)
+     at org.apache.cxf.jaxws.interceptors.WrapperClassOutInterceptor.handleMessage(WrapperClassOutInterceptor.java:91)
+     at org.apache.cxf.phase.PhaseInterceptorChain.doIntercept(PhaseInterceptorChain.java:307)
+     at org.apache.cxf.endpoint.ClientImpl.doInvoke(ClientImpl.java:530)
+     at org.apache.cxf.endpoint.ClientImpl.invoke(ClientImpl.java:441)
+     at org.apache.cxf.endpoint.ClientImpl.invoke(ClientImpl.java:356)
+     at org.apache.cxf.endpoint.ClientImpl.invoke(ClientImpl.java:314)
+     at org.apache.cxf.frontend.ClientProxy.invokeSync(ClientProxy.java:96)
+     at org.apache.cxf.jaxws.JaxWsClientProxy.invoke(JaxWsClientProxy.java:140)
+     at jdk.proxy6/jdk.proxy6.$Proxy132.hello(Unknown Source)
+----
+
+The problem was fixed in CXF 4.1.1 and {quarkus-cxf-project-name} 3.20.0.
+Now, the name of the service class is taken into account.
+So for the above example, the names of the generated classes would be
+`com.acme.jaxws_asm.helloservice.Hello` and `com.acme.jaxws_asm.helloservice.HelloResponse` respectively.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1735[#1735] Receive timeout not honored by clients based on `VertxHttpClientHTTPConduit`
+
+Before {quarkus-cxf-project-name} 3.20.0, when the a service client backed by `VertxHttpClientHTTPConduit` started reading the response body,
+the receive timeout set via
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-receive-timeout[quarkus.cxf.client."client-name".receive-timeout]
+was not checked anymore.
+The operation would never fail in that phase, regardless whether the connection was slow, or the response body was large.
+
+Since {quarkus-cxf-project-name} 3.21.0, the receive timeout is honored also during reading the response body.
+
+== Deprecations
+
+=== Deprecated properties
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]` - use
+  `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]` instead
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]` - use
+  `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]` instead
+
+== Documentation improvements
+
+* Added a note on `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-wsdl[quarkus.cxf.client."client-name".wsdl]` that setting it is not always required.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.19.0+++...+++3.20.0

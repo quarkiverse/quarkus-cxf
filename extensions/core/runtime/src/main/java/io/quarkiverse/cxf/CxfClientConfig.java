@@ -225,9 +225,9 @@ public interface CxfClientConfig {
      *
      * See also:
      *
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".auth.redirect-relative-uri]`
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".auth.max-retransmits]`
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".auth.max-same-uri]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-redirect-relative-uri[quarkus.cxf.client."client-name".redirect-relative-uri]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-retransmits[quarkus.cxf.client."client-name".max-retransmits]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`
      *
      * [IMPORTANT]
      * ====
@@ -256,7 +256,7 @@ public interface CxfClientConfig {
      *
      * See also:
      *
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auth.auto-redirect]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
      *
      * @since 3.17.0
      * @asciidoclet
@@ -275,7 +275,7 @@ public interface CxfClientConfig {
      *
      * See also:
      *
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auth.auto-redirect]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
      *
      * @since 2.2.3
      * @asciidoclet
@@ -292,7 +292,7 @@ public interface CxfClientConfig {
      *
      * See also:
      *
-     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auth.auto-redirect]`
+     * * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
      *
      * @since 3.18.0
      * @asciidoclet
@@ -399,7 +399,7 @@ public interface CxfClientConfig {
 
     /**
      * HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit`
-     * implementation defined via `quarkus.cxf.client."client-name".auth.http-conduit-factory`. Other possible values: `1.1`,
+     * implementation defined via `quarkus.cxf.client."client-name".http-conduit-factory`. Other possible values: `1.1`,
      * `2`.
      *
      * Some of these values might be unsupported by some `HTTPConduit` implementations.
@@ -421,7 +421,7 @@ public interface CxfClientConfig {
     /**
      * An URI path (starting with `/`) or a full URI for the receipt of responses over a separate provider -> consumer
      * connection. If the value starts with `/`, then it is prefixed with the base URI configured via
-     * `quarkus.cxf.client."client-name".auth.decoupled-endpoint-base` before being used as a value for the WS-Addressing
+     * `quarkus.cxf.client."client-name".decoupled-endpoint-base` before being used as a value for the WS-Addressing
      * `ReplyTo`
      * message header.
      *
@@ -529,7 +529,7 @@ public interface CxfClientConfig {
      * The key store location for this client. The resource is first looked up in the classpath, then in the file system.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -543,7 +543,7 @@ public interface CxfClientConfig {
      * The key store password.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -557,7 +557,7 @@ public interface CxfClientConfig {
      * The type of the key store.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -572,7 +572,7 @@ public interface CxfClientConfig {
      * The key password.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -586,7 +586,7 @@ public interface CxfClientConfig {
      * The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -600,7 +600,7 @@ public interface CxfClientConfig {
      * The trust store password.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
@@ -614,7 +614,7 @@ public interface CxfClientConfig {
      * The type of the trust store.
      *
      * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]`
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
      * instead.
      *
      * @asciidoclet
