@@ -12,6 +12,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.antorassured.AntorAssured;
+import io.quarkiverse.antorassured.ResourceResolver;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -24,7 +25,7 @@ public class AntoraTest {
         RestAssured
                 .given()
                 .contentType(ContentType.HTML)
-                .get("/quarkus-cxf/dev/index.html")
+                .get(ResourceResolver.autodetect().getBaseUri().resolve("index.html"))
                 .then()
                 .statusCode(200)
                 .body(CoreMatchers.containsString("<h1 class=\"page\">Quarkus CXF</h1>"));
