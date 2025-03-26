@@ -1,0 +1,9 @@
+= {quarkus-cxf-project-name} 3.21.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.20.x -> 3.21.0 - https://quarkus.io/blog/quarkus-3-21-0-released/[release notes]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.20.0+++...+++3.21.0
