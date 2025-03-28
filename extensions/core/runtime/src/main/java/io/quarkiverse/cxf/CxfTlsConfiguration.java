@@ -19,16 +19,19 @@ public class CxfTlsConfiguration implements TlsConfiguration {
     private final KeyStore trustStore;
     private final KeyCertOptions keyStoreOptions;
     private final KeyStore keyStore;
+    private final String name;
 
     public CxfTlsConfiguration(
             KeyCertOptions keyStoreOptions,
             KeyStore keyStore,
             TrustOptions trustOptions,
-            KeyStore trustStore) {
+            KeyStore trustStore,
+            String name) {
         this.keyStoreOptions = keyStoreOptions;
         this.keyStore = keyStore;
         this.trustOptions = trustOptions;
         this.trustStore = trustStore;
+        this.name = name;
     }
 
     @Override
@@ -100,5 +103,10 @@ public class CxfTlsConfiguration implements TlsConfiguration {
     @Override
     public boolean reload() {
         throw new UnsupportedOperationException(getClass().getName() + ".reload() is not supported");
+    }
+
+    // @Override we can override once Quarkus 3.20 gets the method backported
+    public String getName() {
+        return name;
     }
 }
