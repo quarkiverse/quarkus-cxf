@@ -335,7 +335,8 @@ public class CXFClientInfo {
                         keyStoreOptions,
                         keyStore,
                         trustOptions,
-                        trustStore);
+                        trustStore,
+                        registryKey);
                 tlsRegistry.register(registryKey, cxfTlsConfiguration);
                 return cxfTlsConfiguration;
             } else {
