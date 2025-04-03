@@ -1,5 +1,7 @@
 = {quarkus-cxf-project-name} 3.21.0 release notes
 
+Nothing new compared to xref:release-notes/3.20.0.adoc[3.20.0] except for the Quarkus upgrade.
+
 == Important dependency upgrades
 
 * Quarkus 3.20.x -> 3.21.0 - https://quarkus.io/blog/quarkus-3-21-0-released/[release notes]

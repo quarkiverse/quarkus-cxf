@@ -40,6 +40,7 @@
 * xref:release-notes/index.adoc[Release notes]
 
 ifeval::[{doc-is-main} == true]
+** xref:release-notes/3.21.1.adoc[3.21.1]
 ** xref:release-notes/3.21.0.adoc[3.21.0]
 ** xref:release-notes/3.20.0.adoc[3.20.0 LTS]
 ** xref:release-notes/3.19.0.adoc[3.19.0]

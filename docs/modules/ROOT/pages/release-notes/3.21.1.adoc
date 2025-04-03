@@ -1,0 +1,17 @@
+= {quarkus-cxf-project-name} 3.21.1 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.21.0 -> 3.21.1 - https://quarkus.io/blog/quarkus-3-21-1-released/[release notes]
+
+== Fixed issues
+
+=== Incompatibility with Quarkus 3.21.1
+
+The `getName()` method was added to the `io.quarkus.tls.TlsConfiguration` interface that {quarkus-cxf-project-name} also implements,
+thus causing an incompatibility.
+Since {quarkus-cxf-project-name} 3.21.1, {quarkus-cxf-project-name} implements that method too.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.21.0+++...+++3.21.1
