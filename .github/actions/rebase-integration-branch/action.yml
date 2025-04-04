@@ -1,4 +1,4 @@
-name: rebase-dependency-main-branch
+name: rebase-integration-branch
 description: |
    Rebase a maintenenance branch such as quarkus-main or cxf-main, rebuild it and report the status in a dedicated issue 
    Prerequisites: 
@@ -68,8 +68,9 @@ runs:
             && git checkout ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} >/dev/null 2>&1 \
             || git checkout -b ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} origin/${{ inputs.base-branch }} 
         git status
-        echo "${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }}  is at $(git rev-parse HEAD)"
-        git rebase ${{ inputs.base-branch }}
+        echo "${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} is at $(git rev-parse HEAD)"
+        echo "origin/${{ inputs.base-branch }} is at $(git rev-parse origin/${{ inputs.base-branch }})"
+        git rebase origin/${{ inputs.base-branch }}
         rebaseExitCode=$?
         echo "rebaseExitCode = $rebaseExitCode"
         exit $rebaseExitCode
