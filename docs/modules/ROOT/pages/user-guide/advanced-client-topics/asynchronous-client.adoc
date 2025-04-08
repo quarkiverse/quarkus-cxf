@@ -200,7 +200,19 @@ Internally, the client call is always dispatched on a worker thread.
 This is due to technical limitations of the CXF client API
 and also because there is no guarantee that all parts of the CXF interceptor chain will avoid performing blocking operations.
 
-The asynchronous callback is always notified on a worker thread.
+The asynchronous callback is notified on a worker thread except the situation
+when dispatching the call to a worker thread timeouts due to Worker Thread Pool exhaustion - see the next section.
+
+=== Measures to prevent Worker Thread Pool contention
+
+In case the application is under high load, it may take every long time
+till there is a worker thread available for executing the client call.
+
+There are some configuration options you may want to adjust to prevent that:
+
+* `https://quarkus.io/guides/all-config#quarkus-core_quarkus-thread-pool-core-threads[quarkus.thread-pool.core-threads]`
+* `https://quarkus.io/guides/all-config#quarkus-core_quarkus-thread-pool-max-threads[quarkus.thread-pool.max-threads]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-worker-dispatch-timeout[quarkus.cxf.client.worker-dispatch-timeout]`
 
 == Historical note
 

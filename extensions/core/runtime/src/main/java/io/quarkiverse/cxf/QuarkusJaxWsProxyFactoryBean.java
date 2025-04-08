@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import jakarta.xml.ws.AsyncHandler;
 import jakarta.xml.ws.Binding;
@@ -22,18 +23,27 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.jaxws.JaxWsClientProxy;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.jboss.logging.Logger;
 
 import io.quarkus.runtime.BlockingOperationControl;
 import io.vertx.core.Vertx;
 
 public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
 
+    private static final Logger log = Logger.getLogger(QuarkusJaxWsProxyFactoryBean.class);
+
     private final Class<?>[] additionalImplementingClasses;
     private final Vertx vertx;
+    private final long workerDispatchTimeout;
 
-    public QuarkusJaxWsProxyFactoryBean(ClientFactoryBean fact, Vertx vertx, Class<?>... additionalImplementingClasses) {
+    public QuarkusJaxWsProxyFactoryBean(
+            ClientFactoryBean fact,
+            Vertx vertx,
+            long workerDispatchTimeout,
+            Class<?>... additionalImplementingClasses) {
         super(fact);
         this.vertx = vertx;
+        this.workerDispatchTimeout = workerDispatchTimeout;
         this.additionalImplementingClasses = additionalImplementingClasses;
     }
 
@@ -48,18 +58,20 @@ public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
 
     @Override
     protected ClientProxy clientClientProxy(Client c) {
-        return new QuarkusJaxWsClientProxy(vertx, (JaxWsClientProxy) super.clientClientProxy(c));
+        return new QuarkusJaxWsClientProxy(vertx, (JaxWsClientProxy) super.clientClientProxy(c), workerDispatchTimeout);
     }
 
     public static class QuarkusJaxWsClientProxy extends ClientProxy implements BindingProvider {
 
         private final JaxWsClientProxy delegate;
         private final Vertx vertx;
+        private final long workerDispatchTimeout;
 
-        public QuarkusJaxWsClientProxy(Vertx vertx, JaxWsClientProxy delegate) {
+        public QuarkusJaxWsClientProxy(Vertx vertx, JaxWsClientProxy delegate, long workerDispatchTimeout) {
             super(delegate.getClient());
             this.vertx = vertx;
             this.delegate = delegate;
+            this.workerDispatchTimeout = workerDispatchTimeout;
         }
 
         @Override
@@ -76,12 +88,13 @@ public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
                  * the AsyncHandler is called
                  */
                 final Object[] newArgs;
+                final AsyncHandler<Object> newAsyncHandler;
                 final int len = args.length;
                 if (len > 0 && args[len - 1] instanceof AsyncHandler) {
                     final AsyncHandler<Object> jaxWsHandler = (AsyncHandler<Object>) args[len - 1];
                     newArgs = new Object[len];
                     System.arraycopy(args, 0, newArgs, 0, len);
-                    newArgs[len - 1] = new AsyncHandler<Object>() {
+                    newArgs[len - 1] = newAsyncHandler = new AsyncHandler<Object>() {
                         @Override
                         public void handleResponse(Response<Object> res) {
                             try {
@@ -94,7 +107,7 @@ public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
                 } else {
                     newArgs = new Object[len + 1];
                     System.arraycopy(args, 0, newArgs, 0, len);
-                    newArgs[len] = new AsyncHandler<Object>() {
+                    newArgs[len] = newAsyncHandler = new AsyncHandler<Object>() {
                         @Override
                         public void handleResponse(Response<Object> res) {
                             result.complete(res);
@@ -106,9 +119,38 @@ public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
                  * Because even the async mode of VertxHttpClientConduit may block,
                  * we better dispatch the invocation to a worker thread
                  */
+                final AtomicBoolean completed;
+                final long timerId;
+                if (workerDispatchTimeout > 0) {
+                    completed = new AtomicBoolean(false);
+                    timerId = vertx.setTimer(workerDispatchTimeout, id -> {
+                        boolean shouldTimeout = completed.compareAndSet(false, true);
+                        log.debugf("Timer %d will timeout: %s", (Object) id, shouldTimeout);
+                        if (shouldTimeout) {
+                            newAsyncHandler.handleResponse(new QuarkusJaxWsFailedResponse<>(
+                                    StacklessRejectedExecutionException.workerDispatchTimeout(workerDispatchTimeout)));
+                        }
+                    });
+                    log.debugf("Created timer %d with timeout %d", timerId, workerDispatchTimeout);
+                } else {
+                    completed = null;
+                    timerId = -1;
+                }
+
                 vertx.executeBlocking(new Callable<>() {
                     @Override
                     public Void call() throws Exception {
+                        if (completed != null) {
+                            vertx.cancelTimer(timerId);
+                            final boolean alive = completed.compareAndSet(false, true);
+                            if (log.isDebugEnabled()) {
+                                log.debugf("Scheduled on a worker thread for timer %d: %s", timerId, alive ? "alive" : "dead");
+                            }
+                            if (!alive) {
+                                /* The timer handler has already thrown a RejectedExecutionException */
+                                return null;
+                            }
+                        }
                         try {
                             delegate.invoke(proxy, method, newArgs);
                             return null;
@@ -121,7 +163,9 @@ public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
                             throw new Exception(e);
                         }
                     }
-                }).onFailure(result::completeExceptionally);
+                }).onFailure(e -> {
+                    newAsyncHandler.handleResponse(new QuarkusJaxWsFailedResponse<>(e));
+                });
                 return new QuarkusJaxWsResponse<Object>(result);
             }
             return delegate.invoke(proxy, method, args);
@@ -187,6 +231,47 @@ public class QuarkusJaxWsProxyFactoryBean extends JaxWsProxyFactoryBean {
         @Override
         public <T extends EndpointReference> T getEndpointReference(Class<T> clazz) {
             return delegate.getEndpointReference(clazz);
+        }
+
+        static class QuarkusJaxWsFailedResponse<T> implements Response<T> {
+            private final CompletableFuture<T> delegate;
+
+            public QuarkusJaxWsFailedResponse(Throwable e) {
+                super();
+                this.delegate = CompletableFuture.failedFuture(e);
+            }
+
+            @Override
+            public Map<String, Object> getContext() {
+                /* Not available yet - return null */
+                return null;
+            }
+
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                return delegate.cancel(mayInterruptIfRunning);
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return delegate.isCancelled();
+            }
+
+            @Override
+            public boolean isDone() {
+                return delegate.isDone();
+            }
+
+            @Override
+            public T get() throws InterruptedException, ExecutionException {
+                return delegate.get();
+            }
+
+            @Override
+            public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+                return delegate.get(timeout, unit);
+            }
+
         }
 
         static class QuarkusJaxWsResponse<T> implements Response<T> {

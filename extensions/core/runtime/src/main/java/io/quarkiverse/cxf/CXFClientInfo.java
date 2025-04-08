@@ -219,6 +219,7 @@ public class CXFClientInfo {
     private final SchemaValidationType schemaValidationEnabledFor;
 
     private final boolean secureWsdlAccess;
+    private final long workerDispatchTimeout;
 
     public CXFClientInfo(CXFClientData other, CxfConfig cxfConfig, CxfClientConfig config, String configKey, Vertx vertx) {
         Objects.requireNonNull(config);
@@ -268,6 +269,7 @@ public class CXFClientInfo {
         this.tlsConfiguration = tlsConfiguration(vertx, cxfConfig.client(), config, configKey);
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
         this.schemaValidationEnabledFor = config.schemaValidationEnabledFor().orElse(null);
+        this.workerDispatchTimeout = cxfConfig.client().workerDispatchTimeout();
 
         /*
          * If the optional is empty, this.httpConduitImpl will be null.
@@ -619,6 +621,10 @@ public class CXFClientInfo {
 
     public boolean isSecureWsdlAccess() {
         return secureWsdlAccess;
+    }
+
+    public long getWorkerDispatchTimeout() {
+        return workerDispatchTimeout;
     }
 
     static class AuthWrapper implements Auth {

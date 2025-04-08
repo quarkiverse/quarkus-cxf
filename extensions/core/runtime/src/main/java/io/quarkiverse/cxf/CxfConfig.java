@@ -183,6 +183,32 @@ public interface CxfConfig {
         // @formatter:on
         @WithDefault("javax.net.ssl")
         public String tlsConfigurationName();
+
+        // The formatter breaks the list with long items
+        // @formatter:off
+        /**
+         * A timeout in milliseconds within which a CXF client call must start executing on a worker thread.
+         * Applies only if the client call was issued on Vert.x Event Loop thread.
+         *
+         * The value `0` means no limit.
+         *
+         * The receive timeout set via
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-receive-timeout[quarkus.cxf.client."client-name".receive-timeout]`
+         * does not start counting before the client call starts executing on a worker thread.
+         * Hence in the worst case, getting the complete response from an asynchronous client may take
+         * `quarkus.cxf.client.worker-dispatch-timeout + quarkus.cxf.client."client-name".receive-timeout`.
+         *
+         * See also:
+         *
+         * * xref:user-guide/advanced-client-topics/asynchronous-client.adoc#_caller_threads_and_callback_threads[Caller threads and callback threads]
+         *
+         * @asciidoclet
+         * @since 3.22.0
+         */
+        // @formatter:on
+        @WithDefault("30000")
+        public long workerDispatchTimeout();
+
     }
 
     public interface InternalConfig {
