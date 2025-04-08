@@ -6,7 +6,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
@@ -34,15 +33,7 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
     CXFDefault {
         @Override
         public HTTPConduitImpl resolveDefault() {
-            /*
-             * Mimic what is done in org.apache.cxf.transport.http.HTTPTransportFactory.getConduit(EndpointInfo,
-             * EndpointReferenceType, Bus)
-             */
-            if (Boolean.getBoolean("org.apache.cxf.transport.http.forceURLConnection")) {
-                return URLConnectionHTTPConduitFactory;
-            } else {
-                return HttpClientHTTPConduitFactory;
-            }
+            return URLConnectionHTTPConduitFactory;
         }
     },
     @ConfigDocEnumValue("VertxHttpClientHTTPConduitFactory")
@@ -68,26 +59,6 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
             return new QuarkusTLSClientParameters(cxfClientInfo.getTlsConfigurationName(), cxfClientInfo.getTlsConfiguration());
         }
 
-    },
-    @ConfigDocEnumValue("HttpClientHTTPConduitFactory")
-    HttpClientHTTPConduitFactory {
-        @Override
-        public HTTPConduit createConduit(CXFClientInfo cxfClientInfo, HttpClientPool httpClientPool, Bus b,
-                EndpointInfo localInfo,
-                EndpointReferenceType target) throws IOException {
-            return new HttpClientHTTPConduit(b, localInfo, target);
-        }
-
-        @Override
-        public TLSClientParameters createTLSClientParameters(CXFClientInfo cxfClientInfo) {
-            if (cxfClientInfo.getHostnameVerifier() != null) {
-                throw new IllegalStateException(
-                        getConduitDescription() + " does not support quarkus.cxf.client."
-                                + cxfClientInfo.getConfigKey()
-                                + ".hostname-verifier - see https://github.com/quarkiverse/quarkus-cxf/issues/1687");
-            }
-            return super.createTLSClientParameters(cxfClientInfo);
-        }
     },
     @ConfigDocEnumValue("URLConnectionHTTPConduitFactory")
     URLConnectionHTTPConduitFactory {

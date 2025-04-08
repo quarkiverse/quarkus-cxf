@@ -56,13 +56,12 @@ include::example$ws-security-policy/application.properties[tag=client-trust-stor
 <1> The referenced `client-truststore.pkcs12` file has to be available either in the classpath
     or in the file system.
 
-The new way of configuring TLS is optimized for the new Vert.x based CXF clients (default since {quarkus-cxf-project-name} 3.16.0).
+The new way of configuring TLS is optimized for Vert.x HTTP Client based CXF clients (default since {quarkus-cxf-project-name} 3.16.0).
 For those, all client-related options provided by {link-quarkus-docs-base}/tls-registry-reference#configuration-reference[Quarkus TLS registry] are supported.
 
 The named TLS configurations provided by TLS registry can be also used for CXF clients having `http-conduit-factory` set to
-`URLConnectionHTTPConduitFactory`, `HttpClientHTTPConduitFactory` or with
-xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[Async CXF clients on top of Apache HttpClient 5].
-However, in those cases, the following TLS options are not supported and using them will lead to an exception at runtime:
+`URLConnectionHTTPConduitFactory`.
+However, for those, the following TLS options are not supported and using them will lead to an exception at runtime:
 
 * `{link-quarkus-docs-base}/tls-registry-reference#quarkus-tls-registry_quarkus-tls-tls-bucket-name-trust-all[quarkus.tls."tls-bucket-name".trust-all]`
 * `{link-quarkus-docs-base}/tls-registry-reference#quarkus-tls-registry_quarkus-tls-tls-bucket-name-hostname-verification-algorithm[quarkus.tls."tls-bucket-name".hostname-verification-algorithm]`

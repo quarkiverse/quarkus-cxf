@@ -1,9 +1,6 @@
 package io.quarkiverse.cxf.deployment.test;
 
 import java.net.SocketTimeoutException;
-import java.net.http.HttpTimeoutException;
-import java.nio.channels.ClosedChannelException;
-import java.util.concurrent.TimeoutException;
 
 import jakarta.inject.Inject;
 import jakarta.jws.WebMethod;
@@ -18,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.HTTPConduitImpl;
-import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
-import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.TimeoutIOException;
@@ -45,12 +40,6 @@ public class ClientReceiveTimeoutTest {
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.http-conduit-factory",
                     HTTPConduitImpl.URLConnectionHTTPConduitFactory.name())
 
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.client-endpoint-url", "http://localhost:8081/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.receive-timeout", RECEIVE_TIMEOUT)
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.http-conduit-factory",
-                    HTTPConduitImpl.HttpClientHTTPConduitFactory.name())
-
             .overrideConfigKey("quarkus.cxf.client.helloVertxClient.client-endpoint-url",
                     "http://localhost:8081/services/hello")
             .overrideConfigKey("quarkus.cxf.client.helloVertxClient.service-interface", HelloService.class.getName())
@@ -61,10 +50,6 @@ public class ClientReceiveTimeoutTest {
     @Inject
     @CXFClient("helloUrlConnection")
     HelloService helloUrlConnection;
-
-    @Inject
-    @CXFClient("helloHttpClient")
-    HelloService helloHttpClient;
 
     @Inject
     @CXFClient("helloVertxClient")
@@ -81,21 +66,6 @@ public class ClientReceiveTimeoutTest {
                 .assertThatExceptionOfType(WebServiceException.class)
                 .isThrownBy(() -> helloUrlConnection.hello("Joe"))
                 .withRootCauseInstanceOf(SocketTimeoutException.class);
-    }
-
-    @Test
-    public void helloHttpClient() {
-
-        Assertions
-                .assertThatExceptionOfType(WebServiceException.class)
-                .isThrownBy(() -> helloHttpClient.hello("Joe"))
-                .havingRootCause()
-                .isInstanceOfAny(
-                        HttpTimeoutException.class,
-                        TimeoutException.class,
-                        ClosedChannelException.class // seen only on GitHub Actions
-                );
-
     }
 
     @Test

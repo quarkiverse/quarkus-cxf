@@ -51,14 +51,6 @@ public class BadHostnameTest {
             .overrideConfigKey("quarkus.cxf.client.helloVertx.http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.helloVertx.tls-configuration-name", "client-pkcs12")
 
-            /* Client with HttpClientHTTPConduitFactory */
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.client-endpoint-url",
-                    "https://localhost:8444/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.logging.enabled", "true")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.http-conduit-factory", "HttpClientHTTPConduitFactory")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.tls-configuration-name", "client-pkcs12")
-
             /* Client with URLConnectionHTTPConduitFactory */
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.client-endpoint-url",
                     "https://localhost:8444/services/hello")
@@ -70,9 +62,6 @@ public class BadHostnameTest {
     @CXFClient("helloVertx")
     HelloService helloVertx;
 
-    @CXFClient("helloHttpClient")
-    HelloService helloHttpClient;
-
     @CXFClient("helloUrlConnection")
     HelloService helloUrlConnection;
 
@@ -83,12 +72,6 @@ public class BadHostnameTest {
     void vertx() {
         Assertions.assertThatThrownBy(() -> helloVertx.hello("Doe")).hasRootCauseMessage(
                 "No subject alternative DNS name matching localhost found.");
-    }
-
-    @Test
-    void httpClient() {
-        Assertions.assertThatThrownBy(() -> helloHttpClient.hello("Doe")).hasRootCauseMessage(
-                "No name matching localhost found");
     }
 
     @Test

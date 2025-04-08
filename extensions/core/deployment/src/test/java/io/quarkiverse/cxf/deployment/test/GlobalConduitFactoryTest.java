@@ -9,7 +9,6 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
-import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.HTTPConduitImpl;
-import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
 import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.deployment.test.ClientConduitFactoryTest.HelloService;
@@ -37,11 +35,6 @@ public class GlobalConduitFactoryTest {
             .overrideConfigKey("quarkus.cxf.client.helloGlobal.client-endpoint-url", "http://localhost:8081/services/hello")
             .overrideConfigKey("quarkus.cxf.client.helloGlobal.service-interface", HelloService.class.getName())
 
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.client-endpoint-url", "http://localhost:8081/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.http-conduit-factory",
-                    HTTPConduitImpl.HttpClientHTTPConduitFactory.name())
-
             .overrideConfigKey("quarkus.cxf.client.helloVertxClient.client-endpoint-url",
                     "http://localhost:8081/services/hello")
             .overrideConfigKey("quarkus.cxf.client.helloVertxClient.service-interface", HelloService.class.getName())
@@ -52,9 +45,6 @@ public class GlobalConduitFactoryTest {
 
     @CXFClient("helloGlobal")
     HelloService helloGlobal;
-
-    @CXFClient("helloHttpClient")
-    HelloService helloHttpClient;
 
     @CXFClient("helloVertxClient")
     HelloService helloVertxClient;
@@ -73,13 +63,6 @@ public class GlobalConduitFactoryTest {
             Assertions.assertThat(client.getConduit()).isInstanceOf(URLConnectionHTTPConduit.class);
             /* ... and make sure that the alternative conduit works */
             Assertions.assertThat(helloGlobal.hello("Joe")).isEqualTo("Hello Joe");
-        }
-
-        {
-            final Client client = ClientProxy.getClient(helloHttpClient);
-            Assertions.assertThat(client.getConduit()).isInstanceOf(HttpClientHTTPConduit.class);
-            /* ... and make sure that the alternative conduit works */
-            Assertions.assertThat(helloHttpClient.hello("Joe")).isEqualTo("Hello Joe");
         }
 
         {

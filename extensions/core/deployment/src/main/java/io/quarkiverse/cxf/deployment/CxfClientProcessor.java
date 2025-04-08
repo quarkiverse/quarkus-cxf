@@ -37,7 +37,6 @@ import org.jboss.jandex.Type;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CXFClientData;
-import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.ClientInjectionPoint;
 import io.quarkiverse.cxf.CxfClientProducer;
@@ -45,7 +44,6 @@ import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkiverse.cxf.CxfFixedConfig.ClientFixedConfig;
 import io.quarkiverse.cxf.HTTPConduitImpl;
-import io.quarkiverse.cxf.HttpClientHTTPConduitFactory;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.graal.QuarkusCxfFeature;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
@@ -499,8 +497,7 @@ public class CxfClientProcessor {
                 break;
             case QuarkusCXFDefault:
             case VertxHttpClientHTTPConduitFactory:
-            case URLConnectionHTTPConduitFactory:
-            case HttpClientHTTPConduitFactory: {
+            case URLConnectionHTTPConduitFactory: {
                 customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.setBusHTTPConduitFactory(factory)));
                 break;
             }

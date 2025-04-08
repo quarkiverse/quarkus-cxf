@@ -8,7 +8,6 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
@@ -41,11 +40,6 @@ public class ClientConduitFactoryTest {
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.http-conduit-factory",
                     HTTPConduitImpl.URLConnectionHTTPConduitFactory.name())
 
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.client-endpoint-url", "http://localhost:8081/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.http-conduit-factory",
-                    HTTPConduitImpl.HttpClientHTTPConduitFactory.name())
-
             .overrideConfigKey("quarkus.cxf.client.helloVertxClient.client-endpoint-url",
                     "http://localhost:8081/services/hello")
             .overrideConfigKey("quarkus.cxf.client.helloVertxClient.service-interface", HelloService.class.getName())
@@ -57,9 +51,6 @@ public class ClientConduitFactoryTest {
 
     @CXFClient("helloUrlConnection")
     HelloService helloUrlConnection;
-
-    @CXFClient("helloHttpClient")
-    HelloService helloHttpClient;
 
     @CXFClient("helloVertxClient")
     HelloService helloVertxClient;
@@ -94,13 +85,6 @@ public class ClientConduitFactoryTest {
             final HelloService service = helloUrlConnection;
             final Client client = ClientProxy.getClient(service);
             Assertions.assertThat(client.getConduit()).isInstanceOf(URLConnectionHTTPConduit.class);
-            /* ... and make sure that the alternative conduit works */
-            Assertions.assertThat(service.hello("Joe")).isEqualTo("Hello Joe");
-        }
-        {
-            final HelloService service = helloHttpClient;
-            final Client client = ClientProxy.getClient(service);
-            Assertions.assertThat(client.getConduit()).isInstanceOf(HttpClientHTTPConduit.class);
             /* ... and make sure that the alternative conduit works */
             Assertions.assertThat(service.hello("Joe")).isEqualTo("Hello Joe");
         }

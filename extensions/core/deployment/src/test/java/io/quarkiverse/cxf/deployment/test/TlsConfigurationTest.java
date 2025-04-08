@@ -61,14 +61,6 @@ public class TlsConfigurationTest {
             .overrideConfigKey("quarkus.cxf.client.helloVertx2.http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.helloVertx2.tls-configuration-name", "client-pkcs12")
 
-            /* Client with HttpClientHTTPConduitFactory */
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.client-endpoint-url",
-                    "https://localhost:8444/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.logging.enabled", "true")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.http-conduit-factory", "HttpClientHTTPConduitFactory")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.tls-configuration-name", "client-pkcs12")
-
             /* Client with URLConnectionHTTPConduitFactory */
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.client-endpoint-url",
                     "https://localhost:8444/services/hello")
@@ -83,9 +75,6 @@ public class TlsConfigurationTest {
     @CXFClient("helloVertx2")
     HelloService helloVertx2;
 
-    @CXFClient("helloHttpClient")
-    HelloService helloHttpClient;
-
     @CXFClient("helloUrlConnection")
     HelloService helloUrlConnection;
 
@@ -95,11 +84,6 @@ public class TlsConfigurationTest {
     @Test
     void vertx() {
         Assertions.assertThat(helloVertx.hello("Doe")).isEqualTo("Hello Doe");
-    }
-
-    @Test
-    void httpClient() {
-        Assertions.assertThat(helloHttpClient.hello("Doe")).isEqualTo("Hello Doe");
     }
 
     @Test
