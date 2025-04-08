@@ -15,6 +15,10 @@
     <dependencies>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-rt-features-metrics</artifactId>
         </dependency>
         <dependency>
@@ -32,9 +36,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>${assertj.version}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit4-mock</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -58,17 +72,21 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <!-- Copy the sample code to docs module where Antora
-                        can see it -->
+                        <!-- Copy the sample code to docs module where Antora can see it -->
                         <id>copy-resources-for-antora</id>
                         <phase>compile</phase><!-- after source formatting -->
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>
-                                ${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/metrics</outputDirectory>
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/metrics</outputDirectory>
                             <resources>
+                                <resource>
+                                    <directory>src/main/resources/wsdl</directory>
+                                    <includes>
+                                        <include>async-binding.xml</include>
+                                    </includes>
+                                </resource>
                                 <resource>
                                     <directory>src/main/resources</directory>
                                     <includes>
@@ -117,10 +135,20 @@
                 </property>
             </activation>
             <dependencies>
-                <!-- The following dependencies guarantee that this module is
-                built after them. You can update them by running `mvn
-                process-resources -Pformat -N` from the source tree root
-                directory -->
+                <!-- The following dependencies guarantee that this module is built after them. You can update them by running `mvn process-resources -Pformat -N` from the source tree root directory -->
+                <dependency>
+                    <groupId>io.quarkiverse.cxf</groupId>
+                    <artifactId>quarkus-cxf-deployment</artifactId>
+                    <version>${project.version}</version>
+                    <type>pom</type>
+                    <scope>test</scope>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>*</groupId>
+                            <artifactId>*</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
                 <dependency>
                     <groupId>io.quarkiverse.cxf</groupId>
                     <artifactId>quarkus-cxf-rt-features-metrics-deployment</artifactId>
@@ -135,6 +163,17 @@
                     </exclusions>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>skip-testcontainers-tests</id>
+            <activation>
+                <property>
+                    <name>skip-testcontainers-tests</name>
+                </property>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
         </profile>
     </profiles>
 

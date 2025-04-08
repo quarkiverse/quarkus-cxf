@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.hc5.it;
+package io.quarkiverse.cxf.metrics.it.async;
 
 import java.util.Map;
 
@@ -7,7 +7,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 
-public class Hc5TestResource implements QuarkusTestResourceLifecycleManager {
+public class AsyncClientTestResource implements QuarkusTestResourceLifecycleManager {
 
     private static final int WILDFLY_PORT = 8080;
     private GenericContainer<?> calculatorContainer;

@@ -199,11 +199,9 @@ public abstract class CxfClientProducer {
         customizers.forEach(customizer -> customizer.customize(cxfClientInfo, factory));
 
         final Bus bus = BusFactory.getDefaultBus();
-        final HTTPConduitSpec origConduitImpl = bus.getExtension(HTTPConduitSpec.class);
         final QuarkusHTTPConduitFactory conduitFactory = new QuarkusHTTPConduitFactory(
                 fixedConfig,
                 cxfClientInfo,
-                origConduitImpl,
                 authorizationPolicy,
                 vertx,
                 httpClientPool);

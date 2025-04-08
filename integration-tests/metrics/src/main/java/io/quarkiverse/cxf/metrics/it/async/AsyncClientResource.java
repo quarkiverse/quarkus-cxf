@@ -1,5 +1,5 @@
 // tag::quarkus-cxf-rt-transports-http-hc5.usage.mutiny[]
-package io.quarkiverse.cxf.hc5.it;
+package io.quarkiverse.cxf.metrics.it.async;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -18,7 +18,7 @@ import io.quarkiverse.cxf.mutiny.CxfMutinyUtils;
 import io.smallrye.mutiny.Uni;
 
 @Path("/hc5")
-public class Hc5Resource {
+public class AsyncClientResource {
 
     @Inject
     @CXFClient("myCalculator") // name used in application.properties

@@ -38,7 +38,7 @@ Uni<String> callHelloAsync() {
 }
 ----
 
-This works much like with the existing `xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[Apache HttpClient 5 Async HTTP Transport]`.
+This works much like with the existing Apache HttpClient 5 Async HTTP Transport.
 The main difference is that you do not need to add the `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` dependency to your application anymore.
 
 You still need to

@@ -17,7 +17,6 @@
         <module>client</module>
         <module>client-server</module>
         <module>fastinfoset</module>
-        <module>hc5</module>
         <module>server</module>
         <module>ws-security</module>
         <module>ws-security-policy</module>

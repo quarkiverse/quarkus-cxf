@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.hc5.it;
+package io.quarkiverse.cxf.metrics.it.async;
 
 import java.util.List;
 
