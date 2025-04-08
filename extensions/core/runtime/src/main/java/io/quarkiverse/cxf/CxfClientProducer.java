@@ -139,7 +139,10 @@ public abstract class CxfClientProducer {
             throw new RuntimeException("Could not load " + RUNTIME_INITIALIZED_PROXY_MARKER_INTERFACE_NAME, e);
         }
         final QuarkusClientFactoryBean quarkusClientFactoryBean = new QuarkusClientFactoryBean(seiClass);
-        final QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(quarkusClientFactoryBean, vertx,
+        final QuarkusJaxWsProxyFactoryBean factory = new QuarkusJaxWsProxyFactoryBean(
+                quarkusClientFactoryBean,
+                vertx,
+                cxfClientInfo.getWorkerDispatchTimeout(),
                 interfaces);
         final Map<String, Object> props = new LinkedHashMap<>();
         factory.setProperties(props);

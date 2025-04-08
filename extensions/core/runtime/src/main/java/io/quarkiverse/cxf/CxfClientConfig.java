@@ -197,13 +197,20 @@ public interface CxfClientConfig {
     @WithDefault("30000")
     public long connectionTimeout();
 
+    // The formatter breaks the list with long items
+    // @formatter:off
     /**
-     * Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. 0 is
-     * infinite.
+     * A number of millisecond the SOAP client should wait for receiving the complete response from the remote SOAP service.
+     * The value `0` means no limit.
+     *
+     * See also:
+     *
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-worker-dispatch-timeout[quarkus.cxf.client.worker-dispatch-timeout]`
      *
      * @since 2.2.3
      * @asciidoclet
      */
+    // @formatter:on
     @WithDefault("60000")
     public long receiveTimeout();
 

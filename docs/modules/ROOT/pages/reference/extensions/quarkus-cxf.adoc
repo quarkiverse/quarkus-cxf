@@ -599,6 +599,28 @@ Other Quarkus extensions do not take `javax.net.ssl.trustStore` system property 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT_TLS_CONFIGURATION_NAME+++` +
 *Since Quarkus CXF*: 3.19.0
 
+.<| [[quarkus-cxf_quarkus-cxf-client-worker-dispatch-timeout]]`link:#quarkus-cxf_quarkus-cxf-client-worker-dispatch-timeout[quarkus.cxf.client.worker-dispatch-timeout]`
+.<| `long`
+.<| `30000`
+
+3+a|A timeout in milliseconds within which a CXF client call must start executing on a worker thread.
+Applies only if the client call was issued on Vert.x Event Loop thread.
+
+The value `0` means no limit.
+
+The receive timeout set via
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-receive-timeout[quarkus.cxf.client."client-name".receive-timeout]`
+does not start counting before the client call starts executing on a worker thread.
+Hence in the worst case, getting the complete response from an asynchronous client may take
+`quarkus.cxf.client.worker-dispatch-timeout + quarkus.cxf.client."client-name".receive-timeout`.
+
+See also:
+
+* xref:user-guide/advanced-client-topics/asynchronous-client.adoc#_caller_threads_and_callback_threads[Caller threads and callback threads]
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT_WORKER_DISPATCH_TIMEOUT+++` +
+*Since Quarkus CXF*: 3.22.0
+
 .<| [[quarkus-cxf_quarkus-cxf-logging-enabled-for]]`link:#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus.cxf.logging.enabled-for]`
 .<| `clients`, `services`, `both`, `none`
 .<| `none`
@@ -1849,8 +1871,12 @@ out. 0 is infinite.
 .<| `long`
 .<| `60000`
 
-3+a|Specifies the amount of time, in milliseconds, that the consumer will wait for a response before it times out. 0 is
-infinite.
+3+a|A number of millisecond the SOAP client should wait for receiving the complete response from the remote SOAP service.
+The value `0` means no limit.
+
+See also:
+
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-worker-dispatch-timeout[quarkus.cxf.client.worker-dispatch-timeout]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__RECEIVE_TIMEOUT+++` +
 *Since Quarkus CXF*: 2.2.3
