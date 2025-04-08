@@ -41,12 +41,6 @@ runs:
       run: |
         [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
 
-    - name: Avoid caching SNAPSHOT artifacts in local Maven repository
-      shell: bash
-      run: |
-        # remove SNAPSHOT artifacts
-        find ~/.m2/repository -type d -name '*-SNAPSHOT' -exec rm -r {} +
-
     - name: Create ${{ runner.temp }}/maven-repo.tgz
       if: ${{ inputs.upload-local-maven-repo-archive == 'true' }}
       shell: bash
@@ -59,3 +53,9 @@ runs:
         name: maven-repo
         path: ${{ runner.temp }}/maven-repo.tgz
         retention-days: 1
+
+    - name: Avoid caching SNAPSHOT artifacts in local Maven repository
+      shell: bash
+      run: |
+        # remove SNAPSHOT artifacts
+        find ~/.m2/repository -type d -name '*-SNAPSHOT' -exec rm -r {} +
