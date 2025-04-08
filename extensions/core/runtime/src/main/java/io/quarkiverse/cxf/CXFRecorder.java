@@ -32,7 +32,6 @@ import io.vertx.ext.web.RoutingContext;
 @Recorder
 public class CXFRecorder {
     private static final Logger LOGGER = Logger.getLogger(CXFRecorder.class);
-    private static boolean hc5Present = false;
 
     /**
      * Stores the given {@link CXFClientData} in the application.
@@ -275,14 +274,6 @@ public class CXFRecorder {
 
     public void addRuntimeBusCustomizer(RuntimeValue<Consumer<Bus>> customizer) {
         QuarkusBusFactory.addBusCustomizer(customizer.getValue());
-    }
-
-    public void setHc5Present() {
-        hc5Present = true;
-    }
-
-    public static boolean isHc5Present() {
-        return hc5Present;
     }
 
     public RuntimeValue<Consumer<Bus>> setBusHTTPConduitFactory(HTTPConduitImpl factory) {

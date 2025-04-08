@@ -487,10 +487,7 @@ public class CxfClientProcessor {
             List<FeatureBuildItem> features,
             BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
         final HTTPConduitImpl factory = config.httpConduitFactory()
-                .orElse(
-                        io.quarkiverse.cxf.deployment.QuarkusCxfFeature.hc5Present(features)
-                                ? HTTPConduitImpl.CXFDefault
-                                : HTTPConduitImpl.QuarkusCXFDefault);
+                .orElse(HTTPConduitImpl.QuarkusCXFDefault);
         switch (factory) {
             case CXFDefault:
                 // nothing to do

@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.hc5.it;
+package io.quarkiverse.cxf.metrics.it.async;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -20,16 +20,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import io.quarkiverse.cxf.HTTPConduitImpl;
-import io.quarkiverse.cxf.hc5.it.HeaderToMetricsTagRequestFilter.RequestScopedHeader;
-import io.quarkiverse.cxf.hc5.it.MultiplyingAddInterceptor.RequestScopedFactorHeader;
+import io.quarkiverse.cxf.metrics.it.async.HeaderToMetricsTagRequestFilter.RequestScopedHeader;
+import io.quarkiverse.cxf.metrics.it.async.MultiplyingAddInterceptor.RequestScopedFactorHeader;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
-import io.restassured.path.json.JsonPath;
 
 @QuarkusTest
-@QuarkusTestResource(Hc5TestResource.class)
-class Hc5Test {
+@QuarkusTestResource(AsyncClientTestResource.class)
+class AsyncClientTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "sync", "async" })
@@ -68,7 +67,7 @@ class Hc5Test {
 
         final Config config = ConfigProvider.getConfig();
         final String baseUri = config.getValue("cxf.it.calculator.baseUri", String.class);
-        final Map<String, Object> metrics = getMetrics();
+        final Map<String, Object> metrics = io.quarkiverse.cxf.metrics.it.MetricsTest.getMetrics();
 
         @SuppressWarnings("unchecked")
         Map<String, Object> clientRequests = (Map<String, Object>) metrics.get("cxf.client.requests");
@@ -119,7 +118,7 @@ class Hc5Test {
              */
             staticCopyPath = Paths.get("target/classes/wsdl/CalculatorService.wsdl");
             Files.createDirectories(staticCopyPath.getParent());
-            try (InputStream in = Hc5Test.class.getClassLoader().getResourceAsStream("wsdl/CalculatorService.wsdl")) {
+            try (InputStream in = AsyncClientTest.class.getClassLoader().getResourceAsStream("wsdl/CalculatorService.wsdl")) {
                 Files.copy(in, staticCopyPath, StandardCopyOption.REPLACE_EXISTING);
             }
         }
@@ -148,30 +147,11 @@ class Hc5Test {
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                 .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
 
-        boolean isHc5;
-        try {
-            Class<?> cl = Class.forName("org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduit");
-            isHc5 = true;
-        } catch (ClassNotFoundException e) {
-            isHc5 = false;
-        }
         RestAssured.given()
                 .get("/hc5/conduit")
                 .then()
                 .statusCode(200)
-                .body(is(isHc5
-                        ? "org.apache.cxf.transport.http.asyncclient.hc5.AsyncHTTPConduit"
-                        : "io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit"));
+                .body(is("io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit"));
     }
 
-    private Map<String, Object> getMetrics() {
-        final String body = RestAssured.given()
-                .header("Content-Type", "application/json")
-                .get("/q/metrics/json")
-                .then()
-                .statusCode(200)
-                .extract().body().asString();
-        final JsonPath jp = new JsonPath(body);
-        return jp.getJsonObject("$");
-    }
 }

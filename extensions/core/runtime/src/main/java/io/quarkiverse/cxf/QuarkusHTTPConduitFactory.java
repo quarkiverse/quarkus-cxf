@@ -34,7 +34,6 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
 
     private final CxfFixedConfig cxFixedConfig;
     private final CXFClientInfo cxfClientInfo;
-    private final HTTPConduitSpec busHTTPConduitImpl;
     private final AuthorizationPolicy authorizationPolicy;
     private final Vertx vertx;
     private final HttpClientPool httpClientPool;
@@ -42,14 +41,12 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     public QuarkusHTTPConduitFactory(
             CxfFixedConfig cxFixedConfig,
             CXFClientInfo cxfClientInfo,
-            HTTPConduitSpec busHTTPConduitImpl,
             AuthorizationPolicy authorizationPolicy,
             Vertx vertx,
             HttpClientPool httpClientPool) {
         super();
         this.cxFixedConfig = cxFixedConfig;
         this.cxfClientInfo = cxfClientInfo;
-        this.busHTTPConduitImpl = busHTTPConduitImpl;
         this.authorizationPolicy = authorizationPolicy;
         this.vertx = vertx;
         this.httpClientPool = httpClientPool;
@@ -61,11 +58,6 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         HTTPConduitSpec httpConduitImpl = cxfClientInfo.getHttpConduitImpl();
         if (httpConduitImpl == null) {
             httpConduitImpl = cxFixedConfig.httpConduitFactory().orElse(null);
-        }
-        if (httpConduitImpl == null
-                && (CXFRecorder.isHc5Present())
-                && busHTTPConduitImpl != null) {
-            return configure(busHTTPConduitImpl.resolveDefault(), cxfClientInfo, b, localInfo, target);
         }
 
         if (httpConduitImpl == null) {

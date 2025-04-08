@@ -172,14 +172,14 @@ To enable it, you need to create a JAX-WS binding file with `enableAsyncMapping`
 [TIP]
 ====
 The sample code snippets used in this section come from the
-https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/hc5[HC5 integration test]
+https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/metrics[Metrics integration test]
 in the source tree of {quarkus-cxf-project-name}
 ====
 
 .src/main/resources/wsdl/async-binding.xml
 [source,xml]
 ----
-include::example$hc5/async-binding.xml[]
+include::example$metrics/async-binding.xml[]
 ----
 
 This file should then be passed to xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java]
@@ -188,7 +188,7 @@ through its xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-c
 .application.properties
 [source,properties]
 ----
-include::example$hc5/application.properties[tag=quarkus-cxf-rt-transports-http-hc5.usage.wsdl2java]
+include::example$metrics/application.properties[tag=async-client.wsdl2java]
 ----
 
 == Caller threads and callback threads
@@ -220,5 +220,4 @@ Since {quarkus-cxf-project-name} 3.17.0, the asynchronous mode is supported by `
 `xref:reference/extensions/quarkus-cxf.adoc[io.quarkiverse.cxf:quarkus-cxf]` extension.
 
 Before {quarkus-cxf-project-name} 3.17.0, the asynchronous use case was only supported via
-`xref:reference/extensions/quarkus-cxf-rt-transports-http-hc5.adoc[io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5]`
-which is now deprecated and scheduled for removal in {quarkus-cxf-project-name} 3.21.0.
+`io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` which was removed in {quarkus-cxf-project-name} 3.22.0.

@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.hc5.it;
+package io.quarkiverse.cxf.metrics.it.async;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -9,7 +9,7 @@ import org.apache.cxf.metrics.micrometer.provider.TagsCustomizer;
 
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
-import io.quarkiverse.cxf.hc5.it.HeaderToMetricsTagRequestFilter.RequestScopedHeader;
+import io.quarkiverse.cxf.metrics.it.async.HeaderToMetricsTagRequestFilter.RequestScopedHeader;
 
 @Singleton
 @Named("headerToMetricsTagsCustomizer")

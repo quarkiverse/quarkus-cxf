@@ -23,7 +23,9 @@ public class MetricsTest {
             final Map<String, Object> metrics = getMetrics();
             /* There should be no cxf metrics available before we call anything */
             Assertions.assertThat(metrics.get("cxf.server.requests")).isNull();
-            Assertions.assertThat(metrics.get("cxf.client.requests")).isNull();
+
+            // There may exist client metrics caused by Hc5Test
+            // Assertions.assertThat(metrics.get("cxf.client.requests")).isNull();
         }
 
         /* First send a direct request to the service circumventing the in-app client */
@@ -96,7 +98,7 @@ public class MetricsTest {
 
     }
 
-    private Map<String, Object> getMetrics() {
+    public static Map<String, Object> getMetrics() {
         final String body = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .get("/q/metrics/json")

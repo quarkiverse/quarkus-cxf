@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.hc5.it;
+package io.quarkiverse.cxf.metrics.it.async;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -15,8 +15,8 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-@QuarkusTestResource(Hc5TestResource.class)
-class Hc5ContextlessTest {
+@QuarkusTestResource(AsyncClientTestResource.class)
+class AsyncClientContextlessTest {
 
     @Inject
     @CXFClient("myCalculator")

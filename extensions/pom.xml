@@ -24,7 +24,6 @@
         <module>ws-security</module>
         <module>ws-rm</module>
         <module>services-sts</module>
-        <module>transports-http-hc5</module>
         <module>xjc-plugins</module>
     </modules>
 
