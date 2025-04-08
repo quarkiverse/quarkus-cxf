@@ -29,7 +29,7 @@ curl http://localhost:8080/calculator-ws/CalculatorService?wsdl --output src/mai
 ----
 
 [[soak]]
-== `CxfClientTest.soakRequestScopedVertxHttpClient()`, `CxfClientTest.soakRequestScopedHttpClient()` and `CxfClientTest.soakRequestScopedUrlConnectionClient()`
+== `CxfClientTest.soakRequestScopedVertxHttpClient()` and `CxfClientTest.soakRequestScopedUrlConnectionClient()`
 
 These tests are sensitive to some parameters, such as the number of iterations and acceptable deviation of number of
 threads.

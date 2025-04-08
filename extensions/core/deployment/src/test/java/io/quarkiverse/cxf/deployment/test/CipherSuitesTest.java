@@ -75,7 +75,7 @@ public class CipherSuitesTest {
     }
 
     static List<String> clients() {
-        return List.of("VertxHttpClient", "HttpClient", "URLConnection");
+        return List.of("VertxHttpClient", "URLConnection");
     }
 
     static QuarkusUnitTest configure(QuarkusUnitTest config) {
@@ -106,17 +106,11 @@ public class CipherSuitesTest {
     @CXFClient("VertxHttpClientFake")
     HelloService vertxHttpClientFake;
 
-    @CXFClient("HttpClientFake")
-    HelloService httpClientFake;
-
     @CXFClient("URLConnectionFake")
     HelloService urlConnectionFake;
 
     @CXFClient("VertxHttpClientExisting")
     HelloService vertxHttpClientExisting;
-
-    @CXFClient("HttpClientExisting")
-    HelloService httpClientExisting;
 
     @CXFClient("URLConnectionExisting")
     HelloService urlConnectionExisting;
@@ -142,17 +136,11 @@ public class CipherSuitesTest {
             case "VertxHttpClientFake": {
                 yield vertxHttpClientFake;
             }
-            case "HttpClientFake": {
-                yield httpClientFake;
-            }
             case "URLConnectionFake": {
                 yield urlConnectionFake;
             }
             case "VertxHttpClientExisting": {
                 yield vertxHttpClientExisting;
-            }
-            case "HttpClientExisting": {
-                yield httpClientExisting;
             }
             case "URLConnectionExisting": {
                 yield urlConnectionExisting;

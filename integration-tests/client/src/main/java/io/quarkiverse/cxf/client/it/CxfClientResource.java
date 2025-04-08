@@ -240,9 +240,6 @@ public class CxfClientResource {
         @CXFClient("requestScopedVertxHttpClient")
         CalculatorService requestScopedVertxHttpClient;
 
-        @CXFClient("requestScopedHttpClient")
-        CalculatorService requestScopedHttpClient;
-
         @CXFClient("requestScopedUrlConnectionClient")
         CalculatorService requestScopedUrlConnectionClient;
 
@@ -250,8 +247,6 @@ public class CxfClientResource {
             switch (client) {
                 case "requestScopedVertxHttpClient":
                     return requestScopedVertxHttpClient;
-                case "requestScopedHttpClient":
-                    return requestScopedHttpClient;
                 case "requestScopedUrlConnectionClient":
                     return requestScopedUrlConnectionClient;
                 default:

@@ -62,15 +62,6 @@ public class HostnameVerifierTest {
             .overrideConfigKey("quarkus.cxf.client.helloVertx.http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.helloVertx.tls-configuration-name", "client-pkcs12")
 
-            /* Client with HttpClientHTTPConduitFactory */
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.client-endpoint-url",
-                    "https://localhost:8444/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.logging.enabled", "true")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.hostname-verifier", "#customHostnameVerifier")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.http-conduit-factory", "HttpClientHTTPConduitFactory")
-            .overrideConfigKey("quarkus.cxf.client.helloHttpClient.tls-configuration-name", "client-pkcs12")
-
             /* Client with URLConnectionHTTPConduitFactory */
             /*
              * The HTTP client of UrlConnection skips the HostnameVerifier if
@@ -97,9 +88,6 @@ public class HostnameVerifierTest {
     @CXFClient("helloVertx")
     HelloService helloVertx;
 
-    @CXFClient("helloHttpClient")
-    HelloService helloHttpClient;
-
     @CXFClient("helloUrlConnection")
     HelloService helloUrlConnection;
 
@@ -118,16 +106,6 @@ public class HostnameVerifierTest {
         Assertions.assertThatThrownBy(() -> helloVertx.hello("Doe")).hasRootCauseMessage(
                 "http-conduit-factory = VertxHttpClientHTTPConduitFactory does not support quarkus.cxf.client.helloVertx.hostname-verifier. AllowAllHostnameVerifier can be replaced by using a named TLS configuration (via quarkus.cxf.client.helloVertx.tls-configuration-name) with quarkus.tls.\"tls-bucket-name\".hostname-verification-algorithm set to NONE");
         Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).isEmpty();
-    }
-
-    @Test
-    void customHostnameVerifierHttpClient() {
-        customHostnameVerifier.getCheckedHostNames().clear();
-        Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).isEmpty();
-        customHostnameVerifier.setReturnVal(false);
-        Assertions.assertThatThrownBy(() -> helloHttpClient.hello("Doe")).hasRootCauseMessage(
-                "http-conduit-factory = HttpClientHTTPConduitFactory does not support quarkus.cxf.client.helloHttpClient.hostname-verifier - see https://github.com/quarkiverse/quarkus-cxf/issues/1687");
-        Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).containsExactly();
     }
 
     @Test

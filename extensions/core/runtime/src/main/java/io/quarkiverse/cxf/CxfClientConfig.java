@@ -500,16 +500,11 @@ public interface CxfClientConfig {
      * - `VertxHttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to
      * an implementation always returning `io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit`. This will
      * use `io.vertx.core.http.HttpClient` as the underlying HTTP client. Since {quarkus-cxf-project-name} 3.13.0.
-     * - `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always
-     * returning `org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the
-     * underlying HTTP client.
-     * +
-     * *Deprecated since
-     * xref:release-notes/3.18.0.adoc#_1633_httpclienthttpconduitfactory_value_of_http_conduit_factory_deprecated[3.18.0]*
-     * +++-+++ use other `HTTPConduitFactory` implementations, preferably `QuarkusCXFDefault`.
      * - `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always
      * returning `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the
      * underlying HTTP client.
+     *
+     * Historical note: `HttpClientHTTPConduitFactory` was removed in {quarkus-cxf-project-name} 3.22.0
      *
      * @asciidoclet
      * @since 2.3.0

@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -400,17 +399,6 @@ public class CxfClientTest {
     @Test
     void soakRequestScopedVertxHttpClient() {
         soak("requestScopedVertxHttpClient", VertxHttpClientHTTPConduit.class.getName());
-    }
-
-    /**
-     * Make sure that a request scoped client backed by {@link HttpClient} does not leak threads
-     * - see <a href=
-     * "https://github.com/quarkiverse/quarkus-cxf/issues/992">https://github.com/quarkiverse/quarkus-cxf/issues/992</a>.
-     */
-    @Test
-    void soakRequestScopedHttpClient() {
-        soak("requestScopedHttpClient", HttpClientHTTPConduit.class.getName());
-
     }
 
     /**

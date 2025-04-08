@@ -473,7 +473,7 @@ Larger values may give slight performance increases for large responses, at the 
 *Since Quarkus CXF*: 2.6.0
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-http-conduit-factory]]`link:#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
-.<| `QuarkusCXFDefault`, `CXFDefault`, `VertxHttpClientHTTPConduitFactory`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
+.<| `QuarkusCXFDefault`, `CXFDefault`, `VertxHttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
 .<| 
 
 3+a|Select the `HTTPConduitFactory` implementation for all clients except the ones that override this setting via
@@ -486,16 +486,11 @@ then its `HTTPConduitFactory` implementation will be used; otherwise, since 3.16
 - `VertxHttpClientHTTPConduitFactory`: *(Experimental)* the `HTTPConduitFactory` for this client will be set to
 an implementation always returning `io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit`. This will
 use `io.vertx.core.http.HttpClient` as the underlying HTTP client. Since {quarkus-cxf-project-name} 3.13.0.
-- `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning
-`org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the underlying HTTP
-client.
-+
-*Deprecated since
-xref:release-notes/3.18.0.adoc#_1633_httpclienthttpconduitfactory_value_of_http_conduit_factory_deprecated[3.18.0]*
-+++-+++ use other `HTTPConduitFactory` implementations, preferably `QuarkusCXFDefault`.
 - `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning
 `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the underlying
 HTTP client.
+
+Historical note: `HttpClientHTTPConduitFactory` was removed in {quarkus-cxf-project-name} 3.22.0
 
 *Environment variable*: `+++QUARKUS_CXF_HTTP_CONDUIT_FACTORY+++` +
 *Since Quarkus CXF*: 2.3.0
@@ -2157,7 +2152,7 @@ message header.
 *Since Quarkus CXF*: 2.2.3
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
-.<| `QuarkusCXFDefault`, `CXFDefault`, `VertxHttpClientHTTPConduitFactory`, `HttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
+.<| `QuarkusCXFDefault`, `CXFDefault`, `VertxHttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
 .<| 
 
 3+a|Select the `HTTPConduitFactory` implementation for this client.
@@ -2169,16 +2164,11 @@ then its `HTTPConduitFactory` implementation will be used; otherwise, since 3.16
 - `VertxHttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to
 an implementation always returning `io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit`. This will
 use `io.vertx.core.http.HttpClient` as the underlying HTTP client. Since {quarkus-cxf-project-name} 3.13.0.
-- `HttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always
-returning `org.apache.cxf.transport.http.HttpClientHTTPConduit`. This will use `java.net.http.HttpClient` as the
-underlying HTTP client.
-+
-*Deprecated since
-xref:release-notes/3.18.0.adoc#_1633_httpclienthttpconduitfactory_value_of_http_conduit_factory_deprecated[3.18.0]*
-+++-+++ use other `HTTPConduitFactory` implementations, preferably `QuarkusCXFDefault`.
 - `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to an implementation always
 returning `org.apache.cxf.transport.http.URLConnectionHTTPConduit`. This will use `java.net.HttpURLConnection` as the
 underlying HTTP client.
+
+Historical note: `HttpClientHTTPConduitFactory` was removed in {quarkus-cxf-project-name} 3.22.0
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__HTTP_CONDUIT_FACTORY+++` +
 *Since Quarkus CXF*: 2.3.0
