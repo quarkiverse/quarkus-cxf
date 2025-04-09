@@ -17,6 +17,8 @@
 package io.quarkiverse.xmlsec.it;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -49,9 +51,11 @@ public class XmlsecResource {
     public XmlsecResource() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         // Set up the Key
         keyStore = KeyStore.getInstance("pkcs12");
-        keyStore.load(
-                this.getClass().getClassLoader().getResource("localhost-keystore.p12").openStream(),
-                LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
+        try (InputStream in = Files.newInputStream(java.nio.file.Path.of("target/classes/localhost-keystore.p12"))) {
+            keyStore.load(
+                    in,
+                    LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
+        }
     }
 
     /**
@@ -109,9 +113,11 @@ public class XmlsecResource {
 
         // Set up the Key
         KeyStore keyStore = KeyStore.getInstance("pkcs12");
-        keyStore.load(
-                this.getClass().getClassLoader().getResource("localhost-client-keystore.p12").openStream(),
-                LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
+        try (InputStream in = Files.newInputStream(java.nio.file.Path.of("target/classes/localhost-client-keystore.p12"))) {
+            keyStore.load(
+                    in,
+                    LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
+        }
         Key key = keyStore.getKey("client", CLIENT_KEYSTORE_PASSWORD.toCharArray());
         X509Certificate cert = (X509Certificate) keyStore.getCertificate("client");
         return signature.sign(plaintext, key, cert, PAYMENT_INFO);
@@ -132,9 +138,11 @@ public class XmlsecResource {
 
         // Set up the Key
         KeyStore keyStore = KeyStore.getInstance("pkcs12");
-        keyStore.load(
-                this.getClass().getClassLoader().getResource("localhost-client-keystore.p12").openStream(),
-                LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
+        try (InputStream in = Files.newInputStream(java.nio.file.Path.of("target/classes/localhost-client-keystore.p12"))) {
+            keyStore.load(
+                    in,
+                    LOCALHOST_KEYSTORE_PASSWORD.toCharArray());
+        }
         X509Certificate cert = (X509Certificate) keyStore.getCertificate("client");
         signature.verify(plaintext, cert);
     }
