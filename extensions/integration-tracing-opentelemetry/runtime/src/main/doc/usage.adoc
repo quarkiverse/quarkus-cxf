@@ -9,7 +9,7 @@ or `quarkus.cxf.endpoint."/endpoint-path".otel.enabled`.
 
 === Runnable example
 
-There is an https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/opentelemetry[integration test]
+There is an {link-quarkus-cxf-source-tree-base}/integration-tests/opentelemetry[integration test]
 covering OpenTelemetry in the {quarkus-cxf-project-name} source tree.
 It is using `InMemorySpanExporter` from `io.opentelemetry:opentelemetry-sdk-testing`,
 so that the spans can be inspected from tests easily.
