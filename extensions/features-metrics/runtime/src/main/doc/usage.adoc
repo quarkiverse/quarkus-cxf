@@ -8,7 +8,7 @@ and `quarkus.cxf.endpoint."/endpoint-path".metrics.enabled` properties documente
 
 === Runnable example
 
-There is an https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/metrics[integration test]
+There is an {link-quarkus-cxf-source-tree-base}/integration-tests/metrics[integration test]
 covering Micrometer Metrics in the {quarkus-cxf-project-name} source tree.
 
 Unsurprisingly, it depends on `quarkus-cxf-rt-features-metrics`

@@ -11,13 +11,13 @@ Here are the key parts of a basic WS-Trust scenario:
 
 === Runnable example
 
-There is an https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust[integration test]
+There is an {link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust[integration test]
 covering WS-Trust in the {quarkus-cxf-project-name} source tree.
 Let's walk through it and see how the individual parts are set to work together.
 
 ==== WS-SecurityPolicy
 
-The policy is located in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/resources/asymmetric-saml2-policy.xml[asymmetric-saml2-policy.xml]` file.
+The policy is located in `{link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust/src/main/resources/asymmetric-saml2-policy.xml[asymmetric-saml2-policy.xml]` file.
 Its key part is the `<IssuedToken>` assertion requiring a SAML 2.0 token:
 
 .asymmetric-saml2-policy.xml
@@ -28,7 +28,7 @@ include::example$ws-trust/asymmetric-saml2-policy.xml[tag=ws-trust-usage.adoc-po
 
 ==== Security Token Service (STS)
 
-The STS is implemented in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/java/io/quarkiverse/cxf/it/ws/trust/sts/Sts.java[Sts.java]`:
+The STS is implemented in `{link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust/src/main/java/io/quarkiverse/cxf/it/ws/trust/sts/Sts.java[Sts.java]`:
 
 .Sts.java
 [source,java]
@@ -36,7 +36,7 @@ The STS is implemented in `https://github.com/quarkiverse/quarkus-cxf/tree/main/
 include::example$ws-trust/Sts.java[tag=ws-trust-usage.adoc-sts]
 ----
 
-and configured in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/resources/application.properties[application.properties]`:
+and configured in `{link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust/src/main/resources/application.properties[application.properties]`:
 
 .application.properties
 [source,properties]
@@ -46,7 +46,7 @@ include::example$ws-trust/application.properties[tag=ws-trust-usage.adoc-sts-pro
 
 ==== Service
 
-The service is implemented in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/java/io/quarkiverse/cxf/it/ws/trust/server/TrustHelloServiceImpl.java[TrustHelloServiceImpl.java]`:
+The service is implemented in `{link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust/src/main/java/io/quarkiverse/cxf/it/ws/trust/server/TrustHelloServiceImpl.java[TrustHelloServiceImpl.java]`:
 
 .TrustHelloServiceImpl.java
 [source,java]
@@ -54,7 +54,7 @@ The service is implemented in `https://github.com/quarkiverse/quarkus-cxf/tree/m
 include::example$ws-trust/TrustHelloServiceImpl.java[tag=ws-trust-usage.adoc-service]
 ----
 
-The `asymmetric-saml2-policy.xml` mentioned above is set in the Service Endpoint Interface `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/java/io/quarkiverse/cxf/it/ws/trust/server/TrustHelloService.java[TrustHelloService.java]`:
+The `asymmetric-saml2-policy.xml` mentioned above is set in the Service Endpoint Interface `{link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust/src/main/java/io/quarkiverse/cxf/it/ws/trust/server/TrustHelloService.java[TrustHelloService.java]`:
 
 .TrustHelloServiceImpl.java
 [source,java]
@@ -62,7 +62,7 @@ The `asymmetric-saml2-policy.xml` mentioned above is set in the Service Endpoint
 include::example$ws-trust/TrustHelloService.java[tag=ws-trust-usage.adoc-service]
 ----
 
-The service endpoint is configured in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/resources/application.properties[application.properties]`:
+The service endpoint is configured in `{link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust/src/main/resources/application.properties[application.properties]`:
 
 .application.properties
 [source,properties]
@@ -73,7 +73,7 @@ include::example$ws-trust/application.properties[tag=ws-trust-usage.adoc-service
 ==== Client
 
 Finally, for the SOAP client to be able to communicate with the service, its `STSClient` needs to be configured.
-It can be done in `https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-trust/src/main/resources/application.properties[application.properties]`:
+It can be done in `{link-quarkus-cxf-source-tree-base}/integration-tests/ws-trust/src/main/resources/application.properties[application.properties]`:
 
 .application.properties
 [source,properties]

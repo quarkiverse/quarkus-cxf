@@ -5,7 +5,7 @@
 [NOTE]
 ====
 The sample code snippets shown in this section come from the
-https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client-server[Client and server integration test]
+{link-quarkus-cxf-source-tree-base}/integration-tests/client-server[Client and server integration test]
 in the source tree of {quarkus-cxf-project-name}. You may want to use it as a runnable example.
 ====
 
@@ -52,7 +52,7 @@ especially when it comes to
 * {link-quarkus-docs-base}/security-identity-providers[Identity providers]
 * {link-quarkus-docs-base}/security-authorize-web-endpoints-reference[Role-based access control (RBAC)]
 
-There is a basic example in our https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client-server[Client and server integration test].
+There is a basic example in our {link-quarkus-cxf-source-tree-base}/integration-tests/client-server[Client and server integration test].
 Its key parts are:
 
 * `io.quarkus:quarkus-elytron-security-properties-file` dependency as an Identity provider

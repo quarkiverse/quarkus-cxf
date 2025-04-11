@@ -172,7 +172,7 @@ To enable it, you need to create a JAX-WS binding file with `enableAsyncMapping`
 [TIP]
 ====
 The sample code snippets used in this section come from the
-https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/metrics[Metrics integration test]
+{link-quarkus-cxf-source-tree-base}/integration-tests/metrics[Metrics integration test]
 in the source tree of {quarkus-cxf-project-name}
 ====
 
