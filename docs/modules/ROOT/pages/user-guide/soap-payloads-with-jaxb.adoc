@@ -11,7 +11,7 @@ As an example, let's create an application for managing fruits.
 [NOTE]
 ====
 The sample code snippets used in this section come from the
-https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/server[server integration test]
+{link-quarkus-cxf-source-tree-base}/integration-tests/server[server integration test]
 in the source tree of {quarkus-cxf-project-name}
 ====
 

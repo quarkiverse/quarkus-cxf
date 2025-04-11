@@ -11,14 +11,14 @@ but also the interoperability between vendors.
 Nevertheless, if you leverage WS-SecurityPolicy, CXF sets up the WSS4J interceptors under the hood for you.
 
 We won't explain the manual approach with WSS4J interceptors in detail here,
-but you can still refer to our https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security[WS-Security integration test] as an example.
+but you can still refer to our {link-quarkus-cxf-source-tree-base}/integration-tests/ws-security[WS-Security integration test] as an example.
 
 === WS-Security via WS-SecurityPolicy
 
 [TIP]
 ====
 The sample code snippets used in this section come from the
-https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
+{link-quarkus-cxf-source-tree-base}/integration-tests/ws-security-policy[WS-SecurityPolicy integration test]
 in the source tree of {quarkus-cxf-project-name}
 ====
 

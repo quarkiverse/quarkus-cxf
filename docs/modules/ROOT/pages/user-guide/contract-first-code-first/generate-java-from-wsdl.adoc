@@ -7,7 +7,7 @@
 .Code examples
 ====
 The code snippets shown in this section come from the
-https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client[client integration test]
+{link-quarkus-cxf-source-tree-base}/integration-tests/client[client integration test]
 in the source tree of {quarkus-cxf-project-name}.
 You may want to check it as an executable example.
 ====
