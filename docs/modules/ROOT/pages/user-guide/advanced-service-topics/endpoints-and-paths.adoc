@@ -31,7 +31,7 @@ Let's have a look at an example.
 [NOTE]
 ====
 The sample code snippet shown in this section comes from the
-https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/client-server[Client and server integration test]
+{link-quarkus-cxf-source-tree-base}/integration-tests/client-server[Client and server integration test]
 in the source tree of {quarkus-cxf-project-name}. You may want to use it as a runnable example.
 ====
 
