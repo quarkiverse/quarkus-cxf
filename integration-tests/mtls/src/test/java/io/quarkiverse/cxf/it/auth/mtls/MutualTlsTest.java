@@ -108,10 +108,10 @@ public class MutualTlsTest {
         final String ext = config.getValue("keystore.type.short", String.class);
         return RestAssured.config().sslConfig(new SSLConfig().with()
                 .trustStore(
-                        "localhost-truststore." + ext,
+                        "target/classes/localhost-truststore." + ext,
                         "secret")
                 .keyStore(
-                        "localhost-client-keystore." + ext,
+                        "target/classes/localhost-client-keystore." + ext,
                         "secret"));
     }
 
