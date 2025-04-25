@@ -1,0 +1,69 @@
+= {quarkus-cxf-project-name} 3.22.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.21.x -> 3.22.0 - https://quarkus.io/blog/quarkus-3-22-0-released/[release notes]
+* Apache Santuario XML Security 4.0.3 -> 4.0.4 https://github.com/apache/santuario-xml-security-java/compare/xmlsec-4.0.3+++...+++xmlsec-4.0.4[changelog]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1778[#1778] Introduce `quarkus.cxf.client.worker-dispatch-timeout`
+
+Before {quarkus-cxf-project-name} 3.22.0, when a SOAP client application using asynchronous clients was under high load,
+it might have taken every long time till there was a worker thread available for executing the client call.
+
+In such situations, it was hard to figure out, what was the root cause of those hanging clients.
+
+In {quarkus-cxf-project-name} 3.22.0, we introduced the
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-worker-dispatch-timeout[quarkus.cxf.client.worker-dispatch-timeout]`
+configuration parameter, that limits the time SOAP clients can wait for a free executor thread.
+In case the timeout is surpassed, an exception is thrown informing about the problem:
+
+[source]
+----
+Unable to dispatch SOAP client call within 30000 ms on a worker thread due to worker thread pool exhaustion.
+You may want to adjust one or more of the following configuration options:
+quarkus.thread-pool.core-threads, quarkus.thread-pool.max-threads, quarkus.cxf.client.worker-dispatch-timeout
+----
+
+== Deprecations and removals
+
+=== Remove `HttpClientHTTPConduitFactory` value of `*.http-conduit-factory`
+
+The `HttpClientHTTPConduitFactory` value of
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
+and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+was deprecated since {quarkus-cxf-project-name}
+xref:release-notes/3.18.0.adoc#_1633_httpclienthttpconduitfactory_value_of_http_conduit_factory_deprecated[3.18.0]
+, because it never gained any real traction within {quarkus-cxf-project-name}.
+
+`HttpClientHTTPConduitFactory` was removed from {quarkus-cxf-project-name} 3.22.0.
+
+Use the default `VertxHttpClientHTTPConduit` instead.
+
+Both the removal of `HttpClientHTTPConduitFactory` and `quarkus-cxf-rt-transports-http-hc5` (see the next section)
+are a part of our efforts to support only a single HTTP Conduit based on Vert.x HttpClient in the future.
+For now, the `URLConnectionHTTPConduitFactory` stays fully supported, although it is not used by default since {quarkus-cxf-project-name}
+xref:release-notes/3.16.0.adoc#_vert_x_httpclient_based_http_conduit_is_the_new_default[3.16.0].
+
+Check `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
+and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+for more information.
+
+=== Remove `quarkus-cxf-rt-transports-http-hc5` extension
+
+`io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` has been deprecated since {quarkus-cxf-project-name} 3.19.0
+and was removed in 3.22.0.
+
+Use the xref:user-guide/advanced-client-topics/asynchronous-client.adoc[asynchronous mode of `VertxHttpClientHTTPConduit`] instead.
+All asynchronous client functionality is now supported by the `io.quarkiverse.cxf:quarkus-cxf` extension.
+You do not need any additional extension for that.
+
+== Documentation improvements
+
+* Show only recent releases in the navigation.
+  The complete list of releases is still available on the xref:release-notes/index.adoc[Release notes] page.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.21.1+++...+++3.22.0

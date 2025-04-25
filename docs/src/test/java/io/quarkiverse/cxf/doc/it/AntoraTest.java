@@ -36,9 +36,9 @@ public class AntoraTest {
 
         final Set<String> ignorables = new LinkedHashSet<>();
 
-        final ZonedDateTime deadline = ZonedDateTime.parse("2025-04-03T23:59:59+01:00[Europe/Paris]");
+        final ZonedDateTime deadline = ZonedDateTime.parse("2025-05-01T23:59:59+01:00[Europe/Paris]");
         if (ZonedDateTime.now(ZoneId.of("Europe/Paris")).isBefore(deadline)) {
-            ignorables.add("https://quarkus.io/blog/quarkus-3-21-1-released/");
+            ignorables.add("https://quarkus.io/blog/quarkus-3-22-0-released/");
         }
 
         AntorAssured

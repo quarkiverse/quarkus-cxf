@@ -1,0 +1,14 @@
+= {quarkus-cxf-project-name} 3.20.1 release notes
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1776[#1776] Backport adding `io.quarkiverse.cxf.CxfTlsConfiguration.getName()`
+
+There was a backwards incompatible change in Quarkus 3.21.1,
+because of which we had to release {quarkus-cxf-project-name} 3.21.1.
+Quarkus team announced that they plan to backport that change to their 3.20 LTS stream too.
+By backporting the fix to our 3.20 stream, we prepare for that incompatibility in advance.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.20.0+++...+++3.20.1
