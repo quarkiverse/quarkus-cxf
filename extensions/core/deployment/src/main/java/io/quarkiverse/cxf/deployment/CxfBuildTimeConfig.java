@@ -138,9 +138,8 @@ public interface CxfBuildTimeConfig {
          * `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap. Otherwise a build time exception
          * will be thrown.
          *
-         * The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image
-         * and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (deprecated) or
-         * `quarkus.native.resources.includes/excludes`.
+         * The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image.
+         * You do not need to include them via `quarkus.native.resources.includes/excludes`.
          *
          * @asciidoclet
          * @since 2.0.0

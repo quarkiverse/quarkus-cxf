@@ -10,7 +10,7 @@
 === https://github.com/quarkiverse/quarkus-cxf/issues/1639[#1639] Add `quarkus.cxf.client."client-name".max-same-uri` configuration option
 
 Check
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]`'s documentation for more information.
+``xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-max-same-uri[quarkus.cxf.client."client-name".max-same-uri]``'s documentation for more information.
 
 Special thanks to https://github.com/dcheng1248[@dcheng1248] for the https://github.com/quarkiverse/quarkus-cxf/pull/1669[contribution].
 
@@ -32,7 +32,7 @@ Check the documentation of the following new configuration options to learn how 
 
 [TIP]
 ====
-The above configuration options work also for `VertxHttpClientHTTPConduit`.
+The above configuration options work also for `URLConnectionHTTPConduit`.
 ====
 
 

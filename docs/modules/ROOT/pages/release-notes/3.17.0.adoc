@@ -51,7 +51,7 @@ We plan to deprecate `io.quarkiverse.cxf:quarkus-cxf-rt-transports-http-hc5` onc
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1609[#1609] Support HTTP redirects with `VertxHttpClientHTTPConduit`
 
-Before {quarkus-cxf-project-name} 3.16.0, the `VertxHttpClientHTTPConduit`-based CXF clients were not following HTTP redirects
+Before {quarkus-cxf-project-name} 3.17.0, the `VertxHttpClientHTTPConduit`-based CXF clients were not following HTTP redirects
 (HTTP status codes 301, 302, 303 and 307 with `Location` response header) even if
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auto-redirect[quarkus.cxf.client."client-name".auto-redirect]`
 was enabled for the given client.

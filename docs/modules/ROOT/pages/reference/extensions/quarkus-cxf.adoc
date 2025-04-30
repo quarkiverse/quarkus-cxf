@@ -138,9 +138,8 @@ Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes
 `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap. Otherwise a build time exception
 will be thrown.
 
-The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image
-and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (deprecated) or
-`quarkus.native.resources.includes/excludes`.
+The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image.
+You do not need to include them via `quarkus.native.resources.includes/excludes`.
 
 *Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA_INCLUDES+++` +
 *Since Quarkus CXF*: 2.0.0
@@ -931,9 +930,8 @@ Make sure that the file sets selected by `quarkus.cxf.codegen.wsdl2java.includes
 `quarkus.cxf.codegen.wsdl2java.++[++whatever-name++]++.includes` do not overlap. Otherwise a build time exception
 will be thrown.
 
-The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image
-and therefore you do not need to include them via `quarkus.cxf.wsdl-path` (deprecated) or
-`quarkus.native.resources.includes/excludes`.
+The files from `src/main/resources` selected by `includes` and `excludes` are automatically included in native image.
+You do not need to include them via `quarkus.native.resources.includes/excludes`.
 
 *Environment variable*: `+++QUARKUS_CXF_CODEGEN_WSDL2JAVA__NAMED_PARAMETER_SETS__INCLUDES+++` +
 *Since Quarkus CXF*: 2.0.0

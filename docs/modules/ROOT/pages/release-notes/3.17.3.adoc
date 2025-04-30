@@ -3,7 +3,7 @@
 == Important dependency upgrades
 
 * Santuario XML Security 3.0.4 -> 3.0.5 - https://github.com/apache/santuario-xml-security-java/compare/xmlsec-3.0.4+++...+++xmlsec-3.0.5[All changes]
-* WSS4J 3.0.3 -> 3.0.4 - https://issues.apache.org/jira/projects/WSS/versions/12354367[Release notes]
+* WSS4J 3.0.3 -> 3.0.4 - https://github.com/apache/ws-wss4j/releases/tag/wss4j-3.0.4[Release notes]
 
 == Bugfixes
 
