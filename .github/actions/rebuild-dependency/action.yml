@@ -46,7 +46,7 @@ runs:
     - name: Install xmllint
       shell: bash
       run: |
-        sudo apt-get -qq install -y libxml2-utils
+        sudo apt-get update && sudo apt-get -qq install -y libxml2-utils
 
     - name: Checkout ${{ inputs.dependency-git-repo-url }}
       id: checkout-dependency
