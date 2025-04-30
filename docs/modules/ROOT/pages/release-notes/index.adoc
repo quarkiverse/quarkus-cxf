@@ -23,6 +23,7 @@ Those are typically released on Wednesday following the {quarkus-cxf-project-nam
 | xref:release-notes/3.21.1.adoc[3.21.1] | 2024-04-02 | 3.21.1 | 4.1.1
 | xref:release-notes/3.21.0.adoc[3.21.0] | 2024-03-24 | 3.21.0 | 4.1.1
 
+| xref:release-notes/3.20.2-aggregated.adoc[3.20.2 LTS aggregated since 3.15.3] |  | |
 | xref:release-notes/3.20.2.adoc[3.20.2 LTS] | 2025-04-25 | 3.20.1 | 4.1.1
 | xref:release-notes/3.20.1.adoc[3.20.1 LTS] | 2025-04-09 |        | 4.1.1
 | xref:release-notes/3.20.0.adoc[3.20.0 LTS] | 2024-03-24 | 3.20.0 | 4.1.1
