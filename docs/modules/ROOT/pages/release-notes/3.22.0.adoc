@@ -2,7 +2,7 @@
 
 == Important dependency upgrades
 
-* Quarkus 3.21.x -> 3.22.0 - https://quarkus.io/blog/quarkus-3-22-0-released/[release notes]
+* Quarkus 3.21.x -> 3.22.1 - https://quarkus.io/blog/quarkus-3-22-1-released/[release notes]
 * Apache Santuario XML Security 4.0.3 -> 4.0.4 https://github.com/apache/santuario-xml-security-java/compare/xmlsec-4.0.3+++...+++xmlsec-4.0.4[changelog]
 
 == New and noteworthy in {quarkus-cxf-project-name}
