@@ -12,6 +12,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.antorassured.AntorAssured;
+import io.quarkiverse.antorassured.RateLimit;
 import io.quarkiverse.antorassured.ResourceResolver;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -45,6 +46,7 @@ public class AntoraTest {
                 .links()
                 .excludeResolved(Pattern.compile("^\\Qhttp://localhost:808\\E[02].*"))
                 .excludeEditThisPage()
+                .rateLimit("https://github.com/[^/]+/[^/]+/(?:blob|tree)/.*", RateLimit.requestsPerTimeInterval(4, 61_000L))
                 .validate()
                 .ignore(err -> ignorables.contains(err.uri().resolvedUri()))
                 .assertValid();
