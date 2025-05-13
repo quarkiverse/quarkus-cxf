@@ -14,6 +14,9 @@ inputs:
       If true, the local Maven repository will be tar-gzipped and uploaded using actions/upload-artifact;
       otherwise it will neither be tar-gzipped nor uploaded
     default: 'true'
+  token:
+    description: "The token to use to authenticate against GitHub API"
+    required: true
 
 runs:
   using: 'composite'
@@ -27,12 +30,15 @@ runs:
 
     - name: mvn -B formatter:validate install
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
       run: ./mvnw -B formatter:validate install -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }}
 
     # Same as the previous but only JVM tests and different default ConduitFactory
     - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn -B test
       shell: bash
       env: 
+        GITHUB_TOKEN: ${{ inputs.token }}
         QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
       run: ./mvnw -B clean install -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }}
 
