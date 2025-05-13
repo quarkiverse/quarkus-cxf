@@ -68,6 +68,8 @@ jobs:
 
     - name: build-and-run-jvm-tests
       uses: ./.github/actions/build-and-run-jvm-tests
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   native-tests:
     strategy:
