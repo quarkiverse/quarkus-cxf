@@ -84,6 +84,7 @@ jobs:
       with:
         run-native-tests: 'true'
         upload-local-maven-repo-archive: 'false'
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: git push origin ${{ matrix.dependency-short-name }}-${{ matrix.dependency-stream }} -f
       shell: bash
