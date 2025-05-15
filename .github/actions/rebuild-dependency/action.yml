@@ -64,7 +64,7 @@ runs:
             sed -i '/<module>integration-tests<\/module>/d' pom.xml
           fi
           mvn=$([[ -f ./mvnw ]] && echo "./mvnw" || echo "mvn")
-          "$mvn" clean install -DskipTests -ntp -Dcheckstyle.skip -Dquickly
+          "$mvn" clean install -DskipTests -ntp -Dcheckstyle.skip -Dquickly -Dfastinstall
           if [[ "${{ inputs.dependency-short-name }}" == "quarkus" ]] ; then
             "$mvn" install -DskipTests -ntp -Prelease -f independent-projects/resteasy-reactive/server/vertx/pom.xml -Dno-build-cache -Dgpg.skip
           fi
