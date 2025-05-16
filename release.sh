@@ -13,22 +13,34 @@
 # You can find the job under https://github.com/quarkiverse/quarkus-cxf/actions
 # and watch whether it runs smoothly.
 
-set -x
 set -e
 
-releaseVersion="$1"
-nextVersion="$2"
+upstreamUrl="git@github.com:quarkiverse/quarkus-cxf.git"
 
+if [ "$#" -eq  "2" ]; then
+    releaseVersion="$1"
+    array=($(echo "$releaseVersion" | tr . '\n'))
+    releaseVersionMajorMinor="$((array[0])).$((array[1]))"
+    nextVersion="$2"
+elif [ "$#" -eq  "1" ]; then
+    releaseVersion="$1"
+    array=($(echo "$releaseVersion" | tr . '\n'))
+    releaseVersionMajorMinor="$((array[0])).$((array[1]))"
+    array[2]=$((array[2]+1))
+    nextVersion="$(IFS=. ; echo "${array[*]}")-SNAPSHOT"
+    echo "Setting default nextVersion ${nextVersion}"
+else
+    echo "One or two params expected: $0 <release-version>[ <next-development-version>]"
+fi
+
+set -x
 topicBranch=trigger-release-$releaseVersion
 git checkout -b $topicBranch
 
 sed -i -e 's|  current-version:.*|  current-version: '$releaseVersion'|' .github/project.yml
 sed -i -e 's|  next-version:.*|  next-version: '$nextVersion'|' .github/project.yml
-
-# current-major-minor-version is only used in maintenance branches like 1.5 to set the versio in antora.yml
-releaseVersionMajorMinor=$(echo $releaseVersion | sed 's|.[0-9][0-9]*$||')
 sed -i -e 's|  current-major-minor-version:.*|  current-major-minor-version: '$releaseVersionMajorMinor'|' .github/project.yml
 
 git add -A
 git commit -m "Trigger release $releaseVersion"
-git push git@github.com:quarkiverse/quarkus-cxf.git $topicBranch
+git push "${upstreamUrl}" $topicBranch
