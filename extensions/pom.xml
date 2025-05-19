@@ -25,6 +25,7 @@
         <module>ws-rm</module>
         <module>services-sts</module>
         <module>xjc-plugins</module>
+        <module>jaxb-plugins</module>
     </modules>
 
     <dependencyManagement>
