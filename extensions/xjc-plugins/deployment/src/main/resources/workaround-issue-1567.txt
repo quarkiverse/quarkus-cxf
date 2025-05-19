@@ -1,2 +1,0 @@
-This file should cause that -source.jar and -javadoc.jar are created.
-See https://github.com/quarkiverse/quarkus-cxf/issues/1567
