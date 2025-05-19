@@ -92,6 +92,9 @@ public class MutualTlsTest {
                         /* On Linux, we randomly get any of the following: */
                         Matchers.containsString("SSLHandshakeException: Received fatal alert: bad_certificate"),
                         Matchers.containsString("IOException: Error writing to server"),
+                        /* Linux, Java 24 */
+                        Matchers.containsString(
+                                "SSLHandshakeException: (certificate_required) Received fatal alert: certificate_required"),
                         /*
                          * This comes sometimes with the Vert.x client - see
                          * https://github.com/quarkiverse/quarkus-cxf/issues/1429
