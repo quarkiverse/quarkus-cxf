@@ -21,6 +21,10 @@
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-xjc-plugins</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.cxf</groupId>
+            <artifactId>quarkus-cxf-jaxb-plugins</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -55,6 +59,8 @@
                         <configuration>
                             <sources>
                                 <source>target/generated-test-sources/wsdl2java-custom</source>
+                                <source>target/generated-test-sources/wsdl2java-jaxb1</source>
+                                <source>target/generated-test-sources/wsdl2java-jaxb2</source>
                             </sources>
                         </configuration>
                     </execution>

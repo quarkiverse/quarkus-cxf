@@ -1,0 +1,34 @@
+JAXB plugins for xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java] code generation.
+You'll need to add this extension if you want to use any of the following in
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]:
+
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-SimpleEquals-Plugin[simpleEquals]`
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-SimpleHashCode-Plugin[simpleHashCode]`
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Equals-Plugin[equals]`
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-HashCode-Plugin[hashCode]`
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-ToString-Plugin[toString]`
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Copyable-Plugin[-xjc-copyable]`
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Mergeable-Plugin[mergeable]`
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Inheritance-Plugin[inheritance]` - see https://github.com/quarkiverse/quarkus-cxf/issues/1816
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-AutoInheritance-Plugin[autoInheritance]`
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Wildcard-Plugin[wildcard]` (untested)
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Setters-Plugin[setters]` (untested)
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Simplify-Plugin[simplify]` (untested)
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-EnumValue-Plugin[enumValue]` (untested)
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-JaxbIndex-Plugin[jaxbIndex]` (untested)
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-FixJAXB1058-Plugin[fixJAXB1058]` (untested)
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-CommonsLang-Plugin[commonsLang]` (untested) - generates the `toString()`, `hashCode()` and `equals()` methods using Apache commons-lang3.
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-DefaultValue-Plugin[defaultValue]` (untested) - modifies the JAXB code model to set default values to the schema default attribute.
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-FluentApi-Plugin[fluentApi]` (untested) - support a fluent api in addition to the default (JavaBean) setter methods.
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-NamespacePrefix-Plugin[namespacePrefix]` (untested) - Namespace Prefix Plugin - adds `javax.xml.bind.annotation.XmlNs` annotations to `package-info.java` files
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-ValueConstructor-Plugin[valueConstructor]` (untested) - generates another constructor, taking an argument for each field in the class and initialises the field with the argument value.
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB-Boolean-Getter-Plugin[booleanGetter]` (untested) - changes getter methods for boolean from `isXXX` to `getXXX`.
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB-CamelCase-Plugin[camelCase]` (untested) - changes the way class names are generated to always be in CamelCase..
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB-XML-ElementWrapper-Plugin[xmlElementWrapper]` (untested) - support `@XmlElementWrapper` collection generation (without the need of inner class).
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB-Parent-Pointer-Plugin[parentPointer]` (untested) - adds a field that points to the parent object
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB-Property-Listener-Injector-Plugin[propertyListenerInjector]` (untested) - generates property change events on each `setXXX` if specified in the additional generated methods
+
+[TIP]
+====
+Check the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java] section of User guide for more details about `wsdl2java`.
+====

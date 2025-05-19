@@ -65,4 +65,5 @@ endif::[]
 ** xref:reference/extensions/quarkus-cxf-rt-ws-rm.adoc[WS-ReliableMessaging]
 ** xref:reference/extensions/quarkus-cxf-services-sts.adoc[Security Token Service (STS)]
 ** xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[XJC Plugins]
+** xref:reference/extensions/quarkus-cxf-jaxb-plugins.adoc[JAXB Plugins for wsdl2java]
 // extensions: END
