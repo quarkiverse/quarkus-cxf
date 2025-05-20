@@ -34,6 +34,8 @@
 
   <xs:element name="subtractResponse" type="tns:subtractResponse"></xs:element>
 
+  <xs:element name="myEnum" type="tns:myEnumType"/>
+
   <xs:complexType name="add">
     <xs:sequence>
       <xs:element name="arg0" type="xs:int"></xs:element>
@@ -153,6 +155,13 @@
       <xs:element name="return" type="xs:int"></xs:element>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:simpleType name="myEnumType">
+    <xs:restriction base="xs:string">
+        <xs:enumeration value="k1"/>
+        <xs:enumeration value="k2"/>
+    </xs:restriction>
+  </xs:simpleType>
 
 </xs:schema>
   </wsdl:types>

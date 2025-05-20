@@ -55,13 +55,23 @@
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>add-test-source</goal>
+                            <goal>add-test-resource</goal>
                         </goals>
                         <configuration>
                             <sources>
                                 <source>target/generated-test-sources/wsdl2java-custom</source>
                                 <source>target/generated-test-sources/wsdl2java-jaxb1</source>
                                 <source>target/generated-test-sources/wsdl2java-jaxb2</source>
+                                <source>target/generated-test-sources/wsdl2java-jaxb3</source>
                             </sources>
+                            <resources>
+                                <resource>
+                                    <directory>target/generated-test-sources/wsdl2java-jaxb2</directory>
+                                    <includes>
+                                        <include>**/*.index</include>
+                                    </includes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

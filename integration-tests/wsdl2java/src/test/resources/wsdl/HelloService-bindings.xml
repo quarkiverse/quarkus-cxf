@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<jxb:bindings version="3.0"
+  xmlns:jxb="https://jakarta.ee/xml/ns/jaxb"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:namespace="urn:jaxb.jvnet.org:plugin:namespace-prefix">
+
+  <jxb:bindings schemaLocation="HelloService.xsd">
+    <jxb:schemaBindings>
+      <jxb:package name="io.quarkiverse.cxf.wsdl2java.it.jaxb3" />
+    </jxb:schemaBindings>
+    <jxb:bindings>
+      <namespace:prefix name="jaxb3-test" />
+    </jxb:bindings>
+  </jxb:bindings>
+
+</jxb:bindings>
