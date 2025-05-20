@@ -1,5 +1,12 @@
 package io.quarkiverse.cxf.wsdl2java.it;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.assertj.core.api.Assertions;
@@ -7,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.wsdl2java.it.jaxb2.Add;
 import io.quarkiverse.cxf.wsdl2java.it.jaxb2.AddList;
+import io.quarkiverse.cxf.wsdl2java.it.jaxb2.MyEnumType;
 import io.quarkiverse.cxf.wsdl2java.it.jaxb2.Operands;
 
 public class Wsdl2JavaJaxb2Test {
@@ -65,6 +73,37 @@ public class Wsdl2JavaJaxb2Test {
         result.mergeFrom(b, a);
         Assertions.assertThat(result.getArg0()).containsExactly(8, 9, 10);
 
+    }
+
+    @Test
+    void setters() {
+        AddList a = newAddList(1, 2);
+        List<Integer> l = Arrays.asList(3, 4);
+        a.setArg0(l);
+        Assertions.assertThat(a.getArg0()).containsExactly(3, 4);
+        Assertions.assertThat(a.getArg0()).isSameAs(l);
+    }
+
+    @Test
+    void enumValue() {
+        Assertions.assertThat(MyEnumType.K_1.enumValue()).isEqualTo("k1");
+        Assertions.assertThat(MyEnumType.K_2.enumValue()).isEqualTo("k2");
+    }
+
+    @Test
+    void jaxbIndex() throws IOException, ClassNotFoundException {
+        String packageName = Operands.class.getPackageName();
+        ClassLoader cl = Operands.class.getClassLoader();
+        String jaxbIndex = packageName.replace('.', '/') + "/jaxb.index";
+        System.out.println(jaxbIndex);
+        URL url = cl.getResource(jaxbIndex);
+        Assertions.assertThat(url).isNotNull();
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = r.readLine()) != null) {
+                cl.loadClass(packageName + "." + line.trim());
+            }
+        }
     }
 
     private static Operands newOperands(int a, int b) {
