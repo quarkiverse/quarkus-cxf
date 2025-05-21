@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<jaxb:bindings
+    version="3.0"
+    xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:inheritance="urn:jaxb.jvnet.org:plugin:inheritance"
+    xmlns:wildcard="http://jaxb2-commons.dev.java.net/basic/wildcard"
+    xmlns:namespace="urn:jaxb.jvnet.org:plugin:namespace-prefix">
+
+    <jaxb:bindings schemaLocation="HelloService.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="io.quarkiverse.cxf.wsdl2java.it.jaxb3" />
+        </jaxb:schemaBindings>
+        <jaxb:bindings>
+            <namespace:prefix name="jaxb3-test" />
+        </jaxb:bindings>
+        <jaxb:bindings node="xsd:complexType[@name='hello']">
+            <inheritance:implements>io.quarkiverse.cxf.wsdl2java.it.HelloNameProvider</inheritance:implements>
+        </jaxb:bindings>
+        <jaxb:bindings node="xsd:complexType[@name='anyHolder']">
+            <wildcard:lax/>
+        </jaxb:bindings>
+    </jaxb:bindings>
+
+</jaxb:bindings>

@@ -426,6 +426,11 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.jvnet.jaxb</groupId>
+                <artifactId>jaxb-plugins-runtime</artifactId>
+                <version>${jaxb-plugins.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jvnet.mimepull</groupId>
                 <artifactId>mimepull</artifactId>
                 <version>${mimepull.version}</version>

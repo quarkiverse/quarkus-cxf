@@ -21,6 +21,10 @@
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-jaxb-plugins</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jvnet.jaxb</groupId>
+            <artifactId>jaxb-plugins</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

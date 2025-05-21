@@ -10,10 +10,11 @@
 
     <artifactId>quarkus-cxf-jaxb-plugins</artifactId>
     <name>Quarkus CXF - JAXB Plugins for wsdl2java</name>
-    <description>JAXB Plugins for wsdl2java for wsdl2java code generation</description>
+    <description>JAXB Plugins from org.jvnet.jaxb:jaxb-plugins for wsdl2java code generation</description>
 
     <properties>
         <cq.since>3.23.0</cq.since>
+        <quarkus.metadata.status>experimental</quarkus.metadata.status>
     </properties>
 
     <dependencies>
@@ -23,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>org.jvnet.jaxb</groupId>
-            <artifactId>jaxb-plugins</artifactId>
+            <artifactId>jaxb-plugins-runtime</artifactId>
         </dependency>
     </dependencies>
 

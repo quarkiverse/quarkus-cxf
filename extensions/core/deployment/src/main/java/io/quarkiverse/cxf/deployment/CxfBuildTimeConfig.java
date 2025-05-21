@@ -250,20 +250,14 @@ public interface CxfBuildTimeConfig {
         public Optional<String> wsdlLocation();
 
         /**
-         * A comma separated list of XJC extensions to enable. The following extensions are available through
-         * `io.quarkiverse.cxf:quarkus-cxf-xjc-plugins` dependency:
-         *
-         * - `bg` - generate `getX()` methods for boolean fields instead of `isX()`
-         * - `bgi` - generate both `isX()` and `getX()` methods for boolean fields
-         * - `dv` - initialize fields mapped from elements/attributes with their default values
-         * - `javadoc` - generates JavaDoc based on `xsd:documentation`
-         * - `property-listener` - add a property listener and the code for triggering the property change events to setter
-         * methods
-         * - `ts` - generate `toString()` methods
-         * - `wsdlextension` - generate WSDL extension methods in root classes
-         *
-         * These values correspond to `-wsdl2java` options `-xjc-Xbg`, `-xjc-Xbgi`, `-xjc-Xdv`, `-xjc-Xjavadoc`,
-         * `-xjc-Xproperty-listener`, `-xjc-Xts` and `-xjc-Xwsdlextension` respectively.
+         * A comma separated list of XJC plugins to enable.
+         * Check `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]`
+         * and `xref:reference/extensions/quarkus-cxf-jaxb-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-jaxb-plugins]`
+         * for the list of available plugins.
+         * Check
+         * xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl-customize-the-java-model-classes[Customize
+         * the Java model classes]
+         * for the `wsdl2java` guide for more information about XJC.
          *
          * @asciidoclet
          * @since 2.4.0

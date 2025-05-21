@@ -1,5 +1,8 @@
 package io.quarkiverse.cxf.wsdl2java.it;
 
+import java.lang.reflect.Field;
+
+import jakarta.xml.bind.annotation.XmlAnyElement;
 import jakarta.xml.bind.annotation.XmlNs;
 import jakarta.xml.bind.annotation.XmlSchema;
 
@@ -7,6 +10,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.wsdl2java.it.jaxb3.AcroCase;
+import io.quarkiverse.cxf.wsdl2java.it.jaxb3.AnyHolder;
 import io.quarkiverse.cxf.wsdl2java.it.jaxb3.BoolHolder;
 import io.quarkiverse.cxf.wsdl2java.it.jaxb3.Hello;
 import io.quarkiverse.cxf.wsdl2java.it.jaxb3.IntHolder;
@@ -70,6 +74,19 @@ public class Wsdl2JavaJaxb3Test {
         Assertions.assertThat(new AcroCase()).isNotNull();
         Assertions.assertThat(new SnakeCase()).isNotNull();
         Assertions.assertThat(new KebapCase()).isNotNull();
+    }
+
+    @Test
+    void inheritance() {
+        Assertions.assertThat(new Hello()).isInstanceOf(HelloNameProvider.class);
+    }
+
+    @Test
+    void wildcard() throws NoSuchFieldException, SecurityException {
+        final Field fld = AnyHolder.class.getDeclaredField("content");
+        final XmlAnyElement anyElem = fld.getAnnotation(jakarta.xml.bind.annotation.XmlAnyElement.class);
+        Assertions.assertThat(anyElem).isNotNull();
+        Assertions.assertThat(anyElem.lax()).isTrue();
     }
 
     private static Hello newHello(String string) {

@@ -1,7 +1,7 @@
 ---
 artifact: ${project.groupId}:${project.artifactId}:${project.version}
 name: "JAXB Plugins for wsdl2java"
-description: "JAXB Plugins for wsdl2java code generation"
+description: "Embeds XJC plugins from org.jvnet.jaxb:jaxb-plugins for wsdl2java code generation"
 metadata:
   keywords:
     - "soap"
