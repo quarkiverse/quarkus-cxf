@@ -2,7 +2,6 @@
   <wsdl:types>
 <xs:schema
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:inheritance="urn:jaxb.jvnet.org:plugin:inheritance"
     xmlns:tns="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator"
     elementFormDefault="unqualified"
     targetNamespace="http://www.jboss.org/eap/quickstarts/wscalculator/Calculator"
@@ -66,11 +65,6 @@
   </xs:complexType>
 
   <xs:complexType name="subtract">
-    <xs:annotation>
-      <xs:appinfo>
-        <inheritance:implements>io.quarkiverse.cxf.wsdl2java.it.TestInterface</inheritance:implements>
-      </xs:appinfo>
-    </xs:annotation>
     <xs:sequence>
       <xs:element name="arg0" type="xs:int"></xs:element>
       <xs:element name="arg1" type="xs:int"></xs:element>

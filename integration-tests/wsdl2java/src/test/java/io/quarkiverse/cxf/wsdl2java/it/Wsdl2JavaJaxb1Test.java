@@ -1,10 +1,12 @@
 package io.quarkiverse.cxf.wsdl2java.it;
 
+import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.wsdl2java.it.jaxb1.Operands;
-import io.quarkiverse.cxf.wsdl2java.it.jaxb1.Subtract;
 
 public class Wsdl2JavaJaxb1Test {
 
@@ -27,10 +29,16 @@ public class Wsdl2JavaJaxb1Test {
     }
 
     @Test
-    void inheritance() {
-        // https://github.com/quarkiverse/quarkus-cxf/issues/1816
-        // Should be Assertions.assertThat(new Subtract()).isInstanceOf(TestInterface.class);
-        Assertions.assertThat(new Subtract()).isNotInstanceOf(TestInterface.class);
+    void injectListenerCode() throws NoSuchFieldException, SecurityException {
+        final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
+        final Operands op = new Operands();
+        op.addVetoableChangeListener("a", events::add);
+        op.setA(1);
+        // https://github.com/highsource/jaxb-tools/issues/616
+        Assertions.assertThat(events)
+                .withFailMessage("Set hasSize(1) once https://github.com/highsource/jaxb-tools/issues/616 has been fixed")
+                .hasSize(0);
+        //Assertions.assertThat(events.get(0).getPropertyName()).isEqualTo("a");
     }
 
     private static Operands newOperands(int a, int b) {

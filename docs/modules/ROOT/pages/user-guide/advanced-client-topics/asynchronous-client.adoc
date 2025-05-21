@@ -183,7 +183,9 @@ include::example$metrics/async-binding.xml[]
 ----
 
 This file should then be passed to xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java]
-through its xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[additional-params] property:
+through the
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-bindings[quarkus.cxf.codegen.wsdl2java.bindings]
+configuration property:
 
 .application.properties
 [source,properties]
