@@ -46,9 +46,11 @@ endif::[]
 Check the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java] section of User guide for more details about `wsdl2java` and XJC.
 ====
 
-Add this extension if you want to use any of the following
-xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl-customize-the-java-model-classes[XJC plugins] in
-xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-additional-params[quarkus.cxf.codegen.wsdl2java.additional-params]:
+Use this extension if you want to use any of the following
+xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl-customize-the-java-model-classes[XJC plugins]
+in
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-xjc[quarkus.cxf.codegen.wsdl2java.xjc]`
+or `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-named-parameter-sets-xjc[quarkus.cxf.codegen.wsdl2java."named-parameter-sets".xjc]`:
 
 * `https://cxf.apache.org/cxf-xjc-boolean.html[bg]` - generate `getFoo()` instead of `isFoo()` accessor methods for boolean fields.
 * `https://cxf.apache.org/cxf-xjc-dv.html[dv]` - let the generated getter methods return the default value defined in the schema unless the field is set explicitly.
