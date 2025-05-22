@@ -254,10 +254,10 @@ public interface CxfBuildTimeConfig {
          * Check `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]`
          * and `xref:reference/extensions/quarkus-cxf-jaxb-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-jaxb-plugins]`
          * for the list of available plugins.
-         * Check
+         * Check the
          * xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl-customize-the-java-model-classes[Customize
          * the Java model classes]
-         * for the `wsdl2java` guide for more information about XJC.
+         * part of the `wsdl2java` guide for more information about XJC.
          *
          * @asciidoclet
          * @since 2.4.0
