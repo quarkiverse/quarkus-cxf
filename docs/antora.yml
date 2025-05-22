@@ -8,7 +8,7 @@ asciidoc:
   attributes:
 
     # Versions
-    quarkus-version: 3.22.3 # replace ${quarkus.version}
+    quarkus-version: 3.23.0 # replace ${quarkus.version}
     quarkus-cxf-version: 3.22.0 # replace ${release.current-version}
 
     # Toggle whether some page elements are rendered
