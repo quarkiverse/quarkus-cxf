@@ -1,0 +1,9 @@
+= {quarkus-cxf-project-name} 3.23.1 release notes
+
+== Important dependency upgrades
+
+* CXF 4.1.1 -> 4.1.2 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.1.1+++...+++cxf-4.1.2[changelog]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.23.0+++...+++3.23.1

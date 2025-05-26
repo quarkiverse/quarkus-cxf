@@ -1,0 +1,27 @@
+= {quarkus-cxf-project-name} 3.23.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.22.x -> 3.23.x - https://quarkus.io/blog/quarkus-3-23-0-released/[release notes]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1553[#1553] Support XJC plugins from `org.jvnet.jaxb:jaxb-plugins`
+
+xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl-xjc-plugins[XJC Plugins] are one of the ways how the Java files produced by `wsdl2java` can be customized.
+
+Before {quarkus-cxf-project-name} 3.23.0, only XJC Plugins from `org.apache.cxf.xjcplugins:cxf-xjc-*` were supported
+via `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]`.
+
+Since {quarkus-cxf-project-name} 3.23.0, also CXF Plugins `org.jvnet.jaxb:jaxb-plugins` can be used via
+`xref:reference/extensions/quarkus-cxf-jaxb-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-jaxb-plugins]` extension.
+
+Check the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl-customize-the-java-model-classes[`wsdl2java` guide] for more details.
+
+== Documentation improvements
+
+* We published xref:release-notes/3.20.2-aggregated.adoc[Aggregated Release notes for upgrading from 3.15.3 LTS to 3.20.2 LTS]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.22.0+++...+++3.23.0
