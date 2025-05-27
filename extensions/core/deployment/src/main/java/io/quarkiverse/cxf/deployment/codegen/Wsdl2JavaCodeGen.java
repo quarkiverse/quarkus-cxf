@@ -282,7 +282,6 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
                 WithDefault withDefault, Consumer<String> paramConsumer) {
             switch (wsdl2JavaParam.transformer()) {
                 case bool:
-                    System.out.println("bool " + value + " " + value.getClass().getName());
                     if (paramName != null && Boolean.TRUE.equals(value)) {
                         paramConsumer.accept(paramName);
                     }
