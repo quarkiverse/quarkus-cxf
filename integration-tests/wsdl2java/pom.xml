@@ -64,6 +64,8 @@
                                 <source>target/generated-test-sources/wsdl2java-jaxb2</source>
                                 <source>target/generated-test-sources/wsdl2java-jaxb3</source>
                                 <source>target/generated-test-sources/wsdl2java-elementWrapper</source>
+                                <source>target/generated-test-sources/wsdl2java-parentPointer</source>
+                                <source>target/generated-test-sources/wsdl2java-simplify</source>
                             </sources>
                             <resources>
                                 <resource>

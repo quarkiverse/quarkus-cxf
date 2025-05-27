@@ -66,7 +66,7 @@ or `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-w
 * `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Setters-Plugin[setters]` - generate setters for collection fields.
   By default, a copy of the passed-in collection is set.
   Add `setters-mode=direct` to set the passed in collection instance directly.
-* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Simplify-Plugin[simplify]` (untested)
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Simplify-Plugin[simplify]` - simplify "union" properties like `fooOrBarOrBaz` generated from repeatable choices into several simple properties like `foo`, `bar`, `baz`.
 * `https://github.com/highsource/jaxb-tools/wiki/JAXB2-EnumValue-Plugin[enumValue]` - make enums implement the `EnumValue<T>` interface allowing generic access to the original enum values.
 * `https://github.com/highsource/jaxb-tools/wiki/JAXB2-JaxbIndex-Plugin[jaxbindex]` - generate a per-package `jaxb.index` file listing all of the schema-derived classes in the package.
 * `https://github.com/highsource/jaxb-tools/wiki/JAXB2-FixJAXB1058-Plugin[fixJAXB1058]` (untested)
@@ -89,8 +89,8 @@ or `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-w
 | `SSNCode`    | `SSNCode`   | `SsnCode`
 |===
 +
-* `https://github.com/highsource/jaxb-tools/wiki/JAXB-XML-ElementWrapper-Plugin[xmlElementWrapper]` - annotate collection fields with `@XmlElementWrapper(name = "...")` instead of generating an extra class for the collection.
-* `https://github.com/highsource/jaxb-tools/wiki/JAXB-Parent-Pointer-Plugin[parentPointer]` (untested) - adds a field that points to the parent object
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB-XML-ElementWrapper-Plugin[elementWrapper]` - annotate collection fields with `@XmlElementWrapper(name = "...")` instead of generating an extra class for the collection.
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB-Parent-Pointer-Plugin[parent-pointer]` - adds a field that points to the parent object.
 * `https://github.com/highsource/jaxb-tools/wiki/JAXB-Property-Listener-Injector-Plugin[inject-listener-code]` - https://github.com/highsource/jaxb-tools/issues/616[broken], use `property-listener` from
   `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]` instead.
 
