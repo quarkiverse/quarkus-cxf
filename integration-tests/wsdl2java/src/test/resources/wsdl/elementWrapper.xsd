@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://test.deployment.cxf.quarkiverse.io/"
+    attributeFormDefault="unqualified"
+    elementFormDefault="unqualified"
+    targetNamespace="http://test.deployment.cxf.quarkiverse.io/">
+
+    <xsd:element name="hello" type="tns:hello" />
+    <xsd:complexType name="hello">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="helloName" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="helloResponse" type="tns:helloResponse" />
+    <xsd:complexType name="helloResponse">
+        <xsd:sequence>
+            <xsd:element minOccurs="0" name="return" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="order">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="tns:items" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="items">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="item" type="xsd:string" maxOccurs="unbounded" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>
