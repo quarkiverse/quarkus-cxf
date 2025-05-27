@@ -63,6 +63,7 @@
                                 <source>target/generated-test-sources/wsdl2java-jaxb1</source>
                                 <source>target/generated-test-sources/wsdl2java-jaxb2</source>
                                 <source>target/generated-test-sources/wsdl2java-jaxb3</source>
+                                <source>target/generated-test-sources/wsdl2java-elementWrapper</source>
                             </sources>
                             <resources>
                                 <resource>

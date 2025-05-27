@@ -45,7 +45,7 @@ or `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-w
 | `SSNCode`    | `SSNCode`   | `SsnCode`
 |===
 +
-* `https://github.com/highsource/jaxb-tools/wiki/JAXB-XML-ElementWrapper-Plugin[xmlElementWrapper]` (untested) - support `@XmlElementWrapper` collection generation (without the need of inner class).
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB-XML-ElementWrapper-Plugin[xmlElementWrapper]` - annotate collection fields with `@XmlElementWrapper(name = "...")` instead of generating an extra class for the collection.
 * `https://github.com/highsource/jaxb-tools/wiki/JAXB-Parent-Pointer-Plugin[parentPointer]` (untested) - adds a field that points to the parent object
 * `https://github.com/highsource/jaxb-tools/wiki/JAXB-Property-Listener-Injector-Plugin[inject-listener-code]` - https://github.com/highsource/jaxb-tools/issues/616[broken], use `property-listener` from
   `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]` instead.
