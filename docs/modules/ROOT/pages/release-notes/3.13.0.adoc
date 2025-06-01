@@ -4,7 +4,7 @@
 == Important dependency upgrades
 
 * Quarkus 3.12.x -> 3.13.0 - https://quarkus.io/blog/quarkus-3-13-0-released/[release notes]
-* Woodstox 6.6.2 -> 7.0.0 - link:https://github.com/FasterXML/woodstox/blob/master/release-notes/VERSION[release notes], link:https://github.com/FasterXML/woodstox/compare/woodstox-core-6.6.2+++...+++woodstox-core-7.0.0[changelog]
+* Woodstox 6.6.2 -> 7.0.0 - link:https://github.com/FasterXML/woodstox/blob/main/release-notes/VERSION[release notes], link:https://github.com/FasterXML/woodstox/compare/woodstox-core-6.6.2+++...+++woodstox-core-7.0.0[changelog]
 
 == New and noteworthy in {quarkus-cxf-project-name}
 
