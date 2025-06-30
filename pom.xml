@@ -51,6 +51,7 @@
         <!-- Items annotated with @sync can be updated by running mvn cq:sync-versions -N -->
         <angus-mail.version>2.0.3</angus-mail.version>
         <assertj.version>3.27.3</assertj.version>
+        <awaitility.version>4.3.0</awaitility.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.awaitility:awaitility -->
         <cxf.xjcplugins.version>4.1.0</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
         <ehcache.version>3.10.8</ehcache.version>
         <fastinfoset.version>2.1.1</fastinfoset.version>
@@ -65,6 +66,7 @@
         <httpcore5.version>5.3.4</httpcore5.version>
         <neethi.version>3.2.1</neethi.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
         <mimepull.version>1.10.0</mimepull.version>
+        <rest-assured.version>5.5.5</rest-assured.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.rest-assured:rest-assured -->
         <saaj-impl.version>3.0.4</saaj-impl.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.saaj-impl.version -->
         <santuario-xmlsec.version>4.0.4</santuario-xmlsec.version>
 
@@ -81,6 +83,7 @@
         <exec-maven-plugin.version>3.5.1</exec-maven-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <groovy.version>3.0.25</groovy.version>
+        <hyperfoil-plugin.version>0.27.1</hyperfoil-plugin.version>
         <maven-build-cache-extension.version>1.2.0</maven-build-cache-extension.version>
         <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
         <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
@@ -116,6 +119,7 @@
         <module>bom-test</module>
         <module>test-util-parent</module>
         <module>integration-tests</module>
+        <module>perf-tests</module>
     </modules>
 
     <build>
