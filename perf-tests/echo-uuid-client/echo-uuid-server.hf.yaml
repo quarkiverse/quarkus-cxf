@@ -1,0 +1,18 @@
+name: echo-uuid-server
+http:
+  # The port is replaced by groovy-maven-plugin
+  host: http://localhost:%quarkus.http.port%
+phases:
+- operator:
+    # Running a fixed number of users during a fixed period of time
+    always:
+      users: 100
+      duration: 10m
+      scenario:
+      - echo-uuid-ws:
+        - randomUUID:
+            toVar: my-random-uuid
+        - httpRequest:
+            POST: /services/echo-uuid-ws/soap-1.1
+            body:
+              pattern: '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns2:echoUuid xmlns:ns2="http://l2x6.org/echo-uuid-ws/"><uuid>${my-random-uuid}</uuid></ns2:echoUuid></soap:Body></soap:Envelope>'
