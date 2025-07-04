@@ -15,6 +15,7 @@
 
     <modules>
         <module>echo-uuid-server</module>
+        <module>echo-uuid-client</module>
     </modules>
 
 </project>
