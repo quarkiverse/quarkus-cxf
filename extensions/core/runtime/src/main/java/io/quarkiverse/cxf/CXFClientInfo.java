@@ -12,6 +12,7 @@ import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
 import io.quarkiverse.cxf.CxfClientConfig.Auth;
+import io.quarkiverse.cxf.CxfClientConfig.VertxConfig;
 import io.quarkiverse.cxf.CxfConfig.CxfGlobalClientConfig;
 import io.quarkiverse.cxf.CxfConfig.RetransmitCacheConfig;
 import io.quarkus.arc.Arc;
@@ -41,6 +42,7 @@ public class CXFClientInfo {
     private final String epNamespace;
     private final String epName;
     private final Auth auth;
+    private final VertxConfig vertxConfig;
     private final boolean proxyClassRuntimeInitialized;
     private final List<String> inInterceptors = new ArrayList<>();
     private final List<String> outInterceptors = new ArrayList<>();
@@ -231,6 +233,7 @@ public class CXFClientInfo {
         this.epNamespace = config.endpointNamespace().orElse(null);
         this.epName = config.endpointName().orElse(null);
         this.auth = new AuthWrapper(config.auth(), config);
+        this.vertxConfig = config.vertx();
         this.secureWsdlAccess = config.secureWsdlAccess();
         this.endpointAddress = config.clientEndpointUrl().orElse(DEFAULT_EP_ADDR + "/" + this.sei.toLowerCase());
         this.wsdlUrl = config.wsdlPath().orElse(null);
@@ -427,6 +430,10 @@ public class CXFClientInfo {
 
     public Auth getAuth() {
         return auth;
+    }
+
+    public VertxConfig getVertxConfig() {
+        return vertxConfig;
     }
 
     public boolean isProxyClassRuntimeInitialized() {

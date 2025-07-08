@@ -83,11 +83,11 @@ import io.quarkiverse.cxf.QuarkusCxfUtils;
 import io.quarkiverse.cxf.QuarkusTLSClientParameters;
 import io.quarkiverse.cxf.vertx.http.client.BodyRecorder.BodyWriter;
 import io.quarkiverse.cxf.vertx.http.client.BodyRecorder.StoredBody;
-import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.ClientSpec;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.RequestBodyEvent.RequestBodyEventType;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 import io.quarkus.runtime.BlockingOperationControl;
+import io.quarkus.tls.TlsConfiguration;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -219,10 +219,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 clientInfo,
                 uri,
                 requestOptions,
-                clientParameters != null
-                        ? new ClientSpec(version, clientParameters.getTlsConfigurationName(),
-                                clientParameters.getTlsConfiguration())
-                        : new ClientSpec(version, null, null),
+                version,
+                clientParameters != null ? clientParameters.getTlsConfiguration() : null,
                 determineReceiveTimeout(message, csPolicy),
                 isAsync,
                 csPolicy.getMaxRetransmits(),
@@ -280,7 +278,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 userAgent,
                 httpClientPool,
                 requestContext.requestOptions,
-                requestContext.clientSpec,
+                requestContext.version,
+                requestContext.tlsConfiguration,
                 requestContext.receiveTimeoutMs,
                 responseHandler,
                 requestContext.async,
@@ -368,7 +367,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             CXFClientInfo clientInfo,
             URI uri,
             RequestOptions requestOptions,
-            ClientSpec clientSpec,
+            HttpVersion version,
+            TlsConfiguration tlsConfiguration,
             long receiveTimeoutMs,
             boolean async,
             int maxRetransmits,
@@ -468,7 +468,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private final String userAgent;
         private final HttpClientPool clientPool;
         private final RequestOptions requestOptions;
-        private final ClientSpec clientSpec;
+        private final HttpVersion version;
+        private final TlsConfiguration tlsConfiguration;
         private final ContextInternal context;
         private final AuthorizationPolicy authorizationPolicy;
         private final HttpAuthSupplier authSupplier;
@@ -510,7 +511,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 String userAgent,
                 HttpClientPool clientPool,
                 RequestOptions requestOptions,
-                ClientSpec clientSpec,
+                HttpVersion version,
+                TlsConfiguration tlsConfiguration,
                 long receiveTimeoutMs,
                 IOEHandler<ResponseEvent> responseHandler,
                 boolean isAsync,
@@ -527,7 +529,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             this.userAgent = userAgent;
             this.clientPool = clientPool;
             this.requestOptions = requestOptions;
-            this.clientSpec = clientSpec;
+            this.version = version;
+            this.tlsConfiguration = tlsConfiguration;
 
             this.mode = isAsync
                     ? new Mode.Async(TimeoutSpec.create(receiveTimeoutMs, url), responseHandler, outMessage)
@@ -561,7 +564,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     redirs.add(url);
                 }
 
-                final HttpClient client = clientPool.getClient(clientSpec);
+                final HttpClient client = clientPool.getClient(clientInfo, version, tlsConfiguration);
                 if (event.eventType() == RequestBodyEventType.COMPLETE_BODY && requestHasBody(requestOptions.getMethod())) {
                     requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(buffer.length()));
                 }
@@ -805,7 +808,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     options.removeHeader(CONTENT_LENGTH);
                 }
 
-                final HttpClient client = clientPool.getClient(clientSpec);
+                final HttpClient client = clientPool.getClient(clientInfo, version, tlsConfiguration);
 
                 // Should not be necessary, because we copy from the original requestOptions
                 // setProtocolHeaders(outMessage, options, userAgent);
