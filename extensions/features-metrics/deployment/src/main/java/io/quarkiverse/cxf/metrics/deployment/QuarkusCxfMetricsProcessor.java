@@ -5,11 +5,15 @@ import org.apache.cxf.feature.DelegatingFeature;
 import org.apache.cxf.metrics.MetricsFeature;
 import org.apache.cxf.metrics.codahale.CodahaleMetricsProvider;
 
+import io.quarkiverse.cxf.metrics.CxfMetricsRecorder;
 import io.quarkiverse.cxf.metrics.MetricsCustomizer;
 import io.quarkiverse.cxf.metrics.QuarkusCxfMetricsFeature;
+import io.quarkiverse.cxf.quarkus.vertx.http.client.deployment.HttpClientCustomizerBuildItem;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.annotations.ExecutionTime;
+import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
@@ -48,4 +52,13 @@ public class QuarkusCxfMetricsProcessor {
         additionalBeans.produce(
                 new AdditionalBeanBuildItem(MetricsCustomizer.class));
     }
+
+    @BuildStep
+    @Record(ExecutionTime.STATIC_INIT)
+    void httpClientCustomizers(
+            CxfMetricsRecorder recorder,
+            BuildProducer<HttpClientCustomizerBuildItem> httpClientCustomizers) {
+        httpClientCustomizers.produce(new HttpClientCustomizerBuildItem(recorder.httpClientCustomizer()));
+    }
+
 }

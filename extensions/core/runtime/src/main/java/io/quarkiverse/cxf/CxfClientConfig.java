@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,9 +13,12 @@ import org.apache.cxf.transports.http.configuration.ProxyServerType;
 import io.quarkiverse.cxf.LoggingConfig.PerClientOrServiceLoggingConfig;
 import io.quarkus.runtime.annotations.ConfigDocEnum;
 import io.quarkus.runtime.annotations.ConfigGroup;
+import io.quarkus.runtime.configuration.DurationConverter;
 import io.smallrye.config.WithConverter;
 import io.smallrye.config.WithDefault;
 import io.smallrye.config.WithName;
+import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.http.PoolOptions;
 
 /**
  * A class that provides configurable options of a CXF client.
@@ -677,6 +681,14 @@ public interface CxfClientConfig {
     public Optional<SchemaValidationType> schemaValidationEnabledFor();
 
     /**
+     * Vert.x HttpClient specific configuration.
+     *
+     * @since 3.25.0
+     * @asciidoclet
+     */
+    public VertxConfig vertx();
+
+    /**
      * A configuration interface for {@link AuthorizationPolicy}.
      */
     interface Auth {
@@ -735,6 +747,105 @@ public interface CxfClientConfig {
          * @since 3.20.0
          */
         Optional<String> token();
+    }
+
+    /**
+     * Vert.x HttpClient specific configuration.
+     *
+     * @asciidoclet
+     * @since 3.25.0
+     */
+    interface VertxConfig {
+        /**
+         * Settings used by `io.vertx.core.http.PoolOptions`.
+         *
+         * @asciidoclet
+         * @since 3.25.0
+         */
+        ConnectionPool connectionPool();
+
+        /**
+         * Configure the given {@link HttpClientOptions} based on the values in this {@link VertxConfig}.
+         *
+         * @param opts the {@link HttpClientOptions} to set
+         * @since 3.25.0
+         */
+        default void configure(HttpClientOptions opts) {
+            connectionPool().configure(opts.getPoolOptions());
+        }
+    }
+
+    /**
+     * Settings used by `io.vertx.core.http.PoolOptions`.
+     *
+     * @asciidoclet
+     * @since 3.25.0
+     */
+    interface ConnectionPool {
+        /**
+         * The maximum pool size for HTTP/1.x connections.
+         *
+         * @asciidoclet
+         * @since 3.25.0
+         */
+        @WithDefault("5")
+        int http1MaxSize();
+
+        /**
+         * The maximum pool size for HTTP/2 connections.
+         *
+         * @asciidoclet
+         * @since 3.25.0
+         */
+        @WithDefault("1")
+        int http2MaxSize();
+
+        /**
+         * The connection pool cleaner period.
+         * A non positive value disables expiration checks and connections will remain in the pool until they are closed.
+         *
+         * @asciidoclet
+         * @since 3.25.0
+         */
+        @WithDefault("1s")
+        @WithConverter(DurationConverter.class)
+        Duration cleanerPeriod();
+
+        /**
+         * The maximum number of event loops this client will create internally.
+         * The default value `0` will instruct the client not to create any new event loops
+         * but rather reuse the event loop associated with the caller.
+         *
+         * @asciidoclet
+         * @since 3.25.0
+         */
+        @WithDefault("0")
+        int eventLoopSize();
+
+        /**
+         * The maximum requests allowed in the wait queue.
+         * Any requests beyond the max size will result in a `io.vertx.core.http.ConnectionPoolTooBusyException`.
+         * If the value is negative then the queue is unbounded.
+         *
+         * @asciidoclet
+         * @since 3.25.0
+         */
+        @WithDefault("-1")
+        int maxWaitQueueSize();
+
+        /**
+         * Configure the given {@link PoolOptions} based on the values in this {@link ConnectionPool}.
+         *
+         * @param poolOptions the {@link PoolOptions} to set
+         * @since 3.25.0
+         */
+        default void configure(PoolOptions poolOptions) {
+            poolOptions.setHttp1MaxSize(http1MaxSize());
+            poolOptions.setHttp2MaxSize(http2MaxSize());
+            poolOptions.setCleanerPeriod((int) cleanerPeriod().toMillis());
+            poolOptions.setEventLoopSize(eventLoopSize());
+            poolOptions.setMaxWaitQueueSize(maxWaitQueueSize());
+        }
     }
 
     public enum WellKnownHostnameVerifier {

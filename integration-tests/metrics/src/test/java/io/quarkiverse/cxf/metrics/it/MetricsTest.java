@@ -98,6 +98,8 @@ public class MetricsTest {
 
     }
 
+    // TODO test like in     io.quarkus.micrometer.deployment.binder.VertxHttpClientMetricsTest
+
     public static Map<String, Object> getMetrics() {
         final String body = RestAssured.given()
                 .header("Content-Type", "application/json")
