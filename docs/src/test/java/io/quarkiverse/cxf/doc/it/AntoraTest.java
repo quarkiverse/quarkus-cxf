@@ -51,7 +51,7 @@ public class AntoraTest {
                 .links()
                 .excludeResolved(Pattern.compile("^\\Qhttp://localhost:808\\E[02].*"))
                 .excludeEditThisPage()
-                .overallTimeout(120_000L);
+                .overallTimeout(300_000L); // 5 min
 
         final String ghToken = System.getenv("GITHUB_TOKEN");
         if (ghToken == null) {
