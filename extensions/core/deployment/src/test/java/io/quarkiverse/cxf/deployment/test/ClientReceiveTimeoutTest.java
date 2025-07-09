@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.deployment.test;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.http.HttpTimeoutException;
 import java.nio.channels.ClosedChannelException;
@@ -90,12 +91,11 @@ public class ClientReceiveTimeoutTest {
                 .assertThatExceptionOfType(WebServiceException.class)
                 .isThrownBy(() -> helloHttpClient.hello("Joe"))
                 .havingRootCause()
-                .isInstanceOfAny(
-                        HttpTimeoutException.class,
-                        TimeoutException.class,
-                        ClosedChannelException.class // seen only on GitHub Actions
-                );
-
+                .matches(e -> e instanceof HttpTimeoutException
+                        || e instanceof TimeoutException
+                        || e instanceof ClosedChannelException // seen only on GitHub Actions
+                        || (e instanceof IOException && "connection closed locally".equals(e.getMessage())),
+                        "Expected some timeout related exception");
     }
 
     @Test
