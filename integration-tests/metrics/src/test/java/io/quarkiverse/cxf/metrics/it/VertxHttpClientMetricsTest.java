@@ -41,7 +41,7 @@ public class VertxHttpClientMetricsTest {
                         RestAssured.given()
                                 .queryParam("a", 7)
                                 .queryParam("b", 4)
-                                .get("/VertxHttpClientResource/addAsync")
+                                .get("/metrics/client/addAsync")
                                 .then()
                                 .statusCode(200)
                                 .body(Matchers.is("11"));
