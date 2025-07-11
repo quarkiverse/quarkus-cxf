@@ -107,7 +107,7 @@ $ curl \
   -d '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns2:helloResponse xmlns:ns2="http://it.server.metrics.cxf.quarkiverse.io/"><return>Hello Joe!</return></ns2:helloResponse></soap:Body></soap:Envelope>' \
   -H 'Content-Type: text/xml' \
   -X POST \
-  http://localhost:8080/metrics/client/hello
+  http://localhost:8080//soap/hello
 ----
 
 After that, you should see some metrics under `cxf.server.requests` in the output of the endpoint you configured above:
@@ -124,6 +124,118 @@ metrics: {
     ...
 }
 ----
+
+[id="extensions-quarkus-cxf-rt-features-metrics-usage-client-metrics"]
+=== Client metrics
+
+While still having the {link-quarkus-cxf-source-tree-base}/integration-tests/metrics[metrics integration test]
+from the xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#extensions-quarkus-cxf-rt-features-metrics-usage-runnable-example[previous section]
+up and running in dev mode, you can check the client metrics as well:
+
+1. Send some requests to the REST endpoint wrapping the CXF client:
++
+[source,shell]
+----
+$ curl \
+  -d 'Joe' \
+  -H 'Content-Type: text/plain' \
+  -X POST \
+  http://localhost:8080/metrics/client/hello
+----
++
+2. Check the metrics under the key `cxf.client.requests` in the output of the endpoint you configured above:
++
+[source,shell]
+----
+$ curl http://localhost:8080/q/metrics/json
+metrics: {
+    ...
+    "cxf.client.requests": {
+        "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:8080/soap/hello": 1,
+        "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:8080/soap/hello": 29.0
+    },
+    ...
+}
+----
+
+[id="extensions-quarkus-cxf-rt-features-metrics-usage-vert-x-httpclient-metrics"]
+=== Vert.x HttpClient metrics
+
+Since {quarkus-cxf-project-name} 3.25.0, the metrics of the underlying Vert.x HttpClient are exposed as well.
+This works only if your SOAP clients using the default Vert.x HttpClient based
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[HTTPConduitFactory]`.
+
+While still having the {link-quarkus-cxf-source-tree-base}/integration-tests/metrics[metrics integration test]
+from the xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#extensions-quarkus-cxf-rt-features-metrics-usage-runnable-example[previous section]
+up and running, you can check those metrics as follows:
+
+1. Send some requests to the REST endpoint wrapping the CXF client:
++
+[source,shell]
+----
+$ curl \
+  -d 'Joe' \
+  -H 'Content-Type: text/plain' \
+  -X POST \
+  http://localhost:8080/metrics/client/hello
+----
++
+2. Check the metrics under the keys starting with `http.client.` in the output of the endpoint you configured above:
++
+[source,shell]
+----
+$ curl http://localhost:8080/q/metrics/json
+metrics: {
+    ...
+    "http.client.requests": {
+        "count;address=localhost:8080;clientName=hello;method=GET;outcome=SUCCESS;status=200;uri=/soap/hello?wsdl": 1,
+        "elapsedTime;address=localhost:8080;clientName=hello;method=GET;outcome=SUCCESS;status=200;uri=/soap/hello?wsdl": 7.0,
+        "count;address=localhost:8080;clientName=hello;method=POST;outcome=SUCCESS;status=200;uri=/soap/hello": 1,
+        "elapsedTime;address=localhost:8080;clientName=hello;method=POST;outcome=SUCCESS;status=200;uri=/soap/hello": 26.0
+    },
+    "http.client.connections": {
+        "activeTasks;clientName=hello": 0,
+        "duration;clientName=hello": 0.0,
+        "max;clientName=hello": 0.0,
+        "mean;clientName=hello": 0.0
+    },
+    "http.client.bytes.read": {
+        "min;clientName=hello": 232.0,
+        "count;clientName=hello": 2,
+        "max;clientName=hello": 2317.0,
+        "mean;clientName=hello": 1274.5,
+        "p50;clientName=hello": 232.0,
+        "p75;clientName=hello": 2317.875,
+        "p95;clientName=hello": 2317.875,
+        "p98;clientName=hello": 2317.875,
+        "p99;clientName=hello": 2317.875,
+        "p999;clientName=hello": 2317.875
+    },
+    "http.client.bytes.written": {
+        "min;clientName=hello": 205.0,
+        "count;clientName=hello": 1,
+        "max;clientName=hello": 205.0,
+        "mean;clientName=hello": 205.0,
+        "p50;clientName=hello": 205.0,
+        "p75;clientName=hello": 205.0,
+        "p95;clientName=hello": 205.0,
+        "p98;clientName=hello": 205.0,
+        "p99;clientName=hello": 205.0,
+        "p999;clientName=hello": 205.0
+    },
+    ...
+}
+----
++
+[TIP]
+====
+The number of connections opened by Vert.x HttpClient at any given time is capped by
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http1-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http1-max-size]`
+for HTTP/1.x connections
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http2-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http2-max-size]`
+for HTTP/2 connections.
+====
 
 
 [id="quarkus-cxf-rt-features-metrics-configuration"]
