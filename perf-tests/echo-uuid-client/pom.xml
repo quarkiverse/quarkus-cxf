@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
         <artifactId>quarkus-cxf-perf-tests</artifactId>
-        <version>3.23.2-SNAPSHOT</version>
+        <version>3.25.0.CR1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -13,7 +13,7 @@
     <name>Quarkus CXF - Performance Test - Echo UUID client</name>
 
     <properties>
-        <quarkus.http.port></quarkus.http.port><!-- Set by groovy-maven-plugin below -->
+        <quarkus.http.port /><!-- Set by groovy-maven-plugin below -->
     </properties>
 
     <dependencies>
