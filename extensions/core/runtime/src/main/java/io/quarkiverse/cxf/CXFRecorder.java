@@ -25,13 +25,21 @@ import io.quarkus.arc.runtime.BeanContainer;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.ShutdownContext;
 import io.quarkus.runtime.annotations.Recorder;
-import io.quarkus.vertx.http.runtime.HttpConfiguration;
+import io.quarkus.vertx.http.runtime.VertxHttpConfig;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
 @Recorder
 public class CXFRecorder {
     private static final Logger LOGGER = Logger.getLogger(CXFRecorder.class);
+    private final RuntimeValue<VertxHttpConfig> httpConfiguration;
+    private final RuntimeValue<CxfConfig> cxfConfig;
+
+    public CXFRecorder(RuntimeValue<VertxHttpConfig> httpConfiguration, RuntimeValue<CxfConfig> cxfConfig) {
+        super();
+        this.httpConfiguration = httpConfiguration;
+        this.cxfConfig = cxfConfig;
+    }
 
     /**
      * Stores the given {@link CXFClientData} in the application.
@@ -94,7 +102,6 @@ public class CXFRecorder {
             RuntimeValue<Map<String, List<ServletConfig>>> implementorToCfg,
             String path,
             Class<?> sei,
-            CxfConfig cxfConfig,
             String serviceName,
             String serviceTargetNamepsace,
             String soapBinding,
@@ -108,7 +115,8 @@ public class CXFRecorder {
         switch (beanLookupStrategy) {
             case METHOD_WITH_CXFENDPOINT_ANNOTATION:
             case TYPE_WITH_CXFENDPOINT_ANNOTATION: {
-                final CxfEndpointConfig cxfEndPointConfig = cxfConfig.endpoints().get(relativePathFromCxfEndpointAnnotation);
+                final CxfEndpointConfig cxfEndPointConfig = cxfConfig.getValue().endpoints()
+                        .get(relativePathFromCxfEndpointAnnotation);
                 final CXFServletInfo info = createServletInfo(
                         path,
                         sei,
@@ -125,7 +133,7 @@ public class CXFRecorder {
             }
             case TYPE: {
                 if (relativePathFromCxfEndpointAnnotation != null) {
-                    final CxfEndpointConfig cxfEndPointConfig = cxfConfig.endpoints()
+                    final CxfEndpointConfig cxfEndPointConfig = cxfConfig.getValue().endpoints()
                             .get(relativePathFromCxfEndpointAnnotation);
                     final CXFServletInfo info = createServletInfo(
                             path,
@@ -187,9 +195,9 @@ public class CXFRecorder {
         }
     }
 
-    public RuntimeValue<Map<String, List<ServletConfig>>> implementorToCfgMap(CxfConfig cxfConfig) {
+    public RuntimeValue<Map<String, List<ServletConfig>>> implementorToCfgMap() {
         Map<String, List<ServletConfig>> implementorToCfg = new HashMap<>();
-        for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.endpoints().entrySet()) {
+        for (Map.Entry<String, CxfEndpointConfig> webServicesByPath : cxfConfig.getValue().endpoints().entrySet()) {
             CxfEndpointConfig cxfEndPointConfig = webServicesByPath.getValue();
             String relativePath = webServicesByPath.getKey();
             if (!cxfEndPointConfig.implementor().isPresent()) {
@@ -262,10 +270,9 @@ public class CXFRecorder {
     public Handler<RoutingContext> initServer(
             RuntimeValue<CXFServletInfos> infos,
             BeanContainer beanContainer,
-            HttpConfiguration httpConfiguration,
             CxfFixedConfig fixedConfig) {
         LOGGER.trace("init server");
-        return new CxfHandler(infos.getValue(), beanContainer, httpConfiguration, fixedConfig);
+        return new CxfHandler(infos.getValue(), beanContainer, httpConfiguration.getValue(), fixedConfig);
     }
 
     public void resetDestinationRegistry(ShutdownContext context) {
@@ -321,9 +328,9 @@ public class CXFRecorder {
         }
     }
 
-    public RuntimeValue<Consumer<Bus>> busConfigForRetransmitCache(CxfConfig cxfConfig) {
+    public RuntimeValue<Consumer<Bus>> busConfigForRetransmitCache() {
         return new RuntimeValue<>(bus -> {
-            final RetransmitCacheConfig config = cxfConfig.retransmitCache();
+            final RetransmitCacheConfig config = cxfConfig.getValue().retransmitCache();
             bus.setProperty(CachedConstants.THRESHOLD_BUS_PROP, String.valueOf(config.threshold().asLongValue()));
             config.maxSize().ifPresent(
                     maxSize -> bus.setProperty(CachedConstants.MAX_SIZE_BUS_PROP, String.valueOf(maxSize.asLongValue())));

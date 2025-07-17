@@ -23,7 +23,6 @@ import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.CXFRecorder.BeanLookupStrategy;
 import io.quarkiverse.cxf.CXFRecorder.ServletConfig;
 import io.quarkiverse.cxf.CXFServletInfos;
-import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.BeanContainerBuildItem;
@@ -37,8 +36,7 @@ import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
 import io.quarkus.vertx.http.runtime.HandlerType;
-import io.quarkus.vertx.http.runtime.HttpBuildTimeConfig;
-import io.quarkus.vertx.http.runtime.HttpConfiguration;
+import io.quarkus.vertx.http.runtime.VertxHttpBuildTimeConfig;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
@@ -205,18 +203,16 @@ public class CxfEndpointImplementationProcessor {
             BeanContainerBuildItem beanContainer,
             List<CxfEndpointImplementationBuildItem> cxfEndpoints,
             List<CxfRouteRegistrationRequestorBuildItem> cxfRouteRegistrationRequestors,
-            HttpBuildTimeConfig httpBuildTimeConfig,
-            HttpConfiguration httpConfiguration,
+            VertxHttpBuildTimeConfig httpBuildTimeConfig,
             CxfBuildTimeConfig cxfBuildTimeConfig,
-            CxfFixedConfig fixedConfig,
-            CxfConfig cxfConfig) {
+            CxfFixedConfig fixedConfig) {
         final RuntimeValue<CXFServletInfos> infos = recorder.createInfos(fixedConfig.path(),
-                httpBuildTimeConfig.rootPath);
+                httpBuildTimeConfig.rootPath());
         final List<String> requestors = cxfRouteRegistrationRequestors.stream()
                 .map(CxfRouteRegistrationRequestorBuildItem::getRequestorName)
                 .collect(Collectors.toList());
         if (!cxfEndpoints.isEmpty()) {
-            RuntimeValue<Map<String, List<ServletConfig>>> implementorToCfgMap = recorder.implementorToCfgMap(cxfConfig);
+            RuntimeValue<Map<String, List<ServletConfig>>> implementorToCfgMap = recorder.implementorToCfgMap();
 
             final ClassLoader cl = Thread.currentThread().getContextClassLoader();
             for (CxfEndpointImplementationBuildItem cxfWebService : cxfEndpoints) {
@@ -226,7 +222,6 @@ public class CxfEndpointImplementationProcessor {
                             implementorToCfgMap,
                             fixedConfig.path(),
                             cl.loadClass(cxfWebService.getSei()),
-                            cxfConfig,
                             cxfWebService.getWsName(),
                             cxfWebService.getWsNamespace(),
                             cxfWebService.getSoapBinding(),
@@ -241,8 +236,7 @@ public class CxfEndpointImplementationProcessor {
             }
         }
         if (!requestors.isEmpty()) {
-            final Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(),
-                    httpConfiguration, fixedConfig);
+            final Handler<RoutingContext> handler = recorder.initServer(infos, beanContainer.getValue(), fixedConfig);
             final String mappingPath = getMappingPath(fixedConfig.path());
             LOGGER.infof("Mapping a Vert.x handler for CXF to %s as requested by %s", mappingPath, requestors);
             routes.produce(RouteBuildItem.builder()

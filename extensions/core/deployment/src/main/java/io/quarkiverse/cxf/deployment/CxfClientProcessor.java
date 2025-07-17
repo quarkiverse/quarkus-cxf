@@ -40,7 +40,6 @@ import io.quarkiverse.cxf.CXFClientData;
 import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.ClientInjectionPoint;
 import io.quarkiverse.cxf.CxfClientProducer;
-import io.quarkiverse.cxf.CxfConfig;
 import io.quarkiverse.cxf.CxfFixedConfig;
 import io.quarkiverse.cxf.CxfFixedConfig.ClientFixedConfig;
 import io.quarkiverse.cxf.HTTPConduitImpl;
@@ -508,9 +507,8 @@ public class CxfClientProcessor {
     @Record(ExecutionTime.RUNTIME_INIT)
     void runtimeBusCustomizers(
             CXFRecorder recorder,
-            CxfConfig config,
             BuildProducer<RuntimeBusCustomizerBuildItem> customizers) {
-        customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.busConfigForRetransmitCache(config)));
+        customizers.produce(new RuntimeBusCustomizerBuildItem(recorder.busConfigForRetransmitCache()));
     }
 
     /**
