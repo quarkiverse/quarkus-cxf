@@ -40,7 +40,7 @@ import io.quarkus.security.identity.CurrentIdentityAssociation;
 import io.quarkus.security.identity.IdentityProviderManager;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.vertx.http.runtime.CurrentVertxRequest;
-import io.quarkus.vertx.http.runtime.HttpConfiguration;
+import io.quarkus.vertx.http.runtime.VertxHttpConfig;
 import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
@@ -56,7 +56,7 @@ public class CxfHandler implements Handler<RoutingContext> {
     private final CurrentIdentityAssociation association;
     private final IdentityProviderManager identityProviderManager;
     private final CurrentVertxRequest currentVertxRequest;
-    private final HttpConfiguration httpConfiguration;
+    private final VertxHttpConfig httpConfiguration;
     private final int outputBufferSize;
     private final int minChunkSize;
 
@@ -64,7 +64,7 @@ public class CxfHandler implements Handler<RoutingContext> {
     private static final String X_FORWARDED_FOR_HEADER = "X-Forwarded-For";
     private static final String X_FORWARDED_PORT_HEADER = "X-Forwarded-Port";
 
-    public CxfHandler(CXFServletInfos cxfServletInfos, BeanContainer beanContainer, HttpConfiguration httpConfiguration,
+    public CxfHandler(CXFServletInfos cxfServletInfos, BeanContainer beanContainer, VertxHttpConfig httpConfiguration,
             CxfFixedConfig fixedConfig) {
         LOGGER.trace("CxfHandler created");
         this.beanContainer = beanContainer;
