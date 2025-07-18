@@ -45,7 +45,7 @@
         <quarkus.version>3.25.0.CR1</quarkus.version>
         <cxf.version>4.1.2</cxf.version>
         <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
-        <quarkus-antora.version>2.2.0</quarkus-antora.version>
+        <quarkus-antora.version>2.3.0.CR1</quarkus-antora.version>
 
         <!-- Other compile dependency versions (keep sorted alphabetically) -->
         <!-- Items annotated with @sync can be updated by running mvn cq:sync-versions -N -->
