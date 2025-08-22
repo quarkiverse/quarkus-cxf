@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:tns="http://test.deployment.cxf.quarkiverse.io/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:ns1="http://schemas.xmlsoap.org/soap/http"
+    name="ExtensorsService"
+    targetNamespace="http://test.deployment.cxf.quarkiverse.io/"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" >
+  <wsdl:types>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://test.deployment.cxf.quarkiverse.io/" attributeFormDefault="unqualified" elementFormDefault="unqualified" targetNamespace="http://test.deployment.cxf.quarkiverse.io/">
+  <!-- my custom comment -->
+  <xsd:element name="hello" type="tns:hello"/>
+  <xsd:complexType name="hello">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="helloName" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="helloResponse" type="tns:helloResponse"/>
+  <xsd:complexType name="helloResponse">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="return" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="helloResponse">
+    <wsdl:part element="tns:helloResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="hello">
+    <wsdl:part element="tns:hello" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ExtensorsService">
+    <wsdl:operation name="hello">
+      <wsdl:input message="tns:hello" name="hello">
+    </wsdl:input>
+      <wsdl:output message="tns:helloResponse" name="helloResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ExtensorsServiceGet" />
+  <wsdl:binding name="ExtensorsServiceSoapBinding" type="tns:ExtensorsService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="hello">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="hello">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="helloResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ExtensorsServiceGet" type="tns:ExtensorsServiceGet">
+    <http:binding verb="GET" />
+  </wsdl:binding>
+  <wsdl:service name="ExtensorsService">
+    <wsdl:port binding="tns:ExtensorsServiceSoapBinding" name="ExtensorsServicePort">
+      <soap:address location="http://localhost:8081/soap/ExtensorsService/"/>
+    </wsdl:port>
+    <wsdl:port binding="tns:ExtensorsServiceGet" name="ExtensorsServiceGet" >
+      <http:address location="http://localhost:8081/soap/ExtensorsServiceGet" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
