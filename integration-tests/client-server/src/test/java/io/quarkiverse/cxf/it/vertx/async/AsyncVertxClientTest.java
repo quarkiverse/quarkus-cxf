@@ -1,30 +1,41 @@
 package io.quarkiverse.cxf.it.vertx.async;
 
-import static org.hamcrest.CoreMatchers.is;
-
 import java.time.Duration;
 
+import org.apache.http.params.CoreConnectionPNames;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
 import org.jboss.logging.Logger;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 import io.quarkus.runtime.configuration.MemorySizeConverter;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.config.HttpClientConfig;
+import io.restassured.config.RestAssuredConfig;
+import io.restassured.response.Response;
 
 @QuarkusTest
 class AsyncVertxClientTest {
     private static final Logger log = Logger.getLogger(AsyncVertxClientTest.class);
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "20", // minimal
-            "450k", // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
-            "9m" // close to max
-    })
+    @Test
+    void helloWithWsdl20() {
+        helloWithoutWsdl("20"); // minimal
+    }
+
+    @Test
+    void helloWithWsdl450k() {
+        helloWithoutWsdl("450k"); // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
+    }
+
+    @Test
+    void helloWithWsdl9m() {
+        helloWithoutWsdl("9m"); // close to max
+    }
+
     void helloWithWsdl(String payloadSize) {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
@@ -36,12 +47,21 @@ class AsyncVertxClientTest {
 
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "20", // minimal
-            "450k", // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
-            "9m" // close to max
-    })
+    @Test
+    void helloWithWsdlWithBlocking20() {
+        helloWithWsdlWithBlocking("20"); // minimal
+    }
+
+    @Test
+    void helloWithWsdlWithBlocking450k() {
+        helloWithWsdlWithBlocking("450k"); // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
+    }
+
+    @Test
+    void helloWithWsdlWithBlocking9m() {
+        helloWithWsdlWithBlocking("9m"); // close to max
+    }
+
     void helloWithWsdlWithBlocking(String payloadSize) {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
@@ -51,12 +71,21 @@ class AsyncVertxClientTest {
                 "Hello from HelloWithWsdlWithBlocking ");
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "20", // minimal
-            "450k", // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
-            "9m" // close to max
-    })
+    @Test
+    void helloWithWsdlWithEagerInit20() {
+        helloWithWsdlWithEagerInit("20"); // minimal
+    }
+
+    @Test
+    void helloWithWsdlWithEagerInit450k() {
+        helloWithWsdlWithEagerInit("450k"); // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
+    }
+
+    @Test
+    void helloWithWsdlWithEagerInit9m() {
+        helloWithWsdlWithEagerInit("9m"); // close to max
+    }
+
     void helloWithWsdlWithEagerInit(String payloadSize) {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
@@ -66,12 +95,21 @@ class AsyncVertxClientTest {
                 "Hello from HelloWithWsdlWithEagerInit ");
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "20", // minimal
-            "450k", // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
-            "9m" // close to max
-    })
+    @Test
+    void helloWithoutWsdl20() {
+        helloWithoutWsdl("20"); // minimal
+    }
+
+    @Test
+    void helloWithoutWsdl450k() {
+        helloWithoutWsdl("450k"); // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
+    }
+
+    @Test
+    void helloWithoutWsdl9m() {
+        helloWithoutWsdl("9m"); // close to max
+    }
+
     void helloWithoutWsdl(String payloadSize) {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
@@ -80,12 +118,21 @@ class AsyncVertxClientTest {
         assert200("/RestAsyncWithoutWsdl/helloWithoutWsdl", payloadSize, "Hello from HelloWithoutWsdl ");
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "20", // minimal
-            "450k", // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
-            "9m" // close to max
-    })
+    @Test
+    void helloWithoutWsdlWithBlocking20() {
+        helloWithoutWsdlWithBlocking("20"); // minimal
+    }
+
+    @Test
+    void helloWithoutWsdlWithBlocking450k() {
+        helloWithoutWsdlWithBlocking("450k"); // smaller than quarkus.cxf.retransmit-cache.threshold = 500K
+    }
+
+    @Test
+    void helloWithoutWsdlWithBlocking9m() {
+        helloWithoutWsdlWithBlocking("9m"); // close to max
+    }
+
     void helloWithoutWsdlWithBlocking(String payloadSize) {
         /* URLConnectionHTTPConduitFactory does not support async */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
@@ -99,12 +146,20 @@ class AsyncVertxClientTest {
         QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
                 () -> {
                     final String body = body(payloadSize);
-                    RestAssured.given()
+                    final Response resp = RestAssured.given()
+                            .config(
+                                    RestAssuredConfig.config()
+                                            .httpClient(HttpClientConfig.httpClientConfig()
+                                                    .setParam(CoreConnectionPNames.SO_TIMEOUT, 70_000)))
                             .body(body)
                             .post(endpoint)
-                            .then()
-                            .statusCode(200)
-                            .body(is(expectedBodyPrefix + body));
+                            .then().extract().response();
+                    if (resp.statusCode() != 200) {
+                        Assertions.assertThat(resp.statusCode())
+                                .withFailMessage("Expected 200, got " + resp.statusCode() + ":\n" + resp.body().asString())
+                                .isEqualTo(200);
+                    }
+                    Assertions.assertThat(resp.body().asString()).isEqualTo(expectedBodyPrefix + body);
                     return null;
                 },
                 Duration.ofSeconds(5),
