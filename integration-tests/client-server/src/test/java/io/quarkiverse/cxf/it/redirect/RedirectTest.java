@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.params.CoreConnectionPNames;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
 import org.assertj.core.api.Condition;
@@ -29,6 +30,9 @@ import io.quarkus.runtime.configuration.MemorySizeConverter;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
+import io.restassured.config.HttpClientConfig;
+import io.restassured.config.RestAssuredConfig;
+import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 
 @QuarkusTest
@@ -324,13 +328,23 @@ class RedirectTest {
     private static Properties retransmitCache(final int payloadLen, int expectedFileCount, String syncAsync)
             throws IOException {
         String body = QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
-                () -> RestAssured.given()
-                        .header(RedirectRest.EXPECTED_FILE_COUNT_HEADER, String.valueOf(expectedFileCount))
-                        .body(LargeSlowServiceImpl.largeString(payloadLen))
-                        .post("/RedirectRest/" + syncAsync)
-                        .then()
-                        .statusCode(200)
-                        .extract().body().asString(),
+                () -> {
+                    final Response resp = RestAssured.given()
+                            .config(
+                                    RestAssuredConfig.config()
+                                            .httpClient(HttpClientConfig.httpClientConfig()
+                                                    .setParam(CoreConnectionPNames.SO_TIMEOUT, 70_000)))
+                            .header(RedirectRest.EXPECTED_FILE_COUNT_HEADER, String.valueOf(expectedFileCount))
+                            .body(LargeSlowServiceImpl.largeString(payloadLen))
+                            .post("/RedirectRest/" + syncAsync)
+                            .then().extract().response();
+                    if (resp.statusCode() != 200) {
+                        Assertions.assertThat(resp.statusCode())
+                                .withFailMessage("Expected 200, got " + resp.statusCode() + ":\n" + resp.body().asString())
+                                .isEqualTo(200);
+                    }
+                    return resp.body().asString();
+                },
                 Duration.ofSeconds(5),
                 log::info);
 

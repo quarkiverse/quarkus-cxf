@@ -1,5 +1,8 @@
 package io.quarkiverse.cxf.it.redirect;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.handler.MessageContext;
 import jakarta.xml.ws.soap.SOAPFaultException;
@@ -219,12 +223,13 @@ public class RedirectRest {
             result = retransmitCache.retransmitCache(expectedFileCount, body);
             return Response.ok(result.getPayload()).build();
         } catch (SOAPFaultException e) {
+            ResponseBuilder rb = errorResponse(e);
             Map<String, Object> responseContext = ((BindingProvider) retransmitCache).getResponseContext();
             final int sc = (Integer) responseContext.get(Message.RESPONSE_CODE);
             if (sc != 200) {
-                return Response.status(sc).build();
+                rb.status(sc);
             }
-            return Response.status(500, "Unexpected").build();
+            return rb.build();
         }
     }
 
@@ -252,13 +257,23 @@ public class RedirectRest {
                 .map(retransmitCacheResponse -> retransmitCacheResponse.getPayload().getReturn().getPayload())
                 .map(payload -> Response.ok(payload).build())
                 .onFailure().recoverWithItem(e -> {
+                    ResponseBuilder rb = errorResponse(e);
                     if (e instanceof FailedResponse) {
                         final FailedResponse fr = (FailedResponse) e;
                         final int sc = (Integer) fr.getContext().get(Message.RESPONSE_CODE);
-                        return Response.status(sc).build();
+                        rb.status(sc);
                     }
-                    return Response.status(500).build();
+                    return rb.build();
                 });
+    }
+
+    private ResponseBuilder errorResponse(Throwable e) {
+        try (StringWriter stackTrace = new StringWriter(); PrintWriter out = new PrintWriter(stackTrace)) {
+            e.printStackTrace(out);
+            return Response.status(500).entity(stackTrace.toString());
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     public static final String EXPECTED_FILE_COUNT_HEADER = "X-Expected-File-Count";
