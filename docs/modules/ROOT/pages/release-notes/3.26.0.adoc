@@ -1,0 +1,11 @@
+= {quarkus-cxf-project-name} 3.26.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.25.x -> 3.26.x - https://quarkus.io/blog/quarkus-3-26-released/[release notes]
+* CXF 4.1.2 -> 4.1.3 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.1.2+++...+++cxf-4.1.3[changelog]
+* Ehcache 3.10.8 -> 3.11.0 link:https://github.com/ehcache/ehcache3/compare/v3.10.8+++...+++v3.11.0[changelog]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.25.0+++...+++3.26.0
