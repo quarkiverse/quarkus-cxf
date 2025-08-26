@@ -1,0 +1,34 @@
+= {quarkus-cxf-project-name} 3.25.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.23.x -> 3.25.x - https://quarkus.io/blog/quarkus-3-25-released/[release notes]
+* Woodstox 7.1.0 -> 7.1.1 - link:https://github.com/FasterXML/woodstox/compare/woodstox-core-7.1.0+++...+++woodstox-core-7.1.1[changelog]
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== More tests for XJC plugins from `org.jvnet.jaxb:jaxb-plugins`
+
+See `xref:reference/extensions/quarkus-cxf-jaxb-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-jaxb-plugins]` reference page.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1853[#1853] Expose Vert.x HttpClient connection pool configuration options
+
+See the ducumentation of the new options:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http1-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http1-max-size]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http2-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http2-max-size]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-cleaner-period[quarkus.cxf.client."client-name".vertx.connection-pool.cleaner-period]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-event-loop-size[quarkus.cxf.client."client-name".vertx.connection-pool.event-loop-size]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-max-wait-queue-size[quarkus.cxf.client."client-name".vertx.connection-pool.max-wait-queue-size]`
+
+== Documentation improvements
+
+* Accessing SOAP
+  xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#extensions-quarkus-cxf-rt-features-metrics-usage-client-metrics[client metrics]
+  and
+  xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#extensions-quarkus-cxf-rt-features-metrics-usage-vert-x-httpclient-metrics[Vert.x HttpClient metrics].
+
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.23.1+++...+++3.25.0

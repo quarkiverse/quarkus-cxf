@@ -1,0 +1,88 @@
+= {quarkus-cxf-project-name} 3.26.1 release notes
+
+== New and noteworthy in {quarkus-cxf-project-name}
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1891[#1891] Implementations of `javax.wsdl.extensions.ExtensibilityElement` need to get registered for reflection
+
+Before {quarkus-cxf-project-name} 3.26.1, if the WSDL of a client contained elements from the `http://schemas.xmlsoap.org/wsdl/http/` namespace,
+like in the following example
+
+[source,xml]
+----
+<?xml version='1.0' encoding='UTF-8'?>
+<wsdl:definitions
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:tns="http://test.deployment.cxf.quarkiverse.io/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:ns1="http://schemas.xmlsoap.org/soap/http"
+    name="ExtensorsService"
+    targetNamespace="http://test.deployment.cxf.quarkiverse.io/"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" >
+...
+  <wsdl:portType name="ExtensorsServiceGet" />
+  <wsdl:binding name="ExtensorsServiceGet" type="tns:ExtensorsServiceGet">
+    <http:binding verb="GET" />
+  </wsdl:binding>
+  <wsdl:service name="ExtensorsService">
+    <wsdl:port binding="tns:ExtensorsServiceGet" name="ExtensorsServiceGet" >
+      <http:address location="http://localhost:8081/soap/ExtensorsServiceGet" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
+----
+
+then the application would fail during boot in native mode with an error message similar to the following:
+
+[source,bash]
+----
+ERROR [io.qua.run.Application] (main) Failed to start application: java.lang.RuntimeException: Failed to start quarkus
+        at io.quarkus.runner.ApplicationImpl.doStart(Unknown Source)
+        at io.quarkus.runtime.Application.start(Application.java:101)
+        at io.quarkus.runtime.ApplicationLifecycleManager.run(ApplicationLifecycleManager.java:119)
+        at io.quarkus.runtime.Quarkus.run(Quarkus.java:80)
+        at io.quarkus.runtime.Quarkus.run(Quarkus.java:51)
+        at io.quarkus.runtime.Quarkus.run(Quarkus.java:144)
+        at io.quarkus.runner.GeneratedMain.main(Unknown Source)
+Caused by: org.apache.cxf.service.factory.ServiceConstructionException: SERVICE_CREATION_MSG
+        at org.apache.cxf.wsdl11.WSDLServiceFactory.<init>(WSDLServiceFactory.java:87)
+        at org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean.buildServiceFromWSDL(ReflectionServiceFactoryBean.java:393)
+        at org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean.initializeServiceModel(ReflectionServiceFactoryBean.java:527)
+        at org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean.create(ReflectionServiceFactoryBean.java:262)
+        at org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean.create(JaxWsServiceFactoryBean.java:199)
+        at org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory.createEndpoint(AbstractWSDLBasedEndpointFactory.java:103)
+        at org.apache.cxf.frontend.ServerFactoryBean.create(ServerFactoryBean.java:168)
+        at org.apache.cxf.jaxws.JaxWsServerFactoryBean.create(JaxWsServerFactoryBean.java:210)
+        at io.quarkiverse.cxf.transport.CxfHandler.<init>(CxfHandler.java:155)
+        at io.quarkiverse.cxf.CXFRecorder.initServer(CXFRecorder.java:275)
+        at io.quarkus.runner.recorded.CxfEndpointImplementationProcessor$startRoute912873805.deploy_0(Unknown Source)
+        at io.quarkus.runner.recorded.CxfEndpointImplementationProcessor$startRoute912873805.deploy(Unknown Source)
+        ... 7 more
+Caused by: javax.wsdl.WSDLException: WSDLException (at /wsdl:definitions/wsdl:binding[2]/http:binding): faultCode=CONFIGURATION_ERROR: Problem instantiating Java extensionType 'com.ibm.wsdl.extensions.http.HTTPBindingImpl'.: java.lang.InstantiationException: com.ibm.wsdl.extensions.http.HTTPBindingImpl
+        at javax.wsdl.extensions.ExtensionRegistry.createExtension(ExtensionRegistry.java:383)
+        at com.ibm.wsdl.extensions.http.HTTPBindingSerializer.unmarshall(HTTPBindingSerializer.java:69)
+        at com.ibm.wsdl.xml.WSDLReaderImpl.parseExtensibilityElement(WSDLReaderImpl.java:1861)
+        at com.ibm.wsdl.xml.WSDLReaderImpl.parseBinding(WSDLReaderImpl.java:988)
+        at com.ibm.wsdl.xml.WSDLReaderImpl.parseDefinitions(WSDLReaderImpl.java:332)
+        at com.ibm.wsdl.xml.WSDLReaderImpl.readWSDL(WSDLReaderImpl.java:2352)
+        at com.ibm.wsdl.xml.WSDLReaderImpl.readWSDL(WSDLReaderImpl.java:2338)
+        at io.quarkiverse.cxf.wsdl.QuarkusWSDLManager.loadDefinition(QuarkusWSDLManager.java:141)
+        at org.apache.cxf.wsdl11.WSDLManagerImpl.getDefinition(WSDLManagerImpl.java:165)
+        at org.apache.cxf.wsdl11.WSDLServiceFactory.<init>(WSDLServiceFactory.java:85)
+        ... 18 more
+Caused by: java.lang.InstantiationException: com.ibm.wsdl.extensions.http.HTTPBindingImpl
+        at java.base@21.0.8/java.lang.Class.newInstance(DynamicHub.java:719)
+        at javax.wsdl.extensions.ExtensionRegistry.createExtension(ExtensionRegistry.java:367)
+        ... 27 more
+Caused by: java.lang.NoSuchMethodException: com.ibm.wsdl.extensions.http.HTTPBindingImpl.<init>()
+        at java.base@21.0.8/java.lang.Class.checkMethod(DynamicHub.java:1078)
+        at java.base@21.0.8/java.lang.Class.getConstructor0(DynamicHub.java:1241)
+        at java.base@21.0.8/java.lang.Class.newInstance(DynamicHub.java:706)
+        ... 28 more
+----
+
+Special thanks to https://github.com/quarkiverse/quarkus-cxf/discussions/1882[Lazaro Miguel Coronado Torres] for reporting this issue.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.26.0+++...+++3.26.1
