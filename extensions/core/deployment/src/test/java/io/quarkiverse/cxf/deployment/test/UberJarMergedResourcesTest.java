@@ -24,8 +24,10 @@ public class UberJarMergedResourcesTest {
             .setRun(true)
             .setExpectExit(true)
             .overrideConfigKey("quarkus.package.type", "uber-jar")
-            .setLogRecordPredicate(r -> "io.quarkiverse.cxf.deployment.QuarkusCxfProcessor".equals(r.getLoggerName()) ||
-                    "io.quarkus.deployment.pkg.steps.JarResultBuildStep".equals(r.getLoggerName()));
+            .setLogRecordPredicate(r -> "io.quarkiverse.cxf.deployment.QuarkusCxfProcessor".equals(r.getLoggerName())
+                    || "io.quarkus.deployment.pkg.steps.JarResultBuildStep".equals(r.getLoggerName()) // 3.26.1 or earlier
+                    || "io.quarkus.deployment.pkg.jar.UberJarBuilder".equals(r.getLoggerName()) // 3.26.1+
+            );
 
     @ProdBuildResults
     private ProdModeTestResults prodModeTestResults;
