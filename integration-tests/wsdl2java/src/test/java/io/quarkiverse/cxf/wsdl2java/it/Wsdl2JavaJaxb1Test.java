@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf.wsdl2java.it;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
 import java.util.ArrayList;
 
 import org.assertj.core.api.Assertions;
@@ -11,7 +12,7 @@ import io.quarkiverse.cxf.wsdl2java.it.jaxb1.Operands;
 public class Wsdl2JavaJaxb1Test {
 
     @Test
-    void simpleEquals() {
+    void simpleEquals() throws PropertyVetoException {
 
         Operands op1 = newOperands(1, 2);
         Operands op2 = newOperands(1, 2);
@@ -23,25 +24,21 @@ public class Wsdl2JavaJaxb1Test {
     }
 
     @Test
-    void simpleHashcode() {
+    void simpleHashcode() throws PropertyVetoException {
         Operands op = newOperands(0, 0);
         Assertions.assertThat(op.hashCode()).isEqualTo(961);
     }
 
     @Test
-    void injectListenerCode() throws NoSuchFieldException, SecurityException {
+    void injectListenerCode() throws NoSuchFieldException, SecurityException, PropertyVetoException {
         final ArrayList<PropertyChangeEvent> events = new ArrayList<>();
         final Operands op = new Operands();
         op.addVetoableChangeListener("a", events::add);
         op.setA(1);
-        // https://github.com/highsource/jaxb-tools/issues/616
-        Assertions.assertThat(events)
-                .withFailMessage("Set hasSize(1) once https://github.com/highsource/jaxb-tools/issues/616 has been fixed")
-                .hasSize(0);
-        //Assertions.assertThat(events.get(0).getPropertyName()).isEqualTo("a");
+        Assertions.assertThat(events.get(0).getPropertyName()).isEqualTo("a");
     }
 
-    private static Operands newOperands(int a, int b) {
+    private static Operands newOperands(int a, int b) throws PropertyVetoException {
         Operands op = new Operands();
         op.setA(a);
         op.setB(b);
