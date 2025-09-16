@@ -347,6 +347,10 @@
                         <artifactId>metrics-core</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>io.dropwizard.metrics</groupId>
+                        <artifactId>metrics-json</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.bouncycastle</groupId>
                         <artifactId>*</artifactId>
                     </exclusion>
