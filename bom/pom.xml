@@ -134,6 +134,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf</artifactId>
                 <version>${quarkus-cxf.version}</version>
