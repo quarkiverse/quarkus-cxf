@@ -47,6 +47,6 @@ or `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-codegen-w
 +
 * `https://github.com/highsource/jaxb-tools/wiki/JAXB-XML-ElementWrapper-Plugin[elementWrapper]` - annotate collection fields with `@XmlElementWrapper(name = "...")` instead of generating an extra class for the collection.
 * `https://github.com/highsource/jaxb-tools/wiki/JAXB-Parent-Pointer-Plugin[parent-pointer]` - adds a field that points to the parent object.
-* `https://github.com/highsource/jaxb-tools/wiki/JAXB-Property-Listener-Injector-Plugin[inject-listener-code]` - https://github.com/highsource/jaxb-tools/issues/616[broken], use `property-listener` from
-  `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]` instead.
-
+* `https://github.com/highsource/jaxb-tools/wiki/JAXB-Property-Listener-Injector-Plugin[inject-listener-code]` - triggers
+  a property change event on each `setXXX()` invocation; see also `property-listener` from
+  `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]`.
