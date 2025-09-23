@@ -1,0 +1,10 @@
+= {quarkus-cxf-project-name} 3.26.2 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.26.0 -> 3.26.1 - https://quarkus.io/blog/quarkus-3-26-1-released/[release notes]
+* Ehcache 3.11.0 -> 3.11.1 - https://github.com/ehcache/ehcache3/releases/tag/v3.11.1[release notes]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.26.1+++...+++3.26.2

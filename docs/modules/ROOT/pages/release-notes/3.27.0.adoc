@@ -1,0 +1,19 @@
+= {quarkus-cxf-project-name} 3.27.0 LTS release notes
+
+This is the first release in the new 3.27 https://quarkus.io/blog/lts-releases/[LTS stream].
+As usual, where we plan to produce patch releases with bug and security fixes for 12 months.
+
+== Important dependency upgrades
+
+* Quarkus 3.26.x -> 3.27.0 - https://quarkus.io/blog/quarkus-3-27-released/[release notes]
+* JAXB Plugins 4.0.9 -> 4.0.11 - https://github.com/highsource/jaxb-tools/releases/tag/4.0.10[release notes 4.0.10], https://github.com/highsource/jaxb-tools/releases/tag/4.0.11[release notes 4.0.11]
+
+== Bugfixes
+
+=== https://github.com/highsource/jaxb-tools/issues/616[jaxb-plugins#616] JAXB `inject-listener-code` plugin adds a `PropertyChangeSupport` field but no code to trigger the events in setters
+
+This issue was fixed by upgrading to JAXB Plugins 4.0.11.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.26.2+++...+++3.27.0
