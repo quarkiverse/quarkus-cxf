@@ -3,12 +3,11 @@
 set -e
 set -x
 
-invocationDir="$(pwd)"
 workDir="target/openssl-work"
 destinationDir="target/classes"
 keySize=2048
 days=10000
-extFile="$(pwd)/v3.ext"
+extFile="v3.ext"
 encryptionAlgo="aes-256-cbc"
 
 if [[ -n "${JAVA_HOME}" ]] ; then
