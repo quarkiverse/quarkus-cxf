@@ -106,9 +106,9 @@
     </properties>
 
     <scm>
-        <url>https://github.com/quarkiverse/quarkiverse-cxf</url>
-        <connection>scm:git:https://github.com/quarkiverse/quarkiverse-cxf.git</connection>
-        <developerConnection>scm:git:https://github.com/quarkiverse/quarkiverse-cxf.git</developerConnection>
+        <url>https://github.com/quarkiverse/quarkus-cxf</url>
+        <connection>scm:git:https://github.com/quarkiverse/quarkus-cxf.git</connection>
+        <developerConnection>scm:git:https://github.com/quarkiverse/quarkus-cxf.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
