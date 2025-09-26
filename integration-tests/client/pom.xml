@@ -120,6 +120,10 @@
                         </goals>
                         <phase>compile</phase><!-- same as the maven-resources-plugin above -->
                         <configuration>
+                            <properties>
+                                <!-- This is intentionally interpolated as properties otherwise groovy can complain on Windows with not escaped backslashes. -->
+                                <maven.multiModuleProjectDirectory>${maven.multiModuleProjectDirectory}</maven.multiModuleProjectDirectory>
+                            </properties>
                             <!-- Copy pom.xml changing the parent version so that the destination -->
                             <!-- file does not change after every release -->
                             <source>
@@ -128,7 +132,7 @@
                                 def srcPath = project.basedir.toPath().resolve('pom.xml')
                                 def newContent = srcPath.getText('UTF-8')
                                 newContent = newContent.replace('&lt;version&gt;${project.version}&lt;/version&gt;', '&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;')
-                                def destPath = Path.of('${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/calculator-client/pom.xml')
+                                def destPath = Path.of(properties['maven.multiModuleProjectDirectory'], 'docs', 'modules', 'ROOT', 'examples', 'calculator-client', 'pom.xml')
                                 if (!Files.exists(destPath) || !newContent.equals(destPath.getText('UTF-8'))) {
                                     destPath.setText(newContent.toString(), 'UTF-8')
                                     println('Updated ' + destPath.toString())
