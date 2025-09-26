@@ -44,7 +44,7 @@ public class TempStoreTest {
     void initializeExistingTempDir() throws IOException, InterruptedException, ExecutionException, TimeoutException {
         Log.info("TempPathTest.initializeExistingTempDir()");
 
-        final Path tempDir = Path.of("target/" + TempStoreTest.class.getSimpleName() + "-" + UUID.randomUUID() + "/temp");
+        final Path tempDir = Path.of("target", TempStoreTest.class.getSimpleName() + "-" + UUID.randomUUID(), "temp");
         Files.createDirectories(tempDir);
         Assertions.assertThat(tempDir).exists();
 
@@ -95,7 +95,7 @@ public class TempStoreTest {
     @Test
     void initializeNewTempDir() throws InterruptedException, ExecutionException, TimeoutException, IOException {
         Log.info("TempPathTest.initializeNewTempDir()");
-        final Path tempDir = Path.of("target/" + TempStoreTest.class.getSimpleName() + "-" + UUID.randomUUID() + "/temp");
+        final Path tempDir = Path.of("target", TempStoreTest.class.getSimpleName() + "-" + UUID.randomUUID(), "temp");
         Assertions.assertThat(tempDir).doesNotExist();
 
         final CompletableFuture<AsyncResult<InitializedTempStore>> initializedCF = new CompletableFuture<>();
@@ -240,7 +240,7 @@ public class TempStoreTest {
     @Test
     void closeWithoutDelete() throws InterruptedException, ExecutionException, TimeoutException, IOException {
         Log.info("TempPathTest.closeWithoutDelete()");
-        final Path tempDir = Path.of("target/" + TempStoreTest.class.getSimpleName() + "-" + UUID.randomUUID() + "/temp");
+        final Path tempDir = Path.of("target", TempStoreTest.class.getSimpleName() + "-" + UUID.randomUUID(), "temp");
         Assertions.assertThat(tempDir).doesNotExist();
 
         final CompletableFuture<AsyncResult<InitializedTempStore>> initializedCF = new CompletableFuture<>();
