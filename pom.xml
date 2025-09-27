@@ -60,7 +60,7 @@
         <jasypt.version>1.9.3</jasypt.version><!-- @sync org.apache.wss4j:wss4j-parent:${wss4j.version} prop:jasypt.version -->
         <jaxb-plugins.version>4.0.11</jaxb-plugins.version>
         <jcache.version>1.1.1</jcache.version>
-        <httpclient5.version>5.5</httpclient5.version>
+        <httpclient5.version>5.5.1</httpclient5.version>
         <httpcore5.version>5.3.6</httpcore5.version>
         <neethi.version>3.2.1</neethi.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
         <mimepull.version>1.10.0</mimepull.version>
