@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.awaitility.Awaitility;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -37,6 +38,8 @@ public class ServerDevModeTest {
                             Add.class,
                             Delete.class)
                     .addAsResource(applicationProperties(), "application.properties"));
+
+    private static final Logger log = Logger.getLogger(ServerDevModeTest.class);
 
     @Test
     void changePath() {
@@ -88,28 +91,34 @@ public class ServerDevModeTest {
                 "   </soapenv:Body>\n" +
                 "</soapenv:Envelope>";
 
-        final ValidatableResponse response = Awaitility.await().atMost(10, TimeUnit.SECONDS).until(
-                () -> {
-                    try {
-                        return given()
-                                .config(config)
-                                .body(requestBody)
-                                .when()
-                                .post("/soap" + path)
-                                .then();
-                    } catch (Exception e) {
-                        /* The reload of the service takes some time */
-                        return null;
-                    }
-                },
-                resp -> resp != null);
+        Awaitility.await()
+                .atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(
+                        () -> {
+                            ValidatableResponse response = null;
+                            try {
+                                log.info("Trying to get response from /soap" + path);
+                                response = given()
+                                        .config(config)
+                                        .body(requestBody)
+                                        .when()
+                                        .post("/soap" + path)
+                                        .then();
+                            } catch (Exception ex) {
+                                // AssertionError keeps Awaitility running
+                                log.info("Request didn't work", ex);
+                                throw new AssertionError("Error while getting response", ex);
+                            }
 
-        if (expectedStatus >= 200 && expectedStatus < 300) {
-            response.body(
-                    Matchers.hasXPath(
-                            anyNs("Envelope", "Body", "countResponse", "countFruitsResponse") + "/text()",
-                            CoreMatchers.is(expectedCount)));
-        }
+                            response.statusCode(expectedStatus);
+
+                            if (expectedStatus >= 200 && expectedStatus < 300) {
+                                response.body(
+                                        Matchers.hasXPath(
+                                                anyNs("Envelope", "Body", "countResponse", "countFruitsResponse") + "/text()",
+                                                CoreMatchers.is(expectedCount)));
+                            }
+                        });
     }
 
     public static Asset applicationProperties() {
