@@ -56,7 +56,7 @@ Click the extension names to learn more about how to configure and use them, and
 
 | xref:reference/extensions/quarkus-cxf-jaxb-plugins.adoc[Quarkus CXF JAXB Plugins for wsdl2java] +
 `quarkus-cxf-jaxb-plugins`
-|Experimental
+|Stable
 |3.23.0
 |
 // standards: END
