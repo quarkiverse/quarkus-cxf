@@ -5,12 +5,12 @@
 :linkattrs:
 :cq-artifact-id: quarkus-cxf-jaxb-plugins
 :cq-group-id: io.quarkiverse.cxf
-:cq-status: Experimental
+:cq-status: Stable
 :cq-deprecated: false
 :cq-since: 3.23.0
 
 ifeval::[{doc-show-badges} == true]
-🧪Experimental • Since 3.23.0
+Stable • Since 3.23.0
 endif::[]
 
 Embeds XJC plugins from `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Basics-Plugins-List[org.jvnet.jaxb:jaxb-plugins]`
