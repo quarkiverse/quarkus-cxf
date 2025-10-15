@@ -52,7 +52,7 @@ public class MetricsTest {
             Assertions.assertThat(serverRequests).isNotNull();
             Assertions.assertThat(serverRequests.get(
                     "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
-                    .isEqualTo(1);
+                    .isEqualTo(2); // should be set to 1 back again when https://issues.apache.org/jira/browse/CXF-9170 is fixed
             Assertions.assertThat((Float) serverRequests.get(
                     "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
                     .isGreaterThan(0.0F);
@@ -76,7 +76,7 @@ public class MetricsTest {
             Assertions.assertThat(serverRequests).isNotNull();
             Assertions.assertThat(serverRequests.get(
                     "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
-                    .isEqualTo(2);
+                    .isEqualTo(4); // should be set to 2 back again when https://issues.apache.org/jira/browse/CXF-9170 is fixed
             Assertions.assertThat((Float) serverRequests.get(
                     "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
                     .isGreaterThan(0.0F);
