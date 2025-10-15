@@ -19,7 +19,7 @@ permissions:
   issues: write
 
 jobs:
-  rebase-integration-branch:
+  integrate:
     if: github.repository == 'quarkiverse/quarkus-cxf'
     runs-on: ubuntu-latest
     strategy:
