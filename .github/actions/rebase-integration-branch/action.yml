@@ -147,3 +147,18 @@ runs:
         fi
         echo "git status after commit"
         git status
+
+        # cxf somethimes depends on a snapshot version of xjc plugins 
+        # but does not pull some of them itself
+        # so we have to download them manually, for our tests not to fail
+        version="$(mvn help:evaluate -Dexpression=cxf.xjcplugins.version -q -DforceStdout)"
+        if [[ "$version" == *-SNAPSHOT ]]; then
+            plugins=("cxf-xjc-boolean" "cxf-xjc-ts" "cxf-xjc-wsdlextension")
+            for p in "${plugins[@]}"; do
+                mvn dependency:get -DremoteRepositories=https://repository.apache.org/snapshots/ \
+                    -DgroupId=org.apache.cxf.xjcplugins \
+                    -DartifactId=$p \
+                    -Dversion=$version \
+                    -Dpackaging=jar
+            done
+        fi
