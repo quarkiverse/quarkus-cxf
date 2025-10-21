@@ -18,6 +18,22 @@ inputs:
     description: "The token to use to authenticate against GitHub API"
     required: true
 
+outputs:
+  exit-message-path:
+    description: |
+      A path to a file storing the error message describing the build outcome.
+      Available only with exit-status failure.
+      We pass the message in a file because it may contain markdown formatting, such as backticks
+      which break GH Actions's placeholder expansion within shell scripts. 
+    value: ${{ steps.set-outputs.exit-message-path }}
+  exit-status:
+    description: |
+      A short string describing build outcome. 
+      It can be one of the following:
+        * success
+        * failure
+    value: ${{ steps.set-outputs.exit-status }}
+
 runs:
   using: 'composite'
   steps:
@@ -25,27 +41,87 @@ runs:
     - name: Ensure mvn cq:sync-versions -N causes no changes
       shell: bash
       run: |
-        ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -ntp
-        [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
+        ./mvnw cq:sync-versions -Dcq.simpleElementWhitespace=AUTODETECT_PREFER_SPACE -N -B -ntp
+        [[ -z $(git status --porcelain | grep -v antora.yml) ]] || {
+          echo 'There are uncommitted changes after mvn cq:sync-versions'
+          git status
+          git diff
 
-    - name: mvn -B formatter:validate install
+          mkdir -p ~/build-data \
+            && echo "failure" > ~/build-data/exit-status \
+            && printf 'There are uncommitted changes after `mvn cq:sync-versions`:\n\n```\n%s\n```' "$(git diff)" > ~/build-data/exit-message
+
+          exit 1
+        }
+
+    - name: mvn install
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
-      run: ./mvnw -B formatter:validate install -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }}
+      run: |
+        mkdir -p ~/build-data \
+          && ./mvnw -B install -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }} 2>&1 \
+            | tee ~/build-data/build.log
+
+    - name: Set exit status after mvn install
+      if: ${{ failure() }}
+      shell: bash
+      run: |
+        if [ ! -e ~/build-data/exit-status ]; then
+          # do not overwrite previous status and message
+          mkdir -p ~/build-data \
+            && echo "failure" > ~/build-data/exit-status \
+            && printf '`mvn install` failed:\n\n```\n' > ~/build-data/exit-message \
+            && grep ' FAILURE ' ~/build-data/build.log | sed 's|.*\[INFO\] ||' >> ~/build-data/exit-message \
+            && printf '\n...\n' >> ~/build-data/exit-message \
+            && grep 'Failed to execute goal' ~/build-data/build.log >> ~/build-data/exit-message \
+            && printf '```' >> ~/build-data/exit-message
+        else 
+          echo "~/build-data/exit-status exists already"
+        fi
 
     # Same as the previous but only JVM tests and different default ConduitFactory
-    - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn -B test
+    - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn clean install
       shell: bash
       env: 
         GITHUB_TOKEN: ${{ inputs.token }}
         QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
-      run: ./mvnw -B clean install -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }}
+      run: |
+        mkdir -p ~/build-data \
+          && ./mvnw -B clean install -pl '!docs' -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }} 2>&1 \
+            | tee ~/build-data/build.log
 
-    - name: Fail if there are uncommitted changes
+    - name: Set exit status after QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn clean install
+      if: ${{ failure() }}
       shell: bash
       run: |
-        [[ -z $(git status --porcelain | grep -v antora.yml) ]] || { echo 'There are uncommitted changes'; git status; git diff; exit 1; }
+        if [ ! -e ~/build-data/exit-status ]; then
+          # do not overwrite previous status and message
+          mkdir -p ~/build-data \
+            && echo "failure" > ~/build-data/exit-status \
+            && printf '`QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn clean install` failed:\n\n```\n' > ~/build-data/exit-message \
+            && grep ' FAILURE ' ~/build-data/build.log | sed 's|.*\[INFO\] ||' >> ~/build-data/exit-message \
+            && printf '\n...\n' >> ~/build-data/exit-message \
+            && grep 'Failed to execute goal' ~/build-data/build.log >> ~/build-data/exit-message \
+            && printf '```' >> ~/build-data/exit-message
+        else 
+          echo "~/build-data/exit-status exists already"
+        fi
+
+    - name: Ensure mvn install -N caused no changes
+      shell: bash
+      run: |
+        [[ -z $(git status --porcelain | grep -v antora.yml) ]] || {
+          echo 'There are uncommitted changes after mvn install'
+          git status
+          git diff
+
+          mkdir -p ~/build-data \
+            && echo "failure" > ~/build-data/exit-status \
+            && printf 'There are uncommitted changes after `mvn install`:\n\n```\n%s\n```' "$(git diff)" > ~/build-data/exit-message
+
+          exit 1
+        }
 
     - name: Create ${{ runner.temp }}/maven-repo.tgz
       if: ${{ inputs.upload-local-maven-repo-archive == 'true' }}
@@ -65,3 +141,24 @@ runs:
       run: |
         # remove SNAPSHOT artifacts
         find ~/.m2/repository -type d -name '*-SNAPSHOT' -exec rm -r {} +
+
+    - name: Set outputs
+      id: set-outputs
+      if: ${{ failure() || success() }}
+      shell: bash
+      run: |
+        if [ "${{ job.status }}" = "success" ]; then
+          echo 'exit-status=success' >> $GITHUB_OUTPUT
+          echo 'exit-message-path=' >> $GITHUB_OUTPUT
+        else
+          printf 'exit-status=%s' "$( [ -f ~/build-data/exit-status ] && cat ~/build-data/exit-status || echo "failure" )" >> $GITHUB_OUTPUT
+          if [ ! -e ~/build-data/exit-message ]; then
+            echo "Unknown failure" > ~/build-data/exit-message
+          fi
+          echo 'exit-message-path=~/build-data/exit-message' >> $GITHUB_OUTPUT
+        fi
+        echo "Stored exit-status value: $(cat ~/build-data/exit-status)"
+        echo "Stored exit-message value:"
+        echo ""
+        cat ~/build-data/exit-message
+        echo ""
