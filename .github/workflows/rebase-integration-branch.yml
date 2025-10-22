@@ -25,30 +25,41 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dependency-short-name: 'quarkus'
+          - label: 'main + q main'
+            base-branch: 'main'
+            dependency-short-name: 'quarkus'
             dependency-stream: 'main'
             dependency-branch: 'main'
             issue-id: 1287
-            base-branch: 'main'
             dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
-          - dependency-short-name: 'cxf'
+          - label: 'main + cxf main'
+            base-branch: 'main'
+            dependency-short-name: 'cxf'
             dependency-stream: 'main'
             dependency-branch: 'main'
             issue-id: 1767
-            base-branch: 'main'
             dependency-git-repo-url: https://github.com/apache/cxf.git
-          - dependency-short-name: 'quarkus'
+          - label: '3.27 + q 3.27'
+            base-branch: '3.27'
+            dependency-short-name: 'quarkus'
+            dependency-stream: '3.27'
+            dependency-branch: '3.27'
+            issue-id: 1951
+            dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
+          - label: '3.27 + cxf main'
+            base-branch: '3.27'
+            dependency-short-name: 'cxf'
+            dependency-stream: '4.1'
+            dependency-branch: 'main'
+            issue-id: 1955
+            dependency-git-repo-url: https://github.com/apache/cxf.git
+          - label: '3.20 + q 3.20'
+            base-branch: '3.20'
+            dependency-short-name: 'quarkus'
             dependency-stream: '3.20'
             dependency-branch: '3.20'
             issue-id: 1771
-            base-branch: '3.20'
             dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
-          - dependency-short-name: 'cxf'
-            dependency-stream: '4.1'
-            dependency-branch: 'main'
-            issue-id: 1772
-            base-branch: '3.20'
-            dependency-git-repo-url: https://github.com/apache/cxf.git
 
     steps:
 
