@@ -40,6 +40,7 @@
 * xref:release-notes/index.adoc[Release notes]
 
 ifeval::[{doc-is-main} == true]
+** xref:release-notes/3.27.1-aggregated.adoc[3.27.1 LTS aggregated since 3.20.2]
 ** xref:release-notes/3.27.1.adoc[3.27.1 LTS]
 ** xref:release-notes/3.27.0.adoc[3.27.0 LTS]
 ** xref:release-notes/3.26.2.adoc[3.26.2]
@@ -52,9 +53,6 @@ ifeval::[{doc-is-main} == true]
 ** xref:release-notes/3.21.1.adoc[3.21.1]
 ** xref:release-notes/3.21.0.adoc[3.21.0]
 ** xref:release-notes/3.20.2-aggregated.adoc[3.20.2 LTS aggregated since 3.15.3]
-** xref:release-notes/3.20.2.adoc[3.20.2 LTS]
-** xref:release-notes/3.20.1.adoc[3.20.1 LTS]
-** xref:release-notes/3.20.0.adoc[3.20.0 LTS]
 ** xref:release-notes/index.adoc[Older releases...]
 endif::[]
 
