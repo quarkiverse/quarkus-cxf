@@ -90,8 +90,7 @@ jobs:
       run: |
         echo "steps.rebase-integration-branch.outputs.exit-status: ${{ steps.rebase-integration-branch.outputs.exit-status }}"
 
-    - name: build-and-run-jvm-tests
-      id: build-and-run-jvm-tests
+    - id: build-and-run-jvm-tests
       uses: ./.github/actions/build-and-run-jvm-tests
       with:
         run-native-tests: 'true'
@@ -118,8 +117,10 @@ jobs:
         oldState=$(gh issue view ${{ matrix.issue-id }} --json state -q .state -R ${{ github.repository }})
         echo "oldState = $oldState"
         msg="❌ Build with ${{ matrix.dependency-short-name }} ${{ steps.rebase-integration-branch.outputs.dependency-commit }} failed in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-        if [ -f "${{ steps.build-and-run-jvm-tests.outputs.exit-message-path }}" ]; then
-          msg="$(printf '%s\n\n%s' "${msg}" "$(cat "${{ steps.build-and-run-jvm-tests.outputs.exit-message-path }}")")"
+        echo "exit-status=${{ steps.build-and-run-jvm-tests.outputs.exit-status }}"
+        echo "FAILURE_DETAILS_FILE=$FAILURE_DETAILS_FILE"
+        if [ -f "$FAILURE_DETAILS_FILE" ]; then
+          msg="$(printf '%s\n\n%s' "${msg}" "$(cat "$FAILURE_DETAILS_FILE")")"
         fi
         if [[ "$oldState" == "OPEN" ]] ; then
           gh issue comment \
@@ -134,6 +135,7 @@ jobs:
         fi
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        FAILURE_DETAILS_FILE: ${{ steps.build-and-run-jvm-tests.outputs.exit-message-path }}
 
     - name: Close issue https://github.com/${{ github.repository }}/issues/${{ matrix.issue-id }}
       if: ${{ success() }}
