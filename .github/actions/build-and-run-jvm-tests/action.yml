@@ -147,7 +147,8 @@ runs:
       if: ${{ failure() || success() }}
       shell: bash
       run: |
-        if [ "${{ job.status }}" = "success" ]; then
+        if [ ! -f ~/build-data/exit-status ] || [ "$(cat ~/build-data/exit-status 2> /dev/null)" = "success" ]; then
+          echo 'exit-status=success'
           echo 'exit-status=success' >> $GITHUB_OUTPUT
           echo 'exit-message-path=' >> $GITHUB_OUTPUT
         else
