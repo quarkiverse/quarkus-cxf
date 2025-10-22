@@ -144,7 +144,7 @@ runs:
 
     - name: Set outputs
       id: set-outputs
-      if: ${{ failure() || success() }}
+      if: ${{ always() }}
       shell: bash
       run: |
         if [ ! -f ~/build-data/exit-status ] || [ "$(cat ~/build-data/exit-status 2> /dev/null)" = "success" ]; then
@@ -162,7 +162,7 @@ runs:
             mkdir -p ~/build-data
             echo "Unknown failure" > ~/build-data/exit-message
           fi
-          echo 'exit-message-path=~/build-data/exit-message' >> $GITHUB_OUTPUT
+          echo "exit-message-path=$HOME/build-data/exit-message" >> $GITHUB_OUTPUT
           
           echo "Stored exit-status value: $(cat ~/build-data/exit-status)"
           echo "Stored exit-message value:"
