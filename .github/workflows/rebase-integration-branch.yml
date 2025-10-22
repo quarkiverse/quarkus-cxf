@@ -119,8 +119,8 @@ jobs:
         msg="❌ Build with ${{ matrix.dependency-short-name }} ${{ steps.rebase-integration-branch.outputs.dependency-commit }} failed in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         echo "exit-status=${{ steps.build-and-run-jvm-tests.outputs.exit-status }}"
         echo "FAILURE_DETAILS_FILE=$FAILURE_DETAILS_FILE"
-        if [ -f "$FAILURE_DETAILS_FILE" ]; then
-          msg="$(printf '%s\n\n%s' "${msg}" "$(cat "$FAILURE_DETAILS_FILE")")"
+        if [ -f ~/build-data/exit-message ]; then
+          msg="$(printf '%s\n\n%s' "${msg}" "$(cat ~/build-data/exit-message)")"
         fi
         if [[ "$oldState" == "OPEN" ]] ; then
           gh issue comment \
