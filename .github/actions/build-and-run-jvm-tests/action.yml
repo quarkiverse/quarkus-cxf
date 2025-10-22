@@ -170,3 +170,9 @@ runs:
           cat ~/build-data/exit-message
           echo ""
         fi
+
+    - name: print outputs
+      if: ${{ always() }}
+      shell: bash
+      run: |
+        echo "exit-message-path=${{ steps.set-outputs.outputs.exit-message-path }}"
