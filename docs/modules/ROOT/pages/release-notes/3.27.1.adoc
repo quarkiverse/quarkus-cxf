@@ -1,0 +1,10 @@
+= {quarkus-cxf-project-name} 3.27.1 LTS release notes
+
+== Documentation improvements
+
+* The xref:reference/extensions/quarkus-cxf-jaxb-plugins.adoc[JAXB Plugins extension] is now correctly marked as stable.
+  We covered it by tests some time ago.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.27.0+++...+++3.27.1
