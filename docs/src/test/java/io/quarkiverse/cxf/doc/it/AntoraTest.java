@@ -50,6 +50,11 @@ public class AntoraTest {
         LinkStream linkStream = AntorAssured
                 .links()
                 .excludeResolved(Pattern.compile("^\\Qhttp://localhost:808\\E[02].*"))
+                /*
+                 * www.w3.org returns 403 if we hammer it from too many jobs at once
+                 * So let's keep it disabled in all branches except main
+                 */
+                .excludeResolved(Pattern.compile("^\\Qhttps://www.w3.org/\\E.*"))
                 .excludeEditThisPage()
                 .overallTimeout(300_000L); // 5 min
 
