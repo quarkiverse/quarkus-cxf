@@ -107,8 +107,8 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 .<| `string`
 .<| `\http://schemas.xmlsoap.org/ws/2005/02/rm`
 
-3+a|WS-RM version namespace: `http://schemas.xmlsoap.org/ws/2005/02/rm/` or
-`http://docs.oasis-open.org/ws-rx/wsrm/200702`
+3+a|WS-RM version namespace: `\http://schemas.xmlsoap.org/ws/2005/02/rm/` or
+`\http://docs.oasis-open.org/ws-rx/wsrm/200702`
 
 *Environment variable*: `+++QUARKUS_CXF_RM_NAMESPACE+++` +
 *Since Quarkus CXF*: 2.7.0
@@ -117,9 +117,9 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 .<| `string`
 .<| `\http://schemas.xmlsoap.org/ws/2004/08/addressing`
 
-3+a|WS-Addressing version namespace: `http://schemas.xmlsoap.org/ws/2004/08/addressing` or
-`http://www.w3.org/2005/08/addressing`. Note that this property is ignored unless you are using the
-`http://schemas.xmlsoap.org/ws/2005/02/rm/` RM namespace.
+3+a|WS-Addressing version namespace: `\http://schemas.xmlsoap.org/ws/2004/08/addressing` or
+`\http://www.w3.org/2005/08/addressing`. Note that this property is ignored unless you are using the
+`\http://schemas.xmlsoap.org/ws/2005/02/rm/` RM namespace.
 
 *Environment variable*: `+++QUARKUS_CXF_RM_WSA_NAMESPACE+++` +
 *Since Quarkus CXF*: 2.7.0

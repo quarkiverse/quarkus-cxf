@@ -54,8 +54,8 @@ public interface CxfWsRmConfig {
     public interface GlobalRmConfig {
 
         /**
-         * WS-RM version namespace: `http://schemas.xmlsoap.org/ws/2005/02/rm/` or
-         * `http://docs.oasis-open.org/ws-rx/wsrm/200702`
+         * WS-RM version namespace: `\http://schemas.xmlsoap.org/ws/2005/02/rm/` or
+         * `\http://docs.oasis-open.org/ws-rx/wsrm/200702`
          *
          * @since 2.7.0
          * @asciidoclet
@@ -64,9 +64,9 @@ public interface CxfWsRmConfig {
         String namespace();
 
         /**
-         * WS-Addressing version namespace: `http://schemas.xmlsoap.org/ws/2004/08/addressing` or
-         * `http://www.w3.org/2005/08/addressing`. Note that this property is ignored unless you are using the
-         * `http://schemas.xmlsoap.org/ws/2005/02/rm/` RM namespace.
+         * WS-Addressing version namespace: `\http://schemas.xmlsoap.org/ws/2004/08/addressing` or
+         * `\http://www.w3.org/2005/08/addressing`. Note that this property is ignored unless you are using the
+         * `\http://schemas.xmlsoap.org/ws/2005/02/rm/` RM namespace.
          *
          * @since 2.7.0
          * @asciidoclet
