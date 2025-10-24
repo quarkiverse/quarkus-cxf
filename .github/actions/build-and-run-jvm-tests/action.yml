@@ -130,7 +130,7 @@ runs:
         tar -czf ${{ runner.temp }}/maven-repo.tgz -C ~ .m2/repository
     - name: Upload ${{ runner.temp }}/maven-repo.tgz
       if: ${{ inputs.upload-local-maven-repo-archive == 'true' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: maven-repo
         path: ${{ runner.temp }}/maven-repo.tgz
