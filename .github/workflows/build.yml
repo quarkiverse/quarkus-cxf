@@ -102,7 +102,7 @@ jobs:
         java-version: ${{ env.JAVA_VERSION }}
 
     - name: Download Maven Repo
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
       with:
         name: maven-repo
         path: ..
