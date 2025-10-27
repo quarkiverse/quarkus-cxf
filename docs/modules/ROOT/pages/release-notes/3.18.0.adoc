@@ -50,6 +50,7 @@ are transparently dispatched on a Vert.x worker thread, thus preventing blocking
 
 == Deprecations
 
+[[issue_1633_httpclienthttpconduitfactory_value_deprecated]]
 === https://github.com/quarkiverse/quarkus-cxf/issues/1633[#1633] `HttpClientHTTPConduitFactory` value of `*.http-conduit-factory` deprecated
 
 The `HttpClientHTTPConduitFactory` value of

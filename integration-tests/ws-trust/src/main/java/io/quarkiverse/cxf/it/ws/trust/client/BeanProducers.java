@@ -4,7 +4,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-//tag::ws-trust-usage.adoc-sts-client[]
+// tag::ws-trust-usage.adoc-sts-client[]
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Named;
@@ -43,4 +43,4 @@ public class BeanProducers {
         return stsClient;
     }
 }
-//end::ws-trust-usage.adoc-sts-client[]
+// end::ws-trust-usage.adoc-sts-client[]

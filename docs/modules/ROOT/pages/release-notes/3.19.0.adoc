@@ -76,7 +76,7 @@ We deprecated the `HttpClientHTTPConduitFactory` value of
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
 and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
 for the same reason in the
-xref:release-notes/3.18.0.adoc#_1633_httpclienthttpconduitfactory_value_of_http_conduit_factory_deprecated[previous release].
+xref:release-notes/3.18.0.adoc#issue_1633_httpclienthttpconduitfactory_value_deprecated[previous release].
 
 == Documentation improvements
 

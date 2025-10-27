@@ -34,7 +34,7 @@ The `HttpClientHTTPConduitFactory` value of
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
 and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
 was deprecated since {quarkus-cxf-project-name}
-xref:release-notes/3.18.0.adoc#_1633_httpclienthttpconduitfactory_value_of_http_conduit_factory_deprecated[3.18.0]
+xref:release-notes/3.18.0.adoc#issue_1633_httpclienthttpconduitfactory_value_deprecated[3.18.0]
 , because it never gained any real traction within {quarkus-cxf-project-name}.
 
 `HttpClientHTTPConduitFactory` was removed from {quarkus-cxf-project-name} 3.22.0.
@@ -44,7 +44,7 @@ Use the default `VertxHttpClientHTTPConduit` instead.
 Both the removal of `HttpClientHTTPConduitFactory` and `quarkus-cxf-rt-transports-http-hc5` (see the next section)
 are a part of our efforts to support only a single HTTP Conduit based on Vert.x HttpClient in the future.
 For now, the `URLConnectionHTTPConduitFactory` stays fully supported, although it is not used by default since {quarkus-cxf-project-name}
-xref:release-notes/3.16.0.adoc#_vert_x_httpclient_based_http_conduit_is_the_new_default[3.16.0].
+xref:release-notes/3.16.0.adoc#vert-x-httpclient-based-http-conduit-default[3.16.0].
 
 Check `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
 and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
