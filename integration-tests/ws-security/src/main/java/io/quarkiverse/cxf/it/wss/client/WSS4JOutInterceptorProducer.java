@@ -18,7 +18,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import io.quarkus.arc.Unremovable;
 
-//tag::quarkus-cxf-rt-ws-security.adoc[]
+// tag::quarkus-cxf-rt-ws-security.adoc[]
 @ApplicationScoped
 public class WSS4JOutInterceptorProducer {
 
@@ -55,4 +55,4 @@ public class WSS4JOutInterceptorProducer {
         return new WSS4JOutInterceptor(props);
     }
 }
-//end::quarkus-cxf-rt-ws-security.adoc[]
+// end::quarkus-cxf-rt-ws-security.adoc[]
