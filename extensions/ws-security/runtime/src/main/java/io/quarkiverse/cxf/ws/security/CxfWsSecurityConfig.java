@@ -1063,7 +1063,6 @@ public interface CxfWsSecurityConfig {
          * This value is only taken into account if the current security policy has set `CustomAlgorithmSuite` as an
          * `AlgorithmSuite`, for instance
          *
-         * [[custom-algorithm-suite-example]]
          * [source,xml]
          * ----
          * <wsp:Policy wsu:Id="SecurityServiceEncryptThenSignPolicy"
@@ -1109,7 +1108,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The Encryption Algorithm to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1134,7 +1134,8 @@ public interface CxfWsSecurityConfig {
          * The Symmetric Key Encryption Algorithm to set on the
          * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1159,7 +1160,8 @@ public interface CxfWsSecurityConfig {
          * The Asymmetric Key Encryption Algorithm to set on the
          * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1183,7 +1185,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The Encryption Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1207,7 +1210,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The Signature Key Derivation to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1232,7 +1236,8 @@ public interface CxfWsSecurityConfig {
          * The Encryption Derived Key Length (number of bits) to set on the
          * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1257,7 +1262,8 @@ public interface CxfWsSecurityConfig {
          * The Signature Derived Key Length (number of bits) to set on the
          * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1282,7 +1288,8 @@ public interface CxfWsSecurityConfig {
          * The Minimum Symmetric Key Length (number of bits) to set on the
          * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1306,7 +1313,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The Maximum Symmetric Key Length to set on the `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1331,7 +1339,8 @@ public interface CxfWsSecurityConfig {
          * The Minimum Symmetric Key Length (number of bits) to set on the
          * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
@@ -1356,7 +1365,8 @@ public interface CxfWsSecurityConfig {
          * The Maximum Symmetric Key Length (number of bits) to set on the
          * `org.apache.wss4j.policy.model.AlgorithmSuite.AlgorithmSuiteType`.
          * This value is only taken into account if the current security policy has set
-         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#custom-algorithm-suite-example[`CustomAlgorithmSuite` as an
+         * xref:reference/extensions/quarkus-cxf-rt-ws-security.adoc#quarkus-cxf_quarkus-cxf-client-client-name-security-custom-digest-algorithm[`CustomAlgorithmSuite`
+         * as an
          * `AlgorithmSuite`]
          *
          * For more information about algorithms, see
