@@ -34,7 +34,7 @@ The `HttpClientHTTPConduitFactory` value of
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
 and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
 was deprecated since {quarkus-cxf-project-name}
-xref:release-notes/3.18.0.adoc#_1633_httpclienthttpconduitfactory_value_of_http_conduit_factory_deprecated[3.18.0]
+xref:release-notes/3.18.0.adoc#issue_1633_httpclienthttpconduitfactory_value_deprecated[3.18.0]
 , because it never gained any real traction within {quarkus-cxf-project-name}.
 
 `HttpClientHTTPConduitFactory` was removed from {quarkus-cxf-project-name} 3.22.0.
