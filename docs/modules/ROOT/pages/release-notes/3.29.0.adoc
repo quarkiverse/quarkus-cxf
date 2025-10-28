@@ -1,0 +1,13 @@
+= {quarkus-cxf-project-name} 3.29.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.27.x -> 3.29.0 - https://quarkus.io/blog/quarkus-3-29-released/[release notes]
+
+== Documentation improvements
+
+* We published xref:release-notes/3.27.1-aggregated.adoc[Aggregated Release notes for upgrading from 3.20.2 LTS to 3.27.1 LTS]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.27.1+++...+++3.29.0
