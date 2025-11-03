@@ -283,8 +283,8 @@ public abstract class CxfClientProducer {
                 meta,
                 configKey,
                 () -> new IllegalStateException(
-                        "quarkus.cxf.client.\"" + configKey + "\" is referenced in " + ip.getMember()
-                                + " but no such build time configuration entry exists"),
+                        "@" + CXFClient.class.getName() + "(\"" + configKey + "\") is present on " + ip.getMember()
+                                + " but quarkus.cxf.client.\"" + configKey + "\".* configuration is missing"),
                 vertx);
     }
 
