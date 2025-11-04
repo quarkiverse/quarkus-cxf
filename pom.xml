@@ -74,7 +74,7 @@
         <velocity.version>2.4.1</velocity.version><!-- Dependency of wsdl2java -->
         <woodstox-core.version>7.1.1</woodstox-core.version>
         <wsdl4j.version>1.6.3</wsdl4j.version><!-- Manage WSDL4J to make sure that quarkus-cxf-xjc-plugins pulls the right version via cxf-xjc-wsdlextension -->
-        <wss4j.version>4.0.0</wss4j.version><!-- We may ocassionally want to use a bugfix version of WSS4J that is newer than the one used by CXF -->
+        <wss4j.version>4.0.1</wss4j.version><!-- We may ocassionally want to use a bugfix version of WSS4J that is newer than the one used by CXF -->
 
         <supported-maven.versions>[3.6.2,)</supported-maven.versions>
 
