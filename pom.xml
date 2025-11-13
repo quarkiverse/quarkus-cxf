@@ -42,7 +42,7 @@
     </developers>
     <properties>
         <!-- Primary dependencies -->
-        <quarkus.version>3.27.0</quarkus.version>
+        <quarkus.version>3.27.1</quarkus.version>
         <cxf.version>4.1.4</cxf.version>
         <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
         <quarkus-antora.version>3.25.0</quarkus-antora.version>
