@@ -34,7 +34,7 @@ jobs:
     name: Await artifacts on Maven Central
     steps:
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{github.event.inputs.tag || github.ref_name}}
 
