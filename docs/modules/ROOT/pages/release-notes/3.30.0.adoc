@@ -1,0 +1,11 @@
+= {quarkus-cxf-project-name} 3.30.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.29.x -> 3.30.0 - https://quarkus.io/blog/quarkus-3-30-released/[release notes]
+* Apache CXF 4.1.3 -> 4.1.4 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.1.3+++...+++cxf-4.1.4[changelog]
+* Apache WSS4J 4.0.0 -> 4.0.1 - https://github.com/apache/ws-wss4j/releases/tag/wss4j-4.0.1[release notes]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.29.0+++...+++3.30.0
