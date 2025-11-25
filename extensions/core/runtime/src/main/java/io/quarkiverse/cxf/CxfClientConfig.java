@@ -765,12 +765,43 @@ public interface CxfClientConfig {
         ConnectionPool connectionPool();
 
         /**
+         * Settings used by `io.vertx.core.http.HttpClientOptions`.
+         *
+         * @asciidoclet
+         * @since 3.31.0
+         */
+        @WithDefault("true")
+        boolean keepAlive();
+
+        /**
+         * Settings used by `io.vertx.core.http.HttpClientOptions`.
+         *
+         * @asciidoclet
+         * @since 3.31.0
+         */
+        @WithDefault("60")
+        int keepAliveTimeout();
+
+        /**
+         * Settings used by `io.vertx.core.http.HttpClientOptions`.
+         *
+         * @asciidoclet
+         * @since 3.31.0
+         */
+        @WithDefault("60")
+        int http2KeepAliveTimeout();
+
+        /**
          * Configure the given {@link HttpClientOptions} based on the values in this {@link VertxConfig}.
          *
          * @param opts the {@link HttpClientOptions} to set
          * @since 3.25.0
          */
         default void configure(HttpClientOptions opts) {
+            opts.setKeepAlive(keepAlive());
+            opts.setKeepAliveTimeout(keepAliveTimeout());
+            opts.setHttp2KeepAliveTimeout(http2KeepAliveTimeout());
+
             connectionPool().configure(opts.getPoolOptions());
         }
     }
