@@ -56,7 +56,7 @@ public class HttpClientPool {
         return clients.computeIfAbsent(key, v -> {
             final HttpClientOptions opts = new HttpClientOptions()
                     .setProtocolVersion(version);
-            clientInfo.getVertxConfig().configure(opts);
+            clientInfo.getVertxConfig().configure(opts, clientInfo.getConnection());
 
             HttpClientPoolRecorder.configure(clientInfo, opts);
 

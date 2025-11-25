@@ -18,6 +18,7 @@ import io.smallrye.config.WithConverter;
 import io.smallrye.config.WithDefault;
 import io.smallrye.config.WithName;
 import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.http.HttpVersion;
 import io.vertx.core.http.PoolOptions;
 
 /**
@@ -775,12 +776,48 @@ public interface CxfClientConfig {
         ConnectionPool connectionPool();
 
         /**
+         * Set the keep alive timeout for HTTP/1.x connections, in seconds.
+         * This value determines how long a connection remains unused in the pool before being evicted and closed.
+         * A timeout of 0 means there is no timeout.
+         *
+         * @asciidoclet
+         * @since 3.31.0
+         */
+        @WithDefault("60")
+        int keepAliveTimeout();
+
+        /**
+         * Set the keep alive timeout for HTTP/2 connections, in seconds.
+         * This value determines how long a connection remains unused in the pool before being evicted and closed.
+         * A timeout of 0 means there is no timeout.
+         *
+         * @asciidoclet
+         * @since 3.31.0
+         */
+        @WithDefault("60")
+        int http2KeepAliveTimeout();
+
+        /**
          * Configure the given {@link HttpClientOptions} based on the values in this {@link VertxConfig}.
          *
          * @param opts the {@link HttpClientOptions} to set
+         * @param connectionType the {@link ConnectionType} used to control keep-alive settings
          * @since 3.25.0
          */
-        default void configure(HttpClientOptions opts) {
+        default void configure(HttpClientOptions opts, ConnectionType connectionType) {
+            HttpVersion version = opts.getProtocolVersion();
+            if (HttpVersion.HTTP_2.equals(version)) {
+                opts.setHttp2KeepAliveTimeout(http2KeepAliveTimeout());
+            }
+            if (HttpVersion.HTTP_1_1.equals(version) || HttpVersion.HTTP_1_0.equals(version)) {
+                if (ConnectionType.KEEP_ALIVE.equals(connectionType)) {
+                    opts.setKeepAlive(true);
+                    opts.setKeepAliveTimeout(keepAliveTimeout());
+                } else {
+                    opts.setKeepAlive(false);
+                }
+            }
+
             connectionPool().configure(opts.getPoolOptions());
         }
     }

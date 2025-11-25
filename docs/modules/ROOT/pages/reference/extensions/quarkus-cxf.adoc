@@ -2263,6 +2263,28 @@ If the value is negative then the queue is unbounded.
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__VERTX_CONNECTION_POOL_MAX_WAIT_QUEUE_SIZE+++` +
 *Since Quarkus CXF*: 3.25.0
 
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
+.<| `int`
+.<| `60`
+
+3+a|Set the keep alive timeout for HTTP/1.x connections, in seconds.
+This value determines how long a connection remains unused in the pool before being evicted and closed.
+A timeout of 0 means there is no timeout.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__VERTX_KEEP_ALIVE_TIMEOUT+++` +
+*Since Quarkus CXF*: 3.31.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-vertx-http2-keep-alive-timeout]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http2-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http2-keep-alive-timeout]`
+.<| `int`
+.<| `60`
+
+3+a|Set the keep alive timeout for HTTP/2 connections, in seconds.
+This value determines how long a connection remains unused in the pool before being evicted and closed.
+A timeout of 0 means there is no timeout.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__VERTX_HTTP2_KEEP_ALIVE_TIMEOUT+++` +
+*Since Quarkus CXF*: 3.31.0
+
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-username]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]`##
 .<| `string`
 .<| 
