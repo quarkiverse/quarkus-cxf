@@ -124,7 +124,7 @@ public class CipherSuitesTest {
 
         HelloService clientFake = client(clientName + "Fake");
 
-        Assertions.assertThatThrownBy(() -> clientFake.hello("Doe")).hasRootCauseMessage(
+        Assertions.assertThatThrownBy(() -> clientFake.hello("Doe")).rootCause().message().contains(
                 "Received fatal alert: handshake_failure");
 
         HelloService clientExisting = client(clientName + "Existing");
