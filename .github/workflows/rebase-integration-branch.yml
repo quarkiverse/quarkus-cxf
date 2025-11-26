@@ -47,11 +47,11 @@ jobs:
             dependency-branch: '3.27'
             issue-id: 1951
             dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
-          - label: '3.27 + cxf main'
+          - label: '3.27 + cxf 4.1'
             base-branch: '3.27'
             dependency-short-name: 'cxf'
             dependency-stream: '4.1'
-            dependency-branch: 'main'
+            dependency-branch: '4.1.x-fixes'
             issue-id: 1955
             dependency-git-repo-url: https://github.com/apache/cxf.git
           - label: '3.20 + q 3.20'
