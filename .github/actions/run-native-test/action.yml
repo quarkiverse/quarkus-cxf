@@ -21,7 +21,7 @@ runs:
         java-version: ${{ inputs.java-version }}
 
     - name: Download Maven Repo
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: maven-repo
         path: ..
