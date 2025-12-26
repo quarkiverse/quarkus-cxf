@@ -409,11 +409,21 @@ public interface CxfClientConfig {
     public Optional<String> cacheControl();
 
     /**
-     * HTTP Version used for the connection. The default value `auto` will use whatever the default is for the `HTTPConduit`
-     * implementation defined via `quarkus.cxf.client."client-name".http-conduit-factory`. Other possible values: `1.1`,
-     * `2`.
+     * HTTP protocol version the client will use to connect to the server. Possible values:
      *
-     * Some of these values might be unsupported by some `HTTPConduit` implementations.
+     * * `1.0`
+     * * `1.1`
+     * * `2`
+     * * `auto` (default) - delegate selecting the actual default to he `HTTPConduit` implementation specified via
+     * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+     * or
+     * `xref:#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`.
+     * The default HTTP protocol versions for the two supported HTTP Conduit Factories are as follows:
+     * ** `VertxHttpClientHTTPConduitFactory`: `1.1`
+     * ** `URLConnectionHTTPConduitFactory`: `1.1`
+     *
+     * While `VertxHttpClientHTTPConduitFactory` supports all of the named HTTP protocol versions,
+     * `URLConnectionHTTPConduitFactory` supports only versions `1.0` and `1.1`.
      *
      * @since 2.2.3
      * @asciidoclet

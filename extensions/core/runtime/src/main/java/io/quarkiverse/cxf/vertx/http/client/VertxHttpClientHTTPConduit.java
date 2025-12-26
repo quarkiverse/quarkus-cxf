@@ -569,7 +569,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(buffer.length()));
                 }
 
-                setProtocolHeaders(outMessage, requestOptions, userAgent);
+                setProtocolHeaders(outMessage, requestOptions, userAgent, version);
 
                 client.request(requestOptions)
                         .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
@@ -978,7 +978,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         void failResponse(Throwable t) {
         }
 
-        static void setProtocolHeaders(Message outMessage, RequestOptions requestOptions, String userAgent) throws IOException {
+        static void setProtocolHeaders(Message outMessage, RequestOptions requestOptions, String userAgent, HttpVersion version)
+                throws IOException {
             final Headers h = new Headers(outMessage);
             final MultiMap outHeaders;
             final String contentType;
@@ -995,6 +996,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
             for (Map.Entry<String, List<String>> header : h.headerMap().entrySet()) {
                 if (HttpHeaderHelper.CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
+                    continue;
+                }
+                if (HttpHeaderHelper.CONNECTION.equalsIgnoreCase(header.getKey()) && version != HttpVersion.HTTP_1_0
+                        && version != HttpVersion.HTTP_1_1) {
                     continue;
                 }
                 if (addHeaders || HttpHeaderHelper.COOKIE.equalsIgnoreCase(header.getKey())) {
