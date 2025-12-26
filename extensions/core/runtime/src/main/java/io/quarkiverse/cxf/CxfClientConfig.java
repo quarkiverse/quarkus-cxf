@@ -776,9 +776,12 @@ public interface CxfClientConfig {
         ConnectionPool connectionPool();
 
         /**
-         * Set the keep alive timeout for HTTP/1.x connections, in seconds.
-         * This value determines how long a connection remains unused in the pool before being evicted and closed.
-         * A timeout of 0 means there is no timeout.
+         * Duration in seconds after which inactive HTTP/1.x client connections will be closed
+         * if the client was configured with `quarkus.cxf.client."client-name".connection = keep-alive`.
+         * Connections of clients configured with `quarkus.cxf.client."client-name".connection = close` are closed
+         * immediately after receiving the response.
+         *
+         * Value `0` means no timeout.
          *
          * @asciidoclet
          * @since 3.31.0
@@ -787,9 +790,9 @@ public interface CxfClientConfig {
         int keepAliveTimeout();
 
         /**
-         * Set the keep alive timeout for HTTP/2 connections, in seconds.
-         * This value determines how long a connection remains unused in the pool before being evicted and closed.
-         * A timeout of 0 means there is no timeout.
+         * Duration in seconds after which inactive HTTP/2 client connections will be closed.
+         *
+         * Value `0` means no timeout.
          *
          * @asciidoclet
          * @since 3.31.0
