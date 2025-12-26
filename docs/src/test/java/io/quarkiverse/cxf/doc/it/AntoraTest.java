@@ -46,6 +46,9 @@ public class AntoraTest {
         if (ZonedDateTime.now(ZoneId.of("Europe/Paris")).isBefore(deadline)) {
             ignorables.add("https://quarkus.io/blog/quarkus-3-30-released/");
         }
+        // These are timeouting for some reason although they work when visited in browser
+        ignorables.add("https://downloads.apache.org/httpcomponents/httpclient/RELEASE_NOTES-5.4.x.txt");
+        ignorables.add("https://downloads.apache.org/httpcomponents/httpcore/RELEASE_NOTES-5.3.x.txt");
 
         LinkStream linkStream = AntorAssured
                 .links()
