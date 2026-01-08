@@ -39,18 +39,18 @@ Those are typically released on Wednesday following the {quarkus-cxf-project-nam
 
 | xref:release-notes/3.22.0.adoc[3.22.0] | 2025-04-23 | 3.22.0 | 4.1.1
 
-| xref:release-notes/3.21.1.adoc[3.21.1] | 2024-04-02 | 3.21.1 | 4.1.1
-| xref:release-notes/3.21.0.adoc[3.21.0] | 2024-03-24 | 3.21.0 | 4.1.1
+| xref:release-notes/3.21.1.adoc[3.21.1] | 2025-04-02 | 3.21.1 | 4.1.1
+| xref:release-notes/3.21.0.adoc[3.21.0] | 2025-03-24 | 3.21.0 | 4.1.1
 
 | xref:release-notes/3.20.2-aggregated.adoc[3.20.2 LTS aggregated since 3.15.3] |  | |
 | xref:release-notes/3.20.2.adoc[3.20.2 LTS] | 2025-04-25 | 3.20.1 | 4.1.1
 | xref:release-notes/3.20.1.adoc[3.20.1 LTS] | 2025-04-09 |        | 4.1.1
-| xref:release-notes/3.20.0.adoc[3.20.0 LTS] | 2024-03-24 | 3.20.0 | 4.1.1
+| xref:release-notes/3.20.0.adoc[3.20.0 LTS] | 2025-03-24 | 3.20.0 | 4.1.1
 
-| xref:release-notes/3.19.0.adoc[3.19.0] | 2024-02-24 | 3.19.0 | 4.1.0
+| xref:release-notes/3.19.0.adoc[3.19.0] | 2025-02-24 | 3.19.0 | 4.1.0
 
-| xref:release-notes/3.18.1.adoc[3.18.1] | 2024-01-30 | 3.18.1 | 4.1.0
-| xref:release-notes/3.18.0.adoc[3.18.0] | 2024-01-23 | 3.18.0 | 4.1.0
+| xref:release-notes/3.18.1.adoc[3.18.1] | 2025-01-30 | 3.18.1 | 4.1.0
+| xref:release-notes/3.18.0.adoc[3.18.0] | 2025-01-23 | 3.18.0 | 4.1.0
 
 | xref:release-notes/3.17.3.adoc[3.17.3] | 2024-12-06 | 3.17.4 | 4.0.5
 | xref:release-notes/3.17.2.adoc[3.17.2] | 2024-12-04 |        | 4.0.5
