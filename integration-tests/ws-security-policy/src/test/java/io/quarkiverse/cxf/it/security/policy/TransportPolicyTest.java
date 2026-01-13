@@ -9,6 +9,7 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
@@ -222,14 +223,18 @@ public class TransportPolicyTest {
 
     @Test
     void helloIp() {
-        final String expectedMessage;
+        final Matcher<String> expectedMessage;
         HTTPConduitImpl defaultImpl = HTTPConduitImpl.findDefaultHTTPConduitImpl();
         switch (defaultImpl) {
             case VertxHttpClientHTTPConduitFactory:
-                expectedMessage = "No subject alternative names present";
+                expectedMessage = Matchers.containsString("No subject alternative names present");
                 break;
             case URLConnectionHTTPConduitFactory:
-                expectedMessage = "The https URL hostname does not match the Common Name (CN) on the server certificate in the client's truststore";
+                expectedMessage = Matchers.anyOf(
+                        Matchers.containsString(
+                                "The https URL hostname does not match the Common Name (CN) on the server certificate in the client's truststore"),
+                        Matchers.containsString("Wrong HTTPS hostname: should be <127.0.0.1>") // Java 25 on Linux
+                );
                 break;
             default:
                 throw new IllegalArgumentException("Unexpected value: " + defaultImpl);
@@ -245,8 +250,7 @@ public class TransportPolicyTest {
                  * default hostname verifier
                  */
                 .statusCode(500)
-                .body(Matchers.containsString(
-                        expectedMessage));
+                .body(expectedMessage);
 
     }
 
