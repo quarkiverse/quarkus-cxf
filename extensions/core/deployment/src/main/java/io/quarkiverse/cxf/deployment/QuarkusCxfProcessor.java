@@ -284,21 +284,28 @@ class QuarkusCxfProcessor {
                 URL url = urls.nextElement();
                 try (InputStream openStream = url.openStream();
                         BufferedReader reader = new BufferedReader(new InputStreamReader(openStream, StandardCharsets.UTF_8))) {
-                    String line = reader.readLine();
-                    while (line != null) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
                         String[] cols = line.split(":");
                         // org.apache.cxf.bus.managers.PhaseManagerImpl:org.apache.cxf.phase.PhaseManager:true
+                        boolean entryValid = true;
                         if (cols.length > 1) {
-                            if (cols[0].length() > 0) {
-                                reflectiveItems.produce(ReflectiveClassBuildItem.builder(cols[0]).methods().fields().build());
-                            }
-                            if (cols[1].length() > 0) {
-                                reflectiveItems.produce(ReflectiveClassBuildItem.builder(cols[1]).methods().fields().build());
+                            for (int i = 0; i <= 1; i++) {
+                                final String className = cols[i];
+                                if (className.length() > 0) {
+                                    entryValid &= isLoadable(className, url);
+                                    if (!entryValid) {
+                                        break;
+                                    }
+                                    reflectiveItems
+                                            .produce(ReflectiveClassBuildItem.builder(className).methods().fields().build());
+                                }
                             }
                         }
-                        out.write(line);
-                        out.newLine();
-                        line = reader.readLine();
+                        if (entryValid) {
+                            out.write(line);
+                            out.newLine();
+                        }
                     }
                 }
             }
@@ -311,6 +318,16 @@ class QuarkusCxfProcessor {
         } catch (IOException e) {
             LOGGER.warn("cannot merge bus-extensions.txt");
         }
+    }
+
+    static boolean isLoadable(String className, URL url) {
+        try {
+            Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+            return true;
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+            LOGGER.warnf(e, "Ignoring non-loadable CXF Bus extension %s from %s", className, url);
+        }
+        return false;
     }
 
     @BuildStep
