@@ -581,8 +581,27 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    NativeImageResourceBundleBuildItem nativeImageResourceBundleBuildItem() {
-        return new NativeImageResourceBundleBuildItem("org.apache.cxf.interceptor.Messages");
+    void nativeImageResourceBundleBuildItem(
+            CombinedIndexBuildItem combinedIndexBuildItem,
+            BuildProducer<NativeImageResourceBundleBuildItem> resources) {
+        IndexView index = combinedIndexBuildItem.getIndex();
+        DotName rootPackage = DotName.createSimple("org.apache.cxf");
+        registerMessages(index, Thread.currentThread().getContextClassLoader(), rootPackage, resources);
+    }
+
+    static void registerMessages(
+            IndexView index,
+            ClassLoader classLoader,
+            DotName pkg,
+            BuildProducer<NativeImageResourceBundleBuildItem> resources) {
+        if (classLoader.getResource(pkg.toString('/') + "/Messages.properties") != null) {
+            String bundleName = pkg.toString() + ".Messages";
+            LOGGER.debugf("Registering %s", bundleName);
+            resources.produce(new NativeImageResourceBundleBuildItem(bundleName));
+        }
+        for (DotName subPackage : index.getSubpackages(pkg)) {
+            registerMessages(index, classLoader, subPackage, resources);
+        }
     }
 
     @BuildStep
