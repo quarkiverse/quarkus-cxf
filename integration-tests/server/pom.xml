@@ -19,6 +19,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.l2x6.cli-assured</groupId>
+            <artifactId>mvn-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-test-util</artifactId>
             <scope>test</scope>
@@ -82,6 +92,20 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables combine.children="append">
+                        <quarkus.platform.group-id>${quarkus.platform.group-id}</quarkus.platform.group-id>
+                        <quarkus.platform.artifact-id>${quarkus.platform.artifact-id}</quarkus.platform.artifact-id>
+                        <quarkus.platform.version>${quarkus.platform.version}</quarkus.platform.version>
+                        <quarkus-cxf.platform.group-id>${quarkus-cxf.platform.group-id}</quarkus-cxf.platform.group-id>
+                        <quarkus-cxf.platform.artifact-id>${quarkus-cxf.platform.artifact-id}</quarkus-cxf.platform.artifact-id>
+                        <quarkus-cxf.platform.version>${quarkus-cxf.platform.version}</quarkus-cxf.platform.version>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
         </plugins>
     </build>

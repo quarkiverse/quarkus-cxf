@@ -6,8 +6,14 @@ import static io.restassured.RestAssured.given;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+
+import javax.xml.namespace.QName;
+
+import jakarta.xml.ws.Service;
 
 import org.awaitility.Awaitility;
 import org.hamcrest.CoreMatchers;
@@ -20,6 +26,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
 import io.quarkus.test.QuarkusDevModeTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -52,6 +59,15 @@ public class ServerDevModeTest {
         assertCount(config, oldPath, 200, "2");
         assertCount(config, changedPath, 404, ""); // does not exist before the change
         assertWsdl(config, oldPath);
+        //Assertions.assertThat(
+        getClient(FruitWebService.class, "/soap" + oldPath)
+                .add(new Fruit("foo", "bar"));
+
+        //                ).isEqualTo(
+        //                        Set.of(
+        //                                new Fruit("Apple", "Winter fruit"),
+        //                                new Fruit("Banana", "Summer fruit"),
+        //                                new Fruit("foo", "bar")));
 
         /* Now change the path of the service */
         TEST.modifyResourceFile("application.properties",
@@ -64,8 +80,31 @@ public class ServerDevModeTest {
         /* One more change: let the count endpoint always return 42 */
         TEST.modifySourceFile(FruitWebServiceImpl.class,
                 oldSource -> oldSource.replace("fruits.size()", "42"));
+        TEST.modifySourceFile(Fruit.class,
+                oldSource -> oldSource.replace("return description;", "return \"Modified: \" + description;"));
         assertCount(config, changedPath, 200, "42"); // should work after the change
+        //        Assertions.assertThat(
+        getClient(FruitWebService.class, "/soap" + changedPath)
+                .add(new Fruit("foo", "bar"));
+        //                        )
+        //                .isEqualTo(
+        //                        Set.of(
+        //                                new Fruit("Apple", "Modified: Winter fruit"),
+        //                                new Fruit("Banana", "Modified: Summer fruit"),
+        //                                new Fruit("foo", "Modified: bar")));
 
+    }
+
+    public static <T> T getClient(Class<T> serviceInterface, String path) {
+        try {
+            final String namespace = QuarkusCxfClientTestUtil.getDefaultNameSpace(serviceInterface);
+            final URL serviceUrl = new URL("http://localhost:8080" + path + "?wsdl");
+            final QName qName = new QName(namespace, serviceInterface.getSimpleName());
+            final Service service = Service.create(serviceUrl, qName);
+            return service.getPort(serviceInterface);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void assertWsdl(RestAssuredConfig config, String path) {
@@ -127,6 +166,7 @@ public class ServerDevModeTest {
         props.setProperty("quarkus.cxf.path", "/soap");
         props.setProperty("quarkus.cxf.endpoint.\"/fruit\".implementor",
                 io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl.class.getName());
+        props.setProperty("quarkus.cxf.endpoint.\"/fruit\".logging.enabled", "true");
         try {
             props.store(writer, "");
         } catch (IOException e) {

@@ -22,8 +22,11 @@ import org.apache.cxf.jaxws.spi.WrapperClassCreator;
 import org.apache.cxf.jaxws.spi.WrapperClassLoader;
 import org.apache.cxf.wsdl.ExtensionClassCreator;
 import org.apache.cxf.wsdl.ExtensionClassLoader;
+import org.jboss.logging.Logger;
 
 public class QuarkusBusFactory extends CXFBusFactory {
+
+    private static final Logger log = Logger.getLogger(QuarkusBusFactory.class);
 
     /** {@link List} of customizers passed via {@code RuntimeBusCustomizerBuildItem} */
     private static final List<Consumer<Bus>> customizers = new CopyOnWriteArrayList<>();
@@ -37,11 +40,12 @@ public class QuarkusBusFactory extends CXFBusFactory {
         for (Consumer<Bus> customizer : customizers) {
             customizer.accept(bus);
         }
-        bus.setExtension(new WrapperHelperClassLoader(bus), WrapperHelperCreator.class);
-        bus.setExtension(new ExtensionClassLoader(bus), ExtensionClassCreator.class);
-        bus.setExtension(new ExceptionClassLoader(bus), ExceptionClassCreator.class);
-        bus.setExtension(new WrapperClassLoader(bus), WrapperClassCreator.class);
-        bus.setExtension(new FactoryClassLoader(bus), FactoryClassCreator.class);
+
+        bus.setExtension(new QuarkusWrapperHelperClassLoader(bus), WrapperHelperCreator.class);
+        bus.setExtension(new QuarkusExtensionClassLoader(bus), ExtensionClassCreator.class);
+        bus.setExtension(new QuarkusExceptionClassLoader(bus), ExceptionClassCreator.class);
+        bus.setExtension(new QuarkusWrapperClassLoader(bus), WrapperClassCreator.class);
+        bus.setExtension(new QuarkusFactoryClassLoader(bus), FactoryClassCreator.class);
         bus.setExtension(new GeneratedNamespaceClassLoader(bus), NamespaceClassCreator.class);
         bus.setExtension(new ClassLoaderProxyService(new GeneratedNamespaceClassLoader(bus)), ClassLoaderService.class);
         return bus;
@@ -52,6 +56,72 @@ public class QuarkusBusFactory extends CXFBusFactory {
      */
     static void addBusCustomizer(Consumer<Bus> customizer) {
         customizers.add(customizer);
+    }
+
+    public static class QuarkusWrapperHelperClassLoader extends WrapperHelperClassLoader {
+
+        public QuarkusWrapperHelperClassLoader(Bus bus) {
+            super(bus);
+        }
+
+        @Override
+        protected Class<?> findClass(String className, Class<?> callingClass) {
+            return loadClass(className);
+        }
+    }
+
+    public static class QuarkusExtensionClassLoader extends ExtensionClassLoader {
+
+        public QuarkusExtensionClassLoader(Bus bus) {
+            super(bus);
+        }
+
+        @Override
+        protected Class<?> findClass(String className, Class<?> callingClass) {
+            return loadClass(className);
+        }
+    }
+
+    public static class QuarkusExceptionClassLoader extends ExceptionClassLoader {
+
+        public QuarkusExceptionClassLoader(Bus bus) {
+            super(bus);
+        }
+
+        @Override
+        protected Class<?> findClass(String className, Class<?> callingClass) {
+            return loadClass(className);
+        }
+    }
+
+    public static class QuarkusWrapperClassLoader extends WrapperClassLoader {
+        public QuarkusWrapperClassLoader(Bus bus) {
+            super(bus);
+        }
+
+        @Override
+        protected Class<?> findClass(String className, Class<?> callingClass) {
+            return loadClass(className);
+        }
+    }
+
+    public static class QuarkusFactoryClassLoader extends FactoryClassLoader {
+        public QuarkusFactoryClassLoader(Bus bus) {
+            super(bus);
+        }
+
+        @Override
+        protected Class<?> findClass(String className, Class<?> callingClass) {
+            return loadClass(className);
+        }
+    }
+
+    static Class<?> loadClass(String className) {
+        try {
+            return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Could not load " + className, e);
+        }
     }
 
 }

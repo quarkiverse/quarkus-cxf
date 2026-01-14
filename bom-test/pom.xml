@@ -62,6 +62,11 @@
                 <artifactId>cxf-rt-transports-http-netty-server</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.l2x6.cli-assured</groupId>
+                <artifactId>mvn-assured</artifactId>
+                <version>${cli-assured.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
