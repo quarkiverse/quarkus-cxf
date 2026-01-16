@@ -51,7 +51,7 @@
         <!-- Items annotated with @sync can be updated by running mvn cq:sync-versions -N -->
         <assertj.version>3.27.6</assertj.version>
         <awaitility.version>4.3.0</awaitility.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.awaitility:awaitility -->
-        <cli-assured.version>0.0.1-alpha14</cli-assured.version>
+        <cli-assured.version>0.0.1-alpha15</cli-assured.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version><!-- Transitive of org.jvnet.jaxb:jaxb-plugins -->
         <cxf.xjcplugins.version>4.1.1</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
         <ehcache.version>3.11.1</ehcache.version>
