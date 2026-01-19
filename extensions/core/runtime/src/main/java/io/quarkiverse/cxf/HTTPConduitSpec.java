@@ -15,6 +15,7 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
 import io.quarkiverse.cxf.CxfClientConfig.WellKnownHostnameVerifier;
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
+import io.quarkus.proxy.ProxyConfiguration;
 import io.quarkus.tls.TlsConfiguration;
 import io.quarkus.tls.runtime.VertxCertificateHolder;
 import io.quarkus.tls.runtime.config.TlsBucketConfig;
@@ -28,7 +29,7 @@ public interface HTTPConduitSpec {
     }
 
     HTTPConduit createConduit(CXFClientInfo cxfClientInfo, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
-            EndpointReferenceType target)
+            EndpointReferenceType target, ProxyConfiguration proxyConfiguration)
             throws IOException;
 
     default Optional<TLSClientParameters> tlsClientParameters(CXFClientInfo cxfClientInfo, Vertx vertx) {

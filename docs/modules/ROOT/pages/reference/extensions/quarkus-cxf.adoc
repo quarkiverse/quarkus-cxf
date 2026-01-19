@@ -2066,63 +2066,23 @@ message header.
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__DECOUPLED_ENDPOINT+++` +
 *Since Quarkus CXF*: 2.2.3
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-server]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
 .<| `string`
 .<| 
 
-3+a|Specifies the address of proxy server if one is used.
+3+a|The name of the proxy configuration to use; ignored if
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`
+is set.
 
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_SERVER+++` +
-*Since Quarkus CXF*: 2.2.3
+If not set and the default proxy configuration is configured (`quarkus.proxy.*`) then that will be used.
+If the proxy configuration name is set, the configuration from `quarkus.proxy.<name>.*` will be used.
+If the proxy configuration name is set, but no proxy configuration is found with that name, then an error will be thrown
+at runtime.
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port[quarkus.cxf.client."client-name".proxy-server-port]`
-.<| `int`
-.<| 
+Use the value `none` to disable using the default configuration defined via `quarkus.proxy.*`.
 
-3+a|Specifies the port number used by the proxy server.
-
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_SERVER_PORT+++` +
-*Since Quarkus CXF*: 2.2.3
-
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts[quarkus.cxf.client."client-name".non-proxy-hosts]`
-.<| `string`
-.<| 
-
-3+a|Specifies the list of hostnames that will not use the proxy configuration. Examples:
-
-- `localhost` - a single hostname
-- `localhost++\|++www.google.com` - two hostnames that will not use the proxy configuration
-- `localhost++\|++www.google.++*\|*++.apache.org` - hostname patterns
-
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__NON_PROXY_HOSTS+++` +
-*Since Quarkus CXF*: 2.2.3
-
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-type]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-type[quarkus.cxf.client."client-name".proxy-server-type]`
-.<| `http`, `socks`
-.<| `http`
-
-3+a|Specifies the type of the proxy server. Can be either HTTP or SOCKS.
-
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_SERVER_TYPE+++` +
-*Since Quarkus CXF*: 2.2.3
-
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-username]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-username[quarkus.cxf.client."client-name".proxy-username]`
-.<| `string`
-.<| 
-
-3+a|Username for the proxy authentication
-
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_USERNAME+++` +
-*Since Quarkus CXF*: 2.2.3
-
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-password]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`
-.<| `string`
-.<| 
-
-3+a|Password for the proxy authentication
-
-*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_PASSWORD+++` +
-*Since Quarkus CXF*: 2.2.3
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_CONFIGURATION_NAME+++` +
+*Since Quarkus CXF*: 3.31.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
 .<| `QuarkusCXFDefault`, `CXFDefault`, `VertxHttpClientHTTPConduitFactory`, `URLConnectionHTTPConduitFactory`
@@ -2313,6 +2273,110 @@ instead.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PASSWORD+++` +
 *Since Quarkus CXF*: 1.0.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-server]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`##
+.<| `string`
+.<| 
+
+3+a|Hostname or IP address of the proxy server to use for this client.
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+instead.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_SERVER+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port[quarkus.cxf.client."client-name".proxy-server-port]`##
+.<| `int`
+.<| 
+
+3+a|The port number of the proxy server to use for this client.
+
+Ignored if
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+is not set.
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+instead.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_SERVER_PORT+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts[quarkus.cxf.client."client-name".non-proxy-hosts]`##
+.<| `string`
+.<| 
+
+3+a|Specifies the list of hostnames to which the undelying HTTP client will connect directly instead of via proxy server.
+
+Ignored if
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+is not set.
+
+Use the following syntax:
+
+- `localhost` - a single hostname
+- `localhost++\|++www.google.com` - two hostnames that will not use the proxy configuration
+- `localhost++\|++www.google.++*\|*++.apache.org` - hostname patterns
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+instead.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__NON_PROXY_HOSTS+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-type]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-type[quarkus.cxf.client."client-name".proxy-server-type]`##
+.<| `http`, `socks`
+.<| `http`
+
+3+a|Specifies the type of the proxy server. Can be either HTTP or SOCKS.
+
+Ignored if
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+is not set.
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+instead.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_SERVER_TYPE+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-username]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-username[quarkus.cxf.client."client-name".proxy-username]`##
+.<| `string`
+.<| 
+
+3+a|Username for the proxy authentication
+
+Ignored if
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+is not set.
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+instead.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_USERNAME+++` +
+*Since Quarkus CXF*: 2.2.3
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-proxy-password]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`##
+.<| `string`
+.<| 
+
+3+a|Password for the proxy authentication
+
+Ignored if
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+is not set.
+
+*Deprecated* - use
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+instead.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__PROXY_PASSWORD+++` +
+*Since Quarkus CXF*: 2.2.3
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-key-store]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store]`##
 .<| `string`

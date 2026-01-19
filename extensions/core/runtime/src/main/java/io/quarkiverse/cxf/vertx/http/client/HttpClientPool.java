@@ -14,6 +14,7 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 
 import io.quarkiverse.cxf.CXFClientInfo;
+import io.quarkus.proxy.ProxyConfiguration;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
 import io.quarkus.tls.CertificateUpdatedEvent;
@@ -23,6 +24,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpVersion;
+import io.vertx.core.net.ProxyOptions;
+import io.vertx.core.net.ProxyType;
 
 /**
  * A pool of HTTP clients so that we do not have to reconnect on every request.
@@ -50,13 +53,24 @@ public class HttpClientPool {
      * @param spec the caching key
      * @return a possibly pooled client
      */
-    public HttpClient getClient(CXFClientInfo clientInfo, HttpVersion version, TlsConfiguration tlsConfiguration) {
+    public HttpClient getClient(CXFClientInfo clientInfo, HttpVersion version, TlsConfiguration tlsConfiguration,
+            ProxyConfiguration proxyConfiguration) {
         final String key = clientInfo.getConfigKey();
         Objects.requireNonNull(key, "CXFClientInfo.configKey cannot be null");
         return clients.computeIfAbsent(key, v -> {
             final HttpClientOptions opts = new HttpClientOptions()
                     .setProtocolVersion(version);
             clientInfo.getVertxConfig().configure(opts, clientInfo.getConnection());
+            if (proxyConfiguration != null) {
+                proxyConfiguration.nonProxyHosts().ifPresent(nph -> nph.forEach(opts::addNonProxyHost));
+                final ProxyOptions proxyOpts = new ProxyOptions()
+                        .setHost(proxyConfiguration.host())
+                        .setPort(proxyConfiguration.port())
+                        .setType(toProxyType(proxyConfiguration.type()));
+                proxyConfiguration.username().ifPresent(proxyOpts::setUsername);
+                proxyConfiguration.password().ifPresent(proxyOpts::setPassword);
+                opts.setProxyOptions(proxyOpts);
+            }
 
             HttpClientPoolRecorder.configure(clientInfo, opts);
 
@@ -93,6 +107,19 @@ public class HttpClientPool {
 
     public Vertx getVertx() {
         return vertx;
+    }
+
+    static ProxyType toProxyType(io.quarkus.proxy.ProxyType type) {
+        switch (type) {
+            case HTTP:
+                return ProxyType.HTTP;
+            case SOCKS4:
+                return ProxyType.SOCKS4;
+            case SOCKS5:
+                return ProxyType.SOCKS5;
+            default:
+                throw new IllegalArgumentException("Unexpected " + io.quarkus.proxy.ProxyType.class.getName() + " " + type);
+        }
     }
 
     static record ClientEntry(HttpClient httpClient, String tlsConfigurationName) {

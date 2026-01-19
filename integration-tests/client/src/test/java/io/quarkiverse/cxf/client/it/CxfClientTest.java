@@ -68,14 +68,17 @@ public class CxfClientTest {
                 .body(is(String.valueOf(expected)));
     }
 
-    /**
-     * Test whether a client with proxy and proxy auth set works properly
-     *
-     * @param clientKey
-     */
     @Test
-    void multiplyProxy() {
+    void legacyProxy() {
+        assertProxy("proxiedCalculator");
+    }
 
+    @Test
+    void qcxfProxyConfig() {
+        assertProxy("qcxfProxyConfig");
+    }
+
+    private void assertProxy(String client) {
         String proxyPort = ConfigProvider.getConfig().getValue("cxf.it.calculator.proxy.port", String.class);
         String uri = ConfigProvider.getConfig().getValue("cxf.it.calculator.hostNameUri", String.class);
         /* Make sure nothing was proxied before this test */
@@ -88,7 +91,7 @@ public class CxfClientTest {
         RestAssured.given()
                 .queryParam("a", 4)
                 .queryParam("b", 5)
-                .get("/cxf/client/calculator/proxiedCalculator/multiply")
+                .get("/cxf/client/calculator/" + client + "/multiply")
                 .then()
                 .statusCode(200)
                 .body(is(String.valueOf(20)));

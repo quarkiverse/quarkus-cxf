@@ -66,6 +66,9 @@ public class CxfClientResource {
     @CXFClient("proxiedCalculator")
     CalculatorService proxiedCalculator;
 
+    @CXFClient("qcxfProxyConfig")
+    CalculatorService qcxfProxyConfig;
+
     @Inject
     RequestScopedClients requestScopedClients;
 
@@ -158,6 +161,8 @@ public class CxfClientResource {
                 return mySkewedCalculator;
             case "proxiedCalculator":
                 return proxiedCalculator;
+            case "qcxfProxyConfig":
+                return qcxfProxyConfig;
             default:
                 return requestScopedClients.getClient(client);
         }

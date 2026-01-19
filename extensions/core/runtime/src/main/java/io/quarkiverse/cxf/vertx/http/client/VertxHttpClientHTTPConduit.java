@@ -26,9 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.Proxy.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayDeque;
@@ -86,6 +83,7 @@ import io.quarkiverse.cxf.vertx.http.client.BodyRecorder.StoredBody;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.RequestBodyEvent.RequestBodyEventType;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
+import io.quarkus.proxy.ProxyConfiguration;
 import io.quarkus.runtime.BlockingOperationControl;
 import io.quarkus.tls.TlsConfiguration;
 import io.vertx.core.AsyncResult;
@@ -104,8 +102,6 @@ import io.vertx.core.http.RequestOptions;
 import io.vertx.core.http.impl.HttpUtils;
 import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.impl.NoStackTraceTimeoutException;
-import io.vertx.core.net.ProxyOptions;
-import io.vertx.core.net.ProxyType;
 import io.vertx.core.streams.WriteStream;
 
 /**
@@ -122,17 +118,20 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
     private final HttpClientPool httpClientPool;
     private final String userAgent;
     private final CXFClientInfo clientInfo;
+    private final ProxyConfiguration proxyConfiguration;
 
     public VertxHttpClientHTTPConduit(
             CXFClientInfo clientInfo,
             Bus b,
             EndpointInfo ei,
             EndpointReferenceType t,
-            HttpClientPool httpClientPool)
+            HttpClientPool httpClientPool,
+            ProxyConfiguration proxyConfiguration)
             throws IOException {
         super(b, ei, t);
         this.clientInfo = clientInfo;
         this.httpClientPool = httpClientPool;
+        this.proxyConfiguration = proxyConfiguration;
         this.userAgent = Version.getCompleteVersionString();
     }
 
@@ -185,16 +184,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             clientParameters = null;
         }
 
-        final Proxy proxy = proxyFactory.createProxy(csPolicy, uri);
-        InetSocketAddress adr;
-        if (proxy != null && (adr = (InetSocketAddress) proxy.address()) != null) {
-            requestOptions.setProxyOptions(
-                    new ProxyOptions()
-                            .setHost(adr.getHostName())
-                            .setPort(adr.getPort())
-                            .setType(toProxyType(proxy.type())));
-        }
-
         final String query = uri.getQuery();
         final String pathAndQuery = query != null && !query.isEmpty()
                 ? uri.getPath() + "?" + query
@@ -221,6 +210,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 requestOptions,
                 version,
                 clientParameters != null ? clientParameters.getTlsConfiguration() : null,
+                proxyConfiguration,
                 determineReceiveTimeout(message, csPolicy),
                 isAsync,
                 csPolicy.getMaxRetransmits(),
@@ -241,17 +231,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         if (clientParameters.isUseHttpsURLConnectionDefaultSslSocketFactory()) {
             throw new IllegalStateException(VertxHttpClientHTTPConduit.class.getName()
                     + " does not support TLSClientParameters.isUseHttpsURLConnectionDefaultSslSocketFactory() returning true");
-        }
-    }
-
-    static ProxyType toProxyType(Type type) {
-        switch (type) {
-            case HTTP:
-                return ProxyType.HTTP;
-            case SOCKS:
-                return ProxyType.SOCKS4;
-            default:
-                throw new IllegalArgumentException("Unexpected " + Type.class.getName() + " " + type);
         }
     }
 
@@ -280,6 +259,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 requestContext.requestOptions,
                 requestContext.version,
                 requestContext.tlsConfiguration,
+                requestContext.proxyConfiguration,
                 requestContext.receiveTimeoutMs,
                 responseHandler,
                 requestContext.async,
@@ -369,6 +349,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             RequestOptions requestOptions,
             HttpVersion version,
             TlsConfiguration tlsConfiguration,
+            ProxyConfiguration proxyConfiguration,
             long receiveTimeoutMs,
             boolean async,
             int maxRetransmits,
@@ -470,6 +451,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private final RequestOptions requestOptions;
         private final HttpVersion version;
         private final TlsConfiguration tlsConfiguration;
+        private final ProxyConfiguration proxyConfiguration;
         private final ContextInternal context;
         private final AuthorizationPolicy authorizationPolicy;
         private final HttpAuthSupplier authSupplier;
@@ -513,6 +495,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 RequestOptions requestOptions,
                 HttpVersion version,
                 TlsConfiguration tlsConfiguration,
+                ProxyConfiguration proxyConfiguration,
                 long receiveTimeoutMs,
                 IOEHandler<ResponseEvent> responseHandler,
                 boolean isAsync,
@@ -531,6 +514,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             this.requestOptions = requestOptions;
             this.version = version;
             this.tlsConfiguration = tlsConfiguration;
+            this.proxyConfiguration = proxyConfiguration;
 
             this.mode = isAsync
                     ? new Mode.Async(TimeoutSpec.create(receiveTimeoutMs, url), responseHandler, outMessage)
@@ -564,7 +548,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     redirs.add(url);
                 }
 
-                final HttpClient client = clientPool.getClient(clientInfo, version, tlsConfiguration);
+                final HttpClient client = clientPool.getClient(clientInfo, version, tlsConfiguration, proxyConfiguration);
                 if (event.eventType() == RequestBodyEventType.COMPLETE_BODY && requestHasBody(requestOptions.getMethod())) {
                     requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(buffer.length()));
                 }
@@ -808,7 +792,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     options.removeHeader(CONTENT_LENGTH);
                 }
 
-                final HttpClient client = clientPool.getClient(clientInfo, version, tlsConfiguration);
+                final HttpClient client = clientPool.getClient(clientInfo, version, tlsConfiguration, proxyConfiguration);
 
                 // Should not be necessary, because we copy from the original requestOptions
                 // setProtocolHeaders(outMessage, options, userAgent);
