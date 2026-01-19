@@ -1,6 +1,8 @@
 package io.quarkiverse.cxf;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.configuration.security.AuthorizationPolicy;
@@ -11,11 +13,14 @@ import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import org.apache.cxf.transports.http.configuration.ProxyServerType;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
 import io.quarkus.logging.Log;
+import io.quarkus.proxy.ProxyConfiguration;
+import io.quarkus.proxy.ProxyType;
 import io.vertx.core.Vertx;
 
 /**
@@ -69,12 +74,14 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     private HTTPConduit configure(HTTPConduitSpec httpConduitImpl, CXFClientInfo cxfClientInfo, Bus b,
             EndpointInfo localInfo,
             EndpointReferenceType target) throws IOException {
+        final ProxyConfiguration pConfig = cxfClientInfo.getProxyConfiguration();
         final HTTPConduit httpConduit = httpConduitImpl.createConduit(
                 cxfClientInfo,
                 httpClientPool,
                 b,
                 localInfo,
-                target);
+                target,
+                pConfig);
         if (httpConduit instanceof HttpClientHTTPConduit) {
             Log.warnf("Usage of %s is deprecated since Quarkus CXF 3.18.0."
                     + " You may want to review the options quarkus.cxf.http-conduit-factory and/or quarkus.cxf.client.\"%s\".http-conduit-factory",
@@ -142,35 +149,26 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                 policy.setDecoupledEndpoint(value);
             }
         }
-        {
-            final String value = cxfClientInfo.getProxyServer();
-            if (value != null) {
-                policy.setProxyServer(value);
-            }
-        }
-        {
-            final Integer value = cxfClientInfo.getProxyServerPort();
-            if (value != null) {
-                policy.setProxyServerPort(value);
-            }
-        }
-        {
-            final String value = cxfClientInfo.getNonProxyHosts();
-            if (value != null) {
-                policy.setNonProxyHosts(value);
-            }
-        }
-        policy.setProxyServerType(cxfClientInfo.getProxyServerType());
 
-        final String proxyUsername = cxfClientInfo.getProxyUsername();
-        if (proxyUsername != null) {
-            final String proxyPassword = cxfClientInfo.getProxyPassword();
-            final ProxyAuthorizationPolicy proxyAuth = new ProxyAuthorizationPolicy();
-            proxyAuth.setUserName(proxyUsername);
-            proxyAuth.setPassword(proxyPassword);
-            httpConduit.setProxyAuthorization(proxyAuth);
-        }
+        if (pConfig != null && !"none".equals(pConfig.host())) {
+            /*
+             * We set the proxy settings on the HTTPClientPolicy only for the URLConnectionHTTPConduit.
+             * VertxHttpClientHTTPConduit does not need it, because we pass the ProxyConfiguration to it directly.
+             */
+            policy.setProxyServer(pConfig.host());
+            policy.setProxyServerPort(pConfig.port());
+            toProxyType(pConfig.type()).ifPresent(policy::setProxyServerType);
+            pConfig.nonProxyHosts().map(nph -> nph.stream().collect(Collectors.joining("|")))
+                    .ifPresent(policy::setNonProxyHosts);
 
+            final String proxyUsername = pConfig.username().orElse(null);
+            if (proxyUsername != null) {
+                final ProxyAuthorizationPolicy proxyAuth = new ProxyAuthorizationPolicy();
+                proxyAuth.setUserName(proxyUsername);
+                pConfig.password().ifPresent(proxyAuth::setPassword);
+                httpConduit.setProxyAuthorization(proxyAuth);
+            }
+        }
         if (authorizationPolicy != null && cxfClientInfo.isSecureWsdlAccess()) {
             /*
              * This is the only way how the AuthorizationPolicy can be set early enough to be effective for the WSDL
@@ -181,6 +179,17 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         }
 
         return httpConduit;
+    }
+
+    static Optional<ProxyServerType> toProxyType(ProxyType proxyType) {
+        switch (proxyType) {
+            case HTTP:
+                return Optional.of(ProxyServerType.HTTP);
+            case SOCKS4:
+                return Optional.of(ProxyServerType.SOCKS);
+            default:
+                return Optional.empty();
+        }
     }
 
 }

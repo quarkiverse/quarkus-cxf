@@ -1,15 +1,20 @@
 package io.quarkiverse.cxf;
 
+import java.net.Proxy.Type;
 import java.security.KeyStore;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
+import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CxfClientConfig.Auth;
 import io.quarkiverse.cxf.CxfClientConfig.VertxConfig;
@@ -17,6 +22,9 @@ import io.quarkiverse.cxf.CxfConfig.CxfGlobalClientConfig;
 import io.quarkiverse.cxf.CxfConfig.RetransmitCacheConfig;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.Unremovable;
+import io.quarkus.proxy.ProxyConfiguration;
+import io.quarkus.proxy.ProxyConfigurationRegistry;
+import io.quarkus.proxy.ProxyType;
 import io.quarkus.tls.TlsConfiguration;
 import io.quarkus.tls.TlsConfigurationRegistry;
 import io.vertx.core.Vertx;
@@ -30,6 +38,7 @@ import io.vertx.core.net.PfxOptions;
  */
 @Unremovable
 public class CXFClientInfo {
+    private static final Logger log = Logger.getLogger(CXFClientInfo.class);
     private static final String DEFAULT_EP_ADDR = "http://localhost:8080";
     private static final String JAVA_NET_SSL_TLS_CONFIGURATION_NAME = "javax.net.ssl";
 
@@ -179,34 +188,8 @@ public class CXFClientInfo {
      */
     private final String decoupledEndpoint;
     private final String decoupledEndpointBase;
-    /**
-     * Specifies the address of proxy server if one is used.
-     */
-    private final String proxyServer;
-    /**
-     * Specifies the port number used by the proxy server.
-     */
-    private final Integer proxyServerPort;
-    /**
-     * Specifies the list of hostnames that will not use the proxy configuration.
-     * Examples of value:
-     * * "localhost" -> A single hostname
-     * * "localhost|www.google.com" -> 2 hostnames that will not use the proxy configuration
-     * * "localhost|www.google.*|*.apache.org" -> It's also possible to use a pattern-like value
-     */
-    private final String nonProxyHosts;
-    /**
-     * Specifies the type of the proxy server. Can be either HTTP or SOCKS.
-     */
-    private final ProxyServerType proxyServerType;
-    /**
-     * Username for the proxy authentication
-     */
-    private final String proxyUsername;
-    /**
-     * Password for the proxy authentication
-     */
-    private final String proxyPassword;
+
+    private final ProxyConfiguration proxyConfiguration;
 
     private final String tlsConfigurationName;
 
@@ -262,12 +245,32 @@ public class CXFClientInfo {
         this.browserType = config.browserType().orElse(null);
         this.decoupledEndpoint = config.decoupledEndpoint().orElse(null);
         this.decoupledEndpointBase = cxfConfig.decoupledEndpointBase().orElse(null);
-        this.proxyServer = config.proxyServer().orElse(null);
-        this.proxyServerPort = config.proxyServerPort().orElse(null);
-        this.nonProxyHosts = config.nonProxyHosts().orElse(null);
-        this.proxyServerType = config.proxyServerType();
-        this.proxyUsername = config.proxyUsername().orElse(null);
-        this.proxyPassword = config.proxyPassword().orElse(null);
+        final String pServer = config.proxyServer().orElse(null);
+        final String pConfigurationName = config.proxyConfigurationName().orElse(null);
+        if (pServer != null) {
+            log.warnf("The configuration option quarkus.cxf.client.%s.proxy-server is deprecated. "
+                    + " Use quarkus.cxf.client.%s.proxy-configuration-name instead.",
+                    configKey, configKey);
+            if (pConfigurationName != null) {
+                log.warnf("Ignoring "
+                        + " quarkus.cxf.client.%s.proxy-configuration-name = %s"
+                        + " because quarkus.cxf.client.%s.proxy-server is set."
+                        + " Use one or the other way to set the proxy options to avoid this warning.",
+                        configKey, pConfigurationName, configKey);
+            }
+            this.proxyConfiguration = new ProxyConfigurationImpl(
+                    pServer,
+                    config.proxyServerPort().getAsInt(),
+                    config.proxyUsername(),
+                    config.proxyPassword(),
+                    config.nonProxyHosts().map(s -> Optional.of(Arrays.asList(s.split(Pattern.quote("|")))))
+                            .orElse(Optional.empty()),
+                    Optional.empty(),
+                    toQuarkusProxyType(config.proxyServerType()));
+        } else {
+            final ProxyConfigurationRegistry registry = Arc.container().select(ProxyConfigurationRegistry.class).get();
+            this.proxyConfiguration = registry.get(config.proxyConfigurationName()).orElse(null);
+        }
         this.tlsConfigurationName = config.tlsConfigurationName().orElse(null);
         this.tlsConfiguration = tlsConfiguration(vertx, cxfConfig.client(), config, configKey);
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
@@ -582,28 +585,8 @@ public class CXFClientInfo {
         return decoupledEndpointBase;
     }
 
-    public String getProxyServer() {
-        return proxyServer;
-    }
-
-    public Integer getProxyServerPort() {
-        return proxyServerPort;
-    }
-
-    public String getNonProxyHosts() {
-        return nonProxyHosts;
-    }
-
-    public ProxyServerType getProxyServerType() {
-        return proxyServerType;
-    }
-
-    public String getProxyUsername() {
-        return proxyUsername;
-    }
-
-    public String getProxyPassword() {
-        return proxyPassword;
+    public ProxyConfiguration getProxyConfiguration() {
+        return proxyConfiguration;
     }
 
     public HTTPConduitImpl getHttpConduitImpl() {
@@ -632,6 +615,17 @@ public class CXFClientInfo {
 
     public long getWorkerDispatchTimeout() {
         return workerDispatchTimeout;
+    }
+
+    static ProxyType toQuarkusProxyType(ProxyServerType proxyServerType) {
+        switch (proxyServerType) {
+            case HTTP:
+                return ProxyType.HTTP;
+            case SOCKS:
+                return ProxyType.SOCKS4;
+            default:
+                throw new IllegalArgumentException("Unexpected " + Type.class.getName() + " " + proxyServerType);
+        }
     }
 
     static class AuthWrapper implements Auth {
@@ -665,4 +659,13 @@ public class CXFClientInfo {
         }
     }
 
+    record ProxyConfigurationImpl(
+            String host,
+            int port,
+            Optional<String> username,
+            Optional<String> password,
+            Optional<List<String>> nonProxyHosts,
+            Optional<Duration> proxyConnectTimeout,
+            ProxyType type) implements ProxyConfiguration {
+    }
 }

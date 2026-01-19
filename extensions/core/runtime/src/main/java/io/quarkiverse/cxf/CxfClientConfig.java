@@ -3,6 +3,7 @@ package io.quarkiverse.cxf;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
@@ -453,56 +454,131 @@ public interface CxfClientConfig {
     Optional<String> decoupledEndpoint();
 
     /**
-     * Specifies the address of proxy server if one is used.
+     * The name of the proxy configuration to use; ignored if
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`
+     * is set.
      *
-     * @since 2.2.3
+     * If not set and the default proxy configuration is configured (`quarkus.proxy.*`) then that will be used.
+     * If the proxy configuration name is set, the configuration from `quarkus.proxy.<name>.*` will be used.
+     * If the proxy configuration name is set, but no proxy configuration is found with that name, then an error will be thrown
+     * at runtime.
+     *
+     * Use the value `none` to disable using the default configuration defined via `quarkus.proxy.*`.
+     *
+     * @since 3.31.0
      * @asciidoclet
      */
+    Optional<String> proxyConfigurationName();
+
+    /**
+     * Hostname or IP address of the proxy server to use for this client.
+     *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * instead.
+     *
+     * @since 2.2.3
+     * @deprecated use {@link #proxyConfigurationName()} instead
+     * @asciidoclet
+     */
+    @Deprecated
     public Optional<String> proxyServer();
 
     /**
-     * Specifies the port number used by the proxy server.
+     * The port number of the proxy server to use for this client.
+     *
+     * Ignored if
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * is not set.
+     *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * instead.
      *
      * @since 2.2.3
+     * @deprecated use {@link #proxyConfigurationName()} instead
      * @asciidoclet
      */
-    public Optional<Integer> proxyServerPort();
+    @Deprecated
+    public OptionalInt proxyServerPort();
 
     /**
-     * Specifies the list of hostnames that will not use the proxy configuration. Examples:
+     * Specifies the list of hostnames to which the undelying HTTP client will connect directly instead of via proxy server.
+     *
+     * Ignored if
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * is not set.
+     *
+     * Use the following syntax:
      *
      * - `localhost` - a single hostname
      * - `localhost++\|++www.google.com` - two hostnames that will not use the proxy configuration
      * - `localhost++\|++www.google.++*\|*++.apache.org` - hostname patterns
      *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * instead.
+     *
      * @since 2.2.3
+     * @deprecated use {@link #proxyConfigurationName()} instead
      * @asciidoclet
      */
+    @Deprecated
     public Optional<String> nonProxyHosts();
 
     /**
      * Specifies the type of the proxy server. Can be either HTTP or SOCKS.
      *
+     * Ignored if
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * is not set.
+     *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * instead.
+     *
      * @since 2.2.3
+     * @deprecated use {@link #proxyConfigurationName()} instead
      * @asciidoclet
      */
     @WithDefault("HTTP")
+    @Deprecated
     public ProxyServerType proxyServerType();
 
     /**
      * Username for the proxy authentication
      *
+     * Ignored if
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * is not set.
+     *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * instead.
+     *
      * @since 2.2.3
+     * @deprecated use {@link #proxyConfigurationName()} instead
      * @asciidoclet
      */
+    @Deprecated
     public Optional<String> proxyUsername();
 
     /**
      * Password for the proxy authentication
      *
+     * Ignored if
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * is not set.
+     *
+     * *Deprecated* - use
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+     * instead.
+     *
      * @since 2.2.3
+     * @deprecated use {@link #proxyConfigurationName()} instead
      * @asciidoclet
      */
+    @Deprecated
     public Optional<String> proxyPassword();
 
     /**

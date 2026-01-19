@@ -11,6 +11,7 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
+import io.quarkus.proxy.ProxyConfiguration;
 import io.quarkus.runtime.annotations.ConfigDocEnumValue;
 
 public enum HTTPConduitImpl implements HTTPConduitSpec {
@@ -41,8 +42,9 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
         @Override
         public HTTPConduit createConduit(CXFClientInfo cxfClientInfo, HttpClientPool httpClientPool, Bus b,
                 EndpointInfo localInfo,
-                EndpointReferenceType target) throws IOException {
-            return new VertxHttpClientHTTPConduit(cxfClientInfo, b, localInfo, target, httpClientPool);
+                EndpointReferenceType target,
+                ProxyConfiguration proxyConfiguration) throws IOException {
+            return new VertxHttpClientHTTPConduit(cxfClientInfo, b, localInfo, target, httpClientPool, proxyConfiguration);
         }
 
         @Override
@@ -65,7 +67,8 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
         @Override
         public HTTPConduit createConduit(CXFClientInfo cxfClientInfo, HttpClientPool httpClientPool, Bus b,
                 EndpointInfo localInfo,
-                EndpointReferenceType target) throws IOException {
+                EndpointReferenceType target,
+                ProxyConfiguration proxyConfiguration) throws IOException {
             return new URLConnectionHTTPConduit(b, localInfo, target);
         }
     };
@@ -82,7 +85,8 @@ public enum HTTPConduitImpl implements HTTPConduitSpec {
 
     @Override
     public HTTPConduit createConduit(CXFClientInfo cxfClientInfo, HttpClientPool httpClientPool, Bus b, EndpointInfo localInfo,
-            EndpointReferenceType target)
+            EndpointReferenceType target,
+            ProxyConfiguration proxyConfiguration)
             throws IOException {
         throw new IllegalStateException(
                 "Call " + HTTPConduitImpl.class.getName() + ".resolveDefault() before calling createConduit()");
