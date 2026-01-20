@@ -20,8 +20,6 @@ import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.l2x6.cli.assured.CommandProcess;
 import org.l2x6.mvn.assured.Mvn;
 
@@ -33,7 +31,6 @@ public class DevModeTest {
     private static final Logger log = Logger.getLogger(DevModeTest.class);
 
     @Test
-    @DisabledOnOs(OS.WINDOWS) // stuck on Windows
     public void devMode() throws IOException, InterruptedException {
 
         final Object[] versions = {
@@ -46,7 +43,6 @@ public class DevModeTest {
         };
 
         final String quarkusVersion = getQuarkusVersion();
-        final Path srcMainJava = Path.of("src/main/java");
         final String artifactId = "quarkus-cxf-integration-test-dev-mode";
         final Path tempProject = Path.of("target/" + DevModeTest.class.getSimpleName() + "-" + UUID.randomUUID())
                 .resolve(artifactId)
@@ -61,6 +57,7 @@ public class DevModeTest {
         mvn
                 .args(
                         "io.quarkus.platform:quarkus-maven-plugin:" + quarkusVersion + ":create",
+                        "-ntp",
                         "-DprojectGroupId=io.quarkiverse.cxf",
                         "-DprojectArtifactId=" + artifactId,
                         "-Dextensions=io.quarkiverse.cxf:quarkus-cxf")
@@ -96,7 +93,7 @@ public class DevModeTest {
                     </dependencies>
                 </dependencyManagement>
                 """.formatted(versions));
-        Files.writeString(pomXmlFile, pomSource);
+        Files.writeString(pomXmlFile, pomSource, StandardCharsets.UTF_8);
 
         /* Copy source files */
         final Path tempSrcMainJava = tempProject.resolve("src/main/java");
@@ -106,32 +103,40 @@ public class DevModeTest {
                 FruitServiceImpl.class)
                 .forEach(cl -> {
                     final String relJavaFile = relJavaFile(cl);
-                    Path src = srcMainJava.resolve(relJavaFile);
                     Path dest = tempSrcMainJava.resolve(relJavaFile);
                     try {
                         Files.createDirectories(dest.getParent());
                     } catch (IOException e) {
                         throw new UncheckedIOException("Could not create " + dest.getParent(), e);
                     }
-                    try {
-                        Files.copy(src, dest);
+                    final String resource = "DevModeTest/" + cl.getSimpleName() + ".java";
+                    try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)) {
+                        try {
+                            Files.copy(in, dest);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException("Could not copy " + resource + " to " + dest, e);
+                        }
                     } catch (IOException e) {
-                        throw new UncheckedIOException("Could not copy " + src + " to " + dest, e);
+                        throw new UncheckedIOException("Could not open resource " + resource, e);
                     }
                 });
         final Path appProps = tempProject.resolve("src/main/resources/application.properties");
         Files.createDirectories(appProps.getParent());
-        Files.write(appProps,
+        Files.writeString(
+                appProps,
                 """
                         quarkus.cxf.endpoint."/fruits".implementor = io.quarkiverse.cxf.it.server.FruitServiceImpl
                         quarkus.cxf.endpoint."/fruits".logging.enabled = pretty
-                        """.getBytes(StandardCharsets.UTF_8));
+                        """,
+                StandardCharsets.UTF_8);
 
         /* Run in dev mode */
         CountDownLatch started = new CountDownLatch(1);
 
         try (CommandProcess mvnProcess = mvn
-                .args("quarkus:dev")
+                .args(
+                        "quarkus:dev",
+                        "-ntp")
                 .cd(tempProject)
                 .then()
                 .stdout()
