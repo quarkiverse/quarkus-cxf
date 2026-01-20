@@ -33,8 +33,9 @@ public class DevModeTest {
     @Test
     public void devMode() throws IOException, InterruptedException {
 
+        final String quarkusGroupId = getProperty("quarkus.platform.group-id");
         final Object[] versions = {
-                getProperty("quarkus.platform.group-id"),
+                quarkusGroupId,
                 getProperty("quarkus.platform.artifact-id"),
                 getProperty("quarkus.platform.version"),
                 getProperty("quarkus-cxf.platform.group-id"),
@@ -56,7 +57,7 @@ public class DevModeTest {
         final Mvn mvn = Mvn.fromMvnw(Path.of(".").toAbsolutePath().normalize()).installIfNeeded();
         mvn
                 .args(
-                        "io.quarkus.platform:quarkus-maven-plugin:" + quarkusVersion + ":create",
+                        quarkusGroupId + ":quarkus-maven-plugin:" + quarkusVersion + ":create",
                         "-ntp",
                         "-DprojectGroupId=io.quarkiverse.cxf",
                         "-DprojectArtifactId=" + artifactId,
