@@ -90,6 +90,7 @@ import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.GeneratedResourceBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
+import io.quarkus.deployment.builditem.RemovedResourceBuildItem;
 import io.quarkus.deployment.builditem.ShutdownContextBuildItem;
 import io.quarkus.deployment.builditem.SystemPropertyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
@@ -104,6 +105,7 @@ import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.steps.NativeOrNativeSourcesBuild;
 import io.quarkus.gizmo.ClassOutput;
+import io.quarkus.maven.dependency.ArtifactKey;
 
 class QuarkusCxfProcessor {
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
@@ -686,6 +688,21 @@ class QuarkusCxfProcessor {
             CXFRecorder recorder,
             ShutdownContextBuildItem shutdownContext) {
         recorder.resetDestinationRegistry(shutdownContext);
+    }
+
+    @BuildStep
+    void removedResources(
+            CombinedIndexBuildItem combinedIndexBuildItem,
+            BuildProducer<RemovedResourceBuildItem> removedResources) {
+        final IndexView index = combinedIndexBuildItem.getIndex();
+
+        Set<String> classes = index.getClassesInPackage(DotName.createSimple("org.apache.cxf.bus.spring")).stream()
+                .map(cl -> cl.name().toString('/') + ".class")
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        removedResources.produce(new RemovedResourceBuildItem(
+                ArtifactKey.fromString("org.apache.cxf:cxf-core"),
+                classes));
     }
 
     private static final class NoOpEntityResolver implements EntityResolver {
