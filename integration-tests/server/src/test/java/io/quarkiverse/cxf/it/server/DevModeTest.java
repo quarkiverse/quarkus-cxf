@@ -8,7 +8,6 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -34,16 +33,16 @@ public class DevModeTest {
     public void devMode() throws IOException, InterruptedException {
 
         final String quarkusGroupId = getProperty("quarkus.platform.group-id");
+        final String quarkusVersion = getProperty("quarkus.platform.version");
         final Object[] versions = {
                 quarkusGroupId,
                 getProperty("quarkus.platform.artifact-id"),
-                getProperty("quarkus.platform.version"),
+                quarkusVersion,
                 getProperty("quarkus-cxf.platform.group-id"),
                 getProperty("quarkus-cxf.platform.artifact-id"),
                 getProperty("quarkus-cxf.platform.version")
         };
 
-        final String quarkusVersion = getQuarkusVersion();
         final String artifactId = "quarkus-cxf-integration-test-dev-mode";
         final Path tempProject = Path.of("target/" + DevModeTest.class.getSimpleName() + "-" + UUID.randomUUID())
                 .resolve(artifactId)
@@ -61,7 +60,8 @@ public class DevModeTest {
                         "-ntp",
                         "-DprojectGroupId=io.quarkiverse.cxf",
                         "-DprojectArtifactId=" + artifactId,
-                        "-Dextensions=io.quarkiverse.cxf:quarkus-cxf")
+                        "-DplatformGroupId=" + quarkusGroupId,
+                        "-DplatformVersion=" + quarkusVersion)
                 .cd(tempProject.getParent())
                 .then()
                 .stdout().log()
@@ -94,6 +94,28 @@ public class DevModeTest {
                     </dependencies>
                 </dependencyManagement>
                 """.formatted(versions));
+
+        /*
+         * We cannot use -Dextensions=io.quarkiverse.cxf:quarkus-cxf with quarkus:create above because it does not work
+         * for io.quarkus:quarkus-bom:999-SNAPSHOT whose catalog does not know io.quarkiverse.cxf:quarkus-cxf
+         * Therefore we are adding the io.quarkiverse.cxf:quarkus-cxf extension manually below
+         */
+        m = Pattern.compile(
+                "<dependency>\\s*<groupId>io.quarkus</groupId>\\s*<artifactId>quarkus-arc</artifactId>\\s*</dependency>",
+                Pattern.DOTALL).matcher(pomSource);
+        Assertions.assertThat(m.find()).isTrue();
+        pomSource = m.replaceFirst(
+                """
+
+                                <dependency>
+                                    <groupId>io.quarkus</groupId>
+                                    <artifactId>quarkus-arc</artifactId>
+                                </dependency>
+                                <dependency>
+                                    <groupId>io.quarkiverse.cxf</groupId>
+                                    <artifactId>quarkus-cxf</artifactId>
+                                </dependency>
+                        """);
         Files.writeString(pomXmlFile, pomSource, StandardCharsets.UTF_8);
 
         /* Copy source files */
@@ -213,15 +235,4 @@ public class DevModeTest {
         return cl.getName().replace('.', '/') + ".java";
     }
 
-    static String getQuarkusVersion() {
-        Properties props = new Properties();
-        try (InputStream is = Thread.currentThread()
-                .getContextClassLoader()
-                .getResourceAsStream("META-INF/maven/io.quarkus/quarkus-core/pom.properties")) {
-            props.load(is);
-            return props.getProperty("version");
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
 }
