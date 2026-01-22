@@ -589,6 +589,10 @@ class QuarkusCxfProcessor {
         IndexView index = combinedIndexBuildItem.getIndex();
         DotName rootPackage = DotName.createSimple("org.apache.cxf");
         registerMessages(index, Thread.currentThread().getContextClassLoader(), rootPackage, resources);
+
+        Stream.of("sun.security.util.resources.security")
+                .map(NativeImageResourceBundleBuildItem::new)
+                .forEach(resources::produce);
     }
 
     static void registerMessages(
