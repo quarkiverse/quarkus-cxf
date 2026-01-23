@@ -1,0 +1,72 @@
+= {quarkus-cxf-project-name} 3.31.0 and 3.31.1 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.30.x -> 3.31.0 - https://quarkus.io/blog/quarkus-3-31-released/[release notes]
+* JAXB Plugins 4.0.11 -> 4.0.12 - https://github.com/highsource/jaxb-tools/releases/tag/4.0.12[release notes]
+
+== New features in {quarkus-cxf-project-name}
+
+=== New keep alive configuration options
+
+These new options control the time duration after which inactive HTTP client connections are closed.
+Refer to their respective documentation for more details:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http2-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http2-keep-alive-timeout]`
+
+Special thanks to https://github.com/dankristensen[@dankristensen] for sending the initial https://github.com/quarkiverse/quarkus-cxf/pull/1980[pull request].
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1943[#1943] Configure HTTP or SOCKS proxies via Quarkus Proxy Registry
+
+Since {quarkus-cxf-project-name} 3.31.0, CXF clients can use proxy settings defined via `quarkus.proxy.*` options.
+
+Refer to the following resources for more details:
+
+* https://quarkus.io/guides/proxy-registry[Quarkus Proxy registry guide]
+* Documentation of the new `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]` configuration option
+
+Special thanks to Erik Åsén for seeding the idea of global Quarkus Proxy settings by
+https://github.com/quarkiverse/quarkus-cxf/issues/1943[requesting it for all CXF clients].
+
+== Deprecations
+
+=== Old proxy configuration options deprecated
+
+As mentioned above, since {quarkus-cxf-project-name} 3.31.0,
+CXF clients can use proxy settings defined via `quarkus.proxy.*` options or refer to those via
+new `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]` configuration option.
+
+Therefore, the original proxy configuration options are deprecated since {quarkus-cxf-project-name} 3.31.0
+and will be removed in {quarkus-cxf-project-name} 4.0.0:
+
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`#
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port[quarkus.cxf.client."client-name".proxy-server-port]`#
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts[quarkus.cxf.client."client-name".non-proxy-hosts]`#
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-type[quarkus.cxf.client."client-name".proxy-server-type]`#
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`#
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1997[#1997] Vert.x-based SOAP client cannot communicate with HTTP/2-only server
+
+Before {quarkus-cxf-project-name} 3.31.0, when a SOAP client using the default `VertxHttpClientHTTPConduitFactory`
+and having `quarkus.cxf.client."client-name".version = 2`
+and the trust store set up properly in the configuration communicated with a HTTP/2-only server
+(such as Vert.x with `new HttpServerOptions().setUseAlpn(true).setAlpnVersions(List.of(HttpVersion.HTTP_2))`),
+then the server hanged up unexpectedly in the middle of the conversation.
+This was caused by the fact that the client was sending the `Connection` header which is not compliant with HTTP/2.
+Since {quarkus-cxf-project-name} 3.31.0, the client is not sending the `Connection` header if the protocol is HTTP/2.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1945[#1945] `ClassNotFoundException: org.springframework.beans.BeansException` during native compilation of an application depending on `quarkus-cxf-rt-ws-security` and `quarkus-messaging-kafka`
+
+Before {quarkus-cxf-project-name} 3.31.0, when an application depended on both
+`io.quarkiverse.cxf:quarkus-cxf-rt-ws-security` and `io.quarkus:quarkus-messaging-kafka`
+then the native compilation filed with the named error.
+This was caused by the fact that some CXF modules reference Spring classes that are not available with Quarkus CXF.
+
+Since {quarkus-cxf-project-name} 3.31.0, the CXF code referencing Spring classes is eliminated at build time using bytecode transformation.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.30.0+++...+++3.31.1
