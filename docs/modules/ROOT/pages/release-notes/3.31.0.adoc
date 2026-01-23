@@ -1,0 +1,3 @@
+= {quarkus-cxf-project-name} 3.31.0 release notes
+
+See the aggregated release notes for xref:release-notes/3.31.1.adoc[3.31.1]
