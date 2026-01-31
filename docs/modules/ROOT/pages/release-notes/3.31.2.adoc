@@ -1,0 +1,7 @@
+= {quarkus-cxf-project-name} 3.31.2 release notes
+
+There are no end user facing changes in this release. We only fixed one test.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.31.1+++...+++3.31.2
