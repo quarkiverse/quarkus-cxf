@@ -43,6 +43,8 @@ public class DevModeTest {
                 getProperty("quarkus-cxf.platform.version")
         };
 
+        final String quarkusPluginGroupId = System.getProperty("quarkus.plugin.group-id", quarkusGroupId);
+
         final String artifactId = "quarkus-cxf-integration-test-dev-mode";
         final Path tempProject = Path.of("target/" + DevModeTest.class.getSimpleName() + "-" + UUID.randomUUID())
                 .resolve(artifactId)
@@ -56,7 +58,7 @@ public class DevModeTest {
         final Mvn mvn = Mvn.fromMvnw(Path.of(".").toAbsolutePath().normalize()).installIfNeeded();
         mvn
                 .args(
-                        quarkusGroupId + ":quarkus-maven-plugin:" + quarkusVersion + ":create",
+                        quarkusPluginGroupId + ":quarkus-maven-plugin:" + quarkusVersion + ":create",
                         "-ntp",
                         "-DprojectGroupId=io.quarkiverse.cxf",
                         "-DprojectArtifactId=" + artifactId,
@@ -72,50 +74,70 @@ public class DevModeTest {
         /* Edit pom.xml */
         final Path pomXmlFile = tempProject.resolve("pom.xml");
         String pomSource = Files.readString(pomXmlFile, StandardCharsets.UTF_8);
-        Matcher m = Pattern.compile("<dependencyManagement>.*</dependencyManagement>", Pattern.DOTALL).matcher(pomSource);
-        Assertions.assertThat(m.find()).isTrue();
-        pomSource = m.replaceFirst("""
-                <dependencyManagement>
-                    <dependencies>
-                        <dependency>
-                            <groupId>%s</groupId>
-                            <artifactId>%s</artifactId>
-                            <version>%s</version>
-                            <type>pom</type>
-                            <scope>import</scope>
-                        </dependency>
-                        <dependency>
-                            <groupId>%s</groupId>
-                            <artifactId>%s</artifactId>
-                            <version>%s</version>
-                            <type>pom</type>
-                            <scope>import</scope>
-                        </dependency>
-                    </dependencies>
-                </dependencyManagement>
-                """.formatted(versions));
+        {
+            Matcher m = Pattern.compile("<dependencyManagement>.*</dependencyManagement>", Pattern.DOTALL).matcher(pomSource);
+            Assertions.assertThat(m.find()).isTrue();
+            pomSource = m.replaceFirst("""
+                    <dependencyManagement>
+                        <dependencies>
+                            <dependency>
+                                <groupId>%s</groupId>
+                                <artifactId>%s</artifactId>
+                                <version>%s</version>
+                                <type>pom</type>
+                                <scope>import</scope>
+                            </dependency>
+                            <dependency>
+                                <groupId>%s</groupId>
+                                <artifactId>%s</artifactId>
+                                <version>%s</version>
+                                <type>pom</type>
+                                <scope>import</scope>
+                            </dependency>
+                        </dependencies>
+                    </dependencyManagement>
+                    """.formatted(versions));
+        }
+        if (!quarkusPluginGroupId.equals(quarkusGroupId)) {
+            /*
+             * When this test is run within Quarkus Platform, the platform plugin is not installed yet
+             * so we have to use the core plugin
+             */
+            Matcher m = Pattern
+                    .compile(
+                            "\\Q<groupId>${quarkus.platform.group-id}</groupId>\\E[^<]*\\Q<artifactId>quarkus-maven-plugin</artifactId>\\E",
+                            Pattern.MULTILINE)
+                    .matcher(pomSource);
+            Assertions.assertThat(m.find()).isTrue();
+            pomSource = m.replaceFirst("""
+                    <groupId>%s</groupId>
+                                    <artifactId>quarkus-maven-plugin</artifactId>
+                    """.formatted(quarkusPluginGroupId));
+        }
 
-        /*
-         * We cannot use -Dextensions=io.quarkiverse.cxf:quarkus-cxf with quarkus:create above because it does not work
-         * for io.quarkus:quarkus-bom:999-SNAPSHOT whose catalog does not know io.quarkiverse.cxf:quarkus-cxf
-         * Therefore we are adding the io.quarkiverse.cxf:quarkus-cxf extension manually below
-         */
-        m = Pattern.compile(
-                "<dependency>\\s*<groupId>io.quarkus</groupId>\\s*<artifactId>quarkus-arc</artifactId>\\s*</dependency>",
-                Pattern.DOTALL).matcher(pomSource);
-        Assertions.assertThat(m.find()).isTrue();
-        pomSource = m.replaceFirst(
-                """
+        {
+            /*
+             * We cannot use -Dextensions=io.quarkiverse.cxf:quarkus-cxf with quarkus:create above because it does not work
+             * for io.quarkus:quarkus-bom:999-SNAPSHOT whose catalog does not know io.quarkiverse.cxf:quarkus-cxf
+             * Therefore we are adding the io.quarkiverse.cxf:quarkus-cxf extension manually below
+             */
+            Matcher m = Pattern.compile(
+                    "<dependency>\\s*<groupId>io.quarkus</groupId>\\s*<artifactId>quarkus-arc</artifactId>\\s*</dependency>",
+                    Pattern.DOTALL).matcher(pomSource);
+            Assertions.assertThat(m.find()).isTrue();
+            pomSource = m.replaceFirst(
+                    """
 
-                                <dependency>
-                                    <groupId>io.quarkus</groupId>
-                                    <artifactId>quarkus-arc</artifactId>
-                                </dependency>
-                                <dependency>
-                                    <groupId>io.quarkiverse.cxf</groupId>
-                                    <artifactId>quarkus-cxf</artifactId>
-                                </dependency>
-                        """);
+                                    <dependency>
+                                        <groupId>io.quarkus</groupId>
+                                        <artifactId>quarkus-arc</artifactId>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>io.quarkiverse.cxf</groupId>
+                                        <artifactId>quarkus-cxf</artifactId>
+                                    </dependency>
+                            """);
+        }
         Files.writeString(pomXmlFile, pomSource, StandardCharsets.UTF_8);
 
         /* Copy source files */
