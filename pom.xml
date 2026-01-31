@@ -10,7 +10,7 @@
 
     <groupId>io.quarkiverse.cxf</groupId>
     <artifactId>quarkus-cxf-parent</artifactId>
-    <version>3.31.2-SNAPSHOT</version>
+    <version>3.31.2</version>
     <name>Quarkus CXF - Parent</name>
 
     <packaging>pom</packaging>
@@ -111,7 +111,7 @@
         <url>https://github.com/quarkiverse/quarkus-cxf</url>
         <connection>scm:git:https://github.com/quarkiverse/quarkus-cxf.git</connection>
         <developerConnection>scm:git:https://github.com/quarkiverse/quarkus-cxf.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>3.31.2</tag>
     </scm>
 
     <modules>
