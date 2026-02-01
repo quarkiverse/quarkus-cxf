@@ -91,7 +91,7 @@
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <keytool-maven-plugin.version>1.7</keytool-maven-plugin.version>
         <maven-idea-plugin.version>2.2.1</maven-idea-plugin.version>
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
         <quarkus-platform-bom-plugin.version>0.0.51</quarkus-platform-bom-plugin.version>
         <rpkgtests-maven-plugin.version>1.0.0</rpkgtests-maven-plugin.version>
