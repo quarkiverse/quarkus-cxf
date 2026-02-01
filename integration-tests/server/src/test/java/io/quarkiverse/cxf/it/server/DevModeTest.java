@@ -44,6 +44,7 @@ public class DevModeTest {
         };
 
         final String quarkusPluginGroupId = System.getProperty("quarkus.plugin.group-id", quarkusGroupId);
+        final String quarkusPluginVersion = System.getProperty("quarkus.plugin.version", quarkusVersion);
 
         final String artifactId = "quarkus-cxf-integration-test-dev-mode";
         final Path tempProject = Path.of("target/" + DevModeTest.class.getSimpleName() + "-" + UUID.randomUUID())
@@ -58,7 +59,7 @@ public class DevModeTest {
         final Mvn mvn = Mvn.fromMvnw(Path.of(".").toAbsolutePath().normalize()).installIfNeeded();
         mvn
                 .args(
-                        quarkusPluginGroupId + ":quarkus-maven-plugin:" + quarkusVersion + ":create",
+                        quarkusPluginGroupId + ":quarkus-maven-plugin:" + quarkusPluginVersion + ":create",
                         "-ntp",
                         "-DprojectGroupId=io.quarkiverse.cxf",
                         "-DprojectArtifactId=" + artifactId,
@@ -105,14 +106,16 @@ public class DevModeTest {
              */
             Matcher m = Pattern
                     .compile(
-                            "\\Q<groupId>${quarkus.platform.group-id}</groupId>\\E[^<]*\\Q<artifactId>quarkus-maven-plugin</artifactId>\\E",
+                            "\\Q<groupId>${quarkus.platform.group-id}</groupId>\\E"
+                                    + "[^<]*\\Q<artifactId>quarkus-maven-plugin</artifactId>\\E"
+                                    + "[^<]*<version>[^<]*</version>",
                             Pattern.MULTILINE)
                     .matcher(pomSource);
             Assertions.assertThat(m.find()).isTrue();
             pomSource = m.replaceFirst("""
                     <groupId>%s</groupId>
                                     <artifactId>quarkus-maven-plugin</artifactId>
-                    """.formatted(quarkusPluginGroupId));
+                                    <version>%s</version>""".formatted(quarkusPluginGroupId, quarkusPluginVersion));
         }
 
         {
