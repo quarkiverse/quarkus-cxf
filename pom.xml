@@ -63,7 +63,7 @@
         <jaxb-plugins.version>4.0.12</jaxb-plugins.version>
         <jcache.version>1.1.1</jcache.version>
         <httpclient5.version>5.5.1</httpclient5.version>
-        <httpcore5.version>5.3.6</httpcore5.version>
+        <httpcore5.version>5.4.1</httpcore5.version>
         <neethi.version>3.2.1</neethi.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
         <mimepull.version>1.10.0</mimepull.version>
         <rest-assured.version>5.5.6</rest-assured.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.rest-assured:rest-assured -->
