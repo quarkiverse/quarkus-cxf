@@ -43,7 +43,7 @@
     <properties>
         <!-- Primary dependencies -->
         <quarkus.version>3.32.0</quarkus.version>
-        <cxf.version>4.1.4</cxf.version>
+        <cxf.version>4.1.5</cxf.version>
         <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
         <quarkus-antora.version>3.25.0</quarkus-antora.version>
 
@@ -53,7 +53,7 @@
         <awaitility.version>4.3.0</awaitility.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.awaitility:awaitility -->
         <cli-assured.version>0.0.1-alpha17</cli-assured.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version><!-- Transitive of org.jvnet.jaxb:jaxb-plugins -->
-        <cxf.xjcplugins.version>4.1.1</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
+        <cxf.xjcplugins.version>4.1.2</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
         <ehcache.version>3.11.1</ehcache.version>
         <fastinfoset.version>2.1.1</fastinfoset.version>
         <glassfish.jaxb.version>4.0.6</glassfish.jaxb.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.glassfish.jaxb:jaxb-runtime -->
@@ -309,7 +309,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
