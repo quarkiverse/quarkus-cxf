@@ -1,0 +1,11 @@
+= {quarkus-cxf-project-name} 3.32.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.31.x -> 3.32.0 - https://quarkus.io/blog/quarkus-3-32-released/[release notes]
+* Apache CXF 4.1.4 -> 4.1.5 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.1.4+++...+++cxf-4.1.5[changelog]
+* Apache CXF XJC plugins 4.1.1 -> 4.1.2 - link:https://github.com/apache/cxf-xjc-utils/compare/xjc-utils-4.1.1+++...+++xjc-utils-4.1.2[changelog]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.31.3+++...+++3.32.0
