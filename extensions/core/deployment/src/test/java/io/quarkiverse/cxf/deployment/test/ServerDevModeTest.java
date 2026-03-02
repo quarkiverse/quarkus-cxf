@@ -9,12 +9,14 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.namespace.QName;
 
 import jakarta.xml.ws.Service;
 
+import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -59,15 +61,14 @@ public class ServerDevModeTest {
         assertCount(config, oldPath, 200, "2");
         assertCount(config, changedPath, 404, ""); // does not exist before the change
         assertWsdl(config, oldPath);
-        //Assertions.assertThat(
-        getClient(FruitWebService.class, "/soap" + oldPath)
-                .add(new Fruit("foo", "bar"));
-
-        //                ).isEqualTo(
-        //                        Set.of(
-        //                                new Fruit("Apple", "Winter fruit"),
-        //                                new Fruit("Banana", "Summer fruit"),
-        //                                new Fruit("foo", "bar")));
+        Assertions.assertThat(
+                getClient(FruitWebService.class, "/soap" + oldPath)
+                        .add(new Fruit("foo", "bar")))
+                .isEqualTo(
+                        Set.of(
+                                new Fruit("Apple", "Winter fruit"),
+                                new Fruit("Banana", "Summer fruit"),
+                                new Fruit("foo", "bar")));
 
         /* Now change the path of the service */
         TEST.modifyResourceFile("application.properties",
@@ -83,15 +84,14 @@ public class ServerDevModeTest {
         TEST.modifySourceFile(Fruit.class,
                 oldSource -> oldSource.replace("return description;", "return \"Modified: \" + description;"));
         assertCount(config, changedPath, 200, "42"); // should work after the change
-        //        Assertions.assertThat(
-        getClient(FruitWebService.class, "/soap" + changedPath)
-                .add(new Fruit("foo", "bar"));
-        //                        )
-        //                .isEqualTo(
-        //                        Set.of(
-        //                                new Fruit("Apple", "Modified: Winter fruit"),
-        //                                new Fruit("Banana", "Modified: Summer fruit"),
-        //                                new Fruit("foo", "Modified: bar")));
+        Assertions.assertThat(
+                getClient(FruitWebService.class, "/soap" + changedPath)
+                        .add(new Fruit("foo", "bar")))
+                .isEqualTo(
+                        Set.of(
+                                new Fruit("Apple", "Modified: Winter fruit"),
+                                new Fruit("Banana", "Modified: Summer fruit"),
+                                new Fruit("foo", "Modified: bar")));
 
     }
 
