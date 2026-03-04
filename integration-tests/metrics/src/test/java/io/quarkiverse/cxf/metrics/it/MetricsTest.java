@@ -53,10 +53,10 @@ public class MetricsTest {
             Map<String, Object> serverRequests = (Map<String, Object>) metrics.get("cxf.server.requests");
             Assertions.assertThat(serverRequests).isNotNull();
             Assertions.assertThat(serverRequests.get(
-                    "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
+                    "count;exception=None;faultCode=None;method=POST;my-header=<empty>;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
                     .isEqualTo(1);
             Assertions.assertThat((Float) serverRequests.get(
-                    "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
+                    "elapsedTime;exception=None;faultCode=None;method=POST;my-header=<empty>;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
                     .isGreaterThan(0.0F);
         }
 
@@ -77,20 +77,20 @@ public class MetricsTest {
             Map<String, Object> serverRequests = (Map<String, Object>) metrics.get("cxf.server.requests");
             Assertions.assertThat(serverRequests).isNotNull();
             Assertions.assertThat(serverRequests.get(
-                    "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
+                    "count;exception=None;faultCode=None;method=POST;my-header=<empty>;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
                     .isEqualTo(2);
             Assertions.assertThat((Float) serverRequests.get(
-                    "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
+                    "elapsedTime;exception=None;faultCode=None;method=POST;my-header=<empty>;operation=hello;outcome=SUCCESS;status=200;uri=/soap/hello"))
                     .isGreaterThan(0.0F);
 
             Map<String, Object> clientRequests = (Map<String, Object>) metrics.get("cxf.client.requests");
             Assertions.assertThat(clientRequests).isNotNull();
             Assertions.assertThat(clientRequests.get(
-                    "count;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:"
+                    "count;exception=None;faultCode=None;method=POST;my-header=<empty>;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:"
                             + port + "/soap/hello"))
                     .isEqualTo(1);
             Assertions.assertThat((Float) clientRequests.get(
-                    "elapsedTime;exception=None;faultCode=None;method=POST;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:"
+                    "elapsedTime;exception=None;faultCode=None;method=POST;my-header=<empty>;operation=hello;outcome=SUCCESS;status=200;uri=http://localhost:"
                             + port + "/soap/hello"))
                     .isGreaterThan(0.0F);
 

@@ -24,6 +24,6 @@ public class HeaderToMetricsTagsCustomizer implements TagsCustomizer {
         if (val != null) {
             return Tags.of(Tag.of("my-header", val));
         }
-        return Tags.empty();
+        return Tags.of(Tag.of("my-header", "<empty>"));
     }
 }
