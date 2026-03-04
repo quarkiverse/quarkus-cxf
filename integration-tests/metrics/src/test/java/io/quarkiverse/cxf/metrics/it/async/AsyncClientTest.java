@@ -44,8 +44,16 @@ class AsyncClientTest {
 
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "sync-observable", "async-observable" })
+    @Test
+    void addObservableSync() {
+        addObservable("sync-observable");
+    }
+
+    @Test
+    void addObservableAsync() {
+        addObservable("async-observable");
+    }
+
     void addObservable(String syncMode) {
 
         if (syncMode.contains("async")) {
