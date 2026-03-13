@@ -108,13 +108,21 @@ public class MtomTest {
         /* Avoid read timeouts on GH actions */
         conduit.getClient().setReceiveTimeout(240_000L);
 
-        DataHandler dh = new DataHandler(new RandomBytesDataSource(size));
-        DHResponse response = proxy.echoDataHandler(new DHRequest(dh));
-        Assertions.assertThat(response).isNotNull();
+        try {
+            DataHandler dh = new DataHandler(new RandomBytesDataSource(size));
+            DHResponse response = proxy.echoDataHandler(new DHRequest(dh));
+            Assertions.assertThat(response).isNotNull();
 
-        DataHandler dataHandler = response.getDataHandler();
-        Assertions.assertThat(RandomBytesDataSource.count(dataHandler.getDataSource().getInputStream())).isEqualTo(size);
-        Assertions.assertThat(dataHandler.getContentType()).isEqualTo("application/octet-stream");
+            DataHandler dataHandler = response.getDataHandler();
+            Assertions.assertThat(RandomBytesDataSource.count(dataHandler.getDataSource().getInputStream())).isEqualTo(size);
+            Assertions.assertThat(dataHandler.getContentType()).isEqualTo("application/octet-stream");
+        } finally {
+            // Explicitly close the proxy to prevent premature garbage collection
+            // and ensure the HTTP client is not shut down while reading the response stream
+            if (proxy instanceof java.io.Closeable) {
+                ((java.io.Closeable) proxy).close();
+            }
+        }
     }
 
 }
