@@ -8,7 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import io.quarkiverse.cxf.it.server.xml.schema.validation.model.CalculatorService;
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -79,7 +79,7 @@ public class XmlSchemaValidationTest {
         if (endpoint.equals("/client-server/validation")) {
             return new RestWrapper();
         }
-        final CalculatorService client = QuarkusCxfClientTestUtil.getClient(
+        final CalculatorService client = QuarkusCxfTestUtil.getClient(
                 "http://www.jboss.org/eap/quickstarts/wscalculator/Calculator",
                 CalculatorService.class,
                 "/soap" + endpoint);

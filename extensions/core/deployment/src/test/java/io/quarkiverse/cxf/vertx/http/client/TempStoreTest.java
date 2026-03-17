@@ -17,7 +17,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkiverse.cxf.test.VertxTestUtil;
+import io.quarkiverse.cxf.test.internal.VertxTestUtil;
 import io.quarkiverse.cxf.vertx.http.client.TempStore.InitializedTempStore;
 import io.quarkiverse.cxf.vertx.http.client.TempStore.InitializedTempStore.TempPath;
 import io.quarkus.logging.Log;

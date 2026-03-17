@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 
@@ -30,7 +30,7 @@ public class CxfWssServerTest {
 
     @Test
     void anonymous() throws IOException {
-        final WssRounderService client = QuarkusCxfClientTestUtil.getClient(WssRounderService.class, "/soap/rounder");
+        final WssRounderService client = QuarkusCxfTestUtil.getClient(WssRounderService.class, "/soap/rounder");
         /* Make sure that it fails properly when called without a password */
         Assertions.assertThatExceptionOfType(jakarta.xml.ws.soap.SOAPFaultException.class)
                 .isThrownBy(() -> client.round(2.8))
@@ -49,7 +49,7 @@ public class CxfWssServerTest {
         final String username = config.getValue("wss.username", String.class);
         final String password = config.getValue("wss.password", String.class);
 
-        final WssRounderService client = QuarkusCxfClientTestUtil.getClient(WssRounderService.class,
+        final WssRounderService client = QuarkusCxfTestUtil.getClient(WssRounderService.class,
                 "/soap/" + endpointRelPath);
 
         final CallbackHandler passwordCallback = new CallbackHandler() {

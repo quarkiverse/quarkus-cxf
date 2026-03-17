@@ -13,7 +13,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
@@ -21,7 +21,7 @@ public class ServerTest {
 
     @Test
     public void fault() {
-        final FaultyHelloService client = QuarkusCxfClientTestUtil.getClient(FaultyHelloService.class, "/soap/faulty-hello");
+        final FaultyHelloService client = QuarkusCxfTestUtil.getClient(FaultyHelloService.class, "/soap/faulty-hello");
         Assertions.assertThatThrownBy(() -> {
             client.faultyHello("Joe");
         }).isInstanceOf(GreetingException.class);
@@ -29,7 +29,7 @@ public class ServerTest {
 
     @Test
     public void calendarAdd() {
-        final DateService dateService = QuarkusCxfClientTestUtil.getClient(DateService.class, "/soap/date");
+        final DateService dateService = QuarkusCxfTestUtil.getClient(DateService.class, "/soap/date");
         final Calendar base = Calendar.getInstance(java.util.TimeZone.getTimeZone("GMT"), Locale.US);
         base.setTimeInMillis(0L);
         final Calendar result = dateService.calendarAdd(base, 1);
@@ -38,7 +38,7 @@ public class ServerTest {
 
     @Test
     public void xmlGregorianCalendarAdd() throws DatatypeConfigurationException {
-        final DateService dateService = QuarkusCxfClientTestUtil.getClient(DateService.class, "/soap/date");
+        final DateService dateService = QuarkusCxfTestUtil.getClient(DateService.class, "/soap/date");
         final LocalDateTime b = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
         final XMLGregorianCalendar base = DatatypeFactory.newInstance()
                 .newXMLGregorianCalendar(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(b));
@@ -50,7 +50,7 @@ public class ServerTest {
 
     @Test
     public void localDateTimeAdd() {
-        final DateService dateService = QuarkusCxfClientTestUtil.getClient(DateService.class, "/soap/date");
+        final DateService dateService = QuarkusCxfTestUtil.getClient(DateService.class, "/soap/date");
         final LocalDateTime base = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
         final int days = 1;
         final LocalDateTime result = dateService.localDateTimeAdd(base, days);

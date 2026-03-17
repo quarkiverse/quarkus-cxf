@@ -58,7 +58,7 @@ import org.apache.http.util.CharArrayBuffer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
@@ -67,7 +67,7 @@ public class ChunkedTest {
     @Test
     public void chunked() throws IOException {
 
-        final int outputBufferSize = QuarkusCxfClientTestUtil.getClient(LargeEntityService.class, "/soap/large-entity")
+        final int outputBufferSize = QuarkusCxfTestUtil.getClient(LargeEntityService.class, "/soap/large-entity")
                 .outputBufferSize();
 
         Assertions.assertThat(outputBufferSize).isEqualTo(8191);

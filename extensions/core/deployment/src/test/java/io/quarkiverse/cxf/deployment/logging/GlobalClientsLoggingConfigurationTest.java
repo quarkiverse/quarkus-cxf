@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.QuarkusUnitTest;
 
 /**
@@ -30,7 +30,7 @@ public class GlobalClientsLoggingConfigurationTest {
             .setLogRecordPredicate(logRecord -> logRecord.getLoggerName().contains("org.apache.cxf.services.HelloService.RE")) // REQ_IN or RESP_OUT
             .assertLogRecords(records -> assertThat(records)
                     .extracting(LogRecord::getMessage)
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("REQ_OUT",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("REQ_OUT",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                                     + "  <soap:Body>\n"
                                     + "    <ns2:hello xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"
@@ -38,7 +38,7 @@ public class GlobalClientsLoggingConfigurationTest {
                                     + "    </ns2:hello>\n"
                                     + "  </soap:Body>\n"
                                     + "</soap:Envelope>\n"))
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("RESP_IN",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("RESP_IN",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                                     + "  <soap:Body>\n"
                                     + "    <ns2:helloResponse xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"

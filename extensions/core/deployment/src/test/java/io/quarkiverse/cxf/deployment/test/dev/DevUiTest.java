@@ -19,7 +19,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 import io.quarkus.test.QuarkusDevModeTest;
 
 public class DevUiTest {
@@ -70,7 +70,7 @@ public class DevUiTest {
 
     public static <T> T getClient(Class<T> serviceInterface, String path) {
         try {
-            final String namespace = QuarkusCxfClientTestUtil.getDefaultNameSpace(serviceInterface);
+            final String namespace = QuarkusCxfTestUtil.getTargetNamespace(serviceInterface);
             final URL serviceUrl = new URL("http://localhost:8080" + path + "?wsdl");
             final QName qName = new QName(namespace, serviceInterface.getSimpleName());
             final Service service = Service.create(serviceUrl, qName);

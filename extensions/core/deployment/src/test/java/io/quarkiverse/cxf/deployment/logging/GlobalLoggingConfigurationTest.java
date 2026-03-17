@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.QuarkusUnitTest;
 
 /**
@@ -47,7 +47,7 @@ public class GlobalLoggingConfigurationTest {
             .setLogRecordPredicate(logRecord -> logRecord.getLoggerName().contains("org.apache.cxf.services.HelloService.RE")) // REQ_IN or RESP_OUT
             .assertLogRecords(records -> assertThat(records)
                     .extracting(LogRecord::getMessage)
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("REQ_OUT",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("REQ_OUT",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                                     + "  <soap:Body>\n"
                                     + "    <ns2:hello xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"
@@ -55,7 +55,7 @@ public class GlobalLoggingConfigurationTest {
                                     + "    </ns2:hello>\n"
                                     + "  </soap:Body>\n"
                                     + "</soap:Envelope>\n"))
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("REQ_IN",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("REQ_IN",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                                     + "  <soap:Body>\n"
                                     + "    <ns2:hello xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"
@@ -63,7 +63,7 @@ public class GlobalLoggingConfigurationTest {
                                     + "    </ns2:hello>\n"
                                     + "  </soap:Body>\n"
                                     + "</soap:Envelope>\n"))
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("RESP_OUT",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("RESP_OUT",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                                     + "  <soap:Body>\n"
                                     + "    <ns2:helloResponse xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"
@@ -71,7 +71,7 @@ public class GlobalLoggingConfigurationTest {
                                     + "    </ns2:helloResponse>\n"
                                     + "  </soap:Body>\n"
                                     + "</soap:Envelope>\n"))
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("RESP_IN",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("RESP_IN",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                                     + "  <soap:Body>\n"
                                     + "    <ns2:helloResponse xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">\n"
@@ -80,7 +80,7 @@ public class GlobalLoggingConfigurationTest {
                                     + "  </soap:Body>\n"
                                     + "</soap:Envelope>\n"))
                     /* helloUgly has pretty = false */
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("REQ_OUT",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("REQ_OUT",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                     + "<soap:Body>"
                                     + "<ns2:hello xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">"
@@ -88,7 +88,7 @@ public class GlobalLoggingConfigurationTest {
                                     + "</ns2:hello>"
                                     + "</soap:Body>"
                                     + "</soap:Envelope>"))
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("REQ_IN",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("REQ_IN",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                     + "<soap:Body>"
                                     + "<ns2:hello xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">"
@@ -96,7 +96,7 @@ public class GlobalLoggingConfigurationTest {
                                     + "</ns2:hello>"
                                     + "</soap:Body>"
                                     + "</soap:Envelope>"))
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("RESP_OUT",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("RESP_OUT",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                     + "<soap:Body>"
                                     + "<ns2:helloResponse xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">"
@@ -104,7 +104,7 @@ public class GlobalLoggingConfigurationTest {
                                     + "</ns2:helloResponse>"
                                     + "</soap:Body>"
                                     + "</soap:Envelope>"))
-                    .anyMatch(QuarkusCxfClientTestUtil.messageExists("RESP_IN",
+                    .anyMatch(QuarkusCxfInternalTestUtil.messageExists("RESP_IN",
                             "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                     + "<soap:Body>"
                                     + "<ns2:helloResponse xmlns:ns2=\"http://deployment.logging.features.cxf.quarkiverse.io/\">"

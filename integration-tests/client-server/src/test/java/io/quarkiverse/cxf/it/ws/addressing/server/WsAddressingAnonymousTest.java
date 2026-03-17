@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf.it.ws.addressing.server;
 
-import static io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.anyNs;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -8,6 +7,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -35,11 +35,11 @@ public class WsAddressingAnonymousTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "binding", "UsingAddressing")
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "binding", "UsingAddressing")
                                         + "/@*[local-name() = 'required']",
                                 CoreMatchers.is("true")),
                         Matchers.hasXPath(
-                                "local-name(" + anyNs("definitions", "Policy", "Addressing") + ")",
+                                "local-name(" + QuarkusCxfInternalTestUtil.anyNs("definitions", "Policy", "Addressing") + ")",
                                 CoreMatchers.is("Addressing")));
     }
 
@@ -81,17 +81,17 @@ public class WsAddressingAnonymousTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("Envelope", "Header", "Action") + "/text()",
+                                QuarkusCxfInternalTestUtil.anyNs("Envelope", "Header", "Action") + "/text()",
                                 CoreMatchers.is(
                                         "http://anonymous.server.addressing.ws.it.cxf.quarkiverse.io/AddressingAnonymousImpl/replyResponse")),
                         Matchers.hasXPath(
-                                anyNs("Envelope", "Header", "MessageID") + "/text()",
+                                QuarkusCxfInternalTestUtil.anyNs("Envelope", "Header", "MessageID") + "/text()",
                                 Matchers.notNullValue(String.class)),
                         Matchers.hasXPath(
-                                anyNs("Envelope", "Header", "To") + "/text()",
+                                QuarkusCxfInternalTestUtil.anyNs("Envelope", "Header", "To") + "/text()",
                                 CoreMatchers.is("http://www.w3.org/2005/08/addressing/anonymous")),
                         Matchers.hasXPath(
-                                anyNs("Envelope", "Header", "RelatesTo") + "/text()",
+                                QuarkusCxfInternalTestUtil.anyNs("Envelope", "Header", "RelatesTo") + "/text()",
                                 CoreMatchers.is(ID)));
     }
 

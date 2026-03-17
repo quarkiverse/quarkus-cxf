@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf.it.wss.server.policy;
 
-import static io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.anyNs;
 import static io.restassured.RestAssured.given;
 
 import java.io.IOException;
@@ -14,7 +13,8 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -61,7 +61,7 @@ public class CxfWssSecurityPolicyServerTest {
 
         given()
                 .body(SOAP_REQUEST)
-                .when().post(QuarkusCxfClientTestUtil.getEndpointUrl(getPlainClient()))
+                .when().post(QuarkusCxfTestUtil.getEndpointUrl(getPlainClient()))
                 .then()
                 .statusCode(500)
                 .body(
@@ -163,7 +163,7 @@ public class CxfWssSecurityPolicyServerTest {
 
         given()
                 .body(SOAP_REQUEST)
-                .when().post(QuarkusCxfClientTestUtil.getEndpointUrl(getPlainClient()))
+                .when().post(QuarkusCxfTestUtil.getEndpointUrl(getPlainClient()))
                 .then()
                 .statusCode(500)
                 .body(
@@ -180,18 +180,18 @@ public class CxfWssSecurityPolicyServerTest {
         config.getXmlConfig().namespaceAware(false);
         given()
                 .config(config)
-                .when().get(QuarkusCxfClientTestUtil.getEndpointUrl(getPlainClient()) + "?wsdl")
+                .when().get(QuarkusCxfTestUtil.getEndpointUrl(getPlainClient()) + "?wsdl")
                 .then()
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "Policy")
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "Policy")
                                         + "/@*[local-name() = 'Id']",
                                 CoreMatchers.is("SecurityServiceEncryptThenSignPolicy")));
     }
 
     WssSecurityPolicyHelloService getPlainClient() {
-        return QuarkusCxfClientTestUtil.getClient(
+        return QuarkusCxfTestUtil.getClient(
                 "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/ws-securitypolicy",
                 WssSecurityPolicyHelloService.class,
                 "/soap/security-policy-hello");

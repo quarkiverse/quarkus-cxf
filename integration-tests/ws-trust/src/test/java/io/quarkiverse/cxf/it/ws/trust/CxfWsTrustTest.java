@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf.it.ws.trust;
 
-import static io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.anyNs;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
@@ -8,6 +7,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -29,7 +29,7 @@ public class CxfWsTrustTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "Policy")
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "Policy")
                                         + "/@*[local-name() = 'Id']",
                                 CoreMatchers.is("UT_policy")));
     }
@@ -45,11 +45,11 @@ public class CxfWsTrustTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "Policy")
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "Policy")
                                         + "[1]/@*[local-name() = 'Id']",
                                 CoreMatchers.is("AsymmetricSAML2Policy")),
                         Matchers.hasXPath(
-                                anyNs("definitions", "Policy")
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "Policy")
                                         + "[2]/@*[local-name() = 'Id']",
                                 CoreMatchers.is("io-policy")));
     }

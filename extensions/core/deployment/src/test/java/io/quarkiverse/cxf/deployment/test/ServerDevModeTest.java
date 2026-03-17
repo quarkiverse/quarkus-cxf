@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf.deployment.test;
 
-import static io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.anyNs;
 import static io.restassured.RestAssured.given;
 
 import java.io.IOException;
@@ -26,7 +25,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.QuarkusDevModeTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -97,7 +97,7 @@ public class ServerDevModeTest {
 
     public static <T> T getClient(Class<T> serviceInterface, String path) {
         try {
-            final String namespace = QuarkusCxfClientTestUtil.getDefaultNameSpace(serviceInterface);
+            final String namespace = QuarkusCxfTestUtil.getTargetNamespace(serviceInterface);
             final URL serviceUrl = new URL("http://localhost:8080" + path + "?wsdl");
             final QName qName = new QName(namespace, serviceInterface.getSimpleName());
             final Service service = Service.create(serviceUrl, qName);
@@ -115,7 +115,8 @@ public class ServerDevModeTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "service", "port", "address")
+                                        + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
                                         "http://localhost:8080/soap" + path)));
     }
@@ -154,7 +155,8 @@ public class ServerDevModeTest {
                             if (expectedStatus >= 200 && expectedStatus < 300) {
                                 response.body(
                                         Matchers.hasXPath(
-                                                anyNs("Envelope", "Body", "countResponse", "countFruitsResponse") + "/text()",
+                                                QuarkusCxfInternalTestUtil.anyNs("Envelope", "Body", "countResponse",
+                                                        "countFruitsResponse") + "/text()",
                                                 CoreMatchers.is(expectedCount)));
                             }
                         });

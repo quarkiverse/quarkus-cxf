@@ -9,7 +9,7 @@ import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.HTTPConduitImpl;
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.runtime.configuration.MemorySizeConverter;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -143,7 +143,7 @@ class AsyncVertxClientTest {
     }
 
     static void assert200(String endpoint, String payloadSize, String expectedBodyPrefix) {
-        QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
+        QuarkusCxfInternalTestUtil.printThreadDumpAtTimeout(
                 () -> {
                     final String body = body(payloadSize);
                     final Response resp = RestAssured.given()

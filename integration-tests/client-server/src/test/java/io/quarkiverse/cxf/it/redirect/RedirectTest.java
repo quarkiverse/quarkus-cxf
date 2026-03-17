@@ -24,7 +24,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkiverse.cxf.it.large.slow.LargeSlowServiceImpl;
 import io.quarkiverse.cxf.it.redirect.retransmitcache.RetransmitCacheServiceImpl;
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.logging.Log;
 import io.quarkus.runtime.configuration.MemorySizeConverter;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -327,7 +327,7 @@ class RedirectTest {
 
     private static Properties retransmitCache(final int payloadLen, int expectedFileCount, String syncAsync)
             throws IOException {
-        String body = QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
+        String body = QuarkusCxfInternalTestUtil.printThreadDumpAtTimeout(
                 () -> {
                     final Response resp = RestAssured.given()
                             .config(
