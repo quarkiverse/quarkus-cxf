@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf.it.server;
 
-import static io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.anyNs;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -17,6 +16,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.TestProfile;
 import io.restassured.response.Response;
@@ -41,7 +41,8 @@ public class XForwardedHeadersTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "service", "port", "address")
+                                        + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
                                         "http://localhost:8081/test/soap/greeting")));
     }
@@ -56,7 +57,8 @@ public class XForwardedHeadersTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "service", "port", "address")
+                                        + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
                                         "https://localhost/soap/greeting")));
     }
@@ -71,7 +73,8 @@ public class XForwardedHeadersTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "service", "port", "address")
+                                        + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
                                         "http://api.example.com/soap/greeting")));
     }
@@ -86,7 +89,8 @@ public class XForwardedHeadersTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "service", "port", "address")
+                                        + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
                                         "http://localhost:1234/soap/greeting")));
         given()
@@ -97,7 +101,8 @@ public class XForwardedHeadersTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "service", "port", "address")
+                                        + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
                                         "http://localhost/soap/greeting")));
         given()
@@ -109,7 +114,8 @@ public class XForwardedHeadersTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "service", "port", "address")
+                                        + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
                                         "https://localhost/soap/greeting")));
     }
@@ -127,7 +133,8 @@ public class XForwardedHeadersTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "service", "port", "address") + "/@*[local-name() = 'location']",
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "service", "port", "address")
+                                        + "/@*[local-name() = 'location']",
                                 CoreMatchers.is(
                                         "https://api.example.com:1234/test/soap/greeting")));
     }

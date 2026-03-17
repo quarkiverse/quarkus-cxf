@@ -30,7 +30,7 @@ import org.jboss.logging.Logger;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -87,7 +87,7 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
 
             skewedCalculatorContainer.start();
 
-            int proxyPort = QuarkusCxfClientTestUtil.randomFreePort();
+            int proxyPort = QuarkusCxfInternalTestUtil.randomFreePort();
             proxy = new ProxyServer(proxyPort, PROXY_USER, PROXY_PASSWORD);
             proxy.start();
 

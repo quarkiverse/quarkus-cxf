@@ -1,6 +1,5 @@
 package io.quarkiverse.cxf.it.ws.addressing.server;
 
-import static io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil.anyNs;
 import static io.restassured.RestAssured.given;
 
 import java.util.Map;
@@ -20,7 +19,8 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.it.ws.addressing.server.decoupled.WsAddressingService;
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.config.RestAssuredConfig;
@@ -41,23 +41,23 @@ public class WsAddressingDecoupledTest {
                 .statusCode(200)
                 .body(
                         Matchers.hasXPath(
-                                anyNs("definitions", "binding", "UsingAddressing")
+                                QuarkusCxfInternalTestUtil.anyNs("definitions", "binding", "UsingAddressing")
                                         + "/@*[local-name() = 'required']",
                                 CoreMatchers.is("true")),
                         Matchers.hasXPath(
-                                "local-name(" + anyNs("definitions", "Policy", "Addressing") + ")",
+                                "local-name(" + QuarkusCxfInternalTestUtil.anyNs("definitions", "Policy", "Addressing") + ")",
                                 CoreMatchers.is("Addressing")));
     }
 
     @Test
     public void decoupled() throws Exception {
-        final WsAddressingService client = QuarkusCxfClientTestUtil.getClient(WsAddressingService.class,
+        final WsAddressingService client = QuarkusCxfTestUtil.getClient(WsAddressingService.class,
                 "/soap/addressing-decoupled");
 
         final AddressingProperties addrProperties = new AddressingProperties();
         final EndpointReferenceType replyTo = new EndpointReferenceType();
         final AttributedURIType replyToURI = new AttributedURIType();
-        final String baseURL = QuarkusCxfClientTestUtil.getServerUrl();
+        final String baseURL = QuarkusCxfTestUtil.getServerUrl();
         replyToURI.setValue(baseURL + "/ws-addressing-target/replyTo");
         replyTo.setAddress(replyToURI);
         addrProperties.setReplyTo(replyTo);

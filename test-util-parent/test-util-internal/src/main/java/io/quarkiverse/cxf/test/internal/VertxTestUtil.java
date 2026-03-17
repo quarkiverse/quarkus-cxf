@@ -1,4 +1,4 @@
-package io.quarkiverse.cxf.test;
+package io.quarkiverse.cxf.test.internal;
 
 import org.assertj.core.api.Assertions;
 

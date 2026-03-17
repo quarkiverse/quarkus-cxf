@@ -7,7 +7,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 import io.quarkus.test.QuarkusUnitTest;
 
 public class ConfiglessServiceTest {
@@ -23,7 +23,7 @@ public class ConfiglessServiceTest {
 
     @Test
     public void noConfig() {
-        final FruitWebService client = QuarkusCxfClientTestUtil.getClient(FruitWebService.class, "/services/FruitWebService");
+        final FruitWebService client = QuarkusCxfTestUtil.getClient(FruitWebService.class, "/services/FruitWebService");
         client.add(new Fruit("Kiwi", "Yummy"));
         assertThat(client.getDescriptionByName("Kiwi")).isEqualTo("Yummy");
     }

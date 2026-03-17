@@ -17,7 +17,7 @@ import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
@@ -98,7 +98,7 @@ public class MtomTest {
     }
 
     static void assertMtom(int size) throws MalformedURLException, IOException {
-        final URL serviceUrl = new URL(QuarkusCxfClientTestUtil.getServerUrl() + "/soap/mtom?wsdl");
+        final URL serviceUrl = new URL(QuarkusCxfTestUtil.getServerUrl() + "/soap/mtom?wsdl");
         final QName qName = new QName("https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/mtom",
                 MtomService.class.getSimpleName());
         final Service service = jakarta.xml.ws.Service.create(serviceUrl, qName);

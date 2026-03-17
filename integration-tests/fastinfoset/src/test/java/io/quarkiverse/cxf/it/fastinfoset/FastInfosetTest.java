@@ -8,7 +8,7 @@ import org.hamcrest.CoreMatchers;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 
@@ -44,7 +44,7 @@ public class FastInfosetTest {
     void fastInfosetTextXml() {
         log.info("FastInfosetTest.fastInfosetTextXml()");
 
-        QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
+        QuarkusCxfInternalTestUtil.printThreadDumpAtTimeout(
                 () -> {
                     RestAssured.given()
                             .accept("application/fastinfoset")
@@ -65,7 +65,7 @@ public class FastInfosetTest {
     @Test
     void fastInfosetNative() {
         log.info("FastInfosetTest.fastInfosetNative()");
-        QuarkusCxfClientTestUtil.printThreadDumpAtTimeout(
+        QuarkusCxfInternalTestUtil.printThreadDumpAtTimeout(
                 () -> {
                     RestAssured.given()
                             .body("FastInfoset")

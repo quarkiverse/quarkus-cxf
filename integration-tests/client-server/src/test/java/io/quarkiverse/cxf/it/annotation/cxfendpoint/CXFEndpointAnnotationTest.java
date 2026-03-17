@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.it.HelloService;
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
@@ -12,7 +12,7 @@ public class CXFEndpointAnnotationTest {
 
     @Test
     void annotatedImplementationType() {
-        final HelloService client = QuarkusCxfClientTestUtil.getClient(
+        final HelloService client = QuarkusCxfTestUtil.getClient(
                 "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test",
                 HelloService.class,
                 "/soap/path-annotation");
@@ -21,7 +21,7 @@ public class CXFEndpointAnnotationTest {
 
     @Test
     void annotatedImplementationTypeWithBean() {
-        final HelloService client = QuarkusCxfClientTestUtil.getClient(
+        final HelloService client = QuarkusCxfTestUtil.getClient(
                 "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test",
                 HelloService.class,
                 "/soap/path-annotation-with-bean");

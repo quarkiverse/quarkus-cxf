@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Wsdl2JavaParameterSet;
 import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaCodeGen.Wsdl2JavaParams;
-import io.quarkiverse.cxf.test.QuarkusCxfClientTestUtil;
+import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 
 public class Wsdl2JavaParamsTest {
 
@@ -37,22 +37,22 @@ public class Wsdl2JavaParamsTest {
                         "mimeMethods", Optional.empty(),
                         "additionalParams", Optional.empty()),
                 "-d",
-                QuarkusCxfClientTestUtil.maybeWinPath("/path/to/project/target/classes"),
-                QuarkusCxfClientTestUtil.maybeWinPath("/path/to/project/src/main/resources/my.wsdl"));
+                QuarkusCxfInternalTestUtil.maybeWinPath("/path/to/project/target/classes"),
+                QuarkusCxfInternalTestUtil.maybeWinPath("/path/to/project/src/main/resources/my.wsdl"));
     }
 
     @Test
     void wsdl2JavaParams() {
         assertParams(
                 proxy(
-                        "outputDirectory", Optional.of(QuarkusCxfClientTestUtil.maybeWinPath("foo/bar")),
+                        "outputDirectory", Optional.of(QuarkusCxfInternalTestUtil.maybeWinPath("foo/bar")),
                         "packageNames",
                         Optional.of(Arrays.asList("http://www.example.org/add=io.quarkiverse.cxf.wsdl2java.it.add",
                                 "http://www.example.org/multiply=io.quarkiverse.cxf.wsdl2java.it.multiply")),
                         "serviceName", Optional.of("HelloService"),
                         "bindings",
-                        Optional.of(Arrays.asList(QuarkusCxfClientTestUtil.maybeWinPath("src/main/resources/b1.xml"),
-                                QuarkusCxfClientTestUtil.maybeWinPath("src/main/resources/b2.xml"))),
+                        Optional.of(Arrays.asList(QuarkusCxfInternalTestUtil.maybeWinPath("src/main/resources/b1.xml"),
+                                QuarkusCxfInternalTestUtil.maybeWinPath("src/main/resources/b2.xml"))),
                         "excludeNamespaceUris", Optional.of(Arrays.asList("http://foo.com", "http://bar.com")),
                         "validate", Boolean.TRUE,
                         "wsdlLocation", Optional.of("my.wsdl"),
@@ -62,11 +62,11 @@ public class Wsdl2JavaParamsTest {
                         "bareMethods", Optional.of(Arrays.asList("bare1", "bare2")),
                         "mimeMethods", Optional.of(Arrays.asList("mime1", "mime2")),
                         "additionalParams", Optional.of(Arrays.asList("-keep", "-dex", "true"))),
-                "-d", QuarkusCxfClientTestUtil.maybeWinPath("/path/to/project/foo/bar"),
+                "-d", QuarkusCxfInternalTestUtil.maybeWinPath("/path/to/project/foo/bar"),
                 "-asyncMethods", "hello,goodBye",
                 "-bareMethods", "bare1,bare2",
-                "-b", QuarkusCxfClientTestUtil.maybeWinPath("/path/to/project/src/main/resources/b1.xml"),
-                "-b", QuarkusCxfClientTestUtil.maybeWinPath("/path/to/project/src/main/resources/b2.xml"),
+                "-b", QuarkusCxfInternalTestUtil.maybeWinPath("/path/to/project/src/main/resources/b1.xml"),
+                "-b", QuarkusCxfInternalTestUtil.maybeWinPath("/path/to/project/src/main/resources/b2.xml"),
                 "-exceptionSuper", "java.lang.RuntimeException",
                 "-nexclude", "http://foo.com",
                 "-nexclude", "http://bar.com",
@@ -79,7 +79,7 @@ public class Wsdl2JavaParamsTest {
                 "-xjc-Xbg",
                 "-xjc-Xdv",
                 "-keep", "-dex", "true",
-                QuarkusCxfClientTestUtil.maybeWinPath("/path/to/project/src/main/resources/my.wsdl"));
+                QuarkusCxfInternalTestUtil.maybeWinPath("/path/to/project/src/main/resources/my.wsdl"));
     }
 
     private Wsdl2JavaParameterSet proxy(final Object... values) {

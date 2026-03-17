@@ -8,10 +8,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>quarkus-cxf-test-util</artifactId>
+    <artifactId>quarkus-cxf-test-util-internal</artifactId>
 
-    <name>Quarkus CXF - Test Utilities</name>
-    <description>Test utilities intended for developers implementing applications on top of Quarkus CXF</description>
+    <name>Quarkus CXF - Internal Test Utilities</name>
+    <description>Test utilities intended for developers working on Quarkus CXF. Breaking changes may come at any time.</description>
 
     <dependencyManagement>
         <dependencies>
