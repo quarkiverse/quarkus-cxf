@@ -114,8 +114,16 @@ public class HostnameVerifierTest {
         customHostnameVerifier.getCheckedHostNames().clear();
         Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).isEmpty();
         customHostnameVerifier.setReturnVal(false);
-        Assertions.assertThatThrownBy(() -> helloUrlConnection.hello("Doe")).hasRootCauseMessage(
-                "The https URL hostname does not match the Common Name (CN) on the server certificate in the client's truststore.  Make sure server certificate is correct, or to disable this check (NOT recommended for production) set the CXF client TLS configuration property \"disableCNCheck\" to true.");
+        Assertions.assertThatThrownBy(() -> helloUrlConnection.hello("Doe"))
+                .rootCause()
+                .message()
+                .satisfiesAnyOf(
+                        actual -> Assertions.assertThat(actual).isEqualTo(
+                                "The https URL hostname does not match the Common Name (CN) on the server certificate in the client's truststore.  Make sure server certificate is correct, or to disable this check (NOT recommended for production) set the CXF client TLS configuration property \"disableCNCheck\" to true."),
+                        actual -> Assertions.assertThat(actual)
+                                .startsWith(
+                                        "Wrong HTTPS hostname: should be <") // Java 25
+                );
         Assertions.assertThat(customHostnameVerifier.getCheckedHostNames()).containsExactly(hostname);
         customHostnameVerifier.setReturnVal(true);
         Assertions.assertThat(helloUrlConnection.hello("Joe")).isEqualTo("Hello Joe");

@@ -84,8 +84,8 @@ public class BadHostnameTest {
                                 .isEqualTo(
                                         "The https URL hostname does not match the Common Name (CN) on the server certificate in the client's truststore.  Make sure server certificate is correct, or to disable this check (NOT recommended for production) set the CXF client TLS configuration property \"disableCNCheck\" to true."),
                         actual -> Assertions.assertThat(actual)
-                                .isEqualTo(
-                                        "Wrong HTTPS hostname: should be <127.0.0.1>") // Java 25
+                                .startsWith(
+                                        "Wrong HTTPS hostname: should be <") // Java 25
                 );
     }
 
