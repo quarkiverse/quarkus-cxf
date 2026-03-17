@@ -532,9 +532,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             this.version = version;
             this.tlsConfiguration = tlsConfiguration;
 
+            final TimeoutSpec timeoutSpec = new TimeoutSpec(
+                    clientInfo.getConnectionRequestTimeout(),
+                    receiveTimeoutMs,
+                    url);
             this.mode = isAsync
-                    ? new Mode.Async(TimeoutSpec.create(receiveTimeoutMs, url), responseHandler, outMessage)
-                    : new Mode.Sync(TimeoutSpec.create(receiveTimeoutMs, url), responseHandler, lock);
+                    ? new Mode.Async(timeoutSpec, responseHandler, outMessage)
+                    : new Mode.Sync(timeoutSpec, responseHandler, lock);
 
             this.possibleRetransmit = possibleRetransmit;
             this.maxRetransmits = maxRetransmits;
@@ -572,14 +576,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 setProtocolHeaders(outMessage, requestOptions, userAgent);
 
                 client.request(requestOptions)
-                        .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
-                        .recover(e -> mode.timeoutSpec.mapTimeoutException(e, "Timeout %d ms sending request headers to %s"))
                         .onSuccess(req -> {
+                            mode.timeoutSpec.connected();
                             if (!finalChunk) {
                                 req
                                         .setChunked(true)
                                         .write(buffer)
-                                        .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                                        .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
                                         .recover(e -> mode.timeoutSpec.mapTimeoutException(e,
                                                 "Timeout %d ms sending request body to %s"))
                                         .onFailure(t -> mode.responseFailed(t, true));
@@ -627,7 +630,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 if (!finalChunk) {
                     req
                             .write(buffer)
-                            .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                            .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
                             .recover(e -> mode.timeoutSpec.mapTimeoutException(e, "Timeout %d ms sending request body to %s"))
                             .onFailure(RequestBodyHandler.this::failResponse);
                 } else {
@@ -642,7 +645,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             prepareResponse(req);
             req
                     .end(buffer)
-                    .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                    .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
                     .recover(e -> mode.timeoutSpec.mapTimeoutException(e, "Timeout %d ms sending request body to %s"))
                     .onFailure(t -> mode.responseFailed(t, true));
 
@@ -650,7 +653,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         private void prepareResponse(HttpClientRequest req) {
             req.response()
-                    .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                    .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
                     .recover(e -> mode.timeoutSpec.mapTimeoutException(e,
                             "Timeout waiting %d ms to receive response headers from %s"))
                     .onComplete(ar -> {
@@ -715,7 +718,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 /* Pass the body back to CXF */
                                 // log.trace("Staring pipe");
                                 response.pipeTo(sink)
-                                        .timeout(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                                        .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
                                         .recover(e -> mode.timeoutSpec.mapTimeoutException(e,
                                                 "Timeout waiting %d ms to receive response body from %s"))
                                         .onFailure(e -> {
@@ -1105,8 +1108,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 }
                 try {
                     waitingForDrain = true;
-                    if (!requestWriteable.await(mode.timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)) {
-                        throw new TimeoutIOException("Timeout waiting " + mode.timeoutSpec.totalReceiveTimeout
+                    if (!requestWriteable.await(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)) {
+                        throw new TimeoutIOException("Timeout waiting " + mode.timeoutSpec.receiveTimeoutMs
                                 + " ms for sending HTTP headers to " + url);
                     }
                 } finally {
@@ -1186,7 +1189,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         lock.lock();
                         try {
                             if (response == null) {
-                                if (!responseReceived.await(timeoutSpec.remainingTimeout(), TimeUnit.MILLISECONDS)
+                                if (!responseReceived.await(timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
                                         || response == null) {
                                     timeoutSpec.throwTimeoutException(null,
                                             "Timeout waiting %d ms to receive response headers from %s");
@@ -1270,10 +1273,25 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
     }
 
-    static record TimeoutSpec(long receiveTimeoutDeadline, long totalReceiveTimeout, URI url) {
+    static class TimeoutSpec {
+        private volatile long receiveTimeoutDeadline = -1;
+        private final long connectTimeoutDeadline;
+        private final long receiveTimeoutMs;
+        private final URI url;
 
-        static TimeoutSpec create(long receiveTimeoutMs, URI url) {
-            return new TimeoutSpec(System.currentTimeMillis() + receiveTimeoutMs, receiveTimeoutMs, url);
+        public TimeoutSpec(
+                long connectTimeoutMs,
+                long receiveTimeoutMs, URI url) {
+            super();
+            this.connectTimeoutDeadline = System.currentTimeMillis() + connectTimeoutMs;
+            this.receiveTimeoutMs = receiveTimeoutMs;
+            this.url = url;
+        }
+
+        public TimeoutSpec connected() {
+            log.trace("Starting receive timeout measurement");
+            receiveTimeoutDeadline = System.currentTimeMillis() + receiveTimeoutMs;
+            return this;
         }
 
         /**
@@ -1281,8 +1299,22 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
          *
          * @return the timeout in milliseconds for response related operations
          */
-        long remainingTimeout() {
-            return receiveTimeoutDeadline - System.currentTimeMillis();
+        long remainingReceiveTimeout() {
+            long ct = System.currentTimeMillis();
+            long deadline = receiveTimeoutDeadline;
+            if (deadline == -1) {
+                /*
+                 * This may happen when we are awaiting response in Mode.awaitResponse() but connected() was not called yet.
+                 * In that case we simply prolong the receive deadline by remainingConnectTimeout
+                 * so that we do not need to slow down by awaiting the request with remainingConnectTimeout
+                 * (which would trigger connected())
+                 * and then awaiting the response using proper remainingReceiveTimeout.
+                 * This way is faster at cost of less precise timeout
+                 */
+                long remainingConnectTimeout = connectTimeoutDeadline - ct;
+                deadline = receiveTimeoutDeadline = remainingConnectTimeout + ct + receiveTimeoutMs;
+            }
+            return deadline - ct;
         }
 
         /**
@@ -1305,7 +1337,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
          * @return a new {@link TimeoutIOException} without throwing it
          */
         TimeoutIOException createTimeoutException(String messageTemplate) {
-            return new TimeoutIOException(messageTemplate.formatted(totalReceiveTimeout, url));
+            return new TimeoutIOException(messageTemplate.formatted(receiveTimeoutMs, url));
         }
 
         <T> Future<T> mapTimeoutException(Throwable originalException, String messageTemplate) {
@@ -1877,7 +1909,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     if (blockingAwaitBuffer) {
                         while ((readBuffer = rb = queue.poll()) == null) {
                             // log.infof("Awaiting a buffer at queue size %d", queue.size());
-                            if (!queueChange.await(timeoutSpec.remainingTimeout(),
+                            if (!queueChange.await(timeoutSpec.remainingReceiveTimeout(),
                                     TimeUnit.MILLISECONDS)) {
                                 timeoutSpec.throwTimeoutException(e -> timeoutException = e,
                                         "Timeout waiting %d ms to receive response body from %s");
