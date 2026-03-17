@@ -20,15 +20,16 @@ runs:
         distribution: temurin
         java-version: ${{ inputs.java-version }}
 
-    - name: Download Maven Repo
-      uses: actions/download-artifact@v8
-      with:
-        name: maven-repo
-        path: ..
-    - name: Extract Maven Repo
+    - name: Detect local Maven repository directory 
+      id: maven-m2
       shell: bash
       run: |
-        tar -xzf ../maven-repo.tgz -C ~
+        echo "repo=$(./mvnw help:evaluate -Dexpression=settings.localRepository -q -DforceStdout)" >> $GITHUB_OUTPUT
+    - name: Download ~/.m2/repository
+      uses: actions/download-artifact@v8
+      with:
+        name: local-maven-repo-${{ github.sha }}
+        path: ${{ steps.maven-m2.outputs.repo }}
 
     - name: Run integration test ${{ inputs.test-module-spec }}
       shell: bash
