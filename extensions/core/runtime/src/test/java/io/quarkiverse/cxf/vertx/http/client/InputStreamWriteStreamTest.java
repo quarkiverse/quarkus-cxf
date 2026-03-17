@@ -46,7 +46,7 @@ public class InputStreamWriteStreamTest {
 
     static TimeoutSpec timeoutSpec() {
         try {
-            return TimeoutSpec.create(2000, new URI("http://acme.com"));
+            return new TimeoutSpec(0L, 2000L, new URI("http://acme.com")).connected();
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
