@@ -42,9 +42,9 @@ public class AntoraTest {
 
         final Set<String> ignorables = new LinkedHashSet<>();
 
-        final ZonedDateTime deadline = ZonedDateTime.parse("2026-02-26T23:59:59+01:00[Europe/Paris]");
+        final ZonedDateTime deadline = ZonedDateTime.parse("2026-03-26T23:59:59+01:00[Europe/Paris]");
         if (ZonedDateTime.now(ZoneId.of("Europe/Paris")).isBefore(deadline)) {
-            ignorables.add("https://quarkus.io/blog/quarkus-3-32-released/");
+            ignorables.add("https://quarkus.io/blog/quarkus-3-33-released/");
             //ignorables.add("https://quarkus.io/guides/proxy-registry");
         }
         // These are timeouting for some reason although they work when visited in browser
