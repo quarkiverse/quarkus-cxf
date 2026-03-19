@@ -1,0 +1,61 @@
+= {quarkus-cxf-project-name} 3.33.0 LTS release notes
+
+3.33.0 is the first release in the 3.33 long term support (LTS) stream.
+
+== Important dependency upgrades
+
+* Quarkus 3.32.x -> 3.33.0 - https://quarkus.io/blog/quarkus-3-33-released/[release notes]
+
+== Enhancements
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2064[#2064] `QuarkusCxfTestUtil` - a new utility for testing {quarkus-cxf-project-name}
+
+`QuarkusCxfTestUtil` offers static methods to create a SOAP client for testing.
+This is handy especially in native mode, where injecting
+http://localhost:8080/quarkus-cxf/dev/user-guide/first-soap-client.html#_using_sei_as_a_client[client beans] to test classes is not possible.
+
+`QuarkusCxfTestUtil` is hosted by a new artifact `io.quarkiverse.cxf:quarkus-cxf-test-util`
+that is managed in `quarkus-cxf-bom`.
+
+Here is an example `QuarkusCxfTestUtil` usage:
+
+[source,java]
+----
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
+import org.assertj.core.api.Assertions;
+...
+HelloService helloClient = QuarkusCxfTestUtil.getClient(
+        "https://acme.org/hello", // the target namespace of HelloService
+                                  // can be omitted if HelloService class
+                                  // is annotated with @WebService(targetNamespace="...")
+        HelloService.class, // the service endpoint interface (SEI)
+        "/services/hello" // the path to append to base URL on which Quarkus test instance is listening
+    );
+
+Assertions.assertThat(helloClient.hello("Dolly"))
+        .isEqualTo("Hello Dolly!");
+----
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2058[#2058] Java 25 support
+
+Java 25 is now tested and officially supported.
+
+== Bugfixes
+
+=== Start measuring receive timeout after the HTTP connection is ready
+
+Before {quarkus-cxf-project-name} 3.33.0, when using the default `VertxHttpClientHTTPConduit`,
+the measurement of the receive timeout defined via
+`xref:/reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-receive-timeout[quarkus.cxf.client."client-name".receive-timeout]`
+started when the request was queued for a free connection.
+As a consequence of that, the receive time span may have overlapped the connect time span
+and receive timeouts may have come earlier than expected.
+
+Since {quarkus-cxf-project-name} 3.33.0, the receive timeout is measured starting from
+when the HTTP connection is ready, rather than from when the request is created
+and queued for a free connection.
+This provides more accurate receive timeout behavior.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.32.0+++...+++3.33.0
