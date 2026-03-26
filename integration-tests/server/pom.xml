@@ -24,8 +24,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.l2x6.cli-assured</groupId>
-            <artifactId>mvn-assured</artifactId>
+            <groupId>org.cli-assured</groupId>
+            <artifactId>cli-assured-mvn</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

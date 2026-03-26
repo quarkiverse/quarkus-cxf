@@ -63,8 +63,8 @@
                 <version>${cxf.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.l2x6.cli-assured</groupId>
-                <artifactId>mvn-assured</artifactId>
+                <groupId>org.cli-assured</groupId>
+                <artifactId>cli-assured-mvn</artifactId>
                 <version>${cli-assured.version}</version>
             </dependency>
         </dependencies>
