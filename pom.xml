@@ -53,6 +53,7 @@
         <awaitility.version>4.3.0</awaitility.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.awaitility:awaitility -->
         <cli-assured.version>0.0.1-alpha17</cli-assured.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version><!-- Transitive of org.jvnet.jaxb:jaxb-plugins -->
+        <commons-collections.version>3.2.2</commons-collections.version>
         <cxf.xjcplugins.version>4.1.2</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
         <ehcache.version>3.11.1</ehcache.version>
         <fastinfoset.version>2.1.1</fastinfoset.version>
