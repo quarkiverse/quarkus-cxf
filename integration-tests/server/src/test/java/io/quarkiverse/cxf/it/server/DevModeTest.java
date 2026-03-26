@@ -17,10 +17,10 @@ import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.cliassured.CommandProcess;
+import org.cliassured.mvn.Mvn;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
-import org.l2x6.cli.assured.CommandProcess;
-import org.l2x6.mvn.assured.Mvn;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ValidatableResponse;
