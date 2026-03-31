@@ -1,0 +1,16 @@
+= {quarkus-cxf-project-name} 3.33.1 LTS release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.33.0 -> 3.33.1 - https://quarkus.io/blog/quarkus-3-33-1-released/[release notes]
+
+== Enhancements
+
+=== Manage `commons-collections:commons-collections` in `quarkus-cxf-bom`
+
+`commons-collections:commons-collections` is now managed in `quarkus-cxf-bom` to avoid potential version conflicts
+when Quarkus CXF is used together with Camel Quarkus.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.0+++...+++3.33.1
