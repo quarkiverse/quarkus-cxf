@@ -5,10 +5,16 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
@@ -35,7 +41,8 @@ import io.smallrye.mutiny.helpers.test.UniAssertSubscriber;
 public class ReceiveTimeoutTest {
 
     private static final int PORT = 8083;
-    private static final long RECEIVE_TIMEOUT = 160L;
+    private static final long DELAY = 80L;
+    private static final long RECEIVE_TIMEOUT = 200L;
     private static final int TASK_COUNT = 4;
 
     @RegisterExtension
@@ -64,7 +71,6 @@ public class ReceiveTimeoutTest {
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                 .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
 
-        final long DELAY = 80;
         final HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         /* The server is able to process only one request at time */
         final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -96,28 +102,52 @@ public class ReceiveTimeoutTest {
             /*
              * Experiment 1:
              * * hello1 has http1-max-size 1, so it will not open any parallel connections
-             * * The receive timeout of hello1 is cca twice as long as the delay of the server
+             * * The receive timeout of hello1 is cca 2.5 times longer than the delay of the server.
              * * We give it enough reserve because com.sun.net.httpserver.HttpServer is not especially fast
              * * We expect all requests to succeed in TASK_COUNT * RECEIVE_TIMEOUT + some constant time
              * * Because both server and client go serially and because the start of receive timeout measurement
              * happens after the connection is ready, no receive timeout should occur
              */
-            assert RECEIVE_TIMEOUT > DELAY;
+            /*
+             * RECEIVE_TIMEOUT is the time needed from client connect through send request,
+             * waiting for DELAY ms to completely receiving the response.
+             * RECEIVE_TIMEOUT has therefore be greater than DELAY
+             */
+            assert DELAY < RECEIVE_TIMEOUT;
+            /*
+             * We fire all client calls at once here in the test, but hello1 has http1-max-size 1, so it should not open
+             * any parallel connections, but rather queue the tasks. That's what we want to confirm by this test.
+             * If it opened parallel connections, then the fourth response could not completely be received
+             * before its RECEIVE_TIMEOUT. That's because, first, the server can process only one request at time and
+             * second, the processing of the requests #1, #2, #3 and #4 would take at least DELAY * TASK_COUNT
+             * (In reality it would take even longer due to transport time, etc.)
+             * DELAY * TASK_COUNT would be longer than RECEIVE_TIMEOUT.
+             * Therefore we have to assert that DELAY * TASK_COUNT > RECEIVE_TIMEOUT
+             */
+            assert DELAY * TASK_COUNT > RECEIVE_TIMEOUT;
+            long timeout1 = TASK_COUNT * RECEIVE_TIMEOUT + 1000;
             {
                 /* Async */
                 long start1 = System.currentTimeMillis();
-                Map<String, Long> results = assertClients(hello1, TASK_COUNT * RECEIVE_TIMEOUT + 1000);
+                Map<String, Long> results = assertClientsAsync(hello1, timeout1);
                 Assertions.assertThat(results).isEqualTo(Map.of("success", (long) TASK_COUNT));
-                long duration1 = System.currentTimeMillis() - start1;
                 /* Ensure that the requests are really processed serially */
-                Assertions.assertThat(duration1).isGreaterThanOrEqualTo(TASK_COUNT * DELAY);
+                Assertions.assertThat(System.currentTimeMillis() - start1).isGreaterThanOrEqualTo(TASK_COUNT * DELAY);
+            }
+            {
+                /* Sync */
+                long start1 = System.currentTimeMillis();
+                Map<String, Long> results = assertClientsSync(hello1, timeout1);
+                Assertions.assertThat(results).isEqualTo(Map.of("success", (long) TASK_COUNT));
+                /* Ensure that the requests are really processed serially */
+                Assertions.assertThat(System.currentTimeMillis() - start1).isGreaterThanOrEqualTo(TASK_COUNT * DELAY);
             }
 
             /*
              * Experiment 2:
              * * hello2 has http1-max-size same as TASK_COUNT, so it will open as many parallel connections as the
              * number of requests
-             * * The receive timeout of hello2 is cca twice as long as the delay of the server
+             * * The receive timeout of hello2 is cca 2.5 times longer than the delay of the server
              * * We give it enough reserve because com.sun.net.httpserver.HttpServer is not especially fast
              * * We expect all requests to succeed or fail in RECEIVE_TIMEOUT + some constant time
              * * Because the server processes the requests serially, but the client connects all connections at once,
@@ -125,9 +155,18 @@ public class ReceiveTimeoutTest {
              * * In theory, two requests might succeed if there was no overhead (because 2 * DELAY <= RECEIVE_TIMEOUT)
              * * In reality, typically only one will succeed and the rest will fail with receive timeout
              */
+            long timeout2 = RECEIVE_TIMEOUT + 1000;
             {
                 /* Async */
-                Map<String, Long> resultMap = assertClients(hello2, RECEIVE_TIMEOUT + 1000);
+                Map<String, Long> resultMap = assertClientsAsync(hello2, timeout2);
+                Assertions.assertThat(resultMap.get("success")).isGreaterThan(0);
+                Assertions.assertThat(resultMap.get("receive-timeout")).isGreaterThan(0);
+                /* ... and ensure there were no other errors */
+                Assertions.assertThat(resultMap.keySet()).containsExactlyInAnyOrder("success", "receive-timeout");
+            }
+            {
+                /* Sync */
+                Map<String, Long> resultMap = assertClientsSync(hello2, timeout2);
                 Assertions.assertThat(resultMap.get("success")).isGreaterThan(0);
                 Assertions.assertThat(resultMap.get("receive-timeout")).isGreaterThan(0);
                 /* ... and ensure there were no other errors */
@@ -139,9 +178,9 @@ public class ReceiveTimeoutTest {
         }
     }
 
-    static Map<String, Long> assertClients(HelloService hello, long timeout) {
+    static Map<String, Long> assertClientsAsync(HelloService hello, long timeout) {
         return Multi.createFrom().range(0, TASK_COUNT)
-                .onItem().transformToUni(i -> hello(hello))
+                .onItem().transformToUni(i -> helloAsync(hello))
                 .merge()
                 .collect().with(Collectors.groupingBy(
                         result -> result,
@@ -153,7 +192,53 @@ public class ReceiveTimeoutTest {
                 .getItem();
     }
 
-    static Uni<String> hello(HelloService hello) {
+    @SuppressWarnings("unchecked")
+    static Map<String, Long> assertClientsSync(HelloService hello, long timeout) {
+        ExecutorService executor = Executors.newFixedThreadPool(TASK_COUNT);
+        try {
+            CompletableFuture<String>[] futures = new CompletableFuture[TASK_COUNT];
+            for (int i = 0; i < TASK_COUNT; i++) {
+                futures[i] = CompletableFuture.supplyAsync(() -> helloSync(hello), executor);
+            }
+            try {
+                CompletableFuture.allOf(futures).get(timeout, TimeUnit.MILLISECONDS);
+                Map<String, Long> result = new HashMap<>();
+                Stream.of(futures).forEach(f -> {
+                    try {
+                        result.merge(f.get(), 1L, (old, new_) -> old + new_);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                return result;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            } catch (ExecutionException | TimeoutException e) {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            executor.shutdown();
+        }
+    }
+
+    private static String helloSync(HelloService hello) {
+        try {
+            hello.hello("Joe");
+            return "success";
+        } catch (Exception e) {
+            Throwable root = rootCause(e);
+            if (root instanceof TimeoutIOException && root.getMessage().contains("receive response")) {
+                return "receive-timeout";
+            }
+            return root.getMessage();
+        }
+    }
+
+    static Uni<String> helloAsync(HelloService hello) {
         return CxfMutinyUtils.<HelloResponse> toUni(handler -> hello.helloAsync("Joe", handler))
                 .map(response -> "success")
                 .onFailure()
