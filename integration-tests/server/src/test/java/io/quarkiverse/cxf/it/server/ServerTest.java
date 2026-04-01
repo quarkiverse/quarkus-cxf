@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.RestAssured;
 
 @QuarkusTest
 public class ServerTest {
@@ -25,6 +26,32 @@ public class ServerTest {
         Assertions.assertThatThrownBy(() -> {
             client.faultyHello("Joe");
         }).isInstanceOf(GreetingException.class);
+    }
+
+    @Test
+    public void hello401Fault() {
+        assert401("/soap/hello-401-fault");
+    }
+
+    static void assert401(String path) {
+        RestAssured.given()
+                .body("""
+                          <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                          <soap:Body>
+                            <ns2:hello xmlns:ns2="http://server.it.cxf.quarkiverse.io/">
+                              <arg0>World</arg0>
+                            </ns2:hello>
+                          </soap:Body>
+                        </soap:Envelope>
+                            """)
+                .post(path)
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void hello401Interceptor() {
+        assert401("/soap/hello-401-interceptor");
     }
 
     @Test
