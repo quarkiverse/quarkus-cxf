@@ -2,7 +2,7 @@
 
 == Important dependency upgrades
 
-* Quarkus 3.33.0 -> 3.33.1 - https://quarkus.io/blog/quarkus-3-33-1-released/[release notes]
+* Quarkus 3.33.0 -> 3.33.1 - https://quarkus.io/blog/quarkus-3-33-released//[release notes]
 
 == Enhancements
 
