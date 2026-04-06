@@ -7,7 +7,8 @@ on:
       - '.github/project.yml'
 
 permissions:
-  contents: write
+  contents: read
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
