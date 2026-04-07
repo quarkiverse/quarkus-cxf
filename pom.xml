@@ -55,7 +55,7 @@
         <commons-beanutils.version>1.11.0</commons-beanutils.version><!-- Transitive of org.jvnet.jaxb:jaxb-plugins -->
         <commons-collections.version>3.2.2</commons-collections.version>
         <cxf.xjcplugins.version>4.1.2</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
-        <ehcache.version>3.11.1</ehcache.version>
+        <ehcache.version>3.12.0</ehcache.version>
         <fastinfoset.version>2.1.1</fastinfoset.version>
         <glassfish.jaxb.version>4.0.6</glassfish.jaxb.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.glassfish.jaxb:jaxb-runtime -->
         <jakarta.xml.soap-api.version>3.0.2</jakarta.xml.soap-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.soapapi.version -->
