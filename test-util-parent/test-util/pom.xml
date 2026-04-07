@@ -13,26 +13,30 @@
     <name>Quarkus CXF - Test Utilities</name>
     <description>Test utilities intended for developers implementing applications on top of Quarkus CXF</description>
 
+
+    <properties>
+        <!-- Allow running our tests against alternative BOMs, such as io.quarkus.platform:quarkus-cxf-bom -->
+        <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
+        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <quarkus.platform.version>${quarkus.version}</quarkus.platform.version>
+        <quarkus-cxf.platform.group-id>io.quarkiverse.cxf</quarkus-cxf.platform.group-id>
+        <quarkus-cxf.platform.artifact-id>quarkus-cxf-bom</quarkus-cxf.platform.artifact-id>
+        <quarkus-cxf.platform.version>3.33.2-SNAPSHOT</quarkus-cxf.platform.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.quarkus</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus.version}</version>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>${quarkus.platform.artifact-id}</artifactId>
+                <version>${quarkus.platform.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-bom</artifactId>
-                <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-bom-test</artifactId>
-                <version>${project.version}</version>
+                <groupId>${quarkus-cxf.platform.group-id}</groupId>
+                <artifactId>${quarkus-cxf.platform.artifact-id}</artifactId>
+                <version>${quarkus-cxf.platform.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -45,17 +49,8 @@
             <artifactId>quarkus-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-core</artifactId>
-        </dependency>
-        <dependency><!-- We'd actually need jakarta.xml.ws:jakarta.xml.ws-api but that one is not managed anywhere -->
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>${assertj.version}</version>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.microprofile.config</groupId>
