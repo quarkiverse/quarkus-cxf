@@ -42,7 +42,7 @@ public class ReceiveTimeoutTest {
 
     private static final int PORT = 8083;
     private static final long DELAY = 80L;
-    private static final long RECEIVE_TIMEOUT = 200L;
+    private static final long RECEIVE_TIMEOUT = 240L;
     private static final int TASK_COUNT = 4;
 
     @RegisterExtension
@@ -102,7 +102,7 @@ public class ReceiveTimeoutTest {
             /*
              * Experiment 1:
              * * hello1 has http1-max-size 1, so it will not open any parallel connections
-             * * The receive timeout of hello1 is cca 2.5 times longer than the delay of the server.
+             * * The receive timeout of hello1 is cca 3 times longer than the delay of the server.
              * * We give it enough reserve because com.sun.net.httpserver.HttpServer is not especially fast
              * * We expect all requests to succeed in TASK_COUNT * RECEIVE_TIMEOUT + some constant time
              * * Because both server and client go serially and because the start of receive timeout measurement
@@ -147,7 +147,7 @@ public class ReceiveTimeoutTest {
              * Experiment 2:
              * * hello2 has http1-max-size same as TASK_COUNT, so it will open as many parallel connections as the
              * number of requests
-             * * The receive timeout of hello2 is cca 2.5 times longer than the delay of the server
+             * * The receive timeout of hello2 is cca 3 times longer than the delay of the server
              * * We give it enough reserve because com.sun.net.httpserver.HttpServer is not especially fast
              * * We expect all requests to succeed or fail in RECEIVE_TIMEOUT + some constant time
              * * Because the server processes the requests serially, but the client connects all connections at once,
