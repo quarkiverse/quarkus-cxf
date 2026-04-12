@@ -19,7 +19,8 @@ permissions:
   issues: write
 
 jobs:
-  integrate:
+  # Keep the name short, so that branch (the first matrix param) is fully readable in GHA UI 
+  i:
     if: github.repository == 'quarkiverse/quarkus-cxf'
     runs-on: ubuntu-latest
     strategy:
