@@ -5,6 +5,11 @@ description: |
      * java must be installed'
 
 inputs:
+  branch:
+    description: |
+      An instable integration branch in the current repository on top of base-branch which may store additional commits 
+      specific for the dependency-branch. Typically equal to ${base-branch}-${dependency-short-name}-${dependency-stream}.
+    required: true
   dependency-git-repo-url:
     description: "The URL of the dependency's git repository to checkout and build from"
     required: true
@@ -58,17 +63,17 @@ runs:
   using: 'composite'
   steps:
 
-    - name: rebase ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }}
+    - name: rebase ${{ inputs.branch }}
       shell: bash
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git fetch origin ${{ inputs.base-branch }}
-        git fetch origin ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} \
-            && git checkout ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} >/dev/null 2>&1 \
-            || git checkout -b ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} origin/${{ inputs.base-branch }} 
+        git fetch origin ${{ inputs.branch }} \
+            && git checkout ${{ inputs.branch }} >/dev/null 2>&1 \
+            || git checkout -b ${{ inputs.branch }} origin/${{ inputs.base-branch }} 
         git status
-        echo "${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} is at $(git rev-parse HEAD)"
+        echo "${{ inputs.branch }} is at $(git rev-parse HEAD)"
         echo "origin/${{ inputs.base-branch }} is at $(git rev-parse origin/${{ inputs.base-branch }})"
         git rebase origin/${{ inputs.base-branch }}
         rebaseExitCode=$?
@@ -83,7 +88,7 @@ runs:
         echo "exit-status=rebase-failed" >> $GITHUB_OUTPUT
         oldState=$(gh issue view ${{ inputs.issue-id }} --json state -q .state -R ${{ github.repository }})
         echo "oldState = $oldState"
-        msg="❌ Could not rebase ${{ inputs.dependency-short-name }}-${{ inputs.dependency-stream }} on top of ${{ inputs.base-branch }} in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        msg="❌ Could not rebase ${{ inputs.branch }} on top of ${{ inputs.base-branch }} in ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         if [[ "$oldState" == "OPEN" ]] ; then
           gh issue comment \
             --repo ${{ github.repository }} \
