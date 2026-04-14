@@ -87,7 +87,7 @@ public class CxfMutinyUtils {
                             .workerDispatchTimeout();
                     final Vertx vertx = container.instance(Vertx.class).get();
 
-                    final Runnable cancelTimer;
+                    final CancelTimer cancelTimer;
                     if (workerDispatchTimeout > 0) {
                         final long timerId = vertx.setTimer(workerDispatchTimeout, id -> {
                             boolean shouldTimeout = !terminated.getAndSet(true);
@@ -122,7 +122,7 @@ public class CxfMutinyUtils {
             }
         }
 
-        private void subscribeIntenal(UniSubscriber<? super T> downstream, AtomicBoolean terminated, Runnable cancelTimer) {
+        private void subscribeIntenal(UniSubscriber<? super T> downstream, AtomicBoolean terminated, CancelTimer cancelTimer) {
             try {
                 subscriptionConsumer.accept(response -> {
                     if (cancelTimer != null) {
@@ -130,7 +130,7 @@ public class CxfMutinyUtils {
                     }
                     boolean alive = !terminated.getAndSet(true);
                     if (log.isDebugEnabled()) {
-                        log.debugf("Scheduled on a worker thread for timer %d: %s", cancelTimer, alive ? "alive" : "dead");
+                        log.debugf("Scheduled on a worker thread for timer %s: %s", cancelTimer, alive ? "alive" : "dead");
                     }
                     if (alive) {
                         try {
