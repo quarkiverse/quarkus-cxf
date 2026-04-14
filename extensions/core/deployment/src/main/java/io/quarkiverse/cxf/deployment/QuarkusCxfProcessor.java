@@ -327,7 +327,7 @@ class QuarkusCxfProcessor {
             Class.forName(className, true, Thread.currentThread().getContextClassLoader());
             return true;
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
-            LOGGER.warnf(e, "Ignoring non-loadable CXF Bus extension %s from %s", className, url);
+            LOGGER.debugf(e, "Ignoring non-loadable CXF Bus extension %s from %s", className, url);
         }
         return false;
     }
