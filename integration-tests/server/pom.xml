@@ -49,6 +49,27 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>collect-maven-repos</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                <![CDATA[
+                                    project.properties.setProperty("qcxf.maven.settings.xml.path", session.request.userSettingsFile.toString())
+                                    project.properties.setProperty("qcxf.maven.active.profiles", session.request.activeProfiles.join(","))
+                                ]]>
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
                 <extensions>true</extensions>
@@ -128,6 +149,8 @@
                         <quarkus-cxf.platform.group-id>${quarkus-cxf.platform.group-id}</quarkus-cxf.platform.group-id>
                         <quarkus-cxf.platform.artifact-id>${quarkus-cxf.platform.artifact-id}</quarkus-cxf.platform.artifact-id>
                         <quarkus-cxf.platform.version>${quarkus-cxf.platform.version}</quarkus-cxf.platform.version>
+                        <qcxf.maven.settings.xml.path>${qcxf.maven.settings.xml.path}</qcxf.maven.settings.xml.path>
+                        <qcxf.maven.active.profiles>${qcxf.maven.active.profiles}</qcxf.maven.active.profiles>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
