@@ -13,6 +13,7 @@ import jakarta.xml.ws.Service;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
@@ -105,6 +106,7 @@ public class MtomTest {
         final MtomService proxy = service.getPort(MtomService.class);
         final Client client = ClientProxy.getClient(proxy);
         final HTTPConduit conduit = (HTTPConduit) client.getConduit();
+        Assertions.assertThat(conduit).isNotInstanceOf(HttpClientHTTPConduit.class);
         /* Avoid read timeouts on GH actions */
         conduit.getClient().setReceiveTimeout(240_000L);
 
