@@ -8,6 +8,9 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +20,6 @@ import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
-import org.cliassured.CommandProcess;
 import org.cliassured.mvn.Mvn;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,10 @@ public class DevModeTest {
 
     @Test
     public void devMode() throws IOException, InterruptedException {
+
+        final Path settingsPath = Path.of(getProperty("qcxf.maven.settings.xml.path")).toAbsolutePath().normalize();
+        Assertions.assertThat(settingsPath).isRegularFile();
+        final String activeProfiles = System.getProperty("qcxf.maven.active.profiles");
 
         final String quarkusGroupId = getProperty("quarkus.platform.group-id");
         final String quarkusVersion = getProperty("quarkus.platform.version");
@@ -58,13 +64,13 @@ public class DevModeTest {
 
         final Mvn mvn = Mvn.fromMvnw(Path.of(".").toAbsolutePath().normalize()).installIfNeeded();
         mvn
-                .args(
+                .args(args(activeProfiles, settingsPath,
                         quarkusPluginGroupId + ":quarkus-maven-plugin:" + quarkusPluginVersion + ":create",
                         "-ntp",
                         "-DprojectGroupId=io.quarkiverse.cxf",
                         "-DprojectArtifactId=" + artifactId,
                         "-DplatformGroupId=" + quarkusGroupId,
-                        "-DplatformVersion=" + quarkusVersion)
+                        "-DplatformVersion=" + quarkusVersion))
                 .cd(tempProject.getParent())
                 .then()
                 .stdout().log()
@@ -181,10 +187,10 @@ public class DevModeTest {
         /* Run in dev mode */
         CountDownLatch started = new CountDownLatch(1);
 
-        try (CommandProcess mvnProcess = mvn
-                .args(
+        try (org.cliassured.CommandProcess mvnProcess = mvn
+                .args(args(activeProfiles, settingsPath,
                         "quarkus:dev",
-                        "-ntp")
+                        "-ntp"))
                 .cd(tempProject)
                 .then()
                 .stdout()
@@ -212,6 +218,16 @@ public class DevModeTest {
 
         }
 
+    }
+
+    static String[] args(String activeProfiles, Path settingsPath, String... mainArgs) {
+        List<String> args = new ArrayList<>(Arrays.asList(mainArgs));
+        args.add("-s");
+        args.add(settingsPath.toString());
+        if (activeProfiles != null && !activeProfiles.isEmpty()) {
+            args.add("-P" + activeProfiles);
+        }
+        return args.toArray(new String[0]);
     }
 
     static void awaitResponse(String name, String description, String expectedDesciption) {
