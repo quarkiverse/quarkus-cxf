@@ -2,17 +2,14 @@ package io.quarkiverse.cxf.it.ws.mtom.server;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Optional;
 
-import javax.xml.namespace.QName;
-
 import jakarta.activation.DataHandler;
-import jakarta.xml.ws.Service;
 
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transport.http.HttpClientHTTPConduit;
 import org.assertj.core.api.Assertions;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
@@ -98,13 +95,10 @@ public class MtomTest {
     }
 
     static void assertMtom(int size) throws MalformedURLException, IOException {
-        final URL serviceUrl = new URL(QuarkusCxfTestUtil.getServerUrl() + "/soap/mtom?wsdl");
-        final QName qName = new QName("https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test/mtom",
-                MtomService.class.getSimpleName());
-        final Service service = jakarta.xml.ws.Service.create(serviceUrl, qName);
-        final MtomService proxy = service.getPort(MtomService.class);
+        final MtomService proxy = QuarkusCxfTestUtil.getClient(MtomService.class, "/soap/mtom");
         final Client client = ClientProxy.getClient(proxy);
         final HTTPConduit conduit = (HTTPConduit) client.getConduit();
+        Assertions.assertThat(conduit).isNotInstanceOf(HttpClientHTTPConduit.class);
         /* Avoid read timeouts on GH actions */
         conduit.getClient().setReceiveTimeout(240_000L);
 
