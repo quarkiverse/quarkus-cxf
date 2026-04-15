@@ -16,9 +16,12 @@ import org.apache.cxf.transport.Destination;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.DestinationRegistryImpl;
+import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.wsdl11.WSDLEndpointFactory;
 import org.jboss.logging.Logger;
+
+import io.quarkiverse.cxf.URLConnectionHTTPConduitFactory;
 
 public class VertxDestinationFactory extends HTTPTransportFactory implements WSDLEndpointFactory {
     private static final Logger LOGGER = Logger.getLogger(VertxDestinationFactory.class);
@@ -74,6 +77,23 @@ public class VertxDestinationFactory extends HTTPTransportFactory implements WSD
             BindingInfo b,
             List<?> ees) {
         return soapTransportFactory.createEndpointInfo(bus, serviceInfo, b, ees);
+    }
+
+    @Override
+    protected HTTPConduitFactory findFactory(EndpointInfo endpointInfo, Bus bus) {
+        HTTPConduitFactory f = endpointInfo.getProperty(HTTPConduitFactory.class.getName(), HTTPConduitFactory.class);
+        if (f == null) {
+            f = bus.getExtension(HTTPConduitFactory.class);
+        }
+        if (f == null) {
+            /*
+             * Avoid that CXF ever creates a HttpClientHTTPConduit
+             * We may revisit this to honor at least the global
+             * quarkus.cxf.http-conduit-factory and return VertHttpClientConduit by default
+             */
+            f = new URLConnectionHTTPConduitFactory();
+        }
+        return f;
     }
 
 }
