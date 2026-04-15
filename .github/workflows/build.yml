@@ -10,6 +10,8 @@ env:
   JAVA_VERSION: 17
 
 permissions:
+  discussions: read
+  issues: read
   contents: read
   pull-requests: read
 
