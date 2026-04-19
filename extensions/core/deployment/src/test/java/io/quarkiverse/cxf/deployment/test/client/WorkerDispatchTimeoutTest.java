@@ -16,6 +16,7 @@ import jakarta.xml.ws.Response;
 
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import io.quarkus.test.QuarkusUnitTest;
 import io.vertx.core.Vertx;
 
 public class WorkerDispatchTimeoutTest {
+    private static final Logger log = Logger.getLogger(WorkerDispatchTimeoutTest.class);
 
     private static final int MAX_THREADS = 4;
 
@@ -44,6 +46,13 @@ public class WorkerDispatchTimeoutTest {
             .overrideConfigKey("quarkus.thread-pool.max-threads", String.valueOf(MAX_THREADS))
             .overrideConfigKey("quarkus.log.category.\"io.quarkiverse.cxf.QuarkusJaxWsProxyFactoryBean\".level", "DEBUG")
             .overrideConfigKey("quarkus.log.category.\"io.quarkiverse.cxf.mutiny.CxfMutinyUtils\".level", "DEBUG")
+            /*
+             * Avoid too many warnings about uncaught exceptions due to requests being processed after shut down - that's
+             * expected
+             */
+            .overrideConfigKey("quarkus.log.category.\"org.jboss.threads.errors\".level", "FATAL")
+            .overrideConfigKey("quarkus.log.category.\"io.quarkus.vertx.core.runtime.VertxCoreRecorder\".level", "FATAL")
+            .overrideConfigKey("quarkus.log.category.\"org.apache.cxf.phase.PhaseInterceptorChain\".level", "ERROR")
 
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor", HelloServiceImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
@@ -68,17 +77,19 @@ public class WorkerDispatchTimeoutTest {
         final int maxCnt = 200;
         /* Submit more and more requests till some of them timeouts due to worker thread pool exhaustion */
         while (cnt++ <= maxCnt && firstException.get() == null) {
+            final String currentCnt = String.valueOf(cnt - 1);
             vertx.runOnContext(v -> {
                 if (firstException.get() == null) {
-                    Future<?> fut = hello.helloAsync(DELAY, resp -> {
+                    Future<?> fut = hello.helloAsync(currentCnt, resp -> {
                         firstException.updateAndGet(oldValue -> {
                             if (oldValue != null) {
                                 return oldValue;
                             }
                             try {
-                                resp.get().getReturn();
+                                log.infof("Normal response for request %s: %s", currentCnt, resp.get().getReturn());
                                 return null;
                             } catch (Exception e) {
+                                log.infof("Exception response for request %s: %s", currentCnt, e);
                                 return e;
                             }
                         });
@@ -90,6 +101,7 @@ public class WorkerDispatchTimeoutTest {
                 }
             });
         }
+        log.infof("Sent %d requests", cnt);
         Awaitility.waitAtMost(10, TimeUnit.SECONDS).until(() -> firstException.get() != null);
 
         Assertions.assertThat(firstException.get())
@@ -175,7 +187,7 @@ public class WorkerDispatchTimeoutTest {
                 throw new RuntimeException("Expected exception");
             }
             try {
-                long delay = Long.parseLong(person);
+                long delay = Long.parseLong(DELAY);
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
