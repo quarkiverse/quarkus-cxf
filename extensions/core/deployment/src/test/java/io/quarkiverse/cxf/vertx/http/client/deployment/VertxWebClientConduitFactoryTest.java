@@ -30,9 +30,9 @@ public class VertxWebClientConduitFactoryTest {
                     .addClasses(HelloService.class, SlowHelloServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
                     SlowHelloServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
             .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.hello.logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.client.hello.logging.enabled", "true")
             .overrideConfigKey("quarkus.cxf.client.hello.service-interface", HelloService.class.getName());
 
     @CXFClient

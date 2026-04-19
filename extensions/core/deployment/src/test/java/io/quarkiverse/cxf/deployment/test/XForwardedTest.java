@@ -32,7 +32,7 @@ public class XForwardedTest {
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(MessageContextService.class, MessageContextServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor", MessageContextServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "pretty")
+            // .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "pretty")
 
             .overrideConfigKey("quarkus.cxf.client.hello.client-endpoint-url", "http://localhost:8081/services/hello")
             .overrideConfigKey("quarkus.cxf.client.hello.service-interface", MessageContextService.class.getName())

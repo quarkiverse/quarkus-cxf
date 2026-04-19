@@ -139,7 +139,7 @@ public class ClientAuthRedirectTest {
                 .overrideConfigKey("quarkus.cxf.client.authRedirect.client-endpoint-url",
                         "http://localhost:" + server.actualPort() + "/authRedirectService")
                 .overrideConfigKey("quarkus.cxf.client.authRedirect.service-interface", HelloService.class.getName())
-                .overrideConfigKey("quarkus.cxf.client.authRedirect.logging.enabled", "true")
+                // .overrideConfigKey("quarkus.cxf.client.authRedirect.logging.enabled", "true")
 
                 /* Authorization */
                 .overrideConfigKey("quarkus.cxf.client.authRedirect.auth.username", USERNAME)
