@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
 
 abstract class AbstractGreetingWebServiceTest {
-    protected static GreetingWebService greetingWS;
+    protected GreetingWebService greetingWS;
     static final String SOAP_REQUEST = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://server.it.cxf.quarkiverse.io/\">\n"
             +
             "   <x:Header/>\n" +
