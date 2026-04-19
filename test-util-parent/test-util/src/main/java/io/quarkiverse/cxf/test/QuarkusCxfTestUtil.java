@@ -9,10 +9,7 @@ import jakarta.jws.WebService;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Service;
 
-import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
-
-import io.quarkus.runtime.LaunchMode;
 
 /**
  * Test utilities intended for developers implementing applications on top of Quarkus CXF.
@@ -65,9 +62,7 @@ public class QuarkusCxfTestUtil {
      * @since 3.33.0
      */
     public static String getServerUrl() {
-        final Config config = ConfigProvider.getConfig();
-        final int port = LaunchMode.current().equals(LaunchMode.TEST) ? config.getValue("quarkus.http.test-port", Integer.class)
-                : config.getValue("quarkus.http.port", Integer.class);
+        final int port = ConfigProvider.getConfig().getValue("quarkus.http.port", Integer.class);
         return String.format("http://localhost:%d", port);
     }
 

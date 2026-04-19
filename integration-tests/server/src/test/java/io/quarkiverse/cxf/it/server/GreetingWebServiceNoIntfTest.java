@@ -3,7 +3,7 @@ package io.quarkiverse.cxf.it.server;
 import jakarta.jws.WebService;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
@@ -12,8 +12,8 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 class GreetingWebServiceNoIntfTest extends AbstractGreetingWebServiceTest {
 
-    @BeforeAll
-    static void setup() {
+    @BeforeEach
+    void setup() {
         greetingWS = QuarkusCxfTestUtil.getClient(GreetingWebServiceNoIntf.class, "/soap/greeting-no-intf");
     }
 
