@@ -47,7 +47,7 @@ public class ClientHttp2Test {
             /* URLConnectionHTTPConduitFactory does not support HTTP/2 */
             .overrideConfigKey("quarkus.cxf.client.hello.http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.hello.version", "2")
-            .overrideConfigKey("quarkus.cxf.client.hello.logging.enabled", "pretty")
+            // .overrideConfigKey("quarkus.cxf.client.hello.logging.enabled", "pretty")
             .overrideConfigKey("quarkus.cxf.client.hello.tls-configuration-name", "soap-clients-tls");
 
     @CXFClient("hello")

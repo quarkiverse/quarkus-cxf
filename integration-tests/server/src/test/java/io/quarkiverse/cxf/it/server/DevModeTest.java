@@ -180,7 +180,7 @@ public class DevModeTest {
                 appProps,
                 """
                         quarkus.cxf.endpoint."/fruits".implementor = io.quarkiverse.cxf.it.server.FruitServiceImpl
-                        quarkus.cxf.endpoint."/fruits".logging.enabled = pretty
+                        // quarkus.cxf.endpoint."/fruits".logging.enabled = pretty
                         """,
                 StandardCharsets.UTF_8);
 
