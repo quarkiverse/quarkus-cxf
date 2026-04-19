@@ -45,7 +45,7 @@ public class CipherSuitesTest {
             .overrideConfigKey("quarkus.http.insecure-requests", "disabled")
             /* Service */
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor", HelloServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
 
             /* Named TLS configurations for the clients */
             .overrideConfigKey("quarkus.tls.client-fake-suites.trust-store.p12.path", "target/classes/localhost-truststore.p12")
@@ -83,7 +83,7 @@ public class CipherSuitesTest {
             config
                     .overrideConfigKey("quarkus.cxf.client." + clientName + "Fake.client-endpoint-url",
                             "https://localhost:8444/services/hello")
-                    .overrideConfigKey("quarkus.cxf.client." + clientName + "Fake.logging.enabled", "true")
+                    // .overrideConfigKey("quarkus.cxf.client." + clientName + "Fake.logging.enabled", "true")
                     .overrideConfigKey("quarkus.cxf.client." + clientName + "Fake.service-interface",
                             HelloService.class.getName())
                     .overrideConfigKey("quarkus.cxf.client." + clientName + "Fake.http-conduit-factory",
@@ -92,7 +92,7 @@ public class CipherSuitesTest {
 
                     .overrideConfigKey("quarkus.cxf.client." + clientName + "Existing.client-endpoint-url",
                             "https://localhost:8444/services/hello")
-                    .overrideConfigKey("quarkus.cxf.client." + clientName + "Existing.logging.enabled", "true")
+                    // .overrideConfigKey("quarkus.cxf.client." + clientName + "Existing.logging.enabled", "true")
                     .overrideConfigKey("quarkus.cxf.client." + clientName + "Existing.service-interface",
                             HelloService.class.getName())
                     .overrideConfigKey("quarkus.cxf.client." + clientName + "Existing.http-conduit-factory",

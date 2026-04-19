@@ -36,32 +36,33 @@ public class Client3xx4xx5xxTest {
             /* Service */
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
                     HelloServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
 
             /* Clients */
             .overrideConfigKey("quarkus.cxf.client.wsdlUri200.client-endpoint-url", "http://localhost:8081/services/hello")
             .overrideConfigKey("quarkus.cxf.client.wsdlUri200.wsdl", "http://localhost:8081/services/hello?wsdl")
             // Not needed when the WSDL is set and HelloService has both serviceName and targetNamespace set
             //.overrideConfigKey("quarkus.cxf.client.wsdlUri404.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.wsdlUri200.logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.client.wsdlUri200.logging.enabled", "true")
 
             /* Bad WSDL URI */
             .overrideConfigKey("quarkus.cxf.client.wsdlUri404.client-endpoint-url", "http://localhost:8081/services/hello")
             .overrideConfigKey("quarkus.cxf.client.wsdlUri404.wsdl", "http://localhost:8081/services/no-such-service?wsdl")
-            .overrideConfigKey("quarkus.cxf.client.wsdlUri404.logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.client.wsdlUri404.logging.enabled", "true")
 
             /* Bad service endpoint URI */
             .overrideConfigKey("quarkus.cxf.client.endpointUri404.client-endpoint-url",
                     "http://localhost:8081/services/no-such-service")
             .overrideConfigKey("quarkus.cxf.client.endpointUri404.service-interface", HelloService.class.getName())
-            .overrideConfigKey("quarkus.cxf.client.endpointUri404.logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.client.endpointUri404.logging.enabled", "true")
 
             /* Bad service endpoint URI */
             .overrideConfigKey("quarkus.cxf.client.endpointUri302.client-endpoint-url",
                     "http://localhost:8081/vertx-redirect")
             .overrideConfigKey("quarkus.cxf.client.endpointUri302.service-interface", HelloService.class.getName())
             .overrideConfigKey("quarkus.cxf.client.endpointUri302.auto-redirect", "true")
-            .overrideConfigKey("quarkus.cxf.client.endpointUri302.logging.enabled", "true");
+    // .overrideConfigKey("quarkus.cxf.client.endpointUri302.logging.enabled", "true")
+    ;
 
     @CXFClient("wsdlUri200")
     // Use Instance to avoid greedy initialization
