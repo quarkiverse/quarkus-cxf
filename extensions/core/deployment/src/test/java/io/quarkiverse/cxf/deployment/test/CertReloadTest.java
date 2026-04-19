@@ -63,7 +63,7 @@ public class CertReloadTest {
             /* Service */
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
                     HelloServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
 
             /* Named TLS configuration for the client */
             .overrideConfigKey("quarkus.tls.client-pkcs12.trust-store.p12.path", "target/classes/localhost-truststore.p12")
@@ -71,14 +71,14 @@ public class CertReloadTest {
 
             /* Client connecting to a service that closes the connection upon cert reload */
             .overrideConfigKey("quarkus.cxf.client.helloVertice.client-endpoint-url", "https://localhost:8445/vertx/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloVertice.logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.client.helloVertice.logging.enabled", "true")
             .overrideConfigKey("quarkus.cxf.client.helloVertice.service-interface", HelloService.class.getName())
             .overrideConfigKey("quarkus.cxf.client.helloVertice.http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.helloVertice.tls-configuration-name", "client-pkcs12")
 
             /* Client connecting to a service that does not close the connection upon cert reload */
             .overrideConfigKey("quarkus.cxf.client.helloVertx.client-endpoint-url", "https://localhost:8444/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloVertx.logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.client.helloVertx.logging.enabled", "true")
             .overrideConfigKey("quarkus.cxf.client.helloVertx.service-interface", HelloService.class.getName())
             .overrideConfigKey("quarkus.cxf.client.helloVertx.http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.helloVertx.tls-configuration-name", "client-pkcs12")

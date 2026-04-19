@@ -168,7 +168,7 @@ public class ServerDevModeTest {
         props.setProperty("quarkus.cxf.path", "/soap");
         props.setProperty("quarkus.cxf.endpoint.\"/fruit\".implementor",
                 io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl.class.getName());
-        props.setProperty("quarkus.cxf.endpoint.\"/fruit\".logging.enabled", "true");
+        // props.setProperty("quarkus.cxf.endpoint.\"/fruit\".logging.enabled", "true");
         try {
             props.store(writer, "");
         } catch (IOException e) {

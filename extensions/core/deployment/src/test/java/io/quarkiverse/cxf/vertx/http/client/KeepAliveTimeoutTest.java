@@ -100,7 +100,8 @@ public class KeepAliveTimeoutTest {
                         .overrideConfigKey(k + ".http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
                         .overrideConfigKey(k + ".connection", connectionValue)
                         .overrideConfigKey(k + ".version", plainVersion(v))
-                        .overrideConfigKey(k + ".logging.enabled", "pretty");
+                // .overrideConfigKey(k + ".logging.enabled", "pretty")
+                ;
             }
 
             String connectionValue = "keep-alive";
@@ -115,7 +116,8 @@ public class KeepAliveTimeoutTest {
                     .overrideConfigKey(k + ".connection", connectionValue)
                     .overrideConfigKey(k + ".vertx." + (v == HttpVersion.HTTP_2 ? "http2-" : "") + "keep-alive-timeout", "1")
                     .overrideConfigKey(k + ".version", plainVersion(v))
-                    .overrideConfigKey(k + ".logging.enabled", "pretty");
+            // .overrideConfigKey(k + ".logging.enabled", "pretty")
+            ;
 
         }
 

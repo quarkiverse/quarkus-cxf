@@ -23,7 +23,7 @@ public interface LoggingConfig {
         /**
          * If `true` or `pretty`, the message logging will be enabled; otherwise it will not be enabled. If the value is
          * `pretty` (since 2.7.0), the `pretty` attribute will effectively be set to `true`. The default is given by
-         * `xref:#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus.cxf.logging.enabled-for]`.
+         * // `xref:#quarkus-cxf_quarkus-cxf-logging-enabled-for[quarkus.cxf.logging.enabled-for]`.
          *
          * @since 2.6.0
          * @asciidoclet
@@ -32,7 +32,7 @@ public interface LoggingConfig {
 
         /**
          * If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. The default is given
-         * by `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
+         * by // `xref:#quarkus-cxf_quarkus-cxf-logging-pretty[quarkus.cxf.logging.pretty]`
          *
          * @since 2.6.0
          * @asciidoclet
@@ -141,8 +141,10 @@ public interface LoggingConfig {
         /**
          * Specifies whether the message logging will be enabled for clients, services, both or none. This setting can be
          * overridden per client or service endpoint using
+         * //
          * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-enabled[quarkus.cxf.endpoint."/endpoint-path".logging.enabled]`
          * or
+         * //
          * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-enabled[quarkus.cxf.client."client-name".logging.enabled]`
          * respectively.
          *
@@ -156,9 +158,10 @@ public interface LoggingConfig {
         /**
          * If `true`, the XML elements will be indented in the log; otherwise they will appear unindented. This setting can be
          * overridden per client or service endpoint using
+         * //
          * `xref:#quarkus-cxf_quarkus-cxf-endpoint-endpoint-path-logging-pretty[quarkus.cxf.endpoint."/endpoint-path".logging.pretty]`
          * or
-         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-pretty[quarkus.cxf.client."client-name".logging.pretty]`
+         * // `xref:#quarkus-cxf_quarkus-cxf-client-client-name-logging-pretty[quarkus.cxf.client."client-name".logging.pretty]`
          * respectively.
          *
          * @since 2.6.0

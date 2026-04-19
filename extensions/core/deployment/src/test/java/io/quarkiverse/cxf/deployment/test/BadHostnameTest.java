@@ -37,7 +37,7 @@ public class BadHostnameTest {
             /* Service */
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
                     HelloServiceImpl.class.getName())
-            .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".logging.enabled", "true")
 
             /* Named TLS configuration for the clients */
             .overrideConfigKey("quarkus.tls.client-pkcs12.trust-store.p12.path", "fake-host-truststore.p12")
@@ -46,7 +46,7 @@ public class BadHostnameTest {
 
             /* Client with VertxHttpClientHTTPConduitFactory */
             .overrideConfigKey("quarkus.cxf.client.helloVertx.client-endpoint-url", "https://localhost:8444/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloVertx.logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.client.helloVertx.logging.enabled", "true")
             .overrideConfigKey("quarkus.cxf.client.helloVertx.service-interface", HelloService.class.getName())
             .overrideConfigKey("quarkus.cxf.client.helloVertx.http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.helloVertx.tls-configuration-name", "client-pkcs12")
@@ -54,7 +54,7 @@ public class BadHostnameTest {
             /* Client with URLConnectionHTTPConduitFactory */
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.client-endpoint-url",
                     "https://localhost:8444/services/hello")
-            .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.logging.enabled", "true")
+            // .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.logging.enabled", "true")
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.service-interface", HelloService.class.getName())
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.http-conduit-factory", "URLConnectionHTTPConduitFactory")
             .overrideConfigKey("quarkus.cxf.client.helloUrlConnection.tls-configuration-name", "client-pkcs12");
