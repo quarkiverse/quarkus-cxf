@@ -1,8 +1,11 @@
-= {quarkus-cxf-project-name} 3.33.2 LTS release notes
+= {quarkus-cxf-project-name} 3.35.0 release notes
 
 == Important dependency upgrades
 
-* Apache HTTP Client 5.5.1 -> 5.5.2
+* CXF 4.1.5 -> 4.2.0 - https://cxf.apache.org/download.html[release notes]
+* Quarkus 3.33.1 -> 3.34.5 - https://quarkus.io/blog/quarkus-3-34-5-released//[release notes]
+* Apache HTTP Client 5.5.1 -> 5.5.2 and HTTP Core 5.3.6 -> 5.4.2
+* Ehcache 3.11.1 -> 3.12.0
 
 == Bugfixes
 
@@ -56,4 +59,4 @@ Since {quarkus-cxf-project-name} 3.35.0 and 3.33.2, those messages are logged at
 
 == Full changelog
 
-https://github.com/quarkiverse/quarkus-cxf/compare/3.33.1+++...+++3.33.2
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.1+++...+++3.35.0
