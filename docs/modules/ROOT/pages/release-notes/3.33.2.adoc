@@ -1,0 +1,59 @@
+= {quarkus-cxf-project-name} 3.33.2 LTS release notes
+
+== Important dependency upgrades
+
+* Apache HTTP Client 5.5.1 -> 5.5.2
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2060[#2060] Avoid using `HttpClientHTTPConduit` even for clients created via `jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)`
+
+`HttpClientHTTPConduit` provided by CXF has had known issues, due to which we deprecated the `HttpClientHTTPConduitFactory` value of
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
+and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+options in xref:release-notes/3.18.0.adoc#issue_1633_httpclienthttpconduitfactory_value_deprecated[3.18.0 release].
+We removed the `HttpClientHTTPConduitFactory` value in
+xref:release-notes/3.22.0.adoc#_remove_httpclienthttpconduitfactory_value_of_http_conduit_factory[{quarkus-cxf-project-name} 3.22.0].
+So after 3.22.0 it was not possible to xref:user-guide/first-soap-client.adoc[create an injected SOAP client]
+via {quarkus-cxf-project-name} `application.properties` configuration that would use `HttpClientHTTPConduit` and JDK HTTP Client under the hood.
+
+However, even after {quarkus-cxf-project-name} 3.22.0 it was still possible to programmatically create SOAP clients using `HttpClientHTTPConduit` as follows:
+
+[source,java]
+----
+URL serviceUrl = ...;
+QName qName = ...
+Service service = Service.create(serviceUrl, qName);
+MyService myClient = service.getPort(MyService.class);
+----
+
+We used this code ourselves in our integration tests.
+The same code is used by `QuarkusCxfTestUtil.getClient(...)` methods that we exposed for public usage in
+xref:release-notes/3.33.0.adoc#_2064_quarkuscxftestutil_a_new_utility_for_testing_quarkus_cxf[{quarkus-cxf-project-name} 3.33.0].
+
+The issue https://github.com/quarkiverse/quarkus-cxf/issues/2060[#2060] popped up in our MTOM integration test,
+which spawns many SOAP clients to perform some soak testing.
+When the number of clients went over certain threshold, the clients started failing due to underlying HTTP connections being closed.
+This is another known issue of JDK HTTP client: no external control over its internal connection pool is possible.
+Therefore it may happen that the connections get closed while SOAP clients, possibly running in parallel threads still use them.
+
+Since {quarkus-cxf-project-name} 3.35.0 and 3.33.2, even clients created programmatically via
+`jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)` are using `URLConnectionHTTPConduit` instead of `HttpClientHTTPConduit`.
+As a consequence of that, no issues with connection pooling should occur.
+
+=== `IllegalFormatConversionException` in a debug log statement in `CxfMutinyUtils`
+
+Before {quarkus-cxf-project-name} 3.35.0 and 3.33.2, a debug log statement in `CxfMutinyUtils` used a `%d` format to log
+a non-number object, which could cause a `java.util.IllegalFormatConversionException` at runtime.
+Since {quarkus-cxf-project-name} 3.35.0 and 3.33.2, the correct `%s` format specifier is used.
+
+=== Stop warning bout non-loadable CXF Bus extensions at build time
+
+Before {quarkus-cxf-project-name} 3.35.0 and 3.33.2, non-loadable CXF Bus extensions were logged at `WARN` level at build time.
+The `WARN` level is not appropriate, because some missing classes are expected at build time,
+due to exclusion of some transitive dependencies from CXF.
+Since {quarkus-cxf-project-name} 3.35.0 and 3.33.2, those messages are logged at `DEBUG` level.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.1+++...+++3.33.2
