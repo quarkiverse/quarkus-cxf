@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.quarkiverse.cxf</groupId>
         <artifactId>quarkus-cxf-test-util-parent</artifactId>
-        <version>3.33.2</version>
+        <version>3.33.3-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -21,7 +21,7 @@
         <quarkus.platform.version>${quarkus.version}</quarkus.platform.version>
         <quarkus-cxf.platform.group-id>io.quarkiverse.cxf</quarkus-cxf.platform.group-id>
         <quarkus-cxf.platform.artifact-id>quarkus-cxf-bom</quarkus-cxf.platform.artifact-id>
-        <quarkus-cxf.platform.version>3.33.2</quarkus-cxf.platform.version>
+        <quarkus-cxf.platform.version>3.33.3-SNAPSHOT</quarkus-cxf.platform.version>
     </properties>
 
     <dependencyManagement>
