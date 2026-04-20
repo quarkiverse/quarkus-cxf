@@ -15,7 +15,7 @@ The version number is passed as the first non-optional argument (e.g., `3.33.2`)
 
 ### 1. Parse the version
 
-Extract the version number from the first (required) argument. It must be a semantic version like `3.33.2` following the maning scheme `<major>.<minor>.<micro or patch>`.
+Extract the version number from the first (required) argument. It must be a semantic version like `3.33.2` following the naming scheme `<major>.<minor>.<micro or patch>`.
 
 ### 1.1 Determine the previous version 
 
