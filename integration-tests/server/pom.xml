@@ -63,6 +63,9 @@
                                 <![CDATA[
                                     project.properties.setProperty("qcxf.maven.settings.xml.path", session.request.userSettingsFile.toString())
                                     project.properties.setProperty("qcxf.maven.active.profiles", session.request.activeProfiles.join(","))
+                                    // Pass -Dqcxf.maven.user.properties.prefixes=maven.repo.local,repo. to forward matching -D properties to child Maven invocations
+                                    def prefixes = (project.properties.getProperty("qcxf.maven.user.properties.prefixes") ?: "").split(",")
+                                    project.properties.setProperty("qcxf.maven.user.properties", session.request.userProperties.findAll { k, v -> prefixes.any { p -> k.startsWith(p) } }.collect { k, v -> "-D${k}=${v}" }.join(" "))
                                 ]]>
                             </source>
                         </configuration>
@@ -151,6 +154,7 @@
                         <quarkus-cxf.platform.version>${quarkus-cxf.platform.version}</quarkus-cxf.platform.version>
                         <qcxf.maven.settings.xml.path>${qcxf.maven.settings.xml.path}</qcxf.maven.settings.xml.path>
                         <qcxf.maven.active.profiles>${qcxf.maven.active.profiles}</qcxf.maven.active.profiles>
+                        <qcxf.maven.user.properties>${qcxf.maven.user.properties}</qcxf.maven.user.properties>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
