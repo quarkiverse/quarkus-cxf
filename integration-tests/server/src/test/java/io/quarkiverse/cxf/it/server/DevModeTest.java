@@ -37,6 +37,7 @@ public class DevModeTest {
         final Path settingsPath = Path.of(getProperty("qcxf.maven.settings.xml.path")).toAbsolutePath().normalize();
         Assertions.assertThat(settingsPath).isRegularFile();
         final String activeProfiles = System.getProperty("qcxf.maven.active.profiles");
+        final String userProperties = System.getProperty("qcxf.maven.user.properties");
 
         final String quarkusGroupId = getProperty("quarkus.platform.group-id");
         final String quarkusVersion = getProperty("quarkus.platform.version");
@@ -64,7 +65,7 @@ public class DevModeTest {
 
         final Mvn mvn = Mvn.fromMvnw(Path.of(".").toAbsolutePath().normalize()).installIfNeeded();
         mvn
-                .args(args(activeProfiles, settingsPath,
+                .args(args(activeProfiles, settingsPath, userProperties,
                         quarkusPluginGroupId + ":quarkus-maven-plugin:" + quarkusPluginVersion + ":create",
                         "-ntp",
                         "-DprojectGroupId=io.quarkiverse.cxf",
@@ -188,7 +189,7 @@ public class DevModeTest {
         CountDownLatch started = new CountDownLatch(1);
 
         try (org.cliassured.CommandProcess mvnProcess = mvn
-                .args(args(activeProfiles, settingsPath,
+                .args(args(activeProfiles, settingsPath, userProperties,
                         "quarkus:dev",
                         "-ntp"))
                 .cd(tempProject)
@@ -220,12 +221,19 @@ public class DevModeTest {
 
     }
 
-    static String[] args(String activeProfiles, Path settingsPath, String... mainArgs) {
+    static String[] args(String activeProfiles, Path settingsPath, String userProperties, String... mainArgs) {
         List<String> args = new ArrayList<>(Arrays.asList(mainArgs));
         args.add("-s");
         args.add(settingsPath.toString());
         if (activeProfiles != null && !activeProfiles.isEmpty()) {
             args.add("-P" + activeProfiles);
+        }
+        if (userProperties != null && !userProperties.isEmpty()) {
+            for (String prop : userProperties.split(" ")) {
+                if (!prop.isEmpty()) {
+                    args.add(prop);
+                }
+            }
         }
         return args.toArray(new String[0]);
     }
