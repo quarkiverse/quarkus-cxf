@@ -1,0 +1,11 @@
+= {quarkus-cxf-project-name} 3.35.1 release notes
+
+See also xref:release-notes/3.35.0.adoc[{quarkus-cxf-project-name} 3.35.0 release notes].
+
+== Important dependency upgrades
+
+* Quarkus 3.34.5 -> 3.35.0 - https://quarkus.io/blog/quarkus-3-35-0-released/[release notes]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.35.0+++...+++3.35.1
