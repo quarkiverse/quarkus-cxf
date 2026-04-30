@@ -271,7 +271,7 @@ public class DevModeTest {
                                         .then();
                             } catch (Exception ex) {
                                 // AssertionError keeps Awaitility running
-                                log.info("Request didn't work", ex);
+                                log.info("Request didn't work");
                                 throw new AssertionError("Error while getting response", ex);
                             }
                             response.statusCode(200)
