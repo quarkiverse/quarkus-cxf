@@ -192,7 +192,7 @@ public class DevModeTest {
         try (org.cliassured.CommandProcess mvnProcess = mvn
                 .args(args(activeProfiles, settingsPath, userProperties,
                         "quarkus:dev",
-                        "-ntp"))
+                        "-ntp", "-Dquarkus.analytics.disabled=true"))
                 .cd(tempProject)
                 .then()
                 .stdout()
