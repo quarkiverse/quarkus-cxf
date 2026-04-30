@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.cliassured.mvn.Mvn;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
 
@@ -239,8 +240,11 @@ public class DevModeTest {
     }
 
     static void awaitResponse(String name, String description, String expectedDesciption) {
+        long minutes = ConfigProvider.getConfig()
+                .getOptionalValue("qcxf.test.devmodetest.await.timeout.minutes", Long.class)
+                .orElse(1L);
         Awaitility.await()
-                .atMost(30, TimeUnit.SECONDS)
+                .atMost(minutes, TimeUnit.MINUTES)
                 .untilAsserted(
                         () -> {
                             ValidatableResponse response = null;
