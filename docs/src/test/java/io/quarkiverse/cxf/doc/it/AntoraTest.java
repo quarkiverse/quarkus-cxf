@@ -44,7 +44,7 @@ public class AntoraTest {
 
         final ZonedDateTime deadline = ZonedDateTime.parse("2026-04-30T23:59:59+01:00[Europe/Paris]");
         if (ZonedDateTime.now(ZoneId.of("Europe/Paris")).isBefore(deadline)) {
-            ignorables.add("https://quarkus.io/blog/quarkus-3-35-0-released/");
+            ignorables.add("https://quarkus.io/blog/quarkus-3-35-released/");
             //ignorables.add("https://quarkus.io/guides/proxy-registry");
         }
         // These are timeouting for some reason although they work when visited in browser
