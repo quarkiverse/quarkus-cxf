@@ -48,7 +48,7 @@ Click the extension names to learn more about how to configure and use them, and
 |1.5.3
 |https://cxf.apache.org/docs/ws-trust.html[WS-Trust]
 
-| xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[Quarkus CXF XJC Plugins] +
+| xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[Quarkus CXF XJC Plugins for wsdl2java] +
 `quarkus-cxf-xjc-plugins`
 |Stable
 |1.5.11
