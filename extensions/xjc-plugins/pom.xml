@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-xjc-plugins-parent</artifactId>
-    <name>Quarkus CXF - XJC Plugins - Parent</name>
+    <name>Quarkus CXF - XJC Plugins for wsdl2java - Parent</name>
     <packaging>pom</packaging>
 
     <modules>
