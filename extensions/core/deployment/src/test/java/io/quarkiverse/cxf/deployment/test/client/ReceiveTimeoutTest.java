@@ -41,8 +41,8 @@ import io.smallrye.mutiny.helpers.test.UniAssertSubscriber;
 public class ReceiveTimeoutTest {
 
     private static final int PORT = 8083;
-    private static final long DELAY = 80L;
-    private static final long RECEIVE_TIMEOUT = 240L;
+    private static final long DELAY = 100L;
+    private static final long RECEIVE_TIMEOUT = 3 * DELAY;
     private static final int TASK_COUNT = 4;
 
     @RegisterExtension
