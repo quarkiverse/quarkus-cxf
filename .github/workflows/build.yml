@@ -73,9 +73,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - javaDistro: temurin
-            javaVersion: 25
-            os: ubuntu-latest
           - javaDistro: semeru
             javaVersion: 17
             os: ubuntu-latest
