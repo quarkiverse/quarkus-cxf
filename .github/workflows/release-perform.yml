@@ -50,6 +50,14 @@ jobs:
           java-version: 17
           cache: 'maven'
 
+      - name: Cache ~/.m2/wrapper/dists
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/wrapper/dists
+          key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('.mvn/wrapper/maven-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-wrapper-
+
       - name: Disable native build in test-util-parent/test-ws-rm-server-native/pom.xml
         shell: bash
         run: sed -i 's|<name>performRelease</name>|<name>performRelease-disabled</name>|' test-util-parent/test-ws-rm-server-native/pom.xml

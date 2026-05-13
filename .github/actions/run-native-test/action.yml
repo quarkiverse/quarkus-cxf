@@ -20,6 +20,14 @@ runs:
         distribution: temurin
         java-version: ${{ inputs.java-version }}
 
+    - name: Cache ~/.m2/wrapper/dists
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/wrapper/dists
+        key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('.mvn/wrapper/maven-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-wrapper-
+
     - name: Detect local Maven repository directory 
       id: maven-m2
       shell: bash

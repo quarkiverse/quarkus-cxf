@@ -82,6 +82,14 @@ jobs:
         distribution: temurin
         java-version: ${{ env.JAVA_VERSION }}
 
+    - name: Cache ~/.m2/wrapper/dists
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/wrapper/dists
+        key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('.mvn/wrapper/maven-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-wrapper-
+
     - name: rebase-integration-branch
       uses: ./.github/actions/rebase-integration-branch
       id: rebase-integration-branch
