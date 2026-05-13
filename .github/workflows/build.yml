@@ -34,6 +34,14 @@ jobs:
         java-version: ${{ env.JAVA_VERSION }}
         cache: maven
 
+    - name: Cache ~/.m2/wrapper/dists
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/wrapper/dists
+        key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('.mvn/wrapper/maven-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-wrapper-
+
     - name: Detect CXF integration branch
       id: cxf-branch-info
       uses: ./.github/actions/integration-branch-info
@@ -100,6 +108,14 @@ jobs:
       with:
         distribution: ${{ matrix.javaDistro }}
         java-version: ${{ matrix.javaVersion }}
+
+    - name: Cache ~/.m2/wrapper/dists
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/wrapper/dists
+        key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('.mvn/wrapper/maven-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-wrapper-
 
     - name: Detect local Maven repository directory 
       id: maven-m2
