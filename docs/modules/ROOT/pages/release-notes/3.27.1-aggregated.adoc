@@ -65,7 +65,7 @@ See the ducumentation of the new options:
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1891[#1891] Implementations of `javax.wsdl.extensions.ExtensibilityElement` need to get registered for reflection
 
-Before {quarkus-cxf-project-name} 3.26.1, if the WSDL of a client contained elements from the `http://schemas.xmlsoap.org/wsdl/http/` namespace,
+Before {quarkus-cxf-project-name} 3.26.1, if the WSDL of a client contained elements from the `\http://schemas.xmlsoap.org/wsdl/http/` namespace,
 like in the following example
 
 [source,xml]
@@ -116,7 +116,7 @@ Caused by: java.lang.NoSuchMethodException: com.ibm.wsdl.extensions.http.HTTPBin
         ... 28 more
 ----
 
-Since {quarkus-cxf-project-name} 3.26.1, no classes related to the `http://schemas.xmlsoap.org/wsdl/http/` namespace
+Since {quarkus-cxf-project-name} 3.26.1, no classes related to the `\http://schemas.xmlsoap.org/wsdl/http/` namespace
 need to be registered for reflection by end users.
 
 Special thanks to https://github.com/quarkiverse/quarkus-cxf/discussions/1882[Lazaro Miguel Coronado Torres] for reporting this issue.
