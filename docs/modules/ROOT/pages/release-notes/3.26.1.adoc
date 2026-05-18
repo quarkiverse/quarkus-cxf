@@ -4,7 +4,7 @@
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1891[#1891] Implementations of `javax.wsdl.extensions.ExtensibilityElement` need to get registered for reflection
 
-Before {quarkus-cxf-project-name} 3.26.1, if the WSDL of a client contained elements from the `http://schemas.xmlsoap.org/wsdl/http/` namespace,
+Before {quarkus-cxf-project-name} 3.26.1, if the WSDL of a client contained elements from the `\http://schemas.xmlsoap.org/wsdl/http/` namespace,
 like in the following example
 
 [source,xml]
