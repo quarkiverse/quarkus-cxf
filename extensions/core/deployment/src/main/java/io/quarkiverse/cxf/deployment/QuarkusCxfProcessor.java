@@ -89,6 +89,7 @@ import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.GeneratedResourceBuildItem;
+import io.quarkus.deployment.builditem.GeneratedServiceProviderBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.RemovedResourceBuildItem;
 import io.quarkus.deployment.builditem.ShutdownContextBuildItem;
@@ -197,18 +198,17 @@ class QuarkusCxfProcessor {
     }
 
     @BuildStep
-    void generateRuntimeBusServiceFile(BuildProducer<GeneratedResourceBuildItem> generatedResources) {
+    void generateRuntimeBusServiceFile(BuildProducer<GeneratedServiceProviderBuildItem> generatedResources) {
         /*
          * If we simply stored io.quarkiverse.cxf.deployment.QuarkusBusFactory
          * to META-INF/services/org.apache.cxf.bus.factory in the runtime module
          * then it would be also visible for the deployment module, where we want to configure
          * the bus extensions differently
          */
-        byte[] serviceFileContent = QuarkusBusFactory.class.getName().getBytes(StandardCharsets.UTF_8);
         generatedResources.produce(
-                new GeneratedResourceBuildItem(
-                        "META-INF/services/" + BusFactory.BUS_FACTORY_PROPERTY_NAME,
-                        serviceFileContent));
+                new GeneratedServiceProviderBuildItem(
+                        BusFactory.BUS_FACTORY_PROPERTY_NAME,
+                        QuarkusBusFactory.class.getName()));
     }
 
     @BuildStep
