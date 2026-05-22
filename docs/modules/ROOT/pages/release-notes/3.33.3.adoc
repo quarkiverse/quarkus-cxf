@@ -1,0 +1,10 @@
+= {quarkus-cxf-project-name} 3.33.3 LTS release notes
+
+== Important dependency upgrades
+
+* Apache Neethi 3.2.1 -> 3.2.2 - https://www.cve.org/CVERecord?id=CVE-2026-42404[CVE-2026-42404],
+  https://www.cve.org/CVERecord?id=CVE-2026-42403[CVE-2026-42403] and https://www.cve.org/CVERecord?id=CVE-2026-42402[CVE-2026-42402] fixed.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.2+++...+++3.33.3
