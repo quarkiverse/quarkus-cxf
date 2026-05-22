@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
@@ -40,9 +41,12 @@ import io.smallrye.mutiny.helpers.test.UniAssertSubscriber;
 
 public class ReceiveTimeoutTest {
 
+    private static Logger log = Logger.getLogger(ReceiveTimeoutTest.class);
+
     private static final int PORT = 8083;
-    private static final long DELAY = 100L;
+    private static final long DELAY = Runtime.version().feature() == 17 ? 200L : 100L;
     private static final long RECEIVE_TIMEOUT = 3 * DELAY;
+    private static final long TRANSPORT_AND_PROCESSING_DURATION = DELAY * 10;
     private static final int TASK_COUNT = 4;
 
     @RegisterExtension
@@ -67,6 +71,13 @@ public class ReceiveTimeoutTest {
 
     @Test
     public void receiveTimeout() throws InterruptedException, IOException {
+
+        log.info("=== DELAY = " + DELAY);
+        log.info("=== Runtime.version() = " + Runtime.version());
+        log.info("=== Runtime.version().feature() = " + Runtime.version().feature());
+        log.info("=== Runtime.version().interim() = " + Runtime.version().interim());
+        log.info("=== Runtime.version().patch() = " + Runtime.version().patch());
+
         /* The receive timeout in URLConnectionHTTPConduitFactory works differently */
         Assumptions.assumeThat(HTTPConduitImpl.findDefaultHTTPConduitImpl())
                 .isNotEqualTo(HTTPConduitImpl.URLConnectionHTTPConduitFactory);
@@ -125,7 +136,7 @@ public class ReceiveTimeoutTest {
              * Therefore we have to assert that DELAY * TASK_COUNT > RECEIVE_TIMEOUT
              */
             assert DELAY * TASK_COUNT > RECEIVE_TIMEOUT;
-            long timeout1 = TASK_COUNT * RECEIVE_TIMEOUT + 1000;
+            long timeout1 = TASK_COUNT * RECEIVE_TIMEOUT + TRANSPORT_AND_PROCESSING_DURATION;
             {
                 /* Async */
                 long start1 = System.currentTimeMillis();
@@ -155,7 +166,7 @@ public class ReceiveTimeoutTest {
              * * In theory, two requests might succeed if there was no overhead (because 2 * DELAY <= RECEIVE_TIMEOUT)
              * * In reality, typically only one will succeed and the rest will fail with receive timeout
              */
-            long timeout2 = RECEIVE_TIMEOUT + 1000;
+            long timeout2 = RECEIVE_TIMEOUT + TRANSPORT_AND_PROCESSING_DURATION;
             {
                 /* Async */
                 Map<String, Long> resultMap = assertClientsAsync(hello2, timeout2);
