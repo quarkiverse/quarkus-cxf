@@ -145,7 +145,7 @@ Insert it in the correct position to maintain descending version order.
 
 Edit `docs/modules/ROOT/pages/release-notes/index.adoc`. Add a new row in the table, maintaining version-descending order within the appropriate minor version group.
 
-Format: `| xref:release-notes/<version>.adoc[<version>] | <today's date YYYY-MM-DD> | | <cxf-version>`
+Format: `| xref:release-notes/<version>.adoc[<version>] | <date in YYYY-MM-DD format, when the release was tagged> | | <cxf-version>`
 
 - `<cxf-version>` is the value of `cxf.version` property in the project's `pom.xml` top level directory.
 - Add `LTS` suffix to the version label if applicable
