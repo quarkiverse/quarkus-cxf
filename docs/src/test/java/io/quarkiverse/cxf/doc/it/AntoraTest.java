@@ -78,7 +78,13 @@ public class AntoraTest {
 
         linkStream
                 .validate()
-                .ignore(err -> ignorables.contains(err.uri().resolvedUri()))
+                .ignore(err -> ignorables.contains(err.uri().resolvedUri())
+                        // temporary workaround for getting random 404s
+                        || err.uri().resolvedUri().contains("camel.apache.org")
+                        || (
+                        // https://www.w3.org/ sometimes returns 403 on GH Actions
+                        err.uri().resolvedUri().startsWith("https://www.w3.org")
+                                && err.statusCode() == 403))
                 .assertValid();
 
     }
