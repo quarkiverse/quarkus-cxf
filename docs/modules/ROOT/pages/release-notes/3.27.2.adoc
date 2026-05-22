@@ -1,8 +1,15 @@
-= {quarkus-cxf-project-name} 3.33.2 LTS release notes
+= {quarkus-cxf-project-name} 3.27.2 LTS release notes
 
 == Important dependency upgrades
 
-* Apache HTTP Client 5.5.1 -> 5.5.2
+* Quarkus 3.27.0 -> 3.27.3.1
+** https://quarkus.io/blog/quarkus-3-27-3-released/[Release notes 3.27.3]
+*** Fixes https://nvd.nist.gov/vuln/detail/CVE-2026-1002[CVE-2026-1002] and https://nvd.nist.gov/vuln/detail/CVE-2025-33042[CVE-2025-33042]
+** https://quarkus.io/blog/CVE-2026-39852/[Release notes 3.27.3.1]
+*** Fixes https://github.com/quarkusio/quarkus/security/advisories/GHSA-rc95-pcm8-65v9[CVE-2026-39852]
+* Apache CXF 4.1.3 -> 4.1.4 - link:https://github.com/apache/cxf/compare/cxf-4.1.3+++...+++cxf-4.1.4[changelog]
+* Apache Neethi 3.2.1 -> 3.2.2 - https://www.cve.org/CVERecord?id=CVE-2026-42404[CVE-2026-42404],
+  https://www.cve.org/CVERecord?id=CVE-2026-42403[CVE-2026-42403] and https://www.cve.org/CVERecord?id=CVE-2026-42402[CVE-2026-42402] fixed.
 
 == Bugfixes
 
@@ -27,10 +34,6 @@ Service service = Service.create(serviceUrl, qName);
 MyService myClient = service.getPort(MyService.class);
 ----
 
-We used this code ourselves in our integration tests.
-The same code is used by `QuarkusCxfTestUtil.getClient(...)` methods that we exposed for public usage in
-xref:release-notes/3.33.0.adoc#_2064_quarkuscxftestutil_a_new_utility_for_testing_quarkus_cxf[{quarkus-cxf-project-name} 3.33.0].
-
 The issue https://github.com/quarkiverse/quarkus-cxf/issues/2060[#2060] popped up in our MTOM integration test,
 which spawns many SOAP clients to perform some soak testing.
 When the number of clients went over certain threshold, the clients started failing due to underlying HTTP connections being closed.
@@ -41,19 +44,6 @@ Since {quarkus-cxf-project-name} 3.35.0, 3.33.2 and 3.27.2, even clients created
 `jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)` are using `URLConnectionHTTPConduit` instead of `HttpClientHTTPConduit`.
 As a consequence of that, no issues with connection pooling should occur.
 
-=== `IllegalFormatConversionException` in a debug log statement in `CxfMutinyUtils`
-
-Before {quarkus-cxf-project-name} 3.35.0 and 3.33.2, a debug log statement in `CxfMutinyUtils` used a `%d` format to log
-a non-number object, which could cause a `java.util.IllegalFormatConversionException` at runtime.
-Since {quarkus-cxf-project-name} 3.35.0 and 3.33.2, the correct `%s` format specifier is used.
-
-=== Stop warning about non-loadable CXF Bus extensions at build time
-
-Before {quarkus-cxf-project-name} 3.35.0 and 3.33.2, non-loadable CXF Bus extensions were logged at `WARN` level at build time.
-The `WARN` level is not appropriate, because some missing classes are expected at build time,
-due to exclusion of some transitive dependencies from CXF.
-Since {quarkus-cxf-project-name} 3.35.0 and 3.33.2, those messages are logged at `DEBUG` level.
-
 == Full changelog
 
-https://github.com/quarkiverse/quarkus-cxf/compare/3.33.1+++...+++3.33.2
+https://github.com/quarkiverse/quarkus-cxf/compare/3.27.1+++...+++3.27.2

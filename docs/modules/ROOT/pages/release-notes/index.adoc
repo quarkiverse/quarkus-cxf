@@ -23,7 +23,7 @@ Those are typically released on Wednesday following the {quarkus-cxf-project-nam
 | xref:release-notes/3.35.1.adoc[3.35.1] | 2026-04-27 | 3.35.0 | 4.2.0
 | xref:release-notes/3.35.0.adoc[3.35.0] | 2026-04-20 | | 4.2.0
 
-| xref:release-notes/3.33.3.adoc[3.33.3 LTS] | 2026-05-22 | | 4.1.5
+| xref:release-notes/3.33.3.adoc[3.33.3 LTS] | 2026-05-13 | 3.33.2 | 4.1.5
 | xref:release-notes/3.33.2.adoc[3.33.2 LTS] | 2026-04-20 | | 4.1.5
 | xref:release-notes/3.33.1.adoc[3.33.1 LTS] | 2026-03-31 | 3.33.1 | 4.1.5
 | xref:release-notes/3.33.0.adoc[3.33.0 LTS] | 2026-03-18 | 3.33.0 | 4.1.5
@@ -39,6 +39,7 @@ Those are typically released on Wednesday following the {quarkus-cxf-project-nam
 
 | xref:release-notes/3.29.0.adoc[3.29.0] | 2025-10-23 | 3.29.0 | 4.1.3
 
+| xref:release-notes/3.27.2.adoc[3.27.2 LTS] | 2026-05-13 | 3.27.4 | 4.1.4
 | xref:release-notes/3.27.1-aggregated.adoc[3.27.1 LTS aggregated since 3.20.2] | | |
 | xref:release-notes/3.27.1.adoc[3.27.1 LTS] | 2025-09-30 | 3.27.1 | 4.1.3
 | xref:release-notes/3.27.0.adoc[3.27.0 LTS] | 2025-09-17 | 3.27.0 | 4.1.3

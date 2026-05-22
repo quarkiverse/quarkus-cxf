@@ -40,7 +40,7 @@ When the number of clients went over certain threshold, the clients started fail
 This is another known issue of JDK HTTP client: no external control over its internal connection pool is possible.
 Therefore it may happen that the connections get closed while SOAP clients, possibly running in parallel threads still use them.
 
-Since {quarkus-cxf-project-name} 3.35.0 and 3.33.2, even clients created programmatically via
+Since {quarkus-cxf-project-name} 3.35.0, 3.33.2 and 3.27.2, even clients created programmatically via
 `jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)` are using `URLConnectionHTTPConduit` instead of `HttpClientHTTPConduit`.
 As a consequence of that, no issues with connection pooling should occur.
 
