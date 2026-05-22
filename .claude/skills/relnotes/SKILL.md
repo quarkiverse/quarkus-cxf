@@ -78,14 +78,29 @@ Also list PRs merged between the two tags:
 gh pr list --repo quarkiverse/quarkus-cxf --state merged --search "merged:$(git log -1 --format=%ci <previous-version> | cut -d' ' -f1)..$(git log -1 --format=%ci <version> | cut -d' ' -f1)" --limit 100
 ```
 
-### 4. Check existing release notes for style
+### 4. Check existing release notes for style and structure of the document
 
-Read the 2-3 most recent release notes files in `docs/modules/ROOT/pages/release-notes/` to match their style. The format follows these conventions:
+Read the following release note documents to learn the style:
+
+* `docs/modules/ROOT/pages/release-notes/3.31.1.adoc`
+* `docs/modules/ROOT/pages/release-notes/3.31.0.adoc`
+* `docs/modules/ROOT/pages/release-notes/3.30.0.adoc`
+* `docs/modules/ROOT/pages/release-notes/3.29.0.adoc`
+* `docs/modules/ROOT/pages/release-notes/3.27.1.adoc`
+* `docs/modules/ROOT/pages/release-notes/3.27.0.adoc`
+
+The format follows these conventions:
 
 - **Title**: `= {quarkus-cxf-project-name} <version> release notes` (add `LTS` suffix for LTS releases — versions in LTS streams like 3.8.x, 3.15.x, 3.20.x, 3.27.x, 3.33.x)
 - **Sections** (include only those that apply):
-  - `== Important dependency upgrades` — bullet list of upgraded dependencies with links to their release notes
-  - `== Enhancements` — for new features or enhancements, each as a `===` subsection. Link GitHub issues in the heading like `=== https://github.com/quarkiverse/quarkus-cxf/issues/NNN[#NNN] Title`
+  - `== Important dependency upgrades` — bullet list of upgraded dependencies. Each upgrade should contain:
+    - A link to release notes
+      - Look into older release notes under `docs/modules/ROOT/pages/release-notes/` to figure out where the given 
+        project publishes their release notes and try to find the release notes for the version we upgraded to.
+      - If needed you can also search on the internet for the specific dependency release 
+    - A link to changelog in, typically `https://github.com/<org>/<project>/compare/<old-version>+++...+++<new-version>`
+    - If there were security vulnerabilities fixed in the given dependency, list them along with links to the CVE database.
+  - `== Enhancements` — for new features or enhancements, each as a `===` subsection. Link GitHub issues in the heading like `=== https://github.com/quarkiverse/quarkus-cxf/issues/<issue-number>[#issue-number] <issue-title>`
   - `== Bugfixes` — bug fixes, each as a `===` subsection with issue links
   - `== Deprecations` — deprecated features
   - `== Breaking changes` — if any
@@ -115,12 +130,12 @@ Read the 2-3 most recent release notes files in `docs/modules/ROOT/pages/release
 ### 5. Write the release notes file
 
 Write the file to `docs/modules/ROOT/pages/release-notes/<version>.adoc`.
-
-Before writing, show the user a draft of the release notes content and ask for approval or edits.
+Do not ask the user whether the file can be create or updated, just create and/or update the file however you need.
 
 ### 6. Update nav.adoc
 
-Edit `docs/modules/ROOT/nav.adoc`. Add a new entry in the release notes section, maintaining version-descending order. The entry goes after the `ifeval::[{doc-is-main} == true]` line, among the other `** xref:release-notes/...` entries.
+Edit `docs/modules/ROOT/nav.adoc`. Add a new entry in the release notes section, maintaining version-descending order. 
+The entry goes after the `ifeval::[{doc-is-main} == true]` line, among the other `** xref:release-notes/...` entries.
 
 Format: `** xref:release-notes/<version>.adoc[<version>]` (add ` LTS` suffix if applicable).
 
@@ -137,8 +152,28 @@ Format: `| xref:release-notes/<version>.adoc[<version>] | <today's date YYYY-MM-
 - Leave the Quarkus Platform column empty initially — ask the user if they know the values, otherwise leave them blank for now
 - Group the entry with other releases of the same minor version (e.g., 3.33.x entries are together)
 
-### 8. Summary
+### 8. Adapt `AntoraTest.java` if this is a `.0` release
 
-Report what was created and updated. Remind the user to:
-- Review the generated release notes for accuracy
-- Fill in the Quarkus Platform version column in index.adoc if left empty
+If this is a `.0` release, change the following part of `docs/src/test/java/io/quarkiverse/cxf/doc/it/AntoraTest.java`:
+
+```java
+        final ZonedDateTime deadline = ZonedDateTime.parse("<yyyy>-<mm>-<tt>T23:59:59+01:00[Europe/Paris]");
+        if (ZonedDateTime.now(ZoneId.of("Europe/Paris")).isBefore(deadline)) {
+            ignorables.add("https://quarkus.io/blog/quarkus-<quarkus-major-version>-<quarkus-major-version>-released/");
+            //ignorables.add("https://quarkus.io/guides/proxy-registry");
+        }
+```
+
+* Set `deadline` date to the Thursday next week
+* Set `<quarkus-major-version>` and `<quarkus-major-version>` to match the Quarkus version 
+  as in the `quarkus.version` property of the top level `pom.xml` file in the git source tree.
+
+### 8. Commit the changes
+
+Commit the changes in a new topi branch using:
+
+```bash
+git checkout -b "$(date +%y%m%d)-release-notes<version>"
+git add -A
+git commit -m "<version> release notes"
+```
