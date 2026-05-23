@@ -43,7 +43,7 @@
     <properties>
         <!-- Primary dependencies -->
         <quarkus.version>3.33.1</quarkus.version>
-        <cxf.version>4.1.5</cxf.version>
+        <cxf.version>4.1.6</cxf.version>
         <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
         <quarkus-antora.version>3.25.0</quarkus-antora.version>
 
@@ -54,12 +54,12 @@
         <cli-assured.version>0.0.1</cli-assured.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version><!-- Transitive of org.jvnet.jaxb:jaxb-plugins -->
         <commons-collections.version>3.2.2</commons-collections.version>
-        <cxf.xjcplugins.version>4.1.2</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
+        <cxf.xjcplugins.version>4.1.3</cxf.xjcplugins.version><!-- @sync org.apache.cxf:cxf:${cxf.version} prop:cxf.xjc-utils.version -->
         <ehcache.version>3.11.1</ehcache.version>
         <fastinfoset.version>2.1.1</fastinfoset.version>
         <glassfish.jaxb.version>4.0.6</glassfish.jaxb.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.glassfish.jaxb:jaxb-runtime -->
         <jakarta.xml.soap-api.version>3.0.2</jakarta.xml.soap-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.soapapi.version -->
-        <jakarta.xml.ws-api.version>4.0.2</jakarta.xml.ws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.wsapi.version -->
+        <jakarta.xml.ws-api.version>4.0.3</jakarta.xml.ws-api.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.jakarta.wsapi.version -->
         <jasypt.version>1.9.3</jasypt.version><!-- @sync org.apache.wss4j:wss4j-parent:${wss4j.version} prop:jasypt.version -->
         <jaxb-plugins.version>4.0.14</jaxb-plugins.version>
         <jcache.version>1.1.1</jcache.version>
@@ -68,7 +68,7 @@
         <neethi.version>3.2.2</neethi.version><!-- Let renovate do upgrades independently of org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
         <mimepull.version>1.10.0</mimepull.version>
         <rest-assured.version>5.5.6</rest-assured.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.rest-assured:rest-assured -->
-        <saaj-impl.version>3.0.4</saaj-impl.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.saaj-impl.version -->
+        <saaj-impl.version>3.0.5</saaj-impl.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.saaj-impl.version -->
         <santuario-xmlsec.version>4.0.4</santuario-xmlsec.version>
 
         <slf4j.version>2.0.17</slf4j.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.slf4j:slf4j-api -->
@@ -310,7 +310,7 @@
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence />
+                                <dependencyConvergence/>
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
