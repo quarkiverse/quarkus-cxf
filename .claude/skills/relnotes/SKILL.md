@@ -1,8 +1,8 @@
 ---
 name: relnotes
 description: Create release notes for a specific Quarkus CXF release version. 
-Usage: /relnotes <version> (e.g., /release-notes 3.33.2)
-  or /relnotes <version> <previous-version> (e.g., /release-notes 3.35.0 3.33.1)
+Usage: /relnotes <version> (e.g., /relnotes 3.33.2)
+  or /relnotes <version> <previous-version> (e.g., /relnotes 3.35.0 3.33.1)
 ---
 
 # Release Notes Skill
@@ -168,9 +168,9 @@ If this is a `.0` release, change the following part of `docs/src/test/java/io/q
 * Set `<quarkus-major-version>` and `<quarkus-major-version>` to match the Quarkus version 
   as in the `quarkus.version` property of the top level `pom.xml` file in the git source tree.
 
-### 8. Commit the changes
+### 9. Commit the changes
 
-Commit the changes in a new topi branch using:
+Commit the changes in a new topic branch using:
 
 ```bash
 git checkout -b "$(date +%y%m%d)-release-notes<version>"
