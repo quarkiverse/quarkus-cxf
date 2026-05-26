@@ -2,7 +2,8 @@
 
 == Important dependency upgrades
 
-* Apache HTTP Client 5.5.1 -> 5.5.2
+* Apache HTTP Client 5.5.1 -> 5.5.2 - https://downloads.apache.org/httpcomponents/httpclient/RELEASE_NOTES-5.5.x.txt[release notes],
+  https://github.com/apache/httpcomponents-client/compare/rel/v5.5.1+++...+++rel/v5.5.2[changelog]
 
 == Bugfixes
 

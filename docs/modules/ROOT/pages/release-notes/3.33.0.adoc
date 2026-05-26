@@ -11,8 +11,9 @@
 === https://github.com/quarkiverse/quarkus-cxf/issues/2064[#2064] `QuarkusCxfTestUtil` - a new utility for testing {quarkus-cxf-project-name}
 
 `QuarkusCxfTestUtil` offers static methods to create a SOAP client for testing.
-This is handy especially in native mode, where injecting
-http://localhost:8080/quarkus-cxf/dev/user-guide/first-soap-client.html#_using_sei_as_a_client[client beans] to test classes is not possible.
+This is handy especially in native mode tests (having `@io.quarkus.test.junit.QuarkusIntegrationTest` annotation),
+where injecting http://localhost:8080/quarkus-cxf/dev/user-guide/first-soap-client.html#_using_sei_as_a_client[client beans]
+to test classes is not possible.
 
 `QuarkusCxfTestUtil` is hosted by a new artifact `io.quarkiverse.cxf:quarkus-cxf-test-util`
 that is managed in `quarkus-cxf-bom`.

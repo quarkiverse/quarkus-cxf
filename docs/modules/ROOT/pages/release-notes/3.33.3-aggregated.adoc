@@ -1,0 +1,173 @@
+= Aggregated {quarkus-cxf-project-name} release notes 3.27.2 LTS -> 3.33.3 LTS
+
+This document may help when upgrading from the 3.27 LTS stream to 3.33 LTS stream.
+
+== Important dependency upgrades
+
+* Quarkus 3.27.x -> 3.33.x
+** https://quarkus.io/blog/quarkus-3-29-released/[Quarkus 3.29 release notes]
+** https://quarkus.io/blog/quarkus-3-30-released/[Quarkus 3.30 release notes]
+** https://quarkus.io/blog/quarkus-3-31-released/[Quarkus 3.31 release notes]
+** https://quarkus.io/blog/quarkus-3-32-released/[Quarkus 3.32 release notes]
+** https://quarkus.io/blog/quarkus-3-33-released/[Quarkus 3.33 release notes]
+* CXF 4.1.4 -> 4.1.5 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.1.4+++...+++cxf-4.1.5[changelog]
+* Apache CXF XJC plugins 4.1.1 -> 4.1.2 - link:https://github.com/apache/cxf-xjc-utils/compare/xjc-utils-4.1.1+++...+++xjc-utils-4.1.2[changelog]
+* Apache WSS4J 4.0.0 -> 4.0.1 - https://github.com/apache/ws-wss4j/releases/tag/wss4j-4.0.1[release notes]
+* Apache Neethi 3.2.1 -> 3.2.2 - https://www.cve.org/CVERecord?id=CVE-2026-42404[CVE-2026-42404],
+  https://www.cve.org/CVERecord?id=CVE-2026-42403[CVE-2026-42403] and https://www.cve.org/CVERecord?id=CVE-2026-42402[CVE-2026-42402] fixed.
+* Apache HTTP Client 5.5.1 -> 5.5.2 - https://downloads.apache.org/httpcomponents/httpclient/RELEASE_NOTES-5.5.x.txt[release notes],
+  https://github.com/apache/httpcomponents-client/compare/rel/v5.5.1+++...+++rel/v5.5.2[changelog]
+* JAXB Plugins 4.0.11 -> 4.0.12 - https://github.com/highsource/jaxb-tools/releases/tag/4.0.12[release notes]
+
+== Enhancements
+
+=== New keep alive configuration options
+
+These new options control the time duration after which inactive HTTP client connections are closed.
+Refer to their respective documentation for more details:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http2-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http2-keep-alive-timeout]`
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1943[#1943] Configure HTTP or SOCKS proxies via Quarkus Proxy Registry
+
+Since {quarkus-cxf-project-name} 3.31.0, CXF clients can use proxy settings defined via `quarkus.proxy.*` options.
+
+Refer to the following resources for more details:
+
+* https://quarkus.io/guides/proxy-registry[Quarkus Proxy registry guide]
+* Documentation of the new `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]` configuration option
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2064[#2064] `QuarkusCxfTestUtil` - a new utility for testing {quarkus-cxf-project-name}
+
+`QuarkusCxfTestUtil` offers static methods to create a SOAP client for testing.
+This is handy especially in native mode tests (having `@io.quarkus.test.junit.QuarkusIntegrationTest` annotation),
+where injecting http://localhost:8080/quarkus-cxf/dev/user-guide/first-soap-client.html#_using_sei_as_a_client[client beans]
+to test classes is not possible.
+
+`QuarkusCxfTestUtil` is hosted by a new artifact `io.quarkiverse.cxf:quarkus-cxf-test-util`
+that is managed in `quarkus-cxf-bom`.
+
+Here is an example `QuarkusCxfTestUtil` usage:
+
+[source,java]
+----
+import io.quarkiverse.cxf.test.QuarkusCxfTestUtil;
+import org.assertj.core.api.Assertions;
+...
+HelloService helloClient = QuarkusCxfTestUtil.getClient(
+        "https://acme.org/hello", // the target namespace of HelloService
+                                  // can be omitted if HelloService class
+                                  // is annotated with @WebService(targetNamespace="...")
+        HelloService.class, // the service endpoint interface (SEI)
+        "/services/hello" // the path to append to base URL on which Quarkus test instance is listening
+    );
+
+Assertions.assertThat(helloClient.hello("Dolly"))
+        .isEqualTo("Hello Dolly!");
+----
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2058[#2058] Java 25 support
+
+Java 25 is now tested and officially supported.
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1997[#1997] Vert.x-based SOAP client cannot communicate with HTTP/2-only server
+
+Before {quarkus-cxf-project-name} 3.31.0, when a SOAP client using the default `VertxHttpClientHTTPConduitFactory`
+and having `quarkus.cxf.client."client-name".version = 2`
+communicated with a HTTP/2-only server,
+the server hung up unexpectedly in the middle of the conversation.
+This was caused by the fact that the client was sending the `Connection` header which is not compliant with HTTP/2.
+Since {quarkus-cxf-project-name} 3.31.0, the client is not sending the `Connection` header if the protocol is HTTP/2.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/1945[#1945] `ClassNotFoundException: org.springframework.beans.BeansException` during native compilation
+
+Before {quarkus-cxf-project-name} 3.31.0, when an application depended on both
+`io.quarkiverse.cxf:quarkus-cxf-rt-ws-security` and `io.quarkus:quarkus-messaging-kafka`
+then the native compilation failed with the named error.
+Since {quarkus-cxf-project-name} 3.31.0, the CXF code referencing Spring classes is eliminated at build time using bytecode transformation.
+
+=== Start measuring receive timeout after the HTTP connection is ready
+
+Before {quarkus-cxf-project-name} 3.33.0, when using the default `VertxHttpClientHTTPConduit`,
+the measurement of the receive timeout defined via
+`xref:/reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-receive-timeout[quarkus.cxf.client."client-name".receive-timeout]`
+started when the request was queued for a free connection.
+As a consequence of that, the receive time span may have overlapped the connect time span
+and receive timeouts may have come earlier than expected.
+
+Since {quarkus-cxf-project-name} 3.33.0, the receive timeout is measured starting from
+when the HTTP connection is ready, rather than from when the request is created
+and queued for a free connection.
+This provides more accurate receive timeout behavior.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2060[#2060] Avoid using `HttpClientHTTPConduit` even for clients created via `jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)`
+
+`HttpClientHTTPConduit` provided by CXF has had known issues, due to which we deprecated the `HttpClientHTTPConduitFactory` value of
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
+and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
+options in xref:release-notes/3.18.0.adoc#issue_1633_httpclienthttpconduitfactory_value_deprecated[3.18.0 release].
+We removed the `HttpClientHTTPConduitFactory` value in
+xref:release-notes/3.22.0.adoc#_remove_httpclienthttpconduitfactory_value_of_http_conduit_factory[{quarkus-cxf-project-name} 3.22.0].
+So after 3.22.0 it was not possible to xref:user-guide/first-soap-client.adoc[create an injected SOAP client]
+via {quarkus-cxf-project-name} `application.properties` configuration that would use `HttpClientHTTPConduit` and JDK HTTP Client under the hood.
+
+However, even after {quarkus-cxf-project-name} 3.22.0 it was still possible to programmatically create SOAP clients using `HttpClientHTTPConduit` as follows:
+
+[source,java]
+----
+URL serviceUrl = ...;
+QName qName = ...
+Service service = Service.create(serviceUrl, qName);
+MyService myClient = service.getPort(MyService.class);
+----
+
+We used this code ourselves in our integration tests.
+The same code is used by `QuarkusCxfTestUtil.getClient(...)` methods that we exposed for public usage in
+xref:release-notes/3.33.0.adoc#_2064_quarkuscxftestutil_a_new_utility_for_testing_quarkus_cxf[{quarkus-cxf-project-name} 3.33.0].
+
+The issue https://github.com/quarkiverse/quarkus-cxf/issues/2060[#2060] popped up in our MTOM integration test,
+which spawns many SOAP clients to perform some soak testing.
+When the number of clients went over certain threshold, the clients started failing due to underlying HTTP connections being closed.
+This is another known issue of JDK HTTP client: no external control over its internal connection pool is possible.
+Therefore it may happen that the connections get closed while SOAP clients, possibly running in parallel threads still use them.
+
+Since {quarkus-cxf-project-name} 3.33.2, even clients created programmatically via
+`jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)` are using `URLConnectionHTTPConduit` instead of `HttpClientHTTPConduit`.
+As a consequence of that, no issues with connection pooling should occur.
+
+=== `IllegalFormatConversionException` in a debug log statement in `CxfMutinyUtils`
+
+Before {quarkus-cxf-project-name} 3.33.2, a debug log statement in `CxfMutinyUtils` used a `%d` format to log
+a non-number object, which could cause a `java.util.IllegalFormatConversionException` at runtime.
+Since {quarkus-cxf-project-name} 3.33.2, the correct `%s` format specifier is used.
+
+=== Stop warning about non-loadable CXF Bus extensions at build time
+
+Before {quarkus-cxf-project-name} 3.33.2, non-loadable CXF Bus extensions were logged at `WARN` level at build time.
+The `WARN` level is not appropriate, because some missing classes are expected at build time,
+due to exclusion of some transitive dependencies from CXF.
+Since {quarkus-cxf-project-name} 3.33.2, those messages are logged at `DEBUG` level.
+
+== Deprecations
+
+=== Old proxy configuration options deprecated
+
+Since {quarkus-cxf-project-name} 3.31.0,
+CXF clients can use proxy settings defined via `quarkus.proxy.*` options or refer to those via
+new `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]` configuration option.
+
+Therefore, the following proxy configuration options are deprecated since {quarkus-cxf-project-name} 3.31.0
+and will be removed in {quarkus-cxf-project-name} 4.0.0:
+
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`#
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port[quarkus.cxf.client."client-name".proxy-server-port]`#
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts[quarkus.cxf.client."client-name".non-proxy-hosts]`#
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-type[quarkus.cxf.client."client-name".proxy-server-type]`#
+* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`#
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.27.2+++...+++3.33.3
