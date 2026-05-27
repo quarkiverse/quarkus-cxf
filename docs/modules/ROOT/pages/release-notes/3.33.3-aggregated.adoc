@@ -36,19 +36,19 @@ Since {quarkus-cxf-project-name} 3.31.0, CXF clients can use proxy settings defi
 Refer to the following resources for more details:
 
 * https://quarkus.io/guides/proxy-registry[Quarkus Proxy registry guide]
-* Documentation of the new `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]` configuration option
+* Documentation of the the option `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/2064[#2064] `QuarkusCxfTestUtil` - a new utility for testing {quarkus-cxf-project-name}
 
 `QuarkusCxfTestUtil` offers static methods to create a SOAP client for testing.
-This is handy especially in native mode tests (having `@io.quarkus.test.junit.QuarkusIntegrationTest` annotation),
+This is useful in native mode tests (having `@io.quarkus.test.junit.QuarkusIntegrationTest` annotation),
 where injecting http://localhost:8080/quarkus-cxf/dev/user-guide/first-soap-client.html#_using_sei_as_a_client[client beans]
 to test classes is not possible.
 
 `QuarkusCxfTestUtil` is hosted by a new artifact `io.quarkiverse.cxf:quarkus-cxf-test-util`
 that is managed in `quarkus-cxf-bom`.
 
-Here is an example `QuarkusCxfTestUtil` usage:
+The following is an example `QuarkusCxfTestUtil` usage:
 
 [source,java]
 ----
@@ -69,7 +69,7 @@ Assertions.assertThat(helloClient.hello("Dolly"))
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/2058[#2058] Java 25 support
 
-Java 25 is now tested and officially supported.
+Java 25 is now supported.
 
 == Bugfixes
 
@@ -105,7 +105,7 @@ This provides more accurate receive timeout behavior.
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/2060[#2060] Avoid using `HttpClientHTTPConduit` even for clients created via `jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)`
 
-`HttpClientHTTPConduit` provided by CXF has had known issues, due to which we deprecated the `HttpClientHTTPConduitFactory` value of
+`HttpClientHTTPConduit` provided by CXF has had known issues, so we deprecated the `HttpClientHTTPConduitFactory` value of
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
 and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
 options in xref:release-notes/3.18.0.adoc#issue_1633_httpclienthttpconduitfactory_value_deprecated[3.18.0 release].
@@ -132,7 +132,7 @@ The issue https://github.com/quarkiverse/quarkus-cxf/issues/2060[#2060] popped u
 which spawns many SOAP clients to perform some soak testing.
 When the number of clients went over certain threshold, the clients started failing due to underlying HTTP connections being closed.
 This is another known issue of JDK HTTP client: no external control over its internal connection pool is possible.
-Therefore it may happen that the connections get closed while SOAP clients, possibly running in parallel threads still use them.
+Connections may get closed while SOAP clients still use them, possibly running in parallel threads.
 
 Since {quarkus-cxf-project-name} 3.33.2, even clients created programmatically via
 `jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)` are using `URLConnectionHTTPConduit` instead of `HttpClientHTTPConduit`.
@@ -157,7 +157,7 @@ Since {quarkus-cxf-project-name} 3.33.2, those messages are logged at `DEBUG` le
 
 Since {quarkus-cxf-project-name} 3.31.0,
 CXF clients can use proxy settings defined via `quarkus.proxy.*` options or refer to those via
-new `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]` configuration option.
+the option `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`.
 
 Therefore, the following proxy configuration options are deprecated since {quarkus-cxf-project-name} 3.31.0
 and will be removed in {quarkus-cxf-project-name} 4.0.0:

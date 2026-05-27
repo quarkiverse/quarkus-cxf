@@ -15,7 +15,7 @@
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/2060[#2060] Avoid using `HttpClientHTTPConduit` even for clients created via `jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)`
 
-`HttpClientHTTPConduit` provided by CXF has had known issues, due to which we deprecated the `HttpClientHTTPConduitFactory` value of
+`HttpClientHTTPConduit` provided by CXF has had known issues, so we deprecated the `HttpClientHTTPConduitFactory` value of
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-http-conduit-factory[quarkus.cxf.http-conduit-factory]`
 and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-http-conduit-factory[quarkus.cxf.client."client-name".http-conduit-factory]`
 options in xref:release-notes/3.18.0.adoc#issue_1633_httpclienthttpconduitfactory_value_deprecated[3.18.0 release].
@@ -38,7 +38,7 @@ The issue https://github.com/quarkiverse/quarkus-cxf/issues/2060[#2060] popped u
 which spawns many SOAP clients to perform some soak testing.
 When the number of clients went over certain threshold, the clients started failing due to underlying HTTP connections being closed.
 This is another known issue of JDK HTTP client: no external control over its internal connection pool is possible.
-Therefore it may happen that the connections get closed while SOAP clients, possibly running in parallel threads still use them.
+Connections may get closed while SOAP clients still use them, possibly running in parallel threads.
 
 Since {quarkus-cxf-project-name} 3.35.0, 3.33.2 and 3.27.2, even clients created programmatically via
 `jakarta.xml.ws.Service.create(URL, QName).getPort(MyService.class)` are using `URLConnectionHTTPConduit` instead of `HttpClientHTTPConduit`.

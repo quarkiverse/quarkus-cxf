@@ -24,7 +24,7 @@ Since {quarkus-cxf-project-name} 3.31.0, CXF clients can use proxy settings defi
 Refer to the following resources for more details:
 
 * https://quarkus.io/guides/proxy-registry[Quarkus Proxy registry guide]
-* Documentation of the new `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]` configuration option
+* Documentation of the the option `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
 
 Special thanks to Erik Åsén for seeding the idea of global Quarkus Proxy settings by
 https://github.com/quarkiverse/quarkus-cxf/issues/1943[requesting it for all CXF clients].
@@ -35,7 +35,7 @@ https://github.com/quarkiverse/quarkus-cxf/issues/1943[requesting it for all CXF
 
 As mentioned above, since {quarkus-cxf-project-name} 3.31.0,
 CXF clients can use proxy settings defined via `quarkus.proxy.*` options or refer to those via
-new `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]` configuration option.
+the option `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`.
 
 Therefore, the original proxy configuration options are deprecated since {quarkus-cxf-project-name} 3.31.0
 and will be removed in {quarkus-cxf-project-name} 4.0.0:

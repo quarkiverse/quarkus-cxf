@@ -53,7 +53,7 @@ The format follows these conventions:
 ### 4. Write the release notes file
 
 Write the file to `docs/modules/ROOT/pages/release-notes/<current-lts-version>-aggregated.adoc`.
-Do not ask the user whether the file can be create or updated, just create and/or update the file however you need.
+Do not ask the user whether the file can be created or updated, just create and/or update the file however you need.
 
 ### 5. Update nav.adoc
 
