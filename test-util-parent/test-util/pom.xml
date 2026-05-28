@@ -13,7 +13,6 @@
     <name>Quarkus CXF - Test Utilities</name>
     <description>Test utilities intended for developers implementing applications on top of Quarkus CXF</description>
 
-
     <properties>
         <!-- Allow running our tests against alternative BOMs, such as io.quarkus.platform:quarkus-cxf-bom -->
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>

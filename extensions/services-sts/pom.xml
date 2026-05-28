@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-services-sts-parent</artifactId>
-    <name>Quarkus CXF - Security Token Service (STS) - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - Security Token Service (STS) - Parent</name>
 
     <modules>
         <module>deployment</module>

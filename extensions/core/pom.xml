@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-core</artifactId>
-    <name>Quarkus CXF - Core - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - Core - Parent</name>
 
     <modules>
         <module>axiom-api-stub</module>

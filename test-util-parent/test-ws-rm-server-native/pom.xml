@@ -21,7 +21,8 @@
         <quarkus-cxf.platform.group-id>io.quarkiverse.cxf</quarkus-cxf.platform.group-id>
         <quarkus-cxf.platform.artifact-id>quarkus-cxf-bom</quarkus-cxf.platform.artifact-id>
         <quarkus-cxf.platform.version>3.36.1-SNAPSHOT</quarkus-cxf.platform.version>
-        <quarkus-cxf.version>3.36.1-SNAPSHOT</quarkus-cxf.version><!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
+        <!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
+        <quarkus-cxf.version>3.36.1-SNAPSHOT</quarkus-cxf.version>
 
         <maven.compiler.parameters>true</maven.compiler.parameters>
 
@@ -59,7 +60,8 @@
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-test-ws-rm-server-jvm</artifactId>
-            <type>pom</type><!-- Just build after the jvm module -->
+            <type>pom</type>
+            <!-- Just build after the jvm module -->
         </dependency>
     </dependencies>
 
@@ -71,10 +73,10 @@
                 <executions>
                     <execution>
                         <id>unpack-quarkus-cxf-test-ws-rm-server-jvm</id>
-                        <phase>process-sources</phase>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
+                        <phase>process-sources</phase>
                         <configuration>
                             <artifact>io.quarkiverse.cxf:quarkus-cxf-test-ws-rm-server-jvm:${project.version}</artifact>
                             <excludes>application.properties</excludes>
@@ -100,7 +102,8 @@
 
     <profiles>
         <profile>
-            <id>native</id><!-- Keep in sync with the release profile below -->
+            <id>native</id>
+            <!-- Keep in sync with the release profile below -->
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
@@ -117,10 +120,10 @@
                         <executions>
                             <execution>
                                 <id>attach-exe</id>
-                                <phase>package</phase>
                                 <goals>
                                     <goal>attach-artifact</goal>
                                 </goals>
+                                <phase>package</phase>
                                 <configuration>
                                     <artifacts>
                                         <artifact>
@@ -136,7 +139,8 @@
             </build>
         </profile>
         <profile>
-            <id>release</id><!-- Keep in sync with the native profile above -->
+            <id>release</id>
+            <!-- Keep in sync with the native profile above -->
             <activation>
                 <property>
                     <name>performRelease</name>
@@ -156,10 +160,10 @@
                         <executions>
                             <execution>
                                 <id>attach-exe</id>
-                                <phase>package</phase>
                                 <goals>
                                     <goal>attach-artifact</goal>
                                 </goals>
+                                <phase>package</phase>
                                 <configuration>
                                     <artifacts>
                                         <artifact>
