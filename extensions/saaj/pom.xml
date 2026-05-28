@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-saaj-parent</artifactId>
-    <name>Quarkus CXF - SAAJ - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - SAAJ - Parent</name>
 
     <modules>
         <module>deployment</module>

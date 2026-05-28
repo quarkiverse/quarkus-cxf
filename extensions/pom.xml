@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-extensions</artifactId>
-    <name>Quarkus CXF - Extensions</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - Extensions</name>
 
     <modules>
         <module>saaj</module>
@@ -65,6 +65,9 @@
                         <executions>
                             <execution>
                                 <id>enforce-non-deployment</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
                                 <configuration>
                                     <skip>${enforce-non-deployment.skip}</skip>
                                     <rules>
@@ -75,9 +78,6 @@
                                         </bannedDependencies>
                                     </rules>
                                 </configuration>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>

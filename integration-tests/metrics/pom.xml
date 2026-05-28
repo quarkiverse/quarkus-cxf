@@ -63,11 +63,12 @@
                 <executions>
                     <execution>
                         <!-- Copy the sample code to docs module where Antora can see it -->
+                        <!-- after source formatting -->
                         <id>copy-resources-for-antora</id>
-                        <phase>compile</phase><!-- after source formatting -->
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
+                        <phase>compile</phase>
                         <configuration>
                             <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/metrics</outputDirectory>
                             <resources>

@@ -27,16 +27,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-test-util</artifactId>
             <scope>test</scope>
@@ -46,25 +36,36 @@
             <artifactId>quarkus-cxf-test-util-internal</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <resources>
             <resource>
+                <filtering>true</filtering>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>server/alice.properties</include>
                     <include>server/bob.properties</include>
                 </includes>
-                <filtering>true</filtering>
             </resource>
             <resource>
+                <filtering>false</filtering>
                 <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>server/alice.properties</exclude>
                     <exclude>server/bob.properties</exclude>
                 </excludes>
-                <filtering>false</filtering>
             </resource>
         </resources>
         <plugins>
@@ -121,10 +122,10 @@
                         <executions>
                             <execution>
                                 <id>generate-certs.sh</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <executable>bash</executable>
                                     <arguments>
@@ -162,11 +163,11 @@
                         <executions>
                             <execution>
                                 <id>generate-cxfca-keypair</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>clean</goal>
                                     <goal>generateKeyPair</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>cxfca</alias>
                                     <dname>CN=cxfca, OU=eng, O=apache.org</dname>
@@ -179,10 +180,10 @@
                             </execution>
                             <execution>
                                 <id>export-cxfca-certificate</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>exportCertificate</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>cxfca</alias>
                                     <keystore>${project.build.outputDirectory}/server/cxfca.jks</keystore>
@@ -192,11 +193,11 @@
                             </execution>
                             <execution>
                                 <id>generate-alice-keypair</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>clean</goal>
                                     <goal>generateKeyPair</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>alice</alias>
                                     <dname>CN=alice, OU=eng, O=apache.org</dname>
@@ -209,11 +210,11 @@
                             </execution>
                             <execution>
                                 <id>generate-bob-keypair</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>clean</goal>
                                     <goal>generateKeyPair</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>bob</alias>
                                     <dname>CN=bob, OU=eng, O=apache.org</dname>
@@ -226,10 +227,10 @@
                             </execution>
                             <execution>
                                 <id>generate-alice-certificate-request</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>generateCertificateRequest</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>alice</alias>
                                     <keystore>${project.build.outputDirectory}/server/alice.jks</keystore>
@@ -238,10 +239,10 @@
                             </execution>
                             <execution>
                                 <id>generate-alice-certificate</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>generateCertificate</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>cxfca</alias>
                                     <keystore>${project.build.outputDirectory}/server/cxfca.jks</keystore>
@@ -252,10 +253,10 @@
                             </execution>
                             <execution>
                                 <id>generate-bob-certificate-request</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>generateCertificateRequest</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>bob</alias>
                                     <keystore>${project.build.outputDirectory}/server/bob.jks</keystore>
@@ -264,10 +265,10 @@
                             </execution>
                             <execution>
                                 <id>generate-bob-certificate</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>generateCertificate</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>cxfca</alias>
                                     <keystore>${project.build.outputDirectory}/server/cxfca.jks</keystore>
@@ -278,10 +279,10 @@
                             </execution>
                             <execution>
                                 <id>import-cxfca-certificate-to-alice</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>importCertificate</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>cxfca</alias>
                                     <trustcacerts>true</trustcacerts>
@@ -292,10 +293,10 @@
                             </execution>
                             <execution>
                                 <id>import-cxfca-certificate-to-bob</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>importCertificate</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>cxfca</alias>
                                     <trustcacerts>true</trustcacerts>
@@ -306,10 +307,10 @@
                             </execution>
                             <execution>
                                 <id>import-alice-certificate</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>importCertificate</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>alice</alias>
                                     <trustcacerts>true</trustcacerts>
@@ -320,10 +321,10 @@
                             </execution>
                             <execution>
                                 <id>import-bob-certificate</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>importCertificate</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>bob</alias>
                                     <trustcacerts>true</trustcacerts>
@@ -334,10 +335,10 @@
                             </execution>
                             <execution>
                                 <id>import-bob-certificate-to-alice</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>importCertificate</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>bob</alias>
                                     <trustcacerts>true</trustcacerts>
@@ -348,10 +349,10 @@
                             </execution>
                             <execution>
                                 <id>import-alice-certificate-to-bob</id>
-                                <phase>generate-sources</phase>
                                 <goals>
                                     <goal>importCertificate</goal>
                                 </goals>
+                                <phase>generate-sources</phase>
                                 <configuration>
                                     <alias>alice</alias>
                                     <trustcacerts>true</trustcacerts>

@@ -21,12 +21,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-test-util</artifactId>
@@ -37,14 +31,20 @@
             <artifactId>quarkus-cxf-test-util-internal</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -73,10 +73,11 @@
                     <execution>
                         <!-- Copy the sample code to docs module where Antora can see it -->
                         <id>copy-resources-for-antora</id>
-                        <phase>compile</phase><!-- after source formatting -->
+                        <!-- after source formatting -->
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
+                        <phase>compile</phase>
                         <configuration>
                             <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/calculator-client</outputDirectory>
                             <resources>
@@ -113,7 +114,8 @@
                         <goals>
                             <goal>execute</goal>
                         </goals>
-                        <phase>compile</phase><!-- same as the maven-resources-plugin above -->
+                        <phase>compile</phase>
+                        <!-- same as the maven-resources-plugin above -->
                         <configuration>
                             <properties>
                                 <!-- This is intentionally interpolated as properties otherwise groovy can complain on Windows with not escaped backslashes. -->
@@ -121,8 +123,7 @@
                             </properties>
                             <!-- Copy pom.xml changing the parent version so that the destination -->
                             <!-- file does not change after every release -->
-                            <source>
-                                import java.nio.file.Files
+                            <source>import java.nio.file.Files
                                 import java.nio.file.Path
                                 def srcPath = project.basedir.toPath().resolve('pom.xml')
                                 def newContent = srcPath.getText('UTF-8')
@@ -133,8 +134,7 @@
                                     println('Updated ' + destPath.toString())
                                 } else {
                                     println(destPath.toString() + ' is up to date')
-                                }
-                            </source>
+                                }</source>
                         </configuration>
                     </execution>
                 </executions>

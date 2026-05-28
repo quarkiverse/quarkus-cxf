@@ -19,16 +19,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.cli-assured</groupId>
-            <artifactId>cli-assured-mvn</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-test-util</artifactId>
             <scope>test</scope>
@@ -44,6 +34,17 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.cli-assured</groupId>
+            <artifactId>cli-assured-mvn</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -54,20 +55,18 @@
                 <executions>
                     <execution>
                         <id>collect-maven-repos</id>
-                        <phase>initialize</phase>
                         <goals>
                             <goal>execute</goal>
                         </goals>
+                        <phase>initialize</phase>
                         <configuration>
-                            <source>
-                                <![CDATA[
+                            <source><![CDATA[
                                     project.properties.setProperty("qcxf.maven.settings.xml.path", session.request.userSettingsFile.toString())
                                     project.properties.setProperty("qcxf.maven.active.profiles", session.request.activeProfiles.join(","))
                                     // Pass -Dqcxf.maven.user.properties.prefixes=maven.repo.local,repo. to forward matching -D properties to child Maven invocations
                                     def prefixes = (project.properties.getProperty("qcxf.maven.user.properties.prefixes") ?: "").split(",")
                                     project.properties.setProperty("qcxf.maven.user.properties", session.request.userProperties.findAll { k, v -> prefixes.any { p -> k.startsWith(p) } }.collect { k, v -> "-D${k}=${v}" }.join(" "))
-                                ]]>
-                            </source>
+                                ]]></source>
                         </configuration>
                     </execution>
                 </executions>
@@ -91,10 +90,11 @@
                     <execution>
                         <!-- Copy the sample code to docs module where Antora can see it -->
                         <id>copy-resources-for-antora</id>
-                        <phase>compile</phase><!-- after source formatting -->
+                        <!-- after source formatting -->
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
+                        <phase>compile</phase>
                         <configuration>
                             <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/soap-service</outputDirectory>
                             <resources>
@@ -123,10 +123,11 @@
                     </execution>
                     <execution>
                         <id>copy-java-source-files-for-DevModeTest</id>
-                        <phase>compile</phase><!-- after source formatting -->
+                        <!-- after source formatting -->
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
+                        <phase>compile</phase>
                         <configuration>
                             <outputDirectory>${project.build.directory}/test-classes/DevModeTest</outputDirectory>
                             <resources>

@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-integration-tracing-opentelemetry-parent</artifactId>
-    <name>Quarkus CXF - OpenTelemetry - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - OpenTelemetry - Parent</name>
 
     <modules>
         <module>deployment</module>

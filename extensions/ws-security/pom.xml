@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-ws-security-parent</artifactId>
-    <name>Quarkus CXF - WS-Security - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - WS-Security - Parent</name>
 
     <modules>
         <module>deployment</module>
