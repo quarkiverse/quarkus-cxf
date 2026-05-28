@@ -28,6 +28,7 @@
         <module>jaxb-plugins</module>
     </modules>
 
+    <?SORTPOM IGNORE?>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -46,6 +47,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <?SORTPOM RESUME?>
 
     <profiles>
         <profile>

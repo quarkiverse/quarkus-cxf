@@ -27,6 +27,7 @@
 
     </properties>
 
+    <?SORTPOM IGNORE?>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -52,6 +53,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <?SORTPOM RESUME?>
 
     <dependencies>
         <dependency>
