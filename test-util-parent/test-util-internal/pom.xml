@@ -24,6 +24,7 @@
         <quarkus-cxf.version>3.36.1-SNAPSHOT</quarkus-cxf.version><!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
     </properties>
 
+    <?SORTPOM IGNORE?>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -49,6 +50,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <?SORTPOM RESUME?>
 
     <dependencies>
         <dependency>

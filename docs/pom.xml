@@ -12,6 +12,8 @@
     <properties>
         <enforcer.skip>true</enforcer.skip>
     </properties>
+
+    <?SORTPOM IGNORE?>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -30,6 +32,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <?SORTPOM RESUME?>
+
     <dependencies>
         <dependency>
             <groupId>io.quarkiverse.antora</groupId>

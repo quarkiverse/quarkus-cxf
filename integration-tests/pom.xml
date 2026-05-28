@@ -45,6 +45,7 @@
         <maven.compiler.parameters>true</maven.compiler.parameters>
     </properties>
 
+    <?SORTPOM IGNORE?>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -70,6 +71,8 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <?SORTPOM RESUME?>
+
     <dependencies>
         <dependency>
             <groupId>io.quarkus</groupId>
