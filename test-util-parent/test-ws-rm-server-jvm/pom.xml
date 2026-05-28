@@ -29,6 +29,7 @@
         <quarkus.build.skip>false</quarkus.build.skip>
     </properties>
 
+    <?SORTPOM IGNORE?>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -54,6 +55,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <?SORTPOM RESUME?>
 
     <dependencies>
         <dependency>
