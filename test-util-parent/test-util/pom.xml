@@ -24,6 +24,7 @@
         <quarkus-cxf.platform.version>3.36.1-SNAPSHOT</quarkus-cxf.platform.version>
     </properties>
 
+    <?SORTPOM IGNORE?>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -42,6 +43,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <?SORTPOM RESUME?>
 
     <dependencies>
         <dependency>
