@@ -272,6 +272,7 @@
                                     <alias>localhost</alias>
                                     <storepass>localhost-keystore-password</storepass>
                                     <keystore>${project.build.outputDirectory}/localhost-keystore.jks</keystore>
+                                    <keypass>localhost-keystore-password</keypass>
                                     <file>${project.build.outputDirectory}/server.csr</file>
                                 </configuration>
                             </execution>
@@ -285,6 +286,7 @@
                                     <alias>cxfca</alias>
                                     <storepass>cxfca-password</storepass>
                                     <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
+                                    <keypass>cxfca-password</keypass>
                                     <rfc>true</rfc>
                                     <infile>${project.build.outputDirectory}/server.csr</infile>
                                     <outfile>${project.build.outputDirectory}/server.pem</outfile>
@@ -370,6 +372,7 @@
                                     <alias>alice</alias>
                                     <storepass>alice-keystore-password</storepass>
                                     <keystore>${project.build.outputDirectory}/alice-keystore.jks</keystore>
+                                    <keypass>alice-keystore-password</keypass>
                                     <file>${project.build.outputDirectory}/alice.csr</file>
                                 </configuration>
                             </execution>
@@ -383,6 +386,7 @@
                                     <alias>cxfca</alias>
                                     <storepass>cxfca-password</storepass>
                                     <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
+                                    <keypass>cxfca-password</keypass>
                                     <rfc>true</rfc>
                                     <infile>${project.build.outputDirectory}/alice.csr</infile>
                                     <outfile>${project.build.outputDirectory}/alice.pem</outfile>
@@ -449,6 +453,7 @@
                                     <alias>bob</alias>
                                     <storepass>bob-keystore-password</storepass>
                                     <keystore>${project.build.outputDirectory}/bob-keystore.jks</keystore>
+                                    <keypass>bob-keystore-password</keypass>
                                     <file>${project.build.outputDirectory}/bob.csr</file>
                                 </configuration>
                             </execution>
@@ -462,6 +467,7 @@
                                     <alias>cxfca</alias>
                                     <storepass>cxfca-password</storepass>
                                     <keystore>${project.build.outputDirectory}/cxfca.jks</keystore>
+                                    <keypass>cxfca-password</keypass>
                                     <rfc>true</rfc>
                                     <infile>${project.build.outputDirectory}/bob.csr</infile>
                                     <outfile>${project.build.outputDirectory}/bob.pem</outfile>
