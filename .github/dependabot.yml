@@ -10,9 +10,21 @@ updates:
     schedule:
       interval: "daily"
     ignore:
-      - dependency-name: jakarta.xml.ws:jakarta.xml.ws-api
-        versions:
-          - ">= 3.0.0"
-    # Prevent PRs from opening except for security updates, given Renovate
-    # is used to manage the regular dependency updates
-    open-pull-requests-limit: 0
+      # these have the @sync annotation in pom.xml
+      - dependency-name: 'com.sun.xml.messaging.saaj:*'
+      - dependency-name: 'io.smallrye.certs:*'
+      - dependency-name: 'jakarta.mail:*'
+      - dependency-name: 'jakarta.jws:*'
+      - dependency-name: 'jakarta.xml.soap:*'
+      - dependency-name: 'jakarta.xml.ws:*'
+      - dependency-name: 'org.codehaus.woodstox:*'
+      - dependency-name: 'org.glassfish.jaxb:*'
+      - dependency-name: 'org.apache.cxf.xjcplugins:*'
+      - dependency-name: 'org.apache.cxf.xjc-utils:*'
+      - dependency-name: 'org.apache.neethi:*'
+      - dependency-name: 'org.slf4j:*'
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
