@@ -21,7 +21,7 @@ public class LargeSlowServiceImpl implements LargeSlowService {
             int sizeBytes,
             int clientDeserializationDelayMs,
             int serviceExecutionDelayMs) {
-        Log.infof("Prolonging LargeSlowServiceImpl.largeSlow() execution by %d ms", serviceExecutionDelayMs);
+        Log.debugf("Prolonging LargeSlowServiceImpl.largeSlow() execution by %d ms", serviceExecutionDelayMs);
         if (serviceExecutionDelayMs > 0) {
             try {
                 Thread.sleep(serviceExecutionDelayMs);

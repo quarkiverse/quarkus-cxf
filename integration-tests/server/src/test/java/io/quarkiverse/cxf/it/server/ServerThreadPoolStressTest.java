@@ -54,7 +54,7 @@ public class ServerThreadPoolStressTest {
                                 .post("/soap/SlowHelloServiceImpl")
                                 .then()
                                 .extract().statusCode();
-                        Log.infof("Slow service finished in %d ms", System.currentTimeMillis() - start);
+                        Log.debugf("Slow service finished in %d ms", System.currentTimeMillis() - start);
                         codes[j] = result;
                     }
                     return codes;

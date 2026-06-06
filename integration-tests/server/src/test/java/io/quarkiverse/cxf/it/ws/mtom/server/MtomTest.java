@@ -52,7 +52,7 @@ public class MtomTest {
                 .parseInt(Optional.ofNullable(System.getenv("QUARKUS_CXF_MTOM_SOAK_ITERATIONS")).orElse("300"));
         log.infof("Performing %d interations", requestCount);
         for (int i = 0; i < requestCount; i++) {
-            log.infof("Soaking with %d bytes, round %d", size, i);
+            log.debugf("Soaking with %d bytes, round %d", size, i);
             assertMtom(size);
         }
     }
@@ -82,13 +82,13 @@ public class MtomTest {
                 incrementKb, maxSizeKb, subtract);
         int lastSize = 0;
         for (int size = increment; size <= maxSize; size += increment) {
-            log.infof("Sending large attachment: %d bytes (%d KiB)", size, size / KiB);
+            log.debugf("Sending large attachment: %d bytes (%d KiB)", size, size / KiB);
             assertMtom(size);
             lastSize = size;
         }
         if (maxSize > lastSize) {
             /* Make sure that we really test the max size */
-            log.infof("Sending max sized attachment: %d bytes (%d KiB)", maxSize, maxSize / KiB);
+            log.debugf("Sending max sized attachment: %d bytes (%d KiB)", maxSize, maxSize / KiB);
             assertMtom(maxSize);
         }
 
