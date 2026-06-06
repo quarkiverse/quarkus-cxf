@@ -61,7 +61,7 @@ public class LargeSlowOutput {
      */
     @XmlElement(name = "clientDeserializationDelayMs")
     public void setClientDeserializationDelayMs(int value) {
-        Log.infof("Prolonging deserialization by %d ms", value);
+        Log.debugf("Prolonging deserialization by %d ms", value);
         if (value > 0) {
             try {
                 Thread.sleep(value);

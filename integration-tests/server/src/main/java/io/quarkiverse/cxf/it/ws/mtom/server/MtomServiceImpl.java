@@ -22,7 +22,7 @@ public class MtomServiceImpl implements MtomService {
 
         try {
             int length = RandomBytesDataSource.count(dataHandler.getInputStream());
-            log.infof("Received %d bytes of content type %s", length, dataHandler.getContentType());
+            log.debugf("Received %d bytes of content type %s", length, dataHandler.getContentType());
 
             /*
              * We do not send back the original bytes, because we do not want to keep them in memory.

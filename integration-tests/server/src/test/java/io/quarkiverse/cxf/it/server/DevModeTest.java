@@ -181,6 +181,7 @@ public class DevModeTest {
         Files.writeString(
                 appProps,
                 """
+                        quarkus.banner.enabled = false
                         quarkus.cxf.endpoint."/fruits".implementor = io.quarkiverse.cxf.it.server.FruitServiceImpl
                         // quarkus.cxf.endpoint."/fruits".logging.enabled = pretty
                         """,
