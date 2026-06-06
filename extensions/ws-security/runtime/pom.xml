@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-woodstox</artifactId>
+            <artifactId>quarkus-cxf-bc-stub</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
@@ -30,19 +30,23 @@
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-bc-stub</artifactId>
+            <artifactId>quarkus-cxf-woodstox</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.angus</groupId>
-            <artifactId>angus-mail</artifactId>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-mex</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-ws-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-ws-mex</artifactId>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jvnet.mimepull</groupId>
@@ -52,10 +56,6 @@
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>nativeimage</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.cache</groupId>
-            <artifactId>cache-api</artifactId>
         </dependency>
     </dependencies>
 
@@ -71,8 +71,7 @@
                         </goals>
                         <phase>compile</phase>
                         <configuration>
-                            <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}
-                            </deployment>
+                            <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}</deployment>
                         </configuration>
                     </execution>
                 </executions>

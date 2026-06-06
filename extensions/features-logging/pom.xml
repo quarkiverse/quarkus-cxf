@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-features-logging-parent</artifactId>
-    <name>Quarkus CXF - Logging Feature - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - Logging Feature - Parent</name>
 
     <modules>
         <module>deployment</module>

@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-woodstox-parent</artifactId>
-    <name>Quarkus CXF - Woodstox - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - Woodstox - Parent</name>
 
     <modules>
         <module>deployment</module>

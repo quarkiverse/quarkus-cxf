@@ -23,20 +23,7 @@
         </dependencies>
     </dependencyManagement>
 
-
     <dependencies>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-core-deployment</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-tls-registry-deployment</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-proxy-registry-deployment</artifactId>
-        </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf</artifactId>
@@ -51,11 +38,15 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-vertx-http-deployment</artifactId>
+            <artifactId>quarkus-arc-deployment</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-arc-deployment</artifactId>
+            <artifactId>quarkus-core-deployment</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jackson-deployment</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -67,21 +58,15 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jackson-deployment</artifactId>
-        </dependency>
-
-        <!-- wsdl2java codegen dependencies -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-tools-wsdlto-core</artifactId>
+            <artifactId>quarkus-proxy-registry-deployment</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-tools-wsdlto-databinding-jaxb</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-tls-registry-deployment</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-tools-wsdlto-frontend-jaxws</artifactId>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-vertx-http-deployment</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -98,19 +83,22 @@
             </exclusions>
         </dependency>
 
+        <!-- wsdl2java codegen dependencies -->
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-junit-internal</artifactId>
-            <scope>test</scope>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-tools-wsdlto-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-tools-wsdlto-databinding-jaxb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-tools-wsdlto-frontend-jaxws</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -126,6 +114,17 @@
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-test-util-internal</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit-internal</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -144,9 +143,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-             <groupId>org.mockito</groupId>
-             <artifactId>mockito-core</artifactId>
-             <scope>test</scope>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

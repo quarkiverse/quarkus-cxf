@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-ws-rm-parent</artifactId>
-    <name>Quarkus CXF - WS-ReliableMessaging - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - WS-ReliableMessaging - Parent</name>
 
     <modules>
         <module>deployment</module>

@@ -13,6 +13,11 @@
     <name>Quarkus CXF - Integration Test - OpenTelemetry</name>
 
     <dependencies>
+        <!-- Needed for InMemorySpanExporter to verify captured traces -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk-testing</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf</artifactId>
@@ -20,11 +25,6 @@
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-integration-tracing-opentelemetry</artifactId>
-        </dependency>
-        <!-- Needed for InMemorySpanExporter to verify captured traces -->
-        <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-sdk-testing</artifactId>
         </dependency>
 
         <dependency>

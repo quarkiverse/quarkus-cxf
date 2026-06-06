@@ -20,17 +20,11 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest</artifactId>
+            <artifactId>quarkus-elytron-security-properties-file</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-elytron-security-properties-file</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
+            <artifactId>quarkus-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
@@ -42,19 +36,25 @@
             <artifactId>quarkus-cxf-test-util-internal</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.certs</groupId>
+            <artifactId>smallrye-certificate-generator</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-             <groupId>org.mockito</groupId>
-             <artifactId>mockito-core</artifactId>
-             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.smallrye.certs</groupId>
-            <artifactId>smallrye-certificate-generator</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -80,10 +80,10 @@
                 <executions>
                     <execution>
                         <id>add-source</id>
-                        <phase>generate-sources</phase>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
+                        <phase>generate-sources</phase>
                         <configuration>
                             <sources>
                                 <source>target/generated-sources/wsdl2java-extensors</source>
@@ -99,13 +99,13 @@
                     <execution>
                         <!-- Copy the sample code to docs module where Antora can see it -->
                         <id>copy-resources-for-antora</id>
-                        <phase>compile</phase><!-- after source formatting -->
+                        <!-- after source formatting -->
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
+                        <phase>compile</phase>
                         <configuration>
-                            <outputDirectory>
-                                ${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/client-server</outputDirectory>
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/client-server</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/resources</directory>

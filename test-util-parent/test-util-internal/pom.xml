@@ -21,7 +21,8 @@
         <quarkus-cxf.platform.group-id>io.quarkiverse.cxf</quarkus-cxf.platform.group-id>
         <quarkus-cxf.platform.artifact-id>quarkus-cxf-bom</quarkus-cxf.platform.artifact-id>
         <quarkus-cxf.platform.version>3.33.4-SNAPSHOT</quarkus-cxf.platform.version>
-        <quarkus-cxf.version>3.33.4-SNAPSHOT</quarkus-cxf.version><!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
+        <quarkus-cxf.version>3.33.4-SNAPSHOT</quarkus-cxf.version>
+        <!-- This needs to be set to the underlying Quarkiverse CXF version from command line when testing against Platform BOMs -->
     </properties>
 
     <?SORTPOM IGNORE?>
@@ -61,7 +62,8 @@
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
         </dependency>
-        <dependency><!-- We'd actually need jakarta.xml.ws:jakarta.xml.ws-api but that one is not managed anywhere -->
+        <dependency>
+            <!-- We'd actually need jakarta.xml.ws:jakarta.xml.ws-api but that one is not managed anywhere -->
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
         </dependency>

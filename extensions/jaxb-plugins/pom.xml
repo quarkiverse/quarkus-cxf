@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-jaxb-plugins-parent</artifactId>
-    <name>Quarkus CXF - JAXB Plugins for wsdl2java - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - JAXB Plugins for wsdl2java - Parent</name>
 
     <modules>
         <module>deployment</module>
