@@ -38,9 +38,9 @@ public class LargeSlowRest {
             @QueryParam("worker") Integer worker,
             @QueryParam("iteration") Integer iteration) {
         if (worker != null) {
-            Log.infof("Invoking async %s client with worker %s and iteration %d", client, worker, iteration);
+            Log.debugf("Invoking async %s client with worker %s and iteration %d", client, worker, iteration);
         } else {
-            Log.infof("Invoking async %s client with clientDeserializationDelayMs %s and serviceExecutionDelayMs %d", client,
+            Log.debugf("Invoking async %s client with clientDeserializationDelayMs %s and serviceExecutionDelayMs %d", client,
                     clientDeserializationDelayMs, serviceExecutionDelayMs);
         }
         return CxfMutinyUtils
@@ -63,9 +63,9 @@ public class LargeSlowRest {
             @QueryParam("worker") Integer worker,
             @QueryParam("iteration") Integer iteration) {
         if (worker != null) {
-            Log.infof("Invoking sync %s client with worker %s and iteration %d", client, worker, iteration);
+            Log.debugf("Invoking sync %s client with worker %s and iteration %d", client, worker, iteration);
         } else {
-            Log.infof("Invoking sync %s client with clientDeserializationDelayMs %s and serviceExecutionDelayMs %d", client,
+            Log.debugf("Invoking sync %s client with clientDeserializationDelayMs %s and serviceExecutionDelayMs %d", client,
                     clientDeserializationDelayMs, serviceExecutionDelayMs);
         }
         try {
