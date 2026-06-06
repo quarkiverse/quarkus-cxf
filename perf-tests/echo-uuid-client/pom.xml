@@ -13,7 +13,8 @@
     <name>Quarkus CXF - Performance Test - Echo UUID client</name>
 
     <properties>
-        <quarkus.http.port /><!-- Set by groovy-maven-plugin below -->
+        <quarkus.http.port />
+        <!-- Set by groovy-maven-plugin below -->
     </properties>
 
     <dependencies>
@@ -23,21 +24,21 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-health</artifactId>
+            <artifactId>quarkus-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest</artifactId>
+            <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -105,6 +106,13 @@
                     <plugin>
                         <groupId>org.codehaus.gmaven</groupId>
                         <artifactId>groovy-maven-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.awaitility</groupId>
+                                <artifactId>awaitility</artifactId>
+                                <version>${awaitility.version}</version>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
                                 <id>start-application-under-test</id>
@@ -117,13 +125,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.awaitility</groupId>
-                                <artifactId>awaitility</artifactId>
-                                <version>${awaitility.version}</version>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                     <plugin>
                         <groupId>io.hyperfoil</groupId>

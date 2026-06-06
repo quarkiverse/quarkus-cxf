@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-bom-test</artifactId>
-    <name>Quarkus CXF - Bill Of Materials for testing</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - Bill Of Materials for testing</name>
 
     <properties>
         <quarkus-cxf.version>3.33.4-SNAPSHOT</quarkus-cxf.version>
@@ -26,8 +26,8 @@
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-test-ws-rm-server-jvm</artifactId>
+                <version>${quarkus-cxf.version}</version>
                 <classifier>runner</classifier>
-                <version>${quarkus-cxf.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
@@ -36,26 +36,8 @@
             </dependency>
             <dependency>
                 <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-test-ws-rm-server-jvm</artifactId>
-                <type>pom</type>
-                <version>${quarkus-cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.quarkiverse.cxf</groupId>
                 <artifactId>quarkus-cxf-test-ws-rm-server-native</artifactId>
                 <version>${quarkus-cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.quarkiverse.cxf</groupId>
-                <artifactId>quarkus-cxf-test-ws-rm-server-native</artifactId>
-                <type>exe</type>
-                <version>${quarkus-cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.smallrye.certs</groupId>
-                <artifactId>smallrye-certificate-generator-junit5</artifactId>
-                <version>${smallrye-certificate-generator.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
@@ -71,6 +53,24 @@
                 <groupId>org.cli-assured</groupId>
                 <artifactId>cli-assured-mvn</artifactId>
                 <version>${cli-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-test-ws-rm-server-native</artifactId>
+                <version>${quarkus-cxf.version}</version>
+                <type>exe</type>
+            </dependency>
+            <dependency>
+                <groupId>io.quarkiverse.cxf</groupId>
+                <artifactId>quarkus-cxf-test-ws-rm-server-jvm</artifactId>
+                <version>${quarkus-cxf.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>io.smallrye.certs</groupId>
+                <artifactId>smallrye-certificate-generator-junit5</artifactId>
+                <version>${smallrye-certificate-generator.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

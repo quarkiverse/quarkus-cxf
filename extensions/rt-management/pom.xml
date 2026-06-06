@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-rt-management-parent</artifactId>
-    <name>Quarkus CXF - Runtime Management - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - Runtime Management - Parent</name>
 
     <modules>
         <module>deployment</module>

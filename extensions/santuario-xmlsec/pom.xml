@@ -9,8 +9,8 @@
     </parent>
 
     <artifactId>quarkus-cxf-santuario-xmlsec-parent</artifactId>
-    <name>Quarkus CXF - Santuario XML Security - Parent</name>
     <packaging>pom</packaging>
+    <name>Quarkus CXF - Santuario XML Security - Parent</name>
 
     <modules>
         <module>deployment</module>

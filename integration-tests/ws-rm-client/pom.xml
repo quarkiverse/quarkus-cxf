@@ -21,12 +21,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-test-util</artifactId>
@@ -35,6 +29,12 @@
         <dependency>
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-test-util-internal</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -96,7 +96,7 @@
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
             </properties>
-            
+
             <dependencies>
                 <dependency>
                     <!-- quarkus-cxf-test-ws-rm-server-jvm uber-jar and quarkus-cxf-test-ws-rm-server-native are run by a test in this module. -->

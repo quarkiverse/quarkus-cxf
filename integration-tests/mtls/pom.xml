@@ -37,18 +37,18 @@
     <build>
         <resources>
             <resource>
+                <filtering>true</filtering>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>application.properties</include>
                 </includes>
-                <filtering>true</filtering>
             </resource>
             <resource>
+                <filtering>false</filtering>
                 <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>application.properties</exclude>
                 </excludes>
-                <filtering>false</filtering>
             </resource>
         </resources>
 
@@ -89,13 +89,13 @@
                             <execution>
                                 <!-- Copy the sample code to docs module where Antora can see it -->
                                 <id>copy-resources-for-antora</id>
-                                <phase>compile</phase><!-- after source formatting -->
+                                <!-- after source formatting -->
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
+                                <phase>compile</phase>
                                 <configuration>
-                                    <outputDirectory>
-                                        ${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/mtls</outputDirectory>
+                                    <outputDirectory>${maven.multiModuleProjectDirectory}/docs/modules/ROOT/examples/mtls</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>target/classes</directory>

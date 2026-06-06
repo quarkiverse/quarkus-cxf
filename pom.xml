@@ -11,9 +11,9 @@
     <groupId>io.quarkiverse.cxf</groupId>
     <artifactId>quarkus-cxf-parent</artifactId>
     <version>3.33.4-SNAPSHOT</version>
-    <name>Quarkus CXF - Parent</name>
 
     <packaging>pom</packaging>
+    <name>Quarkus CXF - Parent</name>
 
     <url>https://github.com/quarkiverse/quarkiverse-cxf</url>
 
@@ -40,6 +40,15 @@
             <email>shumon.sharif@gmail.com</email>
         </developer>
     </developers>
+
+    <modules>
+        <module>bom</module>
+        <module>extensions</module>
+        <module>bom-test</module>
+        <module>test-util-parent</module>
+        <module>integration-tests</module>
+        <module>perf-tests</module>
+    </modules>
     <?SORTPOM IGNORE?>
     <properties>
         <!-- Primary dependencies -->
@@ -112,29 +121,13 @@
     <?SORTPOM RESUME?>
 
     <scm>
-        <url>https://github.com/quarkiverse/quarkus-cxf</url>
         <connection>scm:git:https://github.com/quarkiverse/quarkus-cxf.git</connection>
         <developerConnection>scm:git:https://github.com/quarkiverse/quarkus-cxf.git</developerConnection>
         <tag>HEAD</tag>
+        <url>https://github.com/quarkiverse/quarkus-cxf</url>
     </scm>
 
-    <modules>
-        <module>bom</module>
-        <module>extensions</module>
-        <module>bom-test</module>
-        <module>test-util-parent</module>
-        <module>integration-tests</module>
-        <module>perf-tests</module>
-    </modules>
-
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.extensions</groupId>
-                <artifactId>maven-build-cache-extension</artifactId>
-                <version>${maven-build-cache-extension.version}</version>
-            </extension>
-        </extensions>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -329,12 +322,15 @@
                 <executions>
                     <execution>
                         <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
                                     <version>${maven.compiler.release}</version>
                                 </requireJavaVersion>
-                                <dependencyConvergence/>
+                                <dependencyConvergence />
                                 <requireMavenVersion>
                                     <version>${supported-maven.versions}</version>
                                 </requireMavenVersion>
@@ -352,9 +348,6 @@
                                 </externalRules>
                             </rules>
                         </configuration>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -364,11 +357,11 @@
                 <executions>
                     <execution>
                         <id>update-github-workflows</id>
-                        <inherited>false</inherited>
                         <goals>
                             <goal>execute</goal>
                         </goals>
                         <phase>validate</phase>
+                        <inherited>false</inherited>
                         <configuration>
                             <!-- A Groovy script that updates the list of integration test modules in -->
                             <!-- .github/workflows/build.yml based on the real state in integration-tests -->
@@ -443,7 +436,8 @@
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
                 <configuration>
-                    <excludes><!-- Do not format generated files -->
+                    <excludes>
+                        <!-- Do not format generated files -->
                         <exclude>**/generated/*.java</exclude>
                     </excludes>
                 </configuration>
@@ -452,12 +446,20 @@
                 <groupId>net.revelc.code</groupId>
                 <artifactId>impsort-maven-plugin</artifactId>
                 <configuration>
-                    <excludes><!-- Do not format generated files -->
+                    <excludes>
+                        <!-- Do not format generated files -->
                         <exclude>**/generated/*.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
         </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.extensions</groupId>
+                <artifactId>maven-build-cache-extension</artifactId>
+                <version>${maven-build-cache-extension.version}</version>
+            </extension>
+        </extensions>
     </build>
 
     <profiles>
@@ -483,10 +485,10 @@
                         <executions>
                             <execution>
                                 <id>format-poms</id>
-                                <phase>process-resources</phase>
                                 <goals>
                                     <goal>format</goal>
                                 </goals>
+                                <phase>process-resources</phase>
                                 <inherited>false</inherited>
                                 <configuration>
                                     <updateVirtualDependencies>
