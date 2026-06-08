@@ -508,6 +508,7 @@
                             <additionalBoms>
                                 <additionalBom>io.quarkus:quarkus-bom:${quarkus.version}</additionalBom>
                             </additionalBoms>
+                            <installFlavor>REDUCED_EXPANDED</installFlavor>
                             <resolutionEntryPointIncludes>
                                 <!-- We not only flatten the BOM, we also shrink it down so that includes -->
                                 <!-- entries that our extensions need. Here we define the set of our artifacts -->
