@@ -56,8 +56,8 @@ or other {link-quarkus-docs-base}/tooling#build-tool[Quarkus development tools],
   <properties>
     ...
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version><!-- Check the latest https://repo1.maven.org/maven2/io/quarkus/platform/quarkus-cxf-bom/ --></quarkus.platform.version>
+    <quarkus.platform.group-id>{quarkus-platform-groupId}</quarkus.platform.group-id>
+    <quarkus.platform.version><!-- Check the latest {link-boms-maven-repo-base}/io/quarkus/platform/quarkus-cxf-bom/ --></quarkus.platform.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -80,7 +80,7 @@ or other {link-quarkus-docs-base}/tooling#build-tool[Quarkus development tools],
 ...
 ----
 
-You should always take care to import the same version of `io.quarkus.platform:quarkus-bom` and `io.quarkus.platform:quarkus-cxf-bom` into your project.
+You should always take care to import the same version of `{quarkus-platform-groupId}:quarkus-bom` and `{quarkus-platform-groupId}:quarkus-cxf-bom` into your project.
 That's the most reliable way to get compatible versions of Quarkus, CXF, {quarkus-cxf-project-name} and all their transitive dependencies.
 
 == Where to go next
