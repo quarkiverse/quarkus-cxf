@@ -206,7 +206,7 @@ class QuarkusCxfProcessor {
          */
         byte[] serviceFileContent = QuarkusBusFactory.class.getName().getBytes(StandardCharsets.UTF_8);
         generatedResources.produce(
-                new GeneratedResourceBuildItem(
+                GeneratedResourceBuildItem.allowingMetaInfServices(
                         "META-INF/services/" + BusFactory.BUS_FACTORY_PROPERTY_NAME,
                         serviceFileContent));
     }
