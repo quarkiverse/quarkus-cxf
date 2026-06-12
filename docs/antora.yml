@@ -8,7 +8,7 @@ asciidoc:
   attributes:
 
     # Versions
-    quarkus-version: 3.36.1 # replace ${quarkus.version}
+    quarkus-version: 3.36.2 # replace ${quarkus.version}
     quarkus-cxf-version: 3.36.0 # replace ${release.current-version}
 
     # Toggle whether some page elements are rendered
@@ -26,6 +26,9 @@ asciidoc:
     link-camel-quarkus-docs-index: https://camel.apache.org/camel-quarkus/latest/index.html
     link-camel-quarkus-docs-cxf-soap: https://camel.apache.org/camel-quarkus/latest/reference/extensions/cxf-soap.html
     link-quarkus-docs-base: https://quarkus.io/guides
+    link-boms-maven-repo-base: https://repo1.maven.org/maven2
+
+    quarkus-platform-groupId: io.quarkus.platform
 
     # Misc
     javaxOrJakartaPackagePrefix: jakarta # this can be switched to javax in older branches
