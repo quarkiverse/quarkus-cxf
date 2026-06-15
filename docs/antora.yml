@@ -28,7 +28,8 @@ asciidoc:
     link-quarkus-docs-base: https://quarkus.io/guides
     link-boms-maven-repo-base: https://repo1.maven.org/maven2
 
-    quarkus-platform-groupId: io.quarkus.platform
+    quarkus-platform-groupId: io.quarkus.platform # Keep in sync with quarkus-platform-groupId-path
+    quarkus-platform-groupId-path: io/quarkus/platform # Keep in sync with quarkus-platform-groupId
 
     # Misc
     javaxOrJakartaPackagePrefix: jakarta # this can be switched to javax in older branches
