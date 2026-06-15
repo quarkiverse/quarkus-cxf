@@ -57,7 +57,7 @@ or other {link-quarkus-docs-base}/tooling#build-tool[Quarkus development tools],
     ...
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>{quarkus-platform-groupId}</quarkus.platform.group-id>
-    <quarkus.platform.version><!-- Check the latest {link-boms-maven-repo-base}/io/quarkus/platform/quarkus-cxf-bom/ --></quarkus.platform.version>
+    <quarkus.platform.version><!-- Check the latest {link-boms-maven-repo-base}/{quarkus-platform-groupId-path}/quarkus-cxf-bom/ --></quarkus.platform.version>
   </properties>
   <dependencyManagement>
     <dependencies>
