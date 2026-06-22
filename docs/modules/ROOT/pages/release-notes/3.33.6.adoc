@@ -1,0 +1,10 @@
+= {quarkus-cxf-project-name} 3.33.6 LTS release notes
+
+== Important dependency upgrades
+
+* Woodstox 7.2.0 -> 7.2.1 - https://github.com/FasterXML/woodstox/blob/main/release-notes/VERSION[release notes],
+  https://github.com/FasterXML/woodstox/compare/woodstox-core-7.2.0+++...+++woodstox-core-7.2.1[changelog]
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.5+++...+++3.33.6
