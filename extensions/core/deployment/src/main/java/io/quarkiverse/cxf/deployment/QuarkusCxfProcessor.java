@@ -709,17 +709,6 @@ class QuarkusCxfProcessor {
                 classes));
     }
 
-    /**
-     * Remove once https://github.com/apache/cxf/pull/3124 reaches us
-     *
-     * @param recorder
-     */
-    @BuildStep(onlyIf = NativeOrNativeSourcesBuild.class)
-    @Record(ExecutionTime.RUNTIME_INIT)
-    void workaroundCxf9214(CXFRecorder recorder) {
-        recorder.workaroundCxf9214();
-    }
-
     private static final class NoOpEntityResolver implements EntityResolver {
         @Override
         public InputSource resolveEntity(String publicId, String systemId) {
