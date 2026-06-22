@@ -1,0 +1,25 @@
+= {quarkus-cxf-project-name} 3.37.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.36.x -> 3.37.0 - https://quarkus.io/blog/quarkus-3-37-released/[release notes]
+* Apache CXF 4.2.1 -> 4.2.2 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.2.1+++...+++cxf-4.2.2[changelog]
+** https://www.cve.org/CVERecord?id=CVE-2026-50645[CVE-2026-50645] Apache CXF: Uncontrolled Resource Consumption via unlimited attachment headers - severity high
+* Apache HttpClient 5.5.2 -> 5.6.1 - https://hc.apache.org/news.html[release notes],
+  link:https://github.com/apache/httpcomponents-client/compare/rel/v5.5.2+++...+++rel/v5.6.1[changelog]
+* JAXB Plugins 4.0.14 -> 4.0.16 - https://github.com/highsource/jaxb-tools/releases/tag/4.0.15[release notes 4.0.15], https://github.com/highsource/jaxb-tools/releases/tag/4.0.16[release notes 4.0.16]
+* Woodstox 7.2.0 -> 7.2.1 - https://github.com/FasterXML/woodstox/blob/main/release-notes/VERSION[release notes],
+  https://github.com/FasterXML/woodstox/compare/woodstox-core-7.2.0+++...+++woodstox-core-7.2.1[changelog]
+
+== Enhancements
+
+=== Manage all transitive dependencies
+
+`io.quarkiverse.cxf:quarkus-cxf-bom` now manages all transitive dependencies required by Quarkus CXF extensions.
+This is to improve the speed and determinism of dependency resolution.
+As a consequence of that, any combination of Quarkus CXF extensions should use the same transitive dependencies versions
+irrespective of the order of dependencies in `pom.xml`.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.36.0+++...+++3.37.0
