@@ -170,10 +170,17 @@ If this is a `.0` release, change the following part of `docs/src/test/java/io/q
 
 ### 9. Commit the changes
 
-Commit the changes in a new topic branch using:
+Checkout a new topic branch unless the current active branch'es name ends with `-release-notes`.
+
+Use the following command to checkout the new topic branch if needed:
 
 ```bash
 git checkout -b "$(date +%y%m%d)-release-notes<version>"
+```
+
+Commit the changes using:
+
+```bash
 git add -A
 git commit -m "<version> release notes"
 ```
