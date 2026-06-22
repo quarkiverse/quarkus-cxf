@@ -1,0 +1,25 @@
+= {quarkus-cxf-project-name} 3.33.4 LTS release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.33.1 -> 3.33.2 - https://quarkus.io/blog/quarkus-3-33-2-released/[release notes]
+* Apache CXF 4.1.5 -> 4.1.6 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.1.5+++...+++cxf-4.1.6[changelog]
+** https://www.cve.org/CVERecord?id=CVE-2026-44417[CVE-2026-44417] Apache CXF: Incomplete fix for CVE-2025-48913 (Untrusted JMS configuration can lead to RCE) - severity moderate
+** https://www.cve.org/CVERecord?id=CVE-2026-44618[CVE-2026-44618] Apache CXF: XXE vulnerability in WS-Transfer functionality - severity moderate
+** https://www.cve.org/CVERecord?id=CVE-2026-44930[CVE-2026-44930] Apache CXF: LDAP Injection vulnerability in XKMS LDAP Repository - severity moderate
+* JAXB Plugins 4.0.12 -> 4.0.16 - https://github.com/highsource/jaxb-tools/releases/tag/4.0.13[release notes 4.0.13], https://github.com/highsource/jaxb-tools/releases/tag/4.0.14[release notes 4.0.14], https://github.com/highsource/jaxb-tools/releases/tag/4.0.15[release notes 4.0.15], https://github.com/highsource/jaxb-tools/releases/tag/4.0.16[release notes 4.0.16]
+* Woodstox 7.1.1 -> 7.2.0 - https://github.com/FasterXML/woodstox/blob/main/release-notes/VERSION[release notes],
+  https://github.com/FasterXML/woodstox/compare/woodstox-core-7.1.1+++...+++woodstox-core-7.2.0[changelog]
+** Notably, this release contains a fix for https://issues.apache.org/jira/browse/CXF-8966[CXF-8966].
+
+== Bugfixes
+
+=== https://issues.apache.org/jira/browse/CXF-9214[CXF-9214] WSDLs and XSDs cannot be loaded from class path on GraalVM
+
+A workaround was added for https://issues.apache.org/jira/browse/CXF-9214[CXF-9214],
+where WSDLs and XSDs could not be loaded from the class path when running on GraalVM native image.
+See also the upstream https://github.com/apache/cxf/pull/3124[pull request].
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.3+++...+++3.33.4
