@@ -1,0 +1,14 @@
+= {quarkus-cxf-project-name} 3.33.5 LTS release notes
+
+== Enhancements
+
+=== Manage all transitive dependencies
+
+`io.quarkiverse.cxf:quarkus-cxf-bom` now manages all transitive dependencies required by Quarkus CXF extensions.
+This is to improve the speed and determinism of dependency resolution.
+As a consequence of that, any combination of Quarkus CXF extensions should use the same transitive dependencies versions
+irrespective of the order of dependencies in `pom.xml`.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.4+++...+++3.33.5
