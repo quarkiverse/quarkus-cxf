@@ -1,0 +1,10 @@
+= {quarkus-cxf-project-name} 3.33.7 LTS release notes
+
+== Important dependency upgrades
+
+* Apache CXF 4.1.6 -> 4.1.7 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.1.6+++...+++cxf-4.1.7[changelog]
+** https://www.cve.org/CVERecord?id=CVE-2026-50645[CVE-2026-50645] Apache CXF: Uncontrolled Resource Consumption via unlimited attachment headers - severity high
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.6+++...+++3.33.7
