@@ -340,18 +340,4 @@ public class CXFRecorder {
         });
     }
 
-    /**
-     * Remove once https://github.com/apache/cxf/pull/3124 reaches us
-     *
-     * @param recorder
-     */
-    public void workaroundCxf9214() {
-        String val = System.getProperty("org.apache.cxf.resource.uriresolver.allowedSchemes");
-        if (val != null && !val.isBlank()) {
-            System.setProperty("org.apache.cxf.resource.uriresolver.allowedSchemes", val + ",resource");
-        } else {
-            System.setProperty("org.apache.cxf.resource.uriresolver.allowedSchemes", "resource");
-        }
-    }
-
 }
