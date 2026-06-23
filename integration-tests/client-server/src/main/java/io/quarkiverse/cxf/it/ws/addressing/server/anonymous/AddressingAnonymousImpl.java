@@ -1,18 +1,20 @@
 package io.quarkiverse.cxf.it.ws.addressing.server.anonymous;
 
-import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 import jakarta.xml.ws.BindingType;
 import jakarta.xml.ws.soap.Addressing;
 import jakarta.xml.ws.soap.SOAPBinding;
 
-@WebService(serviceName = "AddressingAnonymousImpl")
+import io.quarkiverse.cxf.it.HelloService;
+
+@WebService(serviceName = "HelloService", targetNamespace = HelloService.NS)
 @BindingType(SOAPBinding.SOAP12HTTP_BINDING)
 @Addressing(required = true)
-public class AddressingAnonymousImpl {
+public class AddressingAnonymousImpl implements HelloService {
 
-    public String reply(@WebParam(name = "text") String text) {
-        return "Hello " + text;
+    @Override
+    public String hello(String text) {
+        return "Hello " + text + " from AddressingAnonymousImpl";
     }
 
 }

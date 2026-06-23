@@ -7,6 +7,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.cxf.it.HelloService;
 import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -14,15 +15,16 @@ import io.restassured.config.RestAssuredConfig;
 
 @QuarkusTest
 public class WsAddressingAnonymousTest {
-    static final String SOAP_REQUEST = "<x:Envelope xmlns:x=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cxf=\"http://anonymous.server.addressing.ws.it.cxf.quarkiverse.io/\">\n"
-            +
-            "   <x:Header/>\n" +
-            "   <x:Body>\n" +
-            "      <cxf:reply>\n" +
-            "          <text>foo</text>\n" +
-            "      </cxf:reply>\n" +
-            "   </x:Body>\n" +
-            "</x:Envelope>";
+    static final String SOAP_REQUEST = """
+            <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+              <soap:Header/>
+              <soap:Body>
+                <ns2:hello xmlns:ns2="https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test">
+                  <arg0>Joe</arg0>
+                </ns2:hello>
+              </soap:Body>
+            </soap:Envelope>
+            """;
 
     @Test
     void wsdl() {
@@ -57,22 +59,24 @@ public class WsAddressingAnonymousTest {
     @Test
     void rawAddressing() {
         final String ID = "urn:uuid:50784fd1-f67e-4493-b24c-5850fb38736f";
-        final String request = "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">\n"
-                + "  <soap:Header>\n"
-                + "    <Action xmlns=\"http://www.w3.org/2005/08/addressing\" soap:mustUnderstand=\"true\">http://anonymous.server.addressing.ws.it.cxf.quarkiverse.io/GreetingWebServiceAddressingImpl/replyRequest</Action>\n"
-                + "    <MessageID xmlns=\"http://www.w3.org/2005/08/addressing\" soap:mustUnderstand=\"true\">" + ID
-                + "</MessageID>\n"
-                + "    <To xmlns=\"http://www.w3.org/2005/08/addressing\" soap:mustUnderstand=\"true\">http://localhost:8081/soap/greeting-addressing</To>\n"
-                + "    <ReplyTo xmlns=\"http://www.w3.org/2005/08/addressing\" soap:mustUnderstand=\"true\">\n"
-                + "      <Address>http://www.w3.org/2005/08/addressing/anonymous</Address>\n"
-                + "    </ReplyTo>\n"
-                + "  </soap:Header>\n"
-                + "  <soap:Body>\n"
-                + "    <ns2:reply xmlns:ns2=\"http://anonymous.server.addressing.ws.it.cxf.quarkiverse.io/\">\n"
-                + "      <text>bar</text>\n"
-                + "    </ns2:reply>\n"
-                + "  </soap:Body>\n"
-                + "</soap:Envelope>";
+        final String request = """
+                <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                  <soap:Header>
+                    <Action xmlns="http://www.w3.org/2005/08/addressing" soap:mustUnderstand="1">helloAction</Action>
+                    <MessageID xmlns="http://www.w3.org/2005/08/addressing" soap:mustUnderstand="1">%s</MessageID>
+                    <To xmlns="http://www.w3.org/2005/08/addressing" soap:mustUnderstand="1">http://localhost:8081/soap/addressing-headers-enforcer</To>
+                    <ReplyTo xmlns="http://www.w3.org/2005/08/addressing" soap:mustUnderstand="1">
+                      <Address>http://www.w3.org/2005/08/addressing/anonymous</Address>
+                    </ReplyTo>
+                  </soap:Header>
+                  <soap:Body>
+                    <ns2:hello xmlns:ns2="https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/test">
+                      <arg0>Joe</arg0>
+                    </ns2:hello>
+                  </soap:Body>
+                </soap:Envelope>
+                """
+                .formatted(ID);
 
         given()
                 .header("Content-Type", "text/xml").and().body(request)
@@ -83,7 +87,7 @@ public class WsAddressingAnonymousTest {
                         Matchers.hasXPath(
                                 QuarkusCxfInternalTestUtil.anyNs("Envelope", "Header", "Action") + "/text()",
                                 CoreMatchers.is(
-                                        "http://anonymous.server.addressing.ws.it.cxf.quarkiverse.io/AddressingAnonymousImpl/replyResponse")),
+                                        HelloService.NS + "/HelloService/helloResponse")),
                         Matchers.hasXPath(
                                 QuarkusCxfInternalTestUtil.anyNs("Envelope", "Header", "MessageID") + "/text()",
                                 Matchers.notNullValue(String.class)),
@@ -93,6 +97,18 @@ public class WsAddressingAnonymousTest {
                         Matchers.hasXPath(
                                 QuarkusCxfInternalTestUtil.anyNs("Envelope", "Header", "RelatesTo") + "/text()",
                                 CoreMatchers.is(ID)));
+    }
+
+    @Test
+    void addressingSoapHeadersSent() throws Exception {
+
+        given()
+                .body("Joe")
+                .post("/ws-addressing-client/call-addressing-headers-enforcer")
+                .then()
+                .statusCode(200)
+                .body(Matchers.is("Hello Joe from AddressingAnonymousImpl"));
+
     }
 
 }
