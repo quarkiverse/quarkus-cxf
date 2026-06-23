@@ -15,3 +15,7 @@ metadata:
   status:
     - "stable"
     - "deprecated"
+  integrates:
+    - name: "Apache CXF"
+      artifact: "org.apache.cxf:cxf-core"
+      version: "${cxf.version}"
