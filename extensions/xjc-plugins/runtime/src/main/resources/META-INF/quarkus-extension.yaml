@@ -11,3 +11,7 @@ metadata:
     - "xml"
   guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/reference/extensions/quarkus-cxf-xjc-plugins.html"
   status: "stable"
+  integrates:
+    - name: "Apache CXF XJC Plugins"
+      artifact: "org.apache.cxf.xjc-utils:cxf-xjc-runtime"
+      version: "${cxf.xjcplugins.version}"
