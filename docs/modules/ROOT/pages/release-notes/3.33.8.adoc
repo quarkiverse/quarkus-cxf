@@ -1,0 +1,20 @@
+= {quarkus-cxf-project-name} 3.33.8 LTS release notes
+
+== Enhancements
+
+=== Publish `integrates` extension metadata
+
+{quarkus-cxf-project-name} extensions now publish `integrates` metadata in their `quarkus-extension.yaml` descriptors,
+exposing the version of Apache CXF (or JAXB Plugins) they integrate with.
+This allows various Quarkus tools and applications (such as https://code.quarkus.io and https://registry.quarkus.io[https://extension.registry.io])
+to expose the integrated dependency versions.
+This is not to say they already do that, this is just the first step towards that goal.
+
+=== Remove the https://issues.apache.org/jira/browse/CXF-9214[CXF-9214] workaround
+
+The workaround for WSDLs and XSDs not being loadable from the class path on GraalVM was removed,
+because the issue was fixed upstream in Apache CXF 4.1.7 (see https://github.com/apache/cxf/pull/3124[apache/cxf#3124]).
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.7+++...+++3.33.8
