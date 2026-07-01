@@ -27,11 +27,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - branch: 'main-quarkus-main'
+          - branch: 'main-quarkus-3.x'
             base-branch: 'main'
             dependency-short-name: 'quarkus'
-            dependency-stream: 'main'
-            dependency-branch: 'main'
+            dependency-stream: '3.x'
+            dependency-branch: '3.x'
             issue-id: 1287
             dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
           - branch: 'main-cxf-main'
