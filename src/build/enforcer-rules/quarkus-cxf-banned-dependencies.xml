@@ -17,9 +17,7 @@
                 <exclude>org.apache.cxf:cxf-rt-databinding-sdo</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
                 <exclude>org.apache.cxf:cxf-rt-features-clustering</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
                 <exclude>org.apache.cxf:cxf-rt-features-throttling</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
-                <exclude>org.apache.cxf:cxf-rt-frontend-jaxrs</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
                 <exclude>org.apache.cxf:cxf-rt-javascript</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
-                <exclude>org.apache.cxf:cxf-rt-rs-client</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
                 <exclude>org.apache.cxf:cxf-rt-transports-local</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
                 <exclude>org.apache.cxf:cxf-rt-transports-jbi</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
                 <exclude>org.apache.cxf:cxf-rt-transports-jms</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
