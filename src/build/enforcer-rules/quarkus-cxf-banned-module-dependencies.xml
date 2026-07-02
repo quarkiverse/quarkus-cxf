@@ -1,0 +1,13 @@
+<enforcer>
+    <rules>
+        <!-- Dependency bans that should only honored in Quarkus CXF modules, but not during BOM flattening -->
+        <bannedDependencies>
+            <excludes>
+                <exclude>org.apache.cxf:cxf-rt-frontend-jaxrs</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
+                <exclude>org.apache.cxf:cxf-rt-rs-client</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
+                <exclude>org.apache.cxf:cxf-rt-rs-extension-providers</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
+                <exclude>org.apache.cxf:cxf-rt-rs-security-oauth2</exclude><!-- Unsupported by Quarkus CXF https://docs.quarkiverse.io/quarkus-cxf/dev/reference/index.html#unsupported -->
+            </excludes>
+        </bannedDependencies>
+    </rules>
+</enforcer>

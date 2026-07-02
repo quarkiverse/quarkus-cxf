@@ -245,6 +245,11 @@
                 <artifactId>cxf-rt-features-metrics</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.cxf</groupId>
@@ -256,6 +261,21 @@
                         <artifactId>asm</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-rs-client</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-rs-extension-providers</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-rs-security-oauth2</artifactId>
+                <version>${cxf.version}</version>
             </dependency>
 
             <dependency>
@@ -536,6 +556,10 @@
                                 <!-- entries that our extensions need. Here we define the set of our artifacts -->
                                 <!-- whose dependencies we want to cover in the flattened BOM -->
                                 <resolutionEntryPointInclude>com.sun.xml.fastinfoset:FastInfoset</resolutionEntryPointInclude>
+                                <resolutionEntryPointInclude>org.apache.cxf:cxf-rt-frontend-jaxrs</resolutionEntryPointInclude>
+                                <resolutionEntryPointInclude>org.apache.cxf:cxf-rt-rs-client</resolutionEntryPointInclude>
+                                <resolutionEntryPointInclude>org.apache.cxf:cxf-rt-rs-extension-providers</resolutionEntryPointInclude>
+                                <resolutionEntryPointInclude>org.apache.cxf:cxf-rt-rs-security-oauth2</resolutionEntryPointInclude>
                                 <resolutionEntryPointInclude>io.quarkiverse.cxf:*</resolutionEntryPointInclude>
                                 <resolutionEntryPointInclude>org.apache.cxf.xjc-utils:cxf-xjc-runtime</resolutionEntryPointInclude>
                             </resolutionEntryPointIncludes>
