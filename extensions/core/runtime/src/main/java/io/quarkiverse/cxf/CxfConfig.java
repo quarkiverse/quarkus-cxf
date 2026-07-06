@@ -1,6 +1,7 @@
 package io.quarkiverse.cxf;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -86,6 +87,14 @@ public interface CxfConfig {
      */
     // @formatter:on
     public Optional<String> decoupledEndpointBase();
+
+    /**
+     * Global service endpoint configuration
+     *
+     * @since 3.38.0
+     * @asciidoclet
+     */
+    GlobalEndpoingConfig endpoint();
 
     /**
      * Choose the path of each web services.
@@ -328,6 +337,68 @@ public interface CxfConfig {
         @WithDefault("true")
         public boolean gcOnShutDown();
 
+    }
+
+    /**
+     * Global service endpoint configuration
+     *
+     * @since 3.38.0
+     * @asciidoclet
+     */
+    public interface GlobalEndpoingConfig {
+        /**
+         * WS-Addressing configuration
+         *
+         * @since 3.38.0
+         * @asciidoclet
+         */
+        AddressingConfig addressing();
+
+        /**
+         * WS-Addressing configuration
+         *
+         * @since 3.38.0
+         * @asciidoclet
+         */
+        public interface AddressingConfig {
+            /**
+             * If `true`, WS-Addressing decoupled destinations (non-anonymous `wsa:ReplyTo` or `wsa:FaultTo) requested
+             * by clients will be honored; otherwise, any request will end result in `DestinationUnreachable` fault
+             * to prevent Server-Side Request Forgery (SSRF).
+             * Set to {@code true} only when your application legitimately requires decoupled WS-Addressing callbacks.
+             *
+             * This configuration option replaces the system property `org.apache.cxf.ws.addressing.decoupled.enabled`
+             * of plain CXF.
+             * Any Quarkus CXF application will fail to start if `org.apache.cxf.ws.addressing.decoupled.enabled` system
+             * property is set.
+             *
+             * @since 3.38.0
+             * @asciidoclet
+             */
+            @WithDefault("false")
+            @WithName("decoupled.enabled")
+            boolean decoupledEnabled();
+
+            /**
+             * List of URI scheme prefixes permitted in `wsa:ReplyTo` and `wsa:FaultTo` decoupled-destination addresses.
+             * Replaces the functionality of `org.apache.cxf.ws.addressing.decoupled.allowedSchemes` system property used
+             * by plain CXF.
+             * Any Quarkus CXF application will fail to start if `org.apache.cxf.ws.addressing.decoupled.allowedSchemes` system
+             * property is set.
+             *
+             * [NOTE]
+             * ====
+             * Unlike plain CXF, that allows a broader range of allowed schemes by default, Quarkus CXF allows only `https://`
+             * by default.
+             * ====
+             *
+             * @since 3.38.0
+             * @asciidoclet
+             */
+            @WithDefault("https://")
+            @WithName("decoupled.allowed-schemes")
+            List<String> decoupledAllowedSchemes();
+        }
     }
 
 }

@@ -554,6 +554,42 @@ public class MyRestEasyResource {
 *Environment variable*: `+++QUARKUS_CXF_DECOUPLED_ENDPOINT_BASE+++` +
 *Since Quarkus CXF*: 2.7.0
 
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-enabled]]`link:#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-enabled[quarkus.cxf.endpoint.addressing.decoupled.enabled]`
+.<| `boolean`
+.<| `false`
+
+3+a|If `true`, WS-Addressing decoupled destinations (non-anonymous `wsa:ReplyTo` or `wsa:FaultTo) requested
+by clients will be honored; otherwise, any request will end result in `DestinationUnreachable` fault
+to prevent Server-Side Request Forgery (SSRF).
+Set to {@code true} only when your application legitimately requires decoupled WS-Addressing callbacks.
+
+This configuration option replaces the system property `org.apache.cxf.ws.addressing.decoupled.enabled`
+of plain CXF.
+Any Quarkus CXF application will fail to start if `org.apache.cxf.ws.addressing.decoupled.enabled` system
+property is set.
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT_ADDRESSING_DECOUPLED_ENABLED+++` +
+*Since Quarkus CXF*: 3.38.0
+
+.<| [[quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes]]`link:#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes[quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes]`
+.<| List of ``string``
+.<| `\https://`
+
+3+a|List of URI scheme prefixes permitted in `wsa:ReplyTo` and `wsa:FaultTo` decoupled-destination addresses.
+Replaces the functionality of `org.apache.cxf.ws.addressing.decoupled.allowedSchemes` system property used
+by plain CXF.
+Any Quarkus CXF application will fail to start if `org.apache.cxf.ws.addressing.decoupled.allowedSchemes` system
+property is set.
+
+[NOTE]
+====
+Unlike plain CXF, that allows a broader range of allowed schemes by default, Quarkus CXF allows only `https://`
+by default.
+====
+
+*Environment variable*: `+++QUARKUS_CXF_ENDPOINT_ADDRESSING_DECOUPLED_ALLOWED_SCHEMES+++` +
+*Since Quarkus CXF*: 3.38.0
+
 .<| [[quarkus-cxf_quarkus-cxf-client-tls-configuration-name]]`link:#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`
 .<| `string`
 .<| `javax.net.ssl`
