@@ -196,6 +196,26 @@ class QuarkusCxfProcessor {
                 .produce(new SystemPropertyBuildItem(BusFactory.BUS_FACTORY_PROPERTY_NAME, QuarkusBusFactory.class.getName()));
     }
 
+    @Record(ExecutionTime.RUNTIME_INIT)
+    @BuildStep
+    void addressingProperties(
+            CXFRecorder recorder,
+            /*
+             * The SystemPropertyBuildItem is requested
+             * so that the recorder method is called very early
+             */
+            BuildProducer<SystemPropertyBuildItem> systemProperty) {
+        recorder.addressingProperties();
+    }
+
+    @BuildStep
+    @Record(ExecutionTime.RUNTIME_INIT)
+    void resetAddressingProperties(
+            CXFRecorder recorder,
+            ShutdownContextBuildItem shutdownContext) {
+        recorder.resetAddressingProperties(shutdownContext);
+    }
+
     @BuildStep
     void generateRuntimeBusServiceFile(BuildProducer<GeneratedResourceBuildItem> generatedResources) {
         /*
