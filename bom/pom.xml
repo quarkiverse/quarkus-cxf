@@ -550,6 +550,13 @@
                             <additionalBoms>
                                 <additionalBom>io.quarkus:quarkus-bom:${quarkus.version}</additionalBom>
                             </additionalBoms>
+                            <additionalBomEntries>
+                                <additionalBomEntry>org.apache.httpcomponents.client5:httpclient5-fluent</additionalBomEntry>
+                                <additionalBomEntry>org.apache.httpcomponents.client5:httpclient5-sse</additionalBomEntry>
+                                <additionalBomEntry>org.apache.httpcomponents.client5:httpclient5-websocket</additionalBomEntry>
+                                <additionalBomEntry>org.apache.httpcomponents.core5:httpcore5-jackson2</additionalBomEntry>
+                                <additionalBomEntry>org.apache.httpcomponents.core5:httpcore5-reactive</additionalBomEntry>
+                            </additionalBomEntries>
                             <installFlavor>REDUCED_EXPANDED</installFlavor>
                             <resolutionEntryPointIncludes>
                                 <!-- We not only flatten the BOM, we also shrink it down so that includes -->
