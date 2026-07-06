@@ -2,11 +2,15 @@ package io.quarkiverse.cxf;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.io.CachedConstants;
@@ -337,6 +341,57 @@ public class CXFRecorder {
             config.directory().ifPresent(dir -> bus.setProperty(CachedConstants.OUTPUT_DIRECTORY_BUS_PROP, dir));
             bus.setProperty(CachedConstants.CLEANER_DELAY_BUS_PROP, config.gcDelay().toMillis());
             bus.setProperty(CachedConstants.CLEANER_CLEAN_ON_SHUTDOWN_BUS_PROP, config.gcOnShutDown());
+        });
+    }
+
+    private final Map<String, String> originalAddressingProperties = new ConcurrentHashMap<>();
+
+    public void addressingProperties() {
+        String message = Stream
+                .of("org.apache.cxf.ws.addressing.decoupled.enabled", "org.apache.cxf.ws.addressing.decoupled.allowedSchemes")
+                .map(prop -> new AbstractMap.SimpleImmutableEntry<>(prop, System.getProperty(prop)))
+                .peek(en -> {
+                    if (en.getValue() == null) {
+                        originalAddressingProperties.remove(en.getKey());
+                    } else {
+                        originalAddressingProperties.put(en.getKey(), en.getValue());
+                    }
+                })
+                .filter(en -> en.getValue() != null)
+                .map(en -> "Unsupported system property " + en.getKey() + ". Use Quarkus CXF configuration parameter "
+                        + en.getKey().replace("org.apache.cxf.ws.addressing.decoupled.",
+                                "quarkus.cxf.endpoint.addressing.decoupled.")
+                        + " instead.")
+                .collect(Collectors.joining("\n"));
+
+        if (message != null && !message.isEmpty()) {
+            throw new IllegalStateException(message);
+        }
+
+        System.setProperty("org.apache.cxf.ws.addressing.decoupled.enabled",
+                String.valueOf(cxfConfig.getValue().endpoint().addressing().decoupledEnabled()));
+        System.setProperty("org.apache.cxf.ws.addressing.decoupled.allowedSchemes", cxfConfig.getValue().endpoint().addressing()
+                .decoupledAllowedSchemes().stream().collect(Collectors.joining(",")));
+    }
+
+    public void resetAddressingProperties(ShutdownContext context) {
+        /*
+         * This is needed, because all QuarkusUnitTests run in the same VM.
+         * So the the stale system properties set in addressingProperties() would make the subsequent tests fail.
+         */
+        context.addShutdownTask(() -> {
+            Stream
+                    .of("org.apache.cxf.ws.addressing.decoupled.enabled",
+                            "org.apache.cxf.ws.addressing.decoupled.allowedSchemes")
+                    .forEach(key -> {
+                        String val = originalAddressingProperties.get(key);
+                        if (val == null) {
+                            System.getProperties().remove(key);
+                        } else {
+                            System.setProperty(key, val);
+                        }
+                    });
+            originalAddressingProperties.clear();
         });
     }
 
