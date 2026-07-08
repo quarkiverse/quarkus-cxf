@@ -8,11 +8,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -60,6 +63,7 @@ import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.phase.PhaseInterceptor;
+import org.apache.cxf.ws.addressing.ContextUtils;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.ClassInfo;
 import org.jboss.jandex.DotName;
@@ -90,6 +94,7 @@ import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.GeneratedResourceBuildItem;
 import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
+import io.quarkus.deployment.builditem.RemovedResourceBuildItem;
 import io.quarkus.deployment.builditem.ShutdownContextBuildItem;
 import io.quarkus.deployment.builditem.SystemPropertyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
@@ -104,6 +109,7 @@ import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.steps.NativeOrNativeSourcesBuild;
 import io.quarkus.gizmo.ClassOutput;
+import io.quarkus.maven.dependency.ArtifactKey;
 
 class QuarkusCxfProcessor {
     private static final Logger LOGGER = Logger.getLogger(QuarkusCxfProcessor.class);
@@ -212,6 +218,56 @@ class QuarkusCxfProcessor {
             CXFRecorder recorder,
             ShutdownContextBuildItem shutdownContext) {
         recorder.resetAddressingProperties(shutdownContext);
+    }
+
+    private static final String ADDRESSING_MESSAGES = "org/apache/cxf/ws/addressing/Messages.properties";
+
+    @BuildStep
+    void removeCxfCoreResourceBundles(BuildProducer<RemovedResourceBuildItem> removed) {
+        removed.produce(new RemovedResourceBuildItem(
+                ArtifactKey.of("org.apache.cxf", "cxf-core", null, "jar"),
+                Set.of(ADDRESSING_MESSAGES)));
+    }
+
+    @BuildStep
+    void replaceCxfCoreResourceBundles(BuildProducer<GeneratedResourceBuildItem> generated) {
+        Properties props = new LinkedProperties();
+        try (InputStream in = ContextUtils.class.getClassLoader().getResourceAsStream(ADDRESSING_MESSAGES)) {
+            props.load(in);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not read from " + ADDRESSING_MESSAGES + " in cxf-core.jar", e);
+        }
+        Map<String, String> overrides = Map.of(
+                "DISALLOWED_DECOUPLED_DESTINATION_SCHEME",
+                "Rejected pre-approved decoupled destination with disallowed scheme: {0}. Configure permitted URI schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
+                "REJECTED_DECOUPLED_DESTINATION",
+                "Rejected wsa:ReplyTo/FaultTo decoupled destination: {0}. Decoupled WS-Addressing is disabled by default; enable with quarkus.cxf.endpoint.addressing.decoupled.enabled=true, or configure permitted URI schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
+                "DECOUPLED_REPLY_TO_NOT_PERMITTED",
+                "Decoupled WS-Addressing ReplyTo ({0}) is not permitted by this server. Enable with quarkus.cxf.endpoint.addressing.decoupled.enabled=true, or configure permitted URI schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
+                "DECOUPLED_REPLY_TO_SCHEME_NOT_PERMITTED",
+                "Decoupled WS-Addressing ReplyTo ({0}) is not permitted by this server: URI scheme is not allowed. Configure permitted schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
+                "DECOUPLED_FAULT_TO_SCHEME_NOT_ALLOWED",
+                "Decoupled pre-approved FaultTo ({0}) is not permitted: URI scheme is not allowed. Fault will be delivered to ReplyTo instead. Configure permitted schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
+                "DECOUPLED_FAULT_TO_NOT_ALLOWED",
+                "Fault will be delivered to ReplyTo instead. Configure permitted schemes with {1} Decoupled WS-Addressing FaultTo ({0}) is not permitted; fault will be delivered to ReplyTo instead. Enable with quarkus.cxf.endpoint.addressing.decoupled.enabled=true, or configure permitted URI schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter");
+
+        overrides.forEach((k, v) -> {
+            if (props.get(k) == null) {
+                throw new IllegalStateException(
+                        ADDRESSING_MESSAGES + " in cxf-core.jar is missing an expected key " + k + "; was it perhaps renamed?");
+            }
+            props.put(k, v);
+        });
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            props.store(baos, null);
+            baos.flush();
+            baos.close();
+
+            byte[] content = baos.toByteArray();
+            generated.produce(new GeneratedResourceBuildItem(ADDRESSING_MESSAGES, content));
+        } catch (IOException e) {
+            throw new UncheckedIOException("Could not write to ByteArrayOutputStream", e);
+        }
     }
 
     @BuildStep
@@ -711,6 +767,48 @@ class QuarkusCxfProcessor {
 
         public String[] getGeneratedClasses() {
             return generatedClasses.keySet().toArray(new String[0]);
+        }
+    }
+
+    public class LinkedProperties extends Properties {
+        private static final long serialVersionUID = 1L;
+        private final LinkedHashSet<Object> keys = new LinkedHashSet<>();
+
+        @Override
+        public synchronized Object put(Object key, Object value) {
+            keys.add(key);
+            return super.put(key, value);
+        }
+
+        @Override
+        public synchronized Object remove(Object key) {
+            keys.remove(key);
+            return super.remove(key);
+        }
+
+        @Override
+        public synchronized void clear() {
+            keys.clear();
+            super.clear();
+        }
+
+        @Override
+        public Enumeration<Object> keys() {
+            return Collections.enumeration(keys);
+        }
+
+        @Override
+        public Set<Object> keySet() {
+            return keys;
+        }
+
+        @Override
+        public Set<Map.Entry<Object, Object>> entrySet() {
+            Set<Map.Entry<Object, Object>> set = new LinkedHashSet<>();
+            for (Object key : keys) {
+                set.add(new AbstractMap.SimpleEntry<>(key, get(key)));
+            }
+            return set;
         }
     }
 

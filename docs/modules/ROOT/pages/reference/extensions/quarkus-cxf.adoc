@@ -573,7 +573,7 @@ property is set.
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes]]`link:#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes[quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes]`
 .<| List of ``string``
-.<| `\https://`
+.<| `\http://,https://`
 
 3+a|List of URI scheme prefixes permitted in `wsa:ReplyTo` and `wsa:FaultTo` decoupled-destination addresses.
 Replaces the functionality of `org.apache.cxf.ws.addressing.decoupled.allowedSchemes` system property used
@@ -583,8 +583,8 @@ property is set.
 
 [NOTE]
 ====
-Unlike plain CXF, that allows a broader range of allowed schemes by default, Quarkus CXF allows only `https://`
-by default.
+Unlike plain CXF, that allows a broader range of allowed schemes by default, Quarkus CXF allows only
+`http://` and `https://` by default.
 ====
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT_ADDRESSING_DECOUPLED_ALLOWED_SCHEMES+++` +
