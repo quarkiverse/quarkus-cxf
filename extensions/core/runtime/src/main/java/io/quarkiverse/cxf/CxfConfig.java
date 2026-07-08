@@ -388,14 +388,14 @@ public interface CxfConfig {
              *
              * [NOTE]
              * ====
-             * Unlike plain CXF, that allows a broader range of allowed schemes by default, Quarkus CXF allows only `https://`
-             * by default.
+             * Unlike plain CXF, that allows a broader range of allowed schemes by default, Quarkus CXF allows only
+             * `http://` and `https://` by default.
              * ====
              *
              * @since 3.38.0
              * @asciidoclet
              */
-            @WithDefault("https://")
+            @WithDefault("http://,https://")
             @WithName("decoupled.allowed-schemes")
             List<String> decoupledAllowedSchemes();
         }
