@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s0="urn:IciSystemInterface" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://wicom.com/ws/OII/IciSystem/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s1="http://www.w3.org/2001/XMLSchema" xmlns:s2="urn:IciUserInterface" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://wicom.com/ws/OII/IciSystem/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s1:schema elementFormDefault="qualified" targetNamespace="urn:IciSystemInterface">
+      <s1:import namespace="http://www.w3.org/2001/XMLSchema" />
+      <s1:import namespace="urn:IciUserInterface" />
+      <s1:element name="exchangeProductInformation">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="iciVersion" nillable="true" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="exchangeProductInformationResponse">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="response" nillable="true" type="s0:ici.ProductInformation" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:complexType name="ici.ProductInformation">
+        <s1:sequence>
+          <s1:element minOccurs="1" maxOccurs="1" name="message" nillable="true" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="productName" nillable="true" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="iciMessageGroups" nillable="true" type="s0:ArrayOfString" />
+          <s1:element minOccurs="1" maxOccurs="1" name="productVersion" nillable="true" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="iciVersion" nillable="true" type="s1:string" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="ArrayOfString">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="unbounded" name="item" nillable="true" type="s1:string" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:element name="language" type="s1:SystemLanguage" />
+      <s1:element name="user" type="s1:SystemUser" />
+      <s1:element name="getWorkcenterCapability">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="0" maxOccurs="1" name="userId" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="getWorkcenterCapabilityResponse">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="response" nillable="true" type="s0:ici.WorkcenterCapability" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:complexType name="ici.WorkcenterCapability">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="1" name="types" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="workcenterList" type="s1:boolean" />
+          <s1:element minOccurs="1" maxOccurs="1" name="filter" type="s1:boolean" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:element name="getPresenceQueueInfo">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="0" maxOccurs="1" ref="s2:userId" />
+            <s1:element minOccurs="0" maxOccurs="1" name="channelType" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="queueGuid" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="queueAddress" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="queueName" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="getPresenceQueueInfoResponse">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="response" nillable="true" type="s0:getPresenceQueueInfoResponseResponse" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:complexType name="getPresenceQueueInfoResponseResponse">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="1" name="groupInfo" type="s0:ArrayOfGroupInfo" />
+          <s1:element minOccurs="0" maxOccurs="1" name="queueInfo" type="s0:ArrayOfQueueInfo" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="ArrayOfGroupInfo">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="unbounded" name="item" nillable="true" type="s0:GroupInfo" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="GroupInfo">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="1" name="id" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="description" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="parentId" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="queuesId" type="s0:ArrayOfString" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="ArrayOfQueueInfo">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="unbounded" name="item" nillable="true" type="s0:QueueInfo" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="QueueInfo">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="1" name="id" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="description" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="guid" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="loggedIn" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="ready" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="pending" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="open" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="avgWaitingTime" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="maxWaitingTime" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="busy" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="wrapUp" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="notReady" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="paused" type="s1:string" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:element name="getUserPresence">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="users" nillable="true" type="s0:ArrayOfString1" />
+            <s1:element minOccurs="1" maxOccurs="1" name="searchterm" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="maxhits" nillable="true" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:complexType name="ArrayOfString1">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="unbounded" name="Item" type="s1:string" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:element name="getUserPresenceResponse">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="response" nillable="true" type="s0:ArrayOfIciUserPresenceInfo" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:complexType name="ArrayOfIciUserPresenceInfo">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="unbounded" name="item" nillable="true" type="s0:ici.UserPresenceInfo" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="ici.UserPresenceInfo">
+        <s1:sequence>
+          <s1:element minOccurs="1" maxOccurs="1" name="user" nillable="true" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="presenceStatus" nillable="true" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="presenceDescription" nillable="true" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="collaborationData" nillable="true" type="s0:ArrayOfIciCollaborationData" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="ArrayOfIciCollaborationData">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="unbounded" name="item" type="s0:ici.CollaborationData" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="ici.CollaborationData">
+        <s1:sequence>
+          <s1:element minOccurs="1" maxOccurs="1" name="description" nillable="true" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="channel" nillable="true" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="capability" nillable="true" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="address" nillable="true" type="s1:string" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:element name="testGetUserPresence">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="0" maxOccurs="1" name="searchterm" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="user" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="testGetUserPresenceResponse">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="response" nillable="true" type="s0:ArrayOfIciUserPresenceInfo" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="testGetUserPresence2">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="0" maxOccurs="1" name="userid1" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="userid2" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="user" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="testGetUserPresence2Response">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="response" nillable="true" type="s0:ArrayOfIciUserPresenceInfo" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="getCallRecordings">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="callHandle" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="userId" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="dateTimeFrom" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="dateTimeTo" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="filePath" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="fileName" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="maxhits" nillable="true" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="getCallRecordingsResponse">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="response" nillable="true" type="s0:ArrayOfCallRecording" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:complexType name="ArrayOfCallRecording">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="unbounded" name="item" nillable="true" type="s0:CallRecording" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="CallRecording">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="1" name="callHandle" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="userId" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="creationTime" type="s1:dateTime" />
+          <s1:element minOccurs="1" maxOccurs="1" name="startTime" nillable="true" type="s1:dateTime" />
+          <s1:element minOccurs="1" maxOccurs="1" name="endTime" nillable="true" type="s1:dateTime" />
+          <s1:element minOccurs="0" maxOccurs="1" name="source" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="destination" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="fileName" type="s1:string" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:element name="createCallBack">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="0" maxOccurs="1" name="number" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="queue" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="callTime" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="extraData" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="gwPrefix" nillable="true" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="notes" nillable="true" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="createCallBackResponse">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="response" nillable="true" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="updateCallBack">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="0" maxOccurs="1" name="id" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="result" type="s1:string" />
+            <s1:element minOccurs="1" maxOccurs="1" name="notes" nillable="true" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="updateCallBackResponse">
+        <s1:complexType />
+      </s1:element>
+      <s1:element name="getCallBacks">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="0" maxOccurs="1" name="id" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="number" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="queueGuid" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="queueNumber" type="s1:string" />
+            <s1:element minOccurs="0" maxOccurs="1" name="queueName" type="s1:string" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:element name="getCallBacksResponse">
+        <s1:complexType>
+          <s1:sequence>
+            <s1:element minOccurs="1" maxOccurs="1" name="response" nillable="true" type="s0:ArrayOfCallBack" />
+          </s1:sequence>
+        </s1:complexType>
+      </s1:element>
+      <s1:complexType name="ArrayOfCallBack">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="unbounded" name="item" nillable="true" type="s0:CallBack" />
+        </s1:sequence>
+      </s1:complexType>
+      <s1:complexType name="CallBack">
+        <s1:sequence>
+          <s1:element minOccurs="0" maxOccurs="1" name="id" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="number" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="queueGuid" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="queueNumber" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="queueName" type="s1:string" />
+          <s1:element minOccurs="1" maxOccurs="1" name="handledTime" nillable="true" type="s1:dateTime" />
+          <s1:element minOccurs="1" maxOccurs="1" name="lastCallTime" nillable="true" type="s1:dateTime" />
+          <s1:element minOccurs="1" maxOccurs="1" name="nextCallTime" nillable="true" type="s1:dateTime" />
+          <s1:element minOccurs="1" maxOccurs="1" name="failures" type="s1:int" />
+          <s1:element minOccurs="1" maxOccurs="1" name="maxCalls" type="s1:int" />
+          <s1:element minOccurs="0" maxOccurs="1" name="lastResult" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="extraData" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="notes" type="s1:string" />
+          <s1:element minOccurs="0" maxOccurs="1" name="gwPrefix" type="s1:string" />
+        </s1:sequence>
+      </s1:complexType>
+    </s1:schema>
+    <s1:schema elementFormDefault="qualified" targetNamespace="http://www.w3.org/2001/XMLSchema">
+      <s1:complexType name="SystemLanguage" mixed="true">
+        <s1:anyAttribute />
+      </s1:complexType>
+      <s1:complexType name="SystemUser" mixed="true">
+        <s1:anyAttribute />
+      </s1:complexType>
+    </s1:schema>
+    <s1:schema elementFormDefault="qualified" targetNamespace="urn:IciUserInterface">
+      <s1:element name="userId" type="s1:string" />
+    </s1:schema>
+  </wsdl:types>
+  <wsdl:message name="exchangeProductInformationSoapIn">
+    <wsdl:part name="parameters" element="s0:exchangeProductInformation" />
+  </wsdl:message>
+  <wsdl:message name="exchangeProductInformationSoapOut">
+    <wsdl:part name="parameters" element="s0:exchangeProductInformationResponse" />
+  </wsdl:message>
+  <wsdl:message name="exchangeProductInformationlanguage">
+    <wsdl:part name="language" element="s0:language" />
+  </wsdl:message>
+  <wsdl:message name="exchangeProductInformationuser">
+    <wsdl:part name="user" element="s0:user" />
+  </wsdl:message>
+  <wsdl:message name="getWorkcenterCapabilitySoapIn">
+    <wsdl:part name="parameters" element="s0:getWorkcenterCapability" />
+  </wsdl:message>
+  <wsdl:message name="getWorkcenterCapabilitySoapOut">
+    <wsdl:part name="parameters" element="s0:getWorkcenterCapabilityResponse" />
+  </wsdl:message>
+  <wsdl:message name="getWorkcenterCapabilitylanguage">
+    <wsdl:part name="language" element="s0:language" />
+  </wsdl:message>
+  <wsdl:message name="getWorkcenterCapabilityuser">
+    <wsdl:part name="user" element="s0:user" />
+  </wsdl:message>
+  <wsdl:message name="getPresenceQueueInfoSoapIn">
+    <wsdl:part name="parameters" element="s0:getPresenceQueueInfo" />
+  </wsdl:message>
+  <wsdl:message name="getPresenceQueueInfoSoapOut">
+    <wsdl:part name="parameters" element="s0:getPresenceQueueInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="getPresenceQueueInfolanguage">
+    <wsdl:part name="language" element="s0:language" />
+  </wsdl:message>
+  <wsdl:message name="getPresenceQueueInfouser">
+    <wsdl:part name="user" element="s0:user" />
+  </wsdl:message>
+  <wsdl:message name="getUserPresenceSoapIn">
+    <wsdl:part name="parameters" element="s0:getUserPresence" />
+  </wsdl:message>
+  <wsdl:message name="getUserPresenceSoapOut">
+    <wsdl:part name="parameters" element="s0:getUserPresenceResponse" />
+  </wsdl:message>
+  <wsdl:message name="getUserPresencelanguage">
+    <wsdl:part name="language" element="s0:language" />
+  </wsdl:message>
+  <wsdl:message name="getUserPresenceuser">
+    <wsdl:part name="user" element="s0:user" />
+  </wsdl:message>
+  <wsdl:message name="testGetUserPresenceSoapIn">
+    <wsdl:part name="parameters" element="s0:testGetUserPresence" />
+  </wsdl:message>
+  <wsdl:message name="testGetUserPresenceSoapOut">
+    <wsdl:part name="parameters" element="s0:testGetUserPresenceResponse" />
+  </wsdl:message>
+  <wsdl:message name="testGetUserPresence2SoapIn">
+    <wsdl:part name="parameters" element="s0:testGetUserPresence2" />
+  </wsdl:message>
+  <wsdl:message name="testGetUserPresence2SoapOut">
+    <wsdl:part name="parameters" element="s0:testGetUserPresence2Response" />
+  </wsdl:message>
+  <wsdl:message name="getCallRecordingsSoapIn">
+    <wsdl:part name="parameters" element="s0:getCallRecordings" />
+  </wsdl:message>
+  <wsdl:message name="getCallRecordingsSoapOut">
+    <wsdl:part name="parameters" element="s0:getCallRecordingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCallRecordingslanguage">
+    <wsdl:part name="language" element="s0:language" />
+  </wsdl:message>
+  <wsdl:message name="getCallRecordingsuser">
+    <wsdl:part name="user" element="s0:user" />
+  </wsdl:message>
+  <wsdl:message name="createCallBackSoapIn">
+    <wsdl:part name="parameters" element="s0:createCallBack" />
+  </wsdl:message>
+  <wsdl:message name="createCallBackSoapOut">
+    <wsdl:part name="parameters" element="s0:createCallBackResponse" />
+  </wsdl:message>
+  <wsdl:message name="createCallBacklanguage">
+    <wsdl:part name="language" element="s0:language" />
+  </wsdl:message>
+  <wsdl:message name="createCallBackuser">
+    <wsdl:part name="user" element="s0:user" />
+  </wsdl:message>
+  <wsdl:message name="updateCallBackSoapIn">
+    <wsdl:part name="parameters" element="s0:updateCallBack" />
+  </wsdl:message>
+  <wsdl:message name="updateCallBackSoapOut">
+    <wsdl:part name="parameters" element="s0:updateCallBackResponse" />
+  </wsdl:message>
+  <wsdl:message name="updateCallBacklanguage">
+    <wsdl:part name="language" element="s0:language" />
+  </wsdl:message>
+  <wsdl:message name="updateCallBackuser">
+    <wsdl:part name="user" element="s0:user" />
+  </wsdl:message>
+  <wsdl:message name="getCallBacksSoapIn">
+    <wsdl:part name="parameters" element="s0:getCallBacks" />
+  </wsdl:message>
+  <wsdl:message name="getCallBacksSoapOut">
+    <wsdl:part name="parameters" element="s0:getCallBacksResponse" />
+  </wsdl:message>
+  <wsdl:message name="getCallBackslanguage">
+    <wsdl:part name="language" element="s0:language" />
+  </wsdl:message>
+  <wsdl:message name="getCallBacksuser">
+    <wsdl:part name="user" element="s0:user" />
+  </wsdl:message>
+  <wsdl:portType name="IciSystemServiceSoap">
+    <wsdl:operation name="exchangeProductInformation">
+      <wsdl:input message="tns:exchangeProductInformationSoapIn" />
+      <wsdl:output message="tns:exchangeProductInformationSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getWorkcenterCapability">
+      <wsdl:input message="tns:getWorkcenterCapabilitySoapIn" />
+      <wsdl:output message="tns:getWorkcenterCapabilitySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getPresenceQueueInfo">
+      <wsdl:input message="tns:getPresenceQueueInfoSoapIn" />
+      <wsdl:output message="tns:getPresenceQueueInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getUserPresence">
+      <wsdl:input message="tns:getUserPresenceSoapIn" />
+      <wsdl:output message="tns:getUserPresenceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="testGetUserPresence">
+      <wsdl:input message="tns:testGetUserPresenceSoapIn" />
+      <wsdl:output message="tns:testGetUserPresenceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="testGetUserPresence2">
+      <wsdl:input message="tns:testGetUserPresence2SoapIn" />
+      <wsdl:output message="tns:testGetUserPresence2SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCallRecordings">
+      <wsdl:input message="tns:getCallRecordingsSoapIn" />
+      <wsdl:output message="tns:getCallRecordingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="createCallBack">
+      <wsdl:input message="tns:createCallBackSoapIn" />
+      <wsdl:output message="tns:createCallBackSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="updateCallBack">
+      <wsdl:input message="tns:updateCallBackSoapIn" />
+      <wsdl:output message="tns:updateCallBackSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getCallBacks">
+      <wsdl:input message="tns:getCallBacksSoapIn" />
+      <wsdl:output message="tns:getCallBacksSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="IciSystemServiceSoap" type="tns:IciSystemServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="exchangeProductInformation">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:exchangeProductInformationlanguage" part="language" use="literal" />
+        <soap:header message="tns:exchangeProductInformationuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getWorkcenterCapability">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:getWorkcenterCapabilitylanguage" part="language" use="literal" />
+        <soap:header message="tns:getWorkcenterCapabilityuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPresenceQueueInfo">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:getPresenceQueueInfolanguage" part="language" use="literal" />
+        <soap:header message="tns:getPresenceQueueInfouser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getUserPresence">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:getUserPresencelanguage" part="language" use="literal" />
+        <soap:header message="tns:getUserPresenceuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="testGetUserPresence">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="testGetUserPresence2">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCallRecordings">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:getCallRecordingslanguage" part="language" use="literal" />
+        <soap:header message="tns:getCallRecordingsuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCallBack">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:createCallBacklanguage" part="language" use="literal" />
+        <soap:header message="tns:createCallBackuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCallBack">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:updateCallBacklanguage" part="language" use="literal" />
+        <soap:header message="tns:updateCallBackuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCallBacks">
+      <soap:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:getCallBackslanguage" part="language" use="literal" />
+        <soap:header message="tns:getCallBacksuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="IciSystemServiceSoap12" type="tns:IciSystemServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="exchangeProductInformation">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:exchangeProductInformationlanguage" part="language" use="literal" />
+        <soap12:header message="tns:exchangeProductInformationuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getWorkcenterCapability">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:getWorkcenterCapabilitylanguage" part="language" use="literal" />
+        <soap12:header message="tns:getWorkcenterCapabilityuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getPresenceQueueInfo">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:getPresenceQueueInfolanguage" part="language" use="literal" />
+        <soap12:header message="tns:getPresenceQueueInfouser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getUserPresence">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:getUserPresencelanguage" part="language" use="literal" />
+        <soap12:header message="tns:getUserPresenceuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="testGetUserPresence">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="testGetUserPresence2">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCallRecordings">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:getCallRecordingslanguage" part="language" use="literal" />
+        <soap12:header message="tns:getCallRecordingsuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="createCallBack">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:createCallBacklanguage" part="language" use="literal" />
+        <soap12:header message="tns:createCallBackuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCallBack">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:updateCallBacklanguage" part="language" use="literal" />
+        <soap12:header message="tns:updateCallBackuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCallBacks">
+      <soap12:operation soapAction="http://inqmy.com/soapdispatcher/rpc/bcbici/IciSystemBean" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:getCallBackslanguage" part="language" use="literal" />
+        <soap12:header message="tns:getCallBacksuser" part="user" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="IciSystemService">
+    <wsdl:port name="IciSystemServiceSoap" binding="tns:IciSystemServiceSoap">
+      <soap:address location="http://localhost/OII/IciSystemService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="IciSystemServiceSoap12" binding="tns:IciSystemServiceSoap12">
+      <soap12:address location="http://localhost/OII/IciSystemService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

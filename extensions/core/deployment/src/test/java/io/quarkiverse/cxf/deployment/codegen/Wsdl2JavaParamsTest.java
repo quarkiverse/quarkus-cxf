@@ -82,7 +82,7 @@ public class Wsdl2JavaParamsTest {
                 QuarkusCxfInternalTestUtil.maybeWinPath("/path/to/project/src/main/resources/my.wsdl"));
     }
 
-    private Wsdl2JavaParameterSet proxy(final Object... values) {
+    public static Wsdl2JavaParameterSet proxy(final Object... values) {
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -97,7 +97,7 @@ public class Wsdl2JavaParamsTest {
                         + Stream.of(values).map(String::valueOf).collect(Collectors.joining(", ")));
             }
         };
-        return (Wsdl2JavaParameterSet) Proxy.newProxyInstance(getClass().getClassLoader(),
+        return (Wsdl2JavaParameterSet) Proxy.newProxyInstance(Wsdl2JavaParamsTest.class.getClassLoader(),
                 new Class<?>[] { Wsdl2JavaParameterSet.class }, handler);
     }
 
