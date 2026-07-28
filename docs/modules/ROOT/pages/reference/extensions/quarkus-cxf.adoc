@@ -82,6 +82,18 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time.
 | Configuration property | Type | Default
 
 
+.<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-on-quarkus-version-mismatch]]`link:#quarkus-cxf_quarkus-cxf-on-quarkus-version-mismatch[quarkus.cxf.on-quarkus-version-mismatch]`
+.<| tooltip:fail[Fail the build], tooltip:warn[Log a warning and continue the build], tooltip:ignore[Do not perform the check at all]
+.<| `fail`
+
+3+a|What to do at build time when the `major.minor` version of Quarkus used by the application differs from the
+Quarkus version this version of Quarkus CXF was built with. Check the
+xref:user-guide/create-project.adoc#dependency-management[Dependency management] section of the user guide for
+how to fix such a mismatch.
+
+*Environment variable*: `+++QUARKUS_CXF_ON_QUARKUS_VERSION_MISMATCH+++` +
+*Since Quarkus CXF*: 3.39.0
+
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-codegen-wsdl2java-enabled]]`link:#quarkus-cxf_quarkus-cxf-codegen-wsdl2java-enabled[quarkus.cxf.codegen.wsdl2java.enabled]`
 .<| `boolean`
 .<| `true`

@@ -83,6 +83,17 @@ or other {link-quarkus-docs-base}/tooling#build-tool[Quarkus development tools],
 You should always take care to import the same version of `{quarkus-platform-groupId}:quarkus-bom` and `{quarkus-platform-groupId}:quarkus-cxf-bom` into your project.
 That's the most reliable way to get compatible versions of Quarkus, CXF, {quarkus-cxf-project-name} and all their transitive dependencies.
 
+[NOTE]
+.Quarkus version check
+====
+Since {quarkus-cxf-project-name} 3.39.0, the build fails if the Quarkus version used by the application
+comes from a different `major.minor` stream than the Quarkus version {quarkus-cxf-project-name} was built with.
+This typically indicates broken dependency management, which you can fix as described above.
+The check can be relaxed via the
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-on-quarkus-version-mismatch[`quarkus.cxf.on-quarkus-version-mismatch`]
+configuration property.
+====
+
 == Where to go next
 
 We recommend to proceed with any of the following chapters:

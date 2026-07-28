@@ -443,6 +443,25 @@
                                 }</source>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>requires-quarkus-core</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <!-- Computes the quarkus-cxf.requires-quarkus-core property from quarkus.version -->
+                            <!-- so that META-INF/quarkus-extension.yaml templates can declare a Quarkus core -->
+                            <!-- version range with a proper upper bound: [major.minor,major.(minor+2)) -->
+                            <source>def v = project.properties['quarkus.version']
+                                def m = (v =~ /^(\d+)\.(\d+)([.\-].*)?$/)
+                                def range = '[' + v + ',)'
+                                if (m.matches()) {
+                                    range = '[' + m.group(1) + '.' + m.group(2) + ',' + m.group(1) + '.' + ((m.group(2) as int) + 2) + ')'
+                                }
+                                project.properties.setProperty('quarkus-cxf.requires-quarkus-core', range)</source>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

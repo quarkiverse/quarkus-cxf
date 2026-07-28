@@ -13,6 +13,7 @@ metadata:
     - "integration"
   guide: "https://quarkiverse.github.io/quarkiverse-docs/quarkus-cxf/dev/reference/extensions/quarkus-cxf.html"
   status: "stable"
+  requires-quarkus-core: "${quarkus-cxf.requires-quarkus-core}"
   integrates:
     - name: "Apache CXF"
       artifact: "org.apache.cxf:cxf-core"
