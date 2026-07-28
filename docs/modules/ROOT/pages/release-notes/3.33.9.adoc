@@ -1,0 +1,18 @@
+= {quarkus-cxf-project-name} 3.33.9 LTS release notes
+
+== Enhancements
+
+=== Manage more CXF JAX-RS dependencies in the BOM
+
+The {quarkus-cxf-project-name} BOM now manages the versions of the following CXF JAX-RS artifacts:
+
+* `org.apache.cxf:cxf-rt-frontend-jaxrs`
+* `org.apache.cxf:cxf-rt-rs-client`
+* `org.apache.cxf:cxf-rt-rs-extension-providers`
+* `org.apache.cxf:cxf-rt-rs-security-oauth2`
+
+This avoids version conflicts in projects that depend on both {quarkus-cxf-project-name} and Camel Quarkus.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.33.8+++...+++3.33.9
