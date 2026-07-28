@@ -1,0 +1,36 @@
+= {quarkus-cxf-project-name} 3.38.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.37.x -> 3.38.0 - https://quarkus.io/blog/quarkus-3-38-released/[release notes]
+
+== Enhancements
+
+=== New WS-Addressing decoupled endpoint configuration options
+
+New configuration options were introduced to make {quarkus-cxf-project-name} work with the changes
+in https://github.com/apache/cxf/pull/3279[Apache CXF PR #3279]:
+
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-enabled[quarkus.cxf.endpoint.addressing.decoupled.enabled] -
+  if `true`, WS-Addressing decoupled destinations (non-anonymous `wsa:ReplyTo` or `wsa:FaultTo`) requested
+  by clients will be honored; otherwise, any request will result in `DestinationUnreachable` fault
+  to prevent Server-Side Request Forgery (SSRF).
+* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes[quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes] -
+  list of URI scheme prefixes permitted in `wsa:ReplyTo` and `wsa:FaultTo` decoupled-destination addresses.
+
+These options replace the system properties `org.apache.cxf.ws.addressing.decoupled.enabled`
+and `org.apache.cxf.ws.addressing.decoupled.allowedSchemes` used by plain CXF.
+Unlike plain CXF, {quarkus-cxf-project-name} allows only `http://` and `https://` by default.
+
+== Bugfixes
+
+=== Make sure the client sends WS-Addressing headers if the WSDL requires it
+
+Before {quarkus-cxf-project-name} 3.38.0, when a WSDL required WS-Addressing,
+the client did not always send the required WS-Addressing headers.
+Since {quarkus-cxf-project-name} 3.38.0, the client correctly sends WS-Addressing headers
+if the WSDL requires it.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.37.0+++...+++3.38.0
