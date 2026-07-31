@@ -1,7 +1,9 @@
 package io.quarkiverse.cxf.deployment.test.client;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -10,7 +12,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Assumptions;
@@ -30,11 +31,6 @@ import io.quarkus.test.QuarkusExtensionTest;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.helpers.test.UniAssertSubscriber;
-import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerOptions;
-import io.vertx.ext.web.Router;
 
 public class ReceiveTimeoutTest {
 
@@ -49,44 +45,20 @@ public class ReceiveTimeoutTest {
     public static final QuarkusExtensionTest test = createTest();
 
     private static QuarkusExtensionTest createTest() {
-        final String soapResponse = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:helloResponse xmlns:ns2=\"http://test.deployment.cxf.quarkiverse.io/\"><return>Hello Joe!</return></ns2:helloResponse></soap:Body></soap:Envelope>";
-        /*
-         * We want the server to process all requests sequentially, therefore we setWorkerPoolSize(1) and use a blockingHandler
-         */
-        final Vertx vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(1));
 
-        Router router = Router.router(vertx);
-        router.post("/").blockingHandler(context -> {
-            try {
-                Thread.sleep(DELAY);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                context.response().setStatusCode(500).end();
-                return;
-            }
-            context.response()
-                    .putHeader("Content-Type", "text/xml; charset=utf-8")
-                    .setStatusCode(200)
-                    .end(soapResponse);
-        });
-
-        final HttpServer server = vertx.createHttpServer(new HttpServerOptions())
-                .requestHandler(router)
-                .listen(-2)
-                .toCompletionStage()
-                .toCompletableFuture()
-                .join();
-
+        final SleepyServer server = new SleepyServer(DELAY);
         final String baseUrl = "http://localhost:" + server.actualPort() + "/";
 
         return new QuarkusExtensionTest()
                 .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
+                        .addClass(SleepyServer.class)
                         .addPackage(HelloService.class.getPackage()))
 
                 .overrideConfigKey("quarkus.cxf.client.hello1.client-endpoint-url", baseUrl)
                 .overrideConfigKey("quarkus.cxf.client.hello1.service-interface", HelloService.class.getName())
                 .overrideConfigKey("quarkus.cxf.client.hello1.vertx.connection-pool.http1-max-size", "1")
                 .overrideConfigKey("quarkus.cxf.client.hello1.receive-timeout", String.valueOf(RECEIVE_TIMEOUT))
+                .overrideConfigKey("quarkus.cxf.client.hello1.log.enabled", "pretty")
 
                 .overrideConfigKey("quarkus.cxf.client.hello2.client-endpoint-url", baseUrl)
                 .overrideConfigKey("quarkus.cxf.client.hello2.service-interface", HelloService.class.getName())
@@ -94,15 +66,27 @@ public class ReceiveTimeoutTest {
                         String.valueOf(TASK_COUNT))
                 .overrideConfigKey("quarkus.cxf.client.hello2.receive-timeout", String.valueOf(RECEIVE_TIMEOUT))
 
-                .setAfterAllCustomizer(() -> {
-                    vertx.close().toCompletionStage().toCompletableFuture().join();
-                });
+                .overrideConfigKey("quarkus.cxf.client.hello3.client-endpoint-url", baseUrl)
+                .overrideConfigKey("quarkus.cxf.client.hello3.service-interface", HelloService.class.getName())
+                .overrideConfigKey("quarkus.cxf.client.hello3.vertx.connection-pool.http1-max-size", "1")
+                .overrideConfigKey("quarkus.cxf.client.hello3.receive-timeout", "100")
+
+                .overrideConfigKey("quarkus.cxf.client.hello4.client-endpoint-url", baseUrl)
+                .overrideConfigKey("quarkus.cxf.client.hello4.service-interface", HelloService.class.getName())
+                .overrideConfigKey("quarkus.cxf.client.hello4.vertx.connection-pool.http1-max-size", "5")
+                .overrideConfigKey("quarkus.cxf.client.hello4.receive-timeout", "100")
+
+                .setAfterAllCustomizer(server::close);
     }
 
     @CXFClient("hello1")
     HelloService hello1;
     @CXFClient("hello2")
     HelloService hello2;
+    @CXFClient("hello3")
+    HelloService hello3;
+    @CXFClient("hello4")
+    HelloService hello4;
 
     @Test
     public void receiveTimeout() {
@@ -190,11 +174,43 @@ public class ReceiveTimeoutTest {
             /* ... and ensure there were no other errors */
             Assertions.assertThat(resultMap.keySet()).containsExactlyInAnyOrder("success", "receive-timeout");
         }
+
+        /*
+         * Experiment 3
+         * Make sure that a connection that got a receive timeout is usable right away
+         */
+        {
+            /* Async */
+            Assertions.assertThat(helloAsync(hello3, "Joe").await().indefinitely()).isEqualTo("receive-timeout");
+            Assertions.assertThat(helloAsync(hello3, "Speedy").await().indefinitely()).isEqualTo("success");
+        }
+        {
+            /* Sync */
+            Assertions.assertThat(helloSync(hello3, "Joe")).isEqualTo("receive-timeout");
+            Assertions.assertThat(helloSync(hello3, "Speedy")).isEqualTo("success");
+        }
+
+        /*
+         * Experiment 4
+         * Saturate the pool with receive timeouts only, hope to
+         * observe https://github.com/quarkiverse/quarkus-cxf/issues/2240 at some point
+         */
+        {
+            /* Sync */
+            Map<String, Long> resultMap = assertClientsSync(hello4, "Joe", 60_000, 20, 20);
+            System.out.println("==== received " + resultMap);
+            Assertions.assertThat(resultMap.get("receive-timeout")).isEqualTo(400);
+        }
+        {
+            Map<String, Long> resultMap = assertClientsSync(hello4, "Speedy", 60_000, 15, 5);
+            System.out.println("==== received " + resultMap);
+            Assertions.assertThat(resultMap.get("success")).isEqualTo(100);
+        }
     }
 
     static Map<String, Long> assertClientsAsync(HelloService hello, long timeout) {
         return Multi.createFrom().range(0, TASK_COUNT)
-                .onItem().transformToUni(i -> helloAsync(hello))
+                .onItem().transformToUni(i -> helloAsync(hello, "Joe"))
                 .merge()
                 .collect().with(Collectors.groupingBy(
                         result -> result,
@@ -208,25 +224,38 @@ public class ReceiveTimeoutTest {
 
     @SuppressWarnings("unchecked")
     static Map<String, Long> assertClientsSync(HelloService hello, long timeout) {
-        ExecutorService executor = Executors.newFixedThreadPool(TASK_COUNT);
+        return assertClientsSync(hello, "Joe", timeout, TASK_COUNT, 1);
+    }
+
+    static Map<String, Long> assertClientsSync(HelloService hello, String person, long timeout, int threadCount,
+            int iterationCount) {
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         try {
-            CompletableFuture<String>[] futures = new CompletableFuture[TASK_COUNT];
-            for (int i = 0; i < TASK_COUNT; i++) {
-                futures[i] = CompletableFuture.supplyAsync(() -> helloSync(hello), executor);
+            List<CompletableFuture<List<String>>> futures = new ArrayList<>();
+            for (int i = 0; i < threadCount; i++) {
+                futures.add(CompletableFuture.supplyAsync(() -> {
+                    List<String> result = new ArrayList<>();
+                    for (int j = 0; j < iterationCount; j++) {
+                        result.add(helloSync(hello, person));
+                    }
+                    return result;
+                }, executor));
             }
             try {
-                CompletableFuture.allOf(futures).get(timeout, TimeUnit.MILLISECONDS);
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get(timeout, TimeUnit.MILLISECONDS);
                 Map<String, Long> result = new HashMap<>();
-                Stream.of(futures).forEach(f -> {
+                for (CompletableFuture<List<String>> f : futures) {
                     try {
-                        result.merge(f.get(), 1L, (old, new_) -> old + new_);
+                        for (String status : f.get()) {
+                            result.merge(status, 1L, (old, new_) -> old + new_);
+                        }
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         throw new RuntimeException(e);
                     } catch (ExecutionException e) {
                         throw new RuntimeException(e);
                     }
-                });
+                }
                 return result;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -239,9 +268,9 @@ public class ReceiveTimeoutTest {
         }
     }
 
-    private static String helloSync(HelloService hello) {
+    private static String helloSync(HelloService hello, String person) {
         try {
-            hello.hello("Joe");
+            hello.hello(person);
             return "success";
         } catch (Exception e) {
             Throwable root = rootCause(e);
@@ -252,8 +281,8 @@ public class ReceiveTimeoutTest {
         }
     }
 
-    static Uni<String> helloAsync(HelloService hello) {
-        return CxfMutinyUtils.<HelloResponse> toUni(handler -> hello.helloAsync("Joe", handler))
+    static Uni<String> helloAsync(HelloService hello, String person) {
+        return CxfMutinyUtils.<HelloResponse> toUni(handler -> hello.helloAsync(person, handler))
                 .map(response -> "success")
                 .onFailure()
                 .recoverWithItem(t -> {
