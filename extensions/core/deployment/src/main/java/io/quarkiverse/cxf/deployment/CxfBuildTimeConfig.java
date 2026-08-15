@@ -31,6 +31,18 @@ public interface CxfBuildTimeConfig {
     Optional<List<String>> wsdlPath();
 
     /**
+     * What to do at build time when the `major.minor` version of Quarkus used by the application differs from the
+     * Quarkus version this version of Quarkus CXF was built with. Check the
+     * xref:user-guide/create-project.adoc#dependency-management[Dependency management] section of the user guide for
+     * how to fix such a mismatch.
+     *
+     * @asciidoclet
+     * @since 3.39.0
+     */
+    @WithDefault("fail")
+    ErrorRemedy onQuarkusVersionMismatch();
+
+    /**
      * Build time configuration options for Quarkus code generation phase.
      *
      * @asciidoclet
