@@ -13,6 +13,10 @@
     <name>Quarkus CXF - Integration Test - OpenTelemetry</name>
 
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <!-- Needed for InMemorySpanExporter to verify captured traces -->
         <dependency>
             <groupId>io.opentelemetry</groupId>
@@ -26,7 +30,6 @@
             <groupId>io.quarkiverse.cxf</groupId>
             <artifactId>quarkus-cxf-integration-tracing-opentelemetry</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
