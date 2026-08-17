@@ -12,9 +12,7 @@ metadata:
     - "soap"
   categories:
     - "integration"
-  status:
-    - "stable"
-    - "deprecated"
+  status: "deprecated"
   integrates:
     - name: "Apache CXF"
       artifact: "org.apache.cxf:cxf-core"
