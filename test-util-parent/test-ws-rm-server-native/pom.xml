@@ -108,7 +108,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <quarkus.package.type>native</quarkus.package.type>
+                <quarkus.native.enabled>true</quarkus.native.enabled>
                 <quarkus.native.container-build>true</quarkus.native.container-build>
                 <quarkus.build.skip>false</quarkus.build.skip>
             </properties>
@@ -148,7 +148,7 @@
                 </property>
             </activation>
             <properties>
-                <quarkus.package.type>native</quarkus.package.type>
+                <quarkus.native.enabled>true</quarkus.native.enabled>
                 <quarkus.native.container-build>true</quarkus.native.container-build>
                 <quarkus.build.skip>false</quarkus.build.skip>
             </properties>
