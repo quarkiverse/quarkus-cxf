@@ -1,0 +1,32 @@
+= {quarkus-cxf-project-name} 3.39.0 release notes
+
+== Important dependency upgrades
+
+* Quarkus 3.38.x -> 3.39.0 - https://quarkus.io/blog/quarkus-3-39-released/[release notes]
+* Apache CXF 4.2.2 -> 4.2.3 - https://cxf.apache.org/download.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.2.2+++...+++cxf-4.2.3[changelog]
+* Woodstox 7.2.1 -> 7.2.2 - link:https://github.com/FasterXML/woodstox/compare/woodstox-core-7.2.1+++...+++woodstox-core-7.2.2[changelog]
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2250[#2250] `quarkus-cxf` depends on `quarkus-jackson` unnecessarily
+
+Before {quarkus-cxf-project-name} 3.39.0, `quarkus-cxf` pulled in `quarkus-jackson` as a transitive dependency.
+This caused conflicts when the application used an alternative JSON processing library such as JSON-B.
+Since {quarkus-cxf-project-name} 3.39.0, the unnecessary `quarkus-jackson` dependency was removed.
+
+Special thanks to https://github.com/ngChris[@ngChris] for reporting the issue.
+
+== Enhancements
+
+=== WS-Addressing decoupled endpoint error messages now reference {quarkus-cxf-project-name} configuration properties
+
+The WS-Addressing decoupled endpoint error messages from CXF now reference {quarkus-cxf-project-name} configuration
+properties instead of CXF system properties.
+This makes it easier to configure
+xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-enabled[quarkus.cxf.endpoint.addressing.decoupled.enabled]
+and xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes[quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes]
+when encountering these errors.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.38.0+++...+++3.39.0
