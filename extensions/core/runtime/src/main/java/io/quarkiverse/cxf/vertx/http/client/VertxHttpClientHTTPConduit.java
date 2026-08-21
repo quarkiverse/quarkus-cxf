@@ -583,7 +583,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                         .setChunked(true)
                                         .write(buffer)
                                         .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
-                                        .recover(e -> mode.timeoutSpec.mapTimeoutException(e,
+                                        .recover(e -> mode.timeoutSpec.resetRequestAndMapTimeoutException(
+                                                req,
+                                                e,
                                                 "Timeout %d ms sending request body to %s"))
                                         .onFailure(t -> mode.responseFailed(t, true));
 
@@ -631,7 +633,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     req
                             .write(buffer)
                             .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
-                            .recover(e -> mode.timeoutSpec.mapTimeoutException(e, "Timeout %d ms sending request body to %s"))
+                            .recover(e -> mode.timeoutSpec.resetRequestAndMapTimeoutException(req, e,
+                                    "Timeout %d ms sending request body to %s"))
                             .onFailure(RequestBodyHandler.this::failResponse);
                 } else {
                     finishRequest(req, buffer);
@@ -646,7 +649,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             req
                     .end(buffer)
                     .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
-                    .recover(e -> mode.timeoutSpec.mapTimeoutException(e, "Timeout %d ms sending request body to %s"))
+                    .recover(e -> mode.timeoutSpec.resetRequestAndMapTimeoutException(req, e,
+                            "Timeout %d ms sending request body to %s"))
                     .onFailure(t -> mode.responseFailed(t, true));
 
         }
@@ -654,7 +658,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private void prepareResponse(HttpClientRequest req) {
             req.response()
                     .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
-                    .recover(e -> mode.timeoutSpec.mapTimeoutException(e,
+                    .recover(e -> mode.timeoutSpec.resetRequestAndMapTimeoutException(
+                            req,
+                            e,
                             "Timeout waiting %d ms to receive response headers from %s"))
                     .onComplete(ar -> {
                         final InputStreamWriteStream sink = new InputStreamWriteStream(context, mode.timeoutSpec, 2);
@@ -719,7 +725,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 // log.trace("Staring pipe");
                                 response.pipeTo(sink)
                                         .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
-                                        .recover(e -> mode.timeoutSpec.mapTimeoutException(e,
+                                        .recover(e -> mode.timeoutSpec.resetRequestAndMapTimeoutException(
+                                                req,
+                                                e,
                                                 "Timeout waiting %d ms to receive response body from %s"))
                                         .onFailure(e -> {
                                             sink.setException(e);
@@ -1189,10 +1197,20 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         lock.lock();
                         try {
                             if (response == null) {
-                                if (!responseReceived.await(timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
+                                /*
+                                 * We primarily rely on timeouts thrown from the event loop
+                                 * that are passed to this worker thread context via responseFailed().
+                                 * In theory, we should not need to call responseReceived.await() with a timeout.
+                                 * We do so for additional safety, but we add some extra ms so that
+                                 * the timeouts from the event loop hit primarily
+                                 */
+                                final long extra = 10_000L;
+                                if (!responseReceived.await(timeoutSpec.remainingReceiveTimeout() + extra,
+                                        TimeUnit.MILLISECONDS)
                                         || response == null) {
                                     timeoutSpec.throwTimeoutException(null,
-                                            "Timeout waiting %d ms to receive response headers from %s");
+                                            "Timeout waiting %d (+ extra " + extra
+                                                    + ") ms to receive response headers from %s in the worker thread");
                                 }
                             }
                         } catch (InterruptedException e) {
@@ -1340,10 +1358,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             return new TimeoutIOException(messageTemplate.formatted(receiveTimeoutMs, url));
         }
 
-        <T> Future<T> mapTimeoutException(Throwable originalException, String messageTemplate) {
-            return Future.failedFuture(
-                    originalException instanceof NoStackTraceTimeoutException ? createTimeoutException(messageTemplate)
-                            : originalException);
+        <T> Future<T> resetRequestAndMapTimeoutException(HttpClientRequest req, Throwable originalException,
+                String messageTemplate) {
+            if (originalException instanceof NoStackTraceTimeoutException) {
+                req.reset(0x8); // See io.netty.handler.codec.http2.Http2Error.CANCEL
+                return Future.failedFuture(createTimeoutException(messageTemplate));
+            }
+            return Future.failedFuture(originalException);
         }
 
     }
