@@ -1,0 +1,23 @@
+= {quarkus-cxf-project-name} 3.39.1 release notes
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2240[#2240] `VertxHttpClientHTTPConduit`: client connections not released after receive-timeout when the server consumes the request but does not send any response
+
+Before {quarkus-cxf-project-name} 3.39.1 and 3.33.10, when a CXF client using the default `VertxHttpClientHTTPConduitFactory`
+experienced a `receive-timeout` while the server consumed the request but did not send any response,
+some connections were not returned to the Vert.x HTTP connection pool.
+Once enough of these accumulated, the pool became permanently stuck at its configured maximum
+and never recovered, even after all client traffic stopped.
+New requests to the same downstream then queued indefinitely, effectively blocking that CXF client
+for the lifetime of the JVM process.
+
+Since {quarkus-cxf-project-name} 3.39.1 and 3.33.10, the HTTP request is properly reset on timeout,
+ensuring the underlying connection is released back to the pool.
+
+Special thanks to https://github.com/cj19[Roland Darvas] for reporting the issue
+and to https://github.com/Annlazar[@Annlazar] for identifying the server behavior triggering the issue.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.39.0+++...+++3.39.1
