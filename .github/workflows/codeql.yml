@@ -31,18 +31,18 @@ jobs:
           java-version: 17
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4.37.7
+        uses: github/codeql-action/init@v4.37.8
         with:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v4.37.7
+        uses: github/codeql-action/autobuild@v4.37.8
         env:
           SKIP_NATIVE_TESTS: true
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4.37.7
+        uses: github/codeql-action/analyze@v4.37.8
         with:
           category: "/language:${{ matrix.language }}"
           upload: False
@@ -59,6 +59,6 @@ jobs:
           output: sarif-results/java.sarif
 
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v4.37.7
+        uses: github/codeql-action/upload-sarif@v4.37.8
         with:
           sarif_file: sarif-results/java.sarif
