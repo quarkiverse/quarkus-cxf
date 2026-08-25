@@ -66,9 +66,8 @@ public interface CxfFixedConfig {
      * then its `HTTPConduitFactory` implementation was be used.
      * Before 3.16.0, the effective default was `URLConnectionHTTPConduitFactory` rather than
      * `VertxHttpClientHTTPConduitFactory`.
-     * `VertxHttpClientHTTPConduitFactory`. Before 3.16.0, the effective default was `URLConnectionHTTPConduitFactory`.
      * - `CXFDefault`: the selection of `HTTPConduitFactory` implementation is left to CXF
-     * - `VertxHttpClientHTTPConduitFactory`: *(Experimental)* the `HTTPConduitFactory` for this client will be set to
+     * - `VertxHttpClientHTTPConduitFactory`: the `HTTPConduitFactory` for this client will be set to
      * an implementation always returning `io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit`. This will
      * use `io.vertx.core.http.HttpClient` as the underlying HTTP client. Since {quarkus-cxf-project-name} 3.13.0.
      * - `URLConnectionHTTPConduitFactory`: the `HTTPConduitFactory` will be set to an implementation always returning
