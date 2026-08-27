@@ -40,9 +40,9 @@ quarkus.thread-pool.core-threads, quarkus.thread-pool.max-threads, quarkus.cxf.c
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1553[#1553] Support XJC plugins from `org.jvnet.jaxb:jaxb-plugins`
 
-xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl-xjc-plugins[XJC Plugins] are one of the ways how the Java files produced by `wsdl2java` can be customized.
+xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc#generate-java-from-wsdl-xjc-plugins[XJC plugins] are one of the ways how the Java files produced by `wsdl2java` can be customized.
 
-Before {quarkus-cxf-project-name} 3.23.0, only XJC Plugins from `org.apache.cxf.xjcplugins:cxf-xjc-*` were supported
+Before {quarkus-cxf-project-name} 3.23.0, only XJC plugins from `org.apache.cxf.xjcplugins:cxf-xjc-*` were supported
 via `xref:reference/extensions/quarkus-cxf-xjc-plugins.adoc[io.quarkiverse.cxf:quarkus-cxf-xjc-plugins]`.
 
 Since {quarkus-cxf-project-name} 3.23.0, also CXF Plugins `org.jvnet.jaxb:jaxb-plugins` can be used via

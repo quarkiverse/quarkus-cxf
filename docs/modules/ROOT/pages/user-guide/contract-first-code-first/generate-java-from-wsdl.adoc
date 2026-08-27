@@ -76,7 +76,7 @@ and it is invoked during Quarkus code generation phase.
 The way how `wsdl2java` shapes the Java model classes can be customized in two main ways:
 
 1. xref:#generate-java-from-wsdl-jaxb-and-or-jaxws-binding-files[JAXB and/or JAXWS binding files]
-2. xref:#generate-java-from-wsdl-xjc-plugins[XJC Plugins]
+2. xref:#generate-java-from-wsdl-xjc-plugins[XJC plugins]
 
 [[generate-java-from-wsdl-jaxb-and-or-jaxws-binding-files]]
 === JAXB and/or JAXWS binding files

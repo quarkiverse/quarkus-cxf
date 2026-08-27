@@ -7,7 +7,7 @@
 ** https://www.cve.org/CVERecord?id=CVE-2026-44417[CVE-2026-44417] Apache CXF: Incomplete fix for CVE-2025-48913 (Untrusted JMS configuration can lead to RCE) - severity moderate
 ** https://www.cve.org/CVERecord?id=CVE-2026-44618[CVE-2026-44618] Apache CXF: XXE vulnerability in WS-Transfer functionality - severity moderate
 ** https://www.cve.org/CVERecord?id=CVE-2026-44930[CVE-2026-44930] Apache CXF: LDAP Injection vulnerability in XKMS LDAP Repository - severity moderate
-* CXF XJC Plugins 4.1.2 -> 4.2.0
+* CXF XJC plugins 4.1.2 -> 4.2.0
 * JAXB Plugins 4.0.12 -> 4.0.14 - https://github.com/highsource/jaxb-tools/releases/tag/4.0.13[release notes 4.0.13], https://github.com/highsource/jaxb-tools/releases/tag/4.0.14[release notes 4.0.14]
 * Apache Neethi 3.2.1 -> 3.2.2 - https://www.cve.org/CVERecord?id=CVE-2026-42404[CVE-2026-42404],
   https://www.cve.org/CVERecord?id=CVE-2026-42403[CVE-2026-42403] and https://www.cve.org/CVERecord?id=CVE-2026-42402[CVE-2026-42402] fixed.

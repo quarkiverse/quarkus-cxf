@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>quarkus-cxf-xjc-plugins</artifactId>
-    <name>Quarkus CXF - XJC Plugins for wsdl2java</name>
+    <name>Quarkus CXF - XJC plugins from Apache CXF project for wsdl2java</name>
     <description>XJC plugins for wsdl2java code generation</description>
 
     <properties>
