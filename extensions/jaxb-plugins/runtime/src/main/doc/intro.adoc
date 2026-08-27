@@ -1,2 +1,11 @@
 Embeds XJC plugins from `https://github.com/highsource/jaxb-tools/wiki/JAXB2-Basics-Plugins-List[org.jvnet.jaxb:jaxb-plugins]`
 for xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[wsdl2java] code generation.
+
+[NOTE]
+.XJC
+====
+https://docs.oracle.com/javase/8/docs/technotes/tools/unix/xjc.html[XJC] (JAXB schema binding compiler) is a tool for generating Java model classes from XML schemas.
+XML schemas are a key part of WSDL.
+They define the structure of XML messages exchanged between SOAP clients and servers.
+XJC is used internally by `wsdl2java` to generate Java classes from XML schemas embedded or referenced in WSDL contracts.
+====
