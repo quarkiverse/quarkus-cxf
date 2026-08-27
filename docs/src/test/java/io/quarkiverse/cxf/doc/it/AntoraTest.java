@@ -78,9 +78,6 @@ public class AntoraTest {
         linkStream
                 .validate()
                 .ignore(err -> ignorables.contains(err.uri().resolvedUri())
-                        // temporary workaround for anchors on https://quarkus.io rendered differently after migration to roq
-                        || err.uri().resolvedUri().equals("https://quarkus.io/blog/CVE-2026-39852/")
-                        || err.uri().resolvedUri().matches("^https://quarkus\\.io/[^#]*#.*")
                         // temporary workaround for getting random 404s
                         || err.uri().resolvedUri().contains("camel.apache.org")
                         || (
