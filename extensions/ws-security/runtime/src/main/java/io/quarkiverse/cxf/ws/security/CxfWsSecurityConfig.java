@@ -231,8 +231,8 @@ public interface CxfWsSecurityConfig {
          * certificate will be either loaded from the keystore `encryption.properties` or extracted from request (when
          * WS-Security is used and if `encryption.username` has value `useReqSigCert`.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -248,8 +248,8 @@ public interface CxfWsSecurityConfig {
          * If `true`, Certificate Revocation List (CRL) checking is enabled when verifying trust in a certificate; otherwise it
          * is not enabled.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -270,8 +270,8 @@ public interface CxfWsSecurityConfig {
          * the security context.
          * ====
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -292,8 +292,8 @@ public interface CxfWsSecurityConfig {
          * If `true`, the `SubjectConfirmation` requirements of a received SAML Token (sender-vouches or holder-of-key) will be
          * validated; otherwise they won't be validated.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -305,8 +305,8 @@ public interface CxfWsSecurityConfig {
         /**
          * If `true`, security context can be created from JAAS Subject; otherwise it must not be created from JAAS Subject.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -319,8 +319,8 @@ public interface CxfWsSecurityConfig {
          * If `true`, then if the SAML Token contains Audience Restriction URIs, one of them must match one of the values in
          * `audience.restrictions`; otherwise the SAML AudienceRestriction validation is disabled.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -335,8 +335,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The attribute URI of the SAML `AttributeStatement` where the role information is stored.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -350,8 +350,8 @@ public interface CxfWsSecurityConfig {
          * will be applied to the subject DN of the certificate used for signature validation, after trust verification of the
          * certificate chain associated with the certificate.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -362,8 +362,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The separator that is used to parse certificate constraints configured in `security.subject.cert.constraints`
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -378,8 +378,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The actor or role name of the `wsse:Security` header. If this parameter is omitted, the actor name is not set.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -410,8 +410,8 @@ public interface CxfWsSecurityConfig {
          * Whether to always encrypt `UsernameTokens` that are defined as a `SupportingToken`. This should not be set to `false`
          * in a production environment, as it exposes the password (or the digest of the password) on the wire.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -425,8 +425,8 @@ public interface CxfWsSecurityConfig {
          * If `true`, the compliance with the Basic Security Profile (BSP) 1.1 will be ensured; otherwise it will not be
          * ensured.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -467,8 +467,8 @@ public interface CxfWsSecurityConfig {
          * configured for the non-security-policy case.
          * ====
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -526,8 +526,8 @@ public interface CxfWsSecurityConfig {
          * Caching only applies when either a `SamlToken` policy is in effect, or a SAML action has been configured for the
          * non-security-policy case.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -541,8 +541,8 @@ public interface CxfWsSecurityConfig {
          * Set it to false to BASE-64 encode the bytes and "inlined" them in the message instead. Setting this to true is more
          * efficient, as it means that the BASE-64 encoding step can be skipped. This only applies to the DOM WS-Security stack.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -556,8 +556,8 @@ public interface CxfWsSecurityConfig {
          * expression; otherwise `Attachment-Complete` transform will be used when an Attachment is encrypted via a
          * WS-SecurityPolicy expression.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -573,8 +573,8 @@ public interface CxfWsSecurityConfig {
          *
          * Some frameworks cannot process the `SecurityTokenReference`. You may set this `false` in such cases.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -588,8 +588,8 @@ public interface CxfWsSecurityConfig {
          * If `true`, an `InclusiveNamespaces` `PrefixList` will be added as a `CanonicalizationMethod` child when generating
          * Signatures using `WSConstants.C14N_EXCL_OMIT_COMMENTS`; otherwise the `PrefixList` will not be added.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -606,8 +606,8 @@ public interface CxfWsSecurityConfig {
          * Some servers may not do client certificate verification at the start of the SSL handshake, and therefore the client
          * certificates may not be available to the WS-Security layer for policy verification.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -622,8 +622,8 @@ public interface CxfWsSecurityConfig {
          * signature verification (on the inbound side); otherwise the search won't happen. This ensures that the actual bytes
          * are signed, and not just the reference. The default is `true` if MTOM is enabled, otherwise the default is `false`.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -639,8 +639,8 @@ public interface CxfWsSecurityConfig {
          * The time in seconds to add to the Creation value of an incoming `Timestamp` to determine whether to accept it as
          * valid or not.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -655,8 +655,8 @@ public interface CxfWsSecurityConfig {
          * greater than zero to avoid problems where clocks are slightly askew. Set this to `0` to reject all future-created
          * `Timestamp`s.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -670,8 +670,8 @@ public interface CxfWsSecurityConfig {
          * The time in seconds to append to the Creation value of an incoming `UsernameToken` to determine whether to accept it
          * as valid or not.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -686,8 +686,8 @@ public interface CxfWsSecurityConfig {
          * default is greater than zero to avoid problems where clocks are slightly askew. Set this to `0` to reject all
          * future-created `UsernameToken`s.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -701,8 +701,8 @@ public interface CxfWsSecurityConfig {
          * A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.spnego.SpnegoClientAction`
          * bean to use for SPNEGO. This allows the user to plug in a different implementation to obtain a service ticket.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -715,8 +715,8 @@ public interface CxfWsSecurityConfig {
          * A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.wss4j.common.cache.ReplayCache` bean used
          * to cache `UsernameToken` nonces. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -730,8 +730,8 @@ public interface CxfWsSecurityConfig {
          * to cache `Timestamp` `Created` Strings. A `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by
          * default.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -745,8 +745,8 @@ public interface CxfWsSecurityConfig {
          * to cache SAML2 Token Identifier Strings (if the token contains a `OneTimeUse` condition). A
          * `org.apache.wss4j.common.cache.EHCacheReplayCache` instance is used by default.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -759,8 +759,8 @@ public interface CxfWsSecurityConfig {
          * Set this property to point to a configuration file for the underlying caching implementation for the `TokenStore`.
          * The default configuration file that is used is `cxf-ehcache.xml` in `org.apache.cxf:cxf-rt-security` JAR.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -773,8 +773,8 @@ public interface CxfWsSecurityConfig {
          * A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.cxf.ws.security.tokenstore.TokenStore` bean
          * to use for caching security tokens. By default this uses a instance.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -792,8 +792,8 @@ public interface CxfWsSecurityConfig {
          * (for example, if you want to specify a TokenStore per-client proxy), it can be configured with this identifier
          * instead.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -808,8 +808,8 @@ public interface CxfWsSecurityConfig {
          * specified, then it tries to get roles using the `DefaultSecurityContext` in `org.apache.cxf:cxf-core`. Otherwise it
          * uses this value in combination with the `role.classifier.type` to get the roles from the `Subject`.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -823,8 +823,8 @@ public interface CxfWsSecurityConfig {
          * the `WSS4JInInterceptor` will attempt to create a `SecurityContext` based on this Subject. Currently accepted values
          * are `prefix` or `classname`. Must be used in conjunction with the `role.classifier`.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -838,8 +838,8 @@ public interface CxfWsSecurityConfig {
          * This configuration tag allows the user to override the default Asymmetric Signature algorithm (RSA-SHA1) for use in
          * WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use of other algorithms at present.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -852,8 +852,8 @@ public interface CxfWsSecurityConfig {
          * This configuration tag allows the user to override the default Symmetric Signature algorithm (HMAC-SHA1) for use in
          * WS-SecurityPolicy, as the WS-SecurityPolicy specification does not allow the use of other algorithms at present.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -873,8 +873,8 @@ public interface CxfWsSecurityConfig {
          *
          * The encrypted passwords must be stored in the format "ENC(encoded encrypted password)".
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -887,8 +887,8 @@ public interface CxfWsSecurityConfig {
          * A xref:user-guide/configuration.adoc#beanRefs[reference] to a Kerberos `org.ietf.jgss.GSSCredential` bean to use for
          * WS-Security. This is used to retrieve a service ticket instead of using the client credentials.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -903,8 +903,8 @@ public interface CxfWsSecurityConfig {
          * the set of WSS4J processing results. The default implementation is
          * `org.apache.cxf.ws.security.wss4j.DefaultWSS4JSecurityContextCreator`.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -916,8 +916,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The security token lifetime value (in milliseconds).
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -934,8 +934,8 @@ public interface CxfWsSecurityConfig {
          * If `true`, credential delegation is requested in the KerberosClient; otherwise the credential delegation is not in
          * the KerberosClient.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -949,8 +949,8 @@ public interface CxfWsSecurityConfig {
          * If `true`, GSSCredential bean is retrieved from the Message Context using the `delegated.credential` property and
          * then it is used to obtain a service ticket.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -963,8 +963,8 @@ public interface CxfWsSecurityConfig {
         /**
          * If `true`, the Kerberos username is in servicename form; otherwise the Kerberos username is not in servicename form.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -977,8 +977,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The JAAS Context name to use for Kerberos.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -990,8 +990,8 @@ public interface CxfWsSecurityConfig {
         /**
          * The Kerberos Service Provider Name (spn) to use.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
@@ -1004,8 +1004,8 @@ public interface CxfWsSecurityConfig {
          * A xref:user-guide/configuration.adoc#beanRefs[reference] to a `org.apache.cxf.ws.security.kerberos.KerberosClient`
          * bean used to obtain a service ticket.
          *
-         * This option is experimental, because it is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered by
-         * tests] yet.
+         * Setting this option to a non-default value is link:https://github.com/quarkiverse/quarkus-cxf/issues/1052[not covered
+         * by tests] yet.
          *
          * @since 2.5.0
          * @asciidoclet
