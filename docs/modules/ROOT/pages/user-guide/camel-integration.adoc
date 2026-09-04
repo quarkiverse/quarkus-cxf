@@ -1,8 +1,12 @@
 [[camel-integration]]
-= Camel Integration
+= Camel Quarkus integration
 
-{link-camel-quarkus-docs-index}[Camel Quarkus] supports CXF since its version 2.12.0.
-Under the hood, the implementation is based on {quarkus-cxf-project-name}.
-Therefore, all functionality available in {quarkus-cxf-project-name} is also available in Camel Quarkus.
+Connect your SOAP services and clients to other systems through Apache Camel routes: Camel Quarkus supports CXF, and its implementation is based on {quarkus-cxf-project-name}, so all functionality available in {quarkus-cxf-project-name} is also available in Camel Quarkus.
 
-Refer to {link-camel-quarkus-docs-cxf-soap}[Camel Quarkus CXF SOAP] extension documentation for further details.
+*How it fits together.*
+{link-camel-quarkus-docs-index}[Camel Quarkus] supports CXF since its version 2.12.0 through the `camel-quarkus-cxf-soap` extension.
+Under the hood, the implementation is based on {quarkus-cxf-project-name}, so the configuration, security, and packaging options described in this documentation apply to the SOAP endpoints and clients in your routes as well.
+Refer to the {link-camel-quarkus-docs-cxf-soap}[Camel Quarkus CXF SOAP] extension documentation for the route-level details.
+
+*Examples.*
+The {link-quarkus-cxf-source-tree-base}/integration-tests[`integration-tests` folder] of the {quarkus-cxf-project-name} source tree provides runnable examples that demonstrate how to use the extensions.

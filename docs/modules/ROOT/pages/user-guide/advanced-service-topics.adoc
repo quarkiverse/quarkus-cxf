@@ -1,9 +1,18 @@
 [[advanced-service-topics]]
-= Advanced service topics
+= Control service endpoints, paths, and providers
 
-Check the following chapters for more details about implementing SOAP service endpoints:
+Decide where your SOAP services are published and how they are implemented: set endpoint paths, process raw XML with JAX-WS providers, serve REST and SOAP endpoints from one application, and advertise the right addresses when a service runs behind a reverse proxy.
 
-* xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc[Endpoints and paths]
-* xref:user-guide/advanced-service-topics/jax-ws-providers.adoc[JAX-WS Providers]
-* xref:user-guide/advanced-service-topics/rest-and-soap-endpoints.adoc[REST and SOAP Endpoints]
-* xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc[Running behind a reverse proxy]
+*How {quarkus-cxf-project-name} supports this.*
+A service is published under a path either with the `quarkus.cxf.endpoint."/path".implementor` property or with the `@CXFEndpoint` annotation, whose value is relative to `quarkus.cxf.path`; the two are equivalent, and other properties set for that path apply either way.
+A JAX-WS `Provider<T>` implementation registers through the same `implementor` property as a regular `@WebService` class.
+
+REST and SOAP endpoints share one application when each stack has its own root path, such as `quarkus.cxf.path=/soap` next to `quarkus.resteasy.path=/rest`.
+Behind a reverse proxy, the `quarkus.http.proxy.*` properties make Quarkus honor the `X-Forwarded-*` headers, so the address advertised in the served WSDL is the public one.
+
+*Where to go:*
+
+* *Endpoints and paths.* Set them by property or by annotation, including the `@CXFEndpoint` producer-method form that returns a mock implementation for client tests.
+* *JAX-WS providers.* Implement one when the service must handle the raw XML payload instead of Java method parameters.
+* *REST and SOAP endpoints.* Separate them by root path when one application has to expose both.
+* *Running behind a reverse proxy.* Enable proxy address forwarding only when a real reverse proxy sits in front of the service, because it exposes the server to spoofed request information.
