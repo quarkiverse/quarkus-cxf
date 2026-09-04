@@ -1,6 +1,8 @@
 [[reference-index]]
 = Reference
 
+Look up which {quarkus-cxf-project-name} extension provides a capability, its support level and the standards it implements, which Apache CXF modules, front ends, data bindings, transports, and annotations are supported, and how to select SOAP 1.1, SOAP 1.2, and MTOM.
+
 [[extensions]]
 == {quarkus-cxf-project-name}
 
@@ -101,8 +103,7 @@ Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the foll
 [[tools]]
 === Tools
 
-* `wsdl2Java` - see the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL
-] section of User guide
+* `wsdl2Java` - see the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL] section of User guide
 * `java2ws` - see the xref:user-guide/contract-first-code-first/generate-wsdl-from-java.adoc[Generate WSDL from Java] section of User guide
 
 === Supported SOAP Bindings

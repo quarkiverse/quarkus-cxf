@@ -1,8 +1,10 @@
 [[quarkus-cxf-index]]
 = {quarkus-cxf-project-name}
 
-This project aims at porting http://cxf.apache.org/[Apache CXF] to https://quarkus.io/[Quarkus] runtime
-including full support for producing https://quarkus.io/container-first/[GraalVM native images].
+Keep the SOAP contracts your applications and partners rely on while you move those applications to Quarkus: {quarkus-cxf-project-name} brings Apache CXF and the JAX-WS programming model to the Quarkus runtime, with full support for GraalVM native images.
+
+Instead of rewriting a working SOAP integration as REST, or leaving it on an application server you no longer want to run, you carry the existing WSDL contract and JAX-WS code into a Quarkus application that starts fast and compiles to a native executable.
+{quarkus-cxf-project-name} is a port of http://cxf.apache.org/[Apache CXF] to https://quarkus.io/[Quarkus], including https://quarkus.io/container-first/[GraalVM native images].
 
 [IMPORTANT]
 ====
@@ -13,13 +15,23 @@ and *Java API for XML Web Services* (https://en.wikipedia.org/wiki/JAX-WS[JAX-WS
 Refer to xref:reference/index.adoc[Reference] to learn which parts of CXF are supported.
 ====
 
-The documentation is divided into the following main parts:
+*What you get:*
 
-* xref:user-guide/index.adoc[User guide] - explains the typical usage of {quarkus-cxf-project-name}
-* xref:security-guide/index.adoc[Security guide] - documents various security related aspects of {quarkus-cxf-project-name}, such as SSL/TLS, Authentication and Authorization
-* xref:release-notes/index.adoc[Release notes] - Release notes documents for the past releases
-* xref:release-planning.adoc[Release planning] - when new releases of {quarkus-cxf-project-name} are to be expected
-* xref:reference/index.adoc[Reference] - the full list of supported specifications, use cases and configuration options
+* *JAX-WS services and clients.* Your existing WSDL contracts and JAX-WS code carry over.
+* *Contract-first and code-first development.* `wsdl2java` and `java2ws` run inside the Quarkus Maven plugin, so a changed WSDL is picked up by the normal build rather than by a separate tool step.
+* *The standards enterprise contracts commonly require.* WS-Security, WS-SecurityPolicy, WS-ReliableMessaging, and WS-Trust, through companion extensions.
+* *Production insight.* Micrometer metrics and OpenTelemetry tracing for your services and clients.
+
+*Where to go:*
+
+* *Build your first SOAP service and client.* Create a project, expose a JAX-WS endpoint, call it from an injected client, then configure, package, log the SOAP payloads, and map complex payloads with JAXB.
+* *Choose contract-first or code-first development.* Generate Java from WSDL, or WSDL from Java, as part of the build.
+* *Customize message processing.* Interceptors, features, and handlers change how requests and responses are processed.
+* *Control service endpoints, paths, and providers.* Shape service URLs, handle raw XML messages, serve REST and SOAP endpoints from one application, or run behind a reverse proxy.
+* *Configure and control SOAP clients.* Endpoint URL defaults, several clients in one application, CDI scope, asynchronous calls, programmatic and dynamic configuration, client-only applications, and closing clients to prevent resource leaks.
+* *Secure SOAP services and clients.* TLS at the transport layer, authentication and authorization at the HTTP layer, and WS-SecurityPolicy at the message layer.
+* *Integrate with Camel Quarkus.* The `camel-quarkus-cxf-soap` extension builds on {quarkus-cxf-project-name}.
+* *Reference.* The extensions, the supported standards and CXF modules, and every configuration option.
 
 [[issues-and-support]]
 == Issues and Support

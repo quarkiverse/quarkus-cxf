@@ -1,7 +1,18 @@
 [[interceptors-features-handlers]]
-= CXF Interceptors and Features, JAX-WS Handlers
+= Interceptors, features, and handlers for message processing
 
-Check the following chapters to learn a bout various ways to customize the processing of SOAP requests and responses:
+Change how SOAP requests and responses are processed on a client or a service by adding CXF interceptors, CXF features, or JAX-WS handlers, declared with annotations or in `application.properties`.
 
-* xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[CXF Interceptors and Features]
-* xref:user-guide/interceptors-features-handlers/jax-ws-handlers.adoc[JAX-WS Handlers]
+Apache CXF processes every message through a chain of interceptors, and a CXF feature packages the interceptors and settings for one capability, such as the built-in `LoggingFeature`.
+JAX-WS handlers are the alternative defined by the JAX-WS specification, implemented as `SOAPHandler<SOAPMessageContext>` classes.
+
+*How {quarkus-cxf-project-name} supports this.*
+Interceptors and features attach to a service through the `@Features`, `@InInterceptors`, `@OutInterceptors`, `@InFaultInterceptors`, and `@OutFaultInterceptors` annotations on the service interface or implementation, or through the matching `quarkus.cxf.endpoint."/path".*` properties, and to a client through its client configuration.
+Handlers attach through `quarkus.cxf.endpoint."/path".handlers` and `quarkus.cxf.client."name".handlers`, as an alternative to the `@HandlerChain` annotation.
+
+In every case the class is looked up as a CDI bean first, by fully qualified class name or by bean name, and instantiated through its no-argument constructor only when no bean exists, so your interceptors, features, and handlers can inject other beans.
+
+*Where to go:*
+
+* *CXF interceptors and features.* Use them when you want the CXF processing model, including the built-in features such as `LoggingFeature` and your own interceptor classes.
+* *JAX-WS handlers.* Use them when you prefer the standard JAX-WS handler API to CXF-specific interceptors.

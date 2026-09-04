@@ -1,8 +1,20 @@
 [[security-guide-index]]
-= Security guide
+= Secure SOAP services and clients
 
-The security guide documents various security related aspects of {quarkus-cxf-project-name}:
+Protect the SOAP services you expose and the clients that call them by choosing where the proof of identity lives: in the transport connection, in the HTTP request, or in the SOAP message itself.
 
-* xref:user-guide/ssl-tls-https.adoc[SSL, TLS and HTTPS]
-* xref:user-guide/authentication-authorization.adoc[Authentication and authorization]
-* xref:security-guide/ws-securitypolicy-authentication-authorization.adoc[Authentication enforced by WS-SecurityPolicy]
+Each layer answers a different requirement.
+Transport security with TLS proves the server's identity to the client and encrypts the connection, and with mutual TLS the client proves its identity too.
+HTTP-level authentication and authorization carry credentials in the `Authorization` header and let Quarkus Security decide, by role, who can call which service.
+Message-level security through WS-SecurityPolicy puts the credential inside the SOAP message, so the requirement travels with the message and can be declared in the WSDL contract.
+
+*How {quarkus-cxf-project-name} supports this.*
+Clients and services take their TLS settings from the Quarkus TLS registry, referenced by name from `application.properties`.
+HTTP Basic authentication on a client is a username and a password in the client configuration, and services rely on the same Quarkus Security mechanisms as any other Quarkus HTTP endpoint, including `@RolesAllowed`.
+WS-SecurityPolicy assertions come with the `quarkus-cxf-rt-ws-security` extension, which enforces the policy on the client and on the service.
+
+*Where to go:*
+
+* *SSL, TLS, and HTTPS.* Set up trust stores and key stores for clients and services, move up to mutual TLS, and require TLS through a `TransportBinding` policy.
+* *Authentication and authorization.* Add HTTP Basic credentials to a client, protect WSDL retrieval, and secure service endpoints with Quarkus Security.
+* *WS-SecurityPolicy.* Use it when the authentication requirement must live in the SOAP message, for example a `UsernameToken` or a SAML assertion verified by a callback handler.
