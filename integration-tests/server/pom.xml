@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>org.cli-assured</groupId>
-            <artifactId>cli-assured-mvn</artifactId>
+            <artifactId>cli-assured-maven</artifactId>
             <scope>test</scope>
         </dependency>
 
