@@ -20,7 +20,8 @@ import java.util.stream.Stream;
 
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
-import org.cliassured.mvn.Mvn;
+import org.cliassured.CommandSpec;
+import org.cliassured.maven.Maven;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.jboss.logging.Logger;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ public class DevModeTest {
             throw new UncheckedIOException("Could not create " + tempProject.getParent(), e);
         }
 
-        final Mvn mvn = Mvn.fromMvnw(Path.of(".").toAbsolutePath().normalize()).installIfNeeded();
+        final CommandSpec mvn = Maven.fromMvnw(Path.of(".").toAbsolutePath().normalize()).installIfNeeded().mvn();
         mvn
                 .args(args(activeProfiles, settingsPath, userProperties,
                         quarkusPluginGroupId + ":quarkus-maven-plugin:" + quarkusPluginVersion + ":create",
