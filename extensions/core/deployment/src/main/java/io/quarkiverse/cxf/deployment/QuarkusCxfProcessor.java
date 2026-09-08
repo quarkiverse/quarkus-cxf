@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
-import java.io.UncheckedIOException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +30,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -70,6 +72,9 @@ import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 import org.jboss.jandex.Type;
 import org.jboss.logging.Logger;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -80,6 +85,7 @@ import org.xml.sax.SAXException;
 
 import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.QuarkusBusFactory;
+import io.quarkiverse.cxf.QuarkusCxfContextUtils;
 import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Wsdl2JavaParameterSet;
 import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaCodeGen;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
@@ -89,6 +95,7 @@ import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
+import io.quarkus.deployment.builditem.BytecodeTransformerBuildItem;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.ExtensionSslNativeSupportBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -109,6 +116,7 @@ import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
 import io.quarkus.deployment.pkg.builditem.UberJarMergedResourceBuildItem;
 import io.quarkus.deployment.pkg.steps.NativeOrNativeSourcesBuild;
 import io.quarkus.gizmo.ClassOutput;
+import io.quarkus.gizmo.Gizmo;
 import io.quarkus.maven.dependency.ArtifactKey;
 
 class QuarkusCxfProcessor {
@@ -220,54 +228,21 @@ class QuarkusCxfProcessor {
         recorder.resetAddressingProperties(shutdownContext);
     }
 
-    private static final String ADDRESSING_MESSAGES = "org/apache/cxf/ws/addressing/Messages.properties";
-
     @BuildStep
-    void removeCxfCoreResourceBundles(BuildProducer<RemovedResourceBuildItem> removed) {
-        removed.produce(new RemovedResourceBuildItem(
-                ArtifactKey.of("org.apache.cxf", "cxf-core", null, "jar"),
-                Set.of(ADDRESSING_MESSAGES)));
-    }
+    void replaceCxfAddressingMessages(BuildProducer<BytecodeTransformerBuildItem> bytecodeTransformers) {
 
-    @BuildStep
-    void replaceCxfCoreResourceBundles(BuildProducer<GeneratedResourceBuildItem> generated) {
-        Properties props = new LinkedProperties();
-        try (InputStream in = ContextUtils.class.getClassLoader().getResourceAsStream(ADDRESSING_MESSAGES)) {
-            props.load(in);
-        } catch (IOException e) {
-            throw new UncheckedIOException("Could not read from " + ADDRESSING_MESSAGES + " in cxf-core.jar", e);
-        }
-        Map<String, String> overrides = Map.of(
-                "DISALLOWED_DECOUPLED_DESTINATION_SCHEME",
-                "Rejected pre-approved decoupled destination with disallowed scheme: {0}. Configure permitted URI schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
-                "REJECTED_DECOUPLED_DESTINATION",
-                "Rejected wsa:ReplyTo/FaultTo decoupled destination: {0}. Decoupled WS-Addressing is disabled by default; enable with quarkus.cxf.endpoint.addressing.decoupled.enabled=true, or configure permitted URI schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
-                "DECOUPLED_REPLY_TO_NOT_PERMITTED",
-                "Decoupled WS-Addressing ReplyTo ({0}) is not permitted by this server. Enable with quarkus.cxf.endpoint.addressing.decoupled.enabled=true, or configure permitted URI schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
-                "DECOUPLED_REPLY_TO_SCHEME_NOT_PERMITTED",
-                "Decoupled WS-Addressing ReplyTo ({0}) is not permitted by this server: URI scheme is not allowed. Configure permitted schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
-                "DECOUPLED_FAULT_TO_SCHEME_NOT_ALLOWED",
-                "Decoupled pre-approved FaultTo ({0}) is not permitted: URI scheme is not allowed. Fault will be delivered to ReplyTo instead. Configure permitted schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter",
-                "DECOUPLED_FAULT_TO_NOT_ALLOWED",
-                "Fault will be delivered to ReplyTo instead. Configure permitted schemes with {1} Decoupled WS-Addressing FaultTo ({0}) is not permitted; fault will be delivered to ReplyTo instead. Enable with quarkus.cxf.endpoint.addressing.decoupled.enabled=true, or configure permitted URI schemes using quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes configuration parameter");
+        /*
+         * Make InstrumentationManagerImpl.init() a no-op in native mode
+         * to avoid getting an MBean Server instance in the native image heap
+         * See https://github.com/quarkiverse/quarkus-cxf/issues/1697
+         */
+        final BytecodeTransformerBuildItem transformation = new BytecodeTransformerBuildItem.Builder()
+                .setClassToTransform(ContextUtils.class.getName())
+                .setCacheable(true)
+                .setVisitorFunction(new ContextUtilsTransformer())
+                .build();
+        bytecodeTransformers.produce(transformation);
 
-        overrides.forEach((k, v) -> {
-            if (props.get(k) == null) {
-                throw new IllegalStateException(
-                        ADDRESSING_MESSAGES + " in cxf-core.jar is missing an expected key " + k + "; was it perhaps renamed?");
-            }
-            props.put(k, v);
-        });
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            props.store(baos, null);
-            baos.flush();
-            baos.close();
-
-            byte[] content = baos.toByteArray();
-            generated.produce(new GeneratedResourceBuildItem(ADDRESSING_MESSAGES, content));
-        } catch (IOException e) {
-            throw new UncheckedIOException("Could not write to ByteArrayOutputStream", e);
-        }
     }
 
     @BuildStep
@@ -867,4 +842,82 @@ class QuarkusCxfProcessor {
         }
     }
 
+    static class ContextUtilsTransformer implements BiFunction<String, ClassVisitor, ClassVisitor> {
+
+        private final Set<String> overriddenMethods;
+        private final Set<String> missingMethods;
+        private final String DELEGATE = org.objectweb.asm.Type.getInternalName(QuarkusCxfContextUtils.class);
+
+        ContextUtilsTransformer() {
+            this.overriddenMethods = Stream.of(QuarkusCxfContextUtils.class.getDeclaredMethods())
+                    .map(Method::getName)
+                    .collect(Collectors.toUnmodifiableSet());
+            this.missingMethods = new TreeSet<>(overriddenMethods);
+        }
+
+        @Override
+        public ClassVisitor apply(String t, ClassVisitor classVisitor) {
+            return new ClassVisitor(Gizmo.ASM_API_VERSION, classVisitor) {
+
+                @Override
+                public MethodVisitor visitMethod(int access,
+                        String name,
+                        String descriptor,
+                        String signature,
+                        String[] exceptions) {
+                    if (overriddenMethods.contains(name)) {
+                        missingMethods.remove(name);
+                        final MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
+
+                        return new MethodVisitor(api, mv) {
+
+                            @Override
+                            public void visitCode() {
+                                final MethodVisitor target = this.mv;
+                                target.visitCode();
+
+                                final org.objectweb.asm.Type methodType = org.objectweb.asm.Type.getMethodType(descriptor);
+                                final org.objectweb.asm.Type[] argTypes = methodType.getArgumentTypes();
+                                final boolean isStatic = (access & Opcodes.ACC_STATIC) != 0;
+
+                                int slot = 0;
+                                if (!isStatic) {
+                                    target.visitVarInsn(Opcodes.ALOAD, 0);
+                                    slot = 1;
+                                }
+                                for (org.objectweb.asm.Type argType : argTypes) {
+                                    target.visitVarInsn(argType.getOpcode(Opcodes.ILOAD), slot);
+                                    slot += argType.getSize();
+                                }
+
+                                target.visitMethodInsn(Opcodes.INVOKESTATIC, DELEGATE, name, descriptor, false);
+                                target.visitInsn(methodType.getReturnType().getOpcode(Opcodes.IRETURN));
+
+                                target.visitMaxs(slot, slot);
+                                target.visitEnd();
+
+                                /*
+                                 * Silence the original body: MethodVisitor's delegating methods
+                                 * are all no-ops once mv is null.
+                                 */
+                                this.mv = null;
+                            }
+                        };
+                    }
+                    return super.visitMethod(access, name, descriptor, signature, exceptions);
+                }
+
+                @Override
+                public void visitEnd() {
+                    if (!missingMethods.isEmpty()) {
+                        throw new IllegalStateException(
+                                "Methods of " + org.apache.cxf.ws.addressing.ContextUtils.class.getName() + " not found: " +
+                                        missingMethods.stream().map(name -> name + "(...)").collect(Collectors.joining(", ")));
+                    }
+                    super.visitEnd();
+                }
+
+            };
+        }
+    }
 }
