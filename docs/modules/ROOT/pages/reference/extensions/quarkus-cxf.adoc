@@ -568,7 +568,7 @@ Any Quarkus CXF application will fail to start if `org.apache.cxf.ws.addressing.
 property is set.
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT_ADDRESSING_DECOUPLED_ENABLED+++` +
-*Since Quarkus CXF*: 3.38.0
+*Since Quarkus CXF*: 3.38.0 and 3.33.11
 
 .<| [[quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes]]`link:#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes[quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes]`
 .<| List of ``string``
@@ -587,7 +587,7 @@ Unlike plain CXF, that allows a broader range of allowed schemes by default, Qua
 ====
 
 *Environment variable*: `+++QUARKUS_CXF_ENDPOINT_ADDRESSING_DECOUPLED_ALLOWED_SCHEMES+++` +
-*Since Quarkus CXF*: 3.38.0
+*Since Quarkus CXF*: 3.38.0 and 3.33.11
 
 .<| [[quarkus-cxf_quarkus-cxf-client-tls-configuration-name]]`link:#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`
 .<| `string`
