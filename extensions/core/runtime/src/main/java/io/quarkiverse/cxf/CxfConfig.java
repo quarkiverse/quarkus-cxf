@@ -372,7 +372,7 @@ public interface CxfConfig {
              * Any Quarkus CXF application will fail to start if `org.apache.cxf.ws.addressing.decoupled.enabled` system
              * property is set.
              *
-             * @since 3.38.0
+             * @since 3.38.0 and 3.33.11
              * @asciidoclet
              */
             @WithDefault("false")
@@ -392,7 +392,7 @@ public interface CxfConfig {
              * `http://` and `https://` by default.
              * ====
              *
-             * @since 3.38.0
+             * @since 3.38.0 and 3.33.11
              * @asciidoclet
              */
             @WithDefault("http://,https://")
