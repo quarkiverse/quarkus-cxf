@@ -1,5 +1,5 @@
 [[advanced-service-topics]]
-= Control service endpoints, paths, and providers
+= Publish and configure SOAP services
 
 Decide where your SOAP services are published and how they are implemented: set endpoint paths, process raw XML with JAX-WS providers, serve REST and SOAP endpoints from one application, and advertise the right addresses when a service runs behind a reverse proxy.
 

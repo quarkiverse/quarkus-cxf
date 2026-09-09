@@ -13,7 +13,7 @@
 ** xref:user-guide/interceptors-features-handlers.adoc[CXF interceptors, CXF features, and JAX-WS handlers]
 *** xref:user-guide/interceptors-features-handlers/cxf-interceptors-and-features.adoc[CXF Interceptors and Features]
 *** xref:user-guide/interceptors-features-handlers/jax-ws-handlers.adoc[JAX-WS Handlers]
-** xref:user-guide/advanced-service-topics.adoc[Advanced service topics]
+** xref:user-guide/advanced-service-topics.adoc[Publish and configure SOAP services]
 *** xref:user-guide/advanced-service-topics/endpoints-and-paths.adoc[Endpoints and paths]
 *** xref:user-guide/advanced-service-topics/jax-ws-providers.adoc[JAX-WS Providers]
 *** xref:user-guide/advanced-service-topics/rest-and-soap-endpoints.adoc[REST and SOAP Endpoints]
