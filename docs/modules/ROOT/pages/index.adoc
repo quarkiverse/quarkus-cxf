@@ -1,8 +1,9 @@
 [[quarkus-cxf-index]]
 = {quarkus-cxf-project-name}
 
-This project aims at porting http://cxf.apache.org/[Apache CXF] to https://quarkus.io/[Quarkus] runtime
-including full support for producing https://quarkus.io/container-first/[GraalVM native images].
+Keep the SOAP contracts your applications and partners rely on while you move those applications to Quarkus: {quarkus-cxf-project-name} brings http://cxf.apache.org/[Apache CXF] and the JAX-WS programming model to the Quarkus runtime, with full support for GraalVM native images.
+
+Instead of rewriting a working SOAP integration as REST, or leaving it on an application server you no longer want to run, you carry the existing WSDL contract and JAX-WS code into a Quarkus application that starts fast and compiles to a https://quarkus.io/container-first/[GraalVM native image].
 
 [IMPORTANT]
 ====
@@ -13,7 +14,14 @@ and *Java API for XML Web Services* (https://en.wikipedia.org/wiki/JAX-WS[JAX-WS
 Refer to xref:reference/index.adoc[Reference] to learn which parts of CXF are supported.
 ====
 
-The documentation is divided into the following main parts:
+== What you get
+
+* *JAX-WS services and clients.* Your existing WSDL contracts and JAX-WS code carry over.
+* *Contract-first and code-first development.* `wsdl2java` and `java2ws` run inside the Quarkus Maven plugin, so a changed WSDL is picked up by the normal build rather than by a separate tool step.
+* *The standards enterprise contracts commonly require.* WS-Security, WS-SecurityPolicy, WS-ReliableMessaging, and WS-Trust, through companion extensions.
+* *Production insight.* Micrometer metrics and OpenTelemetry tracing for your services and clients.
+
+== Where to go
 
 * xref:user-guide/index.adoc[User guide] - explains the typical usage of {quarkus-cxf-project-name}
 * xref:security-guide/index.adoc[Security guide] - documents various security related aspects of {quarkus-cxf-project-name}, such as SSL/TLS, Authentication and Authorization
@@ -22,20 +30,13 @@ The documentation is divided into the following main parts:
 * xref:reference/index.adoc[Reference] - the full list of supported specifications, use cases and configuration options
 
 [[issues-and-support]]
-== Issues and Support
+== Issues and support
 
-Feel free to https://github.com/quarkiverse/quarkus-cxf/discussions[start a  discussion]
+Feel free to https://github.com/quarkiverse/quarkus-cxf/discussions[start a discussion]
 or https://github.com/quarkiverse/quarkus-cxf/issues/new[open an issue] in the GitHub repository in case you need support.
 The following general guidelines can be used to determine whether to start a discussion or open an issue.
 
-=== https://github.com/quarkiverse/quarkus-cxf/issues[GitHub Issues]
-
-- Bug reports
-- Feature requests
-
-=== https://github.com/quarkiverse/quarkus-cxf/discussions[GitHub Discussions]
-
-- Q&A and general communication
-- RFCs for new features
+* https://github.com/quarkiverse/quarkus-cxf/issues[GitHub Issues]: bug reports and feature requests.
+* https://github.com/quarkiverse/quarkus-cxf/discussions[GitHub Discussions]: Q&A, general communication, and RFCs for new features.
 
 Contributions and pull requests from the community are welcome!

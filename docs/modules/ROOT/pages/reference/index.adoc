@@ -1,6 +1,8 @@
 [[reference-index]]
 = Reference
 
+Look up which {quarkus-cxf-project-name} extension provides a capability, its support level and the standards it implements, which Apache CXF modules, front ends, data bindings, transports, and annotations are supported, and how to select SOAP 1.1, SOAP 1.2, and MTOM.
+
 [[extensions]]
 == {quarkus-cxf-project-name}
 
@@ -70,7 +72,7 @@ Here is a list of CXF modules supported by {quarkus-cxf-project-name}.
 You should typically not depend on these directly, but rather use some of the extensions listed above that brings the given CXF module as a transitive dependency.
 
 [[frontends]]
-=== Front ends
+== Supported front ends
 
 Out of https://cxf.apache.org/docs/frontends.html[CXF front ends] only the
 https://cxf.apache.org/docs/jax-ws.html[JAX-WS front end] is fully supported by `quarkus-cxf`.
@@ -81,7 +83,7 @@ We advise not to use it.
 endif::[]
 
 [[databindings]]
-=== Data Bindings
+== Supported data bindings
 
 Out of https://cxf.apache.org/docs/databindings.html[CXF Data Bindings] only the following ones are supported:
 
@@ -89,7 +91,7 @@ Out of https://cxf.apache.org/docs/databindings.html[CXF Data Bindings] only the
 * https://cxf.apache.org/docs/mtom-attachments-with-jaxb.html[MTOM Attachments with JAXB]
 
 [[transports]]
-=== Transports
+== Supported transports
 
 Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the following ones are supported:
 
@@ -99,13 +101,12 @@ Out of https://cxf.apache.org/docs/transports.html[CXF Transports] only the foll
 ** xref:user-guide/authentication-authorization.adoc[Basic Authentication]
 
 [[tools]]
-=== Tools
+== Supported tools
 
-* `wsdl2Java` - see the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL
-] section of User guide
+* `wsdl2Java` - see the xref:user-guide/contract-first-code-first/generate-java-from-wsdl.adoc[Generate the Model classes from WSDL] section of User guide
 * `java2ws` - see the xref:user-guide/contract-first-code-first/generate-wsdl-from-java.adoc[Generate WSDL from Java] section of User guide
 
-=== Supported SOAP Bindings
+== Supported SOAP bindings
 
 All https://cxf.apache.org/docs/wsdl-bindings.html[CXF WSDL Bindings] are supported.
 In order to switch to SOAP 1.2 or to add MTOM, set `quarkus.cxf.[client|endpoint]."name".soap-binding` to one of the following values:
@@ -127,8 +128,10 @@ Here is a list of CXF modules currently not supported by {quarkus-cxf-project-na
 |===
 | CXF module | Alternative
 
-| JAX-RS +
-`cxf-rt-frontend-jaxrs` +
+a| JAX-RS
+
+`cxf-rt-frontend-jaxrs`
+
 `cxf-rt-rs-client`
 | {link-quarkus-docs-base}/rest-json[Use Quarkus RESTEasy]
 
@@ -138,38 +141,46 @@ Here is a list of CXF modules currently not supported by {quarkus-cxf-project-na
 | https://cxf.apache.org/docs/aegis-21.html[Aegis]
 | Use JAXB and JAX-WS
 
-| https://cxf.apache.org/dosgi-architecture.html[DOSGI] +
+a| https://cxf.apache.org/dosgi-architecture.html[DOSGI]
+
 Karaf
 |
 
 | JiBX
 | Use JAXB and JAX-WS
 
-| Local transport +
+a| Local transport
+
 `cxf-rt-transports-local`
 | Use HTTP transport
 
-| JMS transport +
+a| JMS transport
+
 `cxf-rt-transports-jms`
 | Use HTTP transport
 
-| JBI +
-`cxf-rt-transports-jbi` +
+a| JBI
+
+`cxf-rt-transports-jbi`
+
 `cxf-rt-bindings-jbi`
 | Deprecated in CXF use HTTP transport
 
-| UDP transport +
+a| UDP transport
+
 `cxf-rt-transports-udp`
 | Use HTTP transport
 
 | https://cxf.apache.org/docs/coloc-feature.html[Coloc transport]
 | Use HTTP transport
 
-| https://cxf.apache.org/docs/websocket.html[WebSocket transport] +
+a| https://cxf.apache.org/docs/websocket.html[WebSocket transport]
+
 `cxf-rt-transports-websocket`
 | Use HTTP transport
 
-| Clustering +
+a| Clustering
+
 `cxf-rt-features-clustering`
 | https://github.com/quarkiverse/quarkus-cxf/issues/836[Planned]
 
@@ -177,7 +188,8 @@ Karaf
 `cxf-rt-bindings-corba`
 | Use JAX-WS
 
-| https://cxf.apache.org/docs/sdo.html[SDO databinding] +
+a| https://cxf.apache.org/docs/sdo.html[SDO databinding]
+
 `cxf-rt-databinding-sdo`
 |
 
@@ -190,11 +202,13 @@ Karaf
 | https://cxf.apache.org/docs/using-cxf-jca-rar-in-application-server.html[JCA transport]
 | Use HTTP transport
 
-| WS-Transfer runtime +
+a| WS-Transfer runtime
+
 `cxf-rt-ws-transfer`
 |
 
-| Throttling +
+a| Throttling
+
 `cxf-rt-features-throttling`
 | Use load balancer
 
