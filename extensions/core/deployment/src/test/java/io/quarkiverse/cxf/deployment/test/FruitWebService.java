@@ -1,5 +1,7 @@
 package io.quarkiverse.cxf.deployment.test;
 
+import java.util.Set;
+
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebResult;
@@ -15,7 +17,7 @@ public interface FruitWebService {
 
     @WebMethod
     @RequestWrapper(localName = "add", targetNamespace = "http://test.deployment.cxf.quarkiverse.io/", className = "io.quarkiverse.cxf.deployment.test.Add")
-    void add(@WebParam(name = "fruit") Fruit fruit);
+    Set<Fruit> add(@WebParam(name = "fruit") Fruit fruit);
 
     @WebMethod
     @RequestWrapper(localName = "delete", targetNamespace = "http://test.deployment.cxf.quarkiverse.io/", className = "io.quarkiverse.cxf.deployment.test.Delete")
