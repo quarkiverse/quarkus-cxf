@@ -57,3 +57,6 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
+
+# Linux directory decorations
+/.directory
