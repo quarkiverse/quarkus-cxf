@@ -193,6 +193,7 @@ configuration property:
 include::example$metrics/application.properties[tag=async-client.wsdl2java]
 ----
 
+[id="caller-threads-and-callback-threads"]
 == Caller threads and callback threads
 
 As mentioned above, you should prefer using the
