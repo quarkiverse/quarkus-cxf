@@ -209,7 +209,7 @@ public interface CxfConfig {
          *
          * See also:
          *
-         * * xref:user-guide/advanced-client-topics/asynchronous-client.adoc#_caller_threads_and_callback_threads[Caller threads and callback threads]
+         * * xref:user-guide/advanced-client-topics/asynchronous-client.adoc#caller-threads-and-callback-threads[Caller threads and callback threads]
          *
          * @asciidoclet
          * @since 3.22.0
