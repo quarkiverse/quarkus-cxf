@@ -33,6 +33,7 @@ jobs:
             dependency-branch: 'main'
             issue-id: 1287
             dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
+            java-version: 21
           - branch: 'main-cxf-main'
             base-branch: 'main'
             dependency-short-name: 'cxf'
@@ -40,6 +41,7 @@ jobs:
             dependency-branch: 'main'
             issue-id: 1767
             dependency-git-repo-url: https://github.com/apache/cxf.git
+            java-version: 21
           - branch: '3.40-quarkus-3.40'
             base-branch: 'main'
             dependency-short-name: 'quarkus'
@@ -47,6 +49,15 @@ jobs:
             dependency-branch: '3.40'
             issue-id: 2293
             dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
+            java-version: 17
+          - branch: '3.40-cxf-4.2'
+            base-branch: 'main'
+            dependency-short-name: 'cxf'
+            dependency-stream: '4.2'
+            dependency-branch: '4.2.x-fixes'
+            issue-id: 2296
+            dependency-git-repo-url: https://github.com/apache/cxf.git
+            java-version: 17
           - branch: '3.33-quarkus-3.33'
             base-branch: '3.33'
             dependency-short-name: 'quarkus'
@@ -54,6 +65,7 @@ jobs:
             dependency-branch: '3.33'
             issue-id: 2056
             dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
+            java-version: 17
           - branch: '3.33-cxf-4.1'
             base-branch: '3.33'
             dependency-short-name: 'cxf'
@@ -61,6 +73,7 @@ jobs:
             dependency-branch: '4.1.x-fixes'
             issue-id: 2081
             dependency-git-repo-url: https://github.com/apache/cxf.git
+            java-version: 17
 
     steps:
 
