@@ -642,7 +642,7 @@ Hence in the worst case, getting the complete response from an asynchronous clie
 
 See also:
 
-* xref:user-guide/advanced-client-topics/asynchronous-client.adoc#_caller_threads_and_callback_threads[Caller threads and callback threads]
+* xref:user-guide/advanced-client-topics/asynchronous-client.adoc#caller-threads-and-callback-threads[Caller threads and callback threads]
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT_WORKER_DISPATCH_TIMEOUT+++` +
 *Since Quarkus CXF*: 3.22.0
