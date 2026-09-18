@@ -25,7 +25,7 @@ image::code-quarkus-io.png[https://code.quarkus.io]
 
 * Here you can select the extensions that you want to work with.
 * For a simple Hello world Web service or client the `quarkus-cxf` extension is enough.
-* Click the blue `Generate your application` button to download a basic skeleton project.
+* Click the *Generate your application* button to download a basic skeleton project.
 * Unpack the zip file and import the project the into your favorite IDE.
 
 [[quarkus-platform]]
