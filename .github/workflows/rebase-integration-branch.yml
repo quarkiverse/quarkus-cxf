@@ -50,14 +50,14 @@ jobs:
             issue-id: 2293
             dependency-git-repo-url: https://github.com/quarkusio/quarkus.git
             java-version: 17
-          - branch: '3.40-cxf-4.2'
-            base-branch: 'main'
-            dependency-short-name: 'cxf'
-            dependency-stream: '4.2'
-            dependency-branch: '4.2.x-fixes'
-            issue-id: 2296
-            dependency-git-repo-url: https://github.com/apache/cxf.git
-            java-version: 17
+          #- branch: '3.40-cxf-4.2'
+          #  base-branch: 'main'
+          #  dependency-short-name: 'cxf'
+          #  dependency-stream: '4.2'
+          #  dependency-branch: '4.2.x-fixes'
+          #  issue-id: 2296
+          #  dependency-git-repo-url: https://github.com/apache/cxf.git
+          #  java-version: 17
           - branch: '3.33-quarkus-3.33'
             base-branch: '3.33'
             dependency-short-name: 'quarkus'
