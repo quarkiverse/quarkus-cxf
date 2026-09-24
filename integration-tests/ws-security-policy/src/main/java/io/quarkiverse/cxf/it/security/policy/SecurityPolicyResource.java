@@ -39,9 +39,6 @@ public class SecurityPolicyResource {
     @CXFClient("helloHttps")
     HttpsPolicyHelloService helloHttps;
 
-    @CXFClient("helloHttpsPkcs12")
-    HttpsPolicyHelloService helloHttpsPkcs12;
-
     @CXFClient("helloHttp")
     HelloService helloHttp;
 
@@ -134,9 +131,6 @@ public class SecurityPolicyResource {
                 break;
             case "helloHttps":
                 service = helloHttps;
-                break;
-            case "helloHttpsPkcs12":
-                service = helloHttpsPkcs12;
                 break;
             case "helloHttp":
                 service = helloHttp;

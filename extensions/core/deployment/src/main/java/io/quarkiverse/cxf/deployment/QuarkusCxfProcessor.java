@@ -139,11 +139,6 @@ class QuarkusCxfProcessor {
             OutputTargetBuildItem target,
             BuildProducer<NativeImageResourceBuildItem> resources,
             CxfBuildTimeConfig cxfBuildTimeConfig) {
-        if (cxfBuildTimeConfig.wsdlPath().isPresent()) {
-            for (String wsdlPath : cxfBuildTimeConfig.wsdlPath().get()) {
-                resources.produce(new NativeImageResourceBuildItem(wsdlPath));
-            }
-        }
 
         /* Add all WSDLs configured for wsdl2java processing */
         final Path classesDir = target.getOutputDirectory().resolve("classes");

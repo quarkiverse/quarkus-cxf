@@ -11,9 +11,9 @@
 Before {quarkus-cxf-project-name} 3.19.0, it was only possible to configure trust stores and key stores per CXF client via
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
 or (now deprecated)
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store*]`
+`quarkus.cxf.client."client-name".key-store*`
 and
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store*]` options.
+`quarkus.cxf.client."client-name".trust-store*` options.
 
 The configuration might have got too verbose in case there were multiple clients.
 

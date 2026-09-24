@@ -198,18 +198,6 @@ public class TransportPolicyTest {
     }
 
     @Test
-    void helloHttpsPkcs12() {
-        /* client calling a service enforcing HTTPS via HTTPS */
-        RestAssured.given()
-                .config(PolicyTestUtils.restAssuredConfig())
-                .body("Frank")
-                .post("/cxf/security-policy/helloHttpsPkcs12")
-                .then()
-                .statusCode(200)
-                .body(is("Hello Frank from HTTPS!"));
-    }
-
-    @Test
     void helloHttp() {
         /* client calling a service enforcing HTTPS via HTTP */
         RestAssured.given()

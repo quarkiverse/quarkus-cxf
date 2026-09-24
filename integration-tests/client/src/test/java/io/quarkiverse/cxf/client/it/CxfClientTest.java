@@ -69,11 +69,6 @@ public class CxfClientTest {
     }
 
     @Test
-    void legacyProxy() {
-        assertProxy("proxiedCalculator");
-    }
-
-    @Test
     void qcxfProxyConfig() {
         assertProxy("qcxfProxyConfig");
     }

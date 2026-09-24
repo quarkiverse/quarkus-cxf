@@ -59,7 +59,7 @@ public class ClientHttpPolicyDefaultsTest {
      */
     @Test
     public void defaults() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        final Set<String> unsupportedAttributes = Set.of("asyncExecuteTimeout");
+        final Set<String> unsupportedAttributes = Set.of("asyncExecuteTimeout", "proxyServerType");
         final String configPrefix = "quarkus.cxf.client.hello.";
         final Config config = ConfigProvider.getConfig();
         HTTPClientPolicy policy = new HTTPClientPolicy();

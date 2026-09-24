@@ -1,0 +1,27 @@
+= {quarkus-cxf-project-name} 4.0.0 release notes
+
+== Removals
+
+=== The following configuration options were removed:
+
+[%autowidth,stripes=hover]
+|===
+| Removed | Replacement
+
+| `quarkus.cxf.client."client-name".username` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
+| `quarkus.cxf.client."client-name".password` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
+| `quarkus.cxf.client."client-name".proxy-server` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+| `quarkus.cxf.client."client-name".proxy-server-port` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+| `quarkus.cxf.client."client-name".non-proxy-hosts` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+| quarkus.cxf.client."client-name".proxy-server-type | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+| `quarkus.cxf.client."client-name".proxy-username` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+| `quarkus.cxf.client."client-name".proxy-password` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+| `quarkus.cxf.client."client-name".key-store` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+| `quarkus.cxf.client."client-name".key-store-password` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+| `quarkus.cxf.client."client-name".key-store-type` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+| `quarkus.cxf.client."client-name".key-password` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+| `quarkus.cxf.client."client-name".trust-store` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+| `quarkus.cxf.client."client-name".trust-store-password` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+| `quarkus.cxf.client."client-name".trust-store-type` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+| `quarkus.cxf.wsdl-path` | `quarkus.native.resources.includes`
+|===

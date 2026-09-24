@@ -16,8 +16,8 @@ Use the following client configuration options provided by
 `xref:reference/extensions/quarkus-cxf.adoc[quarkus-cxf]` extension
 to pass the username and password for HTTP basic authentication:
 
-* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".username]`
-* `xref:reference/extensions/quarkus-cxf.adoc[quarkus.cxf.client."client-name".password]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
 
 Here is an example:
 

@@ -26,12 +26,12 @@ In plain CXF, these are set via `HTTPClientPolicy`.
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-browser-type[quarkus.cxf.client."client-name".browser-type]`
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-decoupled-endpoint[quarkus.cxf.client."client-name".decoupled-endpoint]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port[quarkus.cxf.client."client-name".proxy-server-port]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts[quarkus.cxf.client."client-name".non-proxy-hosts]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-type[quarkus.cxf.client."client-name".proxy-server-type]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-username[quarkus.cxf.client."client-name".proxy-username]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`
+* `quarkus.cxf.client."client-name".proxy-server`
+* `quarkus.cxf.client."client-name".proxy-server-port`
+* `quarkus.cxf.client."client-name".non-proxy-hosts`
+* `quarkus.cxf.client."client-name".proxy-server-type`
+* `quarkus.cxf.client."client-name".proxy-username`
+* `quarkus.cxf.client."client-name".proxy-password`
 
 === `HTTPConduitFactory` configurable through `application.properties`
 
