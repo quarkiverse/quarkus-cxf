@@ -3,13 +3,11 @@ package io.quarkiverse.cxf;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
-import org.apache.cxf.transports.http.configuration.ProxyServerType;
 
 import io.quarkiverse.cxf.LoggingConfig.PerClientOrServiceLoggingConfig;
 import io.quarkus.runtime.annotations.ConfigDocEnum;
@@ -84,34 +82,6 @@ public interface CxfClientConfig {
     public Optional<String> endpointName();
 
     /**
-     * The username for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a username
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
-     * instead.
-     *
-     * @asciidoclet
-     * @since 1.0.0
-     * @deprecated use {@code auth.username}
-     */
-    @Deprecated
-    Optional<String> username();
-
-    /**
-     * The password for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a password
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
-     * instead.
-     *
-     * @asciidoclet
-     * @since 1.0.0
-     * @deprecated use {@code auth.password}
-     */
-    @Deprecated
-    Optional<String> password();
-
-    /**
      * The
      * `https://cxf.apache.org/javadoc/latest-3.1.x/org/apache/cxf/configuration/security/AuthorizationPolicy.html[AuthorizationPolicy]`
      *
@@ -121,8 +91,8 @@ public interface CxfClientConfig {
     Auth auth();
 
     /**
-     * If `true`, then the `Authentication` header will be sent preemptively when requesting the WSDL, as long as the `username`
-     * is set; otherwise the WSDL will be requested anonymously.
+     * If `true`, then the `Authentication` header will be sent preemptively when requesting the WSDL, as long as the
+     * `auth.username` is set; otherwise the WSDL will be requested anonymously.
      *
      * @since 2.7.0
      * @asciidoclet
@@ -454,9 +424,7 @@ public interface CxfClientConfig {
     Optional<String> decoupledEndpoint();
 
     /**
-     * The name of the proxy configuration to use; ignored if
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`
-     * is set.
+     * The name of the proxy configuration to use.
      *
      * If not set and the default proxy configuration is configured (`quarkus.proxy.*`) then that will be used.
      * If the proxy configuration name is set, the configuration from `quarkus.proxy.<name>.*` will be used.
@@ -469,117 +437,6 @@ public interface CxfClientConfig {
      * @asciidoclet
      */
     Optional<String> proxyConfigurationName();
-
-    /**
-     * Hostname or IP address of the proxy server to use for this client.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * instead.
-     *
-     * @since 2.2.3
-     * @deprecated use {@link #proxyConfigurationName()} instead
-     * @asciidoclet
-     */
-    @Deprecated
-    public Optional<String> proxyServer();
-
-    /**
-     * The port number of the proxy server to use for this client.
-     *
-     * Ignored if
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * is not set.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * instead.
-     *
-     * @since 2.2.3
-     * @deprecated use {@link #proxyConfigurationName()} instead
-     * @asciidoclet
-     */
-    @Deprecated
-    public OptionalInt proxyServerPort();
-
-    /**
-     * Specifies the list of hostnames to which the undelying HTTP client will connect directly instead of via proxy server.
-     *
-     * Ignored if
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * is not set.
-     *
-     * Use the following syntax:
-     *
-     * - `localhost` - a single hostname
-     * - `localhost++\|++www.google.com` - two hostnames that will not use the proxy configuration
-     * - `localhost++\|++www.google.++*\|*++.apache.org` - hostname patterns
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * instead.
-     *
-     * @since 2.2.3
-     * @deprecated use {@link #proxyConfigurationName()} instead
-     * @asciidoclet
-     */
-    @Deprecated
-    public Optional<String> nonProxyHosts();
-
-    /**
-     * Specifies the type of the proxy server. Can be either HTTP or SOCKS.
-     *
-     * Ignored if
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * is not set.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * instead.
-     *
-     * @since 2.2.3
-     * @deprecated use {@link #proxyConfigurationName()} instead
-     * @asciidoclet
-     */
-    @WithDefault("HTTP")
-    @Deprecated
-    public ProxyServerType proxyServerType();
-
-    /**
-     * Username for the proxy authentication
-     *
-     * Ignored if
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * is not set.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * instead.
-     *
-     * @since 2.2.3
-     * @deprecated use {@link #proxyConfigurationName()} instead
-     * @asciidoclet
-     */
-    @Deprecated
-    public Optional<String> proxyUsername();
-
-    /**
-     * Password for the proxy authentication
-     *
-     * Ignored if
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * is not set.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-     * instead.
-     *
-     * @since 2.2.3
-     * @deprecated use {@link #proxyConfigurationName()} instead
-     * @asciidoclet
-     */
-    @Deprecated
-    public Optional<String> proxyPassword();
 
     /**
      * Select the `HTTPConduitFactory` implementation for this client.
@@ -607,118 +464,15 @@ public interface CxfClientConfig {
     /**
      * The name of the TLS configuration to use for setting up trust store and keystore for this SOAP client.
      *
-     * If not set and `.trust-store` or `.key-store` is configured then that the configuration from `.trust-store*`
-     * and `.key-store*` family of options will be used.
-     * If a name is configured, it uses the configuration from `quarkus.tls.<name>.*`
+     * If a name is configured, it uses the configuration from `quarkus.tls.<name>.*`.
      * If a name is configured, but no TLS configuration is found with that name then an error will be thrown at runtime.
-     * Setting `.tls-configuration-name` and any of `.trust-store` or `.key-store` leads to an exception at runtime.
-     * If none of `.tls-configuration-name`, `.trust-store` or `.key-store` is set, the default configuration is given by
-     * `xref:#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`
+     * If not set, the default configuration is given by
+     * `xref:#quarkus-cxf_quarkus-cxf-client-tls-configuration-name[quarkus.cxf.client.tls-configuration-name]`.
      *
      * @asciidoclet
      * @since 3.15.0
      */
     Optional<String> tlsConfigurationName();
-
-    /**
-     * The key store location for this client. The resource is first looked up in the classpath, then in the file system.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
-     * instead.
-     *
-     * @asciidoclet
-     * @since 3.8.1
-     * @deprecated Use {@link #tlsConfigurationName()}
-     */
-    @Deprecated
-    public Optional<String> keyStore();
-
-    /**
-     * The key store password.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
-     * instead.
-     *
-     * @asciidoclet
-     * @since 3.8.1
-     * @deprecated Use {@link #tlsConfigurationName()}
-     */
-    @Deprecated
-    public Optional<String> keyStorePassword();
-
-    /**
-     * The type of the key store.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
-     * instead.
-     *
-     * @asciidoclet
-     * @since 3.8.1
-     * @deprecated Use {@link #tlsConfigurationName()}
-     */
-    @WithDefault("JKS")
-    @Deprecated
-    public String keyStoreType();
-
-    /**
-     * The key password.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
-     * instead.
-     *
-     * @asciidoclet
-     * @since 3.8.1
-     * @deprecated Use {@link #tlsConfigurationName()}
-     */
-    @Deprecated
-    public Optional<String> keyPassword();
-
-    /**
-     * The trust store location for this client. The resource is first looked up in the classpath, then in the file system.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
-     * instead.
-     *
-     * @asciidoclet
-     * @since 2.5.0
-     * @deprecated Use {@link #tlsConfigurationName()}
-     */
-    @Deprecated
-    public Optional<String> trustStore();
-
-    /**
-     * The trust store password.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
-     * instead.
-     *
-     * @asciidoclet
-     * @since 2.5.0
-     * @deprecated Use {@link #tlsConfigurationName()}
-     */
-    @Deprecated
-    public Optional<String> trustStorePassword();
-
-    /**
-     * The type of the trust store.
-     *
-     * *Deprecated* - use
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
-     * instead.
-     *
-     * @asciidoclet
-     * @since 2.5.0
-     * @deprecated Use {@link #tlsConfigurationName()}
-     */
-    @WithDefault("JKS")
-    @Deprecated
-    public String trustStoreType();
 
     /**
      * Can be one of the following:
@@ -782,9 +536,6 @@ public interface CxfClientConfig {
         /**
          * The username for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a username.
          *
-         * If not set, the value is taken from the deprecated
-         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]`
-         *
          * @asciidoclet
          * @since 3.20.0
          */
@@ -792,9 +543,6 @@ public interface CxfClientConfig {
 
         /**
          * The password for HTTP authentication schemes (such as `Basic` or `Digest`) requiring a password.
-         *
-         * If not set, the value is taken from the deprecated
-         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]`
          *
          * @asciidoclet
          * @since 3.20.0

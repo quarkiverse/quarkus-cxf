@@ -18,9 +18,6 @@ public class SecurityPolicyResource {
     @CXFClient("mTls")
     HelloService mTls;
 
-    @CXFClient("mTlsOld")
-    HelloService mTlsOld;
-
     @CXFClient("noKeystore")
     HelloService noKeystore;
 
@@ -32,9 +29,6 @@ public class SecurityPolicyResource {
         switch (client) {
             case "mTls":
                 service = mTls;
-                break;
-            case "mTlsOld":
-                service = mTlsOld;
                 break;
             case "noKeystore":
                 service = noKeystore;

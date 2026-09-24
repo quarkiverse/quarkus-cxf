@@ -11,8 +11,6 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -39,9 +37,8 @@ import io.smallrye.certs.junit5.Certificates;
 public class MutualTlsTest {
     // end::smallrye-cert-gen[]
 
-    @ParameterizedTest
-    @ValueSource(strings = { "mTls", "mTlsOld" })
-    void mTls(String clientName) throws IOException {
+    @Test
+    void mTls() throws IOException {
 
         final Config config = ConfigProvider.getConfig();
         final String keystoreType = config.getValue("keystore.type.short", String.class);
@@ -54,7 +51,7 @@ public class MutualTlsTest {
         ExtractableResponse<Response> response = RestAssured.given()
                 .config(restAssuredConfig())
                 .body("Sam")
-                .post("https://localhost:8444/cxf/mtls-rest/" + clientName)
+                .post("https://localhost:8444/cxf/mtls-rest/mTls")
                 .then()
                 .extract();
         if (response.statusCode() != 200) {

@@ -20,17 +20,6 @@ import io.smallrye.config.WithParentName;
 public interface CxfBuildTimeConfig {
 
     /**
-     * The comma-separated list of WSDL resource paths used by CXF. Deprecated! use `quarkus.native.resources.includes/excludes`
-     * instead. Note that WSDL files selected by `quarkus.cxf.codegen.wsdl2java.includes/excludes` are included in native image
-     * automatically.
-     *
-     * @asciidoclet
-     * @since 1.0.0
-     */
-    @Deprecated(forRemoval = true)
-    Optional<List<String>> wsdlPath();
-
-    /**
      * Build time configuration options for Quarkus code generation phase.
      *
      * @asciidoclet

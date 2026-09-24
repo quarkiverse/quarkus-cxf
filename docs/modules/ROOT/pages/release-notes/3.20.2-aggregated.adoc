@@ -57,7 +57,7 @@ However, in those cases, the following TLS options are not supported and using t
 * `{link-quarkus-docs-base}/tls-registry-reference#quarkus-tls-registry_quarkus-tls-tls-bucket-name-reload-period[quarkus.tls."tls-bucket-name".reload-period]`
 
 ==== Deprecated stores
-The xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[older way] of configuring client trust stores and key stores is still supported, but deprecated since {quarkus-cxf-project-name} 3.16.0:
+The older way of configuring client trust stores and key stores is still supported, but deprecated since {quarkus-cxf-project-name} 3.16.0:
 
 .application.properties
 [source,properties]
@@ -243,17 +243,17 @@ by sending a new request with an `Authorization` header value derived from one o
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-token[quarkus.cxf.client."client-name".auth.token]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-username[quarkus.cxf.client."client-name".proxy-username]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`
+* `quarkus.cxf.client."client-name".proxy-username`
+* `quarkus.cxf.client."client-name".proxy-password`
 
 === https://github.com/quarkiverse/quarkus-cxf/issues/1680[#1680] Introduce `quarkus.cxf.client.tls-configuration-name` to set TLS options for all CXF clients
 
 Before {quarkus-cxf-project-name} 3.19.0, it was only possible to configure trust stores and key stores per CXF client via
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
 or (now deprecated)
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store*]`
+`quarkus.cxf.client."client-name".key-store*`
 and
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store*]` options.
+`quarkus.cxf.client."client-name".trust-store*` options.
 
 In cases with multiple clients, this configuration could get verbose.
 
@@ -349,23 +349,23 @@ This is a part of our efforts to support only a single HTTP Conduit based on Ver
 
 === Deprecated configuration properties
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]` - use
+* `quarkus.cxf.client."client-name".username` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]` instead
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]` - use
+* `quarkus.cxf.client."client-name".password` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]` instead
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store]` - use
+* `quarkus.cxf.client."client-name".key-store` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]` instead
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store-password[quarkus.cxf.client."client-name".key-store-password]` - use
+* `quarkus.cxf.client."client-name".key-store-password` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]` instead
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store-type[quarkus.cxf.client."client-name".key-store-type]` - use
+* `quarkus.cxf.client."client-name".key-store-type` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]` instead
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-password[quarkus.cxf.client."client-name".key-password]` - use
+* `quarkus.cxf.client."client-name".key-password` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]` instead
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]` - use
+* `quarkus.cxf.client."client-name".trust-store` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]` instead
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password[quarkus.cxf.client."client-name".trust-store-password]` - use
+* `quarkus.cxf.client."client-name".trust-store-password` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]` instead
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-type[quarkus.cxf.client."client-name".trust-store-type]` - use
+* `quarkus.cxf.client."client-name".trust-store-type` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".auth.tls-configuration-name]` instead
 
 

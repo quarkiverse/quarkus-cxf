@@ -52,8 +52,8 @@ See `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-c
 === Basic authentication for the WSDL
 
 {quarkus-cxf-project-name} now sends the
-xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-username[username]
-and xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-password[password]
+`username`
+and `password`
 when getting the WSDL document,
 as long as `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-secure-wsdl-access[quarkus.cxf.client."client-name".secure-wsdl-access]` is `true`.
 

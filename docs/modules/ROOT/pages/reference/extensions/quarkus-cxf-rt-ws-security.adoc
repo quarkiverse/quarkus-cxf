@@ -125,6 +125,8 @@ Similar setup is necessary on the client side:
 .application.properties
 [source,properties]
 ----
+include::example$ws-security-policy/application.properties[tag=client-tls-config]
+
 include::example$ws-security-policy/application.properties[tag=quarkus-cxf-rt-ws-security.adoc-client]
 ----
 

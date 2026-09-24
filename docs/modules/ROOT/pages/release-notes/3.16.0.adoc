@@ -40,7 +40,7 @@ However, in those cases, the following TLS options are not supported and using t
 * `{link-quarkus-docs-base}/tls-registry-reference#quarkus-tls-registry_quarkus-tls-tls-bucket-name-hostname-verification-algorithm[quarkus.tls."tls-bucket-name".hostname-verification-algorithm]`
 * `{link-quarkus-docs-base}/tls-registry-reference#quarkus-tls-registry_quarkus-tls-tls-bucket-name-reload-period[quarkus.tls."tls-bucket-name".reload-period]`
 
-The xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[older way] of configuring client trust stores and key stores is still supported, but deprecated since {quarkus-cxf-project-name} 3.16.0:
+The older way of configuring client trust stores and key stores is still supported, but deprecated since {quarkus-cxf-project-name} 3.16.0:
 
 .application.properties
 [source,properties]

@@ -162,11 +162,11 @@ the option `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-c
 Therefore, the following proxy configuration options are deprecated since {quarkus-cxf-project-name} 3.31.0
 and will be removed in {quarkus-cxf-project-name} 4.0.0:
 
-* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server[quarkus.cxf.client."client-name".proxy-server]`#
-* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-port[quarkus.cxf.client."client-name".proxy-server-port]`#
-* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-non-proxy-hosts[quarkus.cxf.client."client-name".non-proxy-hosts]`#
-* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-server-type[quarkus.cxf.client."client-name".proxy-server-type]`#
-* [.line-through]#`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`#
+* [.line-through]#`quarkus.cxf.client."client-name".proxy-server`#
+* [.line-through]#`quarkus.cxf.client."client-name".proxy-server-port`#
+* [.line-through]#`quarkus.cxf.client."client-name".non-proxy-hosts`#
+* [.line-through]#`quarkus.cxf.client."client-name".proxy-server-type`#
+* [.line-through]#`quarkus.cxf.client."client-name".proxy-password`#
 
 == Full changelog
 

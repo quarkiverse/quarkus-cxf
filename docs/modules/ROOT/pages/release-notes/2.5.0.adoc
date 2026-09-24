@@ -12,9 +12,9 @@
 
 The trust store and host name verifier of a client are now configurable through some new configuration properties:
 
-* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]
-* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-password[quarkus.cxf.client."client-name".trust-store-password]
-* xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store-type[quarkus.cxf.client."client-name".trust-store-type]
+* `quarkus.cxf.client."client-name".trust-store`
+* `quarkus.cxf.client."client-name".trust-store-password`
+* `quarkus.cxf.client."client-name".trust-store-type`
 * xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-hostname-verifier[quarkus.cxf.client."client-name".hostname-verifier]
 
 === `LoggingFeature` configurable through `application.properties`

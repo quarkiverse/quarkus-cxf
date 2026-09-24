@@ -63,9 +63,6 @@ public class CxfClientResource {
     @CXFClient("clientWithRuntimeInitializedPayload") // name used in application.properties
     ClientWithRuntimeInitializedPayload clientWithRuntimeInitializedPayload;
 
-    @CXFClient("proxiedCalculator")
-    CalculatorService proxiedCalculator;
-
     @CXFClient("qcxfProxyConfig")
     CalculatorService qcxfProxyConfig;
 
@@ -159,8 +156,6 @@ public class CxfClientResource {
                 return myFaultyCalculator;
             case "mySkewedCalculator":
                 return mySkewedCalculator;
-            case "proxiedCalculator":
-                return proxiedCalculator;
             case "qcxfProxyConfig":
                 return qcxfProxyConfig;
             default:
