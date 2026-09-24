@@ -14,15 +14,15 @@
 
 Mutual TLS (mTLS) is now xref:user-guide/ssl-tls-https.adoc#mtls[documented],
 https://github.com/quarkiverse/quarkus-cxf/tree/3.8/integration-tests/mtls[tested]
-and can be configured for clients via `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key*]` family of options.
+and can be configured for clients via `quarkus.cxf.client."client-name".key*` family of options.
 
 === Keystores and truststores now looked up in the file system
 
 The keystores and truststores are now https://github.com/quarkiverse/quarkus-cxf/issues/1280[really looked up in the file system]
 unless they are available in the classpath as documented in
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store]`
+`quarkus.cxf.client."client-name".trust-store`
 and
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store]`.
+`quarkus.cxf.client."client-name".key-store`.
 
 === Running on systems with FIPS assertions enabled
 

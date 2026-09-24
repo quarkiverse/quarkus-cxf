@@ -20,8 +20,8 @@ by sending a new request with an `Authorization` header value derived from one o
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]`
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]`
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-token[quarkus.cxf.client."client-name".auth.token]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-username[quarkus.cxf.client."client-name".proxy-username]`
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-password[quarkus.cxf.client."client-name".proxy-password]`
+* `quarkus.cxf.client."client-name".proxy-username`
+* `quarkus.cxf.client."client-name".proxy-password`
 
 
 == Bugfixes
@@ -97,9 +97,9 @@ Since {quarkus-cxf-project-name} 3.21.0, the receive timeout is honored also dur
 
 === Deprecated properties
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-username[quarkus.cxf.client."client-name".username]` - use
+* `quarkus.cxf.client."client-name".username` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-username[quarkus.cxf.client."client-name".auth.username]` instead
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-password[quarkus.cxf.client."client-name".password]` - use
+* `quarkus.cxf.client."client-name".password` - use
   `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-auth-password[quarkus.cxf.client."client-name".auth.password]` instead
 
 == Documentation improvements

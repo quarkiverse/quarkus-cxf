@@ -159,12 +159,9 @@ public interface CxfConfig {
         /**
          * The name of the TLS configuration to use for setting up trust store and keystore for all clients. This setting can be
          * overridden per client using
-         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
-         * or (deprecated) `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[quarkus.cxf.client."client-name".trust-store*]`
-         * and (deprecated) `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-key-store[quarkus.cxf.client."client-name".key-store*]`
-         * options.
+         * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`.
          *
-         * For each client, if the per-client `.tls-configuration-name` or `.trust-store` or `.key-store` is configured then the
+         * For each client, if the per-client `.tls-configuration-name` is configured then the
          * relevant per client configuration will be used.
          * Otherwise, this configuration will be used.
          *

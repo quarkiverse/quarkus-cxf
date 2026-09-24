@@ -68,17 +68,12 @@ However, for those, the following TLS options are not supported and using them w
 * `{link-quarkus-docs-base}/tls-registry-reference#quarkus-tls-registry_quarkus-tls-tls-bucket-name-reload-period[quarkus.tls."tls-bucket-name".reload-period]`
 
 [NOTE]
+.historical note
 ====
-The xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-trust-store[older way] of configuring the client trust store is still supported, but deprecated since {quarkus-cxf-project-name} 3.16.0:
-
-.application.properties
-[source,properties]
-----
-# Deprecated way of setting the client trust store
-quarkus.cxf.client.hello.trust-store-type = pkcs12
-quarkus.cxf.client.hello.trust-store = client-truststore.pkcs12
-quarkus.cxf.client.hello.trust-store-password = client-truststore-password
-----
+The `quarkus.cxf.client."client-name".trust-store*` and `quarkus.cxf.client."client-name".key-store*` options were removed in 4.0.0.
+Configure the stores through `quarkus.tls."tls-bucket-name".*` and select the named configuration with
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`,
+as shown above.
 ====
 
 

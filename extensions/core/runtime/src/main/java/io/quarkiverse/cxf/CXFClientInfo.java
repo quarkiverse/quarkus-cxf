@@ -1,15 +1,10 @@
 package io.quarkiverse.cxf;
 
 import java.net.Proxy.Type;
-import java.security.KeyStore;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
@@ -28,10 +23,6 @@ import io.quarkus.proxy.ProxyType;
 import io.quarkus.tls.TlsConfiguration;
 import io.quarkus.tls.TlsConfigurationRegistry;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.net.JksOptions;
-import io.vertx.core.net.KeyStoreOptionsBase;
-import io.vertx.core.net.PfxOptions;
 
 /**
  * CXF client metadata - the complete set as known at runtime.
@@ -245,32 +236,8 @@ public class CXFClientInfo {
         this.browserType = config.browserType().orElse(null);
         this.decoupledEndpoint = config.decoupledEndpoint().orElse(null);
         this.decoupledEndpointBase = cxfConfig.decoupledEndpointBase().orElse(null);
-        final String pServer = config.proxyServer().orElse(null);
-        final String pConfigurationName = config.proxyConfigurationName().orElse(null);
-        if (pServer != null) {
-            log.warnf("The configuration option quarkus.cxf.client.%s.proxy-server is deprecated. "
-                    + " Use quarkus.cxf.client.%s.proxy-configuration-name instead.",
-                    configKey, configKey);
-            if (pConfigurationName != null) {
-                log.warnf("Ignoring "
-                        + " quarkus.cxf.client.%s.proxy-configuration-name = %s"
-                        + " because quarkus.cxf.client.%s.proxy-server is set."
-                        + " Use one or the other way to set the proxy options to avoid this warning.",
-                        configKey, pConfigurationName, configKey);
-            }
-            this.proxyConfiguration = new ProxyConfigurationImpl(
-                    pServer,
-                    config.proxyServerPort().getAsInt(),
-                    config.proxyUsername(),
-                    config.proxyPassword(),
-                    config.nonProxyHosts().map(s -> Optional.of(Arrays.asList(s.split(Pattern.quote("|")))))
-                            .orElse(Optional.empty()),
-                    Optional.empty(),
-                    toQuarkusProxyType(config.proxyServerType()));
-        } else {
-            final ProxyConfigurationRegistry registry = Arc.container().select(ProxyConfigurationRegistry.class).get();
-            this.proxyConfiguration = registry.get(config.proxyConfigurationName()).orElse(null);
-        }
+        final ProxyConfigurationRegistry registry = Arc.container().select(ProxyConfigurationRegistry.class).get();
+        this.proxyConfiguration = registry.get(config.proxyConfigurationName()).orElse(null);
         this.tlsConfigurationName = config.tlsConfigurationName().orElse(null);
         this.tlsConfiguration = tlsConfiguration(vertx, cxfConfig.client(), config, configKey);
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
@@ -291,88 +258,16 @@ public class CXFClientInfo {
         final TlsConfigurationRegistry tlsRegistry = Arc.container().select(TlsConfigurationRegistry.class).get();
         final Optional<String> maybeTlsConfigName = config.tlsConfigurationName();
         if (maybeTlsConfigName.isEmpty()) {
-            if (config.keyStore().isPresent() || config.trustStore().isPresent()) {
-                final String registryKey = "quarkus-cxf-client-" + configKey;
-                final Optional<TlsConfiguration> cachedTlsConfiguration = tlsRegistry.get(registryKey);
-                if (cachedTlsConfiguration.isPresent()) {
-                    return cachedTlsConfiguration.get();
-                }
-
-                final KeyStoreOptionsBase keyStoreOptions;
-                final KeyStore keyStore;
-                if (config.keyStore().isPresent()) {
-                    keyStoreOptions = keyStoreOptions(config.keyStoreType(),
-                            "quarkus.cxf.client." + configKey + ".key-store-type");
-                    keyStoreOptions
-                            .setPassword(config.keyStorePassword().orElse(null))
-                            .setValue(Buffer.buffer(CXFRuntimeUtils.read(config.keyStore().get())))
-                            .setPath(config.keyStore().orElse(null));
-                    if (config.keyPassword().isPresent()) {
-                        keyStoreOptions.setAliasPassword(config.keyPassword().get());
-                    }
-                    try {
-                        keyStore = keyStoreOptions.loadKeyStore(vertx);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Could not load key store from " + config.keyStore().get(), e);
-                    }
-                } else {
-                    keyStore = null;
-                    keyStoreOptions = null;
-                }
-
-                final KeyStoreOptionsBase trustOptions;
-                final KeyStore trustStore;
-                if (config.trustStore().isPresent()) {
-                    trustOptions = keyStoreOptions(config.trustStoreType(),
-                            "quarkus.cxf.client." + configKey + ".trust-store-type");
-                    trustOptions
-                            .setPassword(config.trustStorePassword().orElse(null))
-                            .setValue(Buffer.buffer(CXFRuntimeUtils.read(config.trustStore().get())))
-                            .setPath(config.trustStore().orElse(null));
-                    try {
-                        trustStore = trustOptions.loadKeyStore(vertx);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Could not load trust store from " + config.trustStore().get(), e);
-                    }
-                } else {
-                    trustOptions = null;
-                    trustStore = null;
-                }
-
-                final CxfTlsConfiguration cxfTlsConfiguration = new CxfTlsConfiguration(
-                        keyStoreOptions,
-                        keyStore,
-                        trustOptions,
-                        trustStore,
-                        registryKey);
-                tlsRegistry.register(registryKey, cxfTlsConfiguration);
-                return cxfTlsConfiguration;
+            /* use global client tls configuration */
+            Optional<TlsConfiguration> maybeTlsConfig = tlsRegistry.get(globalConfig.tlsConfigurationName());
+            if (maybeTlsConfig.isPresent()) {
+                return maybeTlsConfig.get();
             } else {
-                /* use global client tls configuration */
-                Optional<TlsConfiguration> maybeTlsConfig = tlsRegistry.get(globalConfig.tlsConfigurationName());
-                if (maybeTlsConfig.isPresent()) {
-                    return maybeTlsConfig.get();
-                } else {
-                    throw new IllegalStateException(
-                            "No such TLS configuration quarkus.tls." + globalConfig.tlsConfigurationName());
-                }
+                throw new IllegalStateException(
+                        "No such TLS configuration quarkus.tls." + globalConfig.tlsConfigurationName());
             }
         } else {
             /* tls-configuration-name is set */
-
-            if (config.keyStore().isPresent()) {
-                throw new IllegalStateException("The configuration options"
-                        + " quarkus.cxf.client." + configKey + ".tls-configuration-name"
-                        + " and quarkus.cxf.client." + configKey + ".key-store cannot be both set at the same time."
-                        + " Use one or the other way to set the TLS options.");
-            }
-            if (config.trustStore().isPresent()) {
-                throw new IllegalStateException("The configuration options"
-                        + " quarkus.cxf.client." + configKey + ".tls-configuration-name"
-                        + " and quarkus.cxf.client." + configKey + ".trust-store cannot be both set at the same time."
-                        + " Use one or the other way to set the TLS options.");
-            }
-
             Optional<TlsConfiguration> maybeTlsConfig = tlsRegistry.get(maybeTlsConfigName.get());
             if (maybeTlsConfig.isPresent()) {
                 return maybeTlsConfig.get();
@@ -380,19 +275,6 @@ public class CXFClientInfo {
                 throw new IllegalStateException("No such TLS configuration quarkus.tls." + maybeTlsConfigName.get());
             }
         }
-    }
-
-    private static KeyStoreOptionsBase keyStoreOptions(String type, String configKey) {
-        return switch (type.toUpperCase(Locale.ROOT)) {
-            case "JKS": {
-                yield new JksOptions();
-            }
-            case "PKCS12": {
-                yield new PfxOptions();
-            }
-            default:
-                throw new IllegalArgumentException("Unexpected key store type " + type + " for " + configKey);
-        };
     }
 
     public String getHostnameVerifier() {
@@ -640,12 +522,12 @@ public class CXFClientInfo {
 
         @Override
         public Optional<String> username() {
-            return auth.username().or(config::username);
+            return auth.username();
         }
 
         @Override
         public Optional<String> password() {
-            return auth.password().or(config::password);
+            return auth.password();
         }
 
         @Override
@@ -659,13 +541,4 @@ public class CXFClientInfo {
         }
     }
 
-    record ProxyConfigurationImpl(
-            String host,
-            int port,
-            Optional<String> username,
-            Optional<String> password,
-            Optional<List<String>> nonProxyHosts,
-            Optional<Duration> proxyConnectTimeout,
-            ProxyType type) implements ProxyConfiguration {
-    }
 }
