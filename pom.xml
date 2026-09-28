@@ -106,7 +106,7 @@
         <rpkgtests-maven-plugin.version>1.0.0</rpkgtests-maven-plugin.version>
         <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
         <!-- maven-compiler-plugin -->
-        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
 
         <!-- maven-enforcer-plugin -->
         <enforce-non-deployment.skip>false</enforce-non-deployment.skip>
