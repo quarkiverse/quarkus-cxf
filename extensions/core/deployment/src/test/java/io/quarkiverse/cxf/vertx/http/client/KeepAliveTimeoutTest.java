@@ -1,9 +1,6 @@
 package io.quarkiverse.cxf.vertx.http.client;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
@@ -26,15 +23,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
-import io.quarkus.vertx.http.HttpServerOptionsCustomizer;
+import io.quarkus.test.QuarkusExtensionTest;
+import io.quarkus.vertx.http.HttpServerConfigCustomizer;
 import io.restassured.RestAssured;
 import io.smallrye.certs.Format;
 import io.smallrye.certs.junit5.Certificate;
 import io.smallrye.certs.junit5.Certificates;
 import io.vertx.core.http.HttpConnection;
-import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.http.HttpServerConfig;
 import io.vertx.core.http.HttpVersion;
+import io.vertx.core.net.ServerSSLOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 
@@ -47,7 +45,7 @@ public class KeepAliveTimeoutTest {
     private static final Pattern REQUEST_PATTERN = Pattern.compile("<arg0>([^<]*)</arg0>");
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = createTest();
+    public static final QuarkusExtensionTest test = createTest();
 
     //
     //    @WebService(serviceName = "EchoHeaders")
@@ -66,15 +64,16 @@ public class KeepAliveTimeoutTest {
     //        }
     //    }
 
-    static QuarkusUnitTest createTest() {
+    static QuarkusExtensionTest createTest() {
 
         final String http1xBaseUri = "http://localhost:8081";
         final Map<HttpVersion, String> baseUris = Map.of(
                 HttpVersion.HTTP_1_0, http1xBaseUri,
                 HttpVersion.HTTP_1_1, http1xBaseUri,
-                HttpVersion.HTTP_2, "https://localhost:8444");
+                HttpVersion.HTTP_2, "https://localhost:8444",
+                HttpVersion.HTTP_3, "https://localhost:8444");
 
-        QuarkusUnitTest result = new QuarkusUnitTest()
+        QuarkusExtensionTest result = new QuarkusExtensionTest()
                 .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                         .addClasses(EchoHeadersService.class))
                 .overrideConfigKey("quarkus.tls.key-store.p12.path", "localhost-keystore.p12")
@@ -152,6 +151,9 @@ public class KeepAliveTimeoutTest {
             }
             case HTTP_2: {
                 yield "2";
+            }
+            case HTTP_3: {
+                yield "3";
             }
             default:
                 throw new IllegalArgumentException("Unexpected HTTP version: " + v);
@@ -367,13 +369,13 @@ public class KeepAliveTimeoutTest {
     //    }
 
     @ApplicationScoped
-    public static class Http2OnlyServerOptionsCustomizer implements HttpServerOptionsCustomizer {
+    public static class Http2OnlyServerOptionsCustomizer implements HttpServerConfigCustomizer {
 
         @Override
-        public void customizeHttpsServer(HttpServerOptions options) {
+        public void customizeHttpsServer(HttpServerConfig config, ServerSSLOptions sslOptions) {
             // Ensure ALPN is on and only advertise HTTP/2
-            options.setUseAlpn(true);
-            options.setAlpnVersions(List.of(HttpVersion.HTTP_2, HttpVersion.HTTP_1_1, HttpVersion.HTTP_1_0));
+            sslOptions.setUseAlpn(true);
+            config.setVersions(Set.of(HttpVersion.HTTP_2, HttpVersion.HTTP_1_1, HttpVersion.HTTP_1_0));
         }
     }
 }

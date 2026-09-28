@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 public class XForwardedTest {
     private static final String X_FORWARDED_PROTO_HEADER = "X-Forwarded-Proto";
@@ -28,7 +28,7 @@ public class XForwardedTest {
     private static final String X_FORWARDED_PORT_HEADER = "X-Forwarded-Port";
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(MessageContextService.class, MessageContextServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor", MessageContextServiceImpl.class.getName())

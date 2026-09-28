@@ -19,7 +19,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import io.smallrye.certs.Format;
 import io.smallrye.certs.junit5.Certificate;
 import io.smallrye.certs.junit5.Certificates;
@@ -32,7 +32,7 @@ import io.smallrye.certs.junit5.Certificates;
 public class CipherSuitesTest {
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = configure(new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = configure(new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(HelloService.class, HelloServiceImpl.class))
 
@@ -78,7 +78,7 @@ public class CipherSuitesTest {
         return List.of("VertxHttpClient", "URLConnection");
     }
 
-    static QuarkusUnitTest configure(QuarkusUnitTest config) {
+    static QuarkusExtensionTest configure(QuarkusExtensionTest config) {
         for (String clientName : clients()) {
             config
                     .overrideConfigKey("quarkus.cxf.client." + clientName + "Fake.client-endpoint-url",

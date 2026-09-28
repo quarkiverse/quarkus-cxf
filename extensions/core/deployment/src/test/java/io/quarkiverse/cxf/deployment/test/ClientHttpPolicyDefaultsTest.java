@@ -30,12 +30,12 @@ import io.quarkiverse.cxf.HTTPConduitImpl;
 import io.quarkiverse.cxf.HTTPConduitSpec;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 public class ClientHttpPolicyDefaultsTest {
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(HelloService.class, SlowHelloServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",

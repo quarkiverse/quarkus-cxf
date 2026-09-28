@@ -16,14 +16,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import io.quarkiverse.cxf.CXFClientData;
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 public class CxfSeiOnlyClientInstanceTest {
 
     private static final String FRUITCLIENT_URL = "http://localhost:8081/services/fruit";
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(FruitWebService.class)
                     .addClass(Fruit.class)

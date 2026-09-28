@@ -20,12 +20,12 @@ import org.mockito.Mockito;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.annotation.CXFEndpoint;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 public class CXFEndpointAnnotationTest {
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(HelloService.class, PropertiesCounterInterceptor.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/helloMockConfig\".in-interceptors", "#propertiesCounterInterceptor")

@@ -631,7 +631,7 @@ public interface CxfClientConfig {
          * @param connectionType the {@link ConnectionType} used to control keep-alive settings
          * @since 3.25.0
          */
-        default void configure(HttpClientOptions opts, ConnectionType connectionType) {
+        default void configure(HttpClientOptions opts, ConnectionType connectionType, PoolOptions poolOptions) {
             HttpVersion version = opts.getProtocolVersion();
             if (HttpVersion.HTTP_2.equals(version)) {
                 opts.setHttp2KeepAliveTimeout(http2KeepAliveTimeout());
@@ -645,7 +645,7 @@ public interface CxfClientConfig {
                 }
             }
 
-            connectionPool().configure(opts.getPoolOptions());
+            connectionPool().configure(poolOptions);
         }
     }
 

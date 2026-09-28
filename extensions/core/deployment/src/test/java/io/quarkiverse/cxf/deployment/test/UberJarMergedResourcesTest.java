@@ -23,7 +23,7 @@ public class UberJarMergedResourcesTest {
             .setApplicationVersion("0.1-SNAPSHOT")
             .setRun(true)
             .setExpectExit(true)
-            .overrideConfigKey("quarkus.package.type", "uber-jar")
+            .overrideConfigKey("quarkus.package.jar.type", "uber-jar")
             .setLogRecordPredicate(r -> "io.quarkiverse.cxf.deployment.QuarkusCxfProcessor".equals(r.getLoggerName())
                     || "io.quarkus.deployment.pkg.steps.JarResultBuildStep".equals(r.getLoggerName()) // 3.26.1 or earlier
                     || "io.quarkus.deployment.pkg.jar.UberJarBuilder".equals(r.getLoggerName()) // 3.26.1+

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.deployment.test.client.model.HelloResponse;
 import io.quarkiverse.cxf.deployment.test.client.model.HelloService;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import io.vertx.core.Vertx;
 
 public class AsyncHandlerTest {
@@ -34,7 +34,7 @@ public class AsyncHandlerTest {
     private static final String DELAY = "1000";
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addPackage(HelloService.class.getPackage()))
             .overrideConfigKey("quarkus.cxf.client.worker-dispatch-timeout", DISPATCH_TIMEOUT)

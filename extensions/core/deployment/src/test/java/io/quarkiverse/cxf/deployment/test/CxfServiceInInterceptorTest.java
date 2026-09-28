@@ -24,12 +24,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.xml.sax.SAXException;
 
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 public class CxfServiceInInterceptorTest {
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(HelloService.class, HelloServiceImpl.class, AnnotationCounterImplInterceptor.class,
                             AnnotationCounterIntfInterceptor.class, PropertiesCounterInterceptor.class))

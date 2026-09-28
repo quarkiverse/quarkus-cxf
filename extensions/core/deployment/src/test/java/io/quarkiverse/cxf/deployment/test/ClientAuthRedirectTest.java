@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import io.restassured.RestAssured;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
@@ -37,9 +37,9 @@ public class ClientAuthRedirectTest {
     private static final Pattern REQUEST_PATTERN = Pattern.compile("<arg0>([^<]*)</arg0>");
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = createTest();
+    public static final QuarkusExtensionTest test = createTest();
 
-    private static QuarkusUnitTest createTest() {
+    private static QuarkusExtensionTest createTest() {
         final Vertx vertx = Vertx.vertx();
 
         final Map<String, List<Integer>> responseCodesByPerson = new ConcurrentHashMap<>();
@@ -130,7 +130,7 @@ public class ClientAuthRedirectTest {
                 .toCompletableFuture()
                 .join();
 
-        return new QuarkusUnitTest()
+        return new QuarkusExtensionTest()
                 .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                         .addClasses(HelloService.class))
 

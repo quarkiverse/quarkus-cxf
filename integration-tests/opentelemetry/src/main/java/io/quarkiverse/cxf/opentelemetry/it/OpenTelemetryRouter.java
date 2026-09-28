@@ -52,6 +52,7 @@ public class OpenTelemetryRouter {
         router.get("/opentelemetry/export").handler(rc -> {
             List<SpanData> export = exporter.getFinishedSpanItems()
                     .stream()
+                    .peek(sd -> System.out.println(sd.getName()))
                     .filter(sd -> !sd.getName().contains("export")
                             && !sd.getName().contains("reset")
             //&& !sd.getName().equals("POST /opentelemetry/client/hello")
