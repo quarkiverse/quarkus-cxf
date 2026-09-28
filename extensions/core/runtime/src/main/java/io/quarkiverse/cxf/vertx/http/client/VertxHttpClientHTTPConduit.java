@@ -90,7 +90,6 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
-import io.vertx.core.Promise;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
@@ -100,8 +99,8 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpVersion;
 import io.vertx.core.http.RequestOptions;
 import io.vertx.core.http.impl.HttpUtils;
-import io.vertx.core.impl.ContextInternal;
 import io.vertx.core.impl.NoStackTraceTimeoutException;
+import io.vertx.core.internal.ContextInternal;
 import io.vertx.core.streams.WriteStream;
 
 /**
@@ -1658,20 +1657,12 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         @Override
         public Future<Void> write(Buffer data) {
-            final Promise<Void> promise = Promise.promise();
-            write(data, promise);
-            return promise.future();
-        }
-
-        @Override
-        public void write(Buffer data, Handler<AsyncResult<Void>> handler) {
             Throwable cause = null;
             final ReentrantLock lock = this.lock;
             lock.lock();
             try {
                 if ((cause = timeoutException) != null) {
-                    handler.handle(Future.failedFuture(cause));
-                    return;
+                    return Future.failedFuture(cause);
                 }
                 // bytesWritten += data.length();
                 // writeCounter++;
@@ -1690,14 +1681,14 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 lock.unlock();
             }
             if (cause != null) {
-                handler.handle(Future.failedFuture(cause));
+                return Future.failedFuture(cause);
             } else {
-                handler.handle(Future.succeededFuture());
+                return Future.succeededFuture();
             }
         }
 
         @Override
-        public void end(Handler<AsyncResult<Void>> handler) {
+        public Future<Void> end() {
             // log.trace("Ending writes");
             drainHandler = null;
             Throwable cause = null;
@@ -1705,8 +1696,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             lock.lock();
             try {
                 if ((cause = timeoutException) != null) {
-                    handler.handle(Future.failedFuture(cause));
-                    return;
+                    return Future.failedFuture(cause);
                 }
                 // log.tracef("Ending writes, got %d bytes in %d writes; queue size before %d", bytesWritten, writeCounter,
                 // queue.size());
@@ -1724,9 +1714,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 lock.unlock();
             }
             if (cause != null) {
-                handler.handle(Future.failedFuture(cause));
+                return Future.failedFuture(cause);
             } else {
-                handler.handle(Future.succeededFuture());
+                return Future.succeededFuture();
             }
         }
 

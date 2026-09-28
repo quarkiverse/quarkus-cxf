@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 public class PerClientOrServiceLoggingLimitTest {
 
@@ -27,7 +27,7 @@ public class PerClientOrServiceLoggingLimitTest {
     private static final String RESPONSE_BODY_180_CHARS = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:echoResponse xmlns:ns2=\"http://logging.deployment.cxf.quarkiverse.io/\"><return>Lorem ipsum dol";
     private static final String RESPONSE_BODY_170_CHARS = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns2:echoResponse xmlns:ns2=\"http://logging.deployment.cxf.quarkiverse.io/\"><return>Lorem";
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(EchoService.class, EchoServiceImpl.class))
 

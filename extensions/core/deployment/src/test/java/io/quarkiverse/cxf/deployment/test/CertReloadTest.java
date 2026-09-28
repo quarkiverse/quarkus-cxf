@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.logging.Log;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import io.quarkus.tls.CertificateUpdatedEvent;
 import io.quarkus.tls.TlsConfiguration;
 import io.quarkus.tls.TlsConfigurationRegistry;
@@ -50,7 +50,7 @@ import io.vertx.ext.web.Router;
 public class CertReloadTest {
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(HelloService.class, HelloServiceImpl.class))
 
@@ -278,7 +278,8 @@ public class CertReloadTest {
             int port = 8445;
             vertx.createHttpServer(opts)
                     .requestHandler(router)
-                    .listen(port, http -> {
+                    .listen(port)
+                    .onComplete(http -> {
                         if (http.succeeded()) {
                             Log.info("HTTP server started on port " + port);
                         } else {

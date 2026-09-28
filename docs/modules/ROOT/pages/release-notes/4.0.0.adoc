@@ -25,3 +25,26 @@
 | `quarkus.cxf.client."client-name".trust-store-type` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
 | `quarkus.cxf.wsdl-path` | `quarkus.native.resources.includes`
 |===
+
+== Dummy logging extension no longer published
+
+`io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` was deprecated since {quarkus-cxf-project-name} 2.7.0,
+when all its functionality including configuration properties moved to `io.quarkiverse.cxf:quarkus-cxf`.
+To keep backwards compatibility, a dummy `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` artifact still existed up to {quarkus-cxf-project-name} 3.40.* doing nothing else, but outputting a warning.
+
+Since {quarkus-cxf-project-name} 4.0.0, `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` is no longer published. You can simply remove the dependency from your projects, as all its functionality has moved to `io.quarkiverse.cxf:quarkus-cxf`
+
+
+== `quarkus.package.type` -> `quarkus.package.jar.type`
+
+== `http.client.queue.delay` -> `http.pool.queue.size`
+
+* Tagged by `host:port` not by `clientName`
+
+== Quarkus’s changed default trace sampling.
+
+  Quarkus PR #55337 (https://github.com/quarkusio/quarkus/pull/55337), merged July 15, changed:
+
+- quarkus.otel.traces.sampler: parentbased_always_on → parentbased_traceidratio
+- quarkus.otel.traces.sampler.arg: 1.0 → 0.1
+

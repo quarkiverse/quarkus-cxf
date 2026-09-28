@@ -32,6 +32,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
+import io.quarkus.vertx.http.runtime.QuarkusHttpHeaders;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
@@ -43,7 +44,6 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.http.RequestOptions;
-import io.vertx.core.http.impl.headers.HeadersMultiMap;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.net.NetClient;
 import io.vertx.core.net.NetSocket;
@@ -221,19 +221,20 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
                         if (method.equals(HttpMethod.CONNECT)) {
                             // Deal with the result of the CONNECT tunnel and proxy the request / response
                             NetClient netClient = vertx.createNetClient();
-                            netClient.connect(remotePort, remoteHost, result -> {
-                                if (result.succeeded()) {
-                                    NetSocket clientSocket = result.result();
-                                    Future<NetSocket> netSocket = httpServerRequest.toNetSocket();
-                                    NetSocket serverSocket = netSocket.result();
-                                    serverSocket.closeHandler(v -> clientSocket.close());
-                                    clientSocket.closeHandler(v -> serverSocket.close());
-                                    serverSocket.pipeTo(clientSocket);
-                                    clientSocket.pipeTo(serverSocket);
-                                } else {
-                                    response.setStatusCode(403).end();
-                                }
-                            });
+                            netClient.connect(remotePort, remoteHost)
+                                    .onComplete(result -> {
+                                        if (result.succeeded()) {
+                                            NetSocket clientSocket = result.result();
+                                            Future<NetSocket> netSocket = httpServerRequest.toNetSocket();
+                                            NetSocket serverSocket = netSocket.result();
+                                            serverSocket.closeHandler(v -> clientSocket.close());
+                                            clientSocket.closeHandler(v -> serverSocket.close());
+                                            serverSocket.pipeTo(clientSocket);
+                                            clientSocket.pipeTo(serverSocket);
+                                        } else {
+                                            response.setStatusCode(403).end();
+                                        }
+                                    });
                         } else {
                             // non-CONNECT
 
@@ -244,7 +245,7 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
                                     proxiedRequests.add(method + " " + httpServerRequest.uri() + " " + httpServerBody);
                                 }
                                 HttpClient client = vertx.createHttpClient();
-                                MultiMap remoteHeaders = new HeadersMultiMap();
+                                MultiMap remoteHeaders = new QuarkusHttpHeaders();
                                 remoteHeaders.addAll(httpServerRequest.headers());
                                 remoteHeaders.remove("Proxy-Authorization");
                                 client.request(

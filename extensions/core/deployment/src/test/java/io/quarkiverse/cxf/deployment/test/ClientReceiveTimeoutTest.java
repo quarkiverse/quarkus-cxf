@@ -19,7 +19,7 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.TimeoutIOException;
 import io.quarkus.logging.Log;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 public class ClientReceiveTimeoutTest {
 
@@ -27,7 +27,7 @@ public class ClientReceiveTimeoutTest {
     private static final String RECEIVE_TIMEOUT = "100";
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(HelloService.class, SlowHelloServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",

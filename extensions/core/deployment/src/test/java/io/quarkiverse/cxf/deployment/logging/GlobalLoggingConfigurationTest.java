@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.test.internal.QuarkusCxfInternalTestUtil;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 /**
  * A global logging feature configured in {@code application.properties}.
@@ -20,7 +20,7 @@ import io.quarkus.test.QuarkusUnitTest;
 public class GlobalLoggingConfigurationTest {
 
     @RegisterExtension
-    static final QuarkusUnitTest TEST = new QuarkusUnitTest()
+    static final QuarkusExtensionTest TEST = new QuarkusExtensionTest()
             .withApplicationRoot(
                     root -> root.addClasses(HelloService.class, HelloServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.logging.enabled-for", "clients-and-services")
