@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
-import io.netty.buffer.ByteBuf;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -167,7 +166,17 @@ class ErrorBuffer implements Buffer {
     }
 
     @Override
+    public Buffer setFloatLE(int pos, float f) {
+        throw runtimeException();
+    }
+
+    @Override
     public Buffer setDouble(int pos, double d) {
+        throw runtimeException();
+    }
+
+    @Override
+    public Buffer setDoubleLE(int pos, double d) {
         throw runtimeException();
     }
 
@@ -297,7 +306,17 @@ class ErrorBuffer implements Buffer {
     }
 
     @Override
+    public float getFloatLE(int pos) {
+        throw runtimeException();
+    }
+
+    @Override
     public double getDouble(int pos) {
+        throw runtimeException();
+    }
+
+    @Override
+    public double getDoubleLE(int pos) {
         throw runtimeException();
     }
 
@@ -328,11 +347,6 @@ class ErrorBuffer implements Buffer {
 
     @Override
     public byte[] getBytes() {
-        throw runtimeException();
-    }
-
-    @Override
-    public ByteBuf getByteBuf() {
         throw runtimeException();
     }
 
@@ -432,7 +446,17 @@ class ErrorBuffer implements Buffer {
     }
 
     @Override
+    public Buffer appendFloatLE(float f) {
+        throw runtimeException();
+    }
+
+    @Override
     public Buffer appendDouble(double d) {
+        throw runtimeException();
+    }
+
+    @Override
+    public Buffer appendDoubleLE(double d) {
         throw runtimeException();
     }
 

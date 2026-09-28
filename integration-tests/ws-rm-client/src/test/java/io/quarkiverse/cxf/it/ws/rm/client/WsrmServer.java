@@ -96,7 +96,7 @@ public class WsrmServer implements Closeable {
 
             final List<String> cmd = List.of(
                     binPath.toString(),
-                    "-Dquarkus.log.file.enable=true",
+                    "-Dquarkus.log.file.enabled=true",
                     "-Dquarkus.log.file.path=" + serverLog.toString());
             return cmd;
         } else {
@@ -114,7 +114,7 @@ public class WsrmServer implements Closeable {
             final List<String> cmd = List.of(
                     javaHome.resolve("bin/java" + (System.getProperty("os.name").toLowerCase().contains("win") ? ".exe" : ""))
                             .toString(),
-                    "-Dquarkus.log.file.enable=true",
+                    "-Dquarkus.log.file.enabled=true",
                     "-Dquarkus.log.file.path=" + serverLog.toString(),
                     "-jar",
                     jarPath.toString());

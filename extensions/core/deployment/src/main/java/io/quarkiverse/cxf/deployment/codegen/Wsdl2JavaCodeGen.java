@@ -53,6 +53,7 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
     public static final String WSDL2JAVA_CONFIG_KEY_PREFIX = "quarkus.cxf.codegen.wsdl2java";
     private static final Path SRC_MAIN_RESOURCES = Paths.get("src/main/resources");
     private static final Path SRC_TEST_RESOURCES = Paths.get("src/test/resources");
+    private static final String[] INPUT_EXTENSIONS = new String[] { "wsdl" };
 
     @Override
     public String providerId() {
@@ -60,8 +61,8 @@ public class Wsdl2JavaCodeGen implements CodeGenProvider {
     }
 
     @Override
-    public String inputExtension() {
-        return "wsdl";
+    public String[] inputExtensions() {
+        return INPUT_EXTENSIONS;
     }
 
     @Override

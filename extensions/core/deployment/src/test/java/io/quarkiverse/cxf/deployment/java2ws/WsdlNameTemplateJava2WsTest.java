@@ -12,14 +12,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import io.quarkiverse.cxf.deployment.test.Fruit;
 import io.quarkiverse.cxf.deployment.test.FruitWebService;
 import io.quarkiverse.cxf.deployment.test.GreetingWebService;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 public class WsdlNameTemplateJava2WsTest {
 
     private static final String TEST_DIR = "java2ws/" + WsdlNameTemplateJava2WsTest.class.getSimpleName();
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(GreetingWebService.class)
                     .addClass(FruitWebService.class)

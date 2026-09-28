@@ -376,7 +376,7 @@ public class CXFRecorder {
 
     public void resetAddressingProperties(ShutdownContext context) {
         /*
-         * This is needed, because all QuarkusUnitTests run in the same VM.
+         * This is needed, because all QuarkusExtensionTests run in the same VM.
          * So the the stale system properties set in addressingProperties() would make the subsequent tests fail.
          */
         context.addShutdownTask(() -> {

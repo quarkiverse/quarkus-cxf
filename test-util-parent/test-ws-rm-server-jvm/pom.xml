@@ -26,7 +26,6 @@
 
         <maven.compiler.parameters>true</maven.compiler.parameters>
 
-        <quarkus.package.type>uber-jar</quarkus.package.type>
         <quarkus.build.skip>false</quarkus.build.skip>
     </properties>
 

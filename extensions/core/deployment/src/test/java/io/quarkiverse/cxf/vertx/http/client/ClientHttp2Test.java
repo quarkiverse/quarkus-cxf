@@ -1,6 +1,6 @@
 package io.quarkiverse.cxf.vertx.http.client;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -14,13 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
-import io.quarkus.vertx.http.HttpServerOptionsCustomizer;
+import io.quarkus.test.QuarkusExtensionTest;
+import io.quarkus.vertx.http.HttpServerConfigCustomizer;
 import io.smallrye.certs.Format;
 import io.smallrye.certs.junit5.Certificate;
 import io.smallrye.certs.junit5.Certificates;
-import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.http.HttpServerConfig;
 import io.vertx.core.http.HttpVersion;
+import io.vertx.core.net.ServerSSLOptions;
 import io.vertx.ext.web.Router;
 
 @Certificates(baseDir = "target/classes", //
@@ -31,7 +32,7 @@ import io.vertx.ext.web.Router;
 public class ClientHttp2Test {
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClasses(HttpVersionService.class))
             .overrideConfigKey("quarkus.tls.key-store.p12.path", "localhost-keystore.p12")
@@ -87,13 +88,13 @@ public class ClientHttp2Test {
     }
 
     @ApplicationScoped
-    public static class Http2OnlyServerOptionsCustomizer implements HttpServerOptionsCustomizer {
+    public static class Http2OnlyServerOptionsCustomizer implements HttpServerConfigCustomizer {
 
         @Override
-        public void customizeHttpsServer(HttpServerOptions options) {
+        public void customizeHttpsServer(HttpServerConfig config, ServerSSLOptions sslOptions) {
             // Ensure ALPN is on and only advertise HTTP/2
-            options.setUseAlpn(true);
-            options.setAlpnVersions(List.of(HttpVersion.HTTP_2));
+            sslOptions.setUseAlpn(true);
+            config.setVersions(Set.of(HttpVersion.HTTP_2));
         }
     }
 }

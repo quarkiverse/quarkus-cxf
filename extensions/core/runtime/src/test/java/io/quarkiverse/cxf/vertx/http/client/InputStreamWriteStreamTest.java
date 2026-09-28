@@ -15,7 +15,7 @@ import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.InputStre
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.TimeoutSpec;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.internal.ContextInternal;
 
 public class InputStreamWriteStreamTest {
 

@@ -17,14 +17,14 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 public class CxfServiceTest {
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)
