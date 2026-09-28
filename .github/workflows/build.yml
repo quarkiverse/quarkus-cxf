@@ -7,7 +7,7 @@ on:
 
 env:
   QUARKUS_CXF_MTOM_LARGE_ATTACHMENT_INCREMENT_KB: 512
-  JAVA_VERSION: 17
+  JAVA_VERSION: 21
 
 permissions:
   discussions: read
@@ -87,13 +87,10 @@ jobs:
             javaVersion: 25
             os: ubuntu-latest
           - javaDistro: semeru
-            javaVersion: 17
-            os: ubuntu-latest
-          - javaDistro: semeru
             javaVersion: 21
             os: ubuntu-latest
           - javaDistro: temurin
-            javaVersion: 17
+            javaVersion: 21
             os: windows-latest
     name: JVM Tests ${{ matrix.javaDistro }}-${{ matrix.javaVersion }}@${{ matrix.os }}
     needs: build-and-run-jvm-tests
