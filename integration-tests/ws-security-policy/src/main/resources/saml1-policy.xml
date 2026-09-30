@@ -43,8 +43,10 @@
                 </wsp:Policy>
             </sp:AsymmetricBinding>
             <sp:SignedElements>
-                <!-- This works, but setting io.quarkiverse.cxf.it.security.policy.SamlBeanProducers.SamlCallbackHandler.signAssertion = true does not -->
-                <sp:XPath xmlns:saml1="urn:oasis:names:tc:SAML:1.0:assertion">//saml1:Assertion</sp:XPath>
+                <sp:XPath
+                        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+                        xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+                        xmlns:saml1="urn:oasis:names:tc:SAML:1.0:assertion">/soap:Envelope/soap:Header/wsse:Security/saml1:Assertion</sp:XPath>
             </sp:SignedElements>
             <sp:SignedParts>
                 <sp:Body/>
