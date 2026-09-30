@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
@@ -88,13 +89,17 @@ public class UsernameTokenSecurityPolicyStaxTest extends AbstractUsernameTokenSe
     @Override
     @Test
     void helloSaml1() {
-        super.helloSaml1();
+        // This should start failing once https://issues.apache.org/jira/browse/WSS-731 is fixed
+        Assertions.assertThatThrownBy(super::helloSaml1)
+                .isInstanceOf(AssertionError.class).hasMessageContaining("Expected status code <200> but was <500>.");
     }
 
     @Override
     @Test
     void helloSaml2() {
-        super.helloSaml2();
+        // This should start failing once https://issues.apache.org/jira/browse/WSS-731 is fixed
+        Assertions.assertThatThrownBy(super::helloSaml2)
+                .isInstanceOf(AssertionError.class).hasMessageContaining("Expected status code <200> but was <500>.");
     }
 
 }
