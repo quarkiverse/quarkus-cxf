@@ -370,6 +370,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.ws.xmlschema</groupId>
+                <artifactId>xmlschema-core</artifactId>
+                <version>${xmlschema.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.wss4j</groupId>
                 <artifactId>wss4j-bindings</artifactId>
                 <version>${wss4j.version}</version>
