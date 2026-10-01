@@ -107,11 +107,6 @@
             <artifactId>quarkus-cxf-test-util-internal</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>io.quarkiverse.cxf</groupId>
-            <artifactId>quarkus-cxf-test-util-internal</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>io.quarkus</groupId>
