@@ -850,6 +850,7 @@ class QuarkusCxfProcessor {
 
         ContextUtilsTransformer() {
             this.overriddenMethods = Stream.of(QuarkusCxfContextUtils.class.getDeclaredMethods())
+                    .filter(m -> !m.isSynthetic())
                     .map(Method::getName)
                     .collect(Collectors.toUnmodifiableSet());
             this.missingMethods = new TreeSet<>(overriddenMethods);
