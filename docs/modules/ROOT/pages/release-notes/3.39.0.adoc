@@ -27,6 +27,26 @@ xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-addr
 and xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes[quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes]
 when encountering these errors.
 
+
+== Breaking changes
+
+=== WS-Addressing decoupled destinations disabled by default
+
+Before {quarkus-cxf-project-name} 3.39.0 and 3.33.11, WS-Addressing clients could request non-anonymous reply or fault destinations
+without explicitly enabling this on the server.
+Since {quarkus-cxf-project-name} 3.33.11, such requests are rejected with a `DestinationUnreachable` fault by default
+to prevent Server-Side Request Forgery (SSRF).
+Applications that require decoupled WS-Addressing callbacks must enable them using
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-enabled[quarkus.cxf.endpoint.addressing.decoupled.enabled]`
+and configure the allowed URI scheme prefixes via `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-endpoint-addressing-decoupled-allowed-schemes[quarkus.cxf.endpoint.addressing.decoupled.allowed-schemes]` if the defaults are insufficient.
+
+=== Default attachment size limit
+
+Before {quarkus-cxf-project-name} 3.39.0 and 3.33.11, CXF did not impose a default maximum attachment size.
+Since {quarkus-cxf-project-name} 3.33.11, the upgrade to CXF 4.1.8 introduces a default limit of 50 MB.
+Applications that process larger attachments must explicitly configure the CXF `attachment-max-size` contextual property.
+See https://cxf.apache.org/docs/securing-cxf-services.html#SecuringCXFServices-Multiparts[Securing CXF Services] for details.
+
 == Full changelog
 
 https://github.com/quarkiverse/quarkus-cxf/compare/3.38.0+++...+++3.39.0
