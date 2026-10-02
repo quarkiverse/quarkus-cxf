@@ -22,9 +22,11 @@ concurrency:
 jobs:
   build-and-run-jvm-tests:
     if: startsWith(github.head_ref, 'trigger-release-') == false
-    runs-on: ubuntu-latest
+    runs-on: runs-on=${{ github.run_id }}/runner=linux
 
     steps:
+    - uses: runs-on/action@v2
+
     - uses: actions/checkout@v7
 
     - name: Set up JDK ${{ inputs.java-version }}
@@ -94,9 +96,10 @@ jobs:
             os: windows-latest
     name: JVM Tests ${{ matrix.javaDistro }}-${{ matrix.javaVersion }}@${{ matrix.os }}
     needs: build-and-run-jvm-tests
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os == 'ubuntu-latest' && format('runs-on={0}-{1}/runner=linux', github.run_id, strategy.job-index) || matrix.os }}
 
     steps:
+    - uses: runs-on/action@v2
 
     - uses: actions/checkout@v7
 
@@ -160,8 +163,10 @@ jobs:
         testModule: ['client', 'client-server', 'fastinfoset', 'metrics', 'mtls', 'mtls -Djks', 'mtom-awt', 'mutable-jar', 'opentelemetry', 'saaj', 'santuario-xmlsec', 'server', 'ws-rm-client', 'ws-security', 'ws-security -Djks', 'ws-security-policy', 'ws-security-policy -Djks', 'ws-trust', 'wsdl2java', 'wsdl2java-no-config']
     name: ${{matrix.testModule}} native tests
     needs: build-and-run-jvm-tests
-    runs-on: ubuntu-latest
+    runs-on: runs-on=${{ github.run_id }}-${{ strategy.job-index }}/runner=linux
     steps:
+    - uses: runs-on/action@v2
+
     - uses: actions/checkout@v7
     - name: run-native-test
       uses: ./.github/actions/run-native-test
