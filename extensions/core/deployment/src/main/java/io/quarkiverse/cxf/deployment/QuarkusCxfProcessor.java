@@ -339,12 +339,20 @@ class QuarkusCxfProcessor {
                             for (int i = 0; i <= 1; i++) {
                                 final String className = cols[i];
                                 if (className.length() > 0) {
-                                    entryValid &= isLoadable(className, url);
+                                    final Class<?> extensionClass = loadBusExtensionClass(className, url);
+                                    entryValid = extensionClass != null;
                                     if (!entryValid) {
                                         break;
                                     }
-                                    reflectiveItems
-                                            .produce(ReflectiveClassBuildItem.builder(className).methods().fields().build());
+                                    // CXF's ResourceInjector also accesses members declared on superclasses.
+                                    // Reachability metadata exposes inherited methods for lookup, but invoking them
+                                    // and accessing inherited fields requires registration on their declaring classes.
+                                    CxfDeploymentUtils.walkParents(extensionClass,
+                                            name -> reflectiveItems.produce(ReflectiveClassBuildItem.builder(name)
+                                                    .constructors(name.equals(className))
+                                                    .methods().fields()
+                                                    .reason("CXF bus extension " + className)
+                                                    .build()));
                                 }
                             }
                         }
@@ -366,14 +374,13 @@ class QuarkusCxfProcessor {
         }
     }
 
-    static boolean isLoadable(String className, URL url) {
+    static Class<?> loadBusExtensionClass(String className, URL url) {
         try {
-            Class.forName(className, true, Thread.currentThread().getContextClassLoader());
-            return true;
+            return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
         } catch (ClassNotFoundException | NoClassDefFoundError e) {
             LOGGER.debugf(e, "Ignoring non-loadable CXF Bus extension %s from %s", className, url);
         }
-        return false;
+        return null;
     }
 
     @BuildStep
