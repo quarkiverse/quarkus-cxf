@@ -80,9 +80,9 @@
 
         <slf4j.version>2.0.18</slf4j.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.slf4j:slf4j-api -->
         <smallrye-certificate-generator.version>0.9.4</smallrye-certificate-generator.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.smallrye.certs:smallrye-certificate-generator -->
-        <stax2.version>4.3.0</stax2.version><!-- @sync com.fasterxml.woodstox:woodstox-core:${woodstox-core.version} dep:org.codehaus.woodstox:stax2-api -->
+        <stax2.version>4.3.1</stax2.version><!-- @sync com.fasterxml.woodstox:woodstox-core:${woodstox-core.version} dep:org.codehaus.woodstox:stax2-api -->
         <velocity.version>2.4.1</velocity.version><!-- Dependency of wsdl2java -->
-        <woodstox-core.version>7.2.2</woodstox-core.version>
+        <woodstox-core.version>7.3.0</woodstox-core.version>
         <wsdl4j.version>1.6.3</wsdl4j.version><!-- Manage WSDL4J to make sure that quarkus-cxf-xjc-plugins pulls the right version via cxf-xjc-wsdlextension -->
         <wss4j.version>4.0.2</wss4j.version><!-- We may ocassionally want to use a bugfix version of WSS4J that is newer than the one used by CXF -->
         <xmlschema.version>2.3.3</xmlschema.version><!-- We may ocassionally want to use a bugfix version of xmlschema that is newer than the one delivered by CXF -->
