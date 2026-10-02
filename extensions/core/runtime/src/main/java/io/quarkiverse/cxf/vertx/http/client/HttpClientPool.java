@@ -1,17 +1,16 @@
 package io.quarkiverse.cxf.vertx.http.client;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+
+import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CXFClientInfo;
 import io.quarkus.proxy.ProxyConfiguration;
@@ -21,9 +20,7 @@ import io.quarkus.tls.CertificateUpdatedEvent;
 import io.quarkus.tls.TlsConfiguration;
 import io.quarkus.tls.runtime.config.TlsConfigUtils;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientOptions;
-import io.vertx.core.http.HttpVersion;
+import io.vertx.core.http.*;
 import io.vertx.core.net.ProxyOptions;
 import io.vertx.core.net.ProxyType;
 
@@ -32,6 +29,7 @@ import io.vertx.core.net.ProxyType;
  */
 @ApplicationScoped
 public class HttpClientPool {
+    private static final Logger log = Logger.getLogger(HttpClientPool.class);
     private final Map<String, ClientEntry> clients = new ConcurrentHashMap<>();
     private final Vertx vertx;
 
@@ -60,7 +58,8 @@ public class HttpClientPool {
         return clients.computeIfAbsent(key, v -> {
             final HttpClientOptions opts = new HttpClientOptions()
                     .setProtocolVersion(version);
-            clientInfo.getVertxConfig().configure(opts, clientInfo.getConnection());
+            final PoolOptions poolOptions = new PoolOptions();
+            clientInfo.getVertxConfig().configure(opts, clientInfo.getConnection(), poolOptions);
             if (proxyConfiguration != null) {
                 proxyConfiguration.nonProxyHosts().ifPresent(nph -> nph.forEach(opts::addNonProxyHost));
                 final ProxyOptions proxyOpts = new ProxyOptions()
@@ -76,9 +75,9 @@ public class HttpClientPool {
 
             if (tlsConfiguration != null) {
                 TlsConfigUtils.configure(opts, tlsConfiguration);
-                return new ClientEntry(vertx.createHttpClient(opts), tlsConfiguration.getName());
+                return new ClientEntry(vertx.createHttpClient(opts, poolOptions), tlsConfiguration.getName());
             } else {
-                return new ClientEntry(vertx.createHttpClient(opts), null);
+                return new ClientEntry(vertx.createHttpClient(opts, poolOptions), null);
             }
         }).httpClient;
     }
@@ -91,18 +90,47 @@ public class HttpClientPool {
      */
     public void onCertificateUpdate(@Observes CertificateUpdatedEvent event) {
         final String tlsConfigName = event.name();
-        if (tlsConfigName != null) {
-            final Iterator<Entry<String, ClientEntry>> it = clients.entrySet().iterator();
-            while (it.hasNext()) {
-                final Entry<String, ClientEntry> en = it.next();
-                if (tlsConfigName.equals(en.getValue().tlsConfigurationName)) {
-                    final HttpClient cl = en.getValue().httpClient();
-                    it.remove();
-                    cl.close(r -> {
-                    });
-                }
+        final TlsConfiguration updatedTlsConfiguration = event.tlsConfiguration();
+        final Map<String, ClientEntry> clientsToUpdate = new LinkedHashMap<>();
+        for (Entry<String, ClientEntry> en : clients.entrySet()) {
+            if (tlsConfigName.equals(en.getValue().tlsConfigurationName)) {
+                clientsToUpdate.put(en.getKey(), en.getValue());
             }
         }
+
+        if (!clientsToUpdate.isEmpty()) {
+            for (Entry<String, ClientEntry> en : clientsToUpdate.entrySet()) {
+                ((HttpClientAgent) en.getValue().httpClient)
+                        .updateSSLOptions(updatedTlsConfiguration.getClientSSLOptions())
+                        .onComplete(event1 -> {
+                            if (event1.succeeded()) {
+                                if (event1.result()) {
+                                    log.infof(
+                                            "Certificate reloaded for the SOAP client '%s' using the TLS configuration (bucket) name '%s'",
+                                            en.getKey(),
+                                            tlsConfigName);
+                                } else {
+                                    log.warnf(
+                                            "Certificate reload skipped for the SOAP client '%s' using the TLS configuration (bucket) name '%s'",
+                                            en.getKey(),
+                                            tlsConfigName);
+                                }
+                            } else {
+                                final Duration graceTimeout = Duration.ofSeconds(30);
+                                log.errorf(event1.cause(),
+                                        "Certificate reload failed for the SOAP client '%s' using the TLS configuration (bucket) name '%s'. The client will be shutdown",
+                                        en.getKey(),
+                                        tlsConfigName);
+                                clients.remove(en.getKey());
+                                en.getValue().httpClient.shutdown(graceTimeout)
+                                        .onComplete(h -> {
+                                        });
+                            }
+                        });
+            }
+
+        }
+
     }
 
     public Vertx getVertx() {

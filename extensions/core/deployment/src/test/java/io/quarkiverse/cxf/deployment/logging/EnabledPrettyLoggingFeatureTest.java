@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 /**
  * {@code LoggingFeature} set in {@code application.properties} and a named bean is produced via
@@ -18,7 +18,7 @@ import io.quarkus.test.QuarkusUnitTest;
 public class EnabledPrettyLoggingFeatureTest {
 
     @RegisterExtension
-    static final QuarkusUnitTest TEST = new QuarkusUnitTest()
+    static final QuarkusExtensionTest TEST = new QuarkusExtensionTest()
             .withApplicationRoot(
                     root -> root.addClasses(HelloService.class, HelloServiceImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor", HelloServiceImpl.class.getName())

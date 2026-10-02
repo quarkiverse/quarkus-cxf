@@ -35,14 +35,14 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 public class CxfAnnotationsTest {
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/hello\".implementor",
                     HelloServiceImpl.class.getName())

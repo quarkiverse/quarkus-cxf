@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 /**
  * A reproducer for https://github.com/quarkiverse/quarkus-cxf/issues/1326
@@ -20,7 +20,7 @@ import io.quarkus.test.QuarkusUnitTest;
 public class AsmNamingClashTest {
 
     @RegisterExtension
-    static final QuarkusUnitTest TEST = new QuarkusUnitTest()
+    static final QuarkusExtensionTest TEST = new QuarkusExtensionTest()
             .withApplicationRoot(root -> root.addClasses(HelloServiceString.class, HelloServiceStringImpl.class))
             .overrideConfigKey("quarkus.cxf.endpoint.\"/helloString\".implementor", HelloServiceStringImpl.class.getName())
             .overrideConfigKey("quarkus.cxf.client.helloString.service-interface", HelloServiceString.class.getName())

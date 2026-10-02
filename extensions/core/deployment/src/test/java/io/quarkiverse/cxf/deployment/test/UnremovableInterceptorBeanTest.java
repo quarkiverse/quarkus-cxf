@@ -16,7 +16,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.arc.Arc;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 
 /**
  * Make sure that a bean not injected anywhere, such as {@link ApplicationScopedDescriptionAppender}, which would
@@ -26,7 +26,7 @@ import io.quarkus.test.QuarkusUnitTest;
 public class UnremovableInterceptorBeanTest {
 
     @RegisterExtension
-    public static final QuarkusUnitTest test = new QuarkusUnitTest()
+    public static final QuarkusExtensionTest test = new QuarkusExtensionTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                     .addClass(FruitWebService.class)
                     .addClass(FruitWebServiceImpl.class)

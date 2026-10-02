@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.metrics.client.it;
 
+import java.net.URI;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.eap.quickstarts.wscalculator.calculator.AddResponse;
 import org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService;
 
@@ -32,6 +34,9 @@ public class LaggyCalculatorClientResource {
 
     @Inject
     MeterRegistry registry;
+
+    @ConfigProperty(name = "qcxf.laggy-calculator.url")
+    String laggyCalculatorUrl;
 
     @GET
     @Path("/call-clients-sync/{iterationCount}/{a}")
@@ -83,7 +88,8 @@ public class LaggyCalculatorClientResource {
     @GET
     @Path("/pool-metrics/{clientKey}/{meterNotFoundAllowed}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String poolMetrics(@PathParam("clientKey") String clientKey,
+    public String poolMetrics(
+            @PathParam("clientKey") String clientKey,
             @PathParam("meterNotFoundAllowed") boolean meterNotFoundAllowed) {
 
         int activeTasks;
@@ -99,9 +105,10 @@ public class LaggyCalculatorClientResource {
             e.printStackTrace();
         }
         int queueSize;
+        URI uri = URI.create(laggyCalculatorUrl);
         try {
-            queueSize = (int) registry.get("http.client.queue.size")
-                    .tag("clientName", clientKey)
+            queueSize = (int) registry.get("http.pool.queue.size")
+                    .tags("pool.type", "http", "pool.name", uri.getHost() + ":" + uri.getPort())
                     .gauge()
                     .value();
         } catch (MeterNotFoundException e) {

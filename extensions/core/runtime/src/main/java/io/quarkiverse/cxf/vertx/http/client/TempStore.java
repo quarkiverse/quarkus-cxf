@@ -8,13 +8,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.jboss.logging.Logger;
 
-import io.vertx.core.Closeable;
-import io.vertx.core.CompositeFuture;
-import io.vertx.core.Context;
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
+import io.vertx.core.*;
 import io.vertx.core.file.FileSystem;
-import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.internal.ContextInternal;
 
 /**
  * A disk store for temporary files.
@@ -199,7 +195,7 @@ public class TempStore {
         }
 
         @Override
-        public void close(Promise<Void> completion) {
+        public void close(Completable<Void> completion) {
             if (timerId >= 0) {
                 ctx.owner().cancelTimer(timerId);
                 timerId = -1;
@@ -212,14 +208,14 @@ public class TempStore {
                     log.debugf("Skipping deletion of %d temporary files in TempStore %s/%s* on close", tempFiles.size(),
                             directory,
                             prefix);
-                    completion.complete();
+                    completion.succeed();
                     return;
                 }
                 delete(tempFiles, 0 /* 0 to delete all files immediately */)
                         .onSuccess(dels -> {
                             log.debugf("Deleted %d files on close in TempStore %s/%s*", dels.size(), directory,
                                     prefix);
-                            completion.complete();
+                            completion.succeed();
                         })
                         .onFailure(e -> {
                             log.errorf(e, "Could not delete some temporary files on close in TempStore %s/%s*", directory,
@@ -229,7 +225,7 @@ public class TempStore {
             } else {
                 /* If tempFiles == null there is nothing to cleanup */
                 log.debugf("Nothing to cleanup on close in TempStore %s/%s*", directory, prefix);
-                completion.complete();
+                completion.succeed();
             }
         }
 

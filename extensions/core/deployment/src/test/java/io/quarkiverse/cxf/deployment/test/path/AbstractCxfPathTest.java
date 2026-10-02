@@ -15,7 +15,7 @@ import io.quarkiverse.cxf.deployment.test.Delete;
 import io.quarkiverse.cxf.deployment.test.Fruit;
 import io.quarkiverse.cxf.deployment.test.FruitWebService;
 import io.quarkiverse.cxf.deployment.test.FruitWebServiceImpl;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import io.restassured.RestAssured;
 
 /**
@@ -23,7 +23,7 @@ import io.restassured.RestAssured;
  */
 abstract class AbstractCxfPathTest {
 
-    static QuarkusUnitTest createDeployment(String rootPath, String cxfPath) {
+    static QuarkusExtensionTest createDeployment(String rootPath, String cxfPath) {
         StringBuilder fruitPath = new StringBuilder();
         if (rootPath != null) {
             fruitPath.append(rootPath);
@@ -33,7 +33,7 @@ abstract class AbstractCxfPathTest {
         }
         fruitPath.append("/fruit");
 
-        QuarkusUnitTest result = new QuarkusUnitTest()
+        QuarkusExtensionTest result = new QuarkusExtensionTest()
                 .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
                         .addClass(FruitWebService.class)
                         .addClass(FruitWebServiceImpl.class)
