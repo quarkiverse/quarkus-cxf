@@ -17,9 +17,9 @@
 
 === https://github.com/quarkiverse/quarkus-cxf/discussions/2320[#2320] `Methods of org.apache.cxf.ws.addressing.ContextUtils not found: $jacocoInit(...)`
 
-Before {quarkus-cxf-project-name} 3.40.2, running `@QuarkusTest` tests with JaCoCo instrumentation could fail during class transformation with the named error.
+Before {quarkus-cxf-project-name} 3.40.2 and 3.33.14, running `@QuarkusTest` tests with JaCoCo instrumentation could fail during class transformation with the named error.
 The transformer expected the synthetic `$jacocoInit(...)` method added to `QuarkusCxfContextUtils` to have a counterpart in CXF's `ContextUtils`.
-Since {quarkus-cxf-project-name} 3.40.2, the transformer ignores synthetic methods, allowing these tests to start.
+Since {quarkus-cxf-project-name} 3.40.2 and 3.33.14, the transformer ignores synthetic methods, allowing these tests to start.
 
 Special thanks to https://github.com/eekhoorn01[@eekhoorn01] for reporting the issue.
 
@@ -36,15 +36,15 @@ See the https://ws.apache.org/wss4j/user_guide.html#bouncycastleutils_renamed_to
 
 === Stricter XPath validation in streaming WS-SecurityPolicy
 
-Before {quarkus-cxf-project-name} 3.40.2, unsupported XPath expressions in streaming WS-SecurityPolicy assertions could silently fail to enforce the intended protection.
-Since {quarkus-cxf-project-name} 3.40.2, WSS4J rejects descendant steps (`//`), wildcards, predicates and functions in these expressions.
+Before {quarkus-cxf-project-name} 3.40.2 and 3.33.14, unsupported XPath expressions in streaming WS-SecurityPolicy assertions could silently fail to enforce the intended protection.
+Since {quarkus-cxf-project-name} 3.40.2 and 3.33.14, WSS4J rejects descendant steps (`//`), wildcards, predicates and functions in these expressions.
 Use simple element paths, for example `/soap:Envelope/soap:Header/wsse:Security/saml2:Assertion` with the corresponding namespace declarations, instead of `//saml2:Assertion`.
 See https://ws.apache.org/wss4j/advisories/CVE-2026-87830.txt[CVE-2026-87830] for background.
 
 === WSS4J `DOMX509SKI` constructor declares a checked exception
 
-Before {quarkus-cxf-project-name} 3.40.2, `org.apache.wss4j.common.token.DOMX509SKI(Document, X509Certificate)` did not declare a checked exception.
-Since {quarkus-cxf-project-name} 3.40.2, this constructor declares `WSSecurityException` for malformed SubjectKeyIdentifier extensions.
+Before {quarkus-cxf-project-name} 3.40.2 and 3.33.14, `org.apache.wss4j.common.token.DOMX509SKI(Document, X509Certificate)` did not declare a checked exception.
+Since {quarkus-cxf-project-name} 3.40.2 and 3.33.14, this constructor declares `WSSecurityException` for malformed SubjectKeyIdentifier extensions.
 Applications calling this constructor directly must catch or declare that exception when recompiling.
 See the https://ws.apache.org/wss4j/user_guide.html#domx509ski_signals_a_malformed_subjectkeyidentifier[WSS4J migration guide].
 
