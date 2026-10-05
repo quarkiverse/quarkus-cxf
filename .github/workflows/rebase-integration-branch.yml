@@ -43,7 +43,7 @@ jobs:
             dependency-git-repo-url: https://github.com/apache/cxf.git
             java-version: 21
           - branch: '3.40-quarkus-3.40'
-            base-branch: 'main'
+            base-branch: '3.40'
             dependency-short-name: 'quarkus'
             dependency-stream: '3.40'
             dependency-branch: '3.40'
