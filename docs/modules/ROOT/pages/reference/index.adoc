@@ -133,7 +133,7 @@ a| JAX-RS
 `cxf-rt-frontend-jaxrs`
 
 `cxf-rt-rs-client`
-| {link-quarkus-docs-base}/rest-json[Use Quarkus RESTEasy]
+| {link-quarkus-docs-base}/rest-json[Use Quarkus REST]
 
 | https://cxf.apache.org/fediz.html[Fediz]
 | {link-quarkus-docs-base}/security-oidc-bearer-token-authentication-tutorial[Use Quarkus OpenID Connect]
