@@ -2,16 +2,21 @@ package io.quarkiverse.xmlsec.deployment;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.crypto.spec.GCMParameterSpec;
 import javax.xml.crypto.dsig.spec.XPathType;
+import javax.xml.namespace.QName;
 
 import org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI;
 import org.apache.xml.security.algorithms.SignatureAlgorithmSpi;
 import org.apache.xml.security.c14n.CanonicalizerSpi;
+import org.apache.xml.security.stax.ext.ResourceResolver;
+import org.apache.xml.security.stax.ext.stax.XMLSecStartElement;
 import org.apache.xml.security.transforms.TransformSpi;
+import org.jboss.jandex.ClassType;
 import org.jboss.jandex.DotName;
 import org.jboss.jandex.IndexView;
 
@@ -25,6 +30,7 @@ import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceBundleBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.NativeImageSecurityProviderBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ReflectiveMethodBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ServiceProviderBuildItem;
 import io.quarkus.deployment.util.ServiceUtil;
@@ -50,6 +56,7 @@ class XmlsecProcessor {
 
     @BuildStep
     void registerForReflection(BuildProducer<ReflectiveClassBuildItem> reflectiveClass,
+            BuildProducer<ReflectiveMethodBuildItem> reflectiveMethod,
             CombinedIndexBuildItem combinedIndex) {
         IndexView index = combinedIndex.getIndex();
 
@@ -70,6 +77,14 @@ class XmlsecProcessor {
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> ReflectiveClassBuildItem.builder(className).build())
                 .forEach(reflectiveClass::produce);
+
+        // Santuario invokes this overload reflectively because it is not part of the ResourceResolver interface.
+        index.getAllKnownImplementors(DotName.createSimple(ResourceResolver.class.getName())).stream()
+                .map(classInfo -> classInfo.method("matches",
+                        ClassType.create(XMLSecStartElement.class), ClassType.create(QName.class)))
+                .filter(Objects::nonNull)
+                .map(ReflectiveMethodBuildItem::new)
+                .forEach(reflectiveMethod::produce);
 
         reflectiveClass.produce(ReflectiveClassBuildItem.builder(
                 GCMParameterSpec.class.getName(), XPathType[].class.getName()).build());
