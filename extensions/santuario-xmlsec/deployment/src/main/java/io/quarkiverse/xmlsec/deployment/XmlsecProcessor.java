@@ -73,13 +73,13 @@ class XmlsecProcessor {
         Stream.of(
                 org.apache.xml.security.stax.ext.ResourceResolverLookup.class.getName(),
                 org.apache.xml.security.stax.ext.Transformer.class.getName())
-                .flatMap(className -> index.getAllKnownImplementors(DotName.createSimple(className)).stream())
+                .flatMap(className -> index.getAllKnownImplementations(DotName.createSimple(className)).stream())
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> ReflectiveClassBuildItem.builder(className).build())
                 .forEach(reflectiveClass::produce);
 
         // Santuario invokes this overload reflectively because it is not part of the ResourceResolver interface.
-        index.getAllKnownImplementors(DotName.createSimple(ResourceResolver.class.getName())).stream()
+        index.getAllKnownImplementations(DotName.createSimple(ResourceResolver.class.getName())).stream()
                 .map(classInfo -> classInfo.method("matches",
                         ClassType.create(XMLSecStartElement.class), ClassType.create(QName.class)))
                 .filter(Objects::nonNull)

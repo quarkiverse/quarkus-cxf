@@ -65,7 +65,7 @@ public class EhcacheProcessor {
                 "org.ehcache.spi.resilience.ResilienceStrategy",
                 "org.ehcache.spi.serialization.Serializer")
                 .map(DotName::createSimple)
-                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .flatMap(dotName -> index.getAllKnownImplementations(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> ReflectiveClassBuildItem.builder(className).build())
                 .forEach(reflectiveClass::produce);
@@ -73,7 +73,7 @@ public class EhcacheProcessor {
         Stream.of(
                 "org.ehcache.shadow.org.terracotta.statistics.SourceStatistic")
                 .map(DotName::createSimple)
-                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .flatMap(dotName -> index.getAllKnownImplementations(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> ReflectiveClassBuildItem.builder(className).fields().build())
                 .forEach(reflectiveClass::produce);

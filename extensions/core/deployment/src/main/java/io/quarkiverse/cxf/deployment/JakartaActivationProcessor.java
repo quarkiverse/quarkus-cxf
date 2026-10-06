@@ -175,7 +175,7 @@ class JakartaActivationProcessor {
             BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
         final IndexView index = combinedIndexBuildItem.getIndex();
 
-        index.getAllKnownImplementors(DotName.createSimple("javax.activation.DataContentHandler")).stream()
+        index.getAllKnownImplementations(DotName.createSimple("javax.activation.DataContentHandler")).stream()
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> ReflectiveClassBuildItem.builder(className).build())
                 .forEach(reflectiveClasses::produce);

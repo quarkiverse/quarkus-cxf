@@ -530,7 +530,7 @@ class QuarkusCxfProcessor {
                 PhaseInterceptor.class,
                 HostnameVerifier.class)
                 .map(DotName::createSimple)
-                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .flatMap(dotName -> index.getAllKnownImplementations(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
                 .filter(className -> !className.startsWith("org.apache.cxf.") || !className.contains(".blueprint."))
                 .map(className -> ReflectiveClassBuildItem.builder(className).build())
@@ -539,7 +539,7 @@ class QuarkusCxfProcessor {
         Stream.of(
                 "org.apache.cxf.feature.Feature")
                 .map(DotName::createSimple)
-                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .flatMap(dotName -> index.getAllKnownImplementations(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> ReflectiveClassBuildItem.builder(className).methods().build())
                 .forEach(reflectiveClass::produce);
