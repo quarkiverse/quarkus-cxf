@@ -21,4 +21,4 @@ jobs:
     uses: quarkiverse/.github/.github/workflows/prepare-release.yml@main
     secrets: inherit
     with:
-      java_version: 17
+      java_version: 21
