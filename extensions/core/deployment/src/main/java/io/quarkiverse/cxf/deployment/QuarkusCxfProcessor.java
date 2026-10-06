@@ -299,6 +299,7 @@ class QuarkusCxfProcessor {
             reflectiveClasses.produce(
                     ReflectiveClassBuildItem
                             .builder(capture.getGeneratedClasses())
+                            .methods()
                             .fields()
                             .build());
         } finally {
