@@ -1,7 +1,7 @@
 [[advanced-service-topics]]
 = Publish and configure SOAP services
 
-Decide where your SOAP services are published and how they are implemented: set endpoint paths, process raw XML with JAX-WS providers, serve REST and SOAP endpoints from one application, and advertise the right addresses when a service runs behind a reverse proxy.
+Decide where your SOAP services are published and how they are implemented: set endpoint paths, process raw XML with JAX-WS providers, serve REST and SOAP endpoints from one application, advertise the right addresses when a service runs behind a reverse proxy, and index service classes that come from other modules.
 
 == Where to go
 
@@ -9,3 +9,4 @@ Decide where your SOAP services are published and how they are implemented: set 
 * xref:user-guide/advanced-service-topics/jax-ws-providers.adoc[JAX-WS Providers] - Implement one when the service must handle the raw XML payload instead of Java method parameters. A JAX-WS `Provider<T>` implementation registers through the same `implementor` property as a regular `@WebService` class.
 * xref:user-guide/advanced-service-topics/rest-and-soap-endpoints.adoc[REST and SOAP Endpoints] - Separate them by root path when one application has to expose both. REST and SOAP endpoints share one application when each stack has its own root path, such as `quarkus.cxf.path=/soap` next to `quarkus.resteasy.path=/rest`.
 * xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc[Running behind a reverse proxy] - Enable proxy address forwarding only when a real reverse proxy sits in front of the service, because it exposes the server to spoofed request information. Behind a reverse proxy, `{link-quarkus-docs-base}/all-config#quarkus-vertx-http_quarkus-http-proxy-proxy-address-forwarding[quarkus.http.proxy.proxy-address-forwarding]` and the related `quarkus.http.proxy.*` settings make Quarkus honor the `X-Forwarded-*` headers, so the address advertised in the served WSDL is the public one.
+* xref:user-guide/advanced-service-topics/service-classes-in-jandex.adoc[Service classes from other modules] - Index the module that contains the service classes when a service implementation, its superclasses or its interfaces come from a dependency. {quarkus-cxf-project-name} needs the whole class hierarchy of a service implementation in the Quarkus class index at build time, and the build can fail when the service interface is not there.
