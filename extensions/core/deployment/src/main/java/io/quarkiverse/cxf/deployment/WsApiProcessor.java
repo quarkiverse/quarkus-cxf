@@ -38,7 +38,7 @@ class WsApiProcessor {
         Stream.of(
                 "jakarta.xml.ws.handler.Handler")
                 .map(DotName::createSimple)
-                .flatMap(dotName -> index.getAllKnownImplementors(dotName).stream())
+                .flatMap(dotName -> index.getAllKnownImplementations(dotName).stream())
                 .map(classInfo -> classInfo.name().toString())
                 .map(className -> ReflectiveClassBuildItem.builder(className).build())
                 .forEach(reflectiveClass::produce);

@@ -40,7 +40,7 @@ class NeethiProcessor {
             BuildProducer<ReflectiveClassBuildItem> reflectiveClass) {
         final IndexView index = combinedIndexBuildItem.getIndex();
 
-        index.getAllKnownImplementors(DotName.createSimple("org.apache.neethi.builders.converters.Converter")).stream()
+        index.getAllKnownImplementations(DotName.createSimple("org.apache.neethi.builders.converters.Converter")).stream()
                 .map(classInfo -> classInfo.name().toString())
                 .filter(cl -> !BANNED_CONVERTERS.contains(cl))
                 .map(className -> ReflectiveClassBuildItem.builder(className).methods().build())
