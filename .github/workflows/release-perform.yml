@@ -30,7 +30,7 @@ jobs:
 
   await-release-on-central:
     needs: perform-release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     name: Await artifacts on Maven Central
     steps:
 
