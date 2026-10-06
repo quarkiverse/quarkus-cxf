@@ -6,17 +6,16 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.junit.jupiter.api.Test;
 
 import io.quarkiverse.cxf.client.it.CxfClientTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.common.TestLog;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 
@@ -31,8 +30,8 @@ public class CxfLoggingTest {
      * @throws IOException
      */
     @Test
-    void loggingClient() throws IOException {
-        final Path logFile = Paths.get(ConfigProvider.getConfig().getValue("quarkus.log.file.path", String.class));
+    void loggingClient(TestLog testLog) throws IOException {
+        final Path logFile = testLog.getLogFilePath();
 
         /* Make sure the server has started */
         Awaitility.waitAtMost(30, TimeUnit.SECONDS)
