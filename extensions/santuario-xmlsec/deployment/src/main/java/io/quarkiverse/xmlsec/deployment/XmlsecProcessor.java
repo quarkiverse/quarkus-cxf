@@ -77,8 +77,12 @@ class XmlsecProcessor {
 
     @BuildStep
     void runtimeInitializedClass(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitializedClass) {
-        runtimeInitializedClass
-                .produce(new RuntimeInitializedClassBuildItem("org.apache.xml.security.stax.impl.InboundSecurityContextImpl"));
+
+        Stream.of(
+                "org.apache.xml.security.stax.impl.InboundSecurityContextImpl",
+                "org.apache.xml.security.stax.impl.processor.input.AbstractDecryptInputProcessor")
+                .map(RuntimeInitializedClassBuildItem::new)
+                .forEach(runtimeInitializedClass::produce);
     }
 
     @BuildStep
