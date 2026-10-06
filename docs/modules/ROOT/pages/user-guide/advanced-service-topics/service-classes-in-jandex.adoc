@@ -1,0 +1,45 @@
+[[service-classes-in-jandex]]
+= Service classes from other modules
+
+{quarkus-cxf-project-name} inspects your service implementations at build time through the Quarkus class index,
+also known as https://smallrye.io/jandex/[Jandex].
+So the whole class hierarchy of a service implementation must be in that index:
+the implementation class, its superclasses, and the interfaces it implements.
+
+The class index always contains the classes of your application.
+Those are all the classes of the module that is configured with `quarkus-maven-plugin`, or with the `io.quarkus` Gradle plugin.
+Quarkus indexes them automatically.
+
+Quarkus does not index the classes of other modules automatically, even when they belong to the same multi-module project.
+Quarkus treats such a module as a dependency.
+A dependency is in the index when, for example, it contains a Jandex index (`META-INF/jandex.idx`) or a `beans.xml` descriptor,
+or when you register it with `quarkus.index-dependency` properties.
+See {link-quarkus-docs-base}/cdi-reference#bean_discovery[Bean Discovery] in the Quarkus CDI reference for the full list,
+and {link-quarkus-docs-base}/maven-tooling#multi-module-maven[Working with multi-module projects] for Maven.
+
+When a service implementation in your application implements a service interface from a dependency without an index,
+for example a separate API module, and does not set the `endpointInterface` attribute of `@WebService`,
+the build fails with a message such as the following:
+
+[source]
+----
+Cannot find org.acme.HelloService in Quarkus class index (Jandex). You may want to register the artifact containing org.acme.HelloService for indexing using quarkus.index-dependency.* family of properties or you may want to add io.smallrye:jandex-maven-plugin to the module containing sources of org.acme.HelloService. See https://quarkus.io/guides/cdi-reference#bean_discovery for more information.
+----
+
+== Index the module that contains the classes
+
+Use one of the following:
+
+* If you build that module yourself, add a Jandex plugin to its build, so that its JAR contains an index:
+  `io.smallrye:jandex-maven-plugin` for Maven, or `org.kordamp.gradle.jandex` for Gradle.
+  The plugin configuration is in {link-quarkus-docs-base}/cdi-reference#how-to-generate-a-jandex-index[How to Generate a Jandex Index].
+* Otherwise, register the module for indexing in the `application.properties` of your application,
+  with its group ID and artifact ID:
++
+[source,properties]
+----
+quarkus.index-dependency.hello.group-id=org.acme
+quarkus.index-dependency.hello.artifact-id=hello-api
+----
++
+`hello` is a key of your choice that groups the two properties of one dependency.
