@@ -18,6 +18,7 @@
 *** xref:user-guide/advanced-service-topics/jax-ws-providers.adoc[JAX-WS Providers]
 *** xref:user-guide/advanced-service-topics/rest-and-soap-endpoints.adoc[REST and SOAP Endpoints]
 *** xref:user-guide/advanced-service-topics/running-behind-a-reverse-proxy.adoc[Running behind a reverse proxy]
+*** xref:user-guide/advanced-service-topics/service-classes-in-jandex.adoc[Service classes from other modules]
 ** xref:user-guide/advanced-soap-client-topics.adoc[Configure and control SOAP clients]
 *** xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` defaults]
 *** xref:user-guide/advanced-client-topics/configure-multiple-clients.adoc[Configure multiple clients]
