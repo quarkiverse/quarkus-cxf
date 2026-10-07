@@ -47,7 +47,7 @@ include::example$soap-service/application.properties[tag=first-web-service.adoc]
 
 [TIP]
 ====
-All configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc[Configuration properties] reference.
+All configuration properties are documented in the xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf-configuration[Configuration properties] reference.
 ====
 
 [TIP]

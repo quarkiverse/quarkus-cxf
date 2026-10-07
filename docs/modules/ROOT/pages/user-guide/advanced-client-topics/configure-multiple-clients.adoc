@@ -1,8 +1,10 @@
 [[configure-multiple-clients]]
 = Configure multiple clients
 
-In the example above, we configured just a single client called `myCalculator`.
-Of course, you can configure multiple clients pointing at different URLs and/or implementing different SEIs using multiple identifiers:
+On the xref:user-guide/first-soap-client.adoc[First SOAP client] page,
+we configured just a single client called `myCalculator`.
+Of course, you can configure multiple clients pointing at different URLs
+and/or implementing different SEIs using multiple identifiers:
 
 .application.properties
 [source,properties]
