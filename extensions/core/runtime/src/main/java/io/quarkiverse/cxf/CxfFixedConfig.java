@@ -19,12 +19,14 @@ import io.smallrye.config.WithName;
 public interface CxfFixedConfig {
 
     /**
-     * The default path for CXF resources.
+     * The default base path for CXF service endpoints.
      *
      * [NOTE]
-     * .Earlier versions
+     * .Historical note
      * ====
      * The default value before Quarkus CXF version 2.0.0 was `/`.
+     * We changed it, because it broke the correct handling of all other HTTP endpoints
+     * typically exposed by Quarkus, such as health checks and Dev UI.
      * ====
      *
      * @asciidoclet

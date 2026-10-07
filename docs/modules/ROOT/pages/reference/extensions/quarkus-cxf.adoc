@@ -430,12 +430,14 @@ and `build` for Gradle.
 .<| `string`
 .<| `/services`
 
-3+a|The default path for CXF resources.
+3+a|The default base path for CXF service endpoints.
 
 [NOTE]
-.Earlier versions
+.Historical note
 ====
 The default value before Quarkus CXF version 2.0.0 was `/`.
+We changed it, because it broke the correct handling of all other HTTP endpoints
+typically exposed by Quarkus, such as health checks and Dev UI.
 ====
 
 *Environment variable*: `+++QUARKUS_CXF_PATH+++` +
@@ -506,7 +508,7 @@ quarkus.cxf.decoupled-endpoint-base = http://api.example.com:${quarkus.http.port
 
 If you invoke your WS client from within a HTTP handler, you can leave this option unspecified and rather set it
 dynamically on the request context of your WS client using the `org.apache.cxf.ws.addressing.decoupled.endpoint.base`
-key. Here is an example how to do that from a RESTeasy handler method:
+key. Here is an example how to do that from a REST handler method:
 
 [source,java]
 ----
@@ -523,7 +525,7 @@ import io.quarkiverse.cxf.annotation.CXFClient;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @Path("/my-rest")
-public class MyRestEasyResource {
+public class MyRestResource {
 
     @Inject
     @CXFClient("hello")

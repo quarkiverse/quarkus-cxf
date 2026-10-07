@@ -1,85 +1,60 @@
 [[rest-and-soap-endpoints]]
-= REST and SOAP Endpoints
+= SOAP and REST endpoints in the same application
 
-Sometimes a REST endpoint may be needed in the same project where the Quarkus CXF Extension is used.
-The REST endpoint path must be different from the SOAP endpoint path (in order to avoid request
-forwarding conflicts between both protocols).
+Sometimes SOAP and and other HTTP endpoints, such as REST endpoints, may have to co-exist in the same application.
+Then the paths of SOAP endpoints must be different from the other HTTP endpoints
+in order to avoid request handling conflicts.
 
-For example, if a WeatherWebService interface is declared in a WSDL, you can
-begin by creating the `org.acme.cxf.WeatherWebServiceImpl` class as follows:
+Let us offer some practical tips how to avoid such conflicts.
 
-[source,java]
-----
-package org.acme.cxf;
+== `quarkus.cxf.path`
 
-import ...
+First, there is `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-path[quarkus.cxf.path]`,
+the default base path for all CXF service endpoints.
+Its default value is `/services` and you can override it in your `application.properties`:
 
-@Slf4j
-@WebService(endpointInterface = "org.acme.cxf.WeatherWebService")
-public class WeatherWebServiceImpl implements WeatherWebService {
-
-    @Inject
-    BackEndWeatherService backEndWeatherService;
-
-    private Map<String, DailyTemperature> dailyTempByZipCode = Collections.synchronizedMap(new LinkedHashMap<>());
-
-    public WeatherWebServiceImpl() {
-        this.dailyTempByZipCode.addAll(
-                this.backEndWeatherService.getDailyForecast(Instant.now()));
-    }
-
-    @Override
-    public DailyTemperature estimationTemperatures(String zipCode) {
-        log.info("Daily estimation temperatures forecast called with '{}' zip code paramter", zipCode);
-        return this.dailyTempByZipCode.get(zipCode);
-    }
-}
-----
-
-After that, you would need to specify the root context for your CXF web services, as indicated
-in the xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-path[configuration documentation] to split the REST (with RESTEasy for example)
-and SOAP routes based on their root context paths.
-
-CXF's SOAP properties:
+.application.properties
 [source,properties]
 ----
 quarkus.cxf.path=/soap
-quarkus.cxf.endpoint."/weather".implementor=org.acme.cxf.WeatherWebServiceImpl
 ----
 
-Now, imagine the following RESTEasy endpoint:
+With the above in place, a Hello service having
 
-[source,java]
-----
-package org.acme.reasteasy;
-
-import ...
-
-@Slf4j
-@Path("/healthcheck")
-public class HealthCheckResource {
-
-    @Inject
-    BackEndWeatherService backEndWeatherService;
-
-    @GET
-    public Response doHealthCheck() {
-        if(this.backEndWeatherService.isAvailable()) {
-            return Response.ok().build();
-        } else {
-            return Response.status(Response.Status.SERVICE_UNAVAILABLE);
-        }
-    }
-}
-----
-
-You can separate your REST endpoint by configuring the REASTEasy path:
+.application.properties
 [source,properties]
 ----
-quarkus.resteasy.path=/rest
+quarkus.cxf.endpoint."/hello".implementor=org.acme.cxf.HelloServiceImpl
 ----
 
-You should now be able to send requests to both your REST and SOAP endpoints deployed within a single project, at:
+will be accessible on http://localhost:8080/soap/hello[http://localhost:8080/soap/hello].
 
-* http://localhost:8080/rest/healthcheck for REST
-* http://localhost:8080/soap/weather for SOAP
+Given the above, you should take care that your other HTTP endpoints, including REST endpoints,
+do not attempt to handle paths starting with `/soap`.
+
+Do one or more of the following:
+
+* Set `quarkus.rest.path` (if you use Quarkus REST)
+  or `quarkus.resteasy.path` (if you use Quarkus RESTEasy Classic)
++
+[source,properties]
+----
+# For Quarkus REST
+quarkus.rest.path = /rest
+# Or for RESTEasy Classic
+# quarkus.resteasy.path = /rest
+----
++
+* If you cannot set the above, then
+** Inspect `@jakarta.ws.rs.Path` annotations on your REST resource classes and make sure they do not start with your
+   value of `quarkus.cxf.path`.
+** If you have REST resources without class-level `@jakarta.ws.rs.Path` annotation,
+   then you also need to check `@jakarta.ws.rs.Path` annotations on their methods.
+   Make sure that their values not only do not start with a literal matching your value of `quarkus.cxf.path`,
+   but also that they do not start with a placeholder (like `/{id}`) or regex `/{id: \w+}`
+   that might clash with your value of `quarkus.cxf.path` too.
+* If you use Quarkus Reactive Routes
+** Make sure your `@io.quarkus.vertx.web.Route` and `@io.quarkus.vertx.web.RouteBase` annotations do not clash with your value of `quarkus.cxf.path`.
+** Make sure your programmatic routes registered via `@Observes io.vertx.mutiny.ext.web.Router` or an injected
+   `Router` do not conflict with your value of `quarkus.cxf.path`. Check your calls of `Router.route("/my-path")`
+   and your calls of HTTP verb methods of `Router`, such as `Router.get("/my-path")`.

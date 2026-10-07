@@ -28,6 +28,7 @@ asciidoc:
     link-quarkus-docs-base: https://quarkus.io/guides
     link-quarkus-docs-prerequisites: https://quarkus.io/guides/getting-started#prerequisites # Keep in sync with link-quarkus-docs-base
     link-quarkus-docs-building-native-image: https://quarkus.io/guides/building-native-image # Keep in sync with link-quarkus-docs-base
+    link-quarkus-docs-quarkus-rest: https://quarkus.io/guides/rest # Keep in sync with link-quarkus-docs-base
     link-boms-maven-repo-base: https://repo1.maven.org/maven2
 
     quarkus-platform-groupId: io.quarkus.platform # Keep in sync with quarkus-platform-groupId-path
