@@ -38,7 +38,7 @@ public interface CxfConfig {
      *
      * If you invoke your WS client from within a HTTP handler, you can leave this option unspecified and rather set it
      * dynamically on the request context of your WS client using the `org.apache.cxf.ws.addressing.decoupled.endpoint.base`
-     * key. Here is an example how to do that from a RESTeasy handler method:
+     * key. Here is an example how to do that from a REST handler method:
      *
      * [source,java]
      * ----
@@ -55,7 +55,7 @@ public interface CxfConfig {
      * import org.eclipse.microprofile.config.inject.ConfigProperty;
      *
      * &#64;Path("/my-rest")
-     * public class MyRestEasyResource {
+     * public class MyRestResource {
      *
      *     &#64;Inject
      *     &#64;CXFClient("hello")

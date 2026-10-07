@@ -72,11 +72,11 @@ contains the `native` profile needed for building the native image:
 </profile>
 ----
 
-Further, as mentioned in the xref:user-guide/create-project.adoc[] section, you need the GraalVM `native-image` tool.
+Further, as mentioned in the xref:user-guide/create-project.adoc[Create a new project] section, you need the GraalVM `native-image` tool.
 
 
 You should either have it installed locally and have `GRAALVM_HOME` environment variable set properly,
-or -- if you only need to produce a Linux native executable -- you can use `docker`.
+or -- if you only need to produce a Linux native executable -- you can use Podman or Docker.
 
 .With local installation of GraalVM
 [source,shell]
@@ -97,7 +97,7 @@ You can do that by opening `quarkus-bom` imported in your `pom.xml` and searchin
 If you use Docker, Quarkus takes care for pulling the right version for you.
 ====
 
-.With `docker`
+.With Podman or Docker
 [source,shell]
 ----
 # Produce the native executable
