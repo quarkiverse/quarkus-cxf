@@ -31,7 +31,7 @@ This is to control the serialization and deserialization of the bean from and to
 JAXB is a reflection based serialization framework.
 When learning about GraalVM native images, one of the first things you typically hear is
 that you have to register classes, fields and methods for reflection at build time.
-With plain GraalVM you'd have to do this through `reflection-config.json` manually.
+With plain GraalVM you'd have to do this through `reachability-metadata.json` or `reflection-config.json` manually.
 Well, at least for the classes you have written yourself.
 Not so with Quarkus. `quarkus-jaxb` extension (which `quarkus-cxf` depends on)
 is able to scan your application's class path for classes annotated with JAXB annotations
