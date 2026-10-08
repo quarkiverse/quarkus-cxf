@@ -14,9 +14,9 @@ import io.opentelemetry.sdk.trace.data.SpanData;
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.runtime.StartupEvent;
 import io.quarkus.runtime.annotations.RegisterForReflection;
-import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import tools.jackson.databind.ObjectMapper;
 
 @ApplicationScoped
 @RegisterForReflection(classNames = { "io.opentelemetry.sdk.trace.data.SpanData" }, registerFullHierarchy = true)
@@ -30,6 +30,10 @@ public class OpenTelemetryRouter {
 
     @Inject
     InMemorySpanExporter exporter;
+
+    // quarkus-test-opentelemetry customizes this mapper to serialize span attributes as a flat map.
+    @Inject
+    ObjectMapper mapper;
 
     public void register(@Observes StartupEvent ev) {
         router.post("/opentelemetry/client/hello")
@@ -61,7 +65,7 @@ public class OpenTelemetryRouter {
 
             rc.response()
                     .putHeader("content-type", "application/json; charset=utf-8")
-                    .end(Json.encodePrettily(export));
+                    .end(mapper.writeValueAsString(export));
         });
     }
 
