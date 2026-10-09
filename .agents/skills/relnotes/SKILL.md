@@ -93,13 +93,15 @@ The format follows these conventions:
 
 - **Title**: `= {quarkus-cxf-project-name} <version> release notes` (add `LTS` suffix for LTS releases — versions in LTS streams like 3.8.x, 3.15.x, 3.20.x, 3.27.x, 3.33.x)
 - **Sections** (include only those that apply):
-  - `== Important dependency upgrades` — bullet list of upgraded dependencies. Each upgrade should contain:
+  - `== Important dependency upgrades` — bullet list of upgraded dependencies. Each upgrade has the following structure:
     - A link to release notes
       - Look into older release notes under `docs/modules/ROOT/pages/release-notes/` to figure out where the given 
         project publishes their release notes and try to find the release notes for the version we upgraded to.
-      - If needed you can also search on the internet for the specific dependency release 
-    - A link to changelog in, typically `https://github.com/<org>/<project>/compare/<old-version>+++...+++<new-version>`
+      - If needed, search on the internet for the specific dependency release 
+    - There must be a link to changelog in, typically `https://github.com/<org>/<project>/compare/<old-version>+++...+++<new-version>`
     - If there were security vulnerabilities fixed in the given dependency, list them along with links to the CVE database.
+       - For CXF, for each CVE, identify the CXF artifact where the CVE was fixed; 
+         Keep only CVEs whose artifacts are direct or transitive dependecies of the current project.
   - `== Enhancements` — for new features or enhancements, each as a `===` subsection. Link GitHub issues in the heading like `=== https://github.com/quarkiverse/quarkus-cxf/issues/<issue-number>[#issue-number] <issue-title>`
   - `== Bugfixes` — bug fixes, each as a `===` subsection with issue links
   - `== Deprecations` — deprecated features
@@ -124,13 +126,16 @@ The format follows these conventions:
 
 - Use `{quarkus-cxf-project-name}` attribute instead of writing "Quarkus CXF" literally
 - When describing behavior changes, use the pattern: "Before {quarkus-cxf-project-name} <version>, ... Since {quarkus-cxf-project-name} <version>, ..."
-- Link configuration options using xref syntax: `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-...[quarkus.cxf....]`
+  - If the change was backported to one or more LTS branches (such as 3.40 or 3.33), 
+    name also all LTS releases containing that change. 
+  - If the currently written release notes are about an LTS release, then also name the
+    latest release from the `main` branch containing that change.
+- Always link configuration options using xref syntax with monospace formatting: `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-...[quarkus.cxf....]`
 - Credit contributors with `Special thanks to https://github.com/<user>[@<user>]`
 
 ### 5. Write the release notes file
 
 Write the file to `docs/modules/ROOT/pages/release-notes/<version>.adoc`.
-Do not ask the user whether the file can be created or updated, just create and/or update the file however you need.
 
 ### 6. Update nav.adoc
 
