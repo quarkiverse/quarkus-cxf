@@ -41,6 +41,7 @@ Since {quarkus-cxf-project-name} 3.40.3 and 3.33.15, the defaults are 5,000,000 
 Applications processing larger inputs may need to adjust these limits.
 See https://cxf.apache.org/security-advisories.data/CVE-2026-108039.txt[CVE-2026-108039]
 and https://cxf.apache.org/security-advisories.data/CVE-2026-78384.txt[CVE-2026-78384] for the corresponding CXF system properties.
+For native mode, those properties have to be set at build time.
 
 == Full changelog
 
