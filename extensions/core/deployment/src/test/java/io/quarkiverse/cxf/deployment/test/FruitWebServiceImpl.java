@@ -23,8 +23,9 @@ public class FruitWebServiceImpl implements FruitWebService {
     }
 
     @Override
-    public void add(@WebParam(name = "fruit") Fruit fruit) {
+    public Set<Fruit> add(@WebParam(name = "fruit") Fruit fruit) {
         fruits.add(fruit);
+        return fruits;
     }
 
     @Override
