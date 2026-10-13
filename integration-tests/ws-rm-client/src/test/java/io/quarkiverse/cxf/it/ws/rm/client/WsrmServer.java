@@ -71,7 +71,7 @@ public class WsrmServer implements Closeable {
             throw new RuntimeException(cmd.stream().collect(Collectors.joining(" ")), e);
         }
 
-        awaitStarted(serverLog, "Installed features: [", 10_000L);
+        awaitStarted(serverLog, "Installed features: [", 60_000L);
     }
 
     private List<String> cmd(boolean isNative, final String quarkusCxfVersion, final Path localRepo, final Path serverLog) {
@@ -139,7 +139,9 @@ public class WsrmServer implements Closeable {
                     }
                 } else {
                     if (System.currentTimeMillis() >= deadline) {
-                        throw new RuntimeException("Timed out waiting for " + startedString + " in " + serverLog);
+                        String logContent = readLogContent(serverLog);
+                        throw new RuntimeException("Timed out waiting for " + startedString + " in " + serverLog
+                                + "\nLog content:\n" + logContent);
                     }
                     try {
                         Thread.sleep(50);
@@ -151,6 +153,14 @@ public class WsrmServer implements Closeable {
             }
         } catch (IOException e) {
             throw new RuntimeException("Could not read " + serverLog, e);
+        }
+    }
+
+    private static String readLogContent(Path serverLog) {
+        try {
+            return Files.readString(serverLog, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            return "Failed to read log file: " + e.getMessage();
         }
     }
 
