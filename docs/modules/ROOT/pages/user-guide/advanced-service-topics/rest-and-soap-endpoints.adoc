@@ -51,7 +51,7 @@ quarkus.rest.path = /rest
 ** If you have REST resources without class-level `@jakarta.ws.rs.Path` annotation,
    then you also need to check `@jakarta.ws.rs.Path` annotations on their methods.
    Make sure that their values not only do not start with a literal matching your value of `quarkus.cxf.path`,
-   but also that they do not start with a placeholder (like `/{id}`) or regex `/{id: \w+}`
+   but also that they do not start with a placeholder (like `/\{id}`) or regex `/{id: \w+}`
    that might clash with your value of `quarkus.cxf.path` too.
 * If you use Quarkus Reactive Routes
 ** Make sure your `@io.quarkus.vertx.web.Route` and `@io.quarkus.vertx.web.RouteBase` annotations do not clash with your value of `quarkus.cxf.path`.
