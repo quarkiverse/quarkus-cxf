@@ -65,7 +65,7 @@ public class DevModeTest {
             throw new UncheckedIOException("Could not create " + tempProject.getParent(), e);
         }
 
-        final CommandSpec mvn = Maven.fromMvnw(Path.of(".").toAbsolutePath().normalize()).installIfNeeded().mvn();
+        final CommandSpec mvn = getOrInstallMaven();
         mvn
                 .args(args(activeProfiles, settingsPath, userProperties,
                         quarkusPluginGroupId + ":quarkus-maven-plugin:" + quarkusPluginVersion + ":create",
@@ -289,6 +289,59 @@ public class DevModeTest {
 
     static String relJavaFile(Class<? extends Object> cl) {
         return cl.getName().replace('.', '/') + ".java";
+    }
+
+    /**
+     * Get or install Maven. Prefers system Maven if available to avoid downloading Maven wrapper in CI
+     * (which can fail with HTTP 429 rate limiting).
+     *
+     * @return CommandSpec for Maven execution
+     */
+    static CommandSpec getOrInstallMaven() {
+        // Try to find system Maven first
+        // On Windows, Maven executable is mvn.cmd, on Unix-like systems it's mvn
+        final String mvnCommand = System.getProperty("os.name").toLowerCase().contains("win") ? "mvn.cmd" : "mvn";
+
+        try {
+            ProcessBuilder pb = new ProcessBuilder(mvnCommand, "--version");
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+            int exitCode = process.waitFor();
+
+            if (exitCode == 0) {
+                String version = null;
+                String mavenHome = null;
+
+                try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        if (line.startsWith("Apache Maven") && version == null) {
+                            // Extract version from "Apache Maven 3.9.16 (abc123)"
+                            String[] parts = line.split(" ");
+                            if (parts.length >= 3) {
+                                version = parts[2];
+                            }
+                        } else if (line.startsWith("Maven home:")) {
+                            mavenHome = line.substring("Maven home:".length()).trim();
+                        }
+                    }
+                }
+
+                if (version != null && mavenHome != null) {
+                    log.info("Found system Maven " + version + " at " + mavenHome
+                            + ", using it to avoid downloading Maven wrapper");
+                    // installIfNeeded() will use isInstalled() to check if Maven exists and return InstalledMaven
+                    return Maven.version(version).home(Path.of(mavenHome)).installIfNeeded().mvn();
+                }
+            }
+        } catch (Exception e) {
+            log.info("System Maven not found or not accessible: " + e.getMessage() + ", falling back to Maven wrapper");
+        }
+
+        // Fallback to Maven wrapper if system Maven is not available
+        log.info("Using Maven wrapper (will download if needed)");
+        return Maven.fromMvnw(Path.of(".").toAbsolutePath().normalize()).installIfNeeded().mvn();
     }
 
 }
