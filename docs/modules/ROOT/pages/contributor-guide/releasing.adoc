@@ -21,7 +21,10 @@ After that, you need to do the following:
 
 * Create a pull request from the above branch
 * Merge it (without waiting for the CI jobs to pass)
-* Watch the associated https://github.com/quarkiverse/quarkus-cxf/actions/workflows/release.yml[Quarkiverse Release] job
+* Watch the associated
+  https://github.com/quarkiverse/quarkus-cxf/actions/workflows/release-prepare.yml[Quarkiverse Prepare Release]
+  and https://github.com/quarkiverse/quarkus-cxf/actions/workflows/release-perform.yml[Quarkiverse Perform Release]
+  jobs.
 
 == Write release notes
 
