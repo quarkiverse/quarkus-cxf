@@ -87,10 +87,13 @@ public class CxfMutinyUtils {
                             .workerDispatchTimeout();
                     final Vertx vertx = container.instance(Vertx.class).get();
 
-                    final CancelTimer cancelTimer;
+                    final AtomicBoolean dispatchCompleted;
+                    final long timerId;
                     if (workerDispatchTimeout > 0) {
-                        final long timerId = vertx.setTimer(workerDispatchTimeout, id -> {
-                            boolean shouldTimeout = !terminated.getAndSet(true);
+                        dispatchCompleted = new AtomicBoolean();
+                        timerId = vertx.setTimer(workerDispatchTimeout, id -> {
+                            boolean shouldTimeout = dispatchCompleted.compareAndSet(false, true)
+                                    && !terminated.getAndSet(true);
                             log.debugf("Timer %d will timeout: %s", (Object) id, shouldTimeout);
                             if (shouldTimeout) {
                                 downstream.onFailure(
@@ -98,14 +101,25 @@ public class CxfMutinyUtils {
                             }
                         });
                         log.debugf("Created timer %d with timeout %d", timerId, workerDispatchTimeout);
-                        cancelTimer = new CancelTimer(vertx, timerId);
                     } else {
-                        cancelTimer = null;
+                        dispatchCompleted = null;
+                        timerId = -1;
                     }
 
                     vertx.executeBlocking(() -> {
+                        if (dispatchCompleted != null) {
+                            /* The timeout covers waiting for a worker, not waiting for the SOAP response. */
+                            vertx.cancelTimer(timerId);
+                            final boolean alive = dispatchCompleted.compareAndSet(false, true);
+                            if (log.isDebugEnabled()) {
+                                log.debugf("Scheduled on a worker thread for timer %d: %s", timerId, alive ? "alive" : "dead");
+                            }
+                            if (!alive) {
+                                return null;
+                            }
+                        }
                         if (!terminated.get()) {
-                            subscribeIntenal(downstream, terminated, cancelTimer);
+                            subscribeInternal(downstream, terminated);
                         }
                         return null;
                     }).onFailure(e -> {
@@ -117,21 +131,15 @@ public class CxfMutinyUtils {
                     /*
                      * We are not on Vert.x event loop so we may call subscriptionConsumer.accept() as is.
                      */
-                    subscribeIntenal(downstream, terminated, null);
+                    subscribeInternal(downstream, terminated);
                 }
             }
         }
 
-        private void subscribeIntenal(UniSubscriber<? super T> downstream, AtomicBoolean terminated, CancelTimer cancelTimer) {
+        private void subscribeInternal(UniSubscriber<? super T> downstream, AtomicBoolean terminated) {
             try {
                 subscriptionConsumer.accept(response -> {
-                    if (cancelTimer != null) {
-                        cancelTimer.run();
-                    }
                     boolean alive = !terminated.getAndSet(true);
-                    if (log.isDebugEnabled()) {
-                        log.debugf("Scheduled on a worker thread for timer %s: %s", cancelTimer, alive ? "alive" : "dead");
-                    }
                     if (alive) {
                         try {
                             downstream.onItem(mapper.apply(response.get(), response.getContext()));
@@ -150,21 +158,6 @@ public class CxfMutinyUtils {
                     downstream.onFailure(e);
                 }
             }
-        }
-    }
-
-    private record CancelTimer(Vertx vertx, long timerId) implements Runnable {
-
-        @Override
-        public void run() {
-            if (timerId >= 0) {
-                vertx.cancelTimer(timerId);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(timerId);
         }
     }
 
