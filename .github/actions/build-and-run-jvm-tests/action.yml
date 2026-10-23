@@ -5,6 +5,13 @@ description: |
      * java must be installed'
 
 inputs:
+  run-jvm-tests:
+    description: |
+      If false, the initial Maven build will be run with -DskipTests 
+      and the second build with QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY will be skipped;
+      otherwise the initial Maven build will be run without -DskipTests
+      and the second build with QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY will be performed;
+    default: 'true'
   run-native-tests:
     description: |
       If true, the native tests will be run in addition to JVM tests; otherwise only JVM tests will be run
@@ -60,7 +67,10 @@ runs:
         GITHUB_TOKEN: ${{ inputs.token }}
       run: |
         mkdir -p ~/build-data \
-          && ./mvnw -B install -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }} 2>&1 \
+          && ./mvnw -B install -fae -ntp \
+                ${{ inputs.run-jvm-tests == 'false' && '-DskipTests' || '' }} \
+                ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }} \
+                2>&1 \
             | tee ~/build-data/build.log
 
     - name: Set exit status after mvn install
@@ -82,13 +92,16 @@ runs:
 
     # Same as the previous but only JVM tests and different default ConduitFactory
     - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn clean install
+      if: inputs.run-jvm-tests == 'true'
       shell: bash
       env: 
         GITHUB_TOKEN: ${{ inputs.token }}
         QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
       run: |
         mkdir -p ~/build-data \
-          && ./mvnw -B clean install -pl '!docs' -fae -ntp ${{ inputs.run-native-tests == 'true' && '-Pnative -Dquarkus.native.container-build' || '' }} 2>&1 \
+          && ./mvnw -B clean install -pl '!docs' -fae -ntp \
+                ${{ inputs.run-jvm-tests == 'false' && '-DskipTests' || '' }} \
+                2>&1 \
             | tee ~/build-data/build.log
 
     - name: Set exit status after QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn clean install
