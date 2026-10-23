@@ -21,7 +21,7 @@ import io.quarkiverse.cxf.test.internal.VertxTestUtil;
 import io.quarkiverse.cxf.vertx.http.client.TempStore.InitializedTempStore;
 import io.quarkiverse.cxf.vertx.http.client.TempStore.InitializedTempStore.TempPath;
 import io.quarkus.logging.Log;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
@@ -34,7 +34,7 @@ public class TempStoreTest {
     private static final int GC_DELAY = 360000;
 
     @RegisterExtension
-    static final QuarkusUnitTest TEST = new QuarkusUnitTest()
+    static final QuarkusExtensionTest TEST = new QuarkusExtensionTest()
             .overrideConfigKey("quarkus.log.category.\"" + TempStore.class.getName() + "\".level", "DEBUG");
 
     @Inject
