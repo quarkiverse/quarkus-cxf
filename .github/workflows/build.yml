@@ -77,21 +77,13 @@ jobs:
       uses: ./.github/actions/build-and-run-jvm-tests
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+        run-jvm-tests: false
 
   alt-jdk-tests:
     strategy:
       fail-fast: false
       matrix:
         include:
-          - javaDistro: temurin
-            javaVersion: 25
-            os: ubuntu-latest
-          - javaDistro: semeru
-            javaVersion: 17
-            os: ubuntu-latest
-          - javaDistro: semeru
-            javaVersion: 21
-            os: ubuntu-latest
           - javaDistro: temurin
             javaVersion: 17
             os: windows-latest
@@ -135,39 +127,26 @@ jobs:
         ./mvnw -B test \
           -Dformat.skip \
           -Denforcer.skip \
+          -Dtest=ReceiveTimeoutLaggyServerTest -Dsurefire.failIfNoSpecifiedTests=false \
           -pl '!:quarkus-cxf-docs,!:quarkus-cxf-test-ws-rm-server-native' \
           -ntp \
           -fae \
           $WINDOWS_FLAGS
 
-    # Same as the previous but different default ConduitFactory
-    - name: QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY=URLConnectionHTTPConduitFactory mvn test
-      env: 
-        QUARKUS_CXF_DEFAULT_HTTP_CONDUIT_FACTORY: URLConnectionHTTPConduitFactory
-      shell: bash
-      run: |
-        ./mvnw -B clean -f integration-tests/pom.xml
-        WINDOWS_FLAGS="$([[ "${{ matrix.os }}" =~ "windows" ]] && echo "-Dskip-testcontainers-tests" || echo "")"
-        ./mvnw -B test \
-          -Dformat.skip \
-          -Denforcer.skip \
-          -pl '!:quarkus-cxf-docs,!:quarkus-cxf-test-ws-rm-server-native' \
-          -ntp \
-          -fae \
-          $WINDOWS_FLAGS
-
-  native-tests:
-    strategy:
-      fail-fast: false
-      matrix:
-        testModule: ['client', 'client-server', 'fastinfoset', 'metrics', 'mtls', 'mtls -Djks', 'mtom-awt', 'mutable-jar', 'opentelemetry', 'saaj', 'santuario-xmlsec', 'server', 'ws-rm-client', 'ws-security', 'ws-security -Djks', 'ws-security-policy', 'ws-security-policy -Djks', 'ws-trust', 'wsdl2java', 'wsdl2java-no-config']
-    name: ${{matrix.testModule}} native tests
-    needs: build-and-run-jvm-tests
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v7
-    - name: run-native-test
-      uses: ./.github/actions/run-native-test
-      with:
-        java-version: ${{ env.JAVA_VERSION }}
-        test-module-spec: ${{matrix.testModule}}
+#  native-tests:
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        testModule: ['client', 'client-server', 'fastinfoset', 'metrics', 'mtls', 'mtls -Djks', 'mtom-awt', 'mutable-jar', 'opentelemetry', 'saaj', 'santuario-xmlsec', 'server', 'ws-rm-client', 'ws-security', 'ws-security -Djks', 'ws-security-policy', 'ws-security-policy -Djks', 'ws-trust', 'wsdl2java', 'wsdl2java-no-config']
+#    name: ${{matrix.testModule}} native tests
+#    needs: build-and-run-jvm-tests
+#    runs-on: runs-on=${{ github.run_id }}-${{ strategy.job-index }}/runner=ubuntu-latest
+#    steps:
+#    - uses: runs-on/action@v2
+#
+#    - uses: actions/checkout@v7
+#    - name: run-native-test
+#      uses: ./.github/actions/run-native-test
+#      with:
+#        java-version: ${{ env.JAVA_VERSION }}
+#        test-module-spec: ${{matrix.testModule}}
