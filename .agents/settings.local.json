@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(git log:*)",
-      "Bash(git fetch:*)",
-      "Bash(gh pr *)"
-    ]
-  }
-}
