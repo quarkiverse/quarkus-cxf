@@ -53,6 +53,14 @@ mvnd -f path/to/pom.xml clean verify -Pnative -Dquarkus.native.container-build -
 
 The sources of Antora documentation site of Quarkus CXF are available in `docs/modules/ROOT` directory.
 
+### Semantic line breaks
+
+When writing or editing AsciiDoc (.adoc files) or MarkDown (.md files), 
+you must start a new line in paragraphs, lists, and tables at the end of each sentence
+so that lines do not exceed 120 characters.
+When needed, split sentences themselves at natural breaks between clauses.
+Lines longer than 120 characters are allowed if there are links or other complex formatting.
+
 ## Source code of Maven dependencies
 
 1. Check whether `-sources.jar` for the given Maven dependency identified by `groupId`, `artifactId` and `version` was downloaded already:
