@@ -45,3 +45,13 @@ A build with integration tests in both the JVM mode and the native mode:
 ----
 $ mvn clean install -Pnative
 ----
+
+A build on a FIPS-enabled machine (limits the TLS named groups to FIPS-approved ones):
+
+[source,shell]
+----
+$ export MAVEN_OPTS="$MAVEN_OPTS -Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1,ffdhe2048,ffdhe3072"
+$ mvn clean install -Dfips
+----
+
+`MAVEN_OPTS` covers Maven itself (artifact downloads), `-Dfips` covers the test JVMs and the native image builder.

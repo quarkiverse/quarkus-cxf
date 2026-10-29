@@ -1,6 +1,8 @@
 package io.quarkiverse.cxf.it.security.policy;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +52,11 @@ public class PolicyTestUtils {
                 "client-truststore-password"));
     }
 
+    /**
+     * @return {@code true} if the machine running the tests is in FIPS mode, regardless of the JDK used
+     */
     public static boolean isFipsLocalEnabled() throws IOException {
-        return java.security.Security.getProvider("SunPKCS11-NSS-FIPS") != null;
+        final Path fipsEnabled = Path.of("/proc/sys/crypto/fips_enabled");
+        return Files.exists(fipsEnabled) && Files.readString(fipsEnabled).trim().equals("1");
     }
 }
