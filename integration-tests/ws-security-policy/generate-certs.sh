@@ -48,6 +48,7 @@ done
 
 
 # Truststores
+rm -f "$destinationDir/client-truststore.pkcs12"
 "$keytool" -import -file "$workDir/localhost.crt" -alias localhost -noprompt -keystore "$destinationDir/client-truststore.pkcs12" -storepass "client-truststore-password"
 "$keytool" -import -file "$workDir/cxfca.crt"     -alias cxfca     -noprompt -keystore "$destinationDir/client-truststore.pkcs12" -storepass "client-truststore-password"
 
