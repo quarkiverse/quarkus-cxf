@@ -6,7 +6,9 @@
 ====
 The sample code snippets shown in this section come from the
 {link-quarkus-cxf-source-tree-base}/integration-tests/client-server[Client and server integration test]
-in the source tree of {quarkus-cxf-project-name}. You may want to use it as a runnable example.
+and {link-quarkus-cxf-source-tree-base}/integration-tests/oidc[OIDC integration test]
+in the source tree of {quarkus-cxf-project-name}.
+You may want to use them as runnable examples.
 ====
 
 [[client-http-basic-authentication]]
@@ -52,6 +54,8 @@ especially when it comes to
 * {link-quarkus-docs-base}/security-identity-providers[Identity providers]
 * {link-quarkus-docs-base}/security-authorize-web-endpoints-reference[Role-based access control (RBAC)]
 
+=== HTTP basic authentication and role-based access control
+
 There is a basic example in our {link-quarkus-cxf-source-tree-base}/integration-tests/client-server[Client and server integration test].
 Its key parts are:
 
@@ -71,3 +75,38 @@ include::example$client-server/application.properties[tag=users-and-roles]
 ----
 include::example$client-server/BasicAuthHelloServiceImpl.java[]
 ----
+
+=== Securing services with OpenID Connect (OIDC)
+
+Add the `io.quarkus:quarkus-oidc` dependency to authenticate SOAP requests using OpenID Connect (OIDC) bearer tokens.
+The {link-quarkus-cxf-source-tree-base}/integration-tests/oidc[OIDC integration test]
+configures a service application and publishes a SOAP endpoint at `/services/hello`:
+
+.application.properties
+[source,properties]
+----
+include::example$oidc/application.properties[]
+----
+
+The example uses Keycloak Dev Services, which requires Docker or Podman.
+It creates `alice` with the `italian` role and `bob` with the `user` role.
+
+For a production service, set `quarkus.oidc.auth-server-url` to your provider's realm URL
+and configure your own client ID and credentials.
+
+Apply security annotations to the service implementation methods:
+
+.HelloServiceImpl.java
+[source,java]
+----
+include::example$oidc/HelloServiceImpl.java[]
+----
+
+* `hello`: no security annotation; allows anonymous access in this configuration.
+* `hallo`: `@PermitAll` allows anonymous access.
+* `ciao`: `@RolesAllowed("italian")` requires an authenticated user with the `italian` role.
+* `hoi`: `@Authenticated` requires authentication, regardless of the user's roles.
+
+Clients send access tokens in the HTTP `Authorization: Bearer <token>` header.
+Calls requiring authentication return HTTP 401 when no valid token is supplied;
+authenticated callers lacking the required role receive HTTP 403.
