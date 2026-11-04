@@ -507,12 +507,16 @@
                  NSS FIPS has no ML-KEM, so the TLS handshake fails if the hybrid X25519MLKEM768 group is offered -->
             <id>fips</id>
             <activation>
+                <!-- JDK 25+ only: older JDKs don't offer X25519MLKEM768, their FIPS default is already the list below -->
+                <jdk>[25,)</jdk>
                 <property>
                     <name>fips</name>
                 </property>
             </activation>
             <properties>
-                <!-- The groups a Red Hat JDK enables on a FIPS machine, without the hybrid ML-KEM ones, as printed there by
+                <!-- Only a Red Hat JDK 25+ in FIPS mode offers the hybrid X25519MLKEM768 group first by default,
+                     which the SunPKCS11 FIPS provider cannot compute. JDK 21 defaults to exactly this list already,
+                     as printed on a FIPS machine by
                      echo 'String.join(",", javax.net.ssl.SSLContext.getDefault().getDefaultSSLParameters().getNamedGroups())' | jshell -q -->
                 <fips.tls.named-groups>secp256r1,secp384r1,secp521r1,ffdhe2048,ffdhe3072,ffdhe4096,ffdhe6144,ffdhe8192</fips.tls.named-groups>
                 <!-- The native image builder initializes JSSE classes reading jdk.tls.namedGroups, the same groups with escaped commas -->
