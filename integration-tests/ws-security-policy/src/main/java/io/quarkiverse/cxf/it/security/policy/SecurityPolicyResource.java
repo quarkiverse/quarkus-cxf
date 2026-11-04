@@ -2,6 +2,7 @@ package io.quarkiverse.cxf.it.security.policy;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
@@ -107,8 +108,15 @@ public class SecurityPolicyResource {
     @Path("/isfips")
     @Produces(MediaType.TEXT_PLAIN)
     public boolean isfips() {
-        return java.security.Security.getProvider("SunPKCS11-NSS-FIPS") != null;
-
+        /*
+         * Check the configuration instead of loading the provider:
+         * the provider fails to load if its PKCS#11 library is missing, e.g. in native mode.
+         * A Red Hat JDK in FIPS mode sets security.provider.1 to SunPKCS11 with
+         * e.g. redhat/SunPKCS11-FIPS.cfg (JDK 25) or nss.fips.cfg (older versions).
+         */
+        final String provider = java.security.Security.getProperty("security.provider.1");
+        return provider != null && provider.startsWith("SunPKCS11")
+                && provider.toLowerCase(Locale.ROOT).contains("fips");
     }
 
     @POST
