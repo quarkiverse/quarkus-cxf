@@ -98,6 +98,8 @@ public class KeepAliveTimeoutTest {
                         .overrideConfigKey(k + ".service-interface", EchoHeadersService.class.getName())
                         /* This scenario works only with vert.x client */
                         .overrideConfigKey(k + ".http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
+                        /* Make connection reuse assertions independent of pool selection. */
+                        .overrideConfigKey(k + ".vertx.connection-pool.http1-max-size", "1")
                         .overrideConfigKey(k + ".connection", connectionValue)
                         .overrideConfigKey(k + ".version", plainVersion(v))
                 // .overrideConfigKey(k + ".logging.enabled", "pretty")
@@ -113,6 +115,7 @@ public class KeepAliveTimeoutTest {
                     .overrideConfigKey(k + ".service-interface", EchoHeadersService.class.getName())
                     /* This scenario works only with vert.x client */
                     .overrideConfigKey(k + ".http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
+                    .overrideConfigKey(k + ".vertx.connection-pool.http1-max-size", "1")
                     .overrideConfigKey(k + ".connection", connectionValue)
                     .overrideConfigKey(k + ".vertx." + (v == HttpVersion.HTTP_2 ? "http2-" : "") + "keep-alive-timeout", "1")
                     .overrideConfigKey(k + ".version", plainVersion(v))
