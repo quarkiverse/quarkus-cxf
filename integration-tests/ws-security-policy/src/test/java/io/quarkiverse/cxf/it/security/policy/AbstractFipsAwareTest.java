@@ -16,7 +16,7 @@ public abstract class AbstractFipsAwareTest {
      * A FIPS application on a non-FIPS machine is allowed.
      */
     void assertFipsModeOnFipsMachine() throws IOException {
-        if (PolicyTestUtils.isFipsLocalEnabled() && !isFipsEnabled()) {
+        if (PolicyTestUtils.procSysCryptoFipsEnabled() && !isFipsEnabled()) {
             Assertions.fail("The machine is in FIPS mode, but the application is not."
                     + " Use a JDK in FIPS mode or, in native mode, a builder image with a JDK in FIPS mode.");
         }
