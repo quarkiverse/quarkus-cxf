@@ -16,7 +16,7 @@ public class EncryptSignPolicyTest extends AbstractFipsAwareTest {
 
     @Test
     void helloEncryptSign() throws IOException {
-        failFipsInNative();
+        assertFipsModeOnFipsMachine();
 
         ValidatableResponse response = RestAssured.given()
                 .config(PolicyTestUtils.restAssuredConfig())
