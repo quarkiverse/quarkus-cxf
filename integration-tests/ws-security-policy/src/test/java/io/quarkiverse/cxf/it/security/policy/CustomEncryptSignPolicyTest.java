@@ -16,7 +16,7 @@ public class CustomEncryptSignPolicyTest extends AbstractFipsAwareTest {
 
     @Test
     void helloDefaultCustomValues() throws IOException {
-        failFipsInNative();
+        assertFipsModeOnFipsMachine();
 
         RestAssured.given()
                 .config(PolicyTestUtils.restAssuredConfig())
@@ -29,7 +29,7 @@ public class CustomEncryptSignPolicyTest extends AbstractFipsAwareTest {
 
     @Test
     void helloCustomizedValuesCorrectly() throws IOException {
-        failFipsInNative();
+        assertFipsModeOnFipsMachine();
 
         ValidatableResponse response = RestAssured.given()
                 .config(PolicyTestUtils.restAssuredConfig())
@@ -48,7 +48,7 @@ public class CustomEncryptSignPolicyTest extends AbstractFipsAwareTest {
 
     @Test
     void helloCustomizedValuesWrong1() throws IOException {
-        failFipsInNative();
+        assertFipsModeOnFipsMachine();
         //client used default custom algorithm suite, but server is changed (server is same as in the test 'helloDefaultCustomValues')
         RestAssured.given()
                 .config(PolicyTestUtils.restAssuredConfig())
@@ -61,7 +61,7 @@ public class CustomEncryptSignPolicyTest extends AbstractFipsAwareTest {
 
     @Test
     void helloCustomizedValuesWrong2() throws IOException {
-        failFipsInNative();
+        assertFipsModeOnFipsMachine();
 
         String condition = isFipsEnabled() ? "unsupported key transport encryption algorithm"
                 : "An error was discovered processing the <wsse:Security> header";
