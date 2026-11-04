@@ -45,3 +45,42 @@ A build with integration tests in both the JVM mode and the native mode:
 ----
 $ mvn clean install -Pnative
 ----
+
+=== Build on a FIPS-enabled machine
+
+[WARNING]
+====
+Remove this section once OpenJDK on RHEL fixes the underlying problem - see https://github.com/quarkiverse/quarkus-cxf/issues/2397
+====
+
+[source,shell]
+----
+$ mvn clean install -Dfips
+----
+
+With JDK 25+, also limit the TLS named groups of the Maven JVM.
+In FIPS mode, Red Hat JDK 25 offers the hybrid `X25519MLKEM768` group first by default, and the SunPKCS11 FIPS provider cannot compute it.
+
+. Print the default named groups of your JDK:
++
+[source,shell]
+----
+$ echo 'String.join(",", javax.net.ssl.SSLContext.getDefault().getDefaultSSLParameters().getNamedGroups())' | jshell -q
+----
++
+On RHEL in FIPS mode with JDK 25, it prints something like:
++
+----
+X25519MLKEM768,secp256r1,secp384r1,secp521r1,ffdhe2048,ffdhe3072,ffdhe4096,ffdhe6144,ffdhe8192
+----
+
+. Remove `X25519MLKEM768` from the list and pass the rest to Maven:
++
+[source,shell]
+----
+$ export MAVEN_OPTS="$MAVEN_OPTS -Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1,ffdhe2048,ffdhe3072,ffdhe4096,ffdhe6144,ffdhe8192"
+$ mvn clean install -Dfips
+----
+
+`MAVEN_OPTS` covers Maven itself (artifact downloads). On JDK 25+, `-Dfips` covers the test JVMs and the native image builder.
+With JDK 21 the default list has no ML-KEM group, so `MAVEN_OPTS` needs no change.
