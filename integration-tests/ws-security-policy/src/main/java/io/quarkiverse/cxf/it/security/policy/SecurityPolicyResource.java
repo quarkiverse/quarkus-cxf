@@ -108,15 +108,12 @@ public class SecurityPolicyResource {
         /*
          * Check the configuration instead of loading the provider:
          * the provider fails to load if its PKCS#11 library is missing, e.g. in native mode.
-         * A Red Hat JDK in FIPS mode configures e.g. redhat/SunPKCS11-FIPS.cfg (JDK 25) or nss.fips.cfg (older versions).
+         * A Red Hat JDK in FIPS mode sets security.provider.1 to SunPKCS11 with
+         * e.g. redhat/SunPKCS11-FIPS.cfg (JDK 25) or nss.fips.cfg (older versions).
          */
-        String provider;
-        for (int i = 1; (provider = java.security.Security.getProperty("security.provider." + i)) != null; i++) {
-            if (provider.startsWith("SunPKCS11") && provider.toLowerCase(Locale.ROOT).contains("fips")) {
-                return true;
-            }
-        }
-        return false;
+        final String provider = java.security.Security.getProperty("security.provider.1");
+        return provider != null && provider.startsWith("SunPKCS11")
+                && provider.toLowerCase(Locale.ROOT).contains("fips");
     }
 
     @POST

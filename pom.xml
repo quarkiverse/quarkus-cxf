@@ -512,9 +512,11 @@
                 </property>
             </activation>
             <properties>
-                <fips.tls.named-groups>secp256r1,secp384r1,secp521r1,ffdhe2048,ffdhe3072</fips.tls.named-groups>
+                <!-- The groups a Red Hat JDK enables on a FIPS machine, without the hybrid ML-KEM ones, as printed there by
+                     echo 'String.join(",", javax.net.ssl.SSLContext.getDefault().getDefaultSSLParameters().getNamedGroups())' | jshell -q -->
+                <fips.tls.named-groups>secp256r1,secp384r1,secp521r1,ffdhe2048,ffdhe3072,ffdhe4096,ffdhe6144,ffdhe8192</fips.tls.named-groups>
                 <!-- The native image builder initializes JSSE classes reading jdk.tls.namedGroups, the same groups with escaped commas -->
-                <quarkus.native.additional-build-args-append>-J-Djdk.tls.namedGroups=secp256r1\,secp384r1\,secp521r1\,ffdhe2048\,ffdhe3072</quarkus.native.additional-build-args-append>
+                <quarkus.native.additional-build-args-append>-J-Djdk.tls.namedGroups=secp256r1\,secp384r1\,secp521r1\,ffdhe2048\,ffdhe3072\,ffdhe4096\,ffdhe6144\,ffdhe8192</quarkus.native.additional-build-args-append>
             </properties>
             <build>
                 <pluginManagement>

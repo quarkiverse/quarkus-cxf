@@ -55,7 +55,7 @@ public class PolicyTestUtils {
     /**
      * @return {@code true} if the machine running the tests is in FIPS mode, regardless of the JDK used
      */
-    public static boolean isFipsLocalEnabled() throws IOException {
+    public static boolean procSysCryptoFipsEnabled() throws IOException {
         final Path fipsEnabled = Path.of("/proc/sys/crypto/fips_enabled");
         return Files.exists(fipsEnabled) && Files.readString(fipsEnabled).trim().equals("1");
     }

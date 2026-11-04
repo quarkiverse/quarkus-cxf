@@ -50,7 +50,7 @@ A build on a FIPS-enabled machine (limits the TLS named groups to FIPS-approved 
 
 [source,shell]
 ----
-$ export MAVEN_OPTS="$MAVEN_OPTS -Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1,ffdhe2048,ffdhe3072"
+$ export MAVEN_OPTS="$MAVEN_OPTS -Djdk.tls.namedGroups=secp256r1,secp384r1,secp521r1,ffdhe2048,ffdhe3072,ffdhe4096,ffdhe6144,ffdhe8192"
 $ mvn clean install -Dfips
 ----
 
