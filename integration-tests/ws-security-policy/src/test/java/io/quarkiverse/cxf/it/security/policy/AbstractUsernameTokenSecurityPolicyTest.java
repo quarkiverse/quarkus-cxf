@@ -200,7 +200,7 @@ public abstract class AbstractUsernameTokenSecurityPolicyTest extends AbstractFi
     }
 
     void encryptSign(String endpoint) throws IOException {
-        failFipsInNative();
+        assertFipsModeOnFipsMachine();
 
         PolicyTestUtils.drainMessages("drainMessages", -1);
 
