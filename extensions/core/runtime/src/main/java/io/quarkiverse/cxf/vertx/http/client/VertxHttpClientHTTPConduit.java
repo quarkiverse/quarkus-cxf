@@ -705,8 +705,11 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 }
                                 /* No retransmit */
                                 /* Pass the body back to CXF */
-                                // log.trace("Staring pipe");
-                                response.pipeTo(sink)
+                                // log.trace("Starting pipe");
+                                response.pipe()
+                                        /* On failure, only enqueue the exception below: ending first would mask it as EOF. */
+                                        .endOnFailure(false)
+                                        .to(sink)
                                         .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
                                         .recover(e -> mode.timeoutSpec.resetRequestAndMapTimeoutException(
                                                 req,
