@@ -1,13 +1,13 @@
 package io.quarkiverse.cxf.deployment.test.client;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 import jakarta.inject.Inject;
 import jakarta.jws.WebService;
@@ -15,12 +15,11 @@ import jakarta.xml.ws.AsyncHandler;
 import jakarta.xml.ws.Response;
 
 import org.assertj.core.api.Assertions;
-import org.awaitility.Awaitility;
-import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.function.Executable;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkiverse.cxf.deployment.test.client.model.HelloResponse;
@@ -31,8 +30,6 @@ import io.quarkus.test.QuarkusUnitTest;
 import io.vertx.core.Vertx;
 
 public class WorkerDispatchTimeoutTest {
-    private static final Logger log = Logger.getLogger(WorkerDispatchTimeoutTest.class);
-
     private static final int MAX_THREADS = 4;
 
     private static final String DISPATCH_TIMEOUT = "100";
@@ -65,107 +62,96 @@ public class WorkerDispatchTimeoutTest {
     Vertx vertx;
 
     @Test
-    public void workerDispatchTimeout() throws InterruptedException {
+    public void workerDispatchTimeout() throws Throwable {
+        withWorkersBlocked(() -> {
+            final CompletableFuture<Response<HelloResponse>> callback = new CompletableFuture<>();
+            final Future<?> responseFuture = onEventLoop(() -> hello.helloAsync("World", callback::complete));
 
-        final Set<String> threadNames = new HashSet<>();
-        final List<Future<?>> futures = new ArrayList<>();
-
-        /* We want to see some requests to fail due to the worker thread pool exhaustion */
-        final AtomicReference<Exception> firstException = new AtomicReference<>();
-
-        int cnt = 0;
-        final int maxCnt = 200;
-        /* Submit more and more requests till some of them timeouts due to worker thread pool exhaustion */
-        while (cnt++ <= maxCnt && firstException.get() == null) {
-            final String currentCnt = String.valueOf(cnt - 1);
-            vertx.runOnContext(v -> {
-                if (firstException.get() == null) {
-                    Future<?> fut = hello.helloAsync(currentCnt, resp -> {
-                        firstException.updateAndGet(oldValue -> {
-                            if (oldValue != null) {
-                                return oldValue;
-                            }
-                            try {
-                                log.infof("Normal response for request %s: %s", currentCnt, resp.get().getReturn());
-                                return null;
-                            } catch (Exception e) {
-                                log.infof("Exception response for request %s: %s", currentCnt, e);
-                                return e;
-                            }
-                        });
-                    });
-                    synchronized (futures) {
-                        threadNames.add(Thread.currentThread().getName());
-                        futures.add(fut);
-                    }
-                }
-            });
-        }
-        log.infof("Sent %d requests", cnt);
-        Awaitility.waitAtMost(10, TimeUnit.SECONDS).until(() -> firstException.get() != null);
-
-        Assertions.assertThat(firstException.get())
-                .rootCause().isInstanceOf(RejectedExecutionException.class)
-                .message().contains("Unable to dispatch SOAP client call within " + DISPATCH_TIMEOUT
-                        + " ms on a worker thread due to worker thread pool exhaustion");
-
-        synchronized (futures) {
-            /* Make sure we always called the client on the event loop */
-            Assertions.assertThat(threadNames.iterator().next()).startsWith("vert.x-eventloop-thread-");
-            Assertions.assertThat(threadNames).hasSize(1);
-
-            /* Check the results received via futures */
-            Log.infof("Got %d futures", futures.size());
-
-            boolean futTimeoutExists = futures.stream()
-                    .filter(Future::isDone) // do not wait for uncompleted futures.
-                    // At least one we look for should be finished already
-                    .map(f -> {
-                        try {
-                            return ((HelloResponse) f.get()).getReturn();
-                        } catch (Exception e) {
-                            return e.getClass().getName() + ": " + e.getMessage();
-                        }
-                    })
-                    .filter(msg -> msg.contains(
-                            "Unable to dispatch SOAP client call within 100 ms on a worker thread due to worker thread pool exhaustion"))
-                    .findFirst().isPresent();
-            Log.infof("futTimeoutExists %s", futTimeoutExists);
-            Assertions.assertThat(futTimeoutExists).isTrue();
-        }
-
+            final Response<HelloResponse> response = callback.get(10, TimeUnit.SECONDS);
+            Assertions.assertThatThrownBy(response::get)
+                    .rootCause().isInstanceOf(RejectedExecutionException.class)
+                    .message().contains("Unable to dispatch SOAP client call within " + DISPATCH_TIMEOUT
+                            + " ms on a worker thread due to worker thread pool exhaustion");
+            Assertions.assertThatThrownBy(() -> responseFuture.get(10, TimeUnit.SECONDS))
+                    .rootCause().isInstanceOf(RejectedExecutionException.class)
+                    .message().contains("Unable to dispatch SOAP client call within " + DISPATCH_TIMEOUT
+                            + " ms on a worker thread due to worker thread pool exhaustion");
+        });
     }
 
     @Test
-    public void workerDispatchTimeoutCxfMutinyUtils() throws InterruptedException {
+    public void workerDispatchTimeoutCxfMutinyUtils() throws Throwable {
+        withWorkersBlocked(() -> {
+            final CompletableFuture<String> response = mutinyHello();
+            Assertions.assertThatThrownBy(() -> response.get(10, TimeUnit.SECONDS))
+                    .rootCause().isInstanceOf(RejectedExecutionException.class)
+                    .message().contains("Unable to dispatch SOAP client call within " + DISPATCH_TIMEOUT
+                            + " ms on a worker thread due to worker thread pool exhaustion");
+        });
+    }
 
-        /* We want to see some requests to fail due to the worker thread pool exhaustion */
-        final AtomicReference<Throwable> firstException = new AtomicReference<>();
+    @Test
+    public void slowResponseDoesNotTriggerWorkerDispatchTimeout() throws Exception {
+        final CompletableFuture<Response<HelloResponse>> callback = new CompletableFuture<>();
+        final Future<?> responseFuture = onEventLoop(() -> hello.helloAsync("World", callback::complete));
 
-        int cnt = 0;
-        final int maxCnt = 200;
-        /* Submit more and more requests till some of them timeouts due to worker thread pool exhaustion */
-        while (cnt++ <= maxCnt && firstException.get() == null) {
-            vertx.runOnContext(v -> {
-                if (firstException.get() == null) {
-                    CxfMutinyUtils
-                            .<HelloResponse> toUni(handler -> hello.helloAsync(DELAY, handler))
-                            .map(HelloResponse::getReturn)
-                            .subscribe()
-                            .with(
-                                    result -> {
-                                    },
-                                    e -> firstException.updateAndGet(oldValue -> oldValue != null ? oldValue : e));
-                }
-            });
+        Assertions.assertThat(callback.get(10, TimeUnit.SECONDS).get().getReturn())
+                .isEqualTo("Hello World from HelloServiceImpl");
+        responseFuture.get(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void slowResponseDoesNotTriggerWorkerDispatchTimeoutCxfMutinyUtils() throws Exception {
+        Assertions.assertThat(mutinyHello().get(10, TimeUnit.SECONDS))
+                .isEqualTo("Hello World from HelloServiceImpl");
+    }
+
+    private CompletableFuture<String> mutinyHello() throws Exception {
+        return onEventLoop(() -> CxfMutinyUtils
+                .<HelloResponse> toUni(handler -> hello.helloAsync("World", handler))
+                .map(HelloResponse::getReturn)
+                .subscribeAsCompletionStage().toCompletableFuture());
+    }
+
+    private <T> T onEventLoop(Supplier<T> action) throws Exception {
+        return CompletableFuture.supplyAsync(() -> {
+            Assertions.assertThat(Thread.currentThread().getName()).startsWith("vert.x-eventloop-thread-");
+            return action.get();
+        }, command -> vertx.runOnContext(v -> command.run())).get(10, TimeUnit.SECONDS);
+    }
+
+    private void withWorkersBlocked(Executable test) throws Throwable {
+        final CountDownLatch workersStarted = new CountDownLatch(MAX_THREADS);
+        final CountDownLatch releaseWorkers = new CountDownLatch(1);
+        final List<CompletableFuture<Void>> workers = new ArrayList<>();
+        try {
+            /*
+             * Occupy all Vert.x worker threads before calling the client
+             * by submitting a blocking task that waits for being unblocked by
+             * releaseWorkers.countDown() done below,
+             * after asserting the real SOAP client call's dispatch timeout.
+             *
+             * In the past, we were trying to simulate that condition by quickly sending a finite number of async SOAP requests.
+             * That worked only sometimes, because those could fill the Vert.x queue, while the workers were still initializing.
+             */
+            for (int i = 0; i < MAX_THREADS; i++) {
+                workers.add(vertx.<Void> executeBlocking(() -> {
+                    workersStarted.countDown();
+                    releaseWorkers.await();
+                    return null;
+                }, false).toCompletionStage().toCompletableFuture());
+            }
+            Assertions.assertThat(workersStarted.await(10, TimeUnit.SECONDS))
+                    .as("all %d worker threads are occupied", MAX_THREADS).isTrue();
+            Log.infof("All %d worker threads are occupied; testing the %s ms dispatch timeout", MAX_THREADS, DISPATCH_TIMEOUT);
+
+            test.execute();
+        } finally {
+            releaseWorkers.countDown();
+            for (CompletableFuture<Void> worker : workers) {
+                worker.get(10, TimeUnit.SECONDS);
+            }
         }
-        Awaitility.waitAtMost(10, TimeUnit.SECONDS).until(() -> firstException.get() != null);
-
-        Assertions.assertThat(firstException.get())
-                .isInstanceOf(RejectedExecutionException.class)
-                .message().contains("Unable to dispatch SOAP client call within " + DISPATCH_TIMEOUT
-                        + " ms on a worker thread due to worker thread pool exhaustion");
-
     }
 
     @WebService(serviceName = "HelloService")
