@@ -45,7 +45,8 @@ for actor in alice bob; do
   openssl x509 -req -in "$workDir/$actor.csr" -CA "$workDir/cxfca.pem" -CAkey "$workDir/cxfca.key" -CAcreateserial -days $days -out "$workDir/$actor.crt"
 
   # Export keystores
-  openssl pkcs12 -export -in "$workDir/$actor.crt" -inkey "$workDir/$actor.key" -certfile "$workDir/cxfca.crt" -name "$actor" -out "$destinationDir/$actor.pkcs12" -passout pass:"$password" -keypbe "$encryptionAlgo" -certpbe "$encryptionAlgo"
+  # -nomac: OpenSSL on RHEL in FIPS mode would use a PBMAC1 MAC that JDK 21 keytool cannot verify
+  openssl pkcs12 -export -in "$workDir/$actor.crt" -inkey "$workDir/$actor.key" -certfile "$workDir/cxfca.crt" -name "$actor" -out "$destinationDir/$actor.pkcs12" -passout pass:"$password" -keypbe "$encryptionAlgo" -certpbe "$encryptionAlgo" -nomac
 done
 
 "$keytool" -import -trustcacerts -file "$workDir/bob.crt"       -alias bob       -noprompt -keystore "$destinationDir/alice.pkcs12"             -storepass "$password"
