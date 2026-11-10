@@ -22,6 +22,11 @@ jobs:
   i:
     if: github.repository == 'quarkiverse/quarkus-cxf'
     runs-on: ubuntu-latest
+    env:
+      # Match the Quarkus 4.x (main) and 3.x defaults and use the same image for pre-pulling and building.
+      QUARKUS_NATIVE_BUILDER_IMAGE: ${{ matrix.base-branch == 'main' && 'quay.io/quarkus/ubi10-quarkus-mandrel-builder-image:jdk-25' || 'quay.io/quarkus/ubi9-quarkus-mandrel-builder-image:jdk-25' }}
+      # Refresh once per job below, then reuse the local image across modules and both Maven builds.
+      QUARKUS_NATIVE_BUILDER_IMAGE_PULL: missing
     strategy:
       fail-fast: false
       matrix:
@@ -113,6 +118,30 @@ jobs:
       shell: bash
       run: |
         echo "steps.rebase-integration-branch.outputs.exit-status: ${{ steps.rebase-integration-branch.outputs.exit-status }}"
+
+    - name: Pre-pull build and test images
+      shell: bash
+      timeout-minutes: 20
+      run: |
+        pull_image() {
+          local image="$1"
+          local maxAttempts=5
+          local attempt
+          for ((attempt = 1; attempt <= maxAttempts; attempt++)); do
+            echo "Pulling $image (attempt $attempt/$maxAttempts)"
+            if docker pull "$image"; then
+              return 0
+            fi
+            if ((attempt < maxAttempts)); then
+              sleep "$((attempt * 10))"
+            fi
+          done
+          echo "::error::Failed to pull $image after $maxAttempts attempts"
+          return 1
+        }
+
+        pull_image "$QUARKUS_NATIVE_BUILDER_IMAGE"
+        pull_image "quay.io/l2x6/echo-uuid-ws:1.0"
 
     - id: build-and-run-jvm-tests
       uses: ./.github/actions/build-and-run-jvm-tests
