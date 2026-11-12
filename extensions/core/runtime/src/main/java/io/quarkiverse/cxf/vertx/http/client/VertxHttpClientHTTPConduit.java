@@ -72,6 +72,7 @@ import org.apache.cxf.transport.http.auth.HttpAuthSupplier;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.version.Version;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
+import org.apache.cxf.ws.addressing.MAPAggregator;
 import org.eclipse.microprofile.context.ManagedExecutor;
 import org.jboss.logging.Logger;
 
@@ -1452,10 +1453,20 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                 + response.statusMessage() + "' when communicating with " + url.toString();
                         throw new VertxHttpException(msg);
                     }
-                    // REVISIT move the decoupled destination property name into api
                     Endpoint ep = exchange.getEndpoint();
-                    if (null != ep && null != ep.getEndpointInfo() && null == ep.getEndpointInfo()
-                            .getProperty("org.apache.cxf.ws.addressing.MAPAggregator.decoupledDestination")) {
+                    EndpointInfo endpointInfo = ep == null ? null : ep.getEndpointInfo();
+                    boolean decoupled = endpointInfo != null
+                            && endpointInfo.getProperty(MAPAggregator.DECOUPLED_DESTINATION) != null;
+                    if (in == null && !isOneway(exchange) && decoupled) {
+                        /*
+                         * An empty HTTP acknowledgement for a two-way SOAP call whose actual reply arrives
+                         * separately. That real SOAP reply may arrive before or after the acknowledgement.
+                         * The acknowledgement must neither replace it nor complete the exchange.
+                         * Do not propagate it to the incoming observer so that it does not replace the exchange's response.
+                         */
+                        return;
+                    }
+                    if (endpointInfo != null && !decoupled) {
                         // remove callback so that it won't be invoked twice
                         ClientCallback cc = exchange.remove(ClientCallback.class);
                         if (null != cc) {
