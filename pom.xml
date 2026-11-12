@@ -52,7 +52,7 @@
     <?SORTPOM IGNORE?>
     <properties>
         <!-- Primary dependencies -->
-        <quarkus.version>4.0.0.Beta3</quarkus.version>
+        <quarkus.version>4.0.0.CR1</quarkus.version>
         <cxf.version>4.2.4</cxf.version>
         <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
         <quarkus-antora.version>4.0.0.Beta2</quarkus-antora.version>
@@ -74,7 +74,7 @@
         <jcache.version>1.1.1</jcache.version>
         <neethi.version>3.2.4</neethi.version><!-- Let renovate do upgrades independently of org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.neethi.version -->
         <mimepull.version>1.11.0</mimepull.version>
-        <rest-assured.version>6.2.0</rest-assured.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.rest-assured:rest-assured -->
+        <rest-assured.version>6.3.0</rest-assured.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.rest-assured:rest-assured -->
         <saaj-impl.version>3.0.6</saaj-impl.version><!-- @sync org.apache.cxf:cxf-parent:${cxf.version} prop:cxf.saaj-impl.version -->
         <santuario-xmlsec.version>4.0.4</santuario-xmlsec.version>
 
