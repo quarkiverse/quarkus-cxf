@@ -150,3 +150,10 @@ You may also refer to the links below which contain tips on how to work with nat
 
 Refer to Quarkus {link-quarkus-docs-base}/container-image[Container image] guide.
 
+== Further steps
+
+You may want to proceed with
+
+* xref:user-guide/configuration.adoc[Configuration]
+* xref:user-guide/payload-logging.adoc[Logging]
+* xref:user-guide/soap-payloads-with-jaxb.adoc[Complex SOAP payloads with JAXB]
