@@ -83,7 +83,7 @@ or other {link-quarkus-docs-base}/tooling#build-tool[Quarkus development tools],
 You should always take care to import the same version of `{quarkus-platform-groupId}:quarkus-bom` and `{quarkus-platform-groupId}:quarkus-cxf-bom` into your project.
 That's the most reliable way to get compatible versions of Quarkus, CXF, {quarkus-cxf-project-name} and all their transitive dependencies.
 
-== Where to go next
+== Further steps
 
 We recommend to proceed with any of the following chapters:
 
