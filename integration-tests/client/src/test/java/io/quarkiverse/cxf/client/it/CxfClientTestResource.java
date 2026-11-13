@@ -17,6 +17,7 @@
 
 package io.quarkiverse.cxf.client.it;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedHashMap;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.jboss.logging.Logger;
 import org.testcontainers.containers.GenericContainer;
@@ -149,6 +151,7 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
         private final String proxyPassword;
         private final Vertx vertx;
         private final HttpServer proxyServer;
+        private final HttpClient client;
         private final List<String> proxiedRequests = new ArrayList<>();
 
         ProxyServer(int port, String proxyUser, String proxyPassword) {
@@ -157,6 +160,7 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
             this.proxyPassword = proxyPassword;
             this.vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(1).setEventLoopPoolSize(1));
             this.proxyServer = vertx.createHttpServer();
+            this.client = vertx.createHttpClient();
         }
 
         void start() {
@@ -174,12 +178,13 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
         }
 
         void stop() {
-            if (proxyServer != null) {
-                LOG.info("HTTP proxy server shutting down");
-                proxyServer.close();
-            }
-            if (vertx != null) {
-                vertx.close();
+            LOG.info("HTTP proxy server shutting down");
+            try {
+                client.close().await(Duration.ofSeconds(10));
+                proxyServer.close().await(Duration.ofSeconds(10));
+                vertx.close().await(Duration.ofSeconds(10));
+            } catch (TimeoutException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -244,7 +249,6 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
                                 synchronized (proxiedRequests) {
                                     proxiedRequests.add(method + " " + httpServerRequest.uri() + " " + httpServerBody);
                                 }
-                                HttpClient client = vertx.createHttpClient();
                                 MultiMap remoteHeaders = new QuarkusHttpHeaders();
                                 remoteHeaders.addAll(httpServerRequest.headers());
                                 remoteHeaders.remove("Proxy-Authorization");
