@@ -99,7 +99,7 @@
         <extra-enforcer-rules.version>1.12.1</extra-enforcer-rules.version>
         <maven-eclipse-plugin.version>2.10</maven-eclipse-plugin.version>
         <maven-jar-plugin.version>3.5.1</maven-jar-plugin.version>
-        <keytool-maven-plugin.version>2.0.2</keytool-maven-plugin.version>
+        <keytool-maven-plugin.version>2.1.0</keytool-maven-plugin.version>
         <maven-idea-plugin.version>2.2.1</maven-idea-plugin.version>
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
