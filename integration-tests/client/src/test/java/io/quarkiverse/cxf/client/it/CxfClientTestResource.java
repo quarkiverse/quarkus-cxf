@@ -273,7 +273,7 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
                                                                 .onSuccess(body -> {
                                                                     httpServerResponse.end(body);
                                                                 }).onFailure(err -> {
-                                                                    LOG.errorf(err, "Could not receive body from %s to %:%s %s",
+                                                                    LOG.errorf(err, "Could not receive body for %s %s:%s %s",
                                                                             method, remoteHost,
                                                                             remotePort, httpServerRequest.uri());
                                                                     httpServerResponse.setStatusCode(500)
@@ -281,7 +281,7 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
                                                                 });
                                                     })
                                                     .onFailure(err -> {
-                                                        LOG.errorf(err, "Could not receive response from %s to %:%s %s", method,
+                                                        LOG.errorf(err, "Could not receive response for %s %s:%s %s", method,
                                                                 remoteHost,
                                                                 remotePort, httpServerRequest.uri());
                                                         httpServerRequest.response().setStatusCode(500)
@@ -289,7 +289,7 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
                                                     });
                                         })
                                         .onFailure(remoteError -> {
-                                            LOG.errorf(remoteError, "Could not send request to %s to %:%s %s", method,
+                                            LOG.errorf(remoteError, "Could not send request %s %s:%s %s", method,
                                                     remoteHost,
                                                     remotePort, httpServerRequest.uri());
                                             httpServerRequest.response().setStatusCode(500)
@@ -298,7 +298,8 @@ public class CxfClientTestResource implements QuarkusTestResourceLifecycleManage
                                         });
                             })
                                     .onFailure(err -> {
-                                        LOG.errorf(err, "Could not recevie the body from the proxy server client %s to %:%s %s",
+                                        LOG.errorf(err,
+                                                "Could not receive the body from the proxy server client for %s %s:%s %s",
                                                 method, remoteHost,
                                                 remotePort, httpServerRequest.uri());
                                         httpServerRequest.response().setStatusCode(500)
