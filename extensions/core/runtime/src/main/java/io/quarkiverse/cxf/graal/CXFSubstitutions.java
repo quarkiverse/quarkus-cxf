@@ -21,6 +21,7 @@ import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.databinding.WrapperHelper;
 import org.apache.cxf.interceptor.FIStaxInInterceptor;
 import org.apache.cxf.interceptor.FIStaxOutInterceptor;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.transports.http.configuration.HTTPServerPolicy;
 import org.apache.cxf.ws.addressing.wsdl.UsingAddressing;
@@ -331,7 +332,7 @@ class FastInfosetMissing implements BooleanSupplier {
 final class Target_org_apache_cxf_interceptor_FIStaxInInterceptor {
 
     @Substitute
-    private XMLStreamReader getParser(InputStream in) {
+    private XMLStreamReader getParser(InputStream in, Message message) {
         throw new UnsupportedOperationException(
                 "FastInfoset support was requested but its classes are not present in the classpath.");
     }
