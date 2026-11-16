@@ -5,9 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.assertj.core.api.Assertions;
 import org.hamcrest.Matcher;
-import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
@@ -84,22 +82,6 @@ public class UsernameTokenSecurityPolicyStaxTest extends AbstractUsernameTokenSe
     Matcher<String> missingSamlErrorMessage(final String endpoint) {
         /* The Stax implementation does not honor security.return.security.error = true */
         return containsString("<faultstring>XML_STREAM_EXC</faultstring>");
-    }
-
-    @Override
-    @Test
-    void helloSaml1() {
-        // This should start failing once https://issues.apache.org/jira/browse/WSS-731 is fixed
-        Assertions.assertThatThrownBy(super::helloSaml1)
-                .isInstanceOf(AssertionError.class).hasMessageContaining("Expected status code <200> but was <500>.");
-    }
-
-    @Override
-    @Test
-    void helloSaml2() {
-        // This should start failing once https://issues.apache.org/jira/browse/WSS-731 is fixed
-        Assertions.assertThatThrownBy(super::helloSaml2)
-                .isInstanceOf(AssertionError.class).hasMessageContaining("Expected status code <200> but was <500>.");
     }
 
 }
