@@ -2210,8 +2210,8 @@ enforced unless it is enabled by other means, such as `@org.apache.cxf.annotatio
 .<| List of ``string``
 .<| 
 
-3+a|Ordered (most prefered first) list of HTTP protocol versions the client is allowed to use.
-Possible values are `1.0`, `1.1` and `2`.
+3+a|Ordered (most preferred first) list of HTTP protocol versions the client is allowed to use.
+Possible values are `1.0`, `1.1`, `2` and `3`.
 
 Examples:
 
@@ -2225,6 +2225,13 @@ For non-HTTPS HTTP/2 requests, an upgrade from HTTP/1.1 is attempted when `2` is
 An `OPTIONS` preflight request completes this negotiation before sending the SOAP request.
 With `2` and without `1.1`, the client assumes that the server supports HTTP/2 and connects using HTTP/2 directly.
 
+HTTP/3 requires HTTPS and the `io.quarkus:quarkus-http3` extension.
+Use `3` for direct HTTP/3 connections.
+When TCP protocols are also enabled, requests initially use TCP;
+enable `follow-alternative-services` to discover HTTP/3 through `Alt-Svc` advertisements.
+The list does not define retries across transports.
+HTTP/3 does not support proxy configurations or forced SNI for non-FQDN hosts such as `localhost`.
+F *
 If not set, the existing
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
 behavior is preserved,
@@ -2234,6 +2241,20 @@ When this list is set,
 must remain `auto` and CXF per-request version overrides cannot be used.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__VERTX_VERSIONS+++` +
+*Since Quarkus CXF*: 4.0.0
+
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-vertx-follow-alternative-services]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-follow-alternative-services[quarkus.cxf.client."client-name".vertx.follow-alternative-services]`
+.<| `boolean`
+.<| `false`
+
+3+a|Follow trusted alternative-service advertisements from HTTPS servers for subsequent requests.
+Vert.x 5.2.3 handles `Alt-Svc` headers over HTTP/1.1 and `ALTSVC` frames over HTTP/2.
+Only enabled protocols are eligible; include `3` in `versions` to discover HTTP/3.
+This does not replay failed SOAP requests over another protocol.
+Clients using this option send SNI automatically for FQDN hosts;
+they cannot force SNI for non-FQDN hosts such as `localhost`.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__VERTX_FOLLOW_ALTERNATIVE_SERVICES+++` +
 *Since Quarkus CXF*: 4.0.0
 
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http1-max-size]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http1-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http1-max-size]`

@@ -27,6 +27,7 @@ class ClientHttpVersionsConfigTest {
     void defaults() {
         ClientConfig config = config(Map.of());
         assertThat(config.version()).isEqualTo("auto");
+        assertThat(config.vertx().followAlternativeServices()).isFalse();
         assertThat(CXFClientInfo.parseVertxVersions(config, "test")).isEmpty();
     }
 
@@ -43,13 +44,22 @@ class ClientHttpVersionsConfigTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3", "auto", "HTTP_2", "2.0", "invalid", "2,3" })
+    @ValueSource(strings = { "4", "auto", "HTTP_2", "2.0", "invalid", "2,4" })
     void unsupportedVersion(String versions) {
         assertThatThrownBy(() -> CXFClientInfo.parseVertxVersions(
                 config(Map.of("client.vertx.versions", versions)), "test"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("quarkus.cxf.client.test.vertx.versions")
-                .hasMessageContaining("supported values are 1.0, 1.1 and 2");
+                .hasMessageContaining("supported values are 1.0, 1.1, 2 and 3");
+    }
+
+    @Test
+    void http3Discovery() {
+        ClientConfig config = config(Map.of("client.vertx.versions", "2,1.1,3",
+                "client.vertx.follow-alternative-services", "true"));
+        assertThat(CXFClientInfo.parseVertxVersions(config, "test"))
+                .containsExactly(HttpVersion.HTTP_2, HttpVersion.HTTP_1_1, HttpVersion.HTTP_3);
+        assertThat(config.vertx().followAlternativeServices()).isTrue();
     }
 
     @Test

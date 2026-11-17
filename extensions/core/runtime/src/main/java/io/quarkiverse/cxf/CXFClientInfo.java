@@ -272,8 +272,9 @@ public class CXFClientInfo {
                 case "1.0" -> HttpVersion.HTTP_1_0;
                 case "1.1" -> HttpVersion.HTTP_1_1;
                 case "2" -> HttpVersion.HTTP_2;
+                case "3" -> HttpVersion.HTTP_3;
                 default -> throw new IllegalArgumentException("Unsupported HTTP version '" + value + "' in " + key
-                        + ".vertx.versions; supported values are 1.0, 1.1 and 2");
+                        + ".vertx.versions; supported values are 1.0, 1.1, 2 and 3");
             };
             if (versions.contains(version)) {
                 throw new IllegalArgumentException("Duplicate HTTP version '" + value + "' in " + key + ".vertx.versions");

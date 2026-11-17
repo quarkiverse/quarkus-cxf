@@ -10,9 +10,9 @@ quarkus.cxf.client.myClient.vertx.versions=2,1.1
 ----
 
 The `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-versions[vertx.versions]`
-option accepts `1.0`, `1.1` and `2`, without duplicates.
+option accepts `1.0`, `1.1`, `2` and `3`, without duplicates.
 Only the listed versions are enabled.
-HTTP/3 and `auto` are not accepted in this list.
+`auto` is not accepted in this list.
 The option requires `VertxHttpClientHTTPConduitFactory`, which is the default conduit factory.
 
 [%autowidth,stripes=hover]
@@ -24,6 +24,8 @@ The option requires `VertxHttpClientHTTPConduitFactory`, which is the default co
 | `1.1` | Use HTTP/1.1 only.
 | `1.0` | Use HTTP/1.0 only.
 | `1.1,2` | Advertise HTTP/1.1 first for TLS negotiation; start with HTTP/1.1 over cleartext.
+| `3` | Use HTTP/3 over QUIC only.
+| `2,1.1,3` | Start over TCP; discover HTTP/3 when following alternative services is enabled.
 |===
 
 == Negotiation and fallback
@@ -41,6 +43,61 @@ Without `1.1` in the list, an HTTP/2 connection uses prior knowledge:
 the server must accept HTTP/2 directly, without an HTTP/1.1 upgrade.
 The list does not configure retries of failed SOAP operations over another protocol.
 
+== HTTP/3 and alternative services
+
+Add the `io.quarkus:quarkus-http3` extension to use HTTP/3 in JVM mode or a native executable:
+
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-http3</artifactId>
+</dependency>
+----
+
+The extension supplies the platform-specific QUIC library and native-image integration.
+See the https://quarkus.io/guides/http3-reference[Quarkus HTTP/3 reference] for platform and library requirements.
+
+[NOTE]
+====
+Quarkus 4.0.0.CR1 requires an HTTPS listener when the `quarkus-http3` extension is installed,
+including in applications that only need HTTP/3 clients.
+In that version, `quarkus.http3.enabled=false` still leaves a production-mode TLS check active.
+Leave `quarkus.http3.enabled` at its default `true` and configure `quarkus.http.tls-configuration-name`
+with a TLS registry bucket containing the server certificate and key.
+====
+
+For a server known to support HTTP/3, configure `vertx.versions=3` and an HTTPS endpoint.
+Configure its trust store and any client certificate through the TLS registry as for other HTTPS clients.
+HTTP/3 uses UDP, so the endpoint's UDP port must be reachable.
+Proxy configurations are not supported for clients enabling HTTP/3.
+
+To discover an HTTP/3 endpoint from an HTTPS server:
+
+.application.properties
+[source,properties]
+----
+quarkus.cxf.client.myClient.client-endpoint-url=https://soap.example.org/service
+quarkus.cxf.client.myClient.vertx.versions=2,1.1,3
+quarkus.cxf.client.myClient.vertx.follow-alternative-services=true
+quarkus.cxf.client.myClient.tls-configuration-name=soap-tls
+----
+
+When both TCP and QUIC protocols are enabled, Vert.x initially uses TCP, regardless of the list order.
+With `follow-alternative-services=true`, it processes trusted alternative-service advertisements
+and may use an advertised HTTP/3 endpoint for subsequent requests, after validating the alternative asynchronously.
+Vert.x 5.2.3 handles `Alt-Svc` response headers over HTTP/1.1 and `ALTSVC` frames over HTTP/2.
+An `Alt-Svc` header alone on an HTTP/2 response is not processed by this Vert.x version.
+Only protocols enabled by the client are eligible.
+The default is `false`; without an advertisement, the client continues using TCP.
+This is discovery for later calls, not permission to replay a failed SOAP operation over another transport.
+
+Clients enabling HTTP/3 or following alternative services use automatic SNI for fully qualified domain names (FQDNs).
+They cannot force SNI for non-FQDN names such as `localhost`.
+If the server requires SNI, use an FQDN mapped to its address through DNS, a hosts file, or resolver configuration.
+This is a restriction of the Vert.x client configuration API used for these features.
+
 == Compatibility with existing clients
 
 When `vertx.versions` is unset, the existing
@@ -55,5 +112,6 @@ or the CXF contextual properties `org.apache.cxf.transport.http.forceVersion`
 and `org.apache.cxf.transports.http2.enabled` results in an error.
 
 The ordered list preserves existing TLS registry settings, including trust stores, client certificates,
-hostname verification, and forced SNI for HTTP/1.x and HTTP/2.
+and hostname verification.
+Clients using only HTTP/1.x and HTTP/2 with alternative services disabled also retain forced SNI support.
 See xref:user-guide/ssl-tls-https.adoc[SSL, TLS and HTTPS] for TLS configuration.

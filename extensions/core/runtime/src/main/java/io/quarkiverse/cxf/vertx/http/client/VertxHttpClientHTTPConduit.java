@@ -172,6 +172,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
         final HttpVersion version = versions.isEmpty() ? getVersion(message, csPolicy) : versions.get(0);
         final boolean isHttps = "https".equals(uri.getScheme());
+        if (versions.contains(HttpVersion.HTTP_3) && !isHttps) {
+            throw new IllegalArgumentException("HTTP/3 requires an HTTPS endpoint: " + uri);
+        }
         final QuarkusTLSClientParameters clientParameters;
         if (isHttps) {
             clientParameters = findTLSClientParameters(message);
@@ -802,6 +805,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 requestURI += "?" + query;
             }
             RequestOptions options = new RequestOptions(requestOptions);
+            if (clientInfo.getHttpVersions().contains(HttpVersion.HTTP_3) && !ssl) {
+                throw new IOException("HTTP/3 requires an HTTPS redirect target: " + newURL);
+            }
             options.setHost(newURL.getHost());
             options.setPort(port);
             options.setSsl(ssl);
@@ -996,7 +1002,14 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             // Legacy H2C upgrades happen while sending the first request; retain their original header handling.
             if ((actualVersion != HttpVersion.HTTP_1_0 && actualVersion != HttpVersion.HTTP_1_1)
                     || (versions.isEmpty() && version == HttpVersion.HTTP_2)) {
-                request.headers().remove(HttpHeaderHelper.CONNECTION);
+                for (String connection : request.headers().getAll(HttpHeaderHelper.CONNECTION)) {
+                    for (String name : connection.split(",")) {
+                        request.headers().remove(name.trim());
+                    }
+                }
+                for (String name : List.of("Connection", "Keep-Alive", "Proxy-Connection", "Transfer-Encoding", "Upgrade")) {
+                    request.headers().remove(name);
+                }
             }
             return request;
         }

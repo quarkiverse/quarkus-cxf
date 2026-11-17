@@ -1,0 +1,29 @@
+= HTTP/3 client integration tests
+
+The test resource starts local TLS HTTP/1.1, HTTP/2 and QUIC HTTP/3 servers using generated certificates.
+The application invokes them through CXF SOAP clients, so the same assertions exercise JVM and native client code.
+No public server or external DNS service is required.
+
+The tests cover direct HTTP/3, buffered and streamed bodies, HTTP/1.1 `Alt-Svc` headers,
+HTTP/2 `ALTSVC` frames, discovery opt-in, protocol restrictions, automatic SNI, server trust,
+hostname verification, mutual TLS, HTTPS-only endpoints and redirects, and failed requests without replay.
+
+After installing the extension and its dependencies locally, run from the repository root:
+
+[source,shell]
+----
+mvnd -f integration-tests/http3/pom.xml test -Dtest=Http3Test
+----
+
+For native validation with Docker or Podman:
+
+[source,shell]
+----
+mvnd -f integration-tests/http3/pom.xml verify -Pnative -Dquarkus.native.container-build -Dtest=foo -Dsurefire.failIfNoSpecifiedTests=false -Dit.test=Http3IT
+----
+
+The `quarkus-http3` extension provides the platform-specific QUIC library and native-image configuration.
+The application also configures a TLS listener because Quarkus 4.0.0.CR1 performs its production-mode
+HTTPS check even when `quarkus.http3.enabled=false`.
+The SOAP test servers remain independent of that listener.
+The async DNS resolver reads the generated hosts file to resolve the test FQDNs on both JVM and native executables.

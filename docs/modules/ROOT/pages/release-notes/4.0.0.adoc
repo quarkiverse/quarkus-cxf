@@ -2,10 +2,13 @@
 
 == Ordered HTTP protocol versions
 
-Vert.x HTTP clients now support an explicit ordered list of HTTP/1.x and HTTP/2 versions through
+Vert.x HTTP clients now support an explicit ordered list of HTTP/1.x, HTTP/2 and HTTP/3 versions through
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-versions[quarkus.cxf.client."client-name".vertx.versions]`.
 For example, `2,1.1` allows HTTP/2 with HTTP/1.1 fallback, while `2` requires HTTP/2.
 Clients that leave this option unset retain their existing behavior.
+HTTP/3 requires the `io.quarkus:quarkus-http3` extension and HTTPS.
+Use `vertx.versions=3` for direct HTTP/3 connections, or `vertx.versions=2,1.1,3` with
+`vertx.follow-alternative-services=true` to discover HTTP/3 through alternative-service advertisements.
 See xref:user-guide/advanced-client-topics/http-versions.adoc[HTTP protocol versions] for details.
 
 == Removals

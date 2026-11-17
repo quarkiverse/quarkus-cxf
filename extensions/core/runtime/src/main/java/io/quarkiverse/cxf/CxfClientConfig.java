@@ -599,8 +599,8 @@ public interface CxfClientConfig {
      */
     interface VertxConfig {
         /**
-         * Ordered (most prefered first) list of HTTP protocol versions the client is allowed to use.
-         * Possible values are `1.0`, `1.1` and `2`.
+         * Ordered (most preferred first) list of HTTP protocol versions the client is allowed to use.
+         * Possible values are `1.0`, `1.1`, `2` and `3`.
          *
          * Examples:
          *
@@ -614,6 +614,13 @@ public interface CxfClientConfig {
          * An `OPTIONS` preflight request completes this negotiation before sending the SOAP request.
          * With `2` and without `1.1`, the client assumes that the server supports HTTP/2 and connects using HTTP/2 directly.
          *
+         * HTTP/3 requires HTTPS and the `io.quarkus:quarkus-http3` extension.
+         * Use `3` for direct HTTP/3 connections.
+         * When TCP protocols are also enabled, requests initially use TCP;
+         * enable `follow-alternative-services` to discover HTTP/3 through `Alt-Svc` advertisements.
+         * The list does not define retries across transports.
+         * HTTP/3 does not support proxy configurations or forced SNI for non-FQDN hosts such as `localhost`.
+         * F *
          * If not set, the existing
          * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
          * behavior is preserved,
@@ -626,6 +633,20 @@ public interface CxfClientConfig {
          * @since 4.0.0
          */
         Optional<List<String>> versions();
+
+        /**
+         * Follow trusted alternative-service advertisements from HTTPS servers for subsequent requests.
+         * Vert.x 5.2.3 handles `Alt-Svc` headers over HTTP/1.1 and `ALTSVC` frames over HTTP/2.
+         * Only enabled protocols are eligible; include `3` in `versions` to discover HTTP/3.
+         * This does not replay failed SOAP requests over another protocol.
+         * Clients using this option send SNI automatically for FQDN hosts;
+         * they cannot force SNI for non-FQDN hosts such as `localhost`.
+         *
+         * @asciidoclet
+         * @since 4.0.0
+         */
+        @WithDefault("false")
+        boolean followAlternativeServices();
 
         /**
          * Settings used by `io.vertx.core.http.PoolOptions`.
