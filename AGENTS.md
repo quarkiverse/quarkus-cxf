@@ -70,6 +70,11 @@ Semantic line breaks are not required when writing GitHub issue or pull request 
   * Newly added Java fields should be final unless there is a reason 
 * Prefer writing methods without side effects
 
+## Testing
+
+* Avoid mocks
+* Prefer `QuarkusExtensionTest`, `@QuarkusTest`, `@QuarkusIntegrationTest` or plain JUnit tests
+
 ## Source code of Maven dependencies
 
 1. Check whether `-sources.jar` for the given Maven dependency identified by `groupId`, `artifactId` and `version` was downloaded already:
