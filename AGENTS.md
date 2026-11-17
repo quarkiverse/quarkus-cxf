@@ -61,6 +61,15 @@ so that lines do not exceed 120 characters.
 When needed, split sentences themselves at natural breaks between clauses.
 Lines longer than 120 characters are allowed if there are links or other complex formatting.
 
+Semantic line breaks are not required when writing GitHub issue or pull request comments or descriptions. 
+
+## Coding
+
+* Prefer creating immutable data structures - either Java records or classes with all fields being `final`
+* Prefer not introducing new sources of mutability
+  * Newly added Java fields should be final unless there is a reason 
+* Prefer writing methods without side effects
+
 ## Source code of Maven dependencies
 
 1. Check whether `-sources.jar` for the given Maven dependency identified by `groupId`, `artifactId` and `version` was downloaded already:
