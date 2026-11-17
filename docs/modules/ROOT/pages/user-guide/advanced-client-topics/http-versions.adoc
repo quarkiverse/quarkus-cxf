@@ -1,0 +1,59 @@
+= HTTP protocol versions
+
+Since {quarkus-cxf-project-name} 4.0.0, Vert.x HTTP clients can use an explicit ordered list of HTTP protocol versions.
+For example, to enable HTTP/2 with HTTP/1.1 fallback:
+
+.application.properties
+[source,properties]
+----
+quarkus.cxf.client.myClient.vertx.versions=2,1.1
+----
+
+The `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-versions[vertx.versions]`
+option accepts `1.0`, `1.1` and `2`, without duplicates.
+Only the listed versions are enabled.
+HTTP/3 and `auto` are not accepted in this list.
+The option requires `VertxHttpClientHTTPConduitFactory`, which is the default conduit factory.
+
+[%autowidth,stripes=hover]
+|===
+| Value | Behavior
+
+| `2` | Require HTTP/2.
+| `2,1.1` | Prefer HTTP/2 and allow HTTP/1.1 fallback.
+| `1.1` | Use HTTP/1.1 only.
+| `1.0` | Use HTTP/1.0 only.
+| `1.1,2` | Advertise HTTP/1.1 first for TLS negotiation; start with HTTP/1.1 over cleartext.
+|===
+
+== Negotiation and fallback
+
+For HTTPS connections that include HTTP/2, the client advertises the configured versions in order through TLS ALPN.
+The server selects the negotiated protocol, so the client preference does not guarantee the server's choice.
+If ALPN does not select a protocol, the first configured HTTP/1.x version is used, when present.
+An HTTP/2-only client fails if the server cannot negotiate HTTP/2.
+
+For cleartext HTTP, the first configured version determines how the connection starts.
+When `2` is first and `1.1` is included, the client attempts an HTTP/1.1 upgrade to HTTP/2 (h2c).
+An `OPTIONS` preflight request completes this negotiation before sending the SOAP request.
+If the server declines the upgrade, the client can continue with HTTP/1.1.
+Without `1.1` in the list, an HTTP/2 connection uses prior knowledge:
+the server must accept HTTP/2 directly, without an HTTP/1.1 upgrade.
+The list does not configure retries of failed SOAP operations over another protocol.
+
+== Compatibility with existing clients
+
+When `vertx.versions` is unset, the existing
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[version]`
+setting continues to work as before.
+Its default, `auto`, selects HTTP/1.1 for the Vert.x conduit.
+Setting `version=2` retains HTTP/1.1 fallback, whereas `vertx.versions=2` requires HTTP/2.
+
+When using `vertx.versions`, leave `version` unset or set it to `auto`.
+Combining the list with a concrete `version`, a programmatic `HTTPClientPolicy.version`,
+or the CXF contextual properties `org.apache.cxf.transport.http.forceVersion`
+and `org.apache.cxf.transports.http2.enabled` results in an error.
+
+The ordered list preserves existing TLS registry settings, including trust stores, client certificates,
+hostname verification, and forced SNI for HTTP/1.x and HTTP/2.
+See xref:user-guide/ssl-tls-https.adoc[SSL, TLS and HTTPS] for TLS configuration.

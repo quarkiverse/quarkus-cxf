@@ -2035,9 +2035,13 @@ not required.
 .<| `close`, `keep-alive`
 .<| `keep-alive`
 
-3+a|The connection disposition. If close the connection to the server is closed after each request/response dialog. If
-Keep-Alive the client requests the server to keep the connection open, and if the server honors the keep alive request,
-the connection is reused. Many servers and proxies do not honor keep-alive requests.
+3+a|The value of `Connection` HTTP header for HTTP 1.x connections. Possible values:
+
+* `close` - the connection to the server is closed after each request/response exchange
+* `keep-alive` (default) - the client requests the server to keep the connection open and if the server honors
+the keep alive request, the connection is reused. Many servers and proxies do not honor keep-alive requests.
+See also
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__CONNECTION+++` +
 *Since Quarkus CXF*: 2.2.3
@@ -2071,6 +2075,9 @@ The default HTTP protocol versions for the two supported HTTP Conduit Factories 
 
 While `VertxHttpClientHTTPConduitFactory` supports all of the named HTTP protocol versions,
 `URLConnectionHTTPConduitFactory` supports only versions `1.0` and `1.1`.
+For an exact ordered list of supported versions with the Vert.x conduit, use
+`xref:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-versions[quarkus.cxf.client."client-name".vertx.versions]`
+and leave this option at `auto`.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__VERSION+++` +
 *Since Quarkus CXF*: 2.2.3
@@ -2199,6 +2206,36 @@ enforced unless it is enabled by other means, such as `@org.apache.cxf.annotatio
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__SCHEMA_VALIDATION_ENABLED_FOR+++` +
 *Since Quarkus CXF*: 2.7.0
 
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-vertx-versions]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-versions[quarkus.cxf.client."client-name".vertx.versions]`
+.<| List of ``string``
+.<| 
+
+3+a|Ordered (most prefered first) list of HTTP protocol versions the client is allowed to use.
+Possible values are `1.0`, `1.1` and `2`.
+
+Examples:
+
+* `2,1.1` - permits HTTP/2 with HTTP/1.1 fallback
+* `2` - requires HTTP/2
+
+The order determines the default protocol and the preference advertised through TLS ALPN;
+the server selects the negotiated protocol.
+
+For non-HTTPS HTTP/2 requests, an upgrade from HTTP/1.1 is attempted when `2` is first and `1.1` is included.
+An `OPTIONS` preflight request completes this negotiation before sending the SOAP request.
+With `2` and without `1.1`, the client assumes that the server supports HTTP/2 and connects using HTTP/2 directly.
+
+If not set, the existing
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
+behavior is preserved,
+including its default of HTTP/1.1 and HTTP/2 fallback.
+When this list is set,
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
+must remain `auto` and CXF per-request version overrides cannot be used.
+
+*Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__VERTX_VERSIONS+++` +
+*Since Quarkus CXF*: 4.0.0
+
 .<| [[quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http1-max-size]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http1-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http1-max-size]`
 .<| `int`
 .<| `5`
@@ -2253,23 +2290,44 @@ If the value is negative then the queue is unbounded.
 .<| `int`
 .<| `60`
 
-3+a|Duration in seconds after which inactive HTTP/1.x client connections will be closed
-if the client was configured with `quarkus.cxf.client."client-name".connection = keep-alive`.
-Connections of clients configured with `quarkus.cxf.client."client-name".connection = close` are closed
-immediately after receiving the response.
+3+a|Duration in seconds after which inactive client connections will be closed.
+
+For HTTP 1.x connections, this option is only honored, if the client was configured with
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-connection[quarkus.cxf.client."client-name".connection]
+= keep-alive`.
 
 Value `0` means no timeout.
+
+[NOTE]
+.Historical note
+====
+Since {quarkus-cxf-project-name} 4.0.0, this option applies to all HTTP protocol versions.
+Before that version, it only applied to HTTP 1.x.
+====
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__VERTX_KEEP_ALIVE_TIMEOUT+++` +
 *Since Quarkus CXF*: 3.31.0
 
-.<| [[quarkus-cxf_quarkus-cxf-client-client-name-vertx-http2-keep-alive-timeout]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http2-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http2-keep-alive-timeout]`
+.<| [[quarkus-cxf_quarkus-cxf-client-client-name-vertx-http2-keep-alive-timeout]][line-through]##`link:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http2-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http2-keep-alive-timeout]`##
 .<| `int`
-.<| `60`
+.<| 
 
 3+a|Duration in seconds after which inactive HTTP/2 client connections will be closed.
+Overrides the value set via
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
+for HTTP/2 client connections.
 
 Value `0` means no timeout.
+
+[NOTE]
+.Historical note
+====
+Since {quarkus-cxf-project-name} 4.0.0, this option effectively defaults to the value set in
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
+Before that version, the default value was 60 seconds and
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
+had no impact on HTTP/2 connections
+====
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__VERTX_HTTP2_KEEP_ALIVE_TIMEOUT+++` +
 *Since Quarkus CXF*: 3.31.0

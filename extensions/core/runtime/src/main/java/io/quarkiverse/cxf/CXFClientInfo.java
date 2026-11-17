@@ -23,6 +23,7 @@ import io.quarkus.proxy.ProxyType;
 import io.quarkus.tls.TlsConfiguration;
 import io.quarkus.tls.TlsConfigurationRegistry;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpVersion;
 
 /**
  * CXF client metadata - the complete set as known at runtime.
@@ -43,6 +44,7 @@ public class CXFClientInfo {
     private final String epName;
     private final Auth auth;
     private final VertxConfig vertxConfig;
+    private final List<HttpVersion> httpVersions;
     private final boolean proxyClassRuntimeInitialized;
     private final List<String> inInterceptors = new ArrayList<>();
     private final List<String> outInterceptors = new ArrayList<>();
@@ -208,6 +210,7 @@ public class CXFClientInfo {
         this.epName = config.endpointName().orElse(null);
         this.auth = new AuthWrapper(config.auth(), config);
         this.vertxConfig = config.vertx();
+        this.httpVersions = parseVertxVersions(config, configKey);
         this.secureWsdlAccess = config.secureWsdlAccess();
         this.endpointAddress = config.clientEndpointUrl().orElse(DEFAULT_EP_ADDR + "/" + this.sei.toLowerCase());
         this.wsdlUrl = config.wsdlPath().orElse(null);
@@ -251,6 +254,36 @@ public class CXFClientInfo {
          */
         this.httpConduitImpl = config.httpConduitFactory().orElse(null);
         this.configKey = configKey;
+    }
+
+    static List<HttpVersion> parseVertxVersions(CxfClientConfig config, String configKey) {
+        final Optional<List<String>> configured = config.vertx().versions();
+        if (configured.isEmpty()) {
+            return List.of();
+        }
+        final String key = "quarkus.cxf.client." + QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
+        if (!"auto".equals(config.version())) {
+            throw new IllegalArgumentException(key + ".vertx.versions cannot be combined with " + key
+                    + ".version=" + config.version() + "; leave version at auto");
+        }
+        final List<HttpVersion> versions = new ArrayList<>();
+        for (String value : configured.get()) {
+            final HttpVersion version = switch (value) {
+                case "1.0" -> HttpVersion.HTTP_1_0;
+                case "1.1" -> HttpVersion.HTTP_1_1;
+                case "2" -> HttpVersion.HTTP_2;
+                default -> throw new IllegalArgumentException("Unsupported HTTP version '" + value + "' in " + key
+                        + ".vertx.versions; supported values are 1.0, 1.1 and 2");
+            };
+            if (versions.contains(version)) {
+                throw new IllegalArgumentException("Duplicate HTTP version '" + value + "' in " + key + ".vertx.versions");
+            }
+            versions.add(version);
+        }
+        if (versions.isEmpty()) {
+            throw new IllegalArgumentException(key + ".vertx.versions must contain at least one HTTP version");
+        }
+        return List.copyOf(versions);
     }
 
     static TlsConfiguration tlsConfiguration(Vertx vertx, CxfGlobalClientConfig globalConfig, CxfClientConfig config,
@@ -319,6 +352,13 @@ public class CXFClientInfo {
 
     public VertxConfig getVertxConfig() {
         return vertxConfig;
+    }
+
+    /**
+     * @return the explicitly configured ordered versions, or an empty list to use the legacy version selection
+     */
+    public List<HttpVersion> getHttpVersions() {
+        return httpVersions;
     }
 
     public boolean isProxyClassRuntimeInitialized() {

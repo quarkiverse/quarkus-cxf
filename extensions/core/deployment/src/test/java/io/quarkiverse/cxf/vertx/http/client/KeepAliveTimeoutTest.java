@@ -123,6 +123,15 @@ public class KeepAliveTimeoutTest {
 
         }
 
+        result.overrideConfigKey("quarkus.cxf.client.common-timeout.client-endpoint-url",
+                baseUris.get(HttpVersion.HTTP_2) + "/echoHeaders/HTTP_2")
+                .overrideConfigKey("quarkus.cxf.client.common-timeout.service-interface", EchoHeadersService.class.getName())
+                .overrideConfigKey("quarkus.cxf.client.common-timeout.http-conduit-factory",
+                        "VertxHttpClientHTTPConduitFactory")
+                .overrideConfigKey("quarkus.cxf.client.common-timeout.tls-configuration-name", "client-pkcs12")
+                .overrideConfigKey("quarkus.cxf.client.common-timeout.version", "2")
+                .overrideConfigKey("quarkus.cxf.client.common-timeout.vertx.keep-alive-timeout", "1");
+
         return result;
 
     }
@@ -190,6 +199,9 @@ public class KeepAliveTimeoutTest {
     @CXFClient("keep-alive-with-timeout-client_HTTP_2")
     EchoHeadersService keepAliveWithTimeoutClient_HTTP_2;
 
+    @CXFClient("common-timeout")
+    EchoHeadersService commonTimeoutClient;
+
     @ConfigProperty(name = "qcxf.baseUri")
     String baseUri;
 
@@ -240,6 +252,11 @@ public class KeepAliveTimeoutTest {
     void keepAliveWithTimeoutClient_HTTP_2() {
         /* When .vertx.keep-alive-timeout is set 1 then we should observe the connection being closed after 1s */
         close(keepAliveWithTimeoutClient_HTTP_2, HttpVersion.HTTP_2, "null");
+    }
+
+    @Test
+    void commonKeepAliveTimeout_HTTP_2() {
+        close(commonTimeoutClient, HttpVersion.HTTP_2, "null");
     }
 
     static void keepAlive(EchoHeadersService client, String expectedConnectionValue) {

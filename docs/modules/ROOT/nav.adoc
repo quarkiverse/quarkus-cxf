@@ -22,6 +22,7 @@
 ** xref:user-guide/advanced-soap-client-topics.adoc[Configure and control SOAP clients]
 *** xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` defaults]
 *** xref:user-guide/advanced-client-topics/configure-multiple-clients.adoc[Configure multiple clients]
+*** xref:user-guide/advanced-client-topics/http-versions.adoc[HTTP protocol versions]
 *** xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc[CDI scope of clients injected via `@CXFClient`]
 *** xref:user-guide/advanced-client-topics/asynchronous-client.adoc[Asynchronous client]
 *** xref:user-guide/advanced-client-topics/programmatic-client-configuration-at-startup.adoc[Configure clients programmatically at application startup]
