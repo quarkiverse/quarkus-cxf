@@ -1457,10 +1457,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     EndpointInfo endpointInfo = ep == null ? null : ep.getEndpointInfo();
                     boolean decoupled = endpointInfo != null
                             && endpointInfo.getProperty(MAPAggregator.DECOUPLED_DESTINATION) != null;
-                    if (in == null && !isOneway(exchange) && decoupled) {
+                    if (!isOneway(exchange) && decoupled) {
                         /*
-                         * An empty HTTP acknowledgement for a two-way SOAP call whose actual reply arrives
-                         * separately. That real SOAP reply may arrive before or after the acknowledgement.
+                         * An HTTP acknowledgement with no body to process for a two-way SOAP call whose actual reply
+                         * arrives separately. That real SOAP reply may arrive before or after the acknowledgement.
                          * The acknowledgement must neither replace it nor complete the exchange.
                          * Do not propagate it to the incoming observer so that it does not replace the exchange's response.
                          */
