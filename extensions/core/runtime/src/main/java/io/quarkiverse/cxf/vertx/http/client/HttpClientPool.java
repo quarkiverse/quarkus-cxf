@@ -48,7 +48,7 @@ public class HttpClientPool {
      * {@link #onCertificateUpdate(CertificateUpdatedEvent)} then the client may still work for one request, but will be
      * re-created on the subsequent request.
      *
-     * @param spec the caching key
+     * @param clientInfo the client configuration
      * @return a possibly pooled client
      */
     public HttpClient getClient(CXFClientInfo clientInfo, HttpVersion version, TlsConfiguration tlsConfiguration,
@@ -75,16 +75,29 @@ public class HttpClientPool {
 
             if (tlsConfiguration != null) {
                 TlsConfigUtils.configure(opts, tlsConfiguration);
-                return new ClientEntry(vertx.createHttpClient(opts, poolOptions), tlsConfiguration.getName());
-            } else {
-                return new ClientEntry(vertx.createHttpClient(opts, poolOptions), null);
             }
+            final List<HttpVersion> versions = clientInfo.getHttpVersions();
+            if (!versions.isEmpty()) {
+                /*
+                 * HttpClientConfig(HttpClientOptions) takes an explicit ALPN list verbatim, without expanding
+                 * protocolVersion into implicit fallback versions. Keep the options adapter to preserve customizers,
+                 * including forceSni, which HttpClientBuilder.with(HttpClientConfig) otherwise resets.
+                 * Vert.x enables ALPN only for TLS connections whose list contains HTTP/2.
+                 */
+                opts.setProtocolVersion(versions.get(0))
+                        .setAlpnVersions(versions)
+                        .setUseAlpn(true);
+                opts.getHttp2Config().setClearTextUpgrade(versions.size() > 1);
+            }
+            // Vert.x owns the bodyless OPTIONS exchange, upgrade, and fallback, including legacy HTTP/2 clients.
+            opts.getHttp2Config().setClearTextUpgradeWithPreflightRequest(true);
+            return new ClientEntry(vertx.createHttpClient(opts, poolOptions),
+                    tlsConfiguration != null ? tlsConfiguration.getName() : null);
         }).httpClient;
     }
 
     /**
-     * Called upon certificate reload. Clients having the given {@link ClientSpec#tlsConfigurationName} will be
-     * removed from this pool, so that they are created anew via {@link #getClient(ClientSpec)} on the next request.
+     * Update clients using the reloaded TLS configuration. Failed updates evict the client for recreation.
      *
      * @param event the update event
      */

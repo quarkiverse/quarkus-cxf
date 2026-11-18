@@ -12,6 +12,7 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.http.HttpClientHTTPConduit;
+import org.apache.cxf.transport.http.URLConnectionHTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.cxf.transports.http.configuration.ProxyServerType;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
@@ -42,6 +43,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
     private final AuthorizationPolicy authorizationPolicy;
     private final Vertx vertx;
     private final HttpClientPool httpClientPool;
+    private final HTTPConduitSpec effectiveConduit;
 
     public QuarkusHTTPConduitFactory(
             CxfFixedConfig cxFixedConfig,
@@ -55,20 +57,24 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
         this.authorizationPolicy = authorizationPolicy;
         this.vertx = vertx;
         this.httpClientPool = httpClientPool;
+        final HTTPConduitSpec configured = cxfClientInfo.getHttpConduitImpl();
+        this.effectiveConduit = configured != null ? configured.resolveDefault()
+                : cxFixedConfig.httpConduitFactory().orElse(HTTPConduitImpl.QuarkusCXFDefault).resolveDefault();
+        if (!cxfClientInfo.getHttpVersions().isEmpty()
+                && effectiveConduit == HTTPConduitImpl.URLConnectionHTTPConduitFactory) {
+            throw unsupportedVersions(cxfClientInfo);
+        }
     }
 
     @Override
     public HTTPConduit createConduit(HTTPTransportFactory f, Bus b, EndpointInfo localInfo, EndpointReferenceType target)
             throws IOException {
-        HTTPConduitSpec httpConduitImpl = cxfClientInfo.getHttpConduitImpl();
-        if (httpConduitImpl == null) {
-            httpConduitImpl = cxFixedConfig.httpConduitFactory().orElse(null);
-        }
+        return configure(effectiveConduit, cxfClientInfo, b, localInfo, target);
+    }
 
-        if (httpConduitImpl == null) {
-            httpConduitImpl = HTTPConduitImpl.QuarkusCXFDefault;
-        }
-        return configure(httpConduitImpl.resolveDefault(), cxfClientInfo, b, localInfo, target);
+    private static IllegalArgumentException unsupportedVersions(CXFClientInfo clientInfo) {
+        return new IllegalArgumentException(clientInfo.httpVersionsProperty()
+                + " cannot be used with URLConnectionHTTPConduit; select VertxHttpClientHTTPConduitFactory");
     }
 
     private HTTPConduit configure(HTTPConduitSpec httpConduitImpl, CXFClientInfo cxfClientInfo, Bus b,
@@ -82,6 +88,9 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                 localInfo,
                 target,
                 pConfig);
+        if (!cxfClientInfo.getHttpVersions().isEmpty() && httpConduit instanceof URLConnectionHTTPConduit) {
+            throw unsupportedVersions(cxfClientInfo);
+        }
         if (httpConduit instanceof HttpClientHTTPConduit) {
             Log.warnf("Usage of %s is deprecated since Quarkus CXF 3.18.0."
                     + " You may want to review the options quarkus.cxf.http-conduit-factory and/or quarkus.cxf.client.\"%s\".http-conduit-factory",

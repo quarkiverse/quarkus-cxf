@@ -109,7 +109,6 @@ import io.vertx.core.streams.WriteStream;
 public class VertxHttpClientHTTPConduit extends HTTPConduit {
     private static final Logger log = Logger.getLogger(VertxHttpClientHTTPConduit.class);
     public static final String USE_ASYNC = "use.async.http.conduit";
-    public static final String ENABLE_HTTP2 = "org.apache.cxf.transports.http2.enabled";
     public static final String AUTO_REDIRECT_MAX_SAME_URI_COUNT = "http.redirect.max.same.uri.count";
     private static final String AUTO_REDIRECT_SAME_HOST_ONLY = "http.redirect.same.host.only";
     private static final String AUTO_REDIRECT_ALLOWED_URI = "http.redirect.allowed.uri";
@@ -161,7 +160,22 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                             + " quarkus-reactive-routes, quarkus-grpc, quarkus-messaging-* and possibly others.");
         }
 
-        final HttpVersion version = getVersion(message, csPolicy);
+        final HttpVersion version;
+        if (clientInfo.getHttpVersions().isEmpty()) {
+            version = getVersion(message, csPolicy);
+        } else {
+            clientInfo.validateHttpVersions(uri);
+            if (message.getContextualProperty(FORCE_HTTP_VERSION) != null) {
+                throw new IllegalArgumentException(clientInfo.httpVersionsProperty()
+                        + " cannot be combined with CXF request override " + FORCE_HTTP_VERSION);
+            }
+            if (!"auto".equals(csPolicy.getVersion())) {
+                throw new IllegalArgumentException(clientInfo.httpVersionsProperty()
+                        + " cannot be combined with HTTPClientPolicy.version=" + csPolicy.getVersion()
+                        + "; leave the policy version at auto");
+            }
+            version = clientInfo.getHttpVersions().get(0);
+        }
         final boolean isHttps = "https".equals(uri.getScheme());
         final QuarkusTLSClientParameters clientParameters;
         if (isHttps) {
@@ -272,10 +286,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
     static HttpVersion getVersion(Message message, HTTPClientPolicy csPolicy) {
         String verc = (String) message.getContextualProperty(FORCE_HTTP_VERSION);
-        final Object enableHttp2 = message.getContextualProperty(ENABLE_HTTP2);
-        if (verc == null && enableHttp2 != null) {
-            csPolicy.setVersion("2");
-        }
         if (verc == null) {
             verc = csPolicy.getVersion();
         }
@@ -557,7 +567,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(buffer.length()));
                 }
 
-                setProtocolHeaders(outMessage, requestOptions, userAgent, version);
+                // A list starting with HTTP/1.x can negotiate HTTP/2 through ALPN. Connection is forbidden there;
+                // the pool's keep-alive options still govern HTTP/1.x connections when the header is omitted.
+                setProtocolHeaders(outMessage, requestOptions, userAgent,
+                        clientInfo.getHttpVersions().contains(HttpVersion.HTTP_2) ? HttpVersion.HTTP_2 : version);
 
                 client.request(requestOptions)
                         .onSuccess(req -> {
@@ -762,6 +775,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         void retransmit(URI newURL, Function<RequestOptions, RequestOptions> requestOptionsCustomizer) throws IOException {
+            clientInfo.validateHttpVersions(newURL);
             if (log.isDebugEnabled()) {
                 log.debugf("Redirect retransmit: %s",
                         redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")));
