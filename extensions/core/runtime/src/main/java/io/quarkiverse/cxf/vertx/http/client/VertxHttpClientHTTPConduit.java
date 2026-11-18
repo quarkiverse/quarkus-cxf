@@ -161,8 +161,20 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                             + " quarkus-reactive-routes, quarkus-grpc, quarkus-messaging-* and possibly others.");
         }
 
-        final HttpVersion version = getVersion(message, csPolicy);
+        final List<HttpVersion> versions = clientInfo.getHttpVersions();
+        if (!versions.isEmpty()
+                && (message.getContextualProperty(FORCE_HTTP_VERSION) != null
+                        || message.getContextualProperty(ENABLE_HTTP2) != null
+                        || (csPolicy.getVersion() != null && !"auto".equals(csPolicy.getVersion())))) {
+            throw new IllegalArgumentException("quarkus.cxf.client."
+                    + QuarkusCxfUtils.quoteCongurationKeyIfNeeded(clientInfo.getConfigKey())
+                    + ".vertx.versions cannot be combined with a CXF HTTP version override");
+        }
+        final HttpVersion version = versions.isEmpty() ? getVersion(message, csPolicy) : versions.get(0);
         final boolean isHttps = "https".equals(uri.getScheme());
+        if (versions.contains(HttpVersion.HTTP_3) && !isHttps) {
+            throw new IllegalArgumentException("HTTP/3 requires an HTTPS endpoint: " + uri);
+        }
         final QuarkusTLSClientParameters clientParameters;
         if (isHttps) {
             clientParameters = findTLSClientParameters(message);
@@ -557,9 +569,10 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(buffer.length()));
                 }
 
-                setProtocolHeaders(outMessage, requestOptions, userAgent, version);
+                setProtocolHeaders(outMessage, requestOptions, userAgent);
 
                 client.request(requestOptions)
+                        .map(this::prepareRequest)
                         .onSuccess(req -> {
                             mode.timeoutSpec.connected();
                             if (!finalChunk) {
@@ -792,6 +805,9 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                 requestURI += "?" + query;
             }
             RequestOptions options = new RequestOptions(requestOptions);
+            if (clientInfo.getHttpVersions().contains(HttpVersion.HTTP_3) && !ssl) {
+                throw new IOException("HTTP/3 requires an HTTPS redirect target: " + newURL);
+            }
             options.setHost(newURL.getHost());
             options.setPort(port);
             options.setSsl(ssl);
@@ -808,10 +824,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
                 final HttpClient client = clientPool.getClient(clientInfo, version, tlsConfiguration, proxyConfiguration);
 
-                // Should not be necessary, because we copy from the original requestOptions
-                // setProtocolHeaders(outMessage, options, userAgent);
-
                 return client.request(requestOptionsCustomizer.apply(options))
+                        .map(this::prepareRequest)
                         .compose(req -> {
                             prepareResponse(req);
                             return storedBody.pipeTo(req).compose(v -> Future.succeededFuture(req));
@@ -976,7 +990,31 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         void failResponse(Throwable t) {
         }
 
-        static void setProtocolHeaders(Message outMessage, RequestOptions requestOptions, String userAgent, HttpVersion version)
+        private HttpClientRequest prepareRequest(HttpClientRequest request) {
+            final HttpVersion actualVersion = request.version();
+            final List<HttpVersion> versions = clientInfo.getHttpVersions();
+            if (!versions.isEmpty() && !versions.contains(actualVersion)) {
+                request.reset();
+                throw new IllegalStateException("Negotiated HTTP version " + actualVersion
+                        + " is not in the configured versions " + versions + " for CXF client " + clientInfo.getConfigKey());
+            }
+            // Decide after negotiation, including fallback and redirects to servers using another protocol.
+            // Legacy H2C upgrades happen while sending the first request; retain their original header handling.
+            if ((actualVersion != HttpVersion.HTTP_1_0 && actualVersion != HttpVersion.HTTP_1_1)
+                    || (versions.isEmpty() && version == HttpVersion.HTTP_2)) {
+                for (String connection : request.headers().getAll(HttpHeaderHelper.CONNECTION)) {
+                    for (String name : connection.split(",")) {
+                        request.headers().remove(name.trim());
+                    }
+                }
+                for (String name : List.of("Connection", "Keep-Alive", "Proxy-Connection", "Transfer-Encoding", "Upgrade")) {
+                    request.headers().remove(name);
+                }
+            }
+            return request;
+        }
+
+        static void setProtocolHeaders(Message outMessage, RequestOptions requestOptions, String userAgent)
                 throws IOException {
             final Headers h = new Headers(outMessage);
             final MultiMap outHeaders;
@@ -994,10 +1032,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
             for (Map.Entry<String, List<String>> header : h.headerMap().entrySet()) {
                 if (HttpHeaderHelper.CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
-                    continue;
-                }
-                if (HttpHeaderHelper.CONNECTION.equalsIgnoreCase(header.getKey()) && version != HttpVersion.HTTP_1_0
-                        && version != HttpVersion.HTTP_1_1) {
                     continue;
                 }
                 if (addHeaders || HttpHeaderHelper.COOKIE.equalsIgnoreCase(header.getKey())) {

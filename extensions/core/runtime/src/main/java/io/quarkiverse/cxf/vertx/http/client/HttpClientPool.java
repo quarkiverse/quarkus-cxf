@@ -56,8 +56,11 @@ public class HttpClientPool {
         final String key = clientInfo.getConfigKey();
         Objects.requireNonNull(key, "CXFClientInfo.configKey cannot be null");
         return clients.computeIfAbsent(key, v -> {
+            // Preserve forced SNI for HTTP/1.x and HTTP/2 through HttpClientOptions.
+            // Vert.x deliberately removed it from HttpClientConfig; HTTP/3 cannot force SNI for non-FQDNs.
+            // See https://github.com/eclipse-vertx/vert.x/pull/6044
             final HttpClientOptions opts = new HttpClientOptions()
-                    .setProtocolVersion(version);
+                    .setProtocolVersion(version == HttpVersion.HTTP_3 ? HttpVersion.HTTP_1_1 : version);
             final PoolOptions poolOptions = new PoolOptions();
             clientInfo.getVertxConfig().configure(opts, clientInfo.getConnection(), poolOptions);
             if (proxyConfiguration != null) {
@@ -75,10 +78,44 @@ public class HttpClientPool {
 
             if (tlsConfiguration != null) {
                 TlsConfigUtils.configure(opts, tlsConfiguration);
-                return new ClientEntry(vertx.createHttpClient(opts, poolOptions), tlsConfiguration.getName());
-            } else {
-                return new ClientEntry(vertx.createHttpClient(opts, poolOptions), null);
             }
+            final List<HttpVersion> versions = clientInfo.getHttpVersions();
+            final boolean http3 = versions.contains(HttpVersion.HTTP_3);
+            if (http3 && proxyConfiguration != null) {
+                throw new IllegalArgumentException("HTTP/3 does not support proxy configuration for CXF client " + key);
+            }
+            if (!versions.isEmpty() && !http3) {
+                // HttpClientConfig(HttpClientOptions) uses this exact list for both TLS and cleartext connections.
+                // Apply it after TLS configuration so its ALPN setting cannot override the explicit version list.
+                opts.setProtocolVersion(versions.get(0)).setUseAlpn(true).setAlpnVersions(versions);
+                if (!versions.contains(HttpVersion.HTTP_1_1)) {
+                    // H2C upgrade requires HTTP/1.1; use prior knowledge when it is not an allowed fallback.
+                    opts.setHttp2ClearTextUpgrade(false);
+                } else if (versions.get(0) == HttpVersion.HTTP_2) {
+                    // Complete negotiation before sending SOAP headers and potentially streaming a large body.
+                    // Keep the preflight connection alive even for connection=close. The SOAP request's
+                    // Connection header closes HTTP/1.x connections after the actual exchange.
+                    opts.setKeepAlive(true).setHttp2ClearTextUpgradeWithPreflightRequest(true);
+                }
+            }
+            if (http3 || clientInfo.getVertxConfig().followAlternativeServices()) {
+                final HttpClientConfig config = new HttpClientConfig(opts)
+                        .setFollowAlternativeServices(clientInfo.getVertxConfig().followAlternativeServices());
+                if (!versions.isEmpty()) {
+                    // The legacy options conversion cannot parse the h3 ALPN identifier.
+                    config.setVersions(versions);
+                }
+                config.getHttp3Config()
+                        .setKeepAliveTimeout(Duration.ofSeconds(clientInfo.getVertxConfig().keepAliveTimeout()));
+                final HttpClientBuilder builder = vertx.httpClientBuilder()
+                        .with(config).with(poolOptions).with(opts.getSslOptions());
+                if (opts.getSslEngineOptions() != null) {
+                    builder.with(opts.getSslEngineOptions());
+                }
+                return new ClientEntry(builder.build(), tlsConfiguration != null ? tlsConfiguration.getName() : null);
+            }
+            return new ClientEntry(vertx.createHttpClient(opts, poolOptions),
+                    tlsConfiguration != null ? tlsConfiguration.getName() : null);
         }).httpClient;
     }
 

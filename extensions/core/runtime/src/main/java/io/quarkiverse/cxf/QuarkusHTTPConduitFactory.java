@@ -18,6 +18,7 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.vertx.http.client.HttpClientPool;
+import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit;
 import io.quarkus.logging.Log;
 import io.quarkus.proxy.ProxyConfiguration;
 import io.quarkus.proxy.ProxyType;
@@ -82,6 +83,12 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
                 localInfo,
                 target,
                 pConfig);
+        if (!cxfClientInfo.getHttpVersions().isEmpty()
+                && !(httpConduit instanceof VertxHttpClientHTTPConduit)) {
+            throw new IllegalArgumentException("quarkus.cxf.client."
+                    + QuarkusCxfUtils.quoteCongurationKeyIfNeeded(cxfClientInfo.getConfigKey())
+                    + ".vertx.versions requires VertxHttpClientHTTPConduitFactory");
+        }
         if (httpConduit instanceof HttpClientHTTPConduit) {
             Log.warnf("Usage of %s is deprecated since Quarkus CXF 3.18.0."
                     + " You may want to review the options quarkus.cxf.http-conduit-factory and/or quarkus.cxf.client.\"%s\".http-conduit-factory",
