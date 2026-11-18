@@ -9,22 +9,33 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.namespace.QName;
+
+import org.apache.cxf.binding.soap.model.SoapBindingInfo;
+import org.apache.cxf.bus.extension.ExtensionManagerBus;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientCallback;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.endpoint.EndpointImpl;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
+import org.apache.cxf.service.ServiceImpl;
 import org.apache.cxf.service.model.BindingInfo;
+import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.EndpointInfo;
+import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.transport.http.Cookies;
 import org.apache.cxf.ws.addressing.MAPAggregator;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,8 +52,14 @@ class ResponseHandlerTest {
     private static final URI URL = URI.create("http://localhost/services/wsrm");
 
     @ParameterizedTest
-    @CsvSource({ "before,false", "after,false", "concurrent,false", "before,true", "after,true", "concurrent,true" })
-    void decoupledReplySurvivesEmptyAcknowledgement(String order, boolean propagate) throws Exception {
+    @CsvSource({
+            "before,false,''", "after,false,''", "concurrent,false,''",
+            "before,true,''", "after,true,''", "concurrent,true,''",
+            "before,false,unprocessed acknowledgement body", "after,false,unprocessed acknowledgement body",
+            "concurrent,false,unprocessed acknowledgement body", "before,true,unprocessed acknowledgement body",
+            "after,true,unprocessed acknowledgement body", "concurrent,true,unprocessed acknowledgement body"
+    })
+    void decoupledReplySurvivesAcknowledgement(String order, boolean propagate, String body) throws Exception {
         Fixture fixture = new Fixture(true, false, propagate);
         Message reply = new MessageImpl();
         reply.setContent(List.class, List.of("Hello Paul!"));
@@ -50,10 +67,10 @@ class ResponseHandlerTest {
         switch (order) {
             case "before":
                 fixture.completeReply(reply);
-                fixture.respond(202, "");
+                fixture.respond(202, body);
                 break;
             case "after":
-                fixture.respond(202, "");
+                fixture.respond(202, body);
                 assertThat(fixture.exchange.getInMessage()).isNull();
                 assertThat(fixture.exchange.get(ClientImpl.FINISHED)).isNull();
                 fixture.completeReply(reply);
@@ -64,7 +81,7 @@ class ResponseHandlerTest {
                     CountDownLatch start = new CountDownLatch(1);
                     var response = executor.submit(() -> {
                         assertThat(start.await(5, TimeUnit.SECONDS)).isTrue();
-                        fixture.respond(202, "");
+                        fixture.respond(202, body);
                         return null;
                     });
                     var delivery = executor.submit(() -> {
@@ -91,6 +108,55 @@ class ResponseHandlerTest {
         assertThat(fixture.exchange.get(ClientCallback.class)).isSameAs(fixture.callback);
         assertThat(fixture.callback.isDone()).isFalse();
         assertThat(fixture.observed).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", "unprocessed acknowledgement body" })
+    void acknowledgementDuringAsyncResultProcessingPreservesCallbackResult(String body) throws Exception {
+        Fixture fixture = new Fixture(true, false, false);
+        ExtensionManagerBus bus = new ExtensionManagerBus();
+        try {
+            ServiceInfo serviceInfo = new ServiceInfo();
+            serviceInfo.setName(new QName("urn:test", "Service"));
+            ServiceImpl service = new ServiceImpl(serviceInfo);
+            SoapBindingInfo bindingInfo = new SoapBindingInfo(serviceInfo, "http://schemas.xmlsoap.org/wsdl/soap/");
+            bindingInfo.setTransportURI("http://schemas.xmlsoap.org/soap/http");
+            EndpointInfo info = new EndpointInfo();
+            info.setName(new QName("urn:test", "Port"));
+            info.setBinding(bindingInfo);
+            info.setProperty(MAPAggregator.DECOUPLED_DESTINATION, new Object());
+            EndpointImpl endpoint = new EndpointImpl(bus, service, info);
+            // Supply a decoded reply directly so the test only exercises result delivery.
+            endpoint.getBinding().getInInterceptors().clear();
+            fixture.exchange.put(Endpoint.class, endpoint);
+            fixture.exchange.setSynchronous(false);
+            fixture.exchange.put(Client.KEEP_CONDUIT_ALIVE, true);
+            fixture.out.put(Message.INVOCATION_CONTEXT, Map.of(Client.RESPONSE_CONTEXT, new HashMap<String, Object>()));
+            ClientImpl client = new ClientImpl(bus, endpoint) {
+                @Override
+                protected Object[] processResult(Message message, Exchange exchange, BindingOperationInfo operation,
+                        Map<String, Object> responseContext) throws Exception {
+                    // Deliver the acknowledgement after ClientImpl publishes the decoded reply for its callback,
+                    // but before processResult() reads it and before FINISHED is set.
+                    assertThat(exchange.get(ClientImpl.FINISHED)).isNull();
+                    List<?> contents = exchange.getInMessage().getContent(List.class);
+                    assertThat(contents).isEqualTo(List.of("Hello Paul!"));
+                    fixture.respond(202, body);
+                    return super.processResult(message, exchange, operation, responseContext);
+                }
+            };
+            Message reply = new MessageImpl();
+            reply.setExchange(fixture.exchange);
+            reply.setContent(List.class, List.of("Hello Paul!"));
+            client.onMessage(reply);
+
+            assertThat(fixture.exchange.get(ClientImpl.FINISHED)).isEqualTo(true);
+            List<?> contents = fixture.exchange.getInMessage().getContent(List.class);
+            assertThat(contents).isEqualTo(List.of("Hello Paul!"));
+            assertThat(fixture.callback.get(5, TimeUnit.SECONDS)).containsExactly("Hello Paul!");
+        } finally {
+            bus.shutdown(true);
+        }
     }
 
     @ParameterizedTest
