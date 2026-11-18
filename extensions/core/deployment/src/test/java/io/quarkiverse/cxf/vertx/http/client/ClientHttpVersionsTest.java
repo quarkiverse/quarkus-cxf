@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -21,6 +22,8 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
 import io.quarkus.runtime.StartupEvent;
@@ -30,6 +33,7 @@ import io.smallrye.certs.junit5.Certificate;
 import io.smallrye.certs.junit5.Certificates;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.ClientAuth;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerConfig;
 import io.vertx.core.http.HttpVersion;
@@ -55,7 +59,8 @@ public class ClientHttpVersionsTest {
                 Map.entry("untrusted", "2,1.1"), Map.entry("urlConnection", "2,1.1"),
                 Map.entry("orderedClear", "2,1.1"), Map.entry("http2Clear", "2"), Map.entry("http10Clear", "1.0"),
                 Map.entry("chunked", "2,1.1"), Map.entry("closing", "2,1.1"), Map.entry("closingClear", "2,1.1"),
-                Map.entry("legacyClear", ""), Map.entry("legacyHttp2Clear", ""),
+                Map.entry("reusing", "2,1.1"), Map.entry("preflightTimeout", "2,1.1"),
+                Map.entry("legacyClear", ""), Map.entry("legacyHttp2Clear", ""), Map.entry("legacyHttp2Closing", ""),
                 Map.entry("legacy", ""), Map.entry("legacyHttp2", ""));
         lists.forEach((name, versions) -> {
             String key = "quarkus.cxf.client." + name;
@@ -81,6 +86,10 @@ public class ClientHttpVersionsTest {
                 .overrideConfigKey("quarkus.cxf.client.closing.connection", "close")
                 .overrideConfigKey("quarkus.cxf.client.closingClear.connection", "close")
                 .overrideConfigKey("quarkus.cxf.client.legacyHttp2Clear.version", "2")
+                .overrideConfigKey("quarkus.cxf.client.legacyHttp2Closing.version", "2")
+                .overrideConfigKey("quarkus.cxf.client.legacyHttp2Closing.connection", "close")
+                .overrideConfigKey("quarkus.cxf.client.reusing.vertx.connection-pool.http1-max-size", "1")
+                .overrideConfigKey("quarkus.cxf.client.preflightTimeout.connection-timeout", "1000")
                 .overrideConfigKey("quarkus.cxf.client.urlConnection.http-conduit-factory", "URLConnectionHTTPConduitFactory")
                 .overrideConfigKey("quarkus.tls.forced.key-store.p12.path", "localhost-keystore.p12")
                 .overrideConfigKey("quarkus.tls.forced.key-store.p12.password", "secret")
@@ -117,6 +126,12 @@ public class ClientHttpVersionsTest {
     VersionService legacyClear;
     @CXFClient("legacyHttp2Clear")
     VersionService legacyHttp2Clear;
+    @CXFClient("legacyHttp2Closing")
+    VersionService legacyHttp2Closing;
+    @CXFClient("reusing")
+    VersionService reusing;
+    @CXFClient("preflightTimeout")
+    VersionService preflightTimeout;
     @CXFClient("chunked")
     VersionService chunked;
     @CXFClient("closing")
@@ -225,6 +240,67 @@ public class ClientHttpVersionsTest {
     }
 
     @Test
+    void legacyConnectionCloseWithCleartextUpgrade() {
+        assertThat(invoke(legacyHttp2Closing, servers.clearBoth, false)).startsWith("HTTP_2|null|");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "keep-alive", "close", "chunked" })
+    void cleartextFallbackAfterPreflightClosesConnection(String mode) {
+        final VersionService client = switch (mode) {
+            case "close" -> closingClear;
+            case "chunked" -> chunked;
+            default -> orderedClear;
+        };
+        final int preflights = servers.closingPreflights.get();
+        final int soapRequests = servers.closingSoapRequests.get();
+        setAddress(client, servers.clearClosing, false, "/inspect");
+        assertThat(client.inspect("chunked".equals(mode) ? "x".repeat(20_000) : ""))
+                .startsWith("HTTP_1_1|" + ("close".equals(mode) ? "close" : "keep-alive") + "|");
+        assertThat(servers.closingPreflights.get()).isEqualTo(preflights + 1);
+        assertThat(servers.closingSoapRequests.get()).isEqualTo(soapRequests + 1);
+    }
+
+    @Test
+    void cleartextFallbackAfterRedirectPreflightClosesConnection() {
+        final int preflights = servers.closingPreflights.get();
+        final int soapRequests = servers.closingSoapRequests.get();
+        setAddress(ordered, servers.tlsHttp2, true, "/redirect-closing");
+        assertThat(ordered.inspect("")).startsWith("HTTP_1_1|keep-alive|");
+        assertThat(servers.closingPreflights.get()).isEqualTo(preflights + 1);
+        assertThat(servers.closingSoapRequests.get()).isEqualTo(soapRequests + 1);
+    }
+
+    @Test
+    void doesNotRetryAfterSendingSoap() {
+        final int soapRequests = servers.closingSoapRequests.get();
+        setAddress(orderedClear, servers.clearClosing, false, "/drop-response");
+        assertThatThrownBy(() -> orderedClear.inspect("")).isInstanceOf(WebServiceException.class);
+        assertThat(servers.closingSoapRequests.get()).isEqualTo(soapRequests + 1);
+    }
+
+    @Test
+    void preflightIsNotRepeatedOnReusedConnections() {
+        final int http1Preflights = servers.http1Preflights.get();
+        assertThat(invoke(reusing, servers.clearHttp1, false)).startsWith("HTTP_1_1|keep-alive|");
+        assertThat(invoke(reusing, servers.clearHttp1, false)).startsWith("HTTP_1_1|keep-alive|");
+        assertThat(servers.http1Preflights.get()).isEqualTo(http1Preflights + 1);
+
+        final int http2Preflights = servers.http2Preflights.get();
+        assertThat(invoke(reusing, servers.clearBoth, false)).startsWith("HTTP_2|null|");
+        assertThat(invoke(reusing, servers.clearBoth, false)).startsWith("HTTP_2|null|");
+        assertThat(servers.http2Preflights.get()).isEqualTo(http2Preflights + 1);
+    }
+
+    @Test
+    void preflightTimeoutDoesNotSendSoap() {
+        assertThatThrownBy(() -> invoke(preflightTimeout, servers.clearStalled, false))
+                .hasStackTraceContaining("Timeout");
+        assertThat(servers.stalledPreflights.get()).isEqualTo(1);
+        assertThat(servers.stalledSoapRequests.get()).isZero();
+    }
+
+    @Test
     void rejectsRequestVersionOverrides() {
         BindingProvider provider = (BindingProvider) ordered;
         provider.getRequestContext().put("org.apache.cxf.transport.http.forceVersion", "1.1");
@@ -262,6 +338,14 @@ public class ClientHttpVersionsTest {
 
     @Singleton
     public static class Servers {
+        final AtomicInteger closingPreflights = new AtomicInteger();
+        final AtomicInteger closingSoapRequests = new AtomicInteger();
+        final AtomicInteger http1Preflights = new AtomicInteger();
+        final AtomicInteger http2Preflights = new AtomicInteger();
+        final AtomicInteger stalledPreflights = new AtomicInteger();
+        final AtomicInteger stalledSoapRequests = new AtomicInteger();
+        HttpServer clearClosing;
+        HttpServer clearStalled;
         HttpServer clearHttp1;
         HttpServer clearBoth;
         HttpServer tlsHttp1;
@@ -271,6 +355,8 @@ public class ClientHttpVersionsTest {
         HttpServer mutualTls;
 
         void start(@Observes StartupEvent event, Vertx vertx) throws Exception {
+            clearClosing = start(vertx, null, false, false, HttpVersion.HTTP_1_1);
+            clearStalled = start(vertx, null, false, false, HttpVersion.HTTP_1_1);
             clearHttp1 = start(vertx, null, false, false, HttpVersion.HTTP_1_1, HttpVersion.HTTP_1_0);
             clearBoth = start(vertx, null, false, false, HttpVersion.HTTP_2, HttpVersion.HTTP_1_1);
             tlsHttp1 = start(vertx, "localhost", false, false, HttpVersion.HTTP_1_1, HttpVersion.HTTP_1_0);
@@ -295,6 +381,38 @@ public class ClientHttpVersionsTest {
                 builder.with(ssl);
             }
             return builder.build().requestHandler(request -> request.bodyHandler(body -> {
+                if (request.localAddress().port() == clearStalled.actualPort()) {
+                    if (request.method() == HttpMethod.OPTIONS) {
+                        stalledPreflights.incrementAndGet();
+                    } else {
+                        stalledSoapRequests.incrementAndGet();
+                    }
+                    return;
+                }
+                if (request.method() == HttpMethod.OPTIONS) {
+                    if (request.localAddress().port() == clearHttp1.actualPort()) {
+                        http1Preflights.incrementAndGet();
+                    } else if (request.localAddress().port() == clearBoth.actualPort()) {
+                        http2Preflights.incrementAndGet();
+                    }
+                }
+                if (request.localAddress().port() == clearClosing.actualPort()) {
+                    if (request.method() == HttpMethod.OPTIONS) {
+                        closingPreflights.incrementAndGet();
+                        request.response().setStatusCode(405).putHeader("Connection", "close").end();
+                        return;
+                    }
+                    closingSoapRequests.incrementAndGet();
+                    if (request.path().equals("/drop-response")) {
+                        request.connection().close();
+                        return;
+                    }
+                }
+                if (request.path().equals("/redirect-closing")) {
+                    request.response().setStatusCode(307)
+                            .putHeader("Location", "http://localhost:" + clearClosing.actualPort() + "/inspect").end();
+                    return;
+                }
                 if (request.path().startsWith("/redirect-")) {
                     HttpServer target = request.path().equals("/redirect-http1") ? tlsHttp1 : tlsHttp2;
                     request.response().setStatusCode(307)

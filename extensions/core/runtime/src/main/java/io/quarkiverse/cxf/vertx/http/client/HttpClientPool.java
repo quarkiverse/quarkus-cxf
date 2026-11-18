@@ -31,6 +31,9 @@ import io.vertx.core.net.ProxyType;
 public class HttpClientPool {
     private static final Logger log = Logger.getLogger(HttpClientPool.class);
     private final Map<String, ClientEntry> clients = new ConcurrentHashMap<>();
+    // Weak keys avoid retaining connections after Vert.x evicts them from its pool.
+    private final Set<HttpConnection> negotiatedConnections = Collections.synchronizedSet(
+            Collections.newSetFromMap(new WeakHashMap<>()));
     private final Vertx vertx;
 
     HttpClientPool() {
@@ -88,10 +91,10 @@ public class HttpClientPool {
                     // H2C upgrade requires HTTP/1.1; use prior knowledge when it is not an allowed fallback.
                     opts.setHttp2ClearTextUpgrade(false);
                 } else if (versions.get(0) == HttpVersion.HTTP_2) {
-                    // Complete negotiation before sending SOAP headers and potentially streaming a large body.
-                    // Keep the preflight connection alive even for connection=close. The SOAP request's
-                    // Connection header closes HTTP/1.x connections after the actual exchange.
-                    opts.setKeepAlive(true).setHttp2ClearTextUpgradeWithPreflightRequest(true);
+                    // The conduit sends an OPTIONS preflight and waits for its response before sending SOAP.
+                    // Vert.x's built-in preflight exposes the connection before processing Connection: close.
+                    // Keep the preflight alive even for connection=close; the SOAP request supplies that header.
+                    opts.setKeepAlive(true).setHttp2ClearTextUpgradeWithPreflightRequest(false);
                 }
             }
             return new ClientEntry(vertx.createHttpClient(opts, poolOptions),
@@ -152,6 +155,14 @@ public class HttpClientPool {
 
     public Vertx getVertx() {
         return vertx;
+    }
+
+    boolean isNegotiated(HttpConnection connection) {
+        return negotiatedConnections.contains(connection);
+    }
+
+    void negotiated(HttpConnection connection) {
+        negotiatedConnections.add(connection);
     }
 
     static ProxyType toProxyType(io.quarkus.proxy.ProxyType type) {

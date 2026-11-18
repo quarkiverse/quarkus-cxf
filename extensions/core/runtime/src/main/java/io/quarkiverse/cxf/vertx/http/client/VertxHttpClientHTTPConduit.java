@@ -95,6 +95,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
+import io.vertx.core.http.HttpClosedException;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpVersion;
@@ -568,7 +569,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
                 setProtocolHeaders(outMessage, requestOptions, userAgent);
 
-                client.request(requestOptions)
+                createRequest(client, requestOptions)
                         .map(this::prepareRequest)
                         .onSuccess(req -> {
                             mode.timeoutSpec.connected();
@@ -818,7 +819,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
                 final HttpClient client = clientPool.getClient(clientInfo, version, tlsConfiguration, proxyConfiguration);
 
-                return client.request(requestOptionsCustomizer.apply(options))
+                return createRequest(client, requestOptionsCustomizer.apply(options))
                         .map(this::prepareRequest)
                         .compose(req -> {
                             prepareResponse(req);
@@ -982,6 +983,54 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
 
         void failResponse(Throwable t) {
+        }
+
+        private Future<HttpClientRequest> createRequest(HttpClient client, RequestOptions options) {
+            final List<HttpVersion> versions = clientInfo.getHttpVersions();
+            final boolean ssl = options.isSsl() != null ? options.isSsl() : "https".equals(url.getScheme());
+            if (!ssl && !versions.isEmpty() && versions.get(0) == HttpVersion.HTTP_2
+                    && versions.contains(HttpVersion.HTTP_1_1)) {
+                return client.request(options).compose(request -> {
+                    if (request.version() == HttpVersion.HTTP_2 || clientPool.isNegotiated(request.connection())) {
+                        return Future.succeededFuture(request);
+                    }
+                    // Use the first stream for negotiation, without any SOAP headers or body.
+                    request.setMethod(HttpMethod.OPTIONS).setURI("/");
+                    request.headers().clear();
+                    final Future<Boolean> preflight = request.send().compose(response -> {
+                        final boolean close = response.headers().getAll(HttpHeaders.CONNECTION).stream()
+                                .flatMap(value -> Arrays.stream(value.split(",")))
+                                .anyMatch(value -> "close".equalsIgnoreCase(value.trim()));
+                        if (close) {
+                            return request.connection().close().map(true);
+                        }
+                        response.resume();
+                        return response.end().map(v -> {
+                            clientPool.negotiated(request.connection());
+                            return false;
+                        });
+                    });
+                    final long remaining = mode.timeoutSpec.remainingReceiveTimeout();
+                    final long timeout = options.getConnectTimeout() > 0 ? Math.min(options.getConnectTimeout(), remaining)
+                            : remaining;
+                    return preflight.timeout(Math.max(1, timeout), TimeUnit.MILLISECONDS).recover(cause -> {
+                        request.reset();
+                        if (cause instanceof HttpClosedException) {
+                            return Future.succeededFuture(true);
+                        }
+                        return Future.failedFuture(cause);
+                    }).compose(closed -> {
+                        if (closed) {
+                            // No SOAP data was sent. Bypass upgrade on a new HTTP/1.1 connection.
+                            return client.request(new RequestOptions(options).setProtocolVersion(HttpVersion.HTTP_1_1));
+                        }
+                        // Let Vert.x recycle the preflight's pool lease before acquiring the SOAP stream.
+                        return Future.future(
+                                promise -> context.runOnContext(v -> createRequest(client, options).onComplete(promise)));
+                    });
+                });
+            }
+            return client.request(options);
         }
 
         private HttpClientRequest prepareRequest(HttpClientRequest request) {

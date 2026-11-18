@@ -18,6 +18,7 @@ import io.smallrye.config.WithConverter;
 import io.smallrye.config.WithDefault;
 import io.smallrye.config.WithName;
 import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.http.HttpVersion;
 import io.vertx.core.http.PoolOptions;
 
 /**
@@ -692,7 +693,10 @@ public interface CxfClientConfig {
         default void configure(HttpClientOptions opts, ConnectionType connectionType, PoolOptions poolOptions) {
             opts.setKeepAliveTimeout(keepAliveTimeout());
             opts.setHttp2KeepAliveTimeout(http2KeepAliveTimeout().orElse(keepAliveTimeout()));
-            opts.setKeepAlive(ConnectionType.KEEP_ALIVE.equals(connectionType));
+            // Legacy HTTP/2 clients need keep-alive while upgrading their first cleartext request.
+            if (versions().isPresent() || opts.getProtocolVersion() != HttpVersion.HTTP_2) {
+                opts.setKeepAlive(ConnectionType.KEEP_ALIVE.equals(connectionType));
+            }
             connectionPool().configure(poolOptions);
         }
     }
