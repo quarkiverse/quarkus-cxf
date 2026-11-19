@@ -5,6 +5,10 @@
 Quarkus CXF is a set of [Quarkus](https://quarkus.io/) extensions for developing SOAP web services and clients using [Apache CXF](https://cxf.apache.org/). 
 It follows the Quarkus extension model (runtime + deployment split) and supports both JVM and GraalVM native compilation.
 
+## Project mission
+
+Quarkus CXF aims at providing a framework for creating SOAP client and SOAP server applications on Quarkus.
+
 ## Directory structure
 
 ```
