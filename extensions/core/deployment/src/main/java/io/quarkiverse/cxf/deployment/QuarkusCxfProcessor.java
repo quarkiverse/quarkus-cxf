@@ -86,6 +86,7 @@ import org.xml.sax.SAXException;
 import io.quarkiverse.cxf.CXFRecorder;
 import io.quarkiverse.cxf.QuarkusBusFactory;
 import io.quarkiverse.cxf.QuarkusCxfContextUtils;
+import io.quarkiverse.cxf.QuarkusNamespacePrefixMapper;
 import io.quarkiverse.cxf.deployment.CxfBuildTimeConfig.Wsdl2JavaParameterSet;
 import io.quarkiverse.cxf.deployment.codegen.Wsdl2JavaCodeGen;
 import io.quarkus.arc.deployment.GeneratedBeanBuildItem;
@@ -586,8 +587,9 @@ class QuarkusCxfProcessor {
         /* Referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_endpoint_dynamic_ExceptionClassGenerator */
         reflectiveClass.produce(ReflectiveClassBuildItem.builder("io.quarkiverse.cxf.CXFException").build());
 
-        /* Referenced from io.quarkiverse.cxf.graal.Target_org_apache_cxf_common_spi_NamespaceClassGenerator */
-        reflectiveClass.produce(ReflectiveClassBuildItem.builder("org.apache.cxf.common.jaxb.NamespaceMapper").build());
+        /* setContextualNamespaceDecls(String[]) is called reflectively from org.apache.cxf.jaxb.io.DataWriterImpl */
+        reflectiveClass.produce(
+                ReflectiveClassBuildItem.builder(QuarkusNamespacePrefixMapper.class.getName()).methods().build());
 
         reflectiveClass.produce(
                 ReflectiveClassBuildItem.builder("org.apache.cxf.ws.addressing.AddressingProperties").methods().build());

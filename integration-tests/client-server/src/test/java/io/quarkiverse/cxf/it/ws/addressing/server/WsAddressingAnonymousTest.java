@@ -42,7 +42,12 @@ public class WsAddressingAnonymousTest {
                                 CoreMatchers.is("true")),
                         Matchers.hasXPath(
                                 "local-name(" + QuarkusCxfInternalTestUtil.anyNs("definitions", "Policy", "Addressing") + ")",
-                                CoreMatchers.is("Addressing")));
+                                CoreMatchers.is("Addressing")))
+                /*
+                 * Make sure that the prefixes declared in the WSDL are used
+                 * https://github.com/quarkiverse/quarkus-cxf/issues/2432
+                 */
+                .body(containsString("<wsaw:UsingAddressing "));
     }
 
     @Test
