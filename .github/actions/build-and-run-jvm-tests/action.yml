@@ -54,6 +54,14 @@ runs:
           exit 1
         }
 
+    - name: Clone Antora filesystem cache
+      shell: bash
+      run: |
+        # Used by the Antora test in the docs module, see https://github.com/quarkiverse/quarkus-antora/pull/288
+        mkdir -p ~/.cache/antorassured
+        rm -rf ~/.cache/antorassured/pages
+        git clone --depth 1 https://github.com/ppalaga/quarkus-cxf-antorassured-cache.git ~/.cache/antorassured/pages
+
     - name: mvn install
       shell: bash
       env:
