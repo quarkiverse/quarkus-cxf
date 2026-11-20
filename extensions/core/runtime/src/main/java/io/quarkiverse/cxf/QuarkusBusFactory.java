@@ -8,10 +8,7 @@ import java.util.function.Consumer;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.CXFBusFactory;
-import org.apache.cxf.common.spi.ClassLoaderProxyService;
 import org.apache.cxf.common.spi.ClassLoaderService;
-import org.apache.cxf.common.spi.GeneratedNamespaceClassLoader;
-import org.apache.cxf.common.spi.NamespaceClassCreator;
 import org.apache.cxf.endpoint.dynamic.ExceptionClassCreator;
 import org.apache.cxf.endpoint.dynamic.ExceptionClassLoader;
 import org.apache.cxf.jaxb.FactoryClassCreator;
@@ -46,8 +43,12 @@ public class QuarkusBusFactory extends CXFBusFactory {
         bus.setExtension(new QuarkusExceptionClassLoader(bus), ExceptionClassCreator.class);
         bus.setExtension(new QuarkusWrapperClassLoader(bus), WrapperClassCreator.class);
         bus.setExtension(new QuarkusFactoryClassLoader(bus), FactoryClassCreator.class);
-        bus.setExtension(new GeneratedNamespaceClassLoader(bus), NamespaceClassCreator.class);
-        bus.setExtension(new ClassLoaderProxyService(new GeneratedNamespaceClassLoader(bus)), ClassLoaderService.class);
+        /*
+         * CXF's ClassLoaderProxyService would either generate the namespace mapper class at runtime using ASM
+         * or it would try to load a class generated at build time, that we do not have
+         * https://github.com/quarkiverse/quarkus-cxf/issues/2432
+         */
+        bus.setExtension(QuarkusNamespacePrefixMapper::create, ClassLoaderService.class);
         return bus;
     }
 
