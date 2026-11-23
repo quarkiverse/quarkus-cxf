@@ -256,7 +256,6 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             int chunkThreshold) throws IOException {
         final RequestContext requestContext = message.get(RequestContext.class);
         final IOEHandler<ResponseEvent> responseHandler = new ResponseHandler(
-                requestContext.uri,
                 message,
                 cookies,
                 incomingObserver);
@@ -642,7 +641,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         @SuppressWarnings("resource")
         void finishRequest(HttpClientRequest req, Buffer buffer) {
-            prepareResponse(req);
+            prepareResponse(req, url);
             req
                     .end(buffer)
                     .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
@@ -652,7 +651,15 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
         }
 
-        private void prepareResponse(HttpClientRequest req) {
+        /**
+         * @param req the request whose response should be awaited
+         * @param requestUri the absolute {@link URI} {@code req} is being sent to; this is either the original
+         *        {@link #url} or the target of the most recent redirect.
+         *        We keep track of it ourselves, because {@link HttpClientRequest#absoluteURI()} is not reliable for
+         *        requests sent through an HTTP proxy,
+         *        see <a href="https://github.com/quarkiverse/quarkus-cxf/issues/2447">#2447</a>
+         */
+        private void prepareResponse(HttpClientRequest req, URI requestUri) {
             req.response()
                     .timeout(mode.timeoutSpec.remainingReceiveTimeout(), TimeUnit.MILLISECONDS)
                     .recover(e -> mode.timeoutSpec.resetRequestAndMapTimeoutException(
@@ -683,11 +690,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                     }
                                 } catch (IOException e) {
                                     sink.setException((IOException) e);
-                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), e));
+                                    mode.responseReady(
+                                            new Result<>(ResponseEvent.prepare(body, requestUri, response, sink), e));
                                 } catch (Exception e) {
                                     final IOException ioe = new IOException(e);
                                     sink.setException(ioe);
-                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
+                                    mode.responseReady(
+                                            new Result<>(ResponseEvent.prepare(body, requestUri, response, sink), ioe));
                                 }
                                 return;
                             } else {
@@ -700,7 +709,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                                     + " You may want to set quarkus.cxf.client." + qKey
                                                     + ".auto-redirect = true");
                                     sink.setException(ioe);
-                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
+                                    mode.responseReady(
+                                            new Result<>(ResponseEvent.prepare(body, requestUri, response, sink), ioe));
                                     return;
                                 }
                                 if (possibleRetransmit && isRedirect && maxRetransmits >= 0
@@ -714,7 +724,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                                             + " increase quarkus.cxf.client." + qKey + ".max-retransmits. Visited URIs: "
                                             + redirects.stream().map(URI::toString).collect(Collectors.joining(" -> ")));
                                     sink.setException(ioe);
-                                    mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ioe));
+                                    mode.responseReady(
+                                            new Result<>(ResponseEvent.prepare(body, requestUri, response, sink), ioe));
                                     return;
                                 }
                                 /* No retransmit */
@@ -738,7 +749,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                         } else {
                             sink.setException(ar.cause());
                         }
-                        mode.responseReady(new Result<>(ResponseEvent.prepare(body, response, sink), ar.cause()));
+                        mode.responseReady(new Result<>(ResponseEvent.prepare(body, requestUri, response, sink), ar.cause()));
                     });
         }
 
@@ -827,7 +838,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
 
                 return client.request(requestOptionsCustomizer.apply(options))
                         .compose(req -> {
-                            prepareResponse(req);
+                            prepareResponse(req, newURL);
                             return storedBody.pipeTo(req).compose(v -> Future.succeededFuture(req));
                         });
             })
@@ -1390,13 +1401,18 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         }
     }
 
-    static record ResponseEvent(HttpClientResponse response, InputStream responseBodyInputStream) {
-        public static ResponseEvent prepare(Future<StoredBody> body, HttpClientResponse response,
+    /**
+     * @param requestUri the absolute {@link URI} of the request the {@link #response} belongs to
+     * @param response the response to process
+     * @param responseBodyInputStream the stream to read the body of the {@link #response} from
+     */
+    static record ResponseEvent(URI requestUri, HttpClientResponse response, InputStream responseBodyInputStream) {
+        public static ResponseEvent prepare(Future<StoredBody> body, URI requestUri, HttpClientResponse response,
                 InputStream responseBodyInputStream) {
             if (body != null) {
                 body.compose(b -> b.discard());
             }
-            return new ResponseEvent(response, responseBodyInputStream);
+            return new ResponseEvent(requestUri, response, responseBodyInputStream);
         }
     }
 
@@ -1420,14 +1436,12 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         private static final Collection<Integer> DEFAULT_SERVICE_NOT_AVAILABLE_ON_HTTP_STATUS_CODES = Arrays.asList(404, 429,
                 503);
 
-        private final URI url;
         private final Message outMessage;
         private final Cookies cookies;
         private final MessageObserver incomingObserver;
 
-        public ResponseHandler(URI url, Message outMessage, Cookies cookies, MessageObserver incomingObserver) {
+        public ResponseHandler(Message outMessage, Cookies cookies, MessageObserver incomingObserver) {
             super();
-            this.url = url;
             this.outMessage = outMessage;
             this.cookies = cookies;
             this.incomingObserver = incomingObserver;
@@ -1437,7 +1451,11 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
         public void handle(ResponseEvent responseEvent) throws IOException {
             final HttpClientResponse response = responseEvent.response;
             final Exchange exchange = outMessage.getExchange();
-            final URI uri = URI.create(response.request().absoluteURI());
+            /*
+             * Do not use response.request().absoluteURI() here, because it is malformed for plain HTTP requests
+             * sent through an HTTP proxy, see https://github.com/quarkiverse/quarkus-cxf/issues/2447
+             */
+            final URI uri = responseEvent.requestUri;
             final int responseCode = doProcessResponseCode(uri, response, exchange, outMessage);
 
             InputStream in = null;
@@ -1463,7 +1481,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     // partial response
                     if (isOneway(exchange) && responseCode > 300) {
                         final String msg = "HTTP response '" + responseCode + ": "
-                                + response.statusMessage() + "' when communicating with " + url.toString();
+                                + response.statusMessage() + "' when communicating with " + uri.toString();
                         throw new VertxHttpException(msg);
                     }
                     Endpoint ep = exchange.getEndpoint();

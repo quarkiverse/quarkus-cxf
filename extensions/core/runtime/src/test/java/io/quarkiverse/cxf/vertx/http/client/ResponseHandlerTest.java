@@ -45,7 +45,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.ResponseEvent;
 import io.quarkiverse.cxf.vertx.http.client.VertxHttpClientHTTPConduit.ResponseHandler;
 import io.vertx.core.MultiMap;
-import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
 
 class ResponseHandlerTest {
@@ -236,22 +235,17 @@ class ResponseHandlerTest {
             MultiMap headers = MultiMap.caseInsensitiveMultiMap()
                     .add("Content-Length", Integer.toString(bytes.length))
                     .add("Content-Type", "text/xml; charset=UTF-8");
-            HttpClientRequest request = stub(HttpClientRequest.class, (proxy, method, args) -> switch (method.getName()) {
-                case "absoluteURI" -> URL.toString();
-                default -> throw new UnsupportedOperationException(method.getName());
-            });
             HttpClientResponse response = stub(HttpClientResponse.class, (proxy, method, args) -> switch (method.getName()) {
-                case "request" -> request;
                 case "statusCode" -> status;
                 case "statusMessage" -> "Test response";
                 case "headers" -> headers;
                 default -> throw new UnsupportedOperationException(method.getName());
             });
-            new ResponseHandler(URL, out, new Cookies(), message -> {
+            new ResponseHandler(out, new Cookies(), message -> {
                 observed.add(message);
                 // An incoming observer such as ClientImpl may also replace the exchange's response.
                 message.getExchange().setInMessage(message);
-            }).handle(new ResponseEvent(response, new ByteArrayInputStream(bytes)));
+            }).handle(new ResponseEvent(URL, response, new ByteArrayInputStream(bytes)));
         }
     }
 
