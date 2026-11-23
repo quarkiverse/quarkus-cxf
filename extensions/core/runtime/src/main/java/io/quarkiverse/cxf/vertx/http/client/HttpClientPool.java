@@ -61,7 +61,7 @@ public class HttpClientPool {
             final HttpClientOptions opts = new HttpClientOptions()
                     .setProtocolVersion(version);
             clientInfo.getVertxConfig().configure(opts, clientInfo.getConnection());
-            if (proxyConfiguration != null) {
+            if (proxyConfiguration != null && !"none".equals(proxyConfiguration.host())) {
                 proxyConfiguration.nonProxyHosts().ifPresent(nph -> nph.forEach(opts::addNonProxyHost));
                 final ProxyOptions proxyOpts = new ProxyOptions()
                         .setHost(proxyConfiguration.host())
