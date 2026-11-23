@@ -204,8 +204,79 @@ This is due to technical limitations of the CXF client API
 and also because there is no guarantee that all parts of the CXF interceptor chain will avoid performing blocking operations.
 
 The asynchronous callback is notified on a worker thread except the situation
-when dispatching the call to a worker thread timeouts due to Worker Thread Pool exhaustion - see the next section.
+when dispatching the call to a worker thread timeouts due to Worker Thread Pool exhaustion - see
+the xref:user-guide/advanced-client-topics/asynchronous-client.adoc#prevent-worker-thread-pool-contention[dedicated section]
+below.
 
+[id="clients-with-a-remote-wsdl"]
+=== Clients with a remote WSDL
+
+The dispatching to a worker thread described above covers the client calls, but not the creation of the client.
+If `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-wsdl[quarkus.cxf.client."client-name".wsdl]`
+points at a remote `http://` or `https://` URL,
+then the WSDL document is downloaded using a blocking call at the moment when the client is created.
+
+A client injected using `@CXFClient` is created together with the bean it is injected into.
+For example, a REST resource is typically instantiated on the thread serving the first request hitting the resource.
+If that request is served by a
+{link-quarkus-docs-base}/rest#execution-model-blocking-non-blocking[non-blocking method], such as one returning `Uni`,
+then the resource and all SOAP clients injected into it are created on a Vert.x Event Loop thread.
+In such a case, the creation of a client with a remote WSDL fails with the following exception:
+
+[source]
+----
+java.lang.IllegalStateException: You have attempted to perform a blocking service method call on Vert.x event loop
+thread with CXF client hello. This is not allowed, as blocking the IO thread will cause major performance issues with
+your application. ...
+----
+
+This applies to all clients injected into the given class, including those
+that are not used by the method serving the request.
+Hence, a resource class having both blocking and non-blocking methods may work or fail
+depending on which of its methods is called first.
+
+There are several ways to avoid this situation:
+
+. Do not set
+  `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-wsdl[quarkus.cxf.client."client-name".wsdl]`,
+  if possible.
+  The option is not required as long as the Service Endpoint Interface covers all information from the WSDL
+  that is needed for running the client.
+. Defer the creation of the client to the first call by injecting `jakarta.enterprise.inject.Instance<T>`
+  instead of injecting the client directly.
+  Call `Instance.get()` inside the lambda passed to `toUni()`.
+  The lambda is executed on a worker thread, where the WSDL can be fetched safely.
+  Annotate the injection point with
+  {link-quarkus-docs-base}/cdi-reference#caching-the-result-of-programmatic-lookup[`@io.quarkus.arc.WithCaching`],
+  because otherwise every `Instance.get()` call would create a new client and download the WSDL again:
++
+[source,java]
+----
+import jakarta.enterprise.inject.Instance;
+import io.quarkus.arc.WithCaching;
+
+@Path("/rest")
+class HelloRest {
+
+    @CXFClient("hello")
+    @WithCaching
+    Instance<HelloService> helloInstance;
+
+    @Path("/hello")
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    Uni<String> hello(String person) {
+        return CxfMutinyUtils
+            .<HelloResponse> toUni(handler -> helloInstance.get().helloAsync(person, handler))
+            .map(HelloResponse::getReturn);
+    }
+}
+----
++
+. Annotate the non-blocking methods of the class with `@io.smallrye.common.annotation.Blocking`.
+Then both the creation of the resource with its clients and the method itself are executed on a worker thread.
+
+[id="prevent-worker-thread-pool-contention"]
 === Measures to prevent Worker Thread Pool contention
 
 In case the application is under high load, it may take every long time
