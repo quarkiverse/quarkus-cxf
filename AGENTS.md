@@ -69,11 +69,11 @@ Semantic line breaks are not required when writing GitHub issue or pull request 
 
 ### Testable code snippets
 
-New block code snippets (except for shell commands) must come from unit tests or integration tests 
-that are regularly run by CI.
-The module hosting the given test must push the cited file to Antora's `docs/modules/ROOT/examples` directory
-using `maven-resources-plugin` look for example in `integration-tests/*/pom.xml` files.
-Antora AsciiDoc pages then have to include those snippets `docs/modules/ROOT/examples` as follows:
+* New block code snippets (except for shell commands) must come from unit tests or integration tests 
+  that are regularly run by CI.
+* The module hosting the given test must push the cited file to Antora's `docs/modules/ROOT/examples` directory
+  using `maven-resources-plugin` look for example in `integration-tests/*/pom.xml` files.
+* Antora AsciiDoc pages then have to include those snippets `docs/modules/ROOT/examples` as follows:
 
 ```asciidoc
 .<file-name>
@@ -82,6 +82,7 @@ Antora AsciiDoc pages then have to include those snippets `docs/modules/ROOT/exa
 include::example$<directory-named-after-the-source-test-module>/<file-name>[tag=<tag-named-after-page-embedding-it>]
 ----
 ```
+* Java snippets have to contain imports of all used classes
 
 ## Coding
 
