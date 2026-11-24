@@ -48,6 +48,8 @@ public class Http3ClientCreationTest {
         result.overrideConfigKey("quarkus.cxf.client.nonProxied.proxy-configuration-name", "corporate");
         configure(result, "noProxy", "3", "https://service.example.org/echo");
         result.overrideConfigKey("quarkus.cxf.client.noProxy.proxy-configuration-name", "none");
+        result.overrideConfigKey("quarkus.cxf.client.noUrl.service-interface", Echo.class.getName())
+                .overrideConfigKey("quarkus.cxf.client.noUrl.vertx.http-versions", "3");
         return result;
     }
 
@@ -87,6 +89,9 @@ public class Http3ClientCreationTest {
 
     @CXFClient("noProxy")
     Instance<Echo> noProxy;
+
+    @CXFClient("noUrl")
+    Instance<Echo> noUrl;
 
     @Test
     void quicNotAvailable() {
@@ -137,6 +142,15 @@ public class Http3ClientCreationTest {
                 .hasStackTraceContaining("quarkus.cxf.client.nonProxied.vertx.http-versions = 3 requires QUIC");
         assertThatThrownBy(() -> create(noProxy))
                 .hasStackTraceContaining("quarkus.cxf.client.noProxy.vertx.http-versions = 3 requires QUIC");
+    }
+
+    /**
+     * There is no default {@code client-endpoint-url} the HTTP/3 destination checks could be performed against
+     */
+    @Test
+    void noUrl() {
+        assertThatThrownBy(() -> create(noUrl))
+                .hasStackTraceContaining("quarkus.cxf.client.noUrl.client-endpoint-url is not set");
     }
 
     private static void create(Instance<Echo> instance) {

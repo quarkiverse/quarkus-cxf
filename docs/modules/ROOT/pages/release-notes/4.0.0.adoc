@@ -26,6 +26,43 @@
 | `quarkus.cxf.wsdl-path` | `quarkus.native.resources.includes`
 |===
 
+== `client-endpoint-url` is required
+
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-client-endpoint-url[quarkus.cxf.client."client-name".client-endpoint-url]`
+has no default value anymore.
+
+Before {quarkus-cxf-project-name} 4.0.0, a client without `client-endpoint-url` was sending requests to
+`\http://localhost:8080/\{sei}`,
+where `\{sei}` is the fully qualified class name of the service endpoint interface in lower case.
+That URL was hardly ever right and a forgotten or misspelled `client-endpoint-url`
+resulted in connection errors or `404` responses that did not point at the actual cause.
+
+Since {quarkus-cxf-project-name} 4.0.0, a client without `client-endpoint-url` fails when it is created
+with a message like
+
+[source]
+----
+Cannot create the client myCalculator for the service interface org.acme.CalculatorService, because quarkus.cxf.client.myCalculator.client-endpoint-url is not set
+----
+
+This is a breaking change:
+
+* Set `client-endpoint-url` for all your clients.
+* This also applies to clients having
+  `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-wsdl[quarkus.cxf.client."client-name".wsdl]` set.
+  The address available in the `wsdl:port` element of the WSDL is not used instead of `client-endpoint-url`.
+* This also applies to clients whose address is set via `jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY`
+  before each request.
+* A client injected via `@CXFClient` without a client name fails when it is created,
+  unless there is a `quarkus.cxf.client."client-name"` configuration having `service-interface`
+  set to the service endpoint interface of the client.
+  Before {quarkus-cxf-project-name} 4.0.0, such a client was created with default settings
+  and only a warning was logged.
+* The undocumented `quarkus.cxf.internal.client.*` options were removed.
+
+See also xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` is required]
+and https://github.com/quarkiverse/quarkus-cxf/issues/2457[#2457].
+
 == Dummy logging extension no longer published
 
 `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` was deprecated since {quarkus-cxf-project-name} 2.7.0,

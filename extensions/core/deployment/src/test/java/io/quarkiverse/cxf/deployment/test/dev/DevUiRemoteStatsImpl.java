@@ -1,5 +1,6 @@
 package io.quarkiverse.cxf.deployment.test.dev;
 
+import jakarta.enterprise.inject.Instance;
 import jakarta.jws.WebService;
 
 import io.quarkiverse.cxf.annotation.CXFClient;
@@ -12,6 +13,10 @@ public class DevUiRemoteStatsImpl implements DevUiStats {
 
     @CXFClient
     DevUiStats keyLessStats;
+
+    /** A client without {@code client-endpoint-url} that cannot be created, but still has to be listed in Dev UI */
+    @CXFClient("noUrl")
+    Instance<DevUiStats> noUrlStats;
 
     @Override
     public int getClientCount() {

@@ -9,6 +9,15 @@ This might be the case, if, for example, each request needs to be sent to a diff
 CXF offers an API to set the URL of the remote endpoint.
 However using that API on a client instance that may be accessed from other threads can lead to race conditions.
 
+[NOTE]
+====
+Even if you set the URL before every request,
+the client still has to have some initial
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-client-endpoint-url[quarkus.cxf.client."client-name".client-endpoint-url]`
+set, see xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` is required].
+The configured URL is then used for the requests for which you do not set any other URL dynamically.
+====
+
 == Preventing concurrent access to a CXF client
 
 If your client is used as a part of serving an external request,

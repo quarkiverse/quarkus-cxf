@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -165,8 +166,7 @@ public abstract class CxfClientProducer {
             props.put(AuthorizationPolicy.class.getName(), authorizationPolicy);
         }
 
-        final String clientString = "client"
-                + (cxfClientInfo.getConfigKey() != null ? (" " + cxfClientInfo.getConfigKey()) : "");
+        final String clientString = "client " + cxfClientInfo.getConfigKey();
         CXFRuntimeUtils.addBeans(cxfClientInfo.getFeatures(), "feature", clientString, sei, factory.getFeatures());
         CXFRuntimeUtils.addBeans(cxfClientInfo.getHandlers(), "handler", clientString, sei, factory.getHandlers());
         CXFRuntimeUtils.addBeans(cxfClientInfo.getInInterceptors(), "inInterceptor", clientString, sei,
@@ -253,12 +253,17 @@ public abstract class CxfClientProducer {
     }
 
     /**
-     * Calculates the client info to use for producing a JAXWS client proxy.
+     * Selects the configuration for the client injected at the given {@link InjectionPoint} and creates a
+     * {@link CXFClientInfo} out of it.
      *
-     * @param cxfConfig The current configuration
-     * @param ip Meta information about where injection of client proxy takes place
-     * @param meta The default to return
-     * @return not null
+     * @param config the runtime configuration
+     * @param fixedConfig the build time configuration
+     * @param ip the injection point of the client or of its {@link CXFClientInfo}
+     * @param meta the build time metadata of the client's Service Endpoint Interface
+     * @param vertx the {@link Vertx} instance to pass to the new {@link CXFClientInfo}
+     * @return a new {@link CXFClientInfo}
+     * @throws IllegalStateException if no configuration can be selected for the given {@link InjectionPoint}
+     *         or if the selected configuration is not valid
      */
     protected static CXFClientInfo selectorCXFClientInfo(
             CxfConfig config,
@@ -266,9 +271,6 @@ public abstract class CxfClientProducer {
             InjectionPoint ip,
             CXFClientData meta,
             Vertx vertx) {
-
-        // If injection point is annotated with @CXFClient then determine a
-        // configuration by looking up annotated config value:
 
         final String configKey;
         if (ip.getAnnotated().isAnnotationPresent(CXFClient.class)) {
@@ -282,12 +284,68 @@ public abstract class CxfClientProducer {
                 fixedConfig,
                 meta,
                 configKey,
-                () -> new IllegalStateException(
-                        "@" + CXFClient.class.getName() + "(\"" + configKey + "\") is present on " + ip.getMember()
-                                + " but quarkus.cxf.client.\"" + configKey + "\".* configuration is missing"),
+                /*
+                 * FIXME: (review) The message below is not accurate if there is a quarkus.cxf.client."client-name" with
+                 * service-interface = <sei> and alternative = true: selectClientConfig() ignores such clients, but the user
+                 * is told that "there is no quarkus.cxf.client."client-name".service-interface = <sei> in the
+                 * configuration". The removed warning mentioned "and alternative = false" - please keep that qualifier.
+                 * Also "or inject the client using @CXFClient("client-name")" reads as if naming the client was enough,
+                 * while the named client fails with "client-endpoint-url is not set" in the next step.
+                 * Perhaps: "... because there is no quarkus.cxf.client."client-name" having service-interface = <sei>
+                 * and alternative = false; add such a configuration or inject the client by name; in both cases
+                 * quarkus.cxf.client."client-name".client-endpoint-url has to be set".
+                 * A test with an alternative-only configuration would be nice to have.
+                 */
+                () -> configKey.isEmpty()
+                        ? new IllegalStateException(
+                                "Cannot create a client for the service interface " + meta.getSei() + " injected into "
+                                        + ip.getMember() + " without a client name,"
+                                        + " because there is no quarkus.cxf.client.\"client-name\".service-interface = "
+                                        + meta.getSei() + " in the configuration; either add it together with"
+                                        + " quarkus.cxf.client.\"client-name\".client-endpoint-url"
+                                        + " or inject the client using @" + CXFClient.class.getSimpleName()
+                                        + "(\"client-name\")")
+                        /*
+                         * FIXME: (review) This branch is unreachable since this commit: for a non-empty configKey,
+                         * selectClientConfig() never returns an empty Optional, because CxfConfig.clients() is annotated
+                         * with @WithDefaults (ClientEndpointUrlRequiredTest.notConfigured() proves it - it gets
+                         * "client-endpoint-url is not set" rather than "configuration is missing").
+                         * Please remove this branch. If the injection point (ip.getMember()) is worth keeping in the
+                         * message for misspelled client names, it would have to be passed to CXFClientInfo's message
+                         * in some other way.
+                         */
+                        : new IllegalStateException(
+                                "@" + CXFClient.class.getName() + "(\"" + configKey + "\") is present on " + ip.getMember()
+                                        + " but quarkus.cxf.client.\"" + configKey + "\".* configuration is missing"),
                 vertx);
     }
 
+    /*
+     * FIXME: (review) AGENTS.md, section JavaDoc: "Methods and constructors must have @since <version>".
+     * The JavaDoc of both selectorCXFClientInfo() methods was rewritten in this commit without @since.
+     * I added @since 2.7.0 here, because this overload was introduced by 697d3008f (2.7.0.CR1);
+     * the protected overload above has its current signature since 127f70bc3 (2.4.0) - please add it there too.
+     * Question: Dev UI does not call this method anymore, so the protected overload is the only caller.
+     * Does it still need to be public and to take exceptionSupplier, which is used only for clients without a name now?
+     */
+    /**
+     * Selects the configuration for the given client using
+     * {@link #selectClientConfig(CxfConfig, CxfFixedConfig, String, String)} and creates a {@link CXFClientInfo} out of it.
+     *
+     * @param config the runtime configuration
+     * @param fixedConfig the build time configuration
+     * @param meta the build time metadata of the client's Service Endpoint Interface
+     * @param configKey the client name, such as {@code client-name} in
+     *        {@code quarkus.cxf.client."client-name".client-endpoint-url}; {@code null} or empty if the client was
+     *        injected without a name
+     * @param exceptionSupplier the source of the exception to throw if no configuration can be selected for the given
+     *        client
+     * @param vertx the {@link Vertx} instance to pass to the new {@link CXFClientInfo}
+     * @return a new {@link CXFClientInfo}
+     * @throws IllegalStateException if no configuration can be selected for the given client
+     *         or if the selected configuration is not valid
+     * @since 2.7.0
+     */
     public static CXFClientInfo selectorCXFClientInfo(
             CxfConfig config,
             CxfFixedConfig fixedConfig,
@@ -295,49 +353,93 @@ public abstract class CxfClientProducer {
             String configKey,
             Supplier<IllegalStateException> exceptionSupplier,
             Vertx vertx) {
+        final ClientConfigSelection selection = selectClientConfig(config, fixedConfig, meta.getSei(), configKey)
+                .orElseThrow(exceptionSupplier);
+        return new CXFClientInfo(meta, config, selection.config(), selection.configKey(), vertx);
+    }
 
-        // If injection point is annotated with @CXFClient then determine a
-        // configuration by looking up annotated config value:
+    /**
+     * Selects the configuration for the given client without validating it.
+     * <p>
+     * If the given {@code configKey} is neither {@code null} nor empty, then the configuration available under
+     * {@code quarkus.cxf.client."configKey"} is selected.
+     * That configuration consists of default values, if no runtime option is set for the given {@code configKey}.
+     * Otherwise, the only {@code quarkus.cxf.client."client-name"} having {@code service-interface} equal to the given
+     * {@code sei} and {@code alternative = false} is selected.
+     *
+     * @param config the runtime configuration
+     * @param fixedConfig the build time configuration
+     * @param sei the fully qualified class name of the client's Service Endpoint Interface
+     * @param configKey the client name, such as {@code client-name} in
+     *        {@code quarkus.cxf.client."client-name".client-endpoint-url}; {@code null} or empty if the client was
+     *        injected without a name
+     * @return the selected configuration or an empty {@link Optional} if there is no configuration for the given
+     *         client
+     * @throws IllegalStateException if the given {@code configKey} is {@code null} or empty and there are multiple
+     *         clients having {@code service-interface} equal to the given {@code sei} and {@code alternative = false}
+     * @since 4.0.0
+     */
+    public static Optional<ClientConfigSelection> selectClientConfig(
+            CxfConfig config,
+            CxfFixedConfig fixedConfig,
+            String sei,
+            String configKey) {
 
         if (configKey != null && !configKey.isEmpty()) {
-            if (config.isClientPresent(configKey)) {
-                return new CXFClientInfo(meta, config, config.getClient(configKey), configKey, vertx);
-            }
-            // If config-key is present and not default: This is an error:
-            throw exceptionSupplier.get();
+            /*
+             * CxfConfig.clients() does not contain the keys of the clients having only build time options, such as
+             * service-interface, set. But as it is annotated with @WithDefaults, it returns a configuration with
+             * default values for those.
+             */
+            return Optional.ofNullable(config.getClient(configKey))
+                    .map(clientConfig -> new ClientConfigSelection(configKey, clientConfig));
         }
 
-        // User did not specify any client config value. Thus we make a smart guess
-        // about which configuration is to be used.
-        //
-        // Determine all matching configurations for given SEI
-        List<String> keylist = fixedConfig.clients()
+        /* No client name was specified, thus we look for the configuration by the SEI */
+        final List<String> keylist = fixedConfig.clients()
                 .entrySet()
                 .stream()
                 .filter(kv -> kv.getValue() != null)
                 .filter(kv -> kv.getValue().serviceInterface().isPresent())
-                .filter(kv -> kv.getValue().serviceInterface().get().equals(meta.getSei()))
+                .filter(kv -> kv.getValue().serviceInterface().get().equals(sei))
                 .filter(kv -> kv.getValue().alternative() == false)
                 .map(Map.Entry::getKey)
                 .collect(toList());
 
         switch (keylist.size()) {
             case 0:
-                // It is legal to have no matching configuration. Then we go ahead and use default values derived from
-                // the service itself.
-                LOGGER.warnf(
-                        "No configuration found for quarkus.cxf.*.service-interface = %s and alternative = false. Using the values from the service instead: %s.",
-                        meta.getSei(), meta);
-                return new CXFClientInfo(meta, config, config.internal().client(), null, vertx);
+                return Optional.empty();
             case 1:
-                return new CXFClientInfo(meta, config, config.clients().get(keylist.get(0)), keylist.get(0), vertx);
+                return Optional.of(new ClientConfigSelection(keylist.get(0), config.clients().get(keylist.get(0))));
             default:
-                throw new IllegalStateException("quarkus.cxf.*.service-interface = " + meta.getSei()
+                throw new IllegalStateException("quarkus.cxf.*.service-interface = " + sei
                         + " with alternative = false expected once, but found " + keylist.size() + " times in "
                         + keylist.stream().map(k -> "quarkus.cxf.\"" + k + "\".service-interface")
                                 .collect(Collectors.joining(", ")));
         }
+    }
 
+    /**
+     * A client name together with the configuration available under that name.
+     *
+     * @param configKey the client name, such as {@code client-name} in
+     *        {@code quarkus.cxf.client."client-name".client-endpoint-url}; never {@code null} or empty
+     * @param config the configuration available under {@code quarkus.cxf.client."configKey"}
+     * @since 4.0.0
+     */
+    public record ClientConfigSelection(String configKey, CxfClientConfig config) {
+        /*
+         * FIXME: (review) AGENTS.md, section Coding: "Clear, unambiguous contracts".
+         * The JavaDoc promises "never null or empty", but nothing enforces it on this public record.
+         * Suggested compact constructor (needs import java.util.Objects):
+         *
+         * public ClientConfigSelection {
+         * Objects.requireNonNull(config, "config");
+         * if (configKey == null || configKey.isEmpty()) {
+         * throw new IllegalArgumentException("configKey must be neither null nor empty");
+         * }
+         * }
+         */
     }
 
     public interface ClientFactoryCustomizer {
