@@ -73,6 +73,31 @@ Semantic line breaks are not required when writing GitHub issue or pull request 
 * Prefer not introducing new sources of mutability
   * Newly added Java fields should be final unless there is a reason 
 * Prefer writing methods without side effects
+* Design for correctness
+  * Clear, unambiguous contracts
+  * Carefully controlled concurrency guarantees
+  * Simple abstractions
+  * Well-defined encapsulation
+
+## JavaDoc
+
+* Public and protected types and type members must have JavaDoc:
+  * Types: 
+    * First sentence is a noun phrase, e.g. "A connection to a remote peer."
+    * Must have `@since <version>`
+  * Methods and constructors
+    * Must have `@since <version>`
+    * Be concise
+    * Document the exact behavior
+    * Description can be empty if it would only contain trivial information, like "Gets x" on a getter 
+      or "Constructs y" on a constructor 
+    * The first sentence should be a complete sentence, e.g. "Read bytes from this channel."
+    * Describe the inputs and outputs including their possible values.
+      Parameters, return values, and exceptions should be single direct object phrases with no leading caps, no trailing punctuation:
+      * Right: "@param name the connection's name"
+      * Wrong: "@param name The connection's name."
+      * Right: "@return a new connection instance"
+      * Wrong: "@return Returns a new connection instance. It's super nifty."
 
 ## Testing
 
