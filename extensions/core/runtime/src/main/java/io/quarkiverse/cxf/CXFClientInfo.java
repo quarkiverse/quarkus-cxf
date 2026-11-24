@@ -2,10 +2,14 @@ package io.quarkiverse.cxf;
 
 import java.net.Proxy.Type;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
@@ -16,6 +20,8 @@ import io.quarkiverse.cxf.CxfClientConfig.Auth;
 import io.quarkiverse.cxf.CxfClientConfig.VertxConfig;
 import io.quarkiverse.cxf.CxfConfig.CxfGlobalClientConfig;
 import io.quarkiverse.cxf.CxfConfig.RetransmitCacheConfig;
+import io.quarkiverse.cxf.vertx.http.client.HttpClientPool.HttpClientPoolRecorder;
+import io.quarkiverse.cxf.vertx.http.client.QuicSupport;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.Unremovable;
 import io.quarkus.proxy.ProxyConfiguration;
@@ -184,6 +190,12 @@ public class CXFClientInfo {
     private final String decoupledEndpointBase;
 
     private final ProxyConfiguration proxyConfiguration;
+    /**
+     * Decides whether a host is accessed through the proxy defined by {@link #proxyConfiguration}.
+     * Kept here, so that the patterns in {@link ProxyConfiguration#nonProxyHosts()} are compiled only once per client
+     * rather than on each request.
+     */
+    private final Predicate<String> proxiedHosts;
 
     private final String tlsConfigurationName;
 
@@ -242,6 +254,7 @@ public class CXFClientInfo {
         this.decoupledEndpointBase = cxfConfig.decoupledEndpointBase().orElse(null);
         final ProxyConfigurationRegistry registry = Arc.container().select(ProxyConfigurationRegistry.class).get();
         this.proxyConfiguration = registry.get(config.proxyConfigurationName()).orElse(null);
+        this.proxiedHosts = ProxyConfigurationUtils.proxiedHosts(proxyConfiguration);
         this.tlsConfigurationName = config.tlsConfigurationName().orElse(null);
         this.tlsConfiguration = tlsConfiguration(vertx, cxfConfig.client(), config, configKey);
         this.hostnameVerifier = config.hostnameVerifier().orElse(null);
@@ -255,6 +268,19 @@ public class CXFClientInfo {
          */
         this.httpConduitImpl = config.httpConduitFactory().orElse(null);
         this.configKey = configKey;
+
+        if (httpVersions.contains(HttpVersion.HTTP_3)) {
+            final Supplier<String> property = this::httpVersionsProperty;
+            // FIXME: (review, question) If client-endpoint-url is not set, endpointAddress falls back to
+            // DEFAULT_EP_ADDR (http://localhost:8080/<sei>), so a client that gets its address only per request
+            // (BindingProvider.ENDPOINT_ADDRESS_PROPERTY) fails here with "cannot be used with http://localhost:8080".
+            // Is that intended? If so, the message could say that client-endpoint-url is not set.
+            // The removal of the default URL is tracked in https://github.com/quarkiverse/quarkus-cxf/issues/2457
+            validateHttp3Destination(property, httpVersions, proxyConfiguration, proxiedHosts,
+                    toRemoteUri(endpointAddress));
+            validateHttp3Destination(property, httpVersions, proxyConfiguration, proxiedHosts, toRemoteUri(wsdlUrl));
+            validateQuicSupport(property, httpVersions, HttpClientPoolRecorder.getQuicSupport());
+        }
     }
 
     static List<HttpVersion> parseHttpVersions(CxfClientConfig config, String configKey) {
@@ -265,7 +291,7 @@ public class CXFClientInfo {
         final String key = "quarkus.cxf.client." + QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
         if (!"auto".equals(config.version())) {
             throw new IllegalArgumentException(key + ".vertx.http-versions cannot be combined with " + key
-                    + ".version=" + config.version() + "; leave version at auto");
+                    + ".version = " + config.version() + "; leave version at auto");
         }
         final List<HttpVersion> versions = new ArrayList<>();
         final List<String> values = configured.get();
@@ -290,9 +316,21 @@ public class CXFClientInfo {
             case "1.0" -> HttpVersion.HTTP_1_0;
             case "1.1" -> HttpVersion.HTTP_1_1;
             case "2" -> HttpVersion.HTTP_2;
+            case "3" -> HttpVersion.HTTP_3;
             default -> throw new IllegalArgumentException("Unsupported HTTP version '" + value + "' in " + key
-                    + ".vertx.http-versions; supported values are 1.0, 1.1 and 2");
+                    + ".vertx.http-versions; supported values are 1.0, 1.1, 2 and 3");
         };
+    }
+
+    private static String toConfigValue(List<HttpVersion> versions) {
+        return versions.stream()
+                .map(version -> switch (version) {
+                    case HTTP_1_0 -> "1.0";
+                    case HTTP_1_1 -> "1.1";
+                    case HTTP_2 -> "2";
+                    case HTTP_3 -> "3";
+                })
+                .collect(Collectors.joining(","));
     }
 
     public String httpVersionsProperty() {
@@ -301,11 +339,109 @@ public class CXFClientInfo {
 
     /** Validate the effective destination, without including credentials or query parameters in diagnostics. */
     public void validateHttpVersions(URI destination) {
+        /*
+         * The HTTP/3 check has to come first: lists containing 3 are rejected for any plain http: destination, so they
+         * never reach the check below, whose message is right only for 2,1.0
+         */
+        validateHttp3Destination(this::httpVersionsProperty, httpVersions, proxyConfiguration, proxiedHosts, destination);
         if (httpVersions.size() > 1 && httpVersions.get(0) == HttpVersion.HTTP_2
                 && !httpVersions.contains(HttpVersion.HTTP_1_1) && "http".equalsIgnoreCase(destination.getScheme())) {
             throw new IllegalArgumentException(httpVersionsProperty()
-                    + "=2,1.0 cannot be used with plaintext HTTP; use 2 for prior knowledge or include 1.1 for h2c upgrade");
+                    + " = 2,1.0 cannot be used with plaintext HTTP; use 2 for prior knowledge or include 1.1 for h2c upgrade");
         }
+    }
+
+    /**
+     * Rejects the combinations of HTTP/3 and the given {@code destination} for which Vert.x {@code HttpClient} would
+     * silently do something else than what was configured:
+     * <ul>
+     * <li>Plain {@code http:} destinations: with {@code 3} alone, Vert.x would connect over QUIC (and thus TLS) anyway.
+     * With {@code 3} combined with other versions, HTTP/3 would never be used.
+     * <li>Destinations accessed through a proxy: with {@code 3} alone, Vert.x would bypass the proxy and connect to
+     * the destination directly. With {@code 3} combined with other versions, HTTP/3 would never be used, because
+     * Vert.x does not follow alternative service advertisements received through a proxy.
+     * </ul>
+     *
+     * @param httpVersionsProperty the name of the {@code http-versions} configuration property to use in exception messages
+     * @param httpVersions the HTTP versions configured for the given client
+     * @param proxyConfiguration the {@link ProxyConfiguration} of the given client or {@code null} if there is none
+     * @param proxiedHosts the result of {@link ProxyConfigurationUtils#proxiedHosts(ProxyConfiguration)} for the given
+     *        {@code proxyConfiguration}
+     * @param destination the URI to validate; nothing is validated if {@code null}
+     * @throws IllegalArgumentException if HTTP/3 cannot be used with the given {@code destination}
+     */
+    static void validateHttp3Destination(Supplier<String> httpVersionsProperty, List<HttpVersion> httpVersions,
+            ProxyConfiguration proxyConfiguration, Predicate<String> proxiedHosts, URI destination) {
+        if (destination == null || !httpVersions.contains(HttpVersion.HTTP_3)) {
+            return;
+        }
+        if (!"https".equalsIgnoreCase(destination.getScheme())) {
+            throw new IllegalArgumentException(httpVersionsProperty.get() + " = " + toConfigValue(httpVersions)
+                    + " cannot be used with " + origin(destination) + ", because HTTP/3 requires an https: URL;"
+                    + " use an https: URL or remove 3 from " + httpVersionsProperty.get());
+        }
+        if (proxiedHosts.test(destination.getHost())) {
+            throw new IllegalArgumentException(httpVersionsProperty.get() + " = " + toConfigValue(httpVersions)
+                    + " cannot be used with " + origin(destination) + ", because that destination would be accessed"
+                    + " through the proxy " + proxyConfiguration.host() + ":" + proxyConfiguration.port()
+                    + " and HTTP/3 through a proxy is not supported;"
+                    + " remove 3 from " + httpVersionsProperty.get()
+                    + ", or add " + destination.getHost() + " to non-proxy-hosts of the given proxy configuration"
+                    + ", or set " + httpVersionsProperty.get().replace(".vertx.http-versions", ".proxy-configuration-name")
+                    + " to none");
+        }
+    }
+
+    /**
+     * @param httpVersionsProperty the name of the {@code http-versions} configuration property to use in exception messages
+     * @param httpVersions the HTTP versions configured for the given client
+     * @param quicSupport the availability of QUIC in the current application
+     * @throws IllegalStateException if the given {@code httpVersions} contain HTTP/3 and QUIC is not available
+     */
+    static void validateQuicSupport(Supplier<String> httpVersionsProperty, List<HttpVersion> httpVersions,
+            QuicSupport quicSupport) {
+        if (!httpVersions.contains(HttpVersion.HTTP_3)) {
+            return;
+        }
+        switch (quicSupport) {
+            case AVAILABLE:
+                return;
+            case QUARKUS_HTTP3_MISSING:
+                throw new IllegalStateException(httpVersionsProperty.get() + " = " + toConfigValue(httpVersions)
+                        + " requires QUIC, which is not available in this application;"
+                        + " add the io.quarkus:quarkus-http3 extension to the application"
+                        + " and set quarkus.http3.enabled = false unless the HTTP server of the application should support HTTP/3 too");
+            case NATIVE_LIBRARY_MISSING:
+                throw new IllegalStateException(httpVersionsProperty.get() + " = " + toConfigValue(httpVersions)
+                        + " requires QUIC, but no native QUIC library was found in the application;"
+                        + " add the io.netty:netty-codec-native-quic dependency with the classifier matching your platform"
+                        + " (such as linux-x86_64 or osx-aarch_64) to the application");
+            default:
+                throw new IllegalStateException("Unexpected " + QuicSupport.class.getName() + ": " + quicSupport);
+        }
+    }
+
+    /**
+     * @param uri a URI or a classpath resource path or a file system path
+     * @return a {@link URI} if the given {@code uri} is an {@code http:} or {@code https:} URI; otherwise {@code null}
+     */
+    static URI toRemoteUri(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        try {
+            final URI result = new URI(uri);
+            final String scheme = result.getScheme();
+            return "http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme) ? result : null;
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    /** @return scheme, host and port of the given {@code uri}, thus leaving out any credentials, path and query */
+    private static String origin(URI uri) {
+        final int port = uri.getPort();
+        return uri.getScheme() + "://" + uri.getHost() + (port >= 0 ? ":" + port : "");
     }
 
     static TlsConfiguration tlsConfiguration(Vertx vertx, CxfGlobalClientConfig globalConfig, CxfClientConfig config,

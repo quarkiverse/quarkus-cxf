@@ -171,7 +171,7 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
             }
             if (!"auto".equals(csPolicy.getVersion())) {
                 throw new IllegalArgumentException(clientInfo.httpVersionsProperty()
-                        + " cannot be combined with HTTPClientPolicy.version=" + csPolicy.getVersion()
+                        + " cannot be combined with HTTPClientPolicy.version = " + csPolicy.getVersion()
                         + "; leave the policy version at auto");
             }
             version = clientInfo.getHttpVersions().get(0);
@@ -567,10 +567,13 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(buffer.length()));
                 }
 
-                // A list starting with HTTP/1.x can negotiate HTTP/2 through ALPN. Connection is forbidden there;
+                // A list starting with HTTP/1.x can negotiate HTTP/2 through ALPN or switch to HTTP/3 through Alt-Svc.
+                // Connection is forbidden there;
                 // the pool's keep-alive options still govern HTTP/1.x connections when the header is omitted.
+                final List<HttpVersion> versions = clientInfo.getHttpVersions();
                 setProtocolHeaders(outMessage, requestOptions, userAgent,
-                        clientInfo.getHttpVersions().contains(HttpVersion.HTTP_2) ? HttpVersion.HTTP_2 : version);
+                        versions.contains(HttpVersion.HTTP_2) || versions.contains(HttpVersion.HTTP_3) ? HttpVersion.HTTP_2
+                                : version);
 
                 client.request(requestOptions)
                         .onSuccess(req -> {

@@ -181,5 +181,7 @@ The number of connections opened by Vert.x HttpClient at any given time is cappe
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http1-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http1-max-size]`
 for HTTP/1.x connections
 * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http2-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http2-max-size]`
-for HTTP/2 connections.
+for HTTP/2 connections
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http3-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http3-max-size]`
+for HTTP/3 connections.
 ====
