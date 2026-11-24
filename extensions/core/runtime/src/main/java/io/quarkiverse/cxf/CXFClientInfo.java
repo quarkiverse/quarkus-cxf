@@ -38,7 +38,6 @@ import io.vertx.core.http.HttpVersion;
 @Unremovable
 public class CXFClientInfo {
     private static final Logger log = Logger.getLogger(CXFClientInfo.class);
-    private static final String DEFAULT_EP_ADDR = "http://localhost:8080";
     private static final String JAVA_NET_SSL_TLS_CONFIGURATION_NAME = "javax.net.ssl";
 
     private final String sei;
@@ -212,8 +211,15 @@ public class CXFClientInfo {
     private final boolean secureWsdlAccess;
     private final long workerDispatchTimeout;
 
+    /*
+     * FIXME: (review) AGENTS.md, section JavaDoc: "Public and protected types and type members must have JavaDoc".
+     * The contract of this public constructor changed in this commit: configKey must not be null anymore
+     * and an IllegalStateException is thrown if client-endpoint-url is not set.
+     * Could you please document that here (@param configKey ..., @throws IllegalStateException ..., @since)?
+     */
     public CXFClientInfo(CXFClientData other, CxfConfig cxfConfig, CxfClientConfig config, String configKey, Vertx vertx) {
         Objects.requireNonNull(config);
+        Objects.requireNonNull(configKey, "configKey");
         this.sei = other.getSei();
         this.soapBinding = config.soapBinding().orElse(other.getSoapBinding());
         this.wsName = other.getWsName();
@@ -224,7 +230,7 @@ public class CXFClientInfo {
         this.auth = new AuthWrapper(config.auth(), config);
         this.vertxConfig = config.vertx();
         this.secureWsdlAccess = config.secureWsdlAccess();
-        this.endpointAddress = config.clientEndpointUrl().orElse(DEFAULT_EP_ADDR + "/" + this.sei.toLowerCase());
+        this.endpointAddress = requireEndpointAddress(config, configKey, this.sei);
         this.wsdlUrl = config.wsdlPath().orElse(null);
         addFeatures(config);
         addHandlers(config);
@@ -271,16 +277,28 @@ public class CXFClientInfo {
 
         if (httpVersions.contains(HttpVersion.HTTP_3)) {
             final Supplier<String> property = this::httpVersionsProperty;
-            // FIXME: (review, question) If client-endpoint-url is not set, endpointAddress falls back to
-            // DEFAULT_EP_ADDR (http://localhost:8080/<sei>), so a client that gets its address only per request
-            // (BindingProvider.ENDPOINT_ADDRESS_PROPERTY) fails here with "cannot be used with http://localhost:8080".
-            // Is that intended? If so, the message could say that client-endpoint-url is not set.
-            // The removal of the default URL is tracked in https://github.com/quarkiverse/quarkus-cxf/issues/2457
             validateHttp3Destination(property, httpVersions, proxyConfiguration, proxiedHosts,
                     toRemoteUri(endpointAddress));
             validateHttp3Destination(property, httpVersions, proxyConfiguration, proxiedHosts, toRemoteUri(wsdlUrl));
             validateQuicSupport(property, httpVersions, HttpClientPoolRecorder.getQuicSupport());
         }
+    }
+
+    /**
+     * @param config the configuration of the given client
+     * @param configKey the name of the given client, such as {@code client-name} in
+     *        {@code quarkus.cxf.client."client-name".client-endpoint-url}
+     * @param sei the fully qualified class name of the Service Endpoint Interface of the given client
+     * @return the value of {@code quarkus.cxf.client."client-name".client-endpoint-url}
+     * @throws IllegalStateException if {@code quarkus.cxf.client."client-name".client-endpoint-url} is not set
+     */
+    static String requireEndpointAddress(CxfClientConfig config, String configKey, String sei) {
+        return config.clientEndpointUrl().orElseThrow(() -> {
+            final String key = "quarkus.cxf.client." + QuarkusCxfUtils.quoteCongurationKeyIfNeeded(configKey);
+            return new IllegalStateException("Cannot create the client " + configKey + " for the service interface " + sei
+                    + ", because " + key + ".client-endpoint-url is not set; set " + key
+                    + ".client-endpoint-url to the URL of the remote service endpoint");
+        });
     }
 
     static List<HttpVersion> parseHttpVersions(CxfClientConfig config, String configKey) {

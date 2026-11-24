@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.quarkiverse.cxf.LoggingConfig.GlobalLoggingConfig;
-import io.quarkus.runtime.annotations.ConfigDocIgnore;
 import io.quarkus.runtime.annotations.ConfigDocMapKey;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -124,14 +123,6 @@ public interface CxfConfig {
     public Map<String, CxfClientConfig> clients();
 
     /**
-     * This exists just as a convenient way to get a `CxfClientConfig` with all defaults set. It is not intended to be used by
-     * end users.
-     *
-     * @asciidoclet
-     */
-    public InternalConfig internal();
-
-    /**
      * Global logging related configuration
      *
      * @asciidoclet
@@ -144,10 +135,6 @@ public interface CxfConfig {
      * @asciidoclet
      */
     RetransmitCacheConfig retransmitCache();
-
-    default boolean isClientPresent(String key) {
-        return Optional.ofNullable(clients()).map(m -> m.containsKey(key)).orElse(false);
-    }
 
     default CxfClientConfig getClient(String key) {
         return Optional.ofNullable(clients()).map(m -> m.get(key)).orElse(null);
@@ -215,12 +202,6 @@ public interface CxfConfig {
         @WithDefault("30000")
         public long workerDispatchTimeout();
 
-    }
-
-    public interface InternalConfig {
-
-        @ConfigDocIgnore
-        public CxfClientConfig client();
     }
 
     public interface RetransmitCacheConfig {

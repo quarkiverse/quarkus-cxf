@@ -58,7 +58,15 @@ public interface CxfClientConfig {
     public Optional<String> soapBinding();
 
     /**
-     * The client endpoint URL
+     * The URL of the remote service endpoint this client sends requests to.
+     *
+     * [NOTE]
+     * .Historical note
+     * ====
+     * Before {quarkus-cxf-project-name} 4.0.0, this option had a default value `+http://localhost:8080/<sei>+`,
+     * where `<sei>` was the fully qualified class name of the service endpoint interface in lower case.
+     * Since {quarkus-cxf-project-name} 4.0.0, this option must be specified explicitly.
+     * ====
      *
      * @asciidoclet
      * @since 1.0.0

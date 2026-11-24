@@ -6,6 +6,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.stream.IntStream;
 
 import javax.xml.namespace.QName;
 
@@ -37,16 +38,16 @@ public class DevUiTest {
     @Test
     void clientsAndServices() throws InterruptedException {
         final DevUiStats client = getClient(DevUiStats.class, "/services/stats");
-        Assertions.assertThat(client.getClientCount()).isEqualTo(2);
+        Assertions.assertThat(client.getClientCount()).isEqualTo(3);
         Assertions.assertThat(client.getServiceCount()).isEqualTo(2);
 
-        int i = 0;
-        Assertions.assertThat(client.getClient(i++)).isEqualTo(
-                "DevUiClientInfo [configKey=, sei=io.quarkiverse.cxf.deployment.test.dev.DevUiStats, address=http://localhost:8080/services/stats, wsdl=null]");
-        Assertions.assertThat(client.getClient(i++)).isEqualTo(
+        Assertions.assertThat(IntStream.range(0, 3).mapToObj(client::getClient)).containsExactlyInAnyOrder(
+                "DevUiClientInfo [configKey=, sei=io.quarkiverse.cxf.deployment.test.dev.DevUiStats, address=http://localhost:8080/services/stats, wsdl=null]",
+                /* A client without client-endpoint-url cannot be created, but it is still listed */
+                "DevUiClientInfo [configKey=noUrl, sei=io.quarkiverse.cxf.deployment.test.dev.DevUiStats, address=null, wsdl=null]",
                 "DevUiClientInfo [configKey=stats, sei=io.quarkiverse.cxf.deployment.test.dev.DevUiStats, address=http://localhost:8080/services/stats, wsdl=null]");
 
-        i = 0;
+        int i = 0;
         Assertions.assertThat(client.getService(i++)).isEqualTo(
                 "DevUiServiceInfo [path=/services/remote-stats, implementor=io.quarkiverse.cxf.deployment.test.dev.DevUiRemoteStatsImpl]");
         Assertions.assertThat(client.getService(i++)).isEqualTo(

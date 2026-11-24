@@ -1,12 +1,50 @@
 [[client-endpoint-url-defaults]]
-= `client-endpoint-url` defaults
+= `client-endpoint-url` is required
 
-If you omit the `client-endpoint-url` property in `application.properties`,
-the CXF Quarkus extension will assume that the service is published at `\http://localhost:8080/\{service-path}`,
-where `\{service-path}` is derived from
+Since {quarkus-cxf-project-name} 4.0.0, every client must have the URL of the remote service endpoint set via
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-client-endpoint-url[quarkus.cxf.client."client-name".client-endpoint-url]`:
 
-* Configuration property `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-path[quarkus.cxf.path]` and the
-* SEI’s class name in lower case
+.application.properties
+[source,properties]
+----
+quarkus.cxf.client.myCalculator.client-endpoint-url = https://example.org/calculator-ws/CalculatorService
+quarkus.cxf.client.myCalculator.service-interface = org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService
+----
 
-Given `quarkus.cxf.path = /services` (default), the default effective `client-endpoint-url` of the `CalculatorService` would be
-`\http://localhost:8080/services/org.jboss.eap.quickstarts.wscalculator.calculator.calculatorservice`.
+There is no default value.
+If you omit the `client-endpoint-url` property, the client fails when it is created with a message like the following:
+
+[source]
+----
+Cannot create the client myCalculator for the service interface org.jboss.eap.quickstarts.wscalculator.calculator.CalculatorService, because quarkus.cxf.client.myCalculator.client-endpoint-url is not set
+----
+
+A client is created when the bean it is injected into is instantiated.
+Hence the failure may happen at application startup or later, depending on the scope of that bean.
+
+The following does not make `client-endpoint-url` optional:
+
+* An address available in the `wsdl:port` element of the WSDL set via
+  `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-wsdl[quarkus.cxf.client."client-name".wsdl]`.
+  That address is ignored.
+* Setting the address via `jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY` before each request
+  as described in xref:user-guide/advanced-client-topics/dynamic-client-configuration.adoc[Dynamic client configuration].
+
+== Clients injected without a name
+
+// FIXME: (review) The clients having alternative = true are ignored by the lookup, but that was not mentioned here.
+// I reworded the paragraph below accordingly - please check and remove this comment.
+// The same qualifier is missing in the last but one bullet of "client-endpoint-url is required" in release-notes/4.0.0.adoc
+A client injected via `@CXFClient` without a client name is associated with the only `quarkus.cxf.client."client-name"`
+having `service-interface` set to the given service endpoint interface
+and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-alternative[alternative]` not set to `true`.
+If there is no such configuration, the client fails when it is created.
+If there are multiple such configurations, the client fails as well.
+
+[NOTE]
+.Historical note
+====
+Before {quarkus-cxf-project-name} 4.0.0, a client without `client-endpoint-url` was sending requests to
+`\http://localhost:8080/\{sei}`, where `\{sei}` is the fully qualified class name
+of the service endpoint interface in lower case.
+====
