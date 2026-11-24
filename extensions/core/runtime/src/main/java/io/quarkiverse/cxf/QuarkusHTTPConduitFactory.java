@@ -159,7 +159,7 @@ public class QuarkusHTTPConduitFactory implements HTTPConduitFactory {
             }
         }
 
-        if (pConfig != null && !"none".equals(pConfig.host())) {
+        if (ProxyConfigurationUtils.isProxyDefined(pConfig)) {
             /*
              * We set the proxy settings on the HTTPClientPolicy only for the URLConnectionHTTPConduit.
              * VertxHttpClientHTTPConduit does not need it, because we pass the ProxyConfiguration to it directly.

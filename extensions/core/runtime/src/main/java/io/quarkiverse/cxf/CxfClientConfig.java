@@ -3,7 +3,6 @@ package io.quarkiverse.cxf;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import org.apache.cxf.annotations.SchemaValidation.SchemaValidationType;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
@@ -370,8 +369,20 @@ public interface CxfClientConfig {
      * See also
      * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
      *
-     * With `VertxHttpClientHTTPConduitFactory`, `close` is ignored when the requested version is HTTP/2,
-     * including when that connection falls back to HTTP/1.x.
+     * With `VertxHttpClientHTTPConduitFactory`, the effect of `close` depends on the HTTP version of the connection:
+     *
+     * * HTTP/2 and HTTP/3 connections: `close` is ignored,
+     * because the `Connection` header is forbidden in HTTP/2 and HTTP/3.
+     * * HTTP/1.x connections of clients preferring HTTP/2: `close` is ignored too.
+     * These are the clients having
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
+     * set to `2`, or having `2` as the first value other than `3` in
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`,
+     * such as `2,1.1` or `3,2,1.1`.
+     * They use HTTP/1.x connections only if the service does not support HTTP/2.
+     * * HTTP/1.x connections of all other clients,
+     * including those having `http-versions` such as `1.1,2`, `1.1,3` or `3,1.1`:
+     * the connection is closed after each request/response exchange.
      *
      * @since 2.2.3
      * @asciidoclet
@@ -624,8 +635,8 @@ public interface CxfClientConfig {
     interface VertxConfig {
         /**
          * Ordered list of HTTP protocol versions permitted for this Vert.x SOAP client.
-         * Values must be distinct and chosen from `1.0`, `1.1` and `2`.
-         * Unsupported values (including `3` and `auto`) and duplicates cause exceptions on client creation.
+         * Values must be distinct and chosen from `1.0`, `1.1`, `2` and `3`.
+         * Unsupported values (including `auto`) and duplicates cause exceptions on client creation.
          * If absent,
          * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
          * is used.
@@ -641,6 +652,9 @@ public interface CxfClientConfig {
          * * `1.0` or `1.1` - select one HTTP/1.x version
          * * `1.1,2` - use HTTP/1.1 on plaintext HTTP connections;
          * advertise this preference order over TLS ALPN (Application-Layer Protocol Negotiation) for HTTPS connections
+         * * `3` - require HTTP/3 without any fallback; see the HTTP/3 notes below
+         * * `3,2,1.1` - start with HTTP/2 or HTTP/1.1 and switch to HTTP/3 once the service has advertised it;
+         * see the HTTP/3 notes below
          *
          * HTTPS behavior:
          *
@@ -667,6 +681,7 @@ public interface CxfClientConfig {
          * Adding `1.0` to a list starting with `2` does not provide HTTP/1.0 fallback on plaintext connections.
          * * Although Vert.x HttpClient will accept HTTP/1.0 response to an HTTP/1.1 request,
          * it still does not change subsequent outgoing requests to HTTP/1.0.
+         * * Lists containing `3` are rejected, because HTTP/3 requires TLS.
          *
          * Scheme-specific validation uses the effective destination, including endpoint overrides and redirects.
          *
@@ -676,6 +691,78 @@ public interface CxfClientConfig {
          *
          * If `http-versions` is set, CXF per-request version overrides (`org.apache.cxf.transport.http.forceVersion`)
          * and conflicting programmatic HTTP client policies are rejected.
+         *
+         * *HTTP/3*
+         *
+         * [WARNING]
+         * ====
+         * The value `3` is experimental.
+         * It relies on the HTTP/3 support of Vert.x HttpClient, which is marked as unstable in Vert.x.
+         * The behavior described here may change in future releases without prior notice.
+         * ====
+         *
+         * * HTTP/3 uses QUIC, a transport protocol based on UDP.
+         * The QUIC support is not available in {quarkus-cxf-project-name} applications by default.
+         * It comes with the `io.quarkus:quarkus-http3` extension, which you have to add to your application.
+         * Otherwise the creation of a client having `3` in `http-versions` fails.
+         * * `quarkus-http3` selects the native QUIC library for the platform it is built on using Maven profiles.
+         * If you use Gradle or if you build on a different platform than you run on,
+         * you need to add the `io.netty:netty-codec-native-quic` dependency with the classifier matching your target
+         * platform(s), such as `linux-x86_64`.
+         * * `quarkus-http3` enables HTTP/3 also for the HTTP server of the application.
+         * Unless you want that, add `quarkus.http3.enabled = false` to `application.properties`.
+         * This is a build time option that does not impact the SOAP clients.
+         * * Both JVM and native mode are supported.
+         * * HTTP/3 works only with `https:` URLs.
+         * A plain `http:` URL of the service or of a remote WSDL causes an exception on client creation.
+         * An endpoint override or a redirect leading to a plain `http:` URL causes the given request to fail.
+         * * HTTP/3 cannot be used through a proxy.
+         * The client creation fails
+         * if the proxy configuration selected via
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+         * would apply to the host of the service or of a remote WSDL.
+         * A request fails if it would apply to the host of an endpoint override or of a redirect.
+         * This is to prevent Vert.x HttpClient from bypassing the proxy with `3`
+         * and from silently never using HTTP/3 with `3,2,1.1` and similar.
+         * Hosts matching `quarkus.proxy.non-proxy-hosts` of the given proxy configuration can be accessed over HTTP/3.
+         * Use `quarkus.cxf.client."client-name".proxy-configuration-name = none` to make the client ignore
+         * the default proxy configuration.
+         * * `3` alone: the client connects over QUIC straight away and uses HTTP/3 for every request.
+         * There is no fallback to HTTP/2 or HTTP/1.x if the service or the network does not support HTTP/3.
+         * * `3` combined with other versions, such as `3,2,1.1`:
+         * the first request is always sent over TCP using HTTP/2 or HTTP/1.x,
+         * as it would be with the given list without `3`.
+         * The client switches to HTTP/3 only after the service has advertised it
+         * through the `Alt-Svc` response header or the HTTP/2 `ALTSVC` frame
+         * and after the client was able to open a QUIC connection to the advertised alternative in the background.
+         * Otherwise it stays with the TCP based HTTP protocol versions.
+         * As a consequence, a client sending just a few requests may never use HTTP/3.
+         * * The position of `3` in a list of several versions has no influence on that:
+         * `3,2,1.1`, `2,3,1.1` and `2,1.1,3` all behave the same.
+         * The order of the other versions is significant as described above.
+         * * When `3` is combined with other versions, Vert.x HttpClient honors `Alt-Svc` advertisements
+         * only if the host name of the service contains a dot.
+         * For host names such as `localhost` or `soap-backend` (typical for Kubernetes services addressed from the same
+         * namespace), the client stays with the TCP based versions without any warning.
+         * Use `3` alone or a fully qualified host name, such as `soap-backend.my-namespace.svc.cluster.local`,
+         * in those cases.
+         * * When `3` is combined with other versions, the server name is not sent via SNI to hosts without a dot,
+         * even if SNI is enabled in the TLS configuration of the client.
+         * * The trust store and the key store of the TLS configuration selected via
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+         * and the timeouts apply to HTTP/3 connections too.
+         * * The time for establishing an HTTP/3 connection is limited by
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-connection-timeout[quarkus.cxf.client."client-name".connection-timeout]`.
+         * A connection timeout set programmatically, either through `HTTPClientPolicy.connectionTimeout`
+         * or through the `jakarta.xml.ws.client.connectionTimeout` request context property,
+         * can shorten that time, but it cannot extend it.
+         * * The pool size and the keep alive timeout of HTTP/3 connections are configured separately from HTTP/1.x
+         * and HTTP/2 via
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http3-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http3-max-size]`
+         * and
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http3-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http3-keep-alive-timeout]`.
+         * * A TLS configuration with `trust-all = true` works with HTTP/3 only
+         * if it also has `hostname-verification-algorithm = NONE`.
          *
          * @asciidoclet
          * @since 4.0.0
@@ -691,20 +778,23 @@ public interface CxfClientConfig {
         ConnectionPool connectionPool();
 
         /**
-         * Duration in seconds after which inactive client connections will be closed.
-         *
-         * For HTTP 1.x connections, this option is only honored, if the client was configured with
+         * Duration in seconds after which inactive HTTP/1.x client connections will be closed
+         * if the client was configured with
          * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-connection[quarkus.cxf.client."client-name".connection]
          * = keep-alive`.
+         * Connections of clients configured with `quarkus.cxf.client."client-name".connection = close` are closed
+         * immediately after receiving the response.
+         *
+         * This option applies to all HTTP/1.x connections of the given client,
+         * including those of a client preferring HTTP/2 that had to fall back to HTTP/1.x.
+         * It has no effect on HTTP/2 and HTTP/3 connections.
+         * See
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http2-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http2-keep-alive-timeout]`
+         * and
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http3-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http3-keep-alive-timeout]`
+         * for those.
          *
          * Value `0` means no timeout.
-         *
-         * [NOTE]
-         * .Historical note
-         * ====
-         * Since {quarkus-cxf-project-name} 4.0.0, this option applies to all HTTP protocol versions.
-         * Before that version, it only applied to HTTP 1.x.
-         * ====
          *
          * @asciidoclet
          * @since 3.31.0
@@ -714,28 +804,37 @@ public interface CxfClientConfig {
 
         /**
          * Duration in seconds after which inactive HTTP/2 client connections will be closed.
-         * Overrides the value set via
-         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
-         * for HTTP/2 client connections.
+         *
+         * This option applies to all HTTP/2 connections of the given client,
+         * regardless of whether HTTP/2 was selected via
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
+         * or negotiated based on
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`.
+         * It has no effect on HTTP/1.x and HTTP/3 connections.
          *
          * Value `0` means no timeout.
          *
-         * [NOTE]
-         * .Historical note
-         * ====
-         * Since {quarkus-cxf-project-name} 4.0.0, this option effectively defaults to the value set in
-         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
-         * Before that version, the default value was 60 seconds and
-         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.keep-alive-timeout]`
-         * had no impact on HTTP/2 connections
-         * ====
-         *
          * @asciidoclet
          * @since 3.31.0
-         * @deprecated Use {@link #keepAliveTimeout()}
          */
-        @Deprecated
-        OptionalInt http2KeepAliveTimeout();
+        @WithDefault("60")
+        int http2KeepAliveTimeout();
+
+        /**
+         * Duration in seconds after which inactive HTTP/3 client connections will be closed.
+         *
+         * This option is effective only if
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+         * contains `3`.
+         * It has no effect on HTTP/1.x and HTTP/2 connections.
+         *
+         * Value `0` means no timeout.
+         *
+         * @asciidoclet
+         * @since 4.0.0
+         */
+        @WithDefault("60")
+        int http3KeepAliveTimeout();
 
         /**
          * Configure the given {@link HttpClientOptions} based on the values in this {@link VertxConfig}.
@@ -745,8 +844,14 @@ public interface CxfClientConfig {
          * @since 3.25.0
          */
         default void configure(HttpClientOptions opts, ConnectionType connectionType, PoolOptions poolOptions) {
+            /*
+             * Each timeout is set regardless of the protocol version preferred by the client, because a single client
+             * may end up having connections of several HTTP versions, e.g. due to ALPN or a fallback to HTTP/1.x.
+             * Vert.x applies each of them only to connections of the given HTTP version.
+             * The HTTP/3 timeout cannot be set through HttpClientOptions, see HttpClientPool.
+             */
             opts.setKeepAliveTimeout(keepAliveTimeout());
-            opts.setHttp2KeepAliveTimeout(http2KeepAliveTimeout().orElse(keepAliveTimeout()));
+            opts.setHttp2KeepAliveTimeout(http2KeepAliveTimeout());
             // HTTP/2 clients need keep-alive while upgrading their first cleartext request.
             if (opts.getProtocolVersion() != HttpVersion.HTTP_2) {
                 opts.setKeepAlive(ConnectionType.KEEP_ALIVE.equals(connectionType));
@@ -779,6 +884,19 @@ public interface CxfClientConfig {
          */
         @WithDefault("1")
         int http2MaxSize();
+
+        /**
+         * The maximum pool size for HTTP/3 connections.
+         *
+         * This option is effective only if
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+         * contains `3`.
+         *
+         * @asciidoclet
+         * @since 4.0.0
+         */
+        @WithDefault("1")
+        int http3MaxSize();
 
         /**
          * The connection pool cleaner period.
@@ -822,6 +940,7 @@ public interface CxfClientConfig {
         default void configure(PoolOptions poolOptions) {
             poolOptions.setHttp1MaxSize(http1MaxSize());
             poolOptions.setHttp2MaxSize(http2MaxSize());
+            poolOptions.setHttp3MaxSize(http3MaxSize());
             poolOptions.setCleanerPeriod((int) cleanerPeriod().toMillis());
             poolOptions.setEventLoopSize(eventLoopSize());
             poolOptions.setMaxWaitQueueSize(maxWaitQueueSize());

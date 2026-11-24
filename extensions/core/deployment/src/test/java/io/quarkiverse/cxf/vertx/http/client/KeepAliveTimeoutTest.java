@@ -123,6 +123,25 @@ public class KeepAliveTimeoutTest {
 
         }
 
+        /*
+         * Clients having only the keep alive timeout of the HTTP version they do not use set to 1 second.
+         * Their connections are expected to stay open.
+         */
+        for (HttpVersion v : List.of(HttpVersion.HTTP_1_1, HttpVersion.HTTP_2)) {
+            final String baseUri = baseUris.get(v);
+            final String k = "quarkus.cxf.client.other-version-timeout-client_" + v.name();
+            if (baseUri.startsWith("https://")) {
+                result.overrideConfigKey(k + ".tls-configuration-name", "client-pkcs12");
+            }
+            result.overrideConfigKey(k + ".client-endpoint-url", baseUri + "/echoHeaders/" + v.name())
+                    .overrideConfigKey(k + ".service-interface", EchoHeadersService.class.getName())
+                    .overrideConfigKey(k + ".http-conduit-factory", "VertxHttpClientHTTPConduitFactory")
+                    .overrideConfigKey(k + ".vertx.connection-pool.http1-max-size", "1")
+                    .overrideConfigKey(k + ".connection", "keep-alive")
+                    .overrideConfigKey(k + ".vertx." + (v == HttpVersion.HTTP_2 ? "" : "http2-") + "keep-alive-timeout", "1")
+                    .overrideConfigKey(k + ".version", plainVersion(v));
+        }
+
         return result;
 
     }
@@ -190,6 +209,12 @@ public class KeepAliveTimeoutTest {
     @CXFClient("keep-alive-with-timeout-client_HTTP_2")
     EchoHeadersService keepAliveWithTimeoutClient_HTTP_2;
 
+    @CXFClient("other-version-timeout-client_HTTP_1_1")
+    EchoHeadersService otherVersionTimeoutClient_HTTP_1_1;
+
+    @CXFClient("other-version-timeout-client_HTTP_2")
+    EchoHeadersService otherVersionTimeoutClient_HTTP_2;
+
     @ConfigProperty(name = "qcxf.baseUri")
     String baseUri;
 
@@ -238,8 +263,32 @@ public class KeepAliveTimeoutTest {
 
     @Test
     void keepAliveWithTimeoutClient_HTTP_2() {
-        /* When .vertx.keep-alive-timeout is set 1 then we should observe the connection being closed after 1s */
+        /* When .vertx.http2-keep-alive-timeout is set 1 then we should observe the connection being closed after 1s */
         close(keepAliveWithTimeoutClient_HTTP_2, HttpVersion.HTTP_2, "null");
+    }
+
+    /**
+     * {@code .vertx.keep-alive-timeout} must have no effect on HTTP/2 connections
+     * and {@code .vertx.http2-keep-alive-timeout} must have no effect on HTTP/1.x connections.
+     */
+    @Test
+    void keepAliveTimeoutOfOtherVersionIgnored() throws InterruptedException {
+        final String http1CnId = toMap(otherVersionTimeoutClient_HTTP_1_1.getRequestHeaders("connection")).get("cnId");
+        final String http2CnId = toMap(otherVersionTimeoutClient_HTTP_2.getRequestHeaders("connection")).get("cnId");
+        Assertions.assertThat(http1CnId).isNotBlank();
+        Assertions.assertThat(http2CnId).isNotBlank();
+
+        /*
+         * The keepAliveWithTimeoutClient_* tests show that a 1 second timeout closes the connection.
+         * Wait long enough for the timeout and the pool cleaner period (1 second by default) to pass.
+         */
+        Thread.sleep(3_500);
+
+        /* Both connections are still open and reused */
+        Assertions.assertThat(toMap(otherVersionTimeoutClient_HTTP_1_1.getRequestHeaders("connection")).get("cnId"))
+                .isEqualTo(http1CnId);
+        Assertions.assertThat(toMap(otherVersionTimeoutClient_HTTP_2.getRequestHeaders("connection")).get("cnId"))
+                .isEqualTo(http2CnId);
     }
 
     static void keepAlive(EchoHeadersService client, String expectedConnectionValue) {

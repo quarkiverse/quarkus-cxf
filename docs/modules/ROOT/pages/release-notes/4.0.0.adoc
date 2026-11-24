@@ -49,5 +49,38 @@ Since {quarkus-cxf-project-name} 4.0.0, `io.quarkiverse.cxf:quarkus-cxf-rt-featu
 - quarkus.otel.traces.sampler: parentbased_always_on → parentbased_traceidratio
 - quarkus.otel.traces.sampler.arg: 1.0 → 0.1
 
+== HTTP/3 support for SOAP clients (experimental)
+
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+now accepts `3` in addition to `1.0`, `1.1` and `2`.
+
+* `3` alone makes the client use HTTP/3 for every request, without any fallback.
+* `3` combined with other versions, such as `3,2,1.1`, makes the client contact the service over TCP first
+  and switch to HTTP/3 only after the service has advertised it via `Alt-Svc`.
+* The application has to depend on `io.quarkus:quarkus-http3`.
+  Add `quarkus.http3.enabled = false` to `application.properties`,
+  unless you want the HTTP server of the application to serve HTTP/3 too.
+* HTTP/3 requires `https:` URLs and it cannot be used through a proxy.
+  Clients combining `3` with a plain `http:` URL or with a proxy are rejected.
+
+See the documentation of
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+for more details and limitations.
+
+=== New options for HTTP/3 connections
+
+The connection pool size and the keep alive timeout of HTTP/3 connections are configured separately
+from the same settings for HTTP/1.x and HTTP/2 connections:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http3-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http3-max-size]`
+  sets the maximum pool size for HTTP/3 connections.
+  The default is `1`.
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http3-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http3-keep-alive-timeout]`
+  sets the number of seconds after which inactive HTTP/3 connections are closed.
+  The default is `60`.
+
+The existing options `vertx.connection-pool.http1-max-size`, `vertx.connection-pool.http2-max-size`,
+`vertx.keep-alive-timeout` (HTTP/1.x only) and `vertx.http2-keep-alive-timeout` have no effect on HTTP/3 connections.
+
 == Changes in native config
 
