@@ -44,7 +44,7 @@ public class Http3Test {
     static final int HTTP_PORT = 8081;
     static final int HTTPS_PORT = 8444;
 
-    /** {@code 3} alone: HTTP/3 for every request, including the first one, even though the host name has no dot */
+    /** {@code 3}: HTTP/3 for every request, including the first one, even though the host name has no dot */
     @Test
     void http3Only() {
         for (int i = 0; i < 3; i++) {
@@ -55,8 +55,13 @@ public class Http3Test {
     }
 
     /**
-     * {@code 3} combined with other versions: the first request goes over TCP and the client switches to HTTP/3 only
-     * after the service advertised it and after Vert.x probed the advertised alternative successfully
+     * {@code 3,2,1.1}: the first request goes over TCP and the client switches to HTTP/3 only after the service
+     * advertised it and after Vert.x probed the advertised alternative successfully.
+     * <ul>
+     * <li>{@code h3Fallback} calls {@link Http11Peer}, that supports only HTTP/1.1 and advertises HTTP/3 via the
+     * {@code Alt-Svc} response header
+     * <li>{@code h3FallbackH2} calls {@link Http3Peer}, that advertises HTTP/3 via the HTTP/2 {@code ALTSVC} frame
+     * </ul>
      */
     @ParameterizedTest
     @CsvSource({ "h3Fallback,http/1.1", "h3FallbackH2,h2" })
@@ -81,14 +86,14 @@ public class Http3Test {
 
     /**
      * Vert.x does not follow the alternative services advertised by hosts whose name does not contain a dot.
-     * {@code h3Fallback} and {@code h3FallbackLocalhost} differ only in their host names.
+     * {@code h3FallbackH2} and {@code h3FallbackLocalhost} differ only in their host names.
      */
     @Test
     void noHttp3AfterAltSvcWithoutDotInHostName() throws InterruptedException {
         for (int i = 0; i < 5; i++) {
             echo("h3FallbackLocalhost", "x")
                     .statusCode(200)
-                    .body(is("http/1.1:1"));
+                    .body(is("h2:1"));
             Thread.sleep(500);
         }
     }
@@ -274,19 +279,13 @@ public class Http3Test {
                                 + HTTP_PORT + ", because HTTP/3 requires an https: URL"));
     }
 
-    /**
-     * The client is configured properly, but the endpoint URL is changed to a plain HTTP URL per request.
-     * <p>
-     * The HTTP/3 specific message is expected also for lists starting with {@code 2} and having no {@code 1.1}, such as
-     * {@code 2,3}, for which the older check for {@code 2,1.0} would otherwise recommend adding {@code 1.1}.
-     */
-    @ParameterizedTest
-    @CsvSource({ "h3EndpointOverride,'3,2,1.1'", "h3EndpointOverrideNoHttp11,'2,3'" })
-    void endpointOverrideToPlainHttp(String client, String versions) {
-        echo(client, "x", "http://localhost:" + HTTP_PORT + "/peer/echo")
+    /** The client is configured properly, but the endpoint URL is changed to a plain HTTP URL per request */
+    @Test
+    void endpointOverrideToPlainHttp() {
+        echo("h3EndpointOverride", "x", "http://localhost:" + HTTP_PORT + "/peer/echo")
                 .statusCode(500)
                 .body(containsString(
-                        "quarkus.cxf.client." + client + ".vertx.http-versions = " + versions
+                        "quarkus.cxf.client.h3EndpointOverride.vertx.http-versions = 3,2,1.1"
                                 + " cannot be used with http://localhost:" + HTTP_PORT
                                 + ", because HTTP/3 requires an https: URL"));
     }

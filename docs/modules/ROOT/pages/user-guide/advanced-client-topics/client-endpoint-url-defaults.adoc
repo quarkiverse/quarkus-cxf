@@ -32,9 +32,6 @@ The following does not make `client-endpoint-url` optional:
 
 == Clients injected without a name
 
-// FIXME: (review) The clients having alternative = true are ignored by the lookup, but that was not mentioned here.
-// I reworded the paragraph below accordingly - please check and remove this comment.
-// The same qualifier is missing in the last but one bullet of "client-endpoint-url is required" in release-notes/4.0.0.adoc
 A client injected via `@CXFClient` without a client name is associated with the only `quarkus.cxf.client."client-name"`
 having `service-interface` set to the given service endpoint interface
 and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-alternative[alternative]` not set to `true`.

@@ -567,8 +567,8 @@ public class VertxHttpClientHTTPConduit extends HTTPConduit {
                     requestOptions.putHeader(CONTENT_LENGTH, String.valueOf(buffer.length()));
                 }
 
-                // A list starting with HTTP/1.x can negotiate HTTP/2 through ALPN or switch to HTTP/3 through Alt-Svc.
-                // Connection is forbidden there;
+                // Clients permitting HTTP/2 or HTTP/3 may end up with a connection where the Connection header is
+                // forbidden, so we never send it for them;
                 // the pool's keep-alive options still govern HTTP/1.x connections when the header is omitted.
                 final List<HttpVersion> versions = clientInfo.getHttpVersions();
                 setProtocolHeaders(outMessage, requestOptions, userAgent,

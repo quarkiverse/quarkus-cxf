@@ -58,13 +58,6 @@ public class VertxWebClientProcessor {
         if (!quarkusHttp3Present) {
             return QuicSupport.QUARKUS_HTTP3_MISSING;
         }
-        // FIXME: (review, question) quarkus-http3 itself detects the native library differently: its Http3Processor checks
-        // QuarkusClassLoader.isResourcePresentAtRuntime("META-INF/native/<library of the build OS and arch>") and fails the
-        // build if it is missing, unless quarkus.http3.enabled = false. So NATIVE_LIBRARY_MISSING is reachable only with
-        // quarkus.http3.enabled = false, which is the setup we recommend.
-        // Matching Maven coordinates accepts a classifier of any platform (e.g. osx-aarch_64 on Linux)
-        // and rejects a library provided through other coordinates.
-        // Would checking the resource, like quarkus-http3 does, be more accurate and consistent?
         /*
          * The native QUIC libraries are in the netty-codec-native-quic artifacts having a platform specific classifier.
          * quarkus-http3 adds the one matching the build platform through Maven profiles, which does not work with Gradle.

@@ -4,7 +4,10 @@ import java.net.Proxy.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -39,6 +42,13 @@ import io.vertx.core.http.HttpVersion;
 public class CXFClientInfo {
     private static final Logger log = Logger.getLogger(CXFClientInfo.class);
     private static final String JAVA_NET_SSL_TLS_CONFIGURATION_NAME = "javax.net.ssl";
+    /**
+     * The supported values of {@code quarkus.cxf.client."client-name".vertx.http-versions} mapped to the respective
+     * lists of HTTP versions.
+     * The set is intentionally small; see {@link CxfClientConfig.VertxConfig#httpVersions()}.
+     * The iteration order is the order in which the values are listed in exception messages.
+     */
+    private static final Map<String, List<HttpVersion>> SUPPORTED_HTTP_VERSIONS = supportedHttpVersions();
 
     private final String sei;
     private final String endpointAddress;
@@ -301,6 +311,18 @@ public class CXFClientInfo {
         });
     }
 
+    /**
+     * Parses and validates {@code quarkus.cxf.client."client-name".vertx.http-versions} of the given client.
+     * Only the lists enumerated in {@link #SUPPORTED_HTTP_VERSIONS} are accepted.
+     *
+     * @param config the configuration of the given client
+     * @param configKey the name of the given client, such as {@code client-name} in
+     *        {@code quarkus.cxf.client."client-name".vertx.http-versions}
+     * @return an immutable list of the configured HTTP versions in the configured order or an empty list if
+     *         {@code http-versions} is not set
+     * @throws IllegalArgumentException if {@code http-versions} is set to an unsupported value or if it is combined with
+     *         {@code quarkus.cxf.client."client-name".version} other than {@code auto}
+     */
     static List<HttpVersion> parseHttpVersions(CxfClientConfig config, String configKey) {
         final Optional<List<String>> configured = config.vertx().httpVersions();
         if (configured.isEmpty()) {
@@ -311,33 +333,32 @@ public class CXFClientInfo {
             throw new IllegalArgumentException(key + ".vertx.http-versions cannot be combined with " + key
                     + ".version = " + config.version() + "; leave version at auto");
         }
-        final List<HttpVersion> versions = new ArrayList<>();
-        final List<String> values = configured.get();
-        if (values.size() == 1) {
-            return List.of(parseHttpVersion(key, values.get(0)));
+        /*
+         * FIXME: (minor, question) SmallRye Config drops empty list items before we get here, so 2,,1.1 and 2,1.1,
+         * are accepted as 2,1.1 and the message below shows the normalized value rather than what the user wrote
+         * (2,,3 is reported as 2,3). Fine if intended - then please cover it in HttpVersionsConfigTest so that
+         * the behavior is pinned down.
+         */
+        /* Whitespace around the list items is not significant */
+        final String value = configured.get().stream().map(String::trim).collect(Collectors.joining(","));
+        final List<HttpVersion> versions = SUPPORTED_HTTP_VERSIONS.get(value);
+        if (versions == null) {
+            throw new IllegalArgumentException("Unsupported " + key + ".vertx.http-versions = " + value
+                    + "; supported values are "
+                    + SUPPORTED_HTTP_VERSIONS.keySet().stream().collect(Collectors.joining("', '", "'", "'")));
         }
-        for (String value : values) {
-            final HttpVersion version = parseHttpVersion(key, value);
-            if (versions.contains(version)) {
-                throw new IllegalArgumentException("Duplicate HTTP version '" + value + "' in " + key + ".vertx.http-versions");
-            }
-            versions.add(version);
-        }
-        if (versions.isEmpty()) {
-            throw new IllegalArgumentException(key + ".vertx.http-versions must contain at least one HTTP version");
-        }
-        return List.copyOf(versions);
+        return versions;
     }
 
-    private static HttpVersion parseHttpVersion(String key, String value) {
-        return switch (value) {
-            case "1.0" -> HttpVersion.HTTP_1_0;
-            case "1.1" -> HttpVersion.HTTP_1_1;
-            case "2" -> HttpVersion.HTTP_2;
-            case "3" -> HttpVersion.HTTP_3;
-            default -> throw new IllegalArgumentException("Unsupported HTTP version '" + value + "' in " + key
-                    + ".vertx.http-versions; supported values are 1.0, 1.1, 2 and 3");
-        };
+    private static Map<String, List<HttpVersion>> supportedHttpVersions() {
+        final Map<String, List<HttpVersion>> result = new LinkedHashMap<>();
+        result.put("1.0", List.of(HttpVersion.HTTP_1_0));
+        result.put("1.1", List.of(HttpVersion.HTTP_1_1));
+        result.put("2", List.of(HttpVersion.HTTP_2));
+        result.put("2,1.1", List.of(HttpVersion.HTTP_2, HttpVersion.HTTP_1_1));
+        result.put("3", List.of(HttpVersion.HTTP_3));
+        result.put("3,2,1.1", List.of(HttpVersion.HTTP_3, HttpVersion.HTTP_2, HttpVersion.HTTP_1_1));
+        return Collections.unmodifiableMap(result);
     }
 
     private static String toConfigValue(List<HttpVersion> versions) {
@@ -357,16 +378,7 @@ public class CXFClientInfo {
 
     /** Validate the effective destination, without including credentials or query parameters in diagnostics. */
     public void validateHttpVersions(URI destination) {
-        /*
-         * The HTTP/3 check has to come first: lists containing 3 are rejected for any plain http: destination, so they
-         * never reach the check below, whose message is right only for 2,1.0
-         */
         validateHttp3Destination(this::httpVersionsProperty, httpVersions, proxyConfiguration, proxiedHosts, destination);
-        if (httpVersions.size() > 1 && httpVersions.get(0) == HttpVersion.HTTP_2
-                && !httpVersions.contains(HttpVersion.HTTP_1_1) && "http".equalsIgnoreCase(destination.getScheme())) {
-            throw new IllegalArgumentException(httpVersionsProperty()
-                    + " = 2,1.0 cannot be used with plaintext HTTP; use 2 for prior knowledge or include 1.1 for h2c upgrade");
-        }
     }
 
     /**

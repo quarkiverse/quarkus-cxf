@@ -49,9 +49,6 @@ public class Http3Resource {
     @CXFClient("h3EndpointOverride")
     ProtocolEcho h3EndpointOverride;
 
-    @CXFClient("h3EndpointOverrideNoHttp11")
-    ProtocolEcho h3EndpointOverrideNoHttp11;
-
     @CXFClient("h3ReceiveTimeout")
     ProtocolEcho h3ReceiveTimeout;
 
@@ -178,7 +175,6 @@ public class Http3Resource {
             case "h3Untrusted" -> h3Untrusted;
             case "h3Redirect" -> h3Redirect;
             case "h3EndpointOverride" -> h3EndpointOverride;
-            case "h3EndpointOverrideNoHttp11" -> h3EndpointOverrideNoHttp11;
             case "h3ReceiveTimeout" -> h3ReceiveTimeout;
             case "h3ConnectionTimeout" -> h3ConnectionTimeout;
             case "h3KeepAliveTimeout" -> h3KeepAliveTimeout;
