@@ -1,10 +1,6 @@
 package io.quarkiverse.cxf.it.http3;
 
 import java.security.cert.X509Certificate;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +10,6 @@ import javax.net.ssl.SSLSession;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 
-import io.vertx.core.http.HttpConnection;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.http.HttpVersion;
@@ -22,8 +17,11 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
 /**
- * A minimal SOAP service implementing {@link ProtocolEcho} that the SOAP clients of this application can call over
- * HTTP/3.
+ * A minimal hand-written SOAP service that the SOAP clients of this application can call over HTTP/3.
+ * <p>
+ * It implements the operations of {@link ProtocolEcho} except for {@link ProtocolEcho#generate(int)} using plain Vert.x
+ * Web routes.
+ * See {@link ProtocolEchoImpl} for an implementation based on Quarkus CXF.
  */
 @ApplicationScoped
 public class Http3Peer {
@@ -31,17 +29,17 @@ public class Http3Peer {
     private static final Pattern DELAY_MS = Pattern.compile("<delayMs>([0-9]+)</delayMs>");
     private static final Pattern HOLD_MS = Pattern.compile("<holdMs>([0-9]+)</holdMs>");
 
-    private final AtomicInteger connectionCounter = new AtomicInteger();
-    /** The identifiers of the open connections through which {@link ProtocolEcho#connectionId(long)} was called */
-    private final Map<HttpConnection, String> connectionIds = new ConcurrentHashMap<>();
-    /** The identifiers of the connections from {@link #connectionIds} that were closed in the meantime */
-    private final Set<String> closedConnectionIds = ConcurrentHashMap.newKeySet();
+    private final ConnectionIds connectionIds;
+
+    Http3Peer(ConnectionIds connectionIds) {
+        this.connectionIds = connectionIds;
+    }
 
     void init(@Observes Router router) {
         router.post("/peer/echo").handler(this::echo);
         router.post("/peer/redirect").handler(Http3Peer::redirect);
         router.get("/peer/closedConnections")
-                .handler(context -> context.response().end(String.join(",", closedConnectionIds)));
+                .handler(context -> context.response().end(String.join(",", connectionIds.closed())));
     }
 
     private void echo(RoutingContext context) {
@@ -60,7 +58,7 @@ public class Http3Peer {
                     final Matcher delayMs = DELAY_MS.matcher(soapRequest);
                     final Matcher holdMs = HOLD_MS.matcher(soapRequest);
                     if (holdMs.find()) {
-                        final String connectionId = connectionId(request.connection());
+                        final String connectionId = connectionIds.id(request.connection());
                         context.vertx().setTimer(
                                 Math.max(1L, Long.parseLong(holdMs.group(1))),
                                 timerId -> respond(request, "connectionIdResponse", protocol + ":" + connectionId));
@@ -79,21 +77,6 @@ public class Http3Peer {
                     }
                 })
                 .onFailure(context::fail);
-    }
-
-    /**
-     * @return an identifier of the given {@code connection} that is unique within this application and stays the same
-     *         as long as the given {@code connection} is open
-     */
-    private String connectionId(HttpConnection connection) {
-        return connectionIds.computeIfAbsent(connection, cn -> {
-            final String id = String.valueOf(connectionCounter.incrementAndGet());
-            cn.closeHandler(v -> {
-                connectionIds.remove(cn);
-                closedConnectionIds.add(id);
-            });
-            return id;
-        });
     }
 
     /**

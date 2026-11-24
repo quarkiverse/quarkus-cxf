@@ -95,8 +95,9 @@ now accepts `3` in addition to `1.0`, `1.1` and `2`.
 * `3` combined with other versions, such as `3,2,1.1`, makes the client contact the service over TCP first
   and switch to HTTP/3 only after the service has advertised it via `Alt-Svc`.
 * The application has to depend on `io.quarkus:quarkus-http3`.
-  Add `quarkus.http3.enabled = false` to `application.properties`,
-  unless you want the HTTP server of the application to serve HTTP/3 too.
+  That extension makes the HTTP server of the application serve HTTP/3 too,
+  see <<http3-for-soap-services>> below.
+  Add `quarkus.http3.enabled = false` to `application.properties`, unless you want that.
 * HTTP/3 requires `https:` URLs and it cannot be used through a proxy.
   Clients combining `3` with a plain `http:` URL or with a proxy are rejected.
 
@@ -118,6 +119,31 @@ from the same settings for HTTP/1.x and HTTP/2 connections:
 
 The existing options `vertx.connection-pool.http1-max-size`, `vertx.connection-pool.http2-max-size`,
 `vertx.keep-alive-timeout` (HTTP/1.x only) and `vertx.http2-keep-alive-timeout` have no effect on HTTP/3 connections.
+
+[[http3-for-soap-services]]
+== HTTP/3 for SOAP services (experimental)
+
+SOAP services exposed by {quarkus-cxf-project-name} can be called over HTTP/3,
+if the application depends on `io.quarkus:quarkus-http3`, a new extension in Quarkus 4.0,
+and if TLS is configured for the Quarkus HTTP server.
+There are no new {quarkus-cxf-project-name} options for that.
+Both JVM and native mode are supported.
+
+Some limitations exist in the underlying projects:
+
+* `quarkus-http3` in Quarkus 4.0 advertises HTTP/3 only on HTTP/1.x responses.
+  Clients negotiating HTTP/2 for their first request stay on HTTP/2
+  (https://github.com/quarkiverse/quarkus-cxf/issues/2446[#2446]).
+* A request exceeding `quarkus.http.limits.max-body-size` or a stalled request body
+  makes the server close the whole HTTP/3 connection, thus possibly aborting other requests sent through it
+  (https://github.com/quarkiverse/quarkus-cxf/issues/2461[#2461]).
+* With `quarkus-micrometer`, a `NullPointerException` is logged for requests terminated before completion
+  (https://github.com/quarkiverse/quarkus-cxf/issues/2463[#2463]).
+* `HttpServletRequest.getLocalAddr()` returns the wildcard address for requests received over HTTP/3,
+  if the server listens on all network interfaces
+  (https://github.com/quarkiverse/quarkus-cxf/issues/2464[#2464]).
+
+See xref:user-guide/advanced-service-topics/http3.adoc[HTTP/3 for SOAP services] for more details.
 
 == Changes in native config
 
