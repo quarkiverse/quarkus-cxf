@@ -36,7 +36,6 @@ public class CxfSeiOnlyClientInstanceTest {
             .overrideConfigKey("quarkus.cxf.client.foo.client-endpoint-url", FRUITCLIENT_URL)
             .overrideConfigKey("quarkus.cxf.client.foo.service-interface",
                     "io.quarkiverse.cxf.deployment.test.FruitWebService")
-            .overrideConfigKey("quarkus.cxf.client.foo.alternative", "true")
             .overrideConfigKey("quarkus.cxf.client.foo.features", "org.apache.cxf.feature.LoggingFeature");
 
     @Inject
@@ -51,8 +50,11 @@ public class CxfSeiOnlyClientInstanceTest {
     @Named("io.quarkiverse.cxf.deployment.test.FruitWebService")
     Instance<CXFClientData> clientDataInstance;
 
+    /*
+     * The client name is required here, because there are two clients having service-interface set to FruitWebService
+     */
     @Inject
-    @CXFClient
+    @CXFClient("fruitclient")
     Instance<FruitWebService> clientProxyinstance;
 
     @Test

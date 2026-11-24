@@ -31,10 +31,8 @@ public class CxfSeiOnlyClientTest {
             .overrideConfigKey("quarkus.cxf.client.fruitclient.service-interface",
                     "io.quarkiverse.cxf.deployment.test.FruitWebService")
             .overrideConfigKey("quarkus.cxf.client.foo.client-endpoint-url", "http://localhost:8081/services/fruit")
-            .overrideConfigKey("quarkus.cxf.client.foo.features", "org.apache.cxf.feature.LoggingFeature")
-            .overrideConfigKey("quarkus.cxf.client.foo.alternative", "true")
-            .overrideConfigKey("quarkus.cxf.client.foo.service-interface",
-                    "io.quarkiverse.cxf.deployment.test.FruitWebService");
+            /* foo has no service-interface, hence it is not a candidate for the client injected without a name below */
+            .overrideConfigKey("quarkus.cxf.client.foo.features", "org.apache.cxf.feature.LoggingFeature");
 
     @Inject
     @CXFClient("fruitclient")

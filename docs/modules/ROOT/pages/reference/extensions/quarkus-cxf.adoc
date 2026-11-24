@@ -1250,10 +1250,19 @@ and `build` for Gradle.
 
 .<|icon:lock[title=Fixed at build time] [[quarkus-cxf_quarkus-cxf-client-client-name-alternative]]`link:#quarkus-cxf_quarkus-cxf-client-client-name-alternative[quarkus.cxf.client."client-name".alternative]`
 .<| `boolean`
-.<| `false`
+.<| 
 
-3+a|Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when
-configuring a client without annotation `@CXFClient`.
+3+a|This option is not supported since {quarkus-cxf-project-name} 4.0.0.
+Setting it to any value, including `false`, causes a build time failure.
+
+Before {quarkus-cxf-project-name} 4.0.0, a client configuration having `alternative = true` was ignored
+when looking up the configuration for a client injected via `@CXFClient` without a client name.
+To migrate, remove this option and do one of the following:
+
+* Inject the client using an explicit client name, such as `@CXFClient("myClient")`
+* Or make sure that there is only one `quarkus.cxf.client."client-name"` having
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-service-interface[service-interface]`
+set to the given service endpoint interface.
 
 *Environment variable*: `+++QUARKUS_CXF_CLIENT__CLIENT_NAME__ALTERNATIVE+++` +
 *Since Quarkus CXF*: 1.0.0
