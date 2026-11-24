@@ -284,22 +284,17 @@ public abstract class CxfClientProducer {
                 fixedConfig,
                 meta,
                 configKey,
-                /*
-                 * FIXME: (review) "or inject the client using @CXFClient("client-name")" reads as if naming the client
-                 * was enough, while the named client fails with "client-endpoint-url is not set" in the next step.
-                 * Perhaps: "... because there is no quarkus.cxf.client."client-name" having service-interface = <sei>;
-                 * add such a configuration or inject the client by name; in both cases
-                 * quarkus.cxf.client."client-name".client-endpoint-url has to be set".
-                 */
                 () -> configKey.isEmpty()
                         ? new IllegalStateException(
                                 "Cannot create a client for the service interface " + meta.getSei() + " injected into "
                                         + ip.getMember() + " without a client name,"
                                         + " because there is no quarkus.cxf.client.\"client-name\".service-interface = "
-                                        + meta.getSei() + " in the configuration; either add it together with"
-                                        + " quarkus.cxf.client.\"client-name\".client-endpoint-url"
-                                        + " or inject the client using @" + CXFClient.class.getSimpleName()
-                                        + "(\"client-name\")")
+                                        + meta.getSei() + " in the configuration; either set"
+                                        + " quarkus.cxf.client.\"client-name\".service-interface = " + meta.getSei()
+                                        + " for exactly one client or inject the client using an explicit client name,"
+                                        + " e.g. @" + CXFClient.class.getSimpleName() + "(\"client-name\");"
+                                        + " in both cases, quarkus.cxf.client.\"client-name\".client-endpoint-url"
+                                        + " has to be set for that client")
                         /*
                          * FIXME: (review) This branch is unreachable since this commit: for a non-empty configKey,
                          * selectClientConfig() never returns an empty Optional, because CxfConfig.clients() is annotated
