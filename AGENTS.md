@@ -67,17 +67,32 @@ Lines longer than 120 characters are allowed if there are links or other complex
 
 Semantic line breaks are not required when writing GitHub issue or pull request comments or descriptions. 
 
+### Testable code snippets
+
+New block code snippets (except for shell commands) must come from unit tests or integration tests 
+that are regularly run by CI.
+The module hosting the given test must push the cited file to Antora's `docs/modules/ROOT/examples` directory
+using `maven-resources-plugin` look for example in `integration-tests/*/pom.xml` files.
+Antora AsciiDoc pages then have to include those snippets `docs/modules/ROOT/examples` as follows:
+
+```asciidoc
+.<file-name>
+[source,properties]
+----
+include::example$<directory-named-after-the-source-test-module>/<file-name>[tag=<tag-named-after-page-embedding-it>]
+----
+```
+
 ## Coding
 
+* Design clear, unambiguous contracts
+* Design carefully controlled concurrency guarantees
+* Use simple abstractions
+* Prefer composition or delegation to inherritance
 * Prefer creating immutable data structures - either Java records or classes with all fields being `final`
 * Prefer not introducing new sources of mutability
   * Newly added Java fields should be final unless there is a reason 
 * Prefer writing methods without side effects
-* Design for correctness
-  * Clear, unambiguous contracts
-  * Carefully controlled concurrency guarantees
-  * Simple abstractions
-  * Well-defined encapsulation
 
 ## JavaDoc
 
