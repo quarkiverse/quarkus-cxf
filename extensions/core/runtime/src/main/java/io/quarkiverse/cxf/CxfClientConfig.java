@@ -384,12 +384,11 @@ public interface CxfClientConfig {
      * * HTTP/1.x connections of clients preferring HTTP/2: `close` is ignored too.
      * These are the clients having
      * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
-     * set to `2`, or having `2` as the first value other than `3` in
-     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`,
-     * such as `2,1.1` or `3,2,1.1`.
+     * set to `2`, or having
+     * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+     * set to `2,1.1` or `3,2,1.1`.
      * They use HTTP/1.x connections only if the service does not support HTTP/2.
-     * * HTTP/1.x connections of all other clients,
-     * including those having `http-versions` such as `1.1,2`, `1.1,3` or `3,1.1`:
+     * * HTTP/1.x connections of all other clients:
      * the connection is closed after each request/response exchange.
      *
      * @since 2.2.3
@@ -425,7 +424,7 @@ public interface CxfClientConfig {
      *
      * While `VertxHttpClientHTTPConduitFactory` supports all of the named HTTP protocol versions,
      * `URLConnectionHTTPConduitFactory` supports only versions `1.0` and `1.1`.
-     * For an exact ordered list of supported versions with `VertxHttpClientHTTPConduit`, use
+     * For an exact list of permitted versions with `VertxHttpClientHTTPConduit`, including HTTP/3, use
      * `xref:#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
      * and leave this option at `auto`.
      *
@@ -642,56 +641,60 @@ public interface CxfClientConfig {
      */
     interface VertxConfig {
         /**
-         * Ordered list of HTTP protocol versions permitted for this Vert.x SOAP client.
-         * Values must be distinct and chosen from `1.0`, `1.1`, `2` and `3`.
-         * Unsupported values (including `auto`) and duplicates cause exceptions on client creation.
+         * A comma-separated list of HTTP protocol versions permitted for this Vert.x SOAP client.
          * If absent,
          * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
          * is used.
-         *
          * When `http-versions` is set,
          * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
          * must remain `auto`.
          *
-         * Examples:
+         * Only the following values are supported:
          *
-         * * `2,1.1` - prefer HTTP/2 and permit HTTP/1.1 fallback
-         * * `2` - require HTTP/2 without HTTP/1.x fallback
-         * * `1.0` or `1.1` - select one HTTP/1.x version
-         * * `1.1,2` - use HTTP/1.1 on plaintext HTTP connections;
-         * advertise this preference order over TLS ALPN (Application-Layer Protocol Negotiation) for HTTPS connections
-         * * `3` - require HTTP/3 without any fallback; see the HTTP/3 notes below
-         * * `3,2,1.1` - start with HTTP/2 or HTTP/1.1 and switch to HTTP/3 once the service has advertised it;
-         * see the HTTP/3 notes below
+         * * `1.0` - use HTTP/1.0 only
+         * * `1.1` - use HTTP/1.1 only
+         * * `2` - require HTTP/2 without any fallback to HTTP/1.x
+         * * `2,1.1` - prefer HTTP/2 and permit a fallback to HTTP/1.1
+         * * `3` - require HTTP/3 without any fallback; experimental, see the HTTP/3 notes below
+         * * `3,2,1.1` - start with HTTP/2 or HTTP/1.1 like `2,1.1` and switch to HTTP/3 once the service has advertised it;
+         * experimental, see the HTTP/3 notes below
          *
-         * HTTPS behavior:
+         * Any other value causes an exception on client creation.
+         * This includes `auto`, duplicates, other combinations of the above versions, such as `2,1.0` or `3,1.1`,
+         * and other orders, such as `1.1,2` or `2,3,1.1`.
+         * The set of supported values is intentionally small and it may get extended in the future.
          *
-         * * Lists containing `2` advertise the permitted protocols in configured order through TLS ALPN.
-         * The server chooses the protocol; client preference cannot force the server's preference.
-         * * Lists not containing `2` do not use ALPN.
-         * The first list entry is used.
-         * Thus `2,1.1` will work with HTTP/1.1-only and non-ALPN peers, whereas `2` requires negotiated HTTP/2.
-         * * Similarly, `2,1.0` might be a reasonable choice for HTTP/1.0-only and non-ALPN peers.
+         * Behavior with `https:` URLs:
          *
-         * Plaintext HTTP behavior:
+         * * `1.0` and `1.1` - the given version is used
+         * without TLS ALPN (Application-Layer Protocol Negotiation).
+         * * `2` - the client offers only `h2` through TLS ALPN.
+         * The connection fails, unless the service selects it.
+         * * `2,1.1` - the client offers `h2` and `http/1.1` through TLS ALPN and the service chooses one of them.
+         * HTTP/1.1 is used with services not supporting ALPN.
+         * * `3` and `3,2,1.1` - see the HTTP/3 notes below.
          *
+         * Behavior with plain `http:` URLs:
+         *
+         * * `1.0` and `1.1` - the given version is used.
          * * `2` - as per RFC 9113, the client opens a TCP connection
          * and sends the HTTP/2 connection preface (`PRI * HTTP/2.0 ...`) directly,
          * with no HTTP/1.x exchange first.
          * Both sides have to know in advance (have the "prior knowledge") that the server supports `h2c`.
-         * * `2,1.1`, `2,1.1,1.0` and `2,1.0,1.1` send a bodyless HTTP/1.1 `OPTIONS` preflight
+         * * `2,1.1` - the client sends a bodyless HTTP/1.1 `OPTIONS` preflight
          * with `Connection: Upgrade` and `Upgrade: h2c` headers when establishing the connection.
          * A successful upgrade continues on the same connection using HTTP/2.
          * A normal refusal permits HTTP/1.1 on a usable connection; network or negotiation errors remain failures.
          * The preflight contains no SOAP body and is not repeated for each invocation on a reused connection.
-         * * Lists starting with `1.0` or `1.1` use that first version, without retries through later entries.
-         * * `2,1.0` is rejected because h2c upgrade would require unlisted HTTP/1.1.
-         * Adding `1.0` to a list starting with `2` does not provide HTTP/1.0 fallback on plaintext connections.
-         * * Although Vert.x HttpClient will accept HTTP/1.0 response to an HTTP/1.1 request,
-         * it still does not change subsequent outgoing requests to HTTP/1.0.
-         * * Lists containing `3` are rejected, because HTTP/3 requires TLS.
+         * * `3` and `3,2,1.1` are rejected, because HTTP/3 requires TLS.
          *
-         * Scheme-specific validation uses the effective destination, including endpoint overrides and redirects.
+         * The validation depending on the URL scheme uses the effective destination,
+         * including endpoint overrides and redirects.
+         *
+         * There is no fallback to HTTP/1.0 with `1.1`, `2,1.1` and `3,2,1.1`.
+         * Although Vert.x HttpClient accepts an HTTP/1.0 response to an HTTP/1.1 request,
+         * it does not change subsequent outgoing requests to HTTP/1.0.
+         * Use `1.0` for services supporting only HTTP/1.0.
          *
          * Protocol negotiation is performed by Vert.x.
          * See the https://vertx.io/docs/vertx-core/java/#_configuring_an_http_client[Vert.x HttpClient documentation] for
@@ -712,7 +715,7 @@ public interface CxfClientConfig {
          * * HTTP/3 uses QUIC, a transport protocol based on UDP.
          * The QUIC support is not available in {quarkus-cxf-project-name} applications by default.
          * It comes with the `io.quarkus:quarkus-http3` extension, which you have to add to your application.
-         * Otherwise the creation of a client having `3` in `http-versions` fails.
+         * Otherwise the creation of a client having `http-versions` set to `3` or `3,2,1.1` fails.
          * * `quarkus-http3` selects the native QUIC library for the platform it is built on using Maven profiles.
          * If you use Gradle or if you build on a different platform than you run on,
          * you need to add the `io.netty:netty-codec-native-quic` dependency with the classifier matching your target
@@ -733,30 +736,27 @@ public interface CxfClientConfig {
          * would apply to the host of the service or of a remote WSDL.
          * A request fails if it would apply to the host of an endpoint override or of a redirect.
          * This is to prevent Vert.x HttpClient from bypassing the proxy with `3`
-         * and from silently never using HTTP/3 with `3,2,1.1` and similar.
+         * and from silently never using HTTP/3 with `3,2,1.1`.
          * Hosts matching `quarkus.proxy.non-proxy-hosts` of the given proxy configuration can be accessed over HTTP/3.
          * Use `quarkus.cxf.client."client-name".proxy-configuration-name = none` to make the client ignore
          * the default proxy configuration.
-         * * `3` alone: the client connects over QUIC straight away and uses HTTP/3 for every request.
+         * * `3`: the client connects over QUIC straight away and uses HTTP/3 for every request.
          * There is no fallback to HTTP/2 or HTTP/1.x if the service or the network does not support HTTP/3.
-         * * `3` combined with other versions, such as `3,2,1.1`:
-         * the first request is always sent over TCP using HTTP/2 or HTTP/1.x,
-         * as it would be with the given list without `3`.
+         * * `3,2,1.1`:
+         * the first request is always sent over TCP using HTTP/2 or HTTP/1.1,
+         * as it would be with `2,1.1`.
          * The client switches to HTTP/3 only after the service has advertised it
          * through the `Alt-Svc` response header or the HTTP/2 `ALTSVC` frame
          * and after the client was able to open a QUIC connection to the advertised alternative in the background.
          * Otherwise it stays with the TCP based HTTP protocol versions.
          * As a consequence, a client sending just a few requests may never use HTTP/3.
-         * * The position of `3` in a list of several versions has no influence on that:
-         * `3,2,1.1`, `2,3,1.1` and `2,1.1,3` all behave the same.
-         * The order of the other versions is significant as described above.
-         * * When `3` is combined with other versions, Vert.x HttpClient honors `Alt-Svc` advertisements
+         * * With `3,2,1.1`, Vert.x HttpClient honors `Alt-Svc` advertisements
          * only if the host name of the service contains a dot.
          * For host names such as `localhost` or `soap-backend` (typical for Kubernetes services addressed from the same
          * namespace), the client stays with the TCP based versions without any warning.
-         * Use `3` alone or a fully qualified host name, such as `soap-backend.my-namespace.svc.cluster.local`,
+         * Use `3` or a fully qualified host name, such as `soap-backend.my-namespace.svc.cluster.local`,
          * in those cases.
-         * * When `3` is combined with other versions, the server name is not sent via SNI to hosts without a dot,
+         * * With `3,2,1.1`, the server name is not sent via SNI to hosts without a dot,
          * even if SNI is enabled in the TLS configuration of the client.
          * * The trust store and the key store of the TLS configuration selected via
          * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`

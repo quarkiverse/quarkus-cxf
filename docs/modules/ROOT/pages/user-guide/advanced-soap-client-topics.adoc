@@ -5,8 +5,6 @@ Take control of how your SOAP clients are addressed, scoped, invoked, configured
 
 == Where to go
 
-// FIXME: (review, nit) AGENTS.md, section Semantic line breaks: the edited bullet below has two sentences on one line.
-// The neighboring bullets do the same, so feel free to ignore this if one bullet per line is the style wanted here.
 * xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url`] - Set `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-client-endpoint-url[client-endpoint-url]` for every client. There is no default value, and a client without a `client-endpoint-url` fails when it is created.
 * xref:user-guide/advanced-client-topics/configure-multiple-clients.adoc[Configure multiple clients] - Configure several clients under different names. Each client is a named block of `quarkus.cxf.client."client-name".*` properties, so any number of clients coexist.
 * xref:user-guide/advanced-client-topics/cdi-scope-of-cxfclient.adoc[CDI scope of clients injected via `@CXFClient`] - Learn the scope of injected clients before you reconfigure a client dynamically per request. Clients injected with `@CXFClient` are produced in `@Dependent` scope, so they take the scope of the bean that holds them, which is also what makes safe per-request reconfiguration possible.

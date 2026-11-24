@@ -34,7 +34,7 @@ public class Http3ClientCreationTest {
         configure(result, "noQuic", "3", "https://service.example.org/echo");
         configure(result, "noQuicWithFallback", "3,2,1.1", "https://service.example.org/echo");
         configure(result, "plainHttp", "3", "http://service.example.org/echo");
-        configure(result, "plainHttpWithFallback", "2,1.1,3", "http://service.example.org/echo");
+        configure(result, "plainHttpWithFallback", "3,2,1.1", "http://service.example.org/echo");
         configure(result, "plainHttpWsdl", "3", "https://service.example.org/echo");
         result.overrideConfigKey("quarkus.cxf.client.plainHttpWsdl.wsdl", "http://wsdl.example.org/echo?wsdl");
         configure(result, "proxied", "3", "https://service.example.org/echo");
@@ -109,7 +109,7 @@ public class Http3ClientCreationTest {
                 .hasStackTraceContaining("quarkus.cxf.client.plainHttp.vertx.http-versions = 3"
                         + " cannot be used with http://service.example.org, because HTTP/3 requires an https: URL");
         assertThatThrownBy(() -> create(plainHttpWithFallback))
-                .hasStackTraceContaining("quarkus.cxf.client.plainHttpWithFallback.vertx.http-versions = 2,1.1,3"
+                .hasStackTraceContaining("quarkus.cxf.client.plainHttpWithFallback.vertx.http-versions = 3,2,1.1"
                         + " cannot be used with http://service.example.org, because HTTP/3 requires an https: URL");
         assertThatThrownBy(() -> create(plainHttpWsdl))
                 .hasStackTraceContaining("quarkus.cxf.client.plainHttpWsdl.vertx.http-versions = 3"

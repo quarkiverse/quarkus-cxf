@@ -67,11 +67,6 @@ public class OrderedHttpVersionsTest {
                 .overrideConfigKey("quarkus.tls.ordered.trust-store.p12.password", "secret");
         configure(result, "h2", "2");
         configure(result, "prefer", "2,1.1");
-        configure(result, "all", "2,1.1,1.0");
-        configure(result, "reordered", "2,1.0,1.1");
-        configure(result, "h10fallback", "2,1.0");
-        configure(result, "h11first", "1.1,2");
-        configure(result, "h10first", "1.0,2");
         configure(result, "h10", "1.0");
         configure(result, "h11", "1.1");
         configure(result, "legacyDefault", null);
@@ -79,6 +74,7 @@ public class OrderedHttpVersionsTest {
         configure(result, "legacy11", null);
         configure(result, "legacy2", null);
         configure(result, "urlConnection", "2");
+        configure(result, "unsupported", "1.1,2");
         configure(result, "untrusted", "2,1.1");
         result.overrideConfigKey("quarkus.cxf.client.legacy10.version", "1.0")
                 .overrideConfigKey("quarkus.cxf.client.legacy11.version", "1.1")
@@ -86,9 +82,8 @@ public class OrderedHttpVersionsTest {
                 .overrideConfigKey("quarkus.cxf.client.urlConnection.http-conduit-factory", "URLConnectionHTTPConduitFactory");
         configure(result, "tlsPrefer", "2,1.1");
         configure(result, "tlsH2", "2");
-        configure(result, "tlsH11first", "1.1,2");
-        configure(result, "tlsH10fallback", "2,1.0");
-        configure(result, "tlsH10first", "1.0,2");
+        configure(result, "tlsH10", "1.0");
+        configure(result, "tlsH11", "1.1");
         configure(result, "tlsLegacy2", null);
         configure(result, "forceUpgrade", null);
         configure(result, "forceRefusal", null);
@@ -99,14 +94,10 @@ public class OrderedHttpVersionsTest {
         configure(result, "overridePolicy", "2,1.1");
         result.overrideConfigKey("quarkus.cxf.client.tlsLegacy2.version", "2");
         configure(result, "lifecycle", "2,1.1");
-        configure(result, "destination", "2,1.0");
         configure(result, "customized", "1.1");
         configure(result, "customDirect", "2");
         result.overrideConfigKey("quarkus.cxf.client.customized.auth.username", "alice")
-                .overrideConfigKey("quarkus.cxf.client.customized.auth.password", "secret")
-                .overrideConfigKey("quarkus.cxf.client.destination.auto-redirect", "true");
-        configure(result, "tlsH10only", "1.0,1.1");
-        configure(result, "tlsH11only", "1.1,1.0");
+                .overrideConfigKey("quarkus.cxf.client.customized.auth.password", "secret");
         return result;
     }
 
@@ -121,7 +112,7 @@ public class OrderedHttpVersionsTest {
         if (!name.equals("untrusted")) {
             result.overrideConfigKey(key + ".tls-configuration-name", "ordered");
         }
-        if (name.equals("legacy10") || (versions != null && versions.startsWith("1.0")) || name.endsWith("H10fallback")) {
+        if (name.equals("legacy10") || (versions != null && versions.startsWith("1.0"))) {
             result.overrideConfigKey(key + ".allow-chunking", "false");
         }
         if (versions != null) {
@@ -134,21 +125,6 @@ public class OrderedHttpVersionsTest {
 
     @CXFClient("prefer")
     Instance<Echo> prefer;
-
-    @CXFClient("all")
-    Instance<Echo> all;
-
-    @CXFClient("reordered")
-    Instance<Echo> reordered;
-
-    @CXFClient("h10fallback")
-    Instance<Echo> h10fallback;
-
-    @CXFClient("h11first")
-    Instance<Echo> h11first;
-
-    @CXFClient("h10first")
-    Instance<Echo> h10first;
 
     @CXFClient("h10")
     Instance<Echo> h10;
@@ -171,6 +147,9 @@ public class OrderedHttpVersionsTest {
     @CXFClient("urlConnection")
     Instance<Echo> urlConnection;
 
+    @CXFClient("unsupported")
+    Instance<Echo> unsupported;
+
     @CXFClient("untrusted")
     Instance<Echo> untrusted;
 
@@ -180,14 +159,11 @@ public class OrderedHttpVersionsTest {
     @CXFClient("tlsH2")
     Instance<Echo> tlsH2;
 
-    @CXFClient("tlsH11first")
-    Instance<Echo> tlsH11first;
+    @CXFClient("tlsH10")
+    Instance<Echo> tlsH10;
 
-    @CXFClient("tlsH10fallback")
-    Instance<Echo> tlsH10fallback;
-
-    @CXFClient("tlsH10first")
-    Instance<Echo> tlsH10first;
+    @CXFClient("tlsH11")
+    Instance<Echo> tlsH11;
 
     @CXFClient("tlsLegacy2")
     Instance<Echo> tlsLegacy2;
@@ -216,30 +192,16 @@ public class OrderedHttpVersionsTest {
     @CXFClient("lifecycle")
     Instance<Echo> lifecycle;
 
-    @CXFClient("destination")
-    Instance<Echo> destination;
-
     @CXFClient("customized")
     Instance<Echo> customized;
 
     @CXFClient("customDirect")
     Instance<Echo> customDirect;
 
-    @CXFClient("tlsH10only")
-    Instance<Echo> tlsH10only;
-
-    @CXFClient("tlsH11only")
-    Instance<Echo> tlsH11only;
-
     private Instance<Echo> client(String name) {
         return switch (name) {
             case "h2" -> h2;
             case "prefer" -> prefer;
-            case "all" -> all;
-            case "reordered" -> reordered;
-            case "h10fallback" -> h10fallback;
-            case "h11first" -> h11first;
-            case "h10first" -> h10first;
             case "h10" -> h10;
             case "h11" -> h11;
             case "legacyDefault" -> legacyDefault;
@@ -250,9 +212,6 @@ public class OrderedHttpVersionsTest {
             case "untrusted" -> untrusted;
             case "tlsPrefer" -> tlsPrefer;
             case "tlsH2" -> tlsH2;
-            case "tlsH11first" -> tlsH11first;
-            case "tlsH10fallback" -> tlsH10fallback;
-            case "tlsH10first" -> tlsH10first;
             case "tlsLegacy2" -> tlsLegacy2;
             case "forceUpgrade" -> forceUpgrade;
             case "forceRefusal" -> forceRefusal;
@@ -261,8 +220,8 @@ public class OrderedHttpVersionsTest {
             case "overrideForce" -> overrideForce;
             case "overrideEnable" -> overrideEnable;
             case "overridePolicy" -> overridePolicy;
-            case "tlsH10only" -> tlsH10only;
-            case "tlsH11only" -> tlsH11only;
+            case "tlsH10" -> tlsH10;
+            case "tlsH11" -> tlsH11;
             default -> throw new IllegalArgumentException(name);
         };
     }
@@ -271,13 +230,7 @@ public class OrderedHttpVersionsTest {
         return Stream.of(
                 Arguments.of("h2", true, "HTTP_2", false),
                 Arguments.of("prefer", true, "HTTP_2", true),
-                Arguments.of("all", true, "HTTP_2", true),
-                Arguments.of("reordered", true, "HTTP_2", true),
                 Arguments.of("prefer", false, "HTTP_1_1", true),
-                Arguments.of("all", false, "HTTP_1_1", true),
-                Arguments.of("reordered", false, "HTTP_1_1", true),
-                Arguments.of("h11first", true, "HTTP_1_1", false),
-                Arguments.of("h10first", true, "HTTP_1_0", false),
                 Arguments.of("h10", true, "HTTP_1_0", false),
                 Arguments.of("h11", true, "HTTP_1_1", false),
                 Arguments.of("legacyDefault", true, "HTTP_1_1", false),
@@ -384,17 +337,12 @@ public class OrderedHttpVersionsTest {
     }
 
     @Test
-    void plaintextRejectsUnlistedUpgradeProtocol() throws Exception {
-        try (Peer peer = new Peer(false, true, false)) {
-            final Echo echo = h10fallback.get();
-            try {
-                endpoint(echo, peer);
-                assertThatThrownBy(() -> echo.echo(PAYLOAD)).hasStackTraceContaining("vertx.http-versions");
-                assertThat(peer.requests).isEmpty();
-            } finally {
-                h10fallback.destroy(echo);
-            }
-        }
+    void unsupportedListIsRejectedOnClientCreation() {
+        assertThatThrownBy(() -> {
+            final Echo echo = unsupported.get();
+            unsupported.destroy(echo);
+        }).hasStackTraceContaining("Unsupported quarkus.cxf.client.unsupported.vertx.http-versions = 1.1,2;"
+                + " supported values are '1.0', '1.1', '2', '2,1.1', '3', '3,2,1.1'");
     }
 
     @Test
@@ -416,14 +364,12 @@ public class OrderedHttpVersionsTest {
         return Stream.of(Arguments.of("tlsPrefer", true, true, "HTTP_2"),
                 Arguments.of("tlsPrefer", false, true, "HTTP_1_1"),
                 Arguments.of("tlsPrefer", false, false, "HTTP_1_1"),
-                Arguments.of("tlsH11first", true, true, null),
                 Arguments.of("tlsH2", true, true, "HTTP_2"),
-                Arguments.of("tlsH10fallback", true, true, "HTTP_2"),
-                Arguments.of("tlsH10fallback", false, false, "HTTP_1_0"),
-                Arguments.of("tlsH10first", false, false, "HTTP_1_0"),
                 Arguments.of("tlsLegacy2", true, true, "HTTP_2"),
-                Arguments.of("tlsH10only", false, false, "HTTP_1_0"),
-                Arguments.of("tlsH11only", false, false, "HTTP_1_1"));
+                Arguments.of("tlsH10", false, false, "HTTP_1_0"),
+                Arguments.of("tlsH11", false, false, "HTTP_1_1"),
+                /* The client does not offer h2, hence HTTP/1.1 even though the service would prefer HTTP/2 */
+                Arguments.of("tlsH11", true, true, "HTTP_1_1"));
     }
 
     @ParameterizedTest(name = "{0}, h2={1}, ALPN={2}")
@@ -434,12 +380,11 @@ public class OrderedHttpVersionsTest {
             try {
                 endpoint(echo, peer);
                 invokeTwice(peer, echo, expected, false);
-                if (!name.equals("tlsLegacy2") && !name.endsWith("only")) {
+                if (!name.equals("tlsLegacy2")) {
                     assertThat(peer.advertisedProtocols()).containsExactlyElementsOf(switch (name) {
-                        case "tlsH11first" -> List.of("http/1.1", "h2");
                         case "tlsH2" -> List.of("h2");
-                        case "tlsH10fallback" -> List.of("h2", "http/1.0");
-                        case "tlsH10first" -> List.of("http/1.0", "h2");
+                        /* No ALPN without HTTP/2 */
+                        case "tlsH10", "tlsH11" -> List.of();
                         default -> List.of("h2", "http/1.1");
                     });
                 }
@@ -515,39 +460,6 @@ public class OrderedHttpVersionsTest {
     }
 
     @Test
-    void effectiveSchemeIsCheckedAfterEndpointChange() throws Exception {
-        try (Peer https = new Peer(true, true, true); Peer http = new Peer(false, true, false)) {
-            final Echo echo = destination.get();
-            try {
-                endpoint(echo, https);
-                assertThat(echo.echo(PAYLOAD)).isEqualTo("HTTP_2:100000");
-                endpoint(echo, http);
-                assertThatThrownBy(() -> echo.echo(PAYLOAD)).hasStackTraceContaining("vertx.http-versions");
-                assertThat(http.requests).isEmpty();
-            } finally {
-                destination.destroy(echo);
-            }
-        }
-    }
-
-    @Test
-    void redirectCannotIntroduceUnlistedPlaintextUpgrade() throws Exception {
-        try (Peer target = new Peer(false, true, false);
-                Peer redirect = new Peer(true, true, true, target.url())) {
-            final Echo echo = destination.get();
-            try {
-                endpoint(echo, redirect);
-                assertThatThrownBy(() -> echo.echo(PAYLOAD)).hasStackTraceContaining("vertx.http-versions");
-                assertThat(redirect.requests).singleElement()
-                        .satisfies(request -> assertThat(request.version()).isEqualTo("HTTP_2"));
-                assertThat(target.requests).isEmpty();
-            } finally {
-                destination.destroy(echo);
-            }
-        }
-    }
-
-    @Test
     void customizerCannotBroadenList() throws Exception {
         try (Peer peer = new Peer(false, true, false)) {
             new HttpClientPool.HttpClientPoolRecorder().addHttpClientCustomizer(new RuntimeValue<>((info, options) -> {
@@ -607,16 +519,10 @@ public class OrderedHttpVersionsTest {
     private static void invokeTwice(Peer peer, Echo echo, String expected, boolean preflight) {
         for (int i = 1; i <= 2; i++) {
             final String response = echo.echo(PAYLOAD);
-            if (expected == null) {
-                // ALPN server policy decides between the advertised protocols.
-                expected = response.substring(0, response.indexOf(':'));
-                assertThat(expected).isIn("HTTP_2", "HTTP_1_1");
-            }
             assertThat(response).isEqualTo(expected + ":" + PAYLOAD.length());
             final List<Request> soap = peer.requests.stream().filter(r -> r.method().equals("POST")).toList();
-            final String negotiated = expected;
             assertThat(soap).hasSize(i).allSatisfy(request -> {
-                assertThat(request.version()).isEqualTo(negotiated);
+                assertThat(request.version()).isEqualTo(expected);
                 assertThat(request.body()).contains(PAYLOAD);
             });
             if (i == 2 && !expected.equals("HTTP_1_0")) {
@@ -658,10 +564,6 @@ public class OrderedHttpVersionsTest {
         final NetServer recorder;
 
         Peer(boolean tls, boolean h2, boolean alpn) throws Exception {
-            this(tls, h2, alpn, null);
-        }
-
-        Peer(boolean tls, boolean h2, boolean alpn, String redirect) throws Exception {
             this.tls = tls;
             final HttpServerOptions options = new HttpServerOptions().setHost("localhost").setPort(0)
                     .setHttp2ClearTextEnabled(h2);
@@ -675,9 +577,7 @@ public class OrderedHttpVersionsTest {
             server = await(vertx.createHttpServer(options).requestHandler(request -> request.body().onSuccess(body -> {
                 requests.add(new Request(request.method().name(), request.version().name(), body.toString(),
                         request.remoteAddress().toString(), request.getHeader("Authorization"), request.uri()));
-                if (redirect != null) {
-                    request.response().setStatusCode(307).putHeader("Location", redirect).end();
-                } else if (request.method().name().equals("OPTIONS")) {
+                if (request.method().name().equals("OPTIONS")) {
                     request.response().setStatusCode(200).end("preflight is not a SOAP response");
                 } else {
                     if (request.path().equals("/large-header")) {

@@ -6,11 +6,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.net.URI;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.cxf.transports.http.configuration.ConnectionType;
@@ -36,19 +39,16 @@ class HttpVersionsConfigTest {
     /** What {@link ProxyConfigurationUtils#proxiedHosts(ProxyConfiguration)} returns when there is no proxy */
     private static final Predicate<String> NO_PROXY = ProxyConfigurationUtils.proxiedHosts(null);
 
+    private static final String SUPPORTED_VALUES = "'1.0', '1.1', '2', '2,1.1', '3', '3,2,1.1'";
+
     static Stream<List<String>> versions() {
-        return Stream.of(List.of("1.0"), List.of("1.1"), List.of("2"),
-                List.of("2", "1.1"), List.of("1.1", "2"), List.of("2", "1.0"),
-                List.of("2", "1.1", "1.0"), List.of("2", "1.0", "1.1"),
-                List.of("1.0", "2", "1.1"), List.of("1.0", "1.1", "2"),
-                List.of("1.1", "1.0", "2"), List.of("1.1", "2", "1.0"),
-                List.of("3"), List.of("3", "2", "1.1"), List.of("2", "3", "1.1"), List.of("2", "1.1", "3"),
-                List.of("3", "1.1"), List.of("1.0", "3"), List.of("3", "2", "1.1", "1.0"));
+        return Stream.of(List.of("1.0"), List.of("1.1"), List.of("2"), List.of("2", "1.1"),
+                List.of("3"), List.of("3", "2", "1.1"));
     }
 
     @ParameterizedTest
     @MethodSource("versions")
-    void orderedImmutableVersions(List<String> values) {
+    void supportedImmutableVersions(List<String> values) {
         final List<HttpVersion> actual = parse(Map.of(PROPERTY, String.join(",", values)));
         assertThat(actual).containsExactlyElementsOf(values.stream().map(value -> switch (value) {
             case "1.0" -> HttpVersion.HTTP_1_0;
@@ -60,14 +60,58 @@ class HttpVersionsConfigTest {
         assertThatThrownBy(() -> actual.add(HttpVersion.HTTP_1_1)).isInstanceOf(UnsupportedOperationException.class);
     }
 
+    /** Whitespace around the list items is not significant */
+    @Test
+    void whitespace() {
+        assertThat(parse(Map.of(PROPERTY, " 3 , 2 , 1.1 ")))
+                .containsExactly(HttpVersion.HTTP_3, HttpVersion.HTTP_2, HttpVersion.HTTP_1_1);
+        assertThat(parse(Map.of(PROPERTY, "2, 1.1"))).containsExactly(HttpVersion.HTTP_2, HttpVersion.HTTP_1_1);
+    }
+
+    /**
+     * All lists of distinct versions other than the supported ones
+     *
+     * @return the unsupported lists as comma separated strings
+     */
+    static Stream<String> unsupportedCombinations() {
+        final Set<List<String>> supported = versions().collect(Collectors.toSet());
+        final List<List<String>> all = new ArrayList<>();
+        permutations(List.of("1.0", "1.1", "2", "3"), new ArrayList<>(), all);
+        assertThat(all).hasSize(64).containsAll(supported);
+        return all.stream().filter(list -> !supported.contains(list)).map(list -> String.join(",", list));
+    }
+
+    private static void permutations(List<String> available, List<String> prefix, List<List<String>> result) {
+        if (!prefix.isEmpty()) {
+            result.add(List.copyOf(prefix));
+        }
+        for (String version : available) {
+            if (!prefix.contains(version)) {
+                prefix.add(version);
+                permutations(available, prefix, result);
+                prefix.remove(prefix.size() - 1);
+            }
+        }
+    }
+
+    /** Reorderings and other combinations of valid versions that may get supported in the future */
+    @ParameterizedTest
+    @MethodSource("unsupportedCombinations")
+    void unsupportedCombinationsAreRejected(String value) {
+        assertUnsupported(value);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = { "4", "auto", "HTTP_2", "2.0", "3.0", "h3", "bogus", "2,4", "2,2", "1.0,1.1,1.0", "1.1,1.1",
-            "3,3", "3,2,3" })
+            "3,3", "3,2,3", "2,1.1,2", "3,2,1.1,3", "2,auto" })
     void invalidValuesIdentifyClientAndCanonicalProperty(String value) {
+        assertUnsupported(value);
+    }
+
+    private static void assertUnsupported(String value) {
         assertThatThrownBy(() -> parse(Map.of(PROPERTY, value)))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining(PROPERTY)
-                .hasMessageContaining(value.substring(value.lastIndexOf(',') + 1));
+                .hasMessage("Unsupported " + PROPERTY + " = " + value + "; supported values are " + SUPPORTED_VALUES);
     }
 
     @ParameterizedTest
@@ -82,7 +126,7 @@ class HttpVersionsConfigTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3", "3,2,1.1", "2,3,1.1", "2,1.1,3", "1.1,3" })
+    @ValueSource(strings = { "3", "3,2,1.1" })
     void http3RejectsPlainHttp(String versions) {
         final List<HttpVersion> parsed = parse(Map.of(PROPERTY, versions));
         assertThatThrownBy(() -> CXFClientInfo.validateHttp3Destination(PROPERTY_SUPPLIER, parsed, null, NO_PROXY,
@@ -102,7 +146,7 @@ class HttpVersionsConfigTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3", "3,2,1.1", "2,3,1.1", "2,1.1,3", "1.1,3" })
+    @ValueSource(strings = { "3", "3,2,1.1" })
     void http3RejectsProxiedDestination(String versions) {
         final List<HttpVersion> parsed = parse(Map.of(PROPERTY, versions));
         final ProxyConfiguration proxy = new TestProxyConfiguration("proxy.example.org", 3128,
@@ -132,7 +176,7 @@ class HttpVersionsConfigTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "1.0", "1.1", "2", "2,1.1", "1.1,2" })
+    @ValueSource(strings = { "1.0", "1.1", "2", "2,1.1" })
     void listsWithoutHttp3AcceptPlainHttpAndProxy(String versions) {
         final List<HttpVersion> parsed = parse(Map.of(PROPERTY, versions));
         final ProxyConfiguration proxy = new TestProxyConfiguration("proxy.example.org", 3128, null);
@@ -150,7 +194,7 @@ class HttpVersionsConfigTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3", "3,2,1.1", "2,1.1,3" })
+    @ValueSource(strings = { "3", "3,2,1.1" })
     void http3RequiresQuic(String versions) {
         final List<HttpVersion> parsed = parse(Map.of(PROPERTY, versions));
         assertThatThrownBy(
@@ -303,8 +347,8 @@ class HttpVersionsConfigTest {
                 .build().getConfigMapping(EmptyVersionsConfig.class, "empty");
         assertThat(config.vertx().httpVersions()).contains(List.of());
         assertThatThrownBy(() -> CXFClientInfo.parseHttpVersions(config, CLIENT))
-                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining(PROPERTY)
-                .hasMessageContaining("at least one");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Unsupported " + PROPERTY + " = ; supported values are " + SUPPORTED_VALUES);
     }
 
     public interface EmptyVersionsConfig extends CxfClientConfig {

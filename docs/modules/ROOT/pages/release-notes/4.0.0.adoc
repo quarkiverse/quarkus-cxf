@@ -86,20 +86,48 @@ Since {quarkus-cxf-project-name} 4.0.0, `io.quarkiverse.cxf:quarkus-cxf-rt-featu
 - quarkus.otel.traces.sampler: parentbased_always_on → parentbased_traceidratio
 - quarkus.otel.traces.sampler.arg: 1.0 → 0.1
 
+== New `quarkus.cxf.client."client-name".vertx.http-versions` option
+
+The new option
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+defines the HTTP protocol versions that a SOAP client using `VertxHttpClientHTTPConduit` is permitted to use.
+In contrast to the existing
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`,
+it allows requiring HTTP/2 without any fallback to HTTP/1.x and using HTTP/3.
+
+Only the following values are supported:
+
+* `1.0` - use HTTP/1.0 only
+* `1.1` - use HTTP/1.1 only
+* `2` - require HTTP/2 without any fallback to HTTP/1.x
+* `2,1.1` - prefer HTTP/2 and permit a fallback to HTTP/1.1
+* `3` - require HTTP/3 without any fallback (experimental)
+* `3,2,1.1` - start with HTTP/2 or HTTP/1.1 and switch to HTTP/3 once the service has advertised it (experimental)
+
+Any other value, including other combinations and other orders of the above versions,
+causes an exception on client creation.
+The set of supported values is intentionally small and it may get extended in the future.
+
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
+keeps working as before.
+It has to be left at `auto` when `http-versions` is set.
+
 == HTTP/3 support for SOAP clients (experimental)
 
+SOAP clients using `VertxHttpClientHTTPConduit` can use HTTP/3,
+when
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
-now accepts `3` in addition to `1.0`, `1.1` and `2`.
+is set to `3` or `3,2,1.1`:
 
-* `3` alone makes the client use HTTP/3 for every request, without any fallback.
-* `3` combined with other versions, such as `3,2,1.1`, makes the client contact the service over TCP first
+* `3` makes the client use HTTP/3 for every request, without any fallback.
+* `3,2,1.1` makes the client contact the service over TCP first
   and switch to HTTP/3 only after the service has advertised it via `Alt-Svc`.
 * The application has to depend on `io.quarkus:quarkus-http3`.
   That extension makes the HTTP server of the application serve HTTP/3 too,
   see <<http3-for-soap-services>> below.
   Add `quarkus.http3.enabled = false` to `application.properties`, unless you want that.
 * HTTP/3 requires `https:` URLs and it cannot be used through a proxy.
-  Clients combining `3` with a plain `http:` URL or with a proxy are rejected.
+  Clients combining `3` or `3,2,1.1` with a plain `http:` URL or with a proxy are rejected.
 
 See the documentation of
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`

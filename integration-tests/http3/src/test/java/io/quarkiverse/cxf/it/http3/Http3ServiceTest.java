@@ -4,12 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -158,24 +156,21 @@ public class Http3ServiceTest {
     }
 
     /**
-     * A client having {@code 1.1,3} in {@code vertx.http-versions} switches to HTTP/3 after the service has advertised
-     * it via the {@code Alt-Svc} header.
+     * A client having {@code vertx.http-versions = 3,2,1.1} negotiates HTTP/2 with {@link ProtocolEchoImpl} and it
+     * stays on HTTP/2, because {@code quarkus-http3} advertises HTTP/3 only over HTTP/1.x as of Quarkus 4.0.0, see
+     * https://github.com/quarkiverse/quarkus-cxf/issues/2446
      * <p>
-     * There is no such test for a client having {@code 2} before {@code 1.1}, because {@code quarkus-http3} does not
-     * advertise HTTP/3 over HTTP/2 as of Quarkus 4.0.0, see https://github.com/quarkiverse/quarkus-cxf/issues/2446
+     * Once that issue is solved, this test will start failing and it should be changed to expect the switch to HTTP/3,
+     * like {@link Http3Test#http3AfterAltSvc(String, String)} does with {@link Http11Peer} and {@link Http3Peer}.
      */
     @Test
-    void http3AfterAltSvc() {
-        echo("h3ServiceFallback", "first")
-                .statusCode(200)
-                .body(is("http/1.1:5"));
-
-        Awaitility.await()
-                .atMost(Duration.ofSeconds(30))
-                .pollInterval(Duration.ofMillis(200))
-                .untilAsserted(() -> echo("h3ServiceFallback", "retry")
-                        .statusCode(200)
-                        .body(is("h3:5")));
+    void noHttp3AfterNegotiatingHttp2() throws InterruptedException {
+        for (int i = 0; i < 5; i++) {
+            echo("h3ServiceFallback", "x")
+                    .statusCode(200)
+                    .body(is("h2:1"));
+            Thread.sleep(500);
+        }
     }
 
     /**
