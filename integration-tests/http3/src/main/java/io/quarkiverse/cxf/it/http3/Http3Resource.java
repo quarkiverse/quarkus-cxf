@@ -73,6 +73,15 @@ public class Http3Resource {
     @CXFClient("h3Metrics")
     ProtocolEcho h3Metrics;
 
+    @CXFClient("h3Service")
+    ProtocolEcho h3Service;
+
+    @CXFClient("h3ServiceMutualTls")
+    ProtocolEcho h3ServiceMutualTls;
+
+    @CXFClient("h3ServiceFallback")
+    ProtocolEcho h3ServiceFallback;
+
     @POST
     @Path("/echo/{client}")
     @Produces(MediaType.TEXT_PLAIN)
@@ -94,6 +103,33 @@ public class Http3Resource {
     public Response delayedEcho(@PathParam("client") String client, String delayMs) {
         try {
             return Response.ok(client(client).delayedEcho(Long.parseLong(delayMs))).build();
+        } catch (Exception e) {
+            return failure(e);
+        }
+    }
+
+    /**
+     * Calls {@link ProtocolEcho#generate(int)} and summarizes its possibly large response.
+     *
+     * @param client the name of the client to use
+     * @param length the number of characters the service should generate
+     * @return the HTTP protocol returned by the service, followed by a colon and the number of {@code x} characters
+     *         returned by the service; or HTTP status 500 if the call failed or if the service returned anything else
+     *         than {@code x} characters after the protocol
+     * @since 4.0.0
+     */
+    @POST
+    @Path("/generate/{client}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response generate(@PathParam("client") String client, String length) {
+        try {
+            final String result = client(client).generate(Integer.parseInt(length));
+            final int colon = result.indexOf(':');
+            final String payload = result.substring(colon + 1);
+            if (!payload.equals("x".repeat(payload.length()))) {
+                return Response.status(500).entity("Unexpected characters in the generated payload").build();
+            }
+            return Response.ok(result.substring(0, colon) + ":" + payload.length()).build();
         } catch (Exception e) {
             return failure(e);
         }
@@ -150,6 +186,9 @@ public class Http3Resource {
             case "h3MaxSize1" -> h3MaxSize1;
             case "h3MaxSize3" -> h3MaxSize3;
             case "h3Metrics" -> h3Metrics;
+            case "h3Service" -> h3Service;
+            case "h3ServiceMutualTls" -> h3ServiceMutualTls;
+            case "h3ServiceFallback" -> h3ServiceFallback;
             default -> throw new IllegalArgumentException("Unexpected client " + client);
         };
     }

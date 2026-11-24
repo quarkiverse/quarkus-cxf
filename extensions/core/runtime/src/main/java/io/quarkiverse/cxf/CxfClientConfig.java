@@ -717,7 +717,9 @@ public interface CxfClientConfig {
          * If you use Gradle or if you build on a different platform than you run on,
          * you need to add the `io.netty:netty-codec-native-quic` dependency with the classifier matching your target
          * platform(s), such as `linux-x86_64`.
-         * * `quarkus-http3` enables HTTP/3 also for the HTTP server of the application.
+         * * `quarkus-http3` enables HTTP/3 also for the HTTP server of the application,
+         * thus making the SOAP services of the application available over HTTP/3,
+         * see xref:user-guide/advanced-service-topics/http3.adoc[HTTP/3 for SOAP services].
          * Unless you want that, add `quarkus.http3.enabled = false` to `application.properties`.
          * This is a build time option that does not impact the SOAP clients.
          * * Both JVM and native mode are supported.

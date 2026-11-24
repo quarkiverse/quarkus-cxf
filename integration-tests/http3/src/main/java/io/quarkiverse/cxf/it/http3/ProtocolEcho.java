@@ -24,4 +24,17 @@ public interface ProtocolEcho {
      *         through which the request came
      */
     String connectionId(@WebParam(name = "holdMs") long holdMs);
+
+    /**
+     * Generates a response of the requested size.
+     * <p>
+     * Implemented only by {@link ProtocolEchoImpl}; {@link Http3Peer} rejects this operation with HTTP status 400.
+     *
+     * @param length the number of {@code x} characters to return; must not be negative
+     * @return the HTTP protocol through which the request came, followed by a colon and {@code length} {@code x}
+     *         characters
+     * @throws IllegalArgumentException if {@code length} is negative
+     * @since 4.0.0
+     */
+    String generate(@WebParam(name = "length") int length);
 }

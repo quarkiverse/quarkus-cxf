@@ -42,10 +42,10 @@ public class AntoraTest {
 
         final Set<String> ignorables = new LinkedHashSet<>();
 
-        final ZonedDateTime deadline = ZonedDateTime.parse("2026-11-06T23:59:59+02:00[Europe/Paris]");
+        final ZonedDateTime deadline = ZonedDateTime.parse("2026-11-27T23:59:59+02:00[Europe/Paris]");
         if (ZonedDateTime.now(ZoneId.of("Europe/Paris")).isBefore(deadline)) {
-            ignorables.add("https://github.com/quarkiverse/quarkus-cxf/tree/main/integration-tests/oidc");
-            ignorables.add("https://api.github.com/repos/quarkiverse/quarkus-cxf/contents/integration-tests/oidc?ref=main");
+            ignorables.add("https://quarkus.io/guides/http3-reference#auto-tls");
+            ignorables.add("https://quarkus.io/guides/http3-reference");
         }
         // These are timeouting for some reason although they work when visited in browser
         ignorables.add("https://downloads.apache.org/httpcomponents/httpclient/RELEASE_NOTES-5.4.x.txt");
@@ -53,7 +53,7 @@ public class AntoraTest {
 
         LinkStream linkStream = AntorAssured
                 .links()
-                .excludeResolved(Pattern.compile("^\\Qhttp://localhost:808\\E[02].*"))
+                .excludeResolved(Pattern.compile("^https?\\Q://localhost:8\\E[04][84][023].*"))
                 .excludeEditThisPage()
                 .overallTimeout(300_000L); // 5 min
 

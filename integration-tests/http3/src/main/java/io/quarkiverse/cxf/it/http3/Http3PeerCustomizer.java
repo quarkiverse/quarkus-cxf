@@ -7,11 +7,15 @@ import io.vertx.core.http.HttpServerConfig;
 import io.vertx.core.net.ServerSSLOptions;
 
 /**
- * A customizer limiting the number of concurrent requests which {@link Http3Peer} accepts over a single HTTP/3
- * connection.
+ * A customizer limiting the number of concurrent requests which the HTTP server of this application accepts over a
+ * single HTTP/3 connection.
+ * <p>
+ * The limit holds for the whole HTTP server, hence for both {@link Http3Peer} and the services exposed by Quarkus CXF,
+ * such as {@link ProtocolEchoImpl}.
  * <p>
  * Thanks to that limit, a SOAP client sending more concurrent requests has to open more HTTP/3 connections, if its
  * {@code quarkus.cxf.client."client-name".vertx.connection-pool.http3-max-size} allows that.
+ * Otherwise, some of its requests have to wait for the others to complete.
  */
 @Singleton
 public class Http3PeerCustomizer implements HttpServerConfigCustomizer {

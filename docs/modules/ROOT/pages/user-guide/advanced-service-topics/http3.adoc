@@ -1,0 +1,138 @@
+[[http3-for-soap-services]]
+= HTTP/3 for SOAP services
+
+[WARNING]
+====
+Serving SOAP services over HTTP/3 is experimental.
+It relies on the `quarkus-http3` extension, which is experimental in Quarkus,
+and on the HTTP/3 server support of Vert.x, which is marked as unstable in Vert.x.
+The behavior described here may change in future releases without prior notice.
+====
+
+{quarkus-cxf-project-name} service endpoints are served by the Quarkus HTTP server.
+Once the Quarkus HTTP server accepts HTTP/3, your SOAP services can be called over HTTP/3,
+in addition to HTTP/1.x and HTTP/2.
+There are no {quarkus-cxf-project-name} options related to HTTP/3 on the service side.
+
+Both JVM and native mode are supported.
+
+[TIP]
+====
+Refer to {link-quarkus-docs-base}/http3-reference[Quarkus HTTP/3 reference] for more details.
+See the documentation of
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+for HTTP/3 on the client side.
+====
+
+[NOTE]
+====
+The sample code snippets used in this section come from the
+{link-quarkus-cxf-source-tree-base}/integration-tests/http3[HTTP/3 integration test]
+in the source tree of {quarkus-cxf-project-name}
+====
+
+== Enable HTTP/3
+
+. Add the `io.quarkus:quarkus-http3` extension to your application:
++
+.pom.xml
+[source,xml]
+----
+include::example$http3/pom.xml[tag=http3.adoc]
+----
++
+. Configure TLS for the HTTP server.
+HTTP/3 does not work without it.
+The service itself is exposed in the same way as without HTTP/3.
++
+.application.properties
+[source,properties]
+----
+include::example$http3/application.properties[tag=http3.adoc]
+----
++
+See xref:user-guide/ssl-tls-https.adoc[SSL, TLS and HTTPS] for more information about the TLS configuration.
+
+With the above in place, the service is available under `https://localhost:8443/services/hello`
+
+* over HTTP/1.1 and HTTP/2 on the TCP port `8443` and
+* over HTTP/3 on the UDP port `8443`.
+
+The port number is the one set via `quarkus.http.ssl-port`.
+
+== Verify
+
+A `curl` binary built with HTTP/3 support can be used to check that the service is available over HTTP/3.
+`--http3-only` makes `curl` fail, rather than fall back to an older HTTP version:
+
+[source,bash]
+----
+$ curl --http3-only -k -s -o /dev/null -w '%{http_code} HTTP/%{http_version}\n' 'https://localhost:8443/services/hello?wsdl'
+200 HTTP/3
+----
+
+The service implementation can find out the HTTP version of the current request
+via `jakarta.servlet.http.HttpServletRequest.getProtocol()`.
+
+HelloServiceImpl.java
+[source,java]
+----
+include::example$http3/HelloServiceImpl.java[tag=http3.adoc]
+----
+
+== How clients switch to HTTP/3
+
+A client can use HTTP/3 in two ways:
+
+* It knows upfront that the service supports HTTP/3 and it connects over QUIC straight away.
+* It contacts the service over TCP first and it switches to HTTP/3 after the service has advertised it.
+`quarkus-http3` advertises HTTP/3 through the `Alt-Svc` response header, for example `Alt-Svc: h3=":8443"; ma=86400`.
+The header is added to the responses of {quarkus-cxf-project-name} services as well.
+
+For SOAP clients based on {quarkus-cxf-project-name}, the two ways correspond to the values `3` and `3,1.1` of
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+respectively.
+
+== Things to consider
+
+* HTTP/3 uses QUIC, a transport protocol based on UDP.
+The UDP port of the service has to be reachable for the clients.
+Check your firewalls, container port mappings, Kubernetes services and load balancers,
+which often let through only TCP traffic by default.
+Reverse proxies terminating TLS typically speak HTTP/1.1 or HTTP/2 to the applications behind them.
+* `quarkus-http3` selects the native QUIC library for the platform it is built on using Maven profiles.
+If you use Gradle or if you build on a different platform than you run on,
+you need to add the `io.netty:netty-codec-native-quic` dependency with the classifier matching your target
+platform(s), such as `linux-x86_64`.
+* In dev and test mode, if no TLS configuration is detected, `quarkus-http3` generates a TLS certificate
+and it makes the HTTP server redirect plain HTTP requests to HTTPS.
+SOAP clients and tests calling your services via `http:` URLs are impacted by that.
+Either configure TLS as shown above, or add `quarkus.http.insecure-requests = enabled` to `application.properties`.
+See {link-quarkus-docs-base}/http3-reference#auto-tls[Auto-TLS in dev and test mode] in Quarkus HTTP/3 reference.
+* If you have added `quarkus-http3` only for the sake of SOAP clients
+and you do not want the HTTP server of the application to serve HTTP/3,
+add `quarkus.http3.enabled = false` to `application.properties`.
+This is a build time option that does not impact the SOAP clients.
+
+== Known limitations
+
+The following limitations are not specific to {quarkus-cxf-project-name}.
+They come from the underlying projects and they will go away once they are solved there.
+
+* A request whose body exceeds `quarkus.http.limits.max-body-size` is rejected with HTTP status `413`
+and the whole HTTP/3 connection is closed afterwards.
+The same happens if the client stops sending the request body for more than 10 seconds.
+Other requests that the client is sending through the same connection at that time may thus fail.
+This applies to HTTP/2 too.
+See https://github.com/quarkiverse/quarkus-cxf/issues/2461[#2461].
+* If the application depends on `quarkus-micrometer`,
+a `NullPointerException` thrown from `VertxHttpServerMetrics.requestReset()` is logged
+whenever a request sent over HTTP/2 or HTTP/3 is terminated before it is completed.
+See https://github.com/quarkiverse/quarkus-cxf/issues/2463[#2463].
+* If the HTTP server listens on all network interfaces, which is the default in production mode,
+`jakarta.servlet.http.HttpServletRequest.getLocalAddr()` and `getLocalName()` return the wildcard address
+`0:0:0:0:0:0:0:0` for requests received over HTTP/3,
+instead of the address to which the client has sent the request.
+`getLocalPort()` returns the right port.
+Set `quarkus.http.host` to a specific address, if you need the methods to work properly.
+See https://github.com/quarkiverse/quarkus-cxf/issues/2464[#2464].
