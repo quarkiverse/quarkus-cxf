@@ -23,7 +23,7 @@ You need to set up a couple of things for CXF code generation to work:
 include::example$calculator-client/pom.xml[tag=first-soap-client.adoc-quarkus-maven-plugin]
 ----
 +
-* For Gradle projects no additional configurarion of `io.quarkus` plugin is needed
+* For Gradle projects no additional configuration of `io.quarkus` plugin is needed
 * Put your WSDL files under `src/main/resources` or `src/test/resources` or any subdirectory thereof.
 * Your WSDL file names must end with `.wsdl`
 * Set `quarkus.cxf.codegen.wsdl2java.includes`
