@@ -105,14 +105,22 @@ public interface CxfFixedConfig {
         public Optional<String> serviceInterface();
 
         /**
-         * Indicates whether this is an alternative proxy client configuration. If true, then this configuration is ignored when
-         * configuring a client without annotation `@CXFClient`.
+         * This option is not supported since {quarkus-cxf-project-name} 4.0.0.
+         * Setting it to any value, including `false`, causes a build time failure.
+         *
+         * Before {quarkus-cxf-project-name} 4.0.0, a client configuration having `alternative = true` was ignored
+         * when looking up the configuration for a client injected via `@CXFClient` without a client name.
+         * To migrate, remove this option and do one of the following:
+         *
+         * * Inject the client using an explicit client name, such as `@CXFClient("myClient")`
+         * * Or make sure that there is only one `quarkus.cxf.client."client-name"` having
+         * `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-service-interface[service-interface]`
+         * set to the given service endpoint interface.
          *
          * @asciidoclet
          * @since 1.0.0
          */
-        @WithDefault("false")
-        public boolean alternative();
+        public Optional<Boolean> alternative();
 
         /**
          * Configuration options related to native mode
@@ -131,8 +139,8 @@ public interface CxfFixedConfig {
                 }
 
                 @Override
-                public boolean alternative() {
-                    return false;
+                public Optional<Boolean> alternative() {
+                    return Optional.empty();
                 }
 
                 @Override

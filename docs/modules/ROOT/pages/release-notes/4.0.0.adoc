@@ -63,6 +63,36 @@ This is a breaking change:
 See also xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` is required]
 and https://github.com/quarkiverse/quarkus-cxf/issues/2457[#2457].
 
+== `quarkus.cxf.client."client-name".alternative` is not supported anymore
+
+Before {quarkus-cxf-project-name} 4.0.0, a client configuration having
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-alternative[quarkus.cxf.client."client-name".alternative]`
+set to `true` was ignored when looking up the configuration for a client
+injected via `@CXFClient` without a client name.
+That was a niche use case that can be replaced by injecting the client using an explicit client name.
+
+Since {quarkus-cxf-project-name} 4.0.0:
+
+* The option is not used for selecting client configurations anymore.
+* The build fails, if the option is set to any value, including `false`, for any client.
+  The message of the failure names the affected clients.
+
+This is a breaking change.
+Remove the option from your configuration and do one of the following:
+
+* Inject the client using an explicit client name, e.g. `@CXFClient("myClient")` instead of `@CXFClient`.
+* Or remove `service-interface` from the configurations that had `alternative = true`,
+  so that there is only one `quarkus.cxf.client."client-name"`
+  having `service-interface` set to the given service endpoint interface.
+  This is possible only if `CXFClientInfo` is not injected for those clients,
+  because that requires `service-interface` to be set.
+
+If there are multiple `quarkus.cxf.client."client-name"` configurations having `service-interface`
+set to the service endpoint interface of a client injected without a client name, the build fails.
+
+See also xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` is required]
+and https://github.com/quarkiverse/quarkus-cxf/issues/2470[#2470].
+
 == Dummy logging extension no longer published
 
 `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` was deprecated since {quarkus-cxf-project-name} 2.7.0,

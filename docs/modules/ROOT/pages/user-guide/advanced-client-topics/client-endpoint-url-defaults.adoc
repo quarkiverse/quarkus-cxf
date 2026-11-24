@@ -33,10 +33,10 @@ The following does not make `client-endpoint-url` optional:
 == Clients injected without a name
 
 A client injected via `@CXFClient` without a client name is associated with the only `quarkus.cxf.client."client-name"`
-having `service-interface` set to the given service endpoint interface
-and `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-alternative[alternative]` not set to `true`.
+having `service-interface` set to the given service endpoint interface.
 If there is no such configuration, the client fails when it is created.
-If there are multiple such configurations, the client fails as well.
+If there are multiple such configurations, the application fails at build time.
+In that case, inject the client using an explicit client name, such as `@CXFClient("myClient")`.
 
 [NOTE]
 .Historical note
@@ -44,4 +44,9 @@ If there are multiple such configurations, the client fails as well.
 Before {quarkus-cxf-project-name} 4.0.0, a client without `client-endpoint-url` was sending requests to
 `\http://localhost:8080/\{sei}`, where `\{sei}` is the fully qualified class name
 of the service endpoint interface in lower case.
+
+Before {quarkus-cxf-project-name} 4.0.0, the configurations having
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-alternative[quarkus.cxf.client."client-name".alternative]`
+set to `true` were ignored when looking up the configuration for a client injected without a client name.
+That option is not supported anymore and setting it causes a build time failure.
 ====

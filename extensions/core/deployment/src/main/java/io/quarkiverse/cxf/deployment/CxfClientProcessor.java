@@ -83,6 +83,7 @@ public class CxfClientProcessor {
             BuildProducer<NativeImageProxyDefinitionBuildItem> proxies,
             BuildProducer<CxfClientBuildItem> clients,
             BuildProducer<ClientSeiBuildItem> clientSeis) {
+        assertAlternativeNotSet(config);
         IndexView index = combinedIndexBuildItem.getIndex();
 
         final AtomicBoolean hasRuntimeInitializedProxy = new AtomicBoolean(false);
@@ -232,6 +233,30 @@ public class CxfClientProcessor {
     }
 
     /**
+     * Makes sure that {@code quarkus.cxf.client."client-name".alternative} is not set for any client.
+     *
+     * @param config the {@link CxfFixedConfig} to check
+     * @throws IllegalStateException if {@code quarkus.cxf.client."client-name".alternative} is set to any value for at
+     *         least one client
+     */
+    static void assertAlternativeNotSet(CxfFixedConfig config) {
+        final String keys = config.clients().entrySet().stream()
+                .filter(cl -> cl.getValue() != null && cl.getValue().alternative().isPresent())
+                .map(Map.Entry::getKey)
+                .sorted()
+                .map(key -> "quarkus.cxf.client.\"" + key + "\".alternative")
+                .collect(Collectors.joining(", "));
+        if (!keys.isEmpty()) {
+            throw new IllegalStateException(
+                    "quarkus.cxf.client.\"client-name\".alternative is not supported since Quarkus CXF 4.0.0, but found "
+                            + keys + "; remove it and either inject the client using an explicit client name,"
+                            + " e.g. @CXFClient(\"client-name\"), or make sure that there is only one"
+                            + " quarkus.cxf.client.\"client-name\" having service-interface set to the service endpoint"
+                            + " interface of the client");
+        }
+    }
+
+    /**
      * Find a {@link ClientFixedConfig} by the given client configuration {@code key} or by the given
      * {@code serviceInterfaceName}.
      * Note that there is a similar algorithm implemented in
@@ -261,7 +286,6 @@ public class CxfClientProcessor {
 
         final List<Map.Entry<String, ClientFixedConfig>> configsBySei = config.clients().entrySet().stream()
                 .filter(cl -> serviceInterfaceName.equals(cl.getValue().serviceInterface().orElse(null)))
-                .filter(cl -> !cl.getValue().alternative())
                 .collect(Collectors.toList());
 
         switch (configsBySei.size()) {
@@ -274,10 +298,12 @@ public class CxfClientProcessor {
             case 1:
                 return configsBySei.get(0).getValue();
             default:
-                throw new IllegalStateException("quarkus.cxf.*.service-interface = " + serviceInterfaceName
-                        + " with alternative = false expected once, but found " + configsBySei.size() + " times in "
-                        + configsBySei.stream().map(k -> "quarkus.cxf.\"" + k.getKey() + "\".service-interface")
-                                .collect(Collectors.joining(", ")));
+                throw new IllegalStateException("quarkus.cxf.client.\"client-name\".service-interface = "
+                        + serviceInterfaceName + " expected once, but found " + configsBySei.size() + " times in "
+                        + configsBySei.stream().map(k -> "quarkus.cxf.client.\"" + k.getKey() + "\".service-interface")
+                                .collect(Collectors.joining(", "))
+                        + "; either inject the client using an explicit client name, e.g. @CXFClient(\"client-name\"),"
+                        + " or keep that service-interface only in one of those configurations");
         }
 
     }

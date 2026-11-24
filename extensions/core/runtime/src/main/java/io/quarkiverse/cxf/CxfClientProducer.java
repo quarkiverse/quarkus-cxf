@@ -285,16 +285,11 @@ public abstract class CxfClientProducer {
                 meta,
                 configKey,
                 /*
-                 * FIXME: (review) The message below is not accurate if there is a quarkus.cxf.client."client-name" with
-                 * service-interface = <sei> and alternative = true: selectClientConfig() ignores such clients, but the user
-                 * is told that "there is no quarkus.cxf.client."client-name".service-interface = <sei> in the
-                 * configuration". The removed warning mentioned "and alternative = false" - please keep that qualifier.
-                 * Also "or inject the client using @CXFClient("client-name")" reads as if naming the client was enough,
-                 * while the named client fails with "client-endpoint-url is not set" in the next step.
-                 * Perhaps: "... because there is no quarkus.cxf.client."client-name" having service-interface = <sei>
-                 * and alternative = false; add such a configuration or inject the client by name; in both cases
+                 * FIXME: (review) "or inject the client using @CXFClient("client-name")" reads as if naming the client
+                 * was enough, while the named client fails with "client-endpoint-url is not set" in the next step.
+                 * Perhaps: "... because there is no quarkus.cxf.client."client-name" having service-interface = <sei>;
+                 * add such a configuration or inject the client by name; in both cases
                  * quarkus.cxf.client."client-name".client-endpoint-url has to be set".
-                 * A test with an alternative-only configuration would be nice to have.
                  */
                 () -> configKey.isEmpty()
                         ? new IllegalStateException(
@@ -365,7 +360,7 @@ public abstract class CxfClientProducer {
      * {@code quarkus.cxf.client."configKey"} is selected.
      * That configuration consists of default values, if no runtime option is set for the given {@code configKey}.
      * Otherwise, the only {@code quarkus.cxf.client."client-name"} having {@code service-interface} equal to the given
-     * {@code sei} and {@code alternative = false} is selected.
+     * {@code sei} is selected.
      *
      * @param config the runtime configuration
      * @param fixedConfig the build time configuration
@@ -376,7 +371,7 @@ public abstract class CxfClientProducer {
      * @return the selected configuration or an empty {@link Optional} if there is no configuration for the given
      *         client
      * @throws IllegalStateException if the given {@code configKey} is {@code null} or empty and there are multiple
-     *         clients having {@code service-interface} equal to the given {@code sei} and {@code alternative = false}
+     *         clients having {@code service-interface} equal to the given {@code sei}
      * @since 4.0.0
      */
     public static Optional<ClientConfigSelection> selectClientConfig(
@@ -402,7 +397,6 @@ public abstract class CxfClientProducer {
                 .filter(kv -> kv.getValue() != null)
                 .filter(kv -> kv.getValue().serviceInterface().isPresent())
                 .filter(kv -> kv.getValue().serviceInterface().get().equals(sei))
-                .filter(kv -> kv.getValue().alternative() == false)
                 .map(Map.Entry::getKey)
                 .collect(toList());
 
@@ -412,10 +406,12 @@ public abstract class CxfClientProducer {
             case 1:
                 return Optional.of(new ClientConfigSelection(keylist.get(0), config.clients().get(keylist.get(0))));
             default:
-                throw new IllegalStateException("quarkus.cxf.*.service-interface = " + sei
-                        + " with alternative = false expected once, but found " + keylist.size() + " times in "
-                        + keylist.stream().map(k -> "quarkus.cxf.\"" + k + "\".service-interface")
-                                .collect(Collectors.joining(", ")));
+                throw new IllegalStateException("quarkus.cxf.client.\"client-name\".service-interface = " + sei
+                        + " expected once, but found " + keylist.size() + " times in "
+                        + keylist.stream().map(k -> "quarkus.cxf.client.\"" + k + "\".service-interface")
+                                .collect(Collectors.joining(", "))
+                        + "; either inject the client using an explicit client name, e.g. @CXFClient(\"client-name\"),"
+                        + " or keep that service-interface only in one of those configurations");
         }
     }
 
