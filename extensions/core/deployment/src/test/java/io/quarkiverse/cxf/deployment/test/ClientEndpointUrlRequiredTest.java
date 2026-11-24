@@ -112,7 +112,10 @@ public class ClientEndpointUrlRequiredTest {
                         + UnconfiguredService.class.getName() + " injected into ")
                 .hasStackTraceContaining("without a client name, because there is no"
                         + " quarkus.cxf.client.\"client-name\".service-interface = " + UnconfiguredService.class.getName()
-                        + " in the configuration");
+                        + " in the configuration; either set quarkus.cxf.client.\"client-name\".service-interface = "
+                        + UnconfiguredService.class.getName() + " for exactly one client or inject the client using"
+                        + " an explicit client name, e.g. @CXFClient(\"client-name\"); in both cases,"
+                        + " quarkus.cxf.client.\"client-name\".client-endpoint-url has to be set for that client");
     }
 
     private static <T> void create(Instance<T> instance) {
