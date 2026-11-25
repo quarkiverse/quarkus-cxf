@@ -104,7 +104,7 @@ public class VertxHttp3ProxyTest {
         try {
             final int tunnelsBefore = proxyTunnels.get();
             for (int i = 0; i < 3; i++) {
-                assertThat(echo(client, "localhost")).contains("<return>h3:1</return>");
+                assertThat(echo(client, "localhost")).contains("<return>HTTP/3.0:1</return>");
             }
             assertThat(proxyTunnels.get())
                     .as("Vert.x HttpClient is expected to bypass the proxy when HTTP/3 is the only permitted version")
@@ -125,11 +125,11 @@ public class VertxHttp3ProxyTest {
         /* First make sure that the given setup results in HTTP/3 being used when there is no proxy */
         final HttpClientAgent directClient = client(versions, false);
         try {
-            assertThat(echo(directClient, "127.0.0.1")).contains("<return>http/1.1:1</return>");
+            assertThat(echo(directClient, "127.0.0.1")).contains("<return>HTTP/1.1:1</return>");
             Awaitility.await()
                     .atMost(Duration.ofSeconds(30))
                     .pollInterval(Duration.ofMillis(200))
-                    .untilAsserted(() -> assertThat(echo(directClient, "127.0.0.1")).contains("<return>h3:1</return>"));
+                    .untilAsserted(() -> assertThat(echo(directClient, "127.0.0.1")).contains("<return>HTTP/3.0:1</return>"));
         } finally {
             await(directClient.close());
         }
@@ -140,7 +140,7 @@ public class VertxHttp3ProxyTest {
             for (int i = 0; i < 6; i++) {
                 assertThat(echo(proxiedClient, "127.0.0.1"))
                         .as("Vert.x HttpClient is expected not to switch to HTTP/3 when accessing the service through a proxy")
-                        .contains("<return>http/1.1:1</return>");
+                        .contains("<return>HTTP/1.1:1</return>");
                 Thread.sleep(500);
             }
             assertThat(proxyTunnels.get()).isGreaterThan(tunnelsBefore);

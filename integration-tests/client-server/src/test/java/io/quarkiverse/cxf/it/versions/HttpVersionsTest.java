@@ -11,7 +11,7 @@ import io.restassured.RestAssured;
 @QuarkusTest
 public class HttpVersionsTest {
     @ParameterizedTest
-    @CsvSource({ "strict,h2", "upgrade,h2", "legacy,h2", "http1,http/1.1" })
+    @CsvSource({ "strict,HTTP/2.0", "upgrade,HTTP/2.0", "legacy,HTTP/2.0", "http1,HTTP/1.1" })
     void largeSoapRequest(String client, String protocol) {
         for (int i = 0; i < 2; i++) {
             RestAssured.given().contentType("text/plain").body("x".repeat(100_000))

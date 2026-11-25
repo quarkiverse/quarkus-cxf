@@ -3,6 +3,14 @@ package io.quarkiverse.cxf.it.http3;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
 
+/**
+ * A service telling the caller through which HTTP protocol the request came.
+ * <p>
+ * All operations name the protocol in the form returned by {@code jakarta.servlet.ServletRequest.getProtocol()},
+ * that is {@code HTTP/1.0}, {@code HTTP/1.1}, {@code HTTP/2.0} or {@code HTTP/3.0}.
+ *
+ * @since 4.0.0
+ */
 @WebService(targetNamespace = "urn:protocol-echo")
 public interface ProtocolEcho {
 

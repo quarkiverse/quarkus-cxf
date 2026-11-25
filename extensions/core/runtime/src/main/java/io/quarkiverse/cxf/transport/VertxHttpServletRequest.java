@@ -242,9 +242,24 @@ public class VertxHttpServletRequest implements HttpServletRequest {
         return EMPTY_STRING_ARRAY;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The returned value has the form <em>protocol/majorVersion.minorVersion</em> required by the Servlet API, rather
+     * than the ALPN name of the given HTTP version, such as {@code h2} or {@code h3}.
+     *
+     * @return {@code HTTP/1.0}, {@code HTTP/1.1}, {@code HTTP/2.0} or {@code HTTP/3.0}, depending on the HTTP version
+     *         of this request
+     */
     @Override
     public String getProtocol() {
-        return request.version().alpnName();
+        /* No default branch, so that a new constant in HttpVersion breaks the compilation and has to be mapped here */
+        return switch (request.version()) {
+            case HTTP_1_0 -> "HTTP/1.0";
+            case HTTP_1_1 -> "HTTP/1.1";
+            case HTTP_2 -> "HTTP/2.0";
+            case HTTP_3 -> "HTTP/3.0";
+        };
     }
 
     @Override

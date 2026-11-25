@@ -49,7 +49,7 @@ public class Http3Peer {
         request.body()
                 .onSuccess(body -> {
                     final String soapRequest = body.toString();
-                    final String protocol = request.version().alpnName();
+                    final String protocol = protocol(request.version());
                     if (request.version() != HttpVersion.HTTP_1_1 && request.getHeader("Connection") != null) {
                         request.response().setStatusCode(400)
                                 .end("Connection header is forbidden in " + protocol + " requests");
@@ -77,6 +77,24 @@ public class Http3Peer {
                     }
                 })
                 .onFailure(context::fail);
+    }
+
+    /**
+     * Maps the given HTTP version to the name that {@link ProtocolEcho} is supposed to return for it.
+     * <p>
+     * This is intentionally independent of {@code io.quarkiverse.cxf.transport.VertxHttpServletRequest.getProtocol()},
+     * through which {@link ProtocolEchoImpl} gets the same names.
+     *
+     * @param version the HTTP version of a request
+     * @return {@code HTTP/1.0}, {@code HTTP/1.1}, {@code HTTP/2.0} or {@code HTTP/3.0}
+     */
+    static String protocol(HttpVersion version) {
+        return switch (version) {
+            case HTTP_1_0 -> "HTTP/1.0";
+            case HTTP_1_1 -> "HTTP/1.1";
+            case HTTP_2 -> "HTTP/2.0";
+            case HTTP_3 -> "HTTP/3.0";
+        };
     }
 
     /**
