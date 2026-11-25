@@ -2,14 +2,18 @@
 
 # Parse command line parameters
 usage() {
+  echo "$0 - run tests from all or specific modules, optionally run only specific test methods from specific test classes"
+  echo ""
   echo "Usage: $0 --quarkus-cxf-dir <path> [options]"
   echo ""
   echo "Required parameters:"
   echo "  --quarkus-cxf-dir                   Path to the checked-out Quarkus CXF repository"
   echo ""
   echo "Optional parameters:"
-  echo "  --maven-repo-local                  Path to a prepopulated local Maven repository"
-  echo "                                        (if omitted, resolve the platform BOM through Maven)"
+  echo "  --maven-repo-local                  Path to a prepopulated local Maven repository."
+  echo "                                        Passed as -Dmaven.repo.local to every Maven invocation."
+  echo "                                        Also used for BOM copying and discovery of unspecified versions."
+  echo "                                        If omitted, resolve the BOM through Maven."
   echo "  --quarkus-platform-version          Platform version to test against"
   echo "                                        (required without --maven-repo-local; otherwise derived from its platform BOM directory)"
   echo "  --quarkus-platform-group-id         Platform group ID"
@@ -26,21 +30,24 @@ usage() {
   echo "                                        (required without --maven-repo-local; otherwise derived from its quarkus-core directory)"
   echo "  --quarkus-enforcer-rules-version     Quarkus enforcer rules version"
   echo "                                        (default: value of --quarkus-version)"
-  echo "  --settings-xml                      Path to Maven settings.xml"
+  echo "  -s, --settings                      Path to Maven settings.xml"
   echo "  --mvn-extra                         Extra arguments to pass to every mvn invocation"
   echo "  --dep-tree <file>                   Run dependency:tree after each mvn invocation and append output to <file>"
   echo "  --native                            Use verify instead of test phase and add native build args to integration tests"
   echo "                                        Adds: -Pnative -Dtest=!* -Dsurefire.failIfNoSpecifiedTests=false -Dquarkus.native.container-build=true"
   echo "                                        (configure NATIVE_PROFILE and NATIVE_ARGS variables in the script to customize)"
-  echo "  --test-modules                      Comma-separated list of modules to test (adds -pl <modules> to integration tests)"
-  echo "  --test-classes                      Comma-separated list of test classes to run (adds -Dtest=<classes> or -Dit.test=<classes> for native)"
+  echo "  --modules, --test-modules            Comma-separated list of modules to test (adds -pl <modules> to integration tests)"
+  echo "  --tests, --test-classes              Comma-separated list of tests to run (adds -Dtest=<tests> or -Dit.test=<tests> for native)"
   echo "  --prepare-only                      Only run preparation steps such as (BOM/POM setup, support modules), skip integration tests"
-  echo "  --verbose                           Enable verbose output"
-  echo "  --check-errors                      Check Maven output for error strings and use distinct exit codes"
-  echo "                                        Exit 0 = success, 1 = test failures only (UNSTABLE), 2 = build errors (FAILURE)"
-  echo "  --debug                             Enable command tracing (set -x)"
+  echo "  --verbose                           Log configuration, preparation steps, Maven commands, and results"
+  echo "  --check-errors                      Check Maven output for error strings and use distinct exit codes (default)"
+  echo "                                        Exit 0 = success, 1 = other Maven failures, 2 = recognized build errors"
+  echo "  --no-check-errors                   Disable output checking and return Maven's original exit code"
+  echo "  --debug                             Trace Bash execution (set -x)"
   exit 1
 }
+
+CHECK_ERRORS=true
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -72,7 +79,7 @@ while [[ $# -gt 0 ]]; do
       QUARKUS_ENFORCER_RULES_VERSION="$2"
       shift 2
       ;;
-    --settings-xml)
+    -s|--settings)
       SETTINGS_XML="$2"
       shift 2
       ;;
@@ -100,11 +107,11 @@ while [[ $# -gt 0 ]]; do
       NATIVE=true
       shift
       ;;
-    --test-modules)
+    --modules|--test-modules)
       TEST_MODULES="$2"
       shift 2
       ;;
-    --test-classes)
+    --tests|--test-classes)
       TEST_CLASSES="$2"
       shift 2
       ;;
@@ -114,6 +121,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --check-errors)
       CHECK_ERRORS=true
+      shift
+      ;;
+    --no-check-errors)
+      CHECK_ERRORS=false
       shift
       ;;
     --verbose)
