@@ -479,6 +479,30 @@ See https://cxf.apache.org/security-advisories.data/CVE-2026-108039.txt[CVE-2026
 and https://cxf.apache.org/security-advisories.data/CVE-2026-78384.txt[CVE-2026-78384] for the corresponding CXF system properties.
 For native mode, those properties have to be set at build time.
 
+== Known issues
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2476[#2476] `quarkus-http3` breaks responses sent over HTTP/2
+
+This issue exists in `io.quarkus:quarkus-http3` 4.0.1.
+It impacts only applications depending on that extension.
+
+Since Quarkus 4.0.1, `quarkus-http3` advertises HTTP/3 not only on HTTP/1.x responses, but also on HTTP/2 responses.
+On HTTP/2, it does so in a way that sends the response head before the application can set the status and headers.
+As a consequence of that, clients calling SOAP services over HTTP/2 receive an empty response body
+or the HTTP status `500`,
+and `IllegalStateException: Response head already sent` is logged by the application.
+Other parts of the application served over HTTP/2, such as REST endpoints, are affected as well.
+Requests sent over HTTP/1.x and HTTP/3 work properly.
+
+To work around the issue, add `quarkus.http3.alt-svc = false` to `application.properties`.
+With this build time option, `quarkus-http3` does not advertise HTTP/3 at all.
+Clients can then use HTTP/3 only if they connect over HTTP/3 straight away,
+such as SOAP clients having
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+set to `3`.
+
+See also xref:user-guide/advanced-service-topics/http3.adoc[HTTP/3 for SOAP services].
+
 == Full changelog
 
 https://github.com/quarkiverse/quarkus-cxf/compare/3.40.3+++...+++4.0.0
