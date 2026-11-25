@@ -53,6 +53,13 @@ include::example$http3/application.properties[tag=http3.adoc]
 +
 See xref:user-guide/ssl-tls-https.adoc[SSL, TLS and HTTPS] for more information about the TLS configuration.
 
+[IMPORTANT]
+====
+With Quarkus 4.0.1, you also need to add `quarkus.http3.alt-svc = false` to `application.properties`,
+otherwise the service does not work for clients calling it over HTTP/2.
+See xref:#http3-broken-http2-responses[Known limitations] below.
+====
+
 With the above in place, the service is available under `https://localhost:8443/services/hello`
 
 * over HTTP/1.1 and HTTP/2 on the TCP port `8443` and
@@ -119,6 +126,19 @@ This is a build time option that does not impact the SOAP clients.
 The following limitations are not specific to {quarkus-cxf-project-name}.
 They come from the underlying projects and they will go away once they are solved there.
 
+* [[http3-broken-http2-responses]]With Quarkus 4.0.1, `quarkus-http3` breaks the responses sent over HTTP/2.
+It sends the response head while advertising HTTP/3, before the application can set the status and headers.
+Clients calling your SOAP services over HTTP/2 thus receive an empty response body or the HTTP status `500`,
+and `IllegalStateException: Response head already sent` is logged by the application.
+Other parts of the application served over HTTP/2, such as REST endpoints, are affected as well.
+Requests sent over HTTP/1.x and HTTP/3 work properly.
+As a workaround, add `quarkus.http3.alt-svc = false` to `application.properties`.
+With this build time option, `quarkus-http3` does not advertise HTTP/3 at all.
+Clients can then use HTTP/3 only if they connect over HTTP/3 straight away,
+such as SOAP clients having
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+set to `3`.
+See https://github.com/quarkiverse/quarkus-cxf/issues/2476[#2476].
 * A request whose body exceeds `quarkus.http.limits.max-body-size` is rejected with HTTP status `413`
 and the whole HTTP/3 connection is closed afterwards.
 The same happens if the client stops sending the request body for more than 10 seconds.
