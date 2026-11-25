@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -147,6 +148,7 @@ public class Http3ServiceTest {
 
     /** {@code quarkus-http3} advertises HTTP/3 via the {@code Alt-Svc} header also on the responses of Quarkus CXF */
     @Test
+    @Disabled("https://github.com/quarkiverse/quarkus-cxf/issues/2476 - quarkus.http3.alt-svc = false is set in application.properties as a workaround")
     void altSvcOverHttp11() throws Exception {
         final RawResponse response = request(HttpVersion.HTTP_1_1, HttpMethod.POST, SERVICE_PATH, SOAP_REQUEST);
         assertThat(response.version()).isEqualTo(HttpVersion.HTTP_1_1);

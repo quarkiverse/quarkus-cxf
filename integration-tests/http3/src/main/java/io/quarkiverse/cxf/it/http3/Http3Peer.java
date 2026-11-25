@@ -100,9 +100,11 @@ public class Http3Peer {
     private static void respond(HttpServerRequest request, String wrapper, String returnValue) {
         final HttpServerResponse response = request.response();
         response.putHeader("Content-Type", "text/xml; charset=UTF-8");
-        if (request.version() == HttpVersion.HTTP_2) {
+        if (request.version() != HttpVersion.HTTP_3) {
             /*
-             * quarkus-http3 advertises HTTP/3 only over HTTP/1.x, so we have to do it ourselves over HTTP/2.
+             * quarkus-http3 does not advertise HTTP/3, because quarkus.http3.alt-svc = false is set in
+             * application.properties as a workaround for https://github.com/quarkiverse/quarkus-cxf/issues/2476
+             * So we have to do it ourselves: via the Alt-Svc header over HTTP/1.x and via the ALTSVC frame over HTTP/2.
              * The ALTSVC frame can be written only after the response head, hence the headers have to be set before.
              */
             response.writeAltSvc("h3=\":" + request.localAddress().port() + "\"");
