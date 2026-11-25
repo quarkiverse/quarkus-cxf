@@ -1,8 +1,269 @@
 = {quarkus-cxf-project-name} 4.0.0 release notes
 
-== Removals
+4.0.0 is the first release of {quarkus-cxf-project-name} based on Quarkus 4.
+Both Quarkus 4 and {quarkus-cxf-project-name} 4 remove functionality that was deprecated in the 3.x releases.
+Read the <<breaking-changes>> section carefully before upgrading.
 
-=== The following configuration options were removed:
+== Important dependency upgrades
+
+* Quarkus 3.40.0 -> 4.0.0 - https://quarkus.io/blog/quarkus-4-0-released/[release notes],
+  https://github.com/quarkusio/quarkus/wiki/Migration-Guide-4.0[migration guide],
+  link:https://github.com/quarkusio/quarkus/compare/3.40.0+++...+++4.0.0[changelog].
+  Quarkus 4.0.0 is based on Vert.x 5 and Netty 4.2.
+
+* Apache CXF 4.2.3 -> 4.2.4 - https://cxf.apache.org/cxf-424-release-notes.html[release notes], link:https://github.com/apache/cxf/compare/cxf-4.2.3+++...+++cxf-4.2.4[changelog], fixed CVEs (see the https://cxf.apache.org/security-advisories.html[Apache CXF security advisories] for details):
+** https://www.cve.org/CVERecord?id=CVE-2026-78384[CVE-2026-78384] Unbounded DEFLATE decompression can exhaust memory (`org.apache.cxf:cxf-core`)
+** https://www.cve.org/CVERecord?id=CVE-2026-97468[CVE-2026-97468] Weak cache keys for validated STS tokens can bypass authentication (`org.apache.cxf:cxf-rt-ws-security` and `org.apache.cxf.services.sts:cxf-services-sts-core`)
+** https://www.cve.org/CVERecord?id=CVE-2026-97791[CVE-2026-97791] Shared validation state in `STSTokenValidator` can allow untrusted SAML assertions (`org.apache.cxf:cxf-rt-ws-security`)
+** https://www.cve.org/CVERecord?id=CVE-2026-107937[CVE-2026-107937] Repeated or folded attachment headers can bypass size and count limits, exhausting memory (`org.apache.cxf:cxf-core`)
+** https://www.cve.org/CVERecord?id=CVE-2026-108039[CVE-2026-108039] Missing default XML element and character limits can cause excessive memory and CPU usage (`org.apache.cxf:cxf-core`)
+
+* Apache WSS4J 4.0.1 -> 4.0.3 - release notes https://github.com/apache/ws-wss4j/releases/tag/wss4j-4.0.2[4.0.2] and https://github.com/apache/ws-wss4j/releases/tag/wss4j-4.0.3[4.0.3], link:https://github.com/apache/ws-wss4j/compare/wss4j-4.0.1+++...+++wss4j-4.0.3[changelog], fixed CVEs (see the https://ws.apache.org/wss4j/security_advisories.html[Apache WSS4J security advisories] for details):
+** https://www.cve.org/CVERecord?id=CVE-2026-85532[CVE-2026-85532] Inadequate bounds on derived-key lengths and offsets
+** https://www.cve.org/CVERecord?id=CVE-2026-87830[CVE-2026-87830] Streaming policy validation can fail to enforce element signatures and encryption
+** https://www.cve.org/CVERecord?id=CVE-2026-88920[CVE-2026-88920] Forged SAML sender-vouches assertions can bypass authentication
+** https://www.cve.org/CVERecord?id=CVE-2026-89238[CVE-2026-89238] Incorrect selection of a decrypted header can bypass protection requirements
+** https://www.cve.org/CVERecord?id=CVE-2026-92121[CVE-2026-92121] Streaming signature policy checks can be bypassed after processing an STR-Transform reference
+** https://www.cve.org/CVERecord?id=CVE-2026-92899[CVE-2026-92899] Alternate nonce encodings can bypass UsernameToken replay detection
+** https://www.cve.org/CVERecord?id=CVE-2026-95616[CVE-2026-95616] Malformed X.509 certificate extensions can trigger excessive memory allocation
+** https://www.cve.org/CVERecord?id=CVE-2026-115690[CVE-2026-115690] Replay protection can be bypassed by concurrent copies of a message
+
+* Apache Neethi 3.2.2 -> 3.2.4 - https://ws.apache.org/neethi/index.html[release announcement], link:https://github.com/apache/ws-neethi/compare/neethi-3.2.2+++...+++neethi-3.2.4[changelog], fixed CVEs (see the https://ws.apache.org/neethi/security.html[Apache Neethi security advisories] for details):
+** https://www.cve.org/CVERecord?id=CVE-2026-66142[CVE-2026-66142] Uncontrolled recursion during policy processing
+** https://www.cve.org/CVERecord?id=CVE-2026-66143[CVE-2026-66143] Bypass of limits on normalized policy alternatives
+** https://www.cve.org/CVERecord?id=CVE-2026-66144[CVE-2026-66144] Unbounded data read when fetching remote policy references
+** https://www.cve.org/CVERecord?id=CVE-2026-91863[CVE-2026-91863] Stack exhaustion through policies that bypass the nesting-depth limit
+** https://www.cve.org/CVERecord?id=CVE-2026-91864[CVE-2026-91864] Heap exhaustion through assertions that bypass element and attribute limits
+** https://www.cve.org/CVERecord?id=CVE-2026-91865[CVE-2026-91865] Excessive expansion of repeated policy references during normalization
+** https://www.cve.org/CVERecord?id=CVE-2026-91866[CVE-2026-91866] Unbounded computation during policy intersection
+** https://www.cve.org/CVERecord?id=CVE-2026-91867[CVE-2026-91867] Missing total timeout when fetching remote policies
+
+* Apache XMLSchema 2.3.2 -> 2.3.3 - https://github.com/apache/ws-xmlschema/releases/tag/xmlschema-2.3.3[release notes], link:https://github.com/apache/ws-xmlschema/compare/xmlschema-2.3.2+++...+++xmlschema-2.3.3[changelog], fixed CVEs (see the https://ws.apache.org/xmlschema/security.html[Apache XMLSchema security advisories] for details):
+** https://www.cve.org/CVERecord?id=CVE-2026-102495[CVE-2026-102495] Stack exhaustion when resolving deeply nested schema imports and includes
+** https://www.cve.org/CVERecord?id=CVE-2026-102496[CVE-2026-102496] Stack exhaustion when parsing deeply nested schema structures
+** https://www.cve.org/CVERecord?id=CVE-2026-102497[CVE-2026-102497] Stack exhaustion when the schema walker processes cyclic definitions (`xmlschema-walker`)
+
+* Woodstox 7.2.2 -> 7.3.0 - https://github.com/FasterXML/woodstox/blob/main/release-notes/VERSION[release notes],
+  link:https://github.com/FasterXML/woodstox/compare/woodstox-core-7.2.2+++...+++woodstox-core-7.3.0[changelog]
+* Stax2 API 4.3.0 -> 4.3.2 - link:https://github.com/FasterXML/stax2-api/compare/stax2-api-4.3.0+++...+++stax2-api-4.3.2[changelog]
+
+The upgrades of Apache CXF, WSS4J, Neethi and XMLSchema are also available in {quarkus-cxf-project-name}
+xref:release-notes/3.40.3.adoc[3.40.3 LTS].
+
+== Enhancements
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2433[#2433] New `quarkus.cxf.client."client-name".vertx.http-versions` option
+
+The new option
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+defines the HTTP protocol versions that a SOAP client using `VertxHttpClientHTTPConduit` is permitted to use.
+In contrast to the existing
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`,
+it allows requiring HTTP/2 without any fallback to HTTP/1.x and using HTTP/3.
+
+Only the following values are supported:
+
+* `1.0` - use HTTP/1.0 only
+* `1.1` - use HTTP/1.1 only
+* `2` - require HTTP/2 without any fallback to HTTP/1.x
+* `2,1.1` - prefer HTTP/2 and permit a fallback to HTTP/1.1
+* `3` - require HTTP/3 without any fallback (experimental)
+* `3,2,1.1` - start with HTTP/2 or HTTP/1.1 and switch to HTTP/3 once the service has advertised it (experimental)
+
+Any other value, including other combinations and other orders of the above versions,
+causes an exception on client creation.
+The set of supported values is intentionally small and it may get extended in the future.
+
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
+keeps working as before.
+It has to be left at `auto` when `http-versions` is set.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2314[#2314] HTTP/3 support for SOAP clients (experimental)
+
+SOAP clients using `VertxHttpClientHTTPConduit` can use HTTP/3,
+when
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+is set to `3` or `3,2,1.1`:
+
+* `3` makes the client use HTTP/3 for every request, without any fallback.
+* `3,2,1.1` makes the client contact the service over TCP first
+  and switch to HTTP/3 only after the service has advertised it via `Alt-Svc`.
+* The application has to depend on `io.quarkus:quarkus-http3`.
+  That extension makes the HTTP server of the application serve HTTP/3 too,
+  see <<http3-for-soap-services>> below.
+  Add `quarkus.http3.enabled = false` to `application.properties`, unless you want that.
+* HTTP/3 requires `https:` URLs and it cannot be used through a proxy.
+  Clients combining `3` or `3,2,1.1` with a plain `http:` URL or with a proxy are rejected.
+
+See the documentation of
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
+for more details and limitations.
+
+==== New options for HTTP/3 connections
+
+The connection pool size and the keep alive timeout of HTTP/3 connections are configured separately
+from the same settings for HTTP/1.x and HTTP/2 connections:
+
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http3-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http3-max-size]`
+  sets the maximum pool size for HTTP/3 connections.
+  The default is `1`.
+* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http3-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http3-keep-alive-timeout]`
+  sets the number of seconds after which inactive HTTP/3 connections are closed.
+  The default is `60`.
+
+The existing options `vertx.connection-pool.http1-max-size`, `vertx.connection-pool.http2-max-size`,
+`vertx.keep-alive-timeout` (HTTP/1.x only) and `vertx.http2-keep-alive-timeout` have no effect on HTTP/3 connections.
+
+[[http3-for-soap-services]]
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2458[#2458] HTTP/3 for SOAP services (experimental)
+
+SOAP services exposed by {quarkus-cxf-project-name} can be called over HTTP/3,
+if the application depends on `io.quarkus:quarkus-http3`, a new extension in Quarkus 4.0.0,
+and if TLS is configured for the Quarkus HTTP server.
+There are no new {quarkus-cxf-project-name} options for that.
+Both JVM and native mode are supported.
+
+Some limitations exist in the underlying projects:
+
+* A request exceeding `quarkus.http.limits.max-body-size` or a stalled request body
+  makes the server close the whole HTTP/3 connection, thus possibly aborting other requests sent through it
+  (https://github.com/quarkiverse/quarkus-cxf/issues/2461[#2461]).
+* With `quarkus-micrometer`, a `NullPointerException` is logged for requests terminated before completion
+  (https://github.com/quarkiverse/quarkus-cxf/issues/2463[#2463]).
+* `HttpServletRequest.getLocalAddr()` returns the wildcard address for requests received over HTTP/3,
+  if the server listens on all network interfaces
+  (https://github.com/quarkiverse/quarkus-cxf/issues/2464[#2464]).
+
+See xref:user-guide/advanced-service-topics/http3.adoc[HTTP/3 for SOAP services] for more details.
+
+=== TLS certificates of SOAP clients are reloaded without closing the underlying HTTP client
+
+Before {quarkus-cxf-project-name} 4.0.0, when the certificates of a TLS configuration were reloaded,
+the Vert.x `HttpClient` instances of all SOAP clients using that TLS configuration via
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
+were closed and new ones were created upon the next request.
+
+Since {quarkus-cxf-project-name} 4.0.0, the TLS options of the existing Vert.x `HttpClient` instances
+are updated in place.
+The outcome is logged for each affected SOAP client.
+The `HttpClient` is closed only if updating its TLS options fails.
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2432[#2432] `NamespaceWrapper not found` warning on every `?wsdl` request
+
+Before {quarkus-cxf-project-name} 4.0.0, every `?wsdl` request for a service whose `wsdl:binding`
+contains a JAXB extensibility element, such as `<wsaw:UsingAddressing/>`, logged the following warning:
+
+[source]
+----
+WARN  [org.apache.cxf.common.spi.ClassLoaderProxyService] NamespaceWrapper not found : java.lang.NullPointerException: Cannot invoke "java.lang.Class.getConstructor(java.lang.Class[])" because "cls" is null
+----
+
+The WSDL was served properly, but the namespace prefix mapper was not set on the JAXB marshaller.
+
+Since {quarkus-cxf-project-name} 4.0.0, the warning is not logged anymore.
+As a consequence of the fix, the namespace prefixes declared in the WSDL are used for JAXB extensibility elements
+in the served WSDL documents
+and the `namespaceMap` and `contextualNamespaceMap` set on the JAXB data binding are honored.
+
+Special thanks to https://github.com/browlook[@browlook] for the report and the thorough analysis.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2445[#2445] `proxy-configuration-name = none` made `VertxHttpClientHTTPConduit` connect through a proxy at host `none`
+
+Setting
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+to `none` is the documented way to make a client ignore the default proxy configuration defined via `quarkus.proxy.*`.
+
+Before {quarkus-cxf-project-name} 4.0.0, a client using `VertxHttpClientHTTPConduit` configured that way
+attempted to connect through a proxy at host `none` and port `0`
+and every request failed with `java.net.UnknownHostException: none`.
+Since {quarkus-cxf-project-name} 4.0.0, such a client connects to the service directly.
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2415[#2415] Late empty acknowledgement could replace the response received via a decoupled endpoint
+
+Before {quarkus-cxf-project-name} 4.0.0, a client using `VertxHttpClientHTTPConduit` together with a decoupled endpoint,
+such as a WS-ReliableMessaging client,
+could rarely fail with `org.apache.cxf.endpoint.ClientImpl$IllegalEmptyResponseException`
+and the message `Response message did not contain proper response data`.
+That happened when the empty HTTP `202` acknowledgement of the request was processed
+only after the actual response had arrived through the decoupled endpoint.
+Since {quarkus-cxf-project-name} 4.0.0, the already received response is preserved regardless of the order
+in which the two arrive.
+
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2394[#2394] `VertxHttpClientHTTPConduit` may pass an empty body to the XML parser on transport or timeout exceptions
+
+Before {quarkus-cxf-project-name} 4.0.0, when reading the response body failed
+due to a transport exception or a receive timeout,
+the client could fail with `Unexpected EOF in prolog` thrown by the XML parser,
+instead of the original exception.
+Since {quarkus-cxf-project-name} 4.0.0, the original exception or the receive timeout is propagated to the caller.
+
+
+=== `quarkus.cxf.client.worker-dispatch-timeout` applied also to waiting for the response
+
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-worker-dispatch-timeout[quarkus.cxf.client.worker-dispatch-timeout]`
+is documented as a timeout within which a client call issued on Vert.x Event Loop thread
+must start executing on a worker thread.
+
+Before {quarkus-cxf-project-name} 4.0.0, for calls made via `CxfMutinyUtils`,
+the timeout was canceled only when the response arrived.
+Therefore, calls whose responses took longer than the timeout failed,
+even though they were dispatched to a worker thread in time.
+Since {quarkus-cxf-project-name} 4.0.0, the timeout is canceled as soon as the call starts executing on a worker thread.
+The time spent waiting for the response is limited only by
+`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-receive-timeout[quarkus.cxf.client."client-name".receive-timeout]`.
+
+
+=== https://github.com/quarkiverse/quarkus-cxf/discussions/2320[#2320] `Methods of org.apache.cxf.ws.addressing.ContextUtils not found: $jacocoInit(...)`
+
+Before {quarkus-cxf-project-name} 4.0.0, 3.40.2 and 3.33.14, running `@QuarkusTest` tests with JaCoCo instrumentation
+could fail during class transformation with the named error.
+Since {quarkus-cxf-project-name} 4.0.0, 3.40.2 and 3.33.14, the transformer ignores synthetic methods,
+allowing these tests to start.
+
+Special thanks to https://github.com/eekhoorn01[@eekhoorn01] for reporting the issue.
+
+== Documentation improvements
+
+* The xref:user-guide/authentication-authorization.adoc#securing-service-endpoints[Securing service endpoints] section
+  has a new subsection about securing SOAP services with OpenID Connect (OIDC) bearer tokens.
+  It is backed by the new {link-quarkus-cxf-source-tree-base}/integration-tests/oidc[OIDC integration test].
+* The new xref:user-guide/advanced-client-topics/asynchronous-client.adoc#clients-with-a-remote-wsdl[Clients with a remote WSDL]
+  section explains why a client with a remote WSDL cannot be created on Vert.x Event Loop thread
+  and how to avoid that (https://github.com/quarkiverse/quarkus-cxf/issues/2448[#2448]).
+* The new xref:user-guide/advanced-service-topics/service-classes-in-jandex.adoc[Service classes from other modules] guide
+  explains how to index service interfaces and superclasses supplied by dependencies
+  (https://github.com/quarkiverse/quarkus-cxf/issues/1449[#1449], also available since 3.40.3).
+* The xref:user-guide/advanced-service-topics/rest-and-soap-endpoints.adoc[SOAP and REST endpoints in the same application] guide
+  explains how to avoid routing conflicts with Quarkus REST, RESTEasy Classic and reactive routes
+  (also available since 3.40.3).
+* The table of unsupported CXF modules names Quarkus REST as the alternative to CXF JAX-RS.
+* The first chapters of the user guide end with consistent _Further steps_ sections.
+
+== Deprecations
+
+=== WSS4J `BouncyCastleUtils` deprecated
+
+WSS4J 4.0.2 deprecates `org.apache.wss4j.common.crypto.BouncyCastleUtils` for removal.
+Use `org.apache.wss4j.common.crypto.X509KeyIdentifierUtil` instead.
+The old class delegates to the new one for compatibility.
+See the https://ws.apache.org/wss4j/user_guide.html#bouncycastleutils_renamed_to_x509keyidentifierutil[WSS4J migration guide].
+The same deprecation applies to {quarkus-cxf-project-name} 3.40.2 and 3.33.14.
+
+[[breaking-changes]]
+== Breaking changes
+
+=== Java 21 is required
+
+Before {quarkus-cxf-project-name} 4.0.0, Java 17 was the minimum Java version.
+Since {quarkus-cxf-project-name} 4.0.0, Java 21 is required both for building and running applications.
+This is in line with Quarkus 4, which does not support Java 17 anymore and which recommends Java 25.
+
+=== Removed configuration options
+
+The following configuration options of {quarkus-cxf-project-name}, deprecated in earlier releases, were removed:
 
 [%autowidth,stripes=hover]
 |===
@@ -13,7 +274,7 @@
 | `quarkus.cxf.client."client-name".proxy-server` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
 | `quarkus.cxf.client."client-name".proxy-server-port` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
 | `quarkus.cxf.client."client-name".non-proxy-hosts` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
-| quarkus.cxf.client."client-name".proxy-server-type | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
+| `quarkus.cxf.client."client-name".proxy-server-type` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
 | `quarkus.cxf.client."client-name".proxy-username` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
 | `quarkus.cxf.client."client-name".proxy-password` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-proxy-configuration-name[quarkus.cxf.client."client-name".proxy-configuration-name]`
 | `quarkus.cxf.client."client-name".key-store` | `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-tls-configuration-name[quarkus.cxf.client."client-name".tls-configuration-name]`
@@ -26,7 +287,7 @@
 | `quarkus.cxf.wsdl-path` | `quarkus.native.resources.includes`
 |===
 
-== `client-endpoint-url` is required
+=== `client-endpoint-url` is required
 
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-client-endpoint-url[quarkus.cxf.client."client-name".client-endpoint-url]`
 has no default value anymore.
@@ -48,9 +309,6 @@ Cannot create the client myCalculator for the service interface org.acme.Calcula
 This is a breaking change:
 
 * Set `client-endpoint-url` for all your clients.
-* This also applies to clients having
-  `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-wsdl[quarkus.cxf.client."client-name".wsdl]` set.
-  The address available in the `wsdl:port` element of the WSDL is not used instead of `client-endpoint-url`.
 * This also applies to clients whose address is set via `jakarta.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY`
   before each request.
 * A client injected via `@CXFClient` without a client name fails when it is created,
@@ -58,12 +316,11 @@ This is a breaking change:
   set to the service endpoint interface of the client.
   Before {quarkus-cxf-project-name} 4.0.0, such a client was created with default settings
   and only a warning was logged.
-* The undocumented `quarkus.cxf.internal.client.*` options were removed.
 
 See also xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` is required]
 and https://github.com/quarkiverse/quarkus-cxf/issues/2457[#2457].
 
-== `quarkus.cxf.client."client-name".alternative` is not supported anymore
+=== `quarkus.cxf.client."client-name".alternative` is not supported anymore
 
 Before {quarkus-cxf-project-name} 4.0.0, a client configuration having
 `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-alternative[quarkus.cxf.client."client-name".alternative]`
@@ -93,115 +350,135 @@ set to the service endpoint interface of a client injected without a client name
 See also xref:user-guide/advanced-client-topics/client-endpoint-url-defaults.adoc[`client-endpoint-url` is required]
 and https://github.com/quarkiverse/quarkus-cxf/issues/2470[#2470].
 
-== Dummy logging extension no longer published
+=== Dummy logging extension no longer published
 
 `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` was deprecated since {quarkus-cxf-project-name} 2.7.0,
 when all its functionality including configuration properties moved to `io.quarkiverse.cxf:quarkus-cxf`.
-To keep backwards compatibility, a dummy `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` artifact still existed up to {quarkus-cxf-project-name} 3.40.* doing nothing else, but outputting a warning.
+To keep backwards compatibility, a dummy `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` artifact
+still existed up to {quarkus-cxf-project-name} 3.40.* doing nothing else, but outputting a warning.
 
-Since {quarkus-cxf-project-name} 4.0.0, `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` is no longer published. You can simply remove the dependency from your projects, as all its functionality has moved to `io.quarkiverse.cxf:quarkus-cxf`
+Since {quarkus-cxf-project-name} 4.0.0, `io.quarkiverse.cxf:quarkus-cxf-rt-features-logging` is no longer published.
+You can simply remove the dependency from your projects,
+as all its functionality has moved to `io.quarkiverse.cxf:quarkus-cxf`.
 
-== `quarkus.**.enable` -> `quarkus.**.enabled`
+=== `quarkus.package.type` removed in Quarkus 4 in favor of `quarkus.package.jar.type` and `quarkus.native.enabled`
 
-== `quarkus.package.type` -> `quarkus.package.jar.type`
+`quarkus.package.type` was replaced by new options in Quarkus 3.9,
+but it kept working throughout Quarkus 3.x thanks to a compatibility layer.
+That compatibility layer is not available in Quarkus 4 anymore, so the option has to be replaced as follows:
 
-== Metrics `http.client.queue.delay` -> `http.pool.queue.size`
+[%autowidth,stripes=hover]
+|===
+| Before | Since Quarkus 4.0.0
 
-* Tagged by `host:port` not by `clientName`
+| `quarkus.package.type = jar` or `fast-jar` | `quarkus.package.jar.type = fast-jar` (the default)
+| `quarkus.package.type = uber-jar` | `quarkus.package.jar.type = uber-jar`
+| `quarkus.package.type = mutable-jar` | `quarkus.package.jar.type = mutable-jar`
+| `quarkus.package.type = legacy-jar` | `quarkus.package.jar.type = legacy-jar`
+| `quarkus.package.type = native` | `quarkus.native.enabled = true`
+|===
 
-== Quarkus’s changed default trace sampling.
+Note that `quarkus.package.type` is often set as a Maven property,
+typically `<quarkus.package.type>native</quarkus.package.type>` in the `native` profile of `pom.xml` files
+generated by older versions of Quarkus tooling.
+Replace it by `<quarkus.native.enabled>true</quarkus.native.enabled>`,
+as shown in the xref:user-guide/package-for-jvm-and-native.adoc[Package for running on a JVM or natively] guide.
 
-  Quarkus PR #55337 (https://github.com/quarkusio/quarkus/pull/55337), merged July 15, changed:
+=== Native mode configuration changes in Quarkus 4
 
-- quarkus.otel.traces.sampler: parentbased_always_on → parentbased_traceidratio
-- quarkus.otel.traces.sampler.arg: 1.0 → 0.1
+In addition to replacing `quarkus.package.type = native` by `quarkus.native.enabled = true` described above,
+the following changes in Quarkus 4 may affect native applications:
 
-== New `quarkus.cxf.client."client-name".vertx.http-versions` option
+* `quarkus.native.resources.excludes` was removed.
+  Use `reachability-metadata.json` instead.
+  `quarkus.native.resources.includes`, the replacement of the removed `quarkus.cxf.wsdl-path`, keeps working.
+* `quarkus.native.enable-vm-inspection` was removed in favor of `quarkus.native.monitoring`.
 
-The new option
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
-defines the HTTP protocol versions that a SOAP client using `VertxHttpClientHTTPConduit` is permitted to use.
-In contrast to the existing
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`,
-it allows requiring HTTP/2 without any fallback to HTTP/1.x and using HTTP/3.
+See the https://github.com/quarkusio/quarkus/wiki/Migration-Guide-4.0[Quarkus 4.0 migration guide] for more details.
 
-Only the following values are supported:
+=== Vert.x HttpClient metrics `http.client.queue.+*+` replaced by `http.pool.queue.*`
 
-* `1.0` - use HTTP/1.0 only
-* `1.1` - use HTTP/1.1 only
-* `2` - require HTTP/2 without any fallback to HTTP/1.x
-* `2,1.1` - prefer HTTP/2 and permit a fallback to HTTP/1.1
-* `3` - require HTTP/3 without any fallback (experimental)
-* `3,2,1.1` - start with HTTP/2 or HTTP/1.1 and switch to HTTP/3 once the service has advertised it (experimental)
+This change comes with Quarkus 4.0.0.
+It impacts applications collecting the
+xref:reference/extensions/quarkus-cxf-rt-features-metrics.adoc#extensions-quarkus-cxf-rt-features-metrics-usage-vert-x-httpclient-metrics[Vert.x HttpClient metrics]
+of SOAP clients using `VertxHttpClientHTTPConduit`, which is the default.
 
-Any other value, including other combinations and other orders of the above versions,
-causes an exception on client creation.
-The set of supported values is intentionally small and it may get extended in the future.
+Before {quarkus-cxf-project-name} 4.0.0, the requests waiting for a connection from the connection pool of a SOAP client
+were observable through the `http.client.queue.delay` timer and the `http.client.queue.size` gauge.
+Both of them were tagged with `clientName`.
 
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-version[quarkus.cxf.client."client-name".version]`
-keeps working as before.
-It has to be left at `auto` when `http-versions` is set.
+Since {quarkus-cxf-project-name} 4.0.0, those two meters do not exist anymore.
+The same information is available through the meters of the connection pool:
 
-== HTTP/3 support for SOAP clients (experimental)
+[%autowidth,stripes=hover]
+|===
+| Before | Since {quarkus-cxf-project-name} 4.0.0
 
-SOAP clients using `VertxHttpClientHTTPConduit` can use HTTP/3,
-when
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
-is set to `3` or `3,2,1.1`:
+| `http.client.queue.delay` | `http.pool.queue.delay`
+| `http.client.queue.size` | `http.pool.queue.size`
+|===
 
-* `3` makes the client use HTTP/3 for every request, without any fallback.
-* `3,2,1.1` makes the client contact the service over TCP first
-  and switch to HTTP/3 only after the service has advertised it via `Alt-Svc`.
-* The application has to depend on `io.quarkus:quarkus-http3`.
-  That extension makes the HTTP server of the application serve HTTP/3 too,
-  see <<http3-for-soap-services>> below.
-  Add `quarkus.http3.enabled = false` to `application.properties`, unless you want that.
-* HTTP/3 requires `https:` URLs and it cannot be used through a proxy.
-  Clients combining `3` or `3,2,1.1` with a plain `http:` URL or with a proxy are rejected.
+* The new meters are not tagged with `clientName`.
+  They are tagged with `pool.type` having the value `http`
+  and with `pool.name` having the value `<host>:<port>`,
+  where `<host>` and `<port>` are the host and port of the remote service.
+* Adapt your dashboards and alerts accordingly.
+* Other `http.client.+*+` meters, such as `http.client.requests` or `http.client.active.connections`,
+  are still tagged with `clientName`.
 
-See the documentation of
-`xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http-versions[quarkus.cxf.client."client-name".vertx.http-versions]`
-for more details and limitations.
+=== Only 10% of traces sampled by default since Quarkus 4.0.0
 
-=== New options for HTTP/3 connections
+This change comes with Quarkus 4.0.0 (https://github.com/quarkusio/quarkus/pull/55337[Quarkus PR #55337])
+and it impacts applications using
+xref:reference/extensions/quarkus-cxf-integration-tracing-opentelemetry.adoc[`quarkus-cxf-integration-tracing-opentelemetry`].
 
-The connection pool size and the keep alive timeout of HTTP/3 connections are configured separately
-from the same settings for HTTP/1.x and HTTP/2 connections:
+The following defaults were changed:
 
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-connection-pool-http3-max-size[quarkus.cxf.client."client-name".vertx.connection-pool.http3-max-size]`
-  sets the maximum pool size for HTTP/3 connections.
-  The default is `1`.
-* `xref:reference/extensions/quarkus-cxf.adoc#quarkus-cxf_quarkus-cxf-client-client-name-vertx-http3-keep-alive-timeout[quarkus.cxf.client."client-name".vertx.http3-keep-alive-timeout]`
-  sets the number of seconds after which inactive HTTP/3 connections are closed.
-  The default is `60`.
+[%autowidth,stripes=hover]
+|===
+| Option | Default before Quarkus 4.0.0 | Default since Quarkus 4.0.0
 
-The existing options `vertx.connection-pool.http1-max-size`, `vertx.connection-pool.http2-max-size`,
-`vertx.keep-alive-timeout` (HTTP/1.x only) and `vertx.http2-keep-alive-timeout` have no effect on HTTP/3 connections.
+| `quarkus.otel.traces.sampler` | `parentbased_always_on` | `parentbased_traceidratio`
+| `quarkus.otel.traces.sampler.arg` | `1.0` | `0.1`
+|===
 
-[[http3-for-soap-services]]
-== HTTP/3 for SOAP services (experimental)
+As a consequence, only 10% of the traces of SOAP services and SOAP clients are sampled in production and test mode.
+In dev mode, all traces are still sampled.
 
-SOAP services exposed by {quarkus-cxf-project-name} can be called over HTTP/3,
-if the application depends on `io.quarkus:quarkus-http3`, a new extension in Quarkus 4.0,
-and if TLS is configured for the Quarkus HTTP server.
-There are no new {quarkus-cxf-project-name} options for that.
-Both JVM and native mode are supported.
+To get all traces sampled again, do one of the following:
 
-Some limitations exist in the underlying projects:
+* Set `quarkus.otel.traces.sampler = parentbased_always_on` at build time
+* Or keep the `parentbased_traceidratio` sampler and set `quarkus.otel.traces.sampler.arg = 1.0`,
+  which can be done at runtime.
 
-* `quarkus-http3` in Quarkus 4.0 advertises HTTP/3 only on HTTP/1.x responses.
-  Clients negotiating HTTP/2 for their first request stay on HTTP/2
-  (https://github.com/quarkiverse/quarkus-cxf/issues/2446[#2446]).
-* A request exceeding `quarkus.http.limits.max-body-size` or a stalled request body
-  makes the server close the whole HTTP/3 connection, thus possibly aborting other requests sent through it
-  (https://github.com/quarkiverse/quarkus-cxf/issues/2461[#2461]).
-* With `quarkus-micrometer`, a `NullPointerException` is logged for requests terminated before completion
-  (https://github.com/quarkiverse/quarkus-cxf/issues/2463[#2463]).
-* `HttpServletRequest.getLocalAddr()` returns the wildcard address for requests received over HTTP/3,
-  if the server listens on all network interfaces
-  (https://github.com/quarkiverse/quarkus-cxf/issues/2464[#2464]).
+There are more changes related to OpenTelemetry in Quarkus 4,
+such as the default OTLP protocol changed to `http/protobuf`
+or the changed behavior of `quarkus.otel.traces.enabled = false`.
+See the https://github.com/quarkusio/quarkus/wiki/Migration-Guide-4.0[Quarkus 4.0 migration guide] for details.
 
-See xref:user-guide/advanced-service-topics/http3.adoc[HTTP/3 for SOAP services] for more details.
+=== Stricter XPath validation in streaming WS-SecurityPolicy
 
-== Changes in native config
+Before {quarkus-cxf-project-name} 4.0.0, 3.40.2 and 3.33.14,
+unsupported XPath expressions in streaming WS-SecurityPolicy assertions
+could silently fail to enforce the intended protection.
+Since {quarkus-cxf-project-name} 4.0.0, 3.40.2 and 3.33.14, WSS4J rejects descendant steps (`//`), wildcards,
+predicates and functions in these expressions.
+Use simple element paths, for example `/soap:Envelope/soap:Header/wsse:Security/saml2:Assertion`
+with the corresponding namespace declarations, instead of `//saml2:Assertion`.
+See https://ws.apache.org/wss4j/advisories/CVE-2026-87830.txt[CVE-2026-87830] for background.
 
+=== Default limits on XML parsing and decompression
+
+Before {quarkus-cxf-project-name} 4.0.0, 3.40.3 and 3.33.15,
+CXF imposed no default limit on the total number of XML elements,
+the total number of XML characters, or the output size of `CompressionUtils.inflate()`.
+Since {quarkus-cxf-project-name} 4.0.0, 3.40.3 and 3.33.15, the defaults are 5,000,000 elements,
+268,435,456 XML characters and 10 MiB of decompressed data, respectively.
+Applications processing larger inputs may need to adjust these limits.
+See https://cxf.apache.org/security-advisories.data/CVE-2026-108039.txt[CVE-2026-108039]
+and https://cxf.apache.org/security-advisories.data/CVE-2026-78384.txt[CVE-2026-78384] for the corresponding CXF system properties.
+For native mode, those properties have to be set at build time.
+
+== Full changelog
+
+https://github.com/quarkiverse/quarkus-cxf/compare/3.40.3+++...+++4.0.0
