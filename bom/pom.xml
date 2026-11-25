@@ -27,11 +27,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.fasterxml.woodstox</groupId>
-                <artifactId>woodstox-core</artifactId>
-                <version>${woodstox-core.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.sun.xml.fastinfoset</groupId>
                 <artifactId>FastInfoset</artifactId>
                 <version>${fastinfoset.version}</version>
@@ -410,11 +405,6 @@
                 <version>${wss4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>stax2-api</artifactId>
-                <version>${stax2.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
@@ -555,8 +545,6 @@
                             <baseBomPath>${project.build.directory}/flattened-reduced-pom.xml</baseBomPath>
                             <ignoredOverlaps>
                                 <ignoredOverlap>org.glassfish.jaxb:jaxb-runtime</ignoredOverlap>
-                                <ignoredOverlap>com.fasterxml.woodstox:woodstox-core</ignoredOverlap>
-                                <!-- Remove for Quarkus 4.0.0.next  -->
                             </ignoredOverlaps>
                         </configuration>
                     </execution>
