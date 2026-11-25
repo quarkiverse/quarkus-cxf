@@ -28,7 +28,7 @@ public class HelloServiceImpl implements HelloService {
     public String hello(String person) {
         final HttpServletRequest request = (HttpServletRequest) wsContext.getMessageContext()
                 .get(MessageContext.SERVLET_REQUEST);
-        /* getProtocol() returns http/1.1, h2 or h3 */
+        /* getProtocol() returns HTTP/1.1, HTTP/2.0 or HTTP/3.0 */
         return "Hello " + person + " over " + request.getProtocol();
     }
 }

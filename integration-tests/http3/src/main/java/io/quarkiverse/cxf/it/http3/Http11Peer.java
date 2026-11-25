@@ -79,7 +79,7 @@ public class Http11Peer {
                             .putHeader("Alt-Svc", "h3=\":" + http3Port + "\"")
                             .end("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
                                     + "<ns2:echoResponse xmlns:ns2=\"urn:protocol-echo\"><return>"
-                                    + request.version().alpnName() + ":" + echoBody.group(1).length()
+                                    + Http3Peer.protocol(request.version()) + ":" + echoBody.group(1).length()
                                     + "</return></ns2:echoResponse>"
                                     + "</soap:Body></soap:Envelope>");
                 })

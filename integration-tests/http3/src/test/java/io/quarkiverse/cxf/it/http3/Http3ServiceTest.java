@@ -79,7 +79,7 @@ public class Http3ServiceTest {
     void requestSize(int length) {
         echo("h3Service", "x".repeat(length))
                 .statusCode(200)
-                .body(is("h3:" + length));
+                .body(is("HTTP/3.0:" + length));
     }
 
     /** Response bodies of various sizes pass through {@code io.quarkiverse.cxf.transport.VertxServletOutputStream} */
@@ -88,7 +88,7 @@ public class Http3ServiceTest {
     void responseSize(int length) {
         generate("h3Service", length)
                 .statusCode(200)
-                .body(is("h3:" + length));
+                .body(is("HTTP/3.0:" + length));
     }
 
     /** An exception thrown by the service is delivered to the client as a SOAP fault */
@@ -105,7 +105,7 @@ public class Http3ServiceTest {
         echo("h3ServiceMutualTls", "x")
                 .statusCode(200)
                 /* ProtocolEchoImpl appends the subject of the client certificate */
-                .body(is("h3:1:CN=localhost"));
+                .body(is("HTTP/3.0:1:CN=localhost"));
     }
 
     /** The WSDL is served over HTTP/3 and the service address in it is the one through which the WSDL was requested */
@@ -125,17 +125,24 @@ public class Http3ServiceTest {
         assertThat(response.version()).isEqualTo(HttpVersion.HTTP_3);
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.contentType()).startsWith("text/xml");
-        assertThat(response.body()).contains("<return>h3:1</return>");
+        assertThat(response.body()).contains("<return>HTTP/3.0:1</return>");
         /* There is no point in advertising HTTP/3 over HTTP/3 */
         assertThat(response.altSvc()).isNull();
     }
 
     /**
      * {@link HelloServiceImpl}, the example cited in the documentation, tells the HTTP version through which it was
-     * called
+     * called.
+     * <p>
+     * It returns the value of {@code jakarta.servlet.http.HttpServletRequest.getProtocol()} as is, so this is also the
+     * test of {@code io.quarkiverse.cxf.transport.VertxHttpServletRequest.getProtocol()} returning the names required
+     * by the Servlet API, rather than the ALPN names of the HTTP versions, such as {@code h2} or {@code h3}.
+     * <p>
+     * HTTP/1.0 is not tested, because the HTTP server of the application rejects HTTP/1.0 requests with status 501
+     * before they reach Quarkus CXF.
      */
     @ParameterizedTest
-    @CsvSource({ "HTTP_1_1,http/1.1", "HTTP_2,h2", "HTTP_3,h3" })
+    @CsvSource({ "HTTP_1_1,HTTP/1.1", "HTTP_2,HTTP/2.0", "HTTP_3,HTTP/3.0" })
     void helloService(HttpVersion version, String expectedProtocol) throws Exception {
         final RawResponse response = request(version, HttpMethod.POST, "/services/hello",
                 "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
@@ -153,7 +160,7 @@ public class Http3ServiceTest {
         final RawResponse response = request(HttpVersion.HTTP_1_1, HttpMethod.POST, SERVICE_PATH, SOAP_REQUEST);
         assertThat(response.version()).isEqualTo(HttpVersion.HTTP_1_1);
         assertThat(response.statusCode()).isEqualTo(200);
-        assertThat(response.body()).contains("<return>http/1.1:1</return>");
+        assertThat(response.body()).contains("<return>HTTP/1.1:1</return>");
         assertThat(response.altSvc()).startsWith("h3=\":" + Http3Test.HTTPS_PORT + "\"");
     }
 
@@ -170,7 +177,7 @@ public class Http3ServiceTest {
         for (int i = 0; i < 5; i++) {
             echo("h3ServiceFallback", "x")
                     .statusCode(200)
-                    .body(is("h2:1"));
+                    .body(is("HTTP/2.0:1"));
             Thread.sleep(500);
         }
     }
@@ -195,7 +202,7 @@ public class Http3ServiceTest {
                 .statusCode(200)
                 .extract().body().asString();
         final List<String> perRequest = List.of(connections.split(","));
-        assertThat(perRequest).hasSize(concurrentRequests).allMatch(connection -> connection.startsWith("h3:"));
+        assertThat(perRequest).hasSize(concurrentRequests).allMatch(connection -> connection.startsWith("HTTP/3.0:"));
         assertThat(Set.copyOf(perRequest)).hasSize(1);
     }
 

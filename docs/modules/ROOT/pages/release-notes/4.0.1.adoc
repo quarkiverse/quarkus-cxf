@@ -1,0 +1,28 @@
+= {quarkus-cxf-project-name} 4.0.1 release notes
+
+== Bugfixes
+
+=== https://github.com/quarkiverse/quarkus-cxf/issues/2468[#2468] `HttpServletRequest.getProtocol()` returned ALPN names instead of the values required by the Servlet API
+
+`jakarta.servlet.ServletRequest.getProtocol()` is supposed to return the name and the version of the protocol
+in the form _protocol/majorVersion.minorVersion_, for example `HTTP/1.1`.
+
+Before {quarkus-cxf-project-name} 4.0.1, the `HttpServletRequest` available to service implementations,
+interceptors and handlers returned the ALPN name of the HTTP version of the request instead.
+Since {quarkus-cxf-project-name} 4.0.1, it returns the values required by the Servlet API:
+
+[%autowidth,stripes=hover]
+|===
+| HTTP version | `getProtocol()` before 4.0.1 | `getProtocol()` since 4.0.1
+
+| HTTP/1.0 | `http/1.0` | `HTTP/1.0`
+| HTTP/1.1 | `http/1.1` | `HTTP/1.1`
+| HTTP/2 | `h2` | `HTTP/2.0`
+| HTTP/3 | `h3` | `HTTP/3.0`
+|===
+
+`HTTP/2.0` is what other Servlet containers, such as Undertow, return for HTTP/2.
+
+This is a change of behavior visible to applications.
+If your code compares the value returned by `getProtocol()` with `http/1.0`, `http/1.1`, `h2` or `h3`,
+change it to use the new values.

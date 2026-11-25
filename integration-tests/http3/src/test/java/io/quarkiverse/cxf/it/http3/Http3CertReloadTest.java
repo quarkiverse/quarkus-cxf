@@ -67,7 +67,7 @@ public class Http3CertReloadTest {
                 .pollInterval(Duration.ofMillis(200))
                 /* The client keeps failing until it has taken over the new trust store */
                 .ignoreExceptions()
-                .untilAsserted(() -> assertThat(client.echo("x")).isEqualTo("h3:1"));
+                .untilAsserted(() -> assertThat(client.echo("x")).isEqualTo("HTTP/3.0:1"));
 
         /* ... and once the right trust store is gone, the client does not use the connection opened with it anymore */
         replaceTrustStore(Http3CertReloadTestResource.NON_TRUSTING);

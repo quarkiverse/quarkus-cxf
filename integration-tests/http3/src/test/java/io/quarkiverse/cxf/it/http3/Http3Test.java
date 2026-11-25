@@ -50,7 +50,7 @@ public class Http3Test {
         for (int i = 0; i < 3; i++) {
             echo("h3", "x".repeat(100_000))
                     .statusCode(200)
-                    .body(is("h3:100000"));
+                    .body(is("HTTP/3.0:100000"));
         }
     }
 
@@ -64,7 +64,7 @@ public class Http3Test {
      * </ul>
      */
     @ParameterizedTest
-    @CsvSource({ "h3Fallback,http/1.1", "h3FallbackH2,h2" })
+    @CsvSource({ "h3Fallback,HTTP/1.1", "h3FallbackH2,HTTP/2.0" })
     void http3AfterAltSvc(String client, String firstProtocol) {
         echo(client, "first")
                 .statusCode(200)
@@ -75,12 +75,12 @@ public class Http3Test {
                 .pollInterval(Duration.ofMillis(200))
                 .untilAsserted(() -> echo(client, "retry")
                         .statusCode(200)
-                        .body(is("h3:5")));
+                        .body(is("HTTP/3.0:5")));
 
         for (int i = 0; i < 3; i++) {
             echo(client, "x".repeat(100_000))
                     .statusCode(200)
-                    .body(is("h3:100000"));
+                    .body(is("HTTP/3.0:100000"));
         }
     }
 
@@ -93,7 +93,7 @@ public class Http3Test {
         for (int i = 0; i < 5; i++) {
             echo("h3FallbackLocalhost", "x")
                     .statusCode(200)
-                    .body(is("h2:1"));
+                    .body(is("HTTP/2.0:1"));
             Thread.sleep(500);
         }
     }
@@ -104,14 +104,14 @@ public class Http3Test {
         echo("h3MutualTls", "x")
                 .statusCode(200)
                 /* Http3Peer appends the subject of the client certificate */
-                .body(is("h3:1:CN=localhost"));
+                .body(is("HTTP/3.0:1:CN=localhost"));
     }
 
     @Test
     void trustAll() {
         echo("h3TrustAll", "x")
                 .statusCode(200)
-                .body(is("h3:1"));
+                .body(is("HTTP/3.0:1"));
     }
 
     /** The trust store of the client is honored for QUIC connections */
@@ -131,7 +131,7 @@ public class Http3Test {
                 .post("/http3/delayedEcho/h3ReceiveTimeout")
                 .then()
                 .statusCode(200)
-                .body(is("h3"));
+                .body(is("HTTP/3.0"));
 
         RestAssured.given()
                 .body("3000")
@@ -230,7 +230,7 @@ public class Http3Test {
                 .statusCode(200)
                 .extract().body().asString();
         final List<String> perRequest = List.of(connections.split(","));
-        assertThat(perRequest).hasSize(concurrentRequests).allMatch(connection -> connection.startsWith("h3:"));
+        assertThat(perRequest).hasSize(concurrentRequests).allMatch(connection -> connection.startsWith("HTTP/3.0:"));
         assertThat(Set.copyOf(perRequest)).hasSize(expectedConnections);
     }
 
@@ -248,7 +248,7 @@ public class Http3Test {
         for (int i = 0; i < 2; i++) {
             echo("h3Metrics", "x")
                     .statusCode(200)
-                    .body(is("h3:1"));
+                    .body(is("HTTP/3.0:1"));
         }
 
         final Map<String, Object> metrics = getMetrics();
@@ -265,7 +265,7 @@ public class Http3Test {
         echo("h3Redirect", "x", "https://localhost:" + HTTPS_PORT + "/peer/redirect?to=https://localhost:" + HTTPS_PORT
                 + "/peer/echo")
                 .statusCode(200)
-                .body(is("h3:1"));
+                .body(is("HTTP/3.0:1"));
     }
 
     /** HTTP/3 requires TLS, so a redirect to a plain HTTP URL has to fail rather than silently use something else */
@@ -302,8 +302,8 @@ public class Http3Test {
                 .then()
                 .statusCode(200)
                 .extract().body().asString();
-        assertThat(connection).startsWith("h3:");
-        return connection.substring("h3:".length());
+        assertThat(connection).startsWith("HTTP/3.0:");
+        return connection.substring("HTTP/3.0:".length());
     }
 
     /** @return the identifiers of the connections which {@link Http3Peer} has seen closed */

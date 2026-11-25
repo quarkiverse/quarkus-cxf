@@ -80,6 +80,7 @@ $ curl --http3-only -k -s -o /dev/null -w '%{http_code} HTTP/%{http_version}\n' 
 
 The service implementation can find out the HTTP version of the current request
 via `jakarta.servlet.http.HttpServletRequest.getProtocol()`.
+It returns `HTTP/1.1`, `HTTP/2.0` or `HTTP/3.0`.
 
 HelloServiceImpl.java
 [source,java]
