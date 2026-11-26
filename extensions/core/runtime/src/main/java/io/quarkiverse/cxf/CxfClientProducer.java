@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
 import jakarta.annotation.PostConstruct;
@@ -27,9 +29,11 @@ import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.http.HTTPConduitFactory;
 import org.apache.cxf.ws.addressing.WSAContextUtils;
+import org.apache.cxf.wsdl.WSDLManager;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.cxf.CxfClientConfig.Auth;
@@ -148,8 +152,18 @@ public abstract class CxfClientProducer {
         final Map<String, Object> props = new LinkedHashMap<>();
         factory.setProperties(props);
         props.put(CXFClientInfo.class.getName(), cxfClientInfo);
-        LOGGER.debugf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
-        factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
+        final String wsdlUrl = cxfClientInfo.getWsdlUrl();
+        /*
+         * If the SEI does not specify any service name, the service name is chosen by the server and we cannot derive
+         * it reliably from the SEI. If there is a WSDL, we look the service up there later.
+         * See https://github.com/quarkiverse/quarkus-cxf/issues/1925
+         */
+        final boolean lookUpServiceNameInWsdl = wsdlUrl != null && !wsdlUrl.isEmpty()
+                && (cxfClientInfo.getWsName() == null || cxfClientInfo.getWsName().isEmpty());
+        if (!lookUpServiceNameInWsdl) {
+            LOGGER.debugf("using servicename {%s}%s", cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName());
+            factory.setServiceName(new QName(cxfClientInfo.getWsNamespace(), cxfClientInfo.getWsName()));
+        }
         if (cxfClientInfo.getEpName() != null) {
             factory.setEndpointName(new QName(cxfClientInfo.getEpNamespace(), cxfClientInfo.getEpName()));
         }
@@ -217,6 +231,16 @@ public abstract class CxfClientProducer {
              */
             bus.setExtension(conduitFactory, HTTPConduitFactory.class);
 
+            /*
+             * Must be done after setting the client specific HTTPConduitFactory so that it is honored for getting
+             * the WSDL. getServiceQName(false) does not set the default service name as a side effect.
+             * We do not override the service name possibly set by a ClientFactoryCustomizer
+             */
+            if (lookUpServiceNameInWsdl && factory.getServiceFactory().getServiceQName(false) == null) {
+                factory.setServiceName(lookUpServiceName(bus, wsdlUrl, quarkusClientFactoryBean, clientString, sei,
+                        cxfClientInfo.getWsNamespace()));
+            }
+
             LOGGER.debug("cxf client loaded for " + sei);
             result = factory.create();
         } finally {
@@ -231,6 +255,38 @@ public abstract class CxfClientProducer {
             }
         }
 
+        return result;
+    }
+
+    /**
+     * Look up the name of the WSDL service bound to the port type of the given SEI.
+     *
+     * @return the name of the service to use
+     * @throws IllegalStateException if the WSDL contains no service or multiple services bound to the port type of the
+     *         given SEI
+     */
+    private static QName lookUpServiceName(
+            Bus bus,
+            String wsdlUrl,
+            QuarkusClientFactoryBean clientFactoryBean,
+            String clientString,
+            String sei,
+            String wsNamespace) {
+        final Definition definition;
+        try {
+            /* WSDLManager caches the definition, so that CXF does not need to download it again */
+            definition = bus.getExtension(WSDLManager.class).getDefinition(wsdlUrl);
+        } catch (WSDLException | RuntimeException e) {
+            /* Keep the original behavior and let CXF report the problem with getting the WSDL */
+            LOGGER.debugf(e, "Could not load %s to look up the service name for %s", wsdlUrl, clientString);
+            return new QName(wsNamespace, "");
+        }
+        final QName portTypeName = ((JaxWsServiceFactoryBean) clientFactoryBean.getServiceFactory())
+                .getJaxWsImplementorInfo()
+                .getInterfaceName();
+        final QName result = WsdlServiceNameResolver.resolveServiceName(definition, portTypeName, wsdlUrl, clientString,
+                sei);
+        LOGGER.debugf("using servicename %s found in %s by port type %s", result, wsdlUrl, portTypeName);
         return result;
     }
 
