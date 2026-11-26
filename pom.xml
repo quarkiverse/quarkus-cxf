@@ -52,10 +52,10 @@
     <?SORTPOM IGNORE?>
     <properties>
         <!-- Primary dependencies -->
-        <quarkus.version>3.33.4</quarkus.version>
+        <quarkus.version>3.33.5</quarkus.version>
         <cxf.version>4.1.9</cxf.version>
         <quarkus-enforcer-rules.version>${quarkus.version}</quarkus-enforcer-rules.version>
-        <quarkus-antora.version>3.25.0</quarkus-antora.version>
+        <quarkus-antora.version>3.33.2</quarkus-antora.version>
 
         <!-- Other compile dependency versions (keep sorted alphabetically) -->
         <!-- Items annotated with @sync can be updated by running mvn cq:sync-versions -N -->
@@ -80,7 +80,7 @@
         <santuario-xmlsec.version>4.0.4</santuario-xmlsec.version>
 
         <slf4j.version>2.0.17</slf4j.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:org.slf4j:slf4j-api -->
-        <smallrye-certificate-generator.version>0.9.3</smallrye-certificate-generator.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.smallrye.certs:smallrye-certificate-generator -->
+        <smallrye-certificate-generator.version>0.9.4</smallrye-certificate-generator.version><!-- @sync io.quarkus:quarkus-bom:${quarkus.version} dep:io.smallrye.certs:smallrye-certificate-generator -->
         <stax2.version>4.3.2</stax2.version>
         <velocity.version>2.4.1</velocity.version><!-- Dependency of wsdl2java -->
         <woodstox-core.version>7.3.0</woodstox-core.version>
